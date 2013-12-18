@@ -369,7 +369,6 @@ function LunaUnitFrames:UpdateTargetBuffLayout()
 			LunaTargetFrame.Debuffs[i]:ClearAllPoints()
 			LunaTargetFrame.Debuffs[i]:SetPoint("TOPLEFT", LunaTargetFrame.Debuffs[i-1], "TOPRIGHT",1, 0)
 		end
-		LunaUnitFrames:UpdateTargetBuffSize()
 		Luna_Target_Events:UNIT_AURA()
 	elseif LunaOptions.frames["LunaTargetFrame"].ShowBuffs == 3 then
 		LunaTargetFrame:RegisterEvent("UNIT_AURA")
@@ -383,7 +382,6 @@ function LunaUnitFrames:UpdateTargetBuffLayout()
 			LunaTargetFrame.Debuffs[i]:ClearAllPoints()
 			LunaTargetFrame.Debuffs[i]:SetPoint("TOPLEFT", LunaTargetFrame.Debuffs[i-1], "TOPRIGHT", 1, 0)
 		end
-		LunaUnitFrames:UpdateTargetBuffSize()
 		Luna_Target_Events:UNIT_AURA()
 	elseif LunaOptions.frames["LunaTargetFrame"].ShowBuffs == 4 then
 		LunaTargetFrame:RegisterEvent("UNIT_AURA")
@@ -407,7 +405,6 @@ function LunaUnitFrames:UpdateTargetBuffLayout()
 			LunaTargetFrame.Debuffs[i]:ClearAllPoints()
 			LunaTargetFrame.Debuffs[i]:SetPoint("TOPRIGHT", LunaTargetFrame.Debuffs[i-1], "TOPLEFT",1, 0)
 		end
-		LunaUnitFrames:UpdateTargetBuffSize()
 		Luna_Target_Events:UNIT_AURA()
 	else
 		LunaTargetFrame:RegisterEvent("UNIT_AURA")
@@ -431,9 +428,9 @@ function LunaUnitFrames:UpdateTargetBuffLayout()
 			LunaTargetFrame.Debuffs[i]:ClearAllPoints()
 			LunaTargetFrame.Debuffs[i]:SetPoint("TOPLEFT", LunaTargetFrame.Debuffs[i-1], "TOPRIGHT",1, 0)
 		end
-		LunaUnitFrames:UpdateTargetBuffSize()
 		Luna_Target_Events:UNIT_AURA()
 	end
+	LunaUnitFrames:UpdateTargetBuffSize()
 end
 
 function LunaUnitFrames:UpdateTargetBuffSize()
