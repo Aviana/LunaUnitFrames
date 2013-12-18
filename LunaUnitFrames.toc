@@ -3,7 +3,7 @@
 ## Notes: Lightweight Unit Frames in a modern look.
 ## Author: Avi
 ## Dependencies:
-## SavedVariablesPerCharacter: LunaOptions
+## SavedVariables: LunaOptions
 ## OptionalDeps: ProximityLib
 
 libs\ProximityLib\ProximityLib.lua
