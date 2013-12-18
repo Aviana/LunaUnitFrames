@@ -1,0 +1,519 @@
+local Luna_TargetTarget_Events = {}
+
+local tot = CreateFrame("Frame")
+tot.time = 0
+
+function Luna_TargetTarget_Tip()
+	UnitFrame_OnEnter()
+end
+
+local dropdown = CreateFrame("Frame", "LunaUnitDropDownMenuTargetTarget", UIParent, "UIDropDownMenuTemplate")
+function Luna_TargetTargetDropDown_Initialize()
+	local menu, name;
+	if (UnitIsUnit("targettarget", "player")) then
+		menu = "SELF";
+	elseif (UnitIsUnit("targettarget", "pet")) then
+		menu = "PET";
+	elseif (UnitIsPlayer("targettarget")) then
+		if (UnitInParty("targettarget")) then
+			menu = "PARTY";
+		else
+			menu = "PLAYER";
+		end
+	else
+		menu = "RAID_TARGET_ICON";
+		name = RAID_TARGET_ICON;
+	end
+	if (menu) then
+		UnitPopup_ShowMenu(dropdown, menu, "targettarget", name);
+	end
+end
+UIDropDownMenu_Initialize(dropdown, Luna_TargetTargetDropDown_Initialize, "MENU")
+
+local dropdown2 = CreateFrame("Frame", "LunaUnitDropDownMenuTargetTargetTarget", UIParent, "UIDropDownMenuTemplate")
+function Luna_TargetTargetTargetDropDown_Initialize()
+	local menu, name
+	if (UnitIsUnit("targettargettarget", "player")) then
+		menu = "SELF"
+	elseif (UnitIsUnit("targettargettarget", "pet")) then
+		menu = "PET"
+	elseif (UnitIsPlayer("targettargettarget")) then
+		if (UnitInParty("targettargettarget")) then
+			menu = "PARTY"
+		else
+			menu = "PLAYER"
+		end
+	else
+		menu = "RAID_TARGET_ICON"
+		name = RAID_TARGET_ICON
+	end
+	if (menu) then
+		UnitPopup_ShowMenu(dropdown2, menu, "targettargettarget", name);
+	end
+end
+UIDropDownMenu_Initialize(dropdown2, Luna_TargetTargetTargetDropDown_Initialize, "MENU")
+
+function Luna_TargetTarget_OnClick()
+	local button = arg1
+	if (button == "LeftButton") then
+		if (SpellIsTargeting()) then
+			SpellTargetUnit(this.unit)
+		elseif (CursorHasItem()) then
+			DropItemOnUnit(this.unit)
+		else
+			TargetUnit(this.unit)
+		end
+		return;
+	end
+
+	if (button == "RightButton") then
+		if (SpellIsTargeting()) then
+			SpellStopTargeting();
+			return;
+		end
+	end
+
+	if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then
+		if this.unit == "targettarget" then
+			ToggleDropDownMenu(1, nil, dropdown, "cursor", 0, 0)
+		else
+			ToggleDropDownMenu(1, nil, dropdown2, "cursor", 0, 0)
+		end
+	end
+end
+
+function Luna_TargetTarget_OnEvent()
+	local func = Luna_TargetTarget_Events[event]
+	if (func) then
+		func()
+	else
+		DEFAULT_CHAT_FRAME:AddMessage("Luna Unit Frames - TargetTarget: Report the following event error to the author: "..event)
+	end
+end
+
+function Luna_TargetTarget_OnUpdate()
+	tot.time = tot.time + arg1;
+	if (tot.time > 0.2) then
+		tot.time = 0;
+		LunaUnitFrames:UpdateTargetTargetFrame()
+		LunaUnitFrames:UpdateTargetTargetTargetFrame()
+	end
+end
+
+local function StartMoving()
+	this:StartMoving()
+end
+
+local function StopMovingOrSizing()
+	this:StopMovingOrSizing()
+	_,_,_,LunaOptions.frames[this:GetName()].position.x, LunaOptions.frames[this:GetName()].position.y = this:GetPoint()
+end
+
+function LunaUnitFrames:ToggleTargetTargetLock()
+	if LunaTargetTargetFrame:IsMovable() then
+		LunaTargetTargetFrame:SetScript("OnDragStart", nil)
+		LunaTargetTargetFrame:SetMovable(0)
+		LunaTargetTargetTargetFrame:SetScript("OnDragStart", nil)
+		LunaTargetTargetTargetFrame:SetMovable(0)
+	else
+		LunaTargetTargetFrame:SetScript("OnDragStart", StartMoving)
+		LunaTargetTargetFrame:SetMovable(1)
+		LunaTargetTargetTargetFrame:SetScript("OnDragStart", StartMoving)
+		LunaTargetTargetTargetFrame:SetMovable(1)
+	end
+end
+
+function LunaUnitFrames:CreateTargetTargetFrame()
+	LunaTargetTargetFrame = CreateFrame("Button", "LunaTargetTargetFrame", UIParent)
+
+	LunaTargetTargetFrame:SetHeight(LunaOptions.frames["LunaTargetTargetFrame"].size.y)
+	LunaTargetTargetFrame:SetWidth(LunaOptions.frames["LunaTargetTargetFrame"].size.x)
+	LunaTargetTargetFrame:SetScale(LunaOptions.frames["LunaTargetTargetFrame"].scale)
+	LunaTargetTargetFrame:SetBackdrop(LunaOptions.backdrop)
+	LunaTargetTargetFrame:SetBackdropColor(0,0,0,1)
+	LunaTargetTargetFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", LunaOptions.frames["LunaTargetTargetFrame"].position.x, LunaOptions.frames["LunaTargetTargetFrame"].position.y)
+	LunaTargetTargetFrame:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up')
+	LunaTargetTargetFrame.unit = "targettarget"
+	LunaTargetTargetFrame:SetScript("OnEnter", Luna_TargetTarget_Tip)
+	LunaTargetTargetFrame:SetScript("OnLeave", UnitFrame_OnLeave)
+	LunaTargetTargetFrame:SetMovable(0)
+	LunaTargetTargetFrame:RegisterForDrag("LeftButton")
+	LunaTargetTargetFrame:SetScript("OnDragStop", StopMovingOrSizing)
+	LunaTargetTargetFrame:SetClampedToScreen(1)
+
+	-- Healthbar
+	local hp = CreateFrame("StatusBar", nil, LunaTargetTargetFrame)
+	hp:SetStatusBarTexture(LunaOptions.statusbartexture)
+	hp:SetPoint("TOPLEFT", LunaTargetTargetFrame, "TOPLEFT", 0, 0)
+	LunaTargetTargetFrame.HealthBar = hp
+
+	-- Healthbar background
+	local hpbg = hp:CreateTexture(nil, "BORDER")
+	hpbg:SetAllPoints(hp)
+	hpbg:SetTexture(.25,.25,.25)
+	LunaTargetTargetFrame.HealthBar.hpbg = hpbg
+
+	-- Healthbar text
+	local hpp = hp:CreateFontString(nil, "OVERLAY", hp)
+	hpp:SetPoint("RIGHT", -2, -1)
+	hpp:SetFont(LunaOptions.font, LunaOptions.fontHeight)
+	hpp:SetShadowColor(0, 0, 0)
+	hpp:SetShadowOffset(0.8, -0.8)
+	hpp:SetTextColor(1,1,1)
+	LunaTargetTargetFrame.HealthBar.hpp = hpp
+
+	local name = hp:CreateFontString(nil, "OVERLAY", hp)
+	name:SetPoint("LEFT", hp, 2, -1)
+	name:SetJustifyH("LEFT")
+	name:SetFont(LunaOptions.font, LunaOptions.fontHeight)
+	name:SetShadowColor(0, 0, 0)
+	name:SetShadowOffset(0.8, -0.8)
+	name:SetTextColor(1,1,1)
+	name:SetText(UnitName("target"))
+	LunaTargetTargetFrame.name = name
+
+	local icon = LunaTargetTargetFrame.HealthBar:CreateTexture(nil, "OVERLAY")
+	icon:SetHeight(20)
+	icon:SetWidth(20)
+	icon:SetPoint("CENTER", LunaTargetTargetFrame.HealthBar, "TOP", 0, 0)
+	icon:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcons")
+	LunaTargetTargetFrame.RaidIcon = icon
+	
+		-- Manabar
+	local pp = CreateFrame("StatusBar", nil, LunaTargetTargetFrame)
+	pp:SetStatusBarTexture(LunaOptions.statusbartexture)
+	pp:SetPoint("TOPLEFT", LunaTargetTargetFrame.HealthBar, "BOTTOMLEFT", 0, -1)
+	LunaTargetTargetFrame.PowerBar = pp
+	
+	-- Manabar background
+	local ppbg = pp:CreateTexture(nil, "BORDER")
+	ppbg:SetAllPoints(pp)
+	ppbg:SetTexture(.25,.25,.25)
+	LunaTargetTargetFrame.PowerBar.ppbg = ppbg
+
+	local ppp = pp:CreateFontString(nil, "OVERLAY", pp)
+	ppp:SetPoint("RIGHT", -2, -1)
+	ppp:SetFont(LunaOptions.font, LunaOptions.fontHeight)
+	ppp:SetShadowColor(0, 0, 0)
+	ppp:SetShadowOffset(0.8, -0.8)
+	ppp:SetTextColor(1,1,1)
+	LunaTargetTargetFrame.PowerBar.ppp = ppp
+	
+	local lvl
+	lvl = pp:CreateFontString(nil, "OVERLAY")
+	lvl:SetPoint("LEFT", pp, "LEFT", 2, -1)
+	lvl:SetFont(LunaOptions.font, LunaOptions.fontHeight)
+	lvl:SetShadowColor(0, 0, 0)
+	lvl:SetShadowOffset(0.8, -0.8)
+	LunaTargetTargetFrame.Lvl = lvl
+	
+	LunaTargetTargetFrame.class = LunaTargetTargetFrame.PowerBar:CreateFontString(nil, "OVERLAY")
+	LunaTargetTargetFrame.class:SetPoint("LEFT", LunaTargetTargetFrame.Lvl, "RIGHT",  1, 0)
+	LunaTargetTargetFrame.class:SetFont(LunaOptions.font, LunaOptions.fontHeight)
+	LunaTargetTargetFrame.class:SetShadowColor(0, 0, 0)
+	LunaTargetTargetFrame.class:SetShadowOffset(0.8, -0.8)
+	
+	LunaTargetTargetFrame:Hide()
+	
+	LunaTargetTargetFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
+	
+	LunaTargetTargetFrame:SetScript("OnClick", Luna_TargetTarget_OnClick)
+	LunaTargetTargetFrame:SetScript("OnEvent", Luna_TargetTarget_OnEvent)
+	tot:SetScript("OnUpdate", Luna_TargetTarget_OnUpdate)
+	
+	LunaTargetTargetFrame.AdjustBars = function()
+		local frameHeight = LunaTargetTargetFrame:GetHeight()
+		local frameWidth = LunaTargetTargetFrame:GetWidth()
+		LunaTargetTargetFrame.HealthBar:SetWidth(frameWidth)
+		LunaTargetTargetFrame.PowerBar:SetWidth(frameWidth)
+		LunaTargetTargetFrame.HealthBar:SetHeight(frameHeight*0.58)
+		LunaTargetTargetFrame.PowerBar:SetHeight(frameHeight-(frameHeight*0.58)-1)
+	end
+	LunaTargetTargetFrame.AdjustBars()
+		
+end
+
+function Luna_TargetTarget_Events:PLAYER_TARGET_CHANGED()
+	LunaUnitFrames:UpdateTargetTargetFrame()
+	LunaUnitFrames:UpdateTargetTargetTargetFrame()
+end
+
+function LunaUnitFrames:UpdateTargetTargetFrame()
+	if LunaOptions.frames["LunaTargetTargetFrame"].enabled == 1 and UnitExists("targettarget") then
+		LunaTargetTargetFrame:Show()
+	else
+		LunaTargetTargetFrame:Hide()
+		return
+	end
+	local class = UnitClass("targettarget")
+	if UnitIsPlayer("targettarget") then
+		local color = LunaOptions.ClassColors[class]
+		LunaTargetTargetFrame.HealthBar:SetStatusBarColor(color[1],color[2],color[3])
+		LunaTargetTargetFrame.HealthBar.hpbg:SetVertexColor(color[1],color[2],color[3], 0.25)
+	elseif UnitIsTapped("targettarget") and not UnitIsTappedByPlayer("targettarget") then
+		LunaTargetTargetFrame.HealthBar:SetStatusBarColor(0.5, 0.5, 0.5)
+		LunaTargetTargetFrame.HealthBar.hpbg:SetVertexColor(0.5, 0.5, 0.5, 0.25)
+	else
+		reaction = UnitReaction("targettarget", "player")
+		if reaction and reaction < 4 then
+			LunaTargetTargetFrame.HealthBar:SetStatusBarColor(0.9, 0, 0)
+			LunaTargetTargetFrame.HealthBar.hpbg:SetVertexColor(0.9, 0, 0, 0.25)
+		elseif reaction and reaction > 4 then
+			LunaTargetTargetFrame.HealthBar:SetStatusBarColor(0, 0.8, 0)
+			LunaTargetTargetFrame.HealthBar.hpbg:SetVertexColor(0, 0.8, 0, 0.25)
+		else
+			LunaTargetTargetFrame.HealthBar:SetStatusBarColor(0.93, 0.93, 0)
+			LunaTargetTargetFrame.HealthBar.hpbg:SetVertexColor(0.93, 0.93, 0, 0.25)
+		end
+	end
+	if (UnitIsDead(LunaTargetTargetFrame.unit) or UnitIsGhost(LunaTargetTargetFrame.unit) or not UnitIsConnected(LunaTargetTargetFrame.unit)) then
+		LunaTargetTargetFrame.HealthBar:SetMinMaxValues(0, UnitHealthMax(LunaTargetTargetFrame.unit))
+		LunaTargetTargetFrame.HealthBar:SetValue(0)
+		LunaTargetTargetFrame.HealthBar.hpp:SetText("0/"..UnitHealthMax(LunaTargetTargetFrame.unit))
+			
+		LunaTargetTargetFrame.PowerBar:SetMinMaxValues(0, UnitManaMax(LunaTargetTargetFrame.unit))
+		LunaTargetTargetFrame.PowerBar:SetValue(0)
+		LunaTargetTargetFrame.PowerBar.ppp:SetText("0/"..UnitManaMax(LunaTargetTargetFrame.unit))
+	else
+		LunaTargetTargetFrame.HealthBar:SetMinMaxValues(0, UnitHealthMax(LunaTargetTargetFrame.unit))
+		LunaTargetTargetFrame.HealthBar:SetValue(UnitHealth(LunaTargetTargetFrame.unit))
+		LunaTargetTargetFrame.HealthBar.hpp:SetText(UnitHealth(LunaTargetTargetFrame.unit).."/"..UnitHealthMax(LunaTargetTargetFrame.unit))
+			
+		LunaTargetTargetFrame.PowerBar:SetMinMaxValues(0, UnitManaMax(LunaTargetTargetFrame.unit))
+		LunaTargetTargetFrame.PowerBar:SetValue(UnitMana(LunaTargetTargetFrame.unit))
+		LunaTargetTargetFrame.PowerBar.ppp:SetText(UnitMana(LunaTargetTargetFrame.unit).."/"..UnitManaMax(LunaTargetTargetFrame.unit))
+	end
+	local targetpower = UnitPowerType("targettarget")
+	
+	if UnitManaMax("targettarget") == 0 then
+		LunaTargetTargetFrame.PowerBar:SetStatusBarColor(0, 0, 0, .25)
+		LunaTargetTargetFrame.PowerBar.ppbg:SetVertexColor(0, 0, 0, .25)
+	elseif targetpower == 1 then
+		LunaTargetTargetFrame.PowerBar:SetStatusBarColor(LunaOptions.PowerColors["Rage"][1], LunaOptions.PowerColors["Rage"][2], LunaOptions.PowerColors["Rage"][3])
+		LunaTargetTargetFrame.PowerBar.ppbg:SetVertexColor(LunaOptions.PowerColors["Rage"][1], LunaOptions.PowerColors["Rage"][2], LunaOptions.PowerColors["Rage"][3], .25)
+	elseif targetpower == 2 then
+		LunaTargetTargetFrame.PowerBar:SetStatusBarColor(LunaOptions.PowerColors["Focus"][1],LunaOptions.PowerColors["Focus"][2],LunaOptions.PowerColors["Focus"][3])
+		LunaTargetTargetFrame.PowerBar.ppbg:SetVertexColor(LunaOptions.PowerColors["Focus"][1],LunaOptions.PowerColors["Focus"][2],LunaOptions.PowerColors["Focus"][3], 0.25)
+	elseif targetpower == 3 then
+		LunaTargetTargetFrame.PowerBar:SetStatusBarColor(LunaOptions.PowerColors["Energy"][1], LunaOptions.PowerColors["Energy"][2], LunaOptions.PowerColors["Energy"][3])
+		LunaTargetTargetFrame.PowerBar.ppbg:SetVertexColor(LunaOptions.PowerColors["Energy"][1], LunaOptions.PowerColors["Energy"][2], LunaOptions.PowerColors["Energy"][3], .25)
+	elseif not UnitIsDeadOrGhost("targettarget") then
+		LunaTargetTargetFrame.PowerBar:SetStatusBarColor(LunaOptions.PowerColors["Mana"][1], LunaOptions.PowerColors["Mana"][2], LunaOptions.PowerColors["Mana"][3])
+		LunaTargetTargetFrame.PowerBar.ppbg:SetVertexColor(LunaOptions.PowerColors["Mana"][1], LunaOptions.PowerColors["Mana"][2], LunaOptions.PowerColors["Mana"][3], .25)
+	else
+		LunaTargetTargetFrame.PowerBar:SetStatusBarColor(0, 0, 0, .25)
+		LunaTargetTargetFrame.PowerBar.ppbg:SetVertexColor(0, 0, 0, .25)
+	end
+	
+	if UnitIsPlayer("targettarget") then
+		LunaTargetTargetFrame.class:SetText(UnitClass("targettarget"))
+	elseif UnitClassification("targettarget") == "normal" then
+		LunaTargetTargetFrame.class:SetText(UnitCreatureType("targettarget"))
+	else
+		LunaTargetTargetFrame.class:SetText(UnitClassification("targettarget").." "..UnitCreatureType("targettarget"))
+	end
+
+	LunaTargetTargetFrame.Lvl:SetText(UnitLevel("targettarget"))
+	LunaTargetTargetFrame.name:SetText(UnitName("targettarget"))
+	local index = GetRaidTargetIndex("targettarget")
+	if (index) then
+		SetRaidTargetIconTexture(LunaTargetTargetFrame.RaidIcon, index)
+		LunaTargetTargetFrame.RaidIcon:Show()
+	else
+		LunaTargetTargetFrame.RaidIcon:Hide()
+	end
+end
+
+function LunaUnitFrames:CreateTargetTargetTargetFrame()
+	LunaTargetTargetTargetFrame = CreateFrame("Button", "LunaTargetTargetTargetFrame", UIParent)
+
+	LunaTargetTargetTargetFrame:SetHeight(LunaOptions.frames["LunaTargetTargetTargetFrame"].size.y)
+	LunaTargetTargetTargetFrame:SetWidth(LunaOptions.frames["LunaTargetTargetTargetFrame"].size.x)
+	LunaTargetTargetTargetFrame:SetScale(LunaOptions.frames["LunaTargetTargetTargetFrame"].scale)
+	LunaTargetTargetTargetFrame:SetBackdrop(LunaOptions.backdrop)
+	LunaTargetTargetTargetFrame:SetBackdropColor(0,0,0,1)
+	LunaTargetTargetTargetFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", LunaOptions.frames["LunaTargetTargetTargetFrame"].position.x, LunaOptions.frames["LunaTargetTargetTargetFrame"].position.y)
+	LunaTargetTargetTargetFrame:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up')
+	LunaTargetTargetTargetFrame.unit = "targettargettarget"
+	LunaTargetTargetTargetFrame:SetScript("OnEnter", Luna_TargetTarget_Tip)
+	LunaTargetTargetTargetFrame:SetScript("OnLeave", UnitFrame_OnLeave)
+	LunaTargetTargetTargetFrame:SetMovable(0)
+	LunaTargetTargetTargetFrame:RegisterForDrag("LeftButton")
+	LunaTargetTargetTargetFrame:SetScript("OnDragStop", StopMovingOrSizing)
+	LunaTargetTargetTargetFrame:SetClampedToScreen(1)
+
+	-- Healthbar
+	local hp = CreateFrame("StatusBar", nil, LunaTargetTargetTargetFrame)
+	hp:SetStatusBarTexture(LunaOptions.statusbartexture)
+	hp:SetPoint("TOPLEFT", LunaTargetTargetTargetFrame, "TOPLEFT", 0, 0)
+	LunaTargetTargetTargetFrame.HealthBar = hp
+
+	-- Healthbar background
+	local hpbg = hp:CreateTexture(nil, "BORDER")
+	hpbg:SetAllPoints(hp)
+	hpbg:SetTexture(.25,.25,.25)
+	LunaTargetTargetTargetFrame.HealthBar.hpbg = hpbg
+
+	-- Healthbar text
+	local hpp = hp:CreateFontString(nil, "OVERLAY", hp)
+	hpp:SetPoint("RIGHT", -2, -1)
+	hpp:SetFont(LunaOptions.font, LunaOptions.fontHeight)
+	hpp:SetShadowColor(0, 0, 0)
+	hpp:SetShadowOffset(0.8, -0.8)
+	hpp:SetTextColor(1,1,1)
+	LunaTargetTargetTargetFrame.HealthBar.hpp = hpp
+
+	local name = hp:CreateFontString(nil, "OVERLAY", hp)
+	name:SetPoint("LEFT", hp, 2, -1)
+	name:SetJustifyH("LEFT")
+	name:SetFont(LunaOptions.font, LunaOptions.fontHeight)
+	name:SetShadowColor(0, 0, 0)
+	name:SetShadowOffset(0.8, -0.8)
+	name:SetTextColor(1,1,1)
+	name:SetText(UnitName("target"))
+	LunaTargetTargetTargetFrame.name = name
+
+	local icon = LunaTargetTargetTargetFrame.HealthBar:CreateTexture(nil, "OVERLAY")
+	icon:SetHeight(20)
+	icon:SetWidth(20)
+	icon:SetPoint("CENTER", LunaTargetTargetTargetFrame.HealthBar, "TOP", 0, 0)
+	icon:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcons")
+	LunaTargetTargetTargetFrame.RaidIcon = icon
+	
+		-- Manabar
+	local pp = CreateFrame("StatusBar", nil, LunaTargetTargetTargetFrame)
+	pp:SetStatusBarTexture(LunaOptions.statusbartexture)
+	pp:SetPoint("TOPLEFT", LunaTargetTargetTargetFrame.HealthBar, "BOTTOMLEFT", 0, -1)
+	LunaTargetTargetTargetFrame.PowerBar = pp
+	
+	-- Manabar background
+	local ppbg = pp:CreateTexture(nil, "BORDER")
+	ppbg:SetAllPoints(pp)
+	ppbg:SetTexture(.25,.25,.25)
+	LunaTargetTargetTargetFrame.PowerBar.ppbg = ppbg
+
+	local ppp = pp:CreateFontString(nil, "OVERLAY", pp)
+	ppp:SetPoint("RIGHT", -2, -1)
+	ppp:SetFont(LunaOptions.font, LunaOptions.fontHeight)
+	ppp:SetShadowColor(0, 0, 0)
+	ppp:SetShadowOffset(0.8, -0.8)
+	ppp:SetTextColor(1,1,1)
+	LunaTargetTargetTargetFrame.PowerBar.ppp = ppp
+	
+	local lvl
+	lvl = pp:CreateFontString(nil, "OVERLAY")
+	lvl:SetPoint("LEFT", pp, "LEFT", 2, -1)
+	lvl:SetFont(LunaOptions.font, LunaOptions.fontHeight)
+	lvl:SetShadowColor(0, 0, 0)
+	lvl:SetShadowOffset(0.8, -0.8)
+	LunaTargetTargetTargetFrame.Lvl = lvl
+	
+	LunaTargetTargetTargetFrame.class = LunaTargetTargetTargetFrame.PowerBar:CreateFontString(nil, "OVERLAY")
+	LunaTargetTargetTargetFrame.class:SetPoint("LEFT", LunaTargetTargetTargetFrame.Lvl, "RIGHT",  1, 0)
+	LunaTargetTargetTargetFrame.class:SetFont(LunaOptions.font, LunaOptions.fontHeight)
+	LunaTargetTargetTargetFrame.class:SetShadowColor(0, 0, 0)
+	LunaTargetTargetTargetFrame.class:SetShadowOffset(0.8, -0.8)
+	
+	LunaTargetTargetTargetFrame:Hide()
+		
+	LunaTargetTargetTargetFrame:SetScript("OnClick", Luna_TargetTarget_OnClick)
+	LunaTargetTargetTargetFrame:SetScript("OnEvent", Luna_TargetTarget_OnEvent)
+	tot:SetScript("OnUpdate", Luna_TargetTarget_OnUpdate)
+	
+	LunaTargetTargetTargetFrame.AdjustBars = function()
+		local frameHeight = LunaTargetTargetTargetFrame:GetHeight()
+		local frameWidth = LunaTargetTargetTargetFrame:GetWidth()
+		LunaTargetTargetTargetFrame.HealthBar:SetWidth(frameWidth)
+		LunaTargetTargetTargetFrame.PowerBar:SetWidth(frameWidth)
+		LunaTargetTargetTargetFrame.HealthBar:SetHeight(frameHeight*0.58)
+		LunaTargetTargetTargetFrame.PowerBar:SetHeight(frameHeight-(frameHeight*0.58)-1)
+	end
+	LunaTargetTargetTargetFrame.AdjustBars()
+		
+end
+
+function LunaUnitFrames:UpdateTargetTargetTargetFrame()
+	if LunaOptions.frames["LunaTargetTargetTargetFrame"].enabled == 1 and UnitExists("targettargettarget") then
+		LunaTargetTargetTargetFrame:Show()
+	else
+		LunaTargetTargetTargetFrame:Hide()
+		return
+	end
+	local class = UnitClass("targettargettarget")
+	if UnitIsPlayer("targettargettarget") then
+		local color = LunaOptions.ClassColors[class]
+		LunaTargetTargetTargetFrame.HealthBar:SetStatusBarColor(color[1],color[2],color[3])
+		LunaTargetTargetTargetFrame.HealthBar.hpbg:SetVertexColor(color[1],color[2],color[3], 0.25)
+	elseif UnitIsTapped("targettargettarget") and not UnitIsTappedByPlayer("targettargettarget") then
+		LunaTargetTargetTargetFrame.HealthBar:SetStatusBarColor(0.5, 0.5, 0.5)
+		LunaTargetTargetTargetFrame.HealthBar.hpbg:SetVertexColor(0.5, 0.5, 0.5, 0.25)
+	else
+		reaction = UnitReaction("targettargettarget", "player")
+		if reaction and reaction < 4 then
+			LunaTargetTargetTargetFrame.HealthBar:SetStatusBarColor(0.9, 0, 0)
+			LunaTargetTargetTargetFrame.HealthBar.hpbg:SetVertexColor(0.9, 0, 0, 0.25)
+		elseif reaction and reaction > 4 then
+			LunaTargetTargetTargetFrame.HealthBar:SetStatusBarColor(0, 0.8, 0)
+			LunaTargetTargetTargetFrame.HealthBar.hpbg:SetVertexColor(0, 0.8, 0, 0.25)
+		else
+			LunaTargetTargetTargetFrame.HealthBar:SetStatusBarColor(0.93, 0.93, 0)
+			LunaTargetTargetTargetFrame.HealthBar.hpbg:SetVertexColor(0.93, 0.93, 0, 0.25)
+		end
+	end
+	if (UnitIsDead(LunaTargetTargetTargetFrame.unit) or UnitIsGhost(LunaTargetTargetTargetFrame.unit) or not UnitIsConnected(LunaTargetTargetTargetFrame.unit)) then
+		LunaTargetTargetTargetFrame.HealthBar:SetMinMaxValues(0, UnitHealthMax(LunaTargetTargetTargetFrame.unit))
+		LunaTargetTargetTargetFrame.HealthBar:SetValue(0)
+		LunaTargetTargetTargetFrame.HealthBar.hpp:SetText("0/"..UnitHealthMax(LunaTargetTargetTargetFrame.unit))
+			
+		LunaTargetTargetTargetFrame.PowerBar:SetMinMaxValues(0, UnitManaMax(LunaTargetTargetTargetFrame.unit))
+		LunaTargetTargetTargetFrame.PowerBar:SetValue(0)
+		LunaTargetTargetTargetFrame.PowerBar.ppp:SetText("0/"..UnitManaMax(LunaTargetTargetTargetFrame.unit))
+	else
+		LunaTargetTargetTargetFrame.HealthBar:SetMinMaxValues(0, UnitHealthMax(LunaTargetTargetTargetFrame.unit))
+		LunaTargetTargetTargetFrame.HealthBar:SetValue(UnitHealth(LunaTargetTargetTargetFrame.unit))
+		LunaTargetTargetTargetFrame.HealthBar.hpp:SetText(UnitHealth(LunaTargetTargetTargetFrame.unit).."/"..UnitHealthMax(LunaTargetTargetTargetFrame.unit))
+			
+		LunaTargetTargetTargetFrame.PowerBar:SetMinMaxValues(0, UnitManaMax(LunaTargetTargetTargetFrame.unit))
+		LunaTargetTargetTargetFrame.PowerBar:SetValue(UnitMana(LunaTargetTargetTargetFrame.unit))
+		LunaTargetTargetTargetFrame.PowerBar.ppp:SetText(UnitMana(LunaTargetTargetTargetFrame.unit).."/"..UnitManaMax(LunaTargetTargetTargetFrame.unit))
+	end
+	local targetpower = UnitPowerType("targettargettarget")
+	
+	if UnitManaMax("targettargettarget") == 0 then
+		LunaTargetTargetTargetFrame.PowerBar:SetStatusBarColor(0, 0, 0, .25)
+		LunaTargetTargetTargetFrame.PowerBar.ppbg:SetVertexColor(0, 0, 0, .25)
+	elseif targetpower == 1 then
+		LunaTargetTargetTargetFrame.PowerBar:SetStatusBarColor(LunaOptions.PowerColors["Rage"][1], LunaOptions.PowerColors["Rage"][2], LunaOptions.PowerColors["Rage"][3])
+		LunaTargetTargetTargetFrame.PowerBar.ppbg:SetVertexColor(LunaOptions.PowerColors["Rage"][1], LunaOptions.PowerColors["Rage"][2], LunaOptions.PowerColors["Rage"][3], .25)
+	elseif targetpower == 2 then
+		LunaTargetTargetTargetFrame.PowerBar:SetStatusBarColor(LunaOptions.PowerColors["Focus"][1],LunaOptions.PowerColors["Focus"][2],LunaOptions.PowerColors["Focus"][3])
+		LunaTargetTargetTargetFrame.PowerBar.ppbg:SetVertexColor(LunaOptions.PowerColors["Focus"][1],LunaOptions.PowerColors["Focus"][2],LunaOptions.PowerColors["Focus"][3], 0.25)
+	elseif targetpower == 3 then
+		LunaTargetTargetTargetFrame.PowerBar:SetStatusBarColor(LunaOptions.PowerColors["Energy"][1], LunaOptions.PowerColors["Energy"][2], LunaOptions.PowerColors["Energy"][3])
+		LunaTargetTargetTargetFrame.PowerBar.ppbg:SetVertexColor(LunaOptions.PowerColors["Energy"][1], LunaOptions.PowerColors["Energy"][2], LunaOptions.PowerColors["Energy"][3], .25)
+	elseif not UnitIsDeadOrGhost("targettargettarget") then
+		LunaTargetTargetTargetFrame.PowerBar:SetStatusBarColor(LunaOptions.PowerColors["Mana"][1], LunaOptions.PowerColors["Mana"][2], LunaOptions.PowerColors["Mana"][3])
+		LunaTargetTargetTargetFrame.PowerBar.ppbg:SetVertexColor(LunaOptions.PowerColors["Mana"][1], LunaOptions.PowerColors["Mana"][2], LunaOptions.PowerColors["Mana"][3], .25)
+	else
+		LunaTargetTargetTargetFrame.PowerBar:SetStatusBarColor(0, 0, 0, .25)
+		LunaTargetTargetTargetFrame.PowerBar.ppbg:SetVertexColor(0, 0, 0, .25)
+	end
+	
+	if UnitIsPlayer("targettargettarget") then
+		LunaTargetTargetTargetFrame.class:SetText(UnitClass("targettargettarget"))
+	elseif UnitClassification("targettargettarget") == "normal" then
+		LunaTargetTargetTargetFrame.class:SetText(UnitCreatureType("targettargettarget"))
+	else
+		LunaTargetTargetTargetFrame.class:SetText(UnitClassification("targettargettarget").." "..UnitCreatureType("targettargettarget"))
+	end
+
+	LunaTargetTargetTargetFrame.Lvl:SetText(UnitLevel("targettargettarget"))
+	LunaTargetTargetTargetFrame.name:SetText(UnitName("targettargettarget"))
+	local index = GetRaidTargetIndex("targettargettarget")
+	if (index) then
+		SetRaidTargetIconTexture(LunaTargetTargetTargetFrame.RaidIcon, index)
+		LunaTargetTargetTargetFrame.RaidIcon:Show()
+	else
+		LunaTargetTargetTargetFrame.RaidIcon:Hide()
+	end
+end

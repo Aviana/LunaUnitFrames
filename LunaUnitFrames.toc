@@ -1,0 +1,22 @@
+## Interface: 11200
+## Title: Luna Unit Frames
+## Notes: Lightweight Unit Frames in a modern look.
+## Author: Avi
+## Dependencies:
+## SavedVariablesPerCharacter: LunaOptions
+## OptionalDeps: ProximityLib
+
+libs\ProximityLib\ProximityLib.lua
+
+LunaUnitFrames.lua
+
+modules\Player.lua
+modules\Target.lua
+modules\TargetTarget.lua
+modules\Party.lua
+modules\Pet.lua
+modules\PartyPet.lua
+modules\Raid.lua
+modules\SwingBar.lua
+modules\ExperienceBar.lua
+modules\Options.lua
