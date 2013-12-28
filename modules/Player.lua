@@ -90,53 +90,53 @@ end
 local function AdjustForCastbar(isCasting)
 	if isCasting == 1 then
 		local frameHeight = LunaPlayerFrame:GetHeight()
-		LunaPlayerFrame.HealthBar:SetHeight((frameHeight*0.43)-1)
-		LunaPlayerFrame.PowerBar:SetHeight(frameHeight-(frameHeight*0.69))
-		LunaPlayerFrame.Castbar:Show()
+		LunaPlayerFrame.bars["Healthbar"]:SetHeight((frameHeight*0.43)-1)
+		LunaPlayerFrame.bars["Powerbar"]:SetHeight(frameHeight-(frameHeight*0.69))
+		LunaPlayerFrame.bars["Castbar"]:Show()
 	else
 		local frameHeight = LunaPlayerFrame:GetHeight()
-		LunaPlayerFrame.HealthBar:SetHeight(frameHeight*0.58)
-		LunaPlayerFrame.PowerBar:SetHeight(frameHeight-(frameHeight*0.58)-1)
-		LunaPlayerFrame.Castbar:Hide()
+		LunaPlayerFrame.bars["Healthbar"]:SetHeight(frameHeight*0.58)
+		LunaPlayerFrame.bars["Powerbar"]:SetHeight(frameHeight-(frameHeight*0.58)-1)
+		LunaPlayerFrame.bars["Castbar"]:Hide()
 	end
 end
 			
 local function Luna_Player_OnUpdate()
 	local sign
-	local current_time = LunaPlayerFrame.Castbar.maxValue - GetTime()
-	if (LunaPlayerFrame.Castbar.channeling) then
-		current_time = LunaPlayerFrame.Castbar.endTime - GetTime()
+	local current_time = LunaPlayerFrame.bars["Castbar"].maxValue - GetTime()
+	if (LunaPlayerFrame.bars["Castbar"].channeling) then
+		current_time = LunaPlayerFrame.bars["Castbar"].endTime - GetTime()
 	end
 	local text = string.sub(math.max(current_time,0)+0.001,1,4)
-	if (LunaPlayerFrame.Castbar.delaySum ~= 0) then
-		local delay = string.sub(math.max(LunaPlayerFrame.Castbar.delaySum/1000, 0)+0.001,1,4)
-		if (LunaPlayerFrame.Castbar.channeling == 1) then
+	if (LunaPlayerFrame.bars["Castbar"].delaySum ~= 0) then
+		local delay = string.sub(math.max(LunaPlayerFrame.bars["Castbar"].delaySum/1000, 0)+0.001,1,4)
+		if (LunaPlayerFrame.bars["Castbar"].channeling == 1) then
 			sign = "-"
 		else
 			sign = "+"
 		end
 		text = "|cffcc0000"..sign..delay.."|r "..text
 	end
-	LunaPlayerFrame.Castbar.Time:SetText(text)
+	LunaPlayerFrame.bars["Castbar"].Time:SetText(text)
 	
-	if (LunaPlayerFrame.Castbar.casting) then
+	if (LunaPlayerFrame.bars["Castbar"].casting) then
 		local status = GetTime()
-		if (status > LunaPlayerFrame.Castbar.maxValue) then
-			status = LunaPlayerFrame.Castbar.maxValue
+		if (status > LunaPlayerFrame.bars["Castbar"].maxValue) then
+			status = LunaPlayerFrame.bars["Castbar"].maxValue
 		end
-		LunaPlayerFrame.Castbar:SetValue(status)
-	elseif (LunaPlayerFrame.Castbar.channeling) then
+		LunaPlayerFrame.bars["Castbar"]:SetValue(status)
+	elseif (LunaPlayerFrame.bars["Castbar"].channeling) then
 		local time = GetTime()
-		if (time > LunaPlayerFrame.Castbar.endTime) then
-			time = LunaPlayerFrame.Castbar.endTime
+		if (time > LunaPlayerFrame.bars["Castbar"].endTime) then
+			time = LunaPlayerFrame.bars["Castbar"].endTime
 		end
-		if (time == LunaPlayerFrame.Castbar.endTime) then
-			LunaPlayerFrame.Castbar.channeling = nil
-			AdjustForCastbar(0)
+		if (time == LunaPlayerFrame.bars["Castbar"].endTime) then
+			LunaPlayerFrame.bars["Castbar"].channeling = nil
+			LunaPlayerFrame.AdjustBars()
 			return
 		end
-		local barValue = LunaPlayerFrame.Castbar.startTime + (LunaPlayerFrame.Castbar.endTime - time)
-		LunaPlayerFrame.Castbar:SetValue(barValue)
+		local barValue = LunaPlayerFrame.bars["Castbar"].startTime + (LunaPlayerFrame.bars["Castbar"].endTime - time)
+		LunaPlayerFrame.bars["Castbar"]:SetValue(barValue)
 	end
 end
 
@@ -149,7 +149,7 @@ function LunaUnitFrames:CreatePlayerFrame()
 	LunaPlayerFrame:SetBackdrop(LunaOptions.backdrop)
 	LunaPlayerFrame:SetBackdropColor(0,0,0,1)
 	LunaPlayerFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", LunaOptions.frames["LunaPlayerFrame"].position.x, LunaOptions.frames["LunaPlayerFrame"].position.y)
-	LunaPlayerFrame:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up')
+	LunaPlayerFrame:RegisterForClicks('LeftButtonUp', 'RightButtonUp')
 	LunaPlayerFrame.unit = "player"
 	LunaPlayerFrame:SetScript("OnEnter", Luna_Player_Tip)
 	LunaPlayerFrame:SetScript("OnLeave", UnitFrame_OnLeave)
@@ -158,15 +158,15 @@ function LunaUnitFrames:CreatePlayerFrame()
 	LunaPlayerFrame:SetScript("OnDragStop", StopMovingOrSizing)
 	LunaPlayerFrame:SetClampedToScreen(1)
 
+	LunaPlayerFrame.bars = {}
+	
+	LunaPlayerFrame.bars["Portrait"] = CreateFrame("PlayerModel", nil, LunaPlayerFrame)
+	LunaPlayerFrame.bars["Portrait"]:SetScript("OnShow",function() this:SetCamera(0) end)
+	LunaPlayerFrame.bars["Portrait"].type = "3D"
+	LunaPlayerFrame.bars["Portrait"].side = "left"
 
-	LunaPlayerFrame.portrait = CreateFrame("PlayerModel", nil, LunaPlayerFrame)
-	LunaPlayerFrame.portrait:SetScript("OnShow",function() this:SetCamera(0) end)
-	LunaPlayerFrame.portrait.type = "3D"
-	LunaPlayerFrame.portrait:SetPoint("TOPLEFT", LunaPlayerFrame, "TOPLEFT")
-	LunaPlayerFrame.portrait.side = "left"
-
-	LunaPlayerFrame.feedbackText = LunaPlayerFrame.portrait:CreateFontString(nil, "OVERLAY", "NumberFontNormalHuge")
-	LunaPlayerFrame.feedbackText:SetPoint("CENTER", LunaPlayerFrame.portrait, "CENTER", 0, 0)
+	LunaPlayerFrame.feedbackText = LunaPlayerFrame.bars["Portrait"]:CreateFontString(nil, "OVERLAY", "NumberFontNormalHuge")
+	LunaPlayerFrame.feedbackText:SetPoint("CENTER", LunaPlayerFrame.bars["Portrait"], "CENTER", 0, 0)
 	LunaPlayerFrame.feedbackText:SetTextColor(1,1,1)
 	LunaPlayerFrame.feedbackFontHeight = 20
 	LunaPlayerFrame.feedbackStartTime = 0
@@ -236,17 +236,17 @@ function LunaUnitFrames:CreatePlayerFrame()
 		LunaPlayerFrame.Debuffs[i].stacks:SetTextColor(1,1,1)
 	end
 	
+	
 	-- Healthbar
 	local hp = CreateFrame("StatusBar", nil, LunaPlayerFrame)
 	hp:SetStatusBarTexture(LunaOptions.statusbartexture)
-	hp:SetPoint("TOPLEFT", LunaPlayerFrame.portrait, "TOPRIGHT", 0, 0)
-	LunaPlayerFrame.HealthBar = hp
+	LunaPlayerFrame.bars["Healthbar"] = hp
 
 	-- Healthbar background
 	local hpbg = hp:CreateTexture(nil, "BORDER")
 	hpbg:SetAllPoints(hp)
 	hpbg:SetTexture(.25,.25,.25)
-	LunaPlayerFrame.HealthBar.hpbg = hpbg
+	LunaPlayerFrame.bars["Healthbar"].hpbg = hpbg
 
 	-- Healthbar text
 	local hpp = hp:CreateFontString(nil, "OVERLAY", hp)
@@ -255,7 +255,7 @@ function LunaUnitFrames:CreatePlayerFrame()
 	hpp:SetShadowColor(0, 0, 0)
 	hpp:SetShadowOffset(0.8, -0.8)
 	hpp:SetTextColor(1,1,1)
-	LunaPlayerFrame.HealthBar.hpp = hpp
+	LunaPlayerFrame.bars["Healthbar"].hpp = hpp
 
 	local name = hp:CreateFontString(nil, "OVERLAY", hp)
 	name:SetPoint("LEFT", 2, -1)
@@ -270,23 +270,22 @@ function LunaUnitFrames:CreatePlayerFrame()
 	-- Manabar
 	local pp = CreateFrame("StatusBar", nil, LunaPlayerFrame)
 	pp:SetStatusBarTexture(LunaOptions.statusbartexture)
-	pp:SetPoint("TOPLEFT", LunaPlayerFrame.HealthBar, "BOTTOMLEFT", 0, -1)
-	LunaPlayerFrame.PowerBar = pp
+	LunaPlayerFrame.bars["Powerbar"] = pp
 	
-	LunaPlayerFrame.PowerBar.EnergyUpdate = function()
+	LunaPlayerFrame.bars["Powerbar"].EnergyUpdate = function()
 		local time = GetTime()
-		if (time - LunaPlayerFrame.PowerBar.Ticker.startTime) >= 2 then 		--Ticks happen every 2 sec
-			LunaPlayerFrame.PowerBar.Ticker.startTime = GetTime()
+		if (time - LunaPlayerFrame.bars["Powerbar"].Ticker.startTime) >= 2 then 		--Ticks happen every 2 sec
+			LunaPlayerFrame.bars["Powerbar"].Ticker.startTime = GetTime()
 		end
-		local sparkPosition = (((time - LunaPlayerFrame.PowerBar.Ticker.startTime) / 2)* LunaPlayerFrame.PowerBar:GetWidth())
-		LunaPlayerFrame.PowerBar.Ticker:SetPoint("CENTER", LunaPlayerFrame.PowerBar, "LEFT", sparkPosition, 0)
+		local sparkPosition = (((time - LunaPlayerFrame.bars["Powerbar"].Ticker.startTime) / 2)* LunaPlayerFrame.bars["Powerbar"]:GetWidth())
+		LunaPlayerFrame.bars["Powerbar"].Ticker:SetPoint("CENTER", LunaPlayerFrame.bars["Powerbar"], "LEFT", sparkPosition, 0)
 	end
 
 	-- Manabar background
 	local ppbg = pp:CreateTexture(nil, "BORDER")
 	ppbg:SetAllPoints(pp)
 	ppbg:SetTexture(.25,.25,.25)
-	LunaPlayerFrame.PowerBar.ppbg = ppbg
+	LunaPlayerFrame.bars["Powerbar"].ppbg = ppbg
 
 	local ppp = pp:CreateFontString(nil, "OVERLAY", pp)
 	ppp:SetPoint("RIGHT", -2, -1)
@@ -294,15 +293,15 @@ function LunaUnitFrames:CreatePlayerFrame()
 	ppp:SetShadowColor(0, 0, 0)
 	ppp:SetShadowOffset(0.8, -0.8)
 	ppp:SetTextColor(1,1,1)
-	LunaPlayerFrame.PowerBar.ppp = ppp
+	LunaPlayerFrame.bars["Powerbar"].ppp = ppp
 
-	LunaPlayerFrame.PowerBar.Ticker = LunaPlayerFrame.PowerBar:CreateTexture(nil, "OVERLAY")
-	LunaPlayerFrame.PowerBar.Ticker:SetTexture("Interface\\CastingBar\\UI-CastingBar-Spark")
-	LunaPlayerFrame.PowerBar.Ticker:SetVertexColor(1, 1, 1, 0.5)
-	LunaPlayerFrame.PowerBar.Ticker:SetBlendMode("ADD")
-	LunaPlayerFrame.PowerBar.Ticker:SetWidth(3)
-	LunaPlayerFrame.PowerBar.oldMana = 100
-	LunaPlayerFrame.PowerBar.Ticker.startTime = GetTime()
+	LunaPlayerFrame.bars["Powerbar"].Ticker = LunaPlayerFrame.bars["Powerbar"]:CreateTexture(nil, "OVERLAY")
+	LunaPlayerFrame.bars["Powerbar"].Ticker:SetTexture("Interface\\CastingBar\\UI-CastingBar-Spark")
+	LunaPlayerFrame.bars["Powerbar"].Ticker:SetVertexColor(1, 1, 1, 0.5)
+	LunaPlayerFrame.bars["Powerbar"].Ticker:SetBlendMode("ADD")
+	LunaPlayerFrame.bars["Powerbar"].Ticker:SetWidth(3)
+	LunaPlayerFrame.bars["Powerbar"].oldMana = 100
+	LunaPlayerFrame.bars["Powerbar"].Ticker.startTime = GetTime()
 	
 	local lvl
 	lvl = pp:CreateFontString(nil, "OVERLAY")
@@ -325,66 +324,64 @@ function LunaUnitFrames:CreatePlayerFrame()
 	local Castbar = CreateFrame("StatusBar", nil, LunaPlayerFrame)
 	Castbar:SetStatusBarTexture(LunaOptions.statusbartexture)
 	Castbar:SetStatusBarColor(1, 0.7, 0.3)
-	Castbar:SetPoint("TOP", pp, "BOTTOM", 0, -1)
-	LunaPlayerFrame.Castbar = Castbar
-	LunaPlayerFrame.Castbar.maxValue = 0
-	LunaPlayerFrame.Castbar.delaySum = 0
-	LunaPlayerFrame.Castbar.holdTime = 0
+	LunaPlayerFrame.bars["Castbar"] = Castbar
+	LunaPlayerFrame.bars["Castbar"].maxValue = 0
+	LunaPlayerFrame.bars["Castbar"].delaySum = 0
+	LunaPlayerFrame.bars["Castbar"].holdTime = 0
+	LunaPlayerFrame.bars["Castbar"]:Hide()
 
 	-- Add a background
 	local Background = Castbar:CreateTexture(nil, 'BACKGROUND')
 	Background:SetAllPoints(Castbar)
 	Background:SetTexture(0, 0, 1, 0.20)
-	LunaPlayerFrame.Castbar.bg = Background
+	LunaPlayerFrame.bars["Castbar"].bg = Background
 
 	-- Add a spark
 	local Spark = Castbar:CreateTexture(nil, "OVERLAY")
 	Spark:SetBlendMode("ADD")
-	LunaPlayerFrame.Castbar.Spark = Spark
+	LunaPlayerFrame.bars["Castbar"].Spark = Spark
 
 	-- Add a timer
 	local Time = Castbar:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
 	Time:SetPoint("RIGHT", Castbar)
-	LunaPlayerFrame.Castbar.Time = Time
+	LunaPlayerFrame.bars["Castbar"].Time = Time
 
 	-- Add spell text
 	local Text = Castbar:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
 	Text:SetPoint("LEFT", Castbar)
-	LunaPlayerFrame.Castbar.Text = Text
+	LunaPlayerFrame.bars["Castbar"].Text = Text
 
-	LunaPlayerFrame.Castbar:Hide()
-
-	local icon = LunaPlayerFrame.portrait:CreateTexture(nil, "OVERLAY")
+	local icon = LunaPlayerFrame.bars["Portrait"]:CreateTexture(nil, "OVERLAY")
 	icon:SetHeight(20)
 	icon:SetWidth(20)
-	icon:SetPoint("CENTER", LunaPlayerFrame.portrait, "TOPRIGHT", 0, 0)
+	icon:SetPoint("CENTER", LunaPlayerFrame.bars["Portrait"], "TOPRIGHT", 0, 0)
 	icon:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcons")
 	LunaPlayerFrame.RaidIcon = icon
 
-	local rank = LunaPlayerFrame.portrait:CreateTexture(nil, "OVERLAY")
+	local rank = LunaPlayerFrame.bars["Portrait"]:CreateTexture(nil, "OVERLAY")
 	rank:SetHeight(10)
 	rank:SetWidth(10)
-	rank:SetPoint("CENTER", LunaPlayerFrame.portrait, "BOTTOMLEFT", 2, 2)
+	rank:SetPoint("CENTER", LunaPlayerFrame.bars["Portrait"], "BOTTOMLEFT", 2, 2)
 	LunaPlayerFrame.PVPRank = rank
 
-	local leader = LunaPlayerFrame.portrait:CreateTexture(nil, "OVERLAY")
+	local leader = LunaPlayerFrame.bars["Portrait"]:CreateTexture(nil, "OVERLAY")
 	leader:SetHeight(10)
 	leader:SetWidth(10)
-	leader:SetPoint("CENTER", LunaPlayerFrame.portrait, "TOPLEFT", 2, -2)
+	leader:SetPoint("CENTER", LunaPlayerFrame.bars["Portrait"], "TOPLEFT", 2, -2)
 	leader:SetTexture("Interface\\GroupFrame\\UI-Group-LeaderIcon")
 	LunaPlayerFrame.Leader = leader
 
-	local loot = LunaPlayerFrame.portrait:CreateTexture(nil, "OVERLAY")
+	local loot = LunaPlayerFrame.bars["Portrait"]:CreateTexture(nil, "OVERLAY")
 	loot:SetHeight(10)
 	loot:SetWidth(10)
-	loot:SetPoint("CENTER", LunaPlayerFrame.portrait, "TOPLEFT", 2, -12)
+	loot:SetPoint("CENTER", LunaPlayerFrame.bars["Portrait"], "TOPLEFT", 2, -12)
 	loot:SetTexture("Interface\\GroupFrame\\UI-Group-MasterLooter")
 	LunaPlayerFrame.Loot = loot
 
-	local state = LunaPlayerFrame.portrait:CreateTexture(nil, "OVERLAY")
+	local state = LunaPlayerFrame.bars["Portrait"]:CreateTexture(nil, "OVERLAY")
 	state:SetHeight(14)
 	state:SetWidth(14)
-	state:SetPoint("CENTER", LunaPlayerFrame.portrait, "BOTTOMRIGHT", -2, 2)
+	state:SetPoint("CENTER", LunaPlayerFrame.bars["Portrait"], "BOTTOMRIGHT", -2, 2)
 	state:SetTexture("Interface\\CharacterFrame\\UI-StateIcon")
 	state:SetTexCoord(0.57, 0.90, 0.08, 0.41)
 	LunaPlayerFrame.Combat = state
@@ -425,9 +422,9 @@ function LunaUnitFrames:CreatePlayerFrame()
 	end
 	LunaPlayerFrame:SetScript("OnClick", Luna_Player_OnClick)
 	LunaPlayerFrame:SetScript("OnEvent", Luna_Player_OnEvent)
-	LunaPlayerFrame.Castbar:SetScript("OnUpdate", Luna_Player_OnUpdate)
+	LunaPlayerFrame.bars["Castbar"]:SetScript("OnUpdate", Luna_Player_OnUpdate)
 	if LunaOptions.EnergyTicker == 1 then
-		LunaPlayerFrame.PowerBar:SetScript("OnUpdate", LunaPlayerFrame.PowerBar.EnergyUpdate)
+		LunaPlayerFrame.bars["Powerbar"]:SetScript("OnUpdate", LunaPlayerFrame.bars["Powerbar"].EnergyUpdate)
 	end
 	if LunaOptions.hideBlizzCastbar == 1 then
 		Luna_HideBlizz(CastingBarFrame)
@@ -439,16 +436,56 @@ function LunaUnitFrames:CreatePlayerFrame()
 	
 	LunaPlayerFrame.AdjustBars = function()
 		local frameHeight = LunaPlayerFrame:GetHeight()
-		local frameWidth = (LunaPlayerFrame:GetWidth()-frameHeight)
-		LunaPlayerFrame.portrait:SetHeight(frameHeight+1)
-		LunaPlayerFrame.portrait:SetWidth(frameHeight) --square it
-		LunaPlayerFrame.HealthBar:SetWidth(frameWidth)
-		LunaPlayerFrame.PowerBar:SetWidth(frameWidth)
-		LunaPlayerFrame.Castbar:SetWidth(frameWidth)
-		LunaPlayerFrame.HealthBar:SetHeight(frameHeight*0.58)
-		LunaPlayerFrame.PowerBar:SetHeight(frameHeight-(frameHeight*0.58)-1)
-		LunaPlayerFrame.PowerBar.Ticker:SetHeight(LunaPlayerFrame.PowerBar:GetHeight())
-		LunaPlayerFrame.Castbar:SetHeight(frameHeight*0.25)
+		local frameWidth
+		local anchor
+		local totalWeight = 0
+		local gaps = -1
+		if LunaPlayerFrame.bars["Castbar"].casting or LunaPlayerFrame.bars["Castbar"].channeling then
+			LunaPlayerFrame.bars["Castbar"]:Show()
+		else
+			LunaPlayerFrame.bars["Castbar"]:Hide()
+		end
+		if LunaOptions.frames["LunaPlayerFrame"].portrait > 1 then    -- We have a square portrait
+			frameWidth = (LunaPlayerFrame:GetWidth()-frameHeight)
+			LunaPlayerFrame.bars["Portrait"]:SetPoint("TOPLEFT", LunaPlayerFrame, "TOPLEFT")
+			LunaPlayerFrame.bars["Portrait"]:SetHeight(frameHeight)
+			LunaPlayerFrame.bars["Portrait"]:SetWidth(frameHeight)
+			anchor = {"TOPLEFT", LunaPlayerFrame.bars["Portrait"], "TOPRIGHT"}
+		else
+			frameWidth = LunaPlayerFrame:GetWidth()  -- We have a Bar-Portrait or no portrait
+			anchor = {"TOPLEFT", LunaPlayerFrame, "TOPLEFT"}
+		end
+		for k,v in pairs(LunaOptions.frames["LunaPlayerFrame"].bars) do
+			if LunaPlayerFrame.bars[v[1]]:IsShown() then
+				totalWeight = totalWeight + v[2]
+				gaps = gaps + 1
+			end
+		end
+		local firstbar = 1
+		for k,v in pairs(LunaOptions.frames["LunaPlayerFrame"].bars) do
+			local bar = v[1]
+			local weight = v[2]/totalWeight
+			local height = (frameHeight-gaps)*weight
+			LunaPlayerFrame.bars[bar]:ClearAllPoints()
+			LunaPlayerFrame.bars[bar]:SetHeight(height)
+			LunaPlayerFrame.bars[bar]:SetWidth(frameWidth)
+			LunaPlayerFrame.bars[bar].rank = k
+			LunaPlayerFrame.bars[bar].weight = v[2]
+			
+			if not firstbar and LunaPlayerFrame.bars[bar]:IsShown() then
+				LunaPlayerFrame.bars[bar]:SetPoint(anchor[1], anchor[2], anchor[3], 0, -1)
+				anchor = {"TOPLEFT", LunaPlayerFrame.bars[bar], "BOTTOMLEFT"}
+			elseif LunaPlayerFrame.bars[bar]:IsShown() then
+				LunaPlayerFrame.bars[bar]:SetPoint(anchor[1], anchor[2], anchor[3])
+				firstbar = nil
+				anchor = {"TOPLEFT", LunaPlayerFrame.bars[bar], "BOTTOMLEFT"}
+			end			
+		end
+	end
+	for k,v in pairs(LunaOptions.frames["LunaPlayerFrame"].bars) do
+		if v[2] == 0 then
+			LunaPlayerFrame.bars[v[1]]:Hide()
+		end
 	end
 	LunaPlayerFrame.AdjustBars()
 	LunaUnitFrames:UpdatePlayerBuffLayout()
@@ -589,16 +626,16 @@ function LunaUnitFrames:UpdatePlayerFrame()
 		LunaPlayerFrame.PVPRank:Show();
 	end
 	
-	LunaPlayerFrame.HealthBar:SetMinMaxValues(0, maxHealth)
-	LunaPlayerFrame.HealthBar:SetValue(health)
-	LunaPlayerFrame.HealthBar.hpp:SetText(health.."/"..maxHealth)
+	LunaPlayerFrame.bars["Healthbar"]:SetMinMaxValues(0, maxHealth)
+	LunaPlayerFrame.bars["Healthbar"]:SetValue(health)
+	LunaPlayerFrame.bars["Healthbar"].hpp:SetText(health.."/"..maxHealth)
 	local color = LunaOptions.ClassColors[class]
-	LunaPlayerFrame.HealthBar:SetStatusBarColor(color[1],color[2],color[3])
-	LunaPlayerFrame.HealthBar.hpbg:SetVertexColor(color[1],color[2],color[3], 0.25)
+	LunaPlayerFrame.bars["Healthbar"]:SetStatusBarColor(color[1],color[2],color[3])
+	LunaPlayerFrame.bars["Healthbar"].hpbg:SetVertexColor(color[1],color[2],color[3], 0.25)
 
-	LunaPlayerFrame.PowerBar:SetMinMaxValues(0, maxMana)
-	LunaPlayerFrame.PowerBar:SetValue(mana)
-	LunaPlayerFrame.PowerBar.ppp:SetText(mana.."/"..maxMana)
+	LunaPlayerFrame.bars["Powerbar"]:SetMinMaxValues(0, maxMana)
+	LunaPlayerFrame.bars["Powerbar"]:SetValue(mana)
+	LunaPlayerFrame.bars["Powerbar"].ppp:SetText(mana.."/"..maxMana)
 	
 	Luna_Player_Events.PARTY_LEADER_CHANGED()
 	Luna_Player_Events.RAID_TARGET_UPDATE()
@@ -610,60 +647,62 @@ function LunaUnitFrames:UpdatePlayerFrame()
 end
 
 function Luna_Player_Events:SPELLCAST_CHANNEL_START()
-	LunaPlayerFrame.Castbar.maxValue = 1
-	LunaPlayerFrame.Castbar.startTime = GetTime()
-	LunaPlayerFrame.Castbar.endTime = LunaPlayerFrame.Castbar.startTime + (arg1 / 1000)
-	LunaPlayerFrame.Castbar.duration = arg1 / 1000
-	LunaPlayerFrame.Castbar:SetMinMaxValues(LunaPlayerFrame.Castbar.startTime, LunaPlayerFrame.Castbar.endTime)
-	LunaPlayerFrame.Castbar:SetValue(LunaPlayerFrame.Castbar.endTime)
-	LunaPlayerFrame.Castbar.holdTime = 0
-	LunaPlayerFrame.Castbar.casting = nil
-	LunaPlayerFrame.Castbar.channeling = 1
-	LunaPlayerFrame.Castbar.delaySum = 0	
-	LunaPlayerFrame.Castbar.Text:SetText("Channeling")
-	AdjustForCastbar(1)
+	LunaPlayerFrame.bars["Castbar"].maxValue = 1
+	LunaPlayerFrame.bars["Castbar"].startTime = GetTime()
+	LunaPlayerFrame.bars["Castbar"].endTime = LunaPlayerFrame.bars["Castbar"].startTime + (arg1 / 1000)
+	LunaPlayerFrame.bars["Castbar"].duration = arg1 / 1000
+	LunaPlayerFrame.bars["Castbar"]:SetMinMaxValues(LunaPlayerFrame.bars["Castbar"].startTime, LunaPlayerFrame.bars["Castbar"].endTime)
+	LunaPlayerFrame.bars["Castbar"]:SetValue(LunaPlayerFrame.bars["Castbar"].endTime)
+	LunaPlayerFrame.bars["Castbar"].holdTime = 0
+	LunaPlayerFrame.bars["Castbar"].casting = nil
+	LunaPlayerFrame.bars["Castbar"].channeling = 1
+	LunaPlayerFrame.bars["Castbar"].delaySum = 0	
+	LunaPlayerFrame.bars["Castbar"].Text:SetText("Channeling")
+	LunaPlayerFrame.AdjustBars()
 end
 
 function Luna_Player_Events:SPELLCAST_CHANNEL_UPDATE()
 	if (arg1 == 0) then
-		LunaPlayerFrame.Castbar.channeling = nil
-		LunaPlayerFrame.Castbar.delaySum = 0
-		AdjustForCastbar(0)
-	elseif (LunaPlayerFrame.Castbar:IsShown()) then
-		local origDuration = LunaPlayerFrame.Castbar.endTime - LunaPlayerFrame.Castbar.startTime
-		local elapsedTime = GetTime() - LunaPlayerFrame.Castbar.startTime;
+		LunaPlayerFrame.bars["Castbar"].channeling = nil
+		LunaPlayerFrame.bars["Castbar"].delaySum = 0
+		LunaPlayerFrame.AdjustBars()
+	elseif (LunaPlayerFrame.bars["Castbar"]:IsShown()) then
+		local origDuration = LunaPlayerFrame.bars["Castbar"].endTime - LunaPlayerFrame.bars["Castbar"].startTime
+		local elapsedTime = GetTime() - LunaPlayerFrame.bars["Castbar"].startTime;
 		local losttime = origDuration*1000 - elapsedTime*1000 - arg1;
-		LunaPlayerFrame.Castbar.delaySum = LunaPlayerFrame.Castbar.delaySum + losttime;
-		LunaPlayerFrame.Castbar.startTime = LunaPlayerFrame.Castbar.endTime - origDuration;
-		LunaPlayerFrame.Castbar.endTime = GetTime() + (arg1 / 1000);
-		LunaPlayerFrame.Castbar:SetMinMaxValues(LunaPlayerFrame.Castbar.startTime, LunaPlayerFrame.Castbar.endTime);
+		LunaPlayerFrame.bars["Castbar"].delaySum = LunaPlayerFrame.bars["Castbar"].delaySum + losttime;
+		LunaPlayerFrame.bars["Castbar"].startTime = LunaPlayerFrame.bars["Castbar"].endTime - origDuration;
+		LunaPlayerFrame.bars["Castbar"].endTime = GetTime() + (arg1 / 1000);
+		LunaPlayerFrame.bars["Castbar"]:SetMinMaxValues(LunaPlayerFrame.bars["Castbar"].startTime, LunaPlayerFrame.bars["Castbar"].endTime);
 	end
 end
 
 function Luna_Player_Events:SPELLCAST_DELAYED()
-	if (arg1) and LunaPlayerFrame.Castbar.startTime then
-		LunaPlayerFrame.Castbar.startTime = LunaPlayerFrame.Castbar.startTime + (arg1 / 1000);
-		LunaPlayerFrame.Castbar.maxValue = LunaPlayerFrame.Castbar.maxValue + (arg1 / 1000);
-		LunaPlayerFrame.Castbar.delaySum = LunaPlayerFrame.Castbar.delaySum + arg1;
-		LunaPlayerFrame.Castbar:SetMinMaxValues(LunaPlayerFrame.Castbar.startTime, LunaPlayerFrame.Castbar.maxValue);
+	if (arg1) and LunaPlayerFrame.bars["Castbar"].startTime then
+		LunaPlayerFrame.bars["Castbar"].startTime = LunaPlayerFrame.bars["Castbar"].startTime + (arg1 / 1000);
+		LunaPlayerFrame.bars["Castbar"].maxValue = LunaPlayerFrame.bars["Castbar"].maxValue + (arg1 / 1000);
+		LunaPlayerFrame.bars["Castbar"].delaySum = LunaPlayerFrame.bars["Castbar"].delaySum + arg1;
+		LunaPlayerFrame.bars["Castbar"]:SetMinMaxValues(LunaPlayerFrame.bars["Castbar"].startTime, LunaPlayerFrame.bars["Castbar"].maxValue);
 	end
 end
 
 function Luna_Player_Events:SPELLCAST_START()
-	LunaPlayerFrame.Castbar.startTime = GetTime()
-	LunaPlayerFrame.Castbar.maxValue = LunaPlayerFrame.Castbar.startTime + (arg2 / 1000)
-	LunaPlayerFrame.Castbar.holdTime = 0
-	LunaPlayerFrame.Castbar.casting = 1
-	LunaPlayerFrame.Castbar.delaySum = 0	
-	LunaPlayerFrame.Castbar.Text:SetText(arg1)
-	LunaPlayerFrame.Castbar:SetMinMaxValues(LunaPlayerFrame.Castbar.startTime, LunaPlayerFrame.Castbar.maxValue)
-	LunaPlayerFrame.Castbar:SetValue(LunaPlayerFrame.Castbar.startTime)
-	AdjustForCastbar(1)
+	LunaPlayerFrame.bars["Castbar"].startTime = GetTime()
+	LunaPlayerFrame.bars["Castbar"].maxValue = LunaPlayerFrame.bars["Castbar"].startTime + (arg2 / 1000)
+	LunaPlayerFrame.bars["Castbar"].holdTime = 0
+	LunaPlayerFrame.bars["Castbar"].casting = 1
+	LunaPlayerFrame.bars["Castbar"].delaySum = 0	
+	LunaPlayerFrame.bars["Castbar"].Text:SetText(arg1)
+	LunaPlayerFrame.bars["Castbar"]:SetMinMaxValues(LunaPlayerFrame.bars["Castbar"].startTime, LunaPlayerFrame.bars["Castbar"].maxValue)
+	LunaPlayerFrame.bars["Castbar"]:SetValue(LunaPlayerFrame.bars["Castbar"].startTime)
+	LunaPlayerFrame.AdjustBars()
 end
 
 function Luna_Player_Events:SPELLCAST_STOP()
-	if LunaPlayerFrame.Castbar.casting == 1 or event == "SPELLCAST_CHANNEL_STOP" then
-		AdjustForCastbar(0)
+	if LunaPlayerFrame.bars["Castbar"].casting == 1 or event == "SPELLCAST_CHANNEL_STOP" then
+		LunaPlayerFrame.bars["Castbar"].casting = nil
+		LunaPlayerFrame.bars["Castbar"].channeling = nil
+		LunaPlayerFrame.AdjustBars()
 	end
 end
 Luna_Player_Events.SPELLCAST_INTERRUPTED = Luna_Player_Events.SPELLCAST_STOP
@@ -769,23 +808,23 @@ function Luna_Player_Events:RAID_TARGET_UPDATE()
 end
 
 function Luna_Player_Events:UNIT_HEALTH()
-	LunaPlayerFrame.HealthBar:SetMinMaxValues(0, UnitHealthMax("player"))
-	LunaPlayerFrame.HealthBar:SetValue(UnitHealth("player"))
-	LunaPlayerFrame.HealthBar.hpp:SetText(UnitHealth("player").."/"..UnitHealthMax("player"))
+	LunaPlayerFrame.bars["Healthbar"]:SetMinMaxValues(0, UnitHealthMax("player"))
+	LunaPlayerFrame.bars["Healthbar"]:SetValue(UnitHealth("player"))
+	LunaPlayerFrame.bars["Healthbar"].hpp:SetText(UnitHealth("player").."/"..UnitHealthMax("player"))
 	if (UnitIsDead("player") or UnitIsGhost("player")) then
-		LunaPlayerFrame.HealthBar:SetValue(0)
+		LunaPlayerFrame.bars["Healthbar"]:SetValue(0)
 	end
 end
 Luna_Player_Events.UNIT_MAXHEALTH = Luna_Player_Events.UNIT_HEALTH;
 
 function Luna_Player_Events:UNIT_MANA()
-	if not LunaPlayerFrame.PowerBar.Ticker.startTime or UnitMana("player") > LunaPlayerFrame.PowerBar.oldMana then
-		LunaPlayerFrame.PowerBar.Ticker.startTime = GetTime()
+	if not LunaPlayerFrame.bars["Powerbar"].Ticker.startTime or UnitMana("player") > LunaPlayerFrame.bars["Powerbar"].oldMana then
+		LunaPlayerFrame.bars["Powerbar"].Ticker.startTime = GetTime()
 	end
-	LunaPlayerFrame.PowerBar.oldMana = UnitMana("player")
-	LunaPlayerFrame.PowerBar:SetMinMaxValues(0, UnitManaMax("player"))
-	LunaPlayerFrame.PowerBar:SetValue(UnitMana("player"))
-	LunaPlayerFrame.PowerBar.ppp:SetText(UnitMana("player").."/"..UnitManaMax("player"))
+	LunaPlayerFrame.bars["Powerbar"].oldMana = UnitMana("player")
+	LunaPlayerFrame.bars["Powerbar"]:SetMinMaxValues(0, UnitManaMax("player"))
+	LunaPlayerFrame.bars["Powerbar"]:SetValue(UnitMana("player"))
+	LunaPlayerFrame.bars["Powerbar"].ppp:SetText(UnitMana("player").."/"..UnitManaMax("player"))
 end
 Luna_Player_Events.UNIT_MAXMANA = Luna_Player_Events.UNIT_MANA;
 Luna_Player_Events.UNIT_ENERGY = Luna_Player_Events.UNIT_MANA;
@@ -797,27 +836,27 @@ function Luna_Player_Events:UNIT_DISPLAYPOWER()
 	playerpower = UnitPowerType("player")
 	
 	if playerpower == 1 then
-		LunaPlayerFrame.PowerBar:SetStatusBarColor(LunaOptions.PowerColors["Rage"][1], LunaOptions.PowerColors["Rage"][2], LunaOptions.PowerColors["Rage"][3])
-		LunaPlayerFrame.PowerBar.ppbg:SetVertexColor(LunaOptions.PowerColors["Rage"][1], LunaOptions.PowerColors["Rage"][2], LunaOptions.PowerColors["Rage"][3], .25)
-		LunaPlayerFrame.PowerBar.Ticker:Hide()
+		LunaPlayerFrame.bars["Powerbar"]:SetStatusBarColor(LunaOptions.PowerColors["Rage"][1], LunaOptions.PowerColors["Rage"][2], LunaOptions.PowerColors["Rage"][3])
+		LunaPlayerFrame.bars["Powerbar"].ppbg:SetVertexColor(LunaOptions.PowerColors["Rage"][1], LunaOptions.PowerColors["Rage"][2], LunaOptions.PowerColors["Rage"][3], .25)
+		LunaPlayerFrame.bars["Powerbar"].Ticker:Hide()
 	elseif playerpower == 3 then
-		LunaPlayerFrame.PowerBar:SetStatusBarColor(LunaOptions.PowerColors["Energy"][1], LunaOptions.PowerColors["Energy"][2], LunaOptions.PowerColors["Energy"][3])
-		LunaPlayerFrame.PowerBar.ppbg:SetVertexColor(LunaOptions.PowerColors["Energy"][1], LunaOptions.PowerColors["Energy"][2], LunaOptions.PowerColors["Energy"][3], .25)
+		LunaPlayerFrame.bars["Powerbar"]:SetStatusBarColor(LunaOptions.PowerColors["Energy"][1], LunaOptions.PowerColors["Energy"][2], LunaOptions.PowerColors["Energy"][3])
+		LunaPlayerFrame.bars["Powerbar"].ppbg:SetVertexColor(LunaOptions.PowerColors["Energy"][1], LunaOptions.PowerColors["Energy"][2], LunaOptions.PowerColors["Energy"][3], .25)
 		if LunaOptions.EnergyTicker == 1 then
-			LunaPlayerFrame.PowerBar.Ticker:Show()
+			LunaPlayerFrame.bars["Powerbar"].Ticker:Show()
 		else
-			LunaPlayerFrame.PowerBar.Ticker:Hide()
+			LunaPlayerFrame.bars["Powerbar"].Ticker:Hide()
 		end
 	else
-		LunaPlayerFrame.PowerBar:SetStatusBarColor(LunaOptions.PowerColors["Mana"][1], LunaOptions.PowerColors["Mana"][2], LunaOptions.PowerColors["Mana"][3])
-		LunaPlayerFrame.PowerBar.ppbg:SetVertexColor(LunaOptions.PowerColors["Mana"][1], LunaOptions.PowerColors["Mana"][2], LunaOptions.PowerColors["Mana"][3], .25)
-		LunaPlayerFrame.PowerBar.Ticker:Hide()
+		LunaPlayerFrame.bars["Powerbar"]:SetStatusBarColor(LunaOptions.PowerColors["Mana"][1], LunaOptions.PowerColors["Mana"][2], LunaOptions.PowerColors["Mana"][3])
+		LunaPlayerFrame.bars["Powerbar"].ppbg:SetVertexColor(LunaOptions.PowerColors["Mana"][1], LunaOptions.PowerColors["Mana"][2], LunaOptions.PowerColors["Mana"][3], .25)
+		LunaPlayerFrame.bars["Powerbar"].Ticker:Hide()
 	end
 	Luna_Player_Events.UNIT_MANA()
 end
 
 function Luna_Player_Events:UNIT_PORTRAIT_UPDATE()
-	local portrait = LunaPlayerFrame.portrait
+	local portrait = LunaPlayerFrame.bars["Portrait"]
 	if(portrait.type == "3D") then
 		if(not UnitExists("player") or not UnitIsConnected("player") or not UnitIsVisible("player")) then
 			portrait:SetModelScale(4.25)

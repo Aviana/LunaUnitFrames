@@ -50,7 +50,7 @@ function LunaUnitFrames:CreatePartyPetFrames()
 		LunaPartyPetFrames[i]:SetBackdrop(LunaOptions.backdrop)
 		LunaPartyPetFrames[i]:SetBackdropColor(0,0,0,1)
 		LunaPartyPetFrames[i]:SetPoint("BOTTOMLEFT", LunaPartyFrames[i], "BOTTOMRIGHT", 5, 0)
-		LunaPartyPetFrames[i]:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up')
+		LunaPartyPetFrames[i]:RegisterForClicks('LeftButtonUp', 'RightButtonUp')
 		LunaPartyPetFrames[i].unit = "partypet"..i
 		LunaPartyPetFrames[i]:SetScript("OnEnter", Luna_PartyPet_Tip)
 		LunaPartyPetFrames[i]:SetScript("OnLeave", UnitFrame_OnLeave)

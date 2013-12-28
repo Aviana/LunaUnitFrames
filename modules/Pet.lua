@@ -89,7 +89,7 @@ function LunaUnitFrames:CreatePetFrame()
 	LunaPetFrame:SetBackdrop(LunaOptions.backdrop)
 	LunaPetFrame:SetBackdropColor(0,0,0,1)
 	LunaPetFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", LunaOptions.frames["LunaPetFrame"].position.x, LunaOptions.frames["LunaPetFrame"].position.y)
-	LunaPetFrame:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up')
+	LunaPetFrame:RegisterForClicks('LeftButtonUp', 'RightButtonUp')
 	LunaPetFrame.unit = "pet"
 	LunaPetFrame:SetScript("OnEnter", Luna_Pet_Tip)
 	LunaPetFrame:SetScript("OnLeave", UnitFrame_OnLeave)
@@ -170,34 +170,32 @@ function LunaUnitFrames:CreatePetFrame()
 		LunaPetFrame.Debuffs[z].stacks:SetText("8")
 	end
 
-	LunaPetFrame.portrait = CreateFrame("PlayerModel", nil, LunaPetFrame)
-	LunaPetFrame.portrait:SetScript("OnShow",function() this:SetCamera(0) end)
-	LunaPetFrame.portrait.type = "3D"
-	LunaPetFrame.portrait:SetPoint("TOPLEFT", LunaPetFrame, "TOPLEFT")
-	LunaPetFrame.portrait.side = "left"
+	LunaPetFrame.bars = {}
+	
+	LunaPetFrame.bars["Portrait"] = CreateFrame("PlayerModel", nil, LunaPetFrame)
+	LunaPetFrame.bars["Portrait"]:SetScript("OnShow",function() this:SetCamera(0) end)
+	LunaPetFrame.bars["Portrait"].type = "3D"
+	LunaPetFrame.bars["Portrait"].side = "left"
 
 	-- Healthbar
-	LunaPetFrame.HealthBar = CreateFrame("StatusBar", nil, LunaPetFrame)
-	LunaPetFrame.HealthBar:SetHeight(16)
-	LunaPetFrame.HealthBar:SetWidth(210)
-	LunaPetFrame.HealthBar:SetStatusBarTexture(LunaOptions.statusbartexture)
-	LunaPetFrame.HealthBar:SetPoint("TOPLEFT", LunaPetFrame.portrait, "TOPRIGHT", 1, 0)
+	LunaPetFrame.bars["Healthbar"] = CreateFrame("StatusBar", nil, LunaPetFrame)
+	LunaPetFrame.bars["Healthbar"]:SetStatusBarTexture(LunaOptions.statusbartexture)
 
 
 	-- Healthbar background
-	LunaPetFrame.HealthBar.hpbg = LunaPetFrame.HealthBar:CreateTexture(nil, "BORDER")
-	LunaPetFrame.HealthBar.hpbg:SetAllPoints(LunaPetFrame.HealthBar)
-	LunaPetFrame.HealthBar.hpbg:SetTexture(.25,.25,.25)
+	LunaPetFrame.bars["Healthbar"].hpbg = LunaPetFrame.bars["Healthbar"]:CreateTexture(nil, "BORDER")
+	LunaPetFrame.bars["Healthbar"].hpbg:SetAllPoints(LunaPetFrame.bars["Healthbar"])
+	LunaPetFrame.bars["Healthbar"].hpbg:SetTexture(.25,.25,.25)
 
 	-- Healthbar text
-	LunaPetFrame.HealthBar.hpp = LunaPetFrame.HealthBar:CreateFontString(nil, "OVERLAY", LunaPetFrame.HealthBar)
-	LunaPetFrame.HealthBar.hpp:SetPoint("RIGHT", -2, -1)
-	LunaPetFrame.HealthBar.hpp:SetFont(LunaOptions.font, LunaOptions.fontHeight)
-	LunaPetFrame.HealthBar.hpp:SetShadowColor(0, 0, 0)
-	LunaPetFrame.HealthBar.hpp:SetShadowOffset(0.8, -0.8)
-	LunaPetFrame.HealthBar.hpp:SetTextColor(1,1,1)
+	LunaPetFrame.bars["Healthbar"].hpp = LunaPetFrame.bars["Healthbar"]:CreateFontString(nil, "OVERLAY", LunaPetFrame.bars["Healthbar"])
+	LunaPetFrame.bars["Healthbar"].hpp:SetPoint("RIGHT", -2, -1)
+	LunaPetFrame.bars["Healthbar"].hpp:SetFont(LunaOptions.font, LunaOptions.fontHeight)
+	LunaPetFrame.bars["Healthbar"].hpp:SetShadowColor(0, 0, 0)
+	LunaPetFrame.bars["Healthbar"].hpp:SetShadowOffset(0.8, -0.8)
+	LunaPetFrame.bars["Healthbar"].hpp:SetTextColor(1,1,1)
 
-	LunaPetFrame.name = LunaPetFrame.HealthBar:CreateFontString(nil, "OVERLAY", LunaPetFrame.HealthBar)
+	LunaPetFrame.name = LunaPetFrame.bars["Healthbar"]:CreateFontString(nil, "OVERLAY", LunaPetFrame.bars["Healthbar"])
 	LunaPetFrame.name:SetPoint("LEFT", 2, -1)
 	LunaPetFrame.name:SetJustifyH("LEFT")
 	LunaPetFrame.name:SetFont(LunaOptions.font, LunaOptions.fontHeight)
@@ -207,32 +205,29 @@ function LunaUnitFrames:CreatePetFrame()
 	LunaPetFrame.name:SetText(UnitName("pet"))
 
 	-- Manabar
-	LunaPetFrame.PowerBar = CreateFrame("StatusBar", nil, LunaPetFrame)
-	LunaPetFrame.PowerBar:SetHeight(12)
-	LunaPetFrame.PowerBar:SetWidth(210)
-	LunaPetFrame.PowerBar:SetStatusBarTexture(LunaOptions.statusbartexture)
-	LunaPetFrame.PowerBar:SetPoint("TOPLEFT", LunaPetFrame.HealthBar, "BOTTOMLEFT", 0, -1)
+	LunaPetFrame.bars["Powerbar"] = CreateFrame("StatusBar", nil, LunaPetFrame)
+	LunaPetFrame.bars["Powerbar"]:SetStatusBarTexture(LunaOptions.statusbartexture)
 
 	-- Manabar background
-	LunaPetFrame.PowerBar.ppbg = LunaPetFrame.PowerBar:CreateTexture(nil, "BORDER")
-	LunaPetFrame.PowerBar.ppbg:SetAllPoints(LunaPetFrame.PowerBar)
-	LunaPetFrame.PowerBar.ppbg:SetTexture(.25,.25,.25)
+	LunaPetFrame.bars["Powerbar"].ppbg = LunaPetFrame.bars["Powerbar"]:CreateTexture(nil, "BORDER")
+	LunaPetFrame.bars["Powerbar"].ppbg:SetAllPoints(LunaPetFrame.bars["Powerbar"])
+	LunaPetFrame.bars["Powerbar"].ppbg:SetTexture(.25,.25,.25)
 
-	LunaPetFrame.PowerBar.ppp = LunaPetFrame.PowerBar:CreateFontString(nil, "OVERLAY", LunaPetFrame.PowerBar)
-	LunaPetFrame.PowerBar.ppp:SetPoint("RIGHT", -2, -1)
-	LunaPetFrame.PowerBar.ppp:SetFont(LunaOptions.font, LunaOptions.fontHeight)
-	LunaPetFrame.PowerBar.ppp:SetShadowColor(0, 0, 0)
-	LunaPetFrame.PowerBar.ppp:SetShadowOffset(0.8, -0.8)
-	LunaPetFrame.PowerBar.ppp:SetTextColor(1,1,1)
+	LunaPetFrame.bars["Powerbar"].ppp = LunaPetFrame.bars["Powerbar"]:CreateFontString(nil, "OVERLAY", LunaPetFrame.bars["Powerbar"])
+	LunaPetFrame.bars["Powerbar"].ppp:SetPoint("RIGHT", -2, -1)
+	LunaPetFrame.bars["Powerbar"].ppp:SetFont(LunaOptions.font, LunaOptions.fontHeight)
+	LunaPetFrame.bars["Powerbar"].ppp:SetShadowColor(0, 0, 0)
+	LunaPetFrame.bars["Powerbar"].ppp:SetShadowOffset(0.8, -0.8)
+	LunaPetFrame.bars["Powerbar"].ppp:SetTextColor(1,1,1)
 
-	LunaPetFrame.lvl = LunaPetFrame.PowerBar:CreateFontString(nil, "OVERLAY")
-	LunaPetFrame.lvl:SetPoint("LEFT", LunaPetFrame.PowerBar, "LEFT", 2, -1)
+	LunaPetFrame.lvl = LunaPetFrame.bars["Powerbar"]:CreateFontString(nil, "OVERLAY")
+	LunaPetFrame.lvl:SetPoint("LEFT", LunaPetFrame.bars["Powerbar"], "LEFT", 2, -1)
 	LunaPetFrame.lvl:SetFont(LunaOptions.font, LunaOptions.fontHeight)
 	LunaPetFrame.lvl:SetShadowColor(0, 0, 0)
 	LunaPetFrame.lvl:SetShadowOffset(0.8, -0.8)
 	LunaPetFrame.lvl:SetText(UnitLevel("pet"))
 
-	LunaPetFrame.class = LunaPetFrame.PowerBar:CreateFontString(nil, "OVERLAY")
+	LunaPetFrame.class = LunaPetFrame.bars["Powerbar"]:CreateFontString(nil, "OVERLAY")
 	LunaPetFrame.class:SetPoint("LEFT", LunaPetFrame.lvl, "RIGHT",  1, 0)
 	LunaPetFrame.class:SetFont(LunaOptions.font, LunaOptions.fontHeight)
 	LunaPetFrame.class:SetShadowColor(0, 0, 0)
@@ -262,13 +257,51 @@ function LunaUnitFrames:CreatePetFrame()
 	
 	LunaPetFrame.AdjustBars = function()
 		local frameHeight = LunaPetFrame:GetHeight()
-		local frameWidth = (LunaPetFrame:GetWidth()-frameHeight)
-		LunaPetFrame.portrait:SetHeight(frameHeight+1)
-		LunaPetFrame.portrait:SetWidth(frameHeight) --square it
-		LunaPetFrame.HealthBar:SetWidth(frameWidth-1)
-		LunaPetFrame.PowerBar:SetWidth(frameWidth-1)
-		LunaPetFrame.HealthBar:SetHeight(frameHeight*0.58)
-		LunaPetFrame.PowerBar:SetHeight(frameHeight-(frameHeight*0.58)-1)
+		local frameWidth
+		local anchor
+		local totalWeight = 0
+		local gaps = -1
+		if LunaOptions.frames["LunaPetFrame"].portrait > 1 then    -- We have a square portrait
+			frameWidth = (LunaPetFrame:GetWidth()-frameHeight)
+			LunaPetFrame.bars["Portrait"]:SetPoint("TOPLEFT", LunaPetFrame, "TOPLEFT")
+			LunaPetFrame.bars["Portrait"]:SetHeight(frameHeight)
+			LunaPetFrame.bars["Portrait"]:SetWidth(frameHeight)
+			anchor = {"TOPLEFT", LunaPetFrame.bars["Portrait"], "TOPRIGHT"}
+		else
+			frameWidth = LunaPetFrame:GetWidth()  -- We have a Bar-Portrait or no portrait
+			anchor = {"TOPLEFT", LunaPetFrame, "TOPLEFT"}
+		end
+		for k,v in pairs(LunaOptions.frames["LunaPetFrame"].bars) do
+			if LunaPetFrame.bars[v[1]]:IsShown() then
+				totalWeight = totalWeight + v[2]
+				gaps = gaps + 1
+			end
+		end
+		local firstbar = 1
+		for k,v in pairs(LunaOptions.frames["LunaPetFrame"].bars) do
+			local bar = v[1]
+			local weight = v[2]/totalWeight
+			local height = (frameHeight-gaps)*weight
+			LunaPetFrame.bars[bar]:ClearAllPoints()
+			LunaPetFrame.bars[bar]:SetHeight(height)
+			LunaPetFrame.bars[bar]:SetWidth(frameWidth)
+			LunaPetFrame.bars[bar].rank = k
+			LunaPetFrame.bars[bar].weight = v[2]
+			
+			if not firstbar and LunaPetFrame.bars[bar]:IsShown() then
+				LunaPetFrame.bars[bar]:SetPoint(anchor[1], anchor[2], anchor[3], 0, -1)
+				anchor = {"TOPLEFT", LunaPetFrame.bars[bar], "BOTTOMLEFT"}
+			elseif LunaPetFrame.bars[bar]:IsShown() then
+				LunaPetFrame.bars[bar]:SetPoint(anchor[1], anchor[2], anchor[3])
+				firstbar = nil
+				anchor = {"TOPLEFT", LunaPetFrame.bars[bar], "BOTTOMLEFT"}
+			end			
+		end
+	end
+	for k,v in pairs(LunaOptions.frames["LunaPetFrame"].bars) do
+		if v[2] == 0 then
+			LunaPetFrame.bars[v[1]]:Hide()
+		end
 	end
 	LunaPetFrame.AdjustBars()
 	LunaUnitFrames:UpdatePetBuffLayout()
@@ -281,40 +314,40 @@ function LunaUnitFrames:UpdatePetFrame()
 	else
 		LunaPetFrame:Show()
 	end
-	if(LunaPetFrame.portrait.type == "3D") then
+	if(LunaPetFrame.bars["Portrait"].type == "3D") then
 		if(not UnitExists(LunaPetFrame.unit) or not UnitIsConnected(LunaPetFrame.unit) or not UnitIsVisible(LunaPetFrame.unit)) then
-			LunaPetFrame.portrait:SetModelScale(4.25)
-			LunaPetFrame.portrait:SetPosition(0, 0, -1)
-			LunaPetFrame.portrait:SetModel"Interface\\Buttons\\talktomequestionmark.mdx"
+			LunaPetFrame.bars["Portrait"]:SetModelScale(4.25)
+			LunaPetFrame.bars["Portrait"]:SetPosition(0, 0, -1)
+			LunaPetFrame.bars["Portrait"]:SetModel"Interface\\Buttons\\talktomequestionmark.mdx"
 		else
-			LunaPetFrame.portrait:SetUnit(LunaPetFrame.unit)
-			LunaPetFrame.portrait:SetCamera(0)
-			LunaPetFrame.portrait:Show()
+			LunaPetFrame.bars["Portrait"]:SetUnit(LunaPetFrame.unit)
+			LunaPetFrame.bars["Portrait"]:SetCamera(0)
+			LunaPetFrame.bars["Portrait"]:Show()
 		end
 	else
-		SetPortraitTexture(LunaPetFrame.portrait, LunaPetFrame.unit)
+		SetPortraitTexture(LunaPetFrame.bars["Portrait"], LunaPetFrame.unit)
 	end
 	Luna_Pet_Events.UNIT_HAPPINESS()
 
 	petpower = UnitPowerType("pet")
 	if UnitManaMax("pet") == 0 then
-		LunaPetFrame.PowerBar:SetStatusBarColor(0, 0, 0, .25)
-		LunaPetFrame.PowerBar.ppbg:SetVertexColor(0, 0, 0, .25)
+		LunaPetFrame.bars["Powerbar"]:SetStatusBarColor(0, 0, 0, .25)
+		LunaPetFrame.bars["Powerbar"].ppbg:SetVertexColor(0, 0, 0, .25)
 	elseif petpower == 1 then
-		LunaPetFrame.PowerBar:SetStatusBarColor(LunaOptions.PowerColors["Rage"][1], LunaOptions.PowerColors["Rage"][2], LunaOptions.PowerColors["Rage"][3])
-		LunaPetFrame.PowerBar.ppbg:SetVertexColor(LunaOptions.PowerColors["Rage"][1], LunaOptions.PowerColors["Rage"][2], LunaOptions.PowerColors["Rage"][3], .25)
+		LunaPetFrame.bars["Powerbar"]:SetStatusBarColor(LunaOptions.PowerColors["Rage"][1], LunaOptions.PowerColors["Rage"][2], LunaOptions.PowerColors["Rage"][3])
+		LunaPetFrame.bars["Powerbar"].ppbg:SetVertexColor(LunaOptions.PowerColors["Rage"][1], LunaOptions.PowerColors["Rage"][2], LunaOptions.PowerColors["Rage"][3], .25)
 	elseif petpower == 2 then
-		LunaPetFrame.PowerBar:SetStatusBarColor(LunaOptions.PowerColors["Focus"][1],LunaOptions.PowerColors["Focus"][2],LunaOptions.PowerColors["Focus"][3])
-		LunaPetFrame.PowerBar.ppbg:SetVertexColor(LunaOptions.PowerColors["Focus"][1],LunaOptions.PowerColors["Focus"][2],LunaOptions.PowerColors["Focus"][3], 0.25)
+		LunaPetFrame.bars["Powerbar"]:SetStatusBarColor(LunaOptions.PowerColors["Focus"][1],LunaOptions.PowerColors["Focus"][2],LunaOptions.PowerColors["Focus"][3])
+		LunaPetFrame.bars["Powerbar"].ppbg:SetVertexColor(LunaOptions.PowerColors["Focus"][1],LunaOptions.PowerColors["Focus"][2],LunaOptions.PowerColors["Focus"][3], 0.25)
 	elseif petpower == 3 then
-		LunaPetFrame.PowerBar:SetStatusBarColor(LunaOptions.PowerColors["Energy"][1], LunaOptions.PowerColors["Energy"][2], LunaOptions.PowerColors["Energy"][3])
-		LunaPetFrame.PowerBar.ppbg:SetVertexColor(LunaOptions.PowerColors["Energy"][1], LunaOptions.PowerColors["Energy"][2], LunaOptions.PowerColors["Energy"][3], .25)
+		LunaPetFrame.bars["Powerbar"]:SetStatusBarColor(LunaOptions.PowerColors["Energy"][1], LunaOptions.PowerColors["Energy"][2], LunaOptions.PowerColors["Energy"][3])
+		LunaPetFrame.bars["Powerbar"].ppbg:SetVertexColor(LunaOptions.PowerColors["Energy"][1], LunaOptions.PowerColors["Energy"][2], LunaOptions.PowerColors["Energy"][3], .25)
 	elseif not UnitIsDeadOrGhost("pet") then
-		LunaPetFrame.PowerBar:SetStatusBarColor(LunaOptions.PowerColors["Mana"][1], LunaOptions.PowerColors["Mana"][2], LunaOptions.PowerColors["Mana"][3])
-		LunaPetFrame.PowerBar.ppbg:SetVertexColor(LunaOptions.PowerColors["Mana"][1], LunaOptions.PowerColors["Mana"][2], LunaOptions.PowerColors["Mana"][3], .25)
+		LunaPetFrame.bars["Powerbar"]:SetStatusBarColor(LunaOptions.PowerColors["Mana"][1], LunaOptions.PowerColors["Mana"][2], LunaOptions.PowerColors["Mana"][3])
+		LunaPetFrame.bars["Powerbar"].ppbg:SetVertexColor(LunaOptions.PowerColors["Mana"][1], LunaOptions.PowerColors["Mana"][2], LunaOptions.PowerColors["Mana"][3], .25)
 	else
-		LunaPetFrame.PowerBar:SetStatusBarColor(0, 0, 0, .25)
-		LunaPetFrame.PowerBar.ppbg:SetVertexColor(0, 0, 0, .25)
+		LunaPetFrame.bars["Powerbar"]:SetStatusBarColor(0, 0, 0, .25)
+		LunaPetFrame.bars["Powerbar"].ppbg:SetVertexColor(0, 0, 0, .25)
 	end
 	
 	for z=1, 16 do
@@ -508,19 +541,19 @@ function Luna_Pet_Events:UNIT_AURA()
 end
 
 function Luna_Pet_Events:UNIT_HEALTH()
-	LunaPetFrame.HealthBar:SetMinMaxValues(0, UnitHealthMax("pet"))
-	LunaPetFrame.HealthBar:SetValue(UnitHealth("pet"))
-	LunaPetFrame.HealthBar.hpp:SetText(UnitHealth("pet").."/"..UnitHealthMax("pet"))
+	LunaPetFrame.bars["Healthbar"]:SetMinMaxValues(0, UnitHealthMax("pet"))
+	LunaPetFrame.bars["Healthbar"]:SetValue(UnitHealth("pet"))
+	LunaPetFrame.bars["Healthbar"].hpp:SetText(UnitHealth("pet").."/"..UnitHealthMax("pet"))
 	if UnitIsDead("pet") then
-		LunaPetFrame.HealthBar:SetValue(0)
+		LunaPetFrame.bars["Healthbar"]:SetValue(0)
 	end
 end
 Luna_Pet_Events.UNIT_MAXHEALTH = Luna_Pet_Events.UNIT_HEALTH
 
 function Luna_Pet_Events:UNIT_MANA()
-	LunaPetFrame.PowerBar:SetMinMaxValues(0, UnitManaMax("pet"))
-	LunaPetFrame.PowerBar:SetValue(UnitMana("pet"))
-	LunaPetFrame.PowerBar.ppp:SetText(UnitMana("pet").."/"..UnitManaMax("pet"))
+	LunaPetFrame.bars["Powerbar"]:SetMinMaxValues(0, UnitManaMax("pet"))
+	LunaPetFrame.bars["Powerbar"]:SetValue(UnitMana("pet"))
+	LunaPetFrame.bars["Powerbar"].ppp:SetText(UnitMana("pet").."/"..UnitManaMax("pet"))
 end
 Luna_Pet_Events.UNIT_MAXMANA = Luna_Pet_Events.UNIT_MANA
 Luna_Pet_Events.UNIT_ENERGY = Luna_Pet_Events.UNIT_MANA
@@ -533,20 +566,20 @@ Luna_Pet_Events.UNIT_MAXFOCUS = Luna_Pet_Events.UNIT_MANA
 function Luna_Pet_Events:UNIT_HAPPINESS()
 	local happiness = GetPetHappiness()
 	if happiness == 1 then
-		LunaPetFrame.HealthBar:SetStatusBarColor(LunaOptions.MiscColors["hostile"][1],LunaOptions.MiscColors["hostile"][2],LunaOptions.MiscColors["hostile"][3])
-		LunaPetFrame.HealthBar.hpbg:SetVertexColor(LunaOptions.MiscColors["hostile"][1],LunaOptions.MiscColors["hostile"][2],LunaOptions.MiscColors["hostile"][3], 0.25)
+		LunaPetFrame.bars["Healthbar"]:SetStatusBarColor(LunaOptions.MiscColors["hostile"][1],LunaOptions.MiscColors["hostile"][2],LunaOptions.MiscColors["hostile"][3])
+		LunaPetFrame.bars["Healthbar"].hpbg:SetVertexColor(LunaOptions.MiscColors["hostile"][1],LunaOptions.MiscColors["hostile"][2],LunaOptions.MiscColors["hostile"][3], 0.25)
 	elseif happiness == 2 then
-		LunaPetFrame.HealthBar:SetStatusBarColor(LunaOptions.MiscColors["neutral"][1],LunaOptions.MiscColors["neutral"][2],LunaOptions.MiscColors["neutral"][3])
-		LunaPetFrame.HealthBar.hpbg:SetVertexColor(LunaOptions.MiscColors["neutral"][1],LunaOptions.MiscColors["neutral"][2],LunaOptions.MiscColors["neutral"][3], 0.25)
+		LunaPetFrame.bars["Healthbar"]:SetStatusBarColor(LunaOptions.MiscColors["neutral"][1],LunaOptions.MiscColors["neutral"][2],LunaOptions.MiscColors["neutral"][3])
+		LunaPetFrame.bars["Healthbar"].hpbg:SetVertexColor(LunaOptions.MiscColors["neutral"][1],LunaOptions.MiscColors["neutral"][2],LunaOptions.MiscColors["neutral"][3], 0.25)
 	else
-		LunaPetFrame.HealthBar:SetStatusBarColor(LunaOptions.MiscColors["friendly"][1],LunaOptions.MiscColors["friendly"][2],LunaOptions.MiscColors["friendly"][3])
-		LunaPetFrame.HealthBar.hpbg:SetVertexColor(LunaOptions.MiscColors["friendly"][1],LunaOptions.MiscColors["friendly"][2],LunaOptions.MiscColors["friendly"][3], 0.25)
+		LunaPetFrame.bars["Healthbar"]:SetStatusBarColor(LunaOptions.MiscColors["friendly"][1],LunaOptions.MiscColors["friendly"][2],LunaOptions.MiscColors["friendly"][3])
+		LunaPetFrame.bars["Healthbar"].hpbg:SetVertexColor(LunaOptions.MiscColors["friendly"][1],LunaOptions.MiscColors["friendly"][2],LunaOptions.MiscColors["friendly"][3], 0.25)
 	end
 end
 
 function Luna_Pet_Events:UNIT_PORTRAIT_UPDATE()
 	if arg1 == this.unit then
-		local portrait = this.portrait
+		local portrait = this.bars["Portrait"]
 		if(portrait.type == "3D") then
 			if(not UnitExists(arg1) or not UnitIsConnected(arg1) or not UnitIsVisible(arg1)) then
 				portrait:SetModelScale(4.25)

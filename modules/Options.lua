@@ -51,14 +51,14 @@ local function ResetSettings()
 	LunaOptions.bordertexture = "Interface\\AddOns\\LunaUnitFrames\\media\\border"
 	LunaOptions.icontexture = "Interface\\AddOns\\LunaUnitFrames\\media\\icon"
 		
-	LunaOptions.frames = {	["LunaPlayerFrame"] = {position = {x = 10, y = -20}, size = {x = 240, y = 40}, scale = 1, enabled = 1, ShowBuffs = 1},
-							["LunaTargetFrame"] = {position = {x = 280, y = -20}, size = {x = 240, y = 40}, scale = 1, enabled = 1, ShowBuffs = 3},
-							["LunaTargetTargetFrame"] = {position = {x = 550, y = -20}, size = {x = 150, y = 40}, scale = 1, enabled = 1},
-							["LunaTargetTargetTargetFrame"] = {position = {x = 730, y = -20}, size = {x = 150, y = 40}, scale = 1, enabled = 1},
-							["LunaPartyFrames"] = {position = {x = 10, y = -140}, size = {x = 200, y = 40}, scale = 1, enabled = 1, ShowBuffs = 3},
-							["LunaPartyPetFrames"] = {position = {x = 0, y = 0}, size = {x = 110, y = 20}, scale = 1, enabled = 1},
-							["LunaPetFrame"] = {position = {x = 10, y = -70}, size = {x = 240, y = 30}, scale = 1, enabled = 1, ShowBuffs = 3},
-							["GRID"] = {position = {x = 600, y = -400}, size = 20, scale = 1, padding = 4, ShowRaidGroupTitles = 1},
+	LunaOptions.frames = {	["LunaPlayerFrame"] = {position = {x = 10, y = -20}, size = {x = 240, y = 40}, scale = 1, enabled = 1, ShowBuffs = 1, portrait = 2, bars = {{"Healthbar", 6}, {"Powerbar", 4}, {"Castbar", 3}}},
+							["LunaTargetFrame"] = {position = {x = 280, y = -20}, size = {x = 240, y = 40}, scale = 1, enabled = 1, ShowBuffs = 3, portrait = 2, bars = {{"Healthbar", 6}, {"Powerbar", 4}, {"Combo Bar", 2}}},
+							["LunaTargetTargetFrame"] = {position = {x = 550, y = -20}, size = {x = 150, y = 40}, scale = 1, enabled = 1, bars = {{"Healthbar", 6}, {"Powerbar", 4}}},
+							["LunaTargetTargetTargetFrame"] = {position = {x = 730, y = -20}, size = {x = 150, y = 40}, scale = 1, enabled = 1, bars = {{"Healthbar", 6}, {"Powerbar", 4}}},
+							["LunaPartyFrames"] = {position = {x = 10, y = -140}, size = {x = 200, y = 40}, scale = 1, enabled = 1, ShowBuffs = 3, portrait = 2, bars = {{"Healthbar", 6}, {"Powerbar", 4}}},
+							["LunaPartyPetFrames"] = {position = {x = 0, y = 0}, size = {x = 110, y = 20}, scale = 1, enabled = 1, bars = {{"Healthbar", 6}, {"Powerbar", 4}}},
+							["LunaPetFrame"] = {position = {x = 10, y = -70}, size = {x = 240, y = 30}, scale = 1, enabled = 1, ShowBuffs = 3, portrait = 2, bars = {{"Healthbar", 6}, {"Powerbar", 4}}},
+							["GRID"] = {position = {x = 600, y = -400}, size = 20, scale = 1, padding = 4, ShowRaidGroupTitles = 1, powerBars = 1},
 							["BARS"] = {size = 20, scale = 1, padding = 4, ShowRaidGroupTitles = 1},
 							["LunaRaidFramesBars1"] = {position = {x = 380, y = -400}},
 							["LunaRaidFramesBars2"] = {position = {x = 460, y = -400}},
@@ -173,17 +173,7 @@ local function HeightAdjust()
 	local amount = this:GetValue()
 	if frame then
 		if this.frame == "LunaPartyFrames" then
-			for i=1,4 do
-				frame[i]:SetHeight(amount)
-				local frameHeight = frame[i]:GetHeight()
-				local frameWidth = (frame[i]:GetWidth()-frameHeight)
-				frame[i].portrait:SetHeight(frameHeight+1)
-				frame[i].portrait:SetWidth(frameHeight) --square it
-				frame[i].HealthBar:SetWidth(frameWidth)
-				frame[i].PowerBar:SetWidth(frameWidth)
-				frame[i].HealthBar:SetHeight(frameHeight*0.58)
-				frame[i].PowerBar:SetHeight(frameHeight-(frameHeight*0.58)-1)
-			end
+			LunaUnitFrames:UpdatePartyFrameSize()
 		elseif this.frame == "LunaPartyPetFrames" then
 			for i=1,4 do
 				frame[i]:SetHeight(amount)
@@ -251,13 +241,22 @@ local function RegisterCastbar(frame)
 end
 
 local function UnRegisterCastbar(frame)
-	getglobal(frame):UnregisterAllEvents()
+	getglobal(frame):UnregisterEvent("SPELLCAST_START")
+	getglobal(frame):UnregisterEvent("SPELLCAST_STOP")
+	getglobal(frame):UnregisterEvent("SPELLCAST_FAILED")
+	getglobal(frame):UnregisterEvent("SPELLCAST_INTERRUPTED")
+	getglobal(frame):UnregisterEvent("SPELLCAST_DELAYED")
+	getglobal(frame):UnregisterEvent("SPELLCAST_CHANNEL_START")
+	getglobal(frame):UnregisterEvent("SPELLCAST_CHANNEL_UPDATE")
+	getglobal(frame):UnregisterEvent("SPELLCAST_CHANNEL_STOP")
 end
 
 function HideCastBarToggle()
 	if LunaOptionsFrame.pages[1].HideCastbar:GetChecked() == 1 then
 		UnRegisterCastbar("LunaPlayerFrame")
-		LunaPlayerFrame.Castbar:Hide()
+		LunaPlayerFrame.bars["Castbar"]:Hide()
+		LunaPlayerFrame.bars["Castbar"].casting = nil
+		LunaPlayerFrame.bars["Castbar"].channeling = nil
 		LunaOptions.hideCastbar = 1
 		LunaPlayerFrame.AdjustBars()
 	else
@@ -308,6 +307,181 @@ local function PlayerBuffPosSelect()
 		info.func= PlayerBuffPosSelectChoice
 		info.checked = nil
 		UIDropDownMenu_AddButton(info, 1)
+	end
+end
+
+local function PlayerBarSelectorInit()
+	local info={}
+	for k,v in pairs(LunaOptions.frames["LunaPlayerFrame"].bars) do
+		info.text=v[1]
+		info.value=k
+		info.func= function () UIDropDownMenu_SetSelectedID(LunaOptionsFrame.pages[1].BarSelect, this:GetID())
+					for k,v in pairs(LunaOptions.frames["LunaPlayerFrame"].bars) do
+						if v[1] == UIDropDownMenu_GetText(LunaOptionsFrame.pages[1].BarSelect) then
+							LunaOptionsFrame.pages[1].barorder:SetValue(k)
+							LunaOptionsFrame.pages[1].barheight:SetValue(v[2])
+							break
+						end
+					end
+		end
+		info.checked = nil
+		info.checkable = nil
+		UIDropDownMenu_AddButton(info, 1)
+	end
+end
+
+local function PetBarSelectorInit()
+	local info={}
+	for k,v in pairs(LunaOptions.frames["LunaPetFrame"].bars) do
+		info.text=v[1]
+		info.value=k
+		info.func= function () UIDropDownMenu_SetSelectedID(LunaOptionsFrame.pages[2].BarSelect, this:GetID())
+					for k,v in pairs(LunaOptions.frames["LunaPetFrame"].bars) do
+						if v[1] == UIDropDownMenu_GetText(LunaOptionsFrame.pages[2].BarSelect) then
+							LunaOptionsFrame.pages[2].barorder:SetValue(k)
+							LunaOptionsFrame.pages[2].barheight:SetValue(v[2])
+							break
+						end
+					end
+		end
+		info.checked = nil
+		info.checkable = nil
+		UIDropDownMenu_AddButton(info, 1)
+	end
+end
+
+local function TargetBarSelectorInit()
+	local info={}
+	for k,v in pairs(LunaOptions.frames["LunaTargetFrame"].bars) do
+		info.text=v[1]
+		info.value=k
+		info.func= function () UIDropDownMenu_SetSelectedID(LunaOptionsFrame.pages[3].BarSelect, this:GetID())
+					for k,v in pairs(LunaOptions.frames["LunaTargetFrame"].bars) do
+						if v[1] == UIDropDownMenu_GetText(LunaOptionsFrame.pages[3].BarSelect) then
+							LunaOptionsFrame.pages[3].barorder:SetValue(k)
+							LunaOptionsFrame.pages[3].barheight:SetValue(v[2])
+							break
+						end
+					end
+		end
+		info.checked = nil
+		info.checkable = nil
+		UIDropDownMenu_AddButton(info, 1)
+	end
+end
+
+local function TargetTargetBarSelectorInit()
+	local info={}
+	for k,v in pairs(LunaOptions.frames["LunaTargetTargetFrame"].bars) do
+		info.text=v[1]
+		info.value=k
+		info.func= function () UIDropDownMenu_SetSelectedID(LunaOptionsFrame.pages[4].BarSelect, this:GetID())
+					for k,v in pairs(LunaOptions.frames["LunaTargetTargetFrame"].bars) do
+						if v[1] == UIDropDownMenu_GetText(LunaOptionsFrame.pages[4].BarSelect) then
+							LunaOptionsFrame.pages[4].barorder:SetValue(k)
+							LunaOptionsFrame.pages[4].barheight:SetValue(v[2])
+							break
+						end
+					end
+		end
+		info.checked = nil
+		info.checkable = nil
+		UIDropDownMenu_AddButton(info, 1)
+	end
+end
+
+local function TargetTargetTargetBarSelectorInit()
+	local info={}
+	for k,v in pairs(LunaOptions.frames["LunaTargetTargetTargetFrame"].bars) do
+		info.text=v[1]
+		info.value=k
+		info.func= function () UIDropDownMenu_SetSelectedID(LunaOptionsFrame.pages[4].BarSelect2, this:GetID())
+					for k,v in pairs(LunaOptions.frames["LunaTargetTargetTargetFrame"].bars) do
+						if v[1] == UIDropDownMenu_GetText(LunaOptionsFrame.pages[4].BarSelect2) then
+							LunaOptionsFrame.pages[4].barorder2:SetValue(k)
+							LunaOptionsFrame.pages[4].barheight2:SetValue(v[2])
+							break
+						end
+					end
+		end
+		info.checked = nil
+		info.checkable = nil
+		UIDropDownMenu_AddButton(info, 1)
+	end
+end
+
+local function PartyBarSelectorInit()
+	local info={}
+	for k,v in pairs(LunaOptions.frames["LunaPartyFrames"].bars) do
+		info.text=v[1]
+		info.value=k
+		info.func= function () UIDropDownMenu_SetSelectedID(LunaOptionsFrame.pages[5].BarSelect, this:GetID())
+					for k,v in pairs(LunaOptions.frames["LunaPartyFrames"].bars) do
+						if v[1] == UIDropDownMenu_GetText(LunaOptionsFrame.pages[5].BarSelect) then
+							LunaOptionsFrame.pages[5].barorder:SetValue(k)
+							LunaOptionsFrame.pages[5].barheight:SetValue(v[2])
+							break
+						end
+					end
+		end
+		info.checked = nil
+		info.checkable = nil
+		UIDropDownMenu_AddButton(info, 1)
+	end
+end
+
+local function OnOrderSlider()
+	local place = this:GetValue()
+	local bar = UIDropDownMenu_GetText(this:GetParent().BarSelect)
+	for k,v in pairs(LunaOptions.frames[this.frame].bars) do
+		if v[1] == bar then
+			table.remove(LunaOptions.frames[this.frame].bars, k)
+			table.insert(LunaOptions.frames[this.frame].bars, place, v)
+			break
+		end
+	end
+	getglobal(this:GetName().."Text"):SetText("Bar Position: "..place)
+	if this.frame == "LunaPartyFrames" then
+		LunaUnitFrames:UpdatePartyUnitFrameSize()
+	else
+		getglobal(this.frame).AdjustBars()
+	end
+end
+
+local function OnBarHeight()
+	local weight = this:GetValue()
+	if this.frame == "LunaPartyFrames" then
+		for i=1,4 do
+			if weight == 0 then
+				LunaPartyFrames[i].bars[UIDropDownMenu_GetText(this:GetParent().BarSelect)]:Hide()
+				getglobal(this:GetName().."Text"):SetText("Bar height weight: BAR OFF")
+			else
+				LunaPartyFrames[i].bars[UIDropDownMenu_GetText(this:GetParent().BarSelect)]:Show()
+				getglobal(this:GetName().."Text"):SetText("Bar height weight: "..weight)
+			end
+		end
+		for k,v in pairs(LunaOptions.frames[this.frame].bars) do
+			if v[1] == UIDropDownMenu_GetText(this:GetParent().BarSelect) then
+				v[2] = weight
+				break
+			end
+		end
+		LunaUnitFrames:UpdatePartyUnitFrameSize()
+	else
+		if weight == 0 then
+			getglobal(this.frame).bars[UIDropDownMenu_GetText(this:GetParent().BarSelect)]:Hide()
+			getglobal(this:GetName().."Text"):SetText("Bar height weight: BAR OFF")
+		else
+			getglobal(this.frame).bars[UIDropDownMenu_GetText(this:GetParent().BarSelect)]:Show()
+			getglobal(this:GetName().."Text"):SetText("Bar height weight: "..weight)
+		end
+		for k,v in pairs(LunaOptions.frames[this.frame].bars) do
+			if v[1] == UIDropDownMenu_GetText(this:GetParent().BarSelect) then
+				v[2] = weight
+				break
+			end
+		end
+		getglobal(this.frame).AdjustBars()
 	end
 end
 
@@ -661,7 +835,7 @@ function LunaOptionsModule:CreateMenu()
 	
 	for k,i in ipairs({1,2,3,5}) do
 		LunaOptionsFrame.pages[i].BuffPosition = CreateFrame("Button", "BuffSwitch"..i, LunaOptionsFrame.pages[i], "UIDropDownMenuTemplate")
-		LunaOptionsFrame.pages[i].BuffPosition:SetPoint("TOPRIGHT", LunaOptionsFrame.pages[i].scaleslider, "BOTTOMRIGHT", -100 , -15)
+		LunaOptionsFrame.pages[i].BuffPosition:SetPoint("TOPRIGHT", LunaOptionsFrame.pages[i].scaleslider, "BOTTOMRIGHT", -120 , -15)
 		UIDropDownMenu_SetWidth(80, LunaOptionsFrame.pages[i].BuffPosition)
 		UIDropDownMenu_JustifyText("LEFT", LunaOptionsFrame.pages[i].BuffPosition)
 		
@@ -671,7 +845,7 @@ function LunaOptionsModule:CreateMenu()
 		LunaOptionsFrame.pages[i].BuffSwitchDesc:SetTextColor(1,0.82,0)
 		LunaOptionsFrame.pages[i].BuffSwitchDesc:SetText("(De)Buff Position")
 	end
-
+	
 	UIDropDownMenu_Initialize(LunaOptionsFrame.pages[1].BuffPosition, PlayerBuffPosSelect)
 	UIDropDownMenu_SetSelectedID(LunaOptionsFrame.pages[1].BuffPosition, LunaOptions.frames["LunaPlayerFrame"].ShowBuffs)
 	UIDropDownMenu_Initialize(LunaOptionsFrame.pages[2].BuffPosition, PetBuffPosSelect)
@@ -680,6 +854,149 @@ function LunaOptionsModule:CreateMenu()
 	UIDropDownMenu_SetSelectedID(LunaOptionsFrame.pages[3].BuffPosition, LunaOptions.frames["LunaTargetFrame"].ShowBuffs)
 	UIDropDownMenu_Initialize(LunaOptionsFrame.pages[5].BuffPosition, PartyBuffPosSelect)
 	UIDropDownMenu_SetSelectedID(LunaOptionsFrame.pages[5].BuffPosition, LunaOptions.frames["LunaPartyFrames"].ShowBuffs)
+	
+	LunaOptionsFrame.pages[1].BarSelect = CreateFrame("Button", "BarSelector", LunaOptionsFrame.pages[1], "UIDropDownMenuTemplate")
+	LunaOptionsFrame.pages[1].BarSelect:SetPoint("TOPRIGHT", LunaOptionsFrame.pages[1].BuffPosition, "BOTTOMRIGHT", 0 , -30)
+	UIDropDownMenu_SetWidth(80, LunaOptionsFrame.pages[1].BarSelect)
+	UIDropDownMenu_JustifyText("LEFT", LunaOptionsFrame.pages[1].BarSelect)
+	UIDropDownMenu_Initialize(LunaOptionsFrame.pages[1].BarSelect, PlayerBarSelectorInit)
+	UIDropDownMenu_SetSelectedID(LunaOptionsFrame.pages[1].BarSelect, 1)
+	
+	LunaOptionsFrame.pages[1].barheight = CreateFrame("Slider", "BarSizer", LunaOptionsFrame.pages[1], "OptionsSliderTemplate")
+	LunaOptionsFrame.pages[1].barheight.frame = "LunaPlayerFrame"
+	LunaOptionsFrame.pages[1].barheight:SetMinMaxValues(0,10)
+	LunaOptionsFrame.pages[1].barheight:SetValueStep(1)
+	LunaOptionsFrame.pages[1].barheight:SetScript("OnValueChanged", OnBarHeight)
+	LunaOptionsFrame.pages[1].barheight:SetPoint("TOP", LunaOptionsFrame.pages[1].BarSelect, "BOTTOM", 70, -20)
+	LunaOptionsFrame.pages[1].barheight:SetValue(LunaOptions.frames[LunaOptionsFrame.pages[1].barheight.frame].bars[1][2])
+	LunaOptionsFrame.pages[1].barheight:SetWidth(230)
+	
+	
+	LunaOptionsFrame.pages[1].barorder = CreateFrame("Slider", "BarOrderSlider", LunaOptionsFrame.pages[1], "OptionsSliderTemplate")
+	LunaOptionsFrame.pages[1].barorder.frame = "LunaPlayerFrame"
+	LunaOptionsFrame.pages[1].barorder:SetMinMaxValues(1,table.getn(LunaOptions.frames["LunaPlayerFrame"].bars))
+	LunaOptionsFrame.pages[1].barorder:SetValueStep(1)
+	LunaOptionsFrame.pages[1].barorder:SetScript("OnValueChanged", OnOrderSlider)
+	LunaOptionsFrame.pages[1].barorder:SetPoint("TOP", LunaOptionsFrame.pages[1].barheight, "BOTTOM", 0, -20)
+	LunaOptionsFrame.pages[1].barorder:SetWidth(230)
+	
+	for k,v in pairs(LunaOptions.frames["LunaPlayerFrame"].bars) do
+		if v[1] == UIDropDownMenu_GetText(LunaOptionsFrame.pages[1].BarSelect) then
+			LunaOptionsFrame.pages[1].barheight:SetValue(v[2])
+			LunaOptionsFrame.pages[1].barorder:SetValue(k)
+			break
+		end
+	end
+
+	getglobal("BarSizerText"):SetText("Bar height weight: "..LunaOptionsFrame.pages[1].barheight:GetValue())
+	getglobal("BarOrderSliderText"):SetText("Bar Position: "..LunaOptionsFrame.pages[1].barorder:GetValue())
+
+	LunaOptionsFrame.pages[2].BarSelect = CreateFrame("Button", "BarSelector2", LunaOptionsFrame.pages[2], "UIDropDownMenuTemplate")
+	LunaOptionsFrame.pages[2].BarSelect:SetPoint("TOPRIGHT", LunaOptionsFrame.pages[2].BuffPosition, "BOTTOMRIGHT", 0 , -30)
+	UIDropDownMenu_SetWidth(80, LunaOptionsFrame.pages[2].BarSelect)
+	UIDropDownMenu_JustifyText("LEFT", LunaOptionsFrame.pages[2].BarSelect)
+	UIDropDownMenu_Initialize(LunaOptionsFrame.pages[2].BarSelect, PetBarSelectorInit)
+	UIDropDownMenu_SetSelectedID(LunaOptionsFrame.pages[2].BarSelect, 1)
+	
+	LunaOptionsFrame.pages[2].barheight = CreateFrame("Slider", "BarSizer2", LunaOptionsFrame.pages[2], "OptionsSliderTemplate")
+	LunaOptionsFrame.pages[2].barheight.frame = "LunaPetFrame"
+	LunaOptionsFrame.pages[2].barheight:SetMinMaxValues(0,10)
+	LunaOptionsFrame.pages[2].barheight:SetValueStep(1)
+	LunaOptionsFrame.pages[2].barheight:SetScript("OnValueChanged", OnBarHeight)
+	LunaOptionsFrame.pages[2].barheight:SetPoint("TOP", LunaOptionsFrame.pages[2].BarSelect, "BOTTOM", 70, -20)
+	LunaOptionsFrame.pages[2].barheight:SetValue(LunaOptions.frames[LunaOptionsFrame.pages[2].barheight.frame].bars[1][2])
+	LunaOptionsFrame.pages[2].barheight:SetWidth(230)
+	
+	LunaOptionsFrame.pages[2].barorder = CreateFrame("Slider", "BarOrderSlider2", LunaOptionsFrame.pages[2], "OptionsSliderTemplate")
+	LunaOptionsFrame.pages[2].barorder.frame = "LunaPetFrame"
+	LunaOptionsFrame.pages[2].barorder:SetMinMaxValues(1,table.getn(LunaOptions.frames["LunaPetFrame"].bars))
+	LunaOptionsFrame.pages[2].barorder:SetValueStep(1)
+	LunaOptionsFrame.pages[2].barorder:SetScript("OnValueChanged", OnOrderSlider)
+	LunaOptionsFrame.pages[2].barorder:SetPoint("TOP", LunaOptionsFrame.pages[2].barheight, "BOTTOM", 0, -20)
+	LunaOptionsFrame.pages[2].barorder:SetWidth(230)
+	
+	for k,v in pairs(LunaOptions.frames["LunaPetFrame"].bars) do
+		if v[1] == UIDropDownMenu_GetText(LunaOptionsFrame.pages[2].BarSelect) then
+			LunaOptionsFrame.pages[2].barheight:SetValue(v[2])
+			LunaOptionsFrame.pages[2].barorder:SetValue(k)
+			break
+		end
+	end
+	
+	getglobal("BarSizer2Text"):SetText("Bar height weight: "..LunaOptionsFrame.pages[2].barheight:GetValue())
+	getglobal("BarOrderSlider2Text"):SetText("Bar Position: "..LunaOptionsFrame.pages[2].barorder:GetValue())
+
+	LunaOptionsFrame.pages[3].BarSelect = CreateFrame("Button", "BarSelector3", LunaOptionsFrame.pages[3], "UIDropDownMenuTemplate")
+	LunaOptionsFrame.pages[3].BarSelect:SetPoint("TOPRIGHT", LunaOptionsFrame.pages[3].BuffPosition, "BOTTOMRIGHT", 0 , -30)
+	UIDropDownMenu_SetWidth(80, LunaOptionsFrame.pages[3].BarSelect)
+	UIDropDownMenu_JustifyText("LEFT", LunaOptionsFrame.pages[3].BarSelect)
+	UIDropDownMenu_Initialize(LunaOptionsFrame.pages[3].BarSelect, TargetBarSelectorInit)
+	UIDropDownMenu_SetSelectedID(LunaOptionsFrame.pages[3].BarSelect, 1)
+	
+	LunaOptionsFrame.pages[3].barheight = CreateFrame("Slider", "BarSizer3", LunaOptionsFrame.pages[3], "OptionsSliderTemplate")
+	LunaOptionsFrame.pages[3].barheight.frame = "LunaTargetFrame"
+	LunaOptionsFrame.pages[3].barheight:SetMinMaxValues(0,10)
+	LunaOptionsFrame.pages[3].barheight:SetValueStep(1)
+	LunaOptionsFrame.pages[3].barheight:SetScript("OnValueChanged", OnBarHeight)
+	LunaOptionsFrame.pages[3].barheight:SetPoint("TOP", LunaOptionsFrame.pages[3].BarSelect, "BOTTOM", 70, -20)
+	LunaOptionsFrame.pages[3].barheight:SetWidth(230)
+	
+	LunaOptionsFrame.pages[3].barorder = CreateFrame("Slider", "BarOrderSlider3", LunaOptionsFrame.pages[3], "OptionsSliderTemplate")
+	LunaOptionsFrame.pages[3].barorder.frame = "LunaTargetFrame"
+	LunaOptionsFrame.pages[3].barorder:SetMinMaxValues(1,table.getn(LunaOptions.frames["LunaTargetFrame"].bars))
+	LunaOptionsFrame.pages[3].barorder:SetValueStep(1)
+	LunaOptionsFrame.pages[3].barorder:SetScript("OnValueChanged", OnOrderSlider)
+	LunaOptionsFrame.pages[3].barorder:SetPoint("TOP", LunaOptionsFrame.pages[3].barheight, "BOTTOM", 0, -20)
+	LunaOptionsFrame.pages[3].barorder:SetWidth(230)
+	
+	for k,v in pairs(LunaOptions.frames["LunaTargetFrame"].bars) do
+		if v[1] == UIDropDownMenu_GetText(LunaOptionsFrame.pages[3].BarSelect) then
+			LunaOptionsFrame.pages[3].barheight:SetValue(v[2])
+			LunaOptionsFrame.pages[3].barorder:SetValue(k)
+			break
+		end
+	end	
+	
+	getglobal("BarSizer3Text"):SetText("Bar height weight: "..LunaOptionsFrame.pages[3].barheight:GetValue())
+	getglobal("BarOrderSlider3Text"):SetText("Bar Position: "..LunaOptionsFrame.pages[3].barorder:GetValue())
+
+	LunaOptionsFrame.pages[4].heightslider:SetWidth(250)	
+	LunaOptionsFrame.pages[4].widthslider:SetWidth(250)
+	LunaOptionsFrame.pages[4].scaleslider:SetWidth(250)
+	
+	LunaOptionsFrame.pages[4].BarSelect = CreateFrame("Button", "BarSelector4", LunaOptionsFrame.pages[4], "UIDropDownMenuTemplate")
+	LunaOptionsFrame.pages[4].BarSelect:SetPoint("TOPRIGHT", LunaOptionsFrame.pages[4], "TOPRIGHT", -100 , -35)
+	UIDropDownMenu_SetWidth(80, LunaOptionsFrame.pages[4].BarSelect)
+	UIDropDownMenu_JustifyText("LEFT", LunaOptionsFrame.pages[4].BarSelect)
+	UIDropDownMenu_Initialize(LunaOptionsFrame.pages[4].BarSelect, TargetTargetBarSelectorInit)
+	UIDropDownMenu_SetSelectedID(LunaOptionsFrame.pages[4].BarSelect, 1)
+	
+	LunaOptionsFrame.pages[4].barheight = CreateFrame("Slider", "BarSizer4", LunaOptionsFrame.pages[4], "OptionsSliderTemplate")
+	LunaOptionsFrame.pages[4].barheight.frame = "LunaTargetTargetFrame"
+	LunaOptionsFrame.pages[4].barheight:SetMinMaxValues(0,10)
+	LunaOptionsFrame.pages[4].barheight:SetValueStep(1)
+	LunaOptionsFrame.pages[4].barheight:SetScript("OnValueChanged", OnBarHeight)
+	LunaOptionsFrame.pages[4].barheight:SetPoint("TOP", LunaOptionsFrame.pages[4].BarSelect, "BOTTOM", 55, -15)
+	LunaOptionsFrame.pages[4].barheight:SetWidth(200)
+	
+	LunaOptionsFrame.pages[4].barorder = CreateFrame("Slider", "BarOrderSlider4", LunaOptionsFrame.pages[4], "OptionsSliderTemplate")
+	LunaOptionsFrame.pages[4].barorder.frame = "LunaTargetTargetFrame"
+	LunaOptionsFrame.pages[4].barorder:SetMinMaxValues(1,table.getn(LunaOptions.frames["LunaTargetTargetFrame"].bars))
+	LunaOptionsFrame.pages[4].barorder:SetValueStep(1)
+	LunaOptionsFrame.pages[4].barorder:SetScript("OnValueChanged", OnOrderSlider)
+	LunaOptionsFrame.pages[4].barorder:SetPoint("TOP", LunaOptionsFrame.pages[4].barheight, "BOTTOM", 0, -20)
+	LunaOptionsFrame.pages[4].barorder:SetWidth(200)
+	
+	for k,v in pairs(LunaOptions.frames["LunaTargetTargetFrame"].bars) do
+		if v[1] == UIDropDownMenu_GetText(LunaOptionsFrame.pages[4].BarSelect) then
+			LunaOptionsFrame.pages[4].barheight:SetValue(v[2])
+			LunaOptionsFrame.pages[4].barorder:SetValue(k)
+			break
+		end
+	end	
+	
+	getglobal("BarSizer4Text"):SetText("Bar height weight: "..LunaOptionsFrame.pages[4].barheight:GetValue())
+	getglobal("BarOrderSlider4Text"):SetText("Bar Position: "..LunaOptionsFrame.pages[4].barorder:GetValue())
 	
 	LunaOptionsFrame.pages[4].enable2 = CreateFrame("CheckButton", "LunaTargetTargetTargetFrameEnableButton", LunaOptionsFrame.pages[4], "UICheckButtonTemplate")
 	LunaOptionsFrame.pages[4].enable2:SetPoint("TOPLEFT", LunaOptionsFrame.pages[4], "TOPLEFT", 10, -170)
@@ -691,7 +1008,7 @@ function LunaOptionsModule:CreateMenu()
 	getglobal("LunaTargetTargetTargetFrameEnableButtonText"):SetText("Enable")
 	
 	LunaOptionsFrame.pages[4].name2 = LunaOptionsFrame.pages[4]:CreateFontString(nil, "OVERLAY", LunaOptionsFrame.pages[4])
-	LunaOptionsFrame.pages[4].name2:SetPoint("TOP", LunaOptionsFrame.pages[4].scaleslider, "BOTTOM", 0, -30)
+	LunaOptionsFrame.pages[4].name2:SetPoint("TOP", LunaOptionsFrame.pages[4].name, "BOTTOM", 0, -145)
 	LunaOptionsFrame.pages[4].name2:SetFont(LunaOptions.font, 15)
 	LunaOptionsFrame.pages[4].name2:SetShadowColor(0, 0, 0)
 	LunaOptionsFrame.pages[4].name2:SetShadowOffset(0.8, -0.8)
@@ -702,10 +1019,10 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[4].heightslider2:SetMinMaxValues(20,110)
 	LunaOptionsFrame.pages[4].heightslider2:SetValueStep(1)
 	LunaOptionsFrame.pages[4].heightslider2:SetScript("OnValueChanged", HeightAdjust)
-	LunaOptionsFrame.pages[4].heightslider2:SetPoint("TOP", LunaOptionsFrame.pages[4].name2, "BOTTOM", 0, -30)
+	LunaOptionsFrame.pages[4].heightslider2:SetPoint("TOP", LunaOptionsFrame.pages[4].name2, "BOTTOM", -105, -30)
 	LunaOptionsFrame.pages[4].heightslider2:SetValue(LunaOptions.frames["LunaTargetTargetTargetFrame"].size.y)
 	LunaOptionsFrame.pages[4].heightslider2.frame = "LunaTargetTargetTargetFrame"
-	LunaOptionsFrame.pages[4].heightslider2:SetWidth(460)
+	LunaOptionsFrame.pages[4].heightslider2:SetWidth(250)
 	getglobal("LunaTargetTargetTargetFrameHeightSliderText"):SetText("Height: "..LunaOptions.frames["LunaTargetTargetTargetFrame"].size.y)
 
 	LunaOptionsFrame.pages[4].widthslider2 = CreateFrame("Slider", "LunaTargetTargetTargetFrameWidthSlider", LunaOptionsFrame.pages[4], "OptionsSliderTemplate")
@@ -715,7 +1032,7 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[4].widthslider2:SetPoint("TOPLEFT", LunaOptionsFrame.pages[4].heightslider2, "TOPLEFT", 0, -40)
 	LunaOptionsFrame.pages[4].widthslider2:SetValue(LunaOptions.frames["LunaTargetTargetTargetFrame"].size.x)
 	LunaOptionsFrame.pages[4].widthslider2.frame = "LunaTargetTargetTargetFrame"
-	LunaOptionsFrame.pages[4].widthslider2:SetWidth(460)
+	LunaOptionsFrame.pages[4].widthslider2:SetWidth(250)
 	getglobal("LunaTargetTargetTargetFrameWidthSliderText"):SetText("Width: "..LunaOptions.frames["LunaTargetTargetTargetFrame"].size.x)
 	
 	LunaOptionsFrame.pages[4].scaleslider2 = CreateFrame("Slider", "LunaTargetTargetTargetFrameScaleSlider", LunaOptionsFrame.pages[4], "OptionsSliderTemplate")
@@ -725,8 +1042,77 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[4].scaleslider2:SetPoint("TOPLEFT", LunaOptionsFrame.pages[4].widthslider2, "TOPLEFT", 0, -40)
 	LunaOptionsFrame.pages[4].scaleslider2:SetValue(LunaOptions.frames["LunaTargetTargetTargetFrame"].scale)
 	LunaOptionsFrame.pages[4].scaleslider2.frame = "LunaTargetTargetTargetFrame"
-	LunaOptionsFrame.pages[4].scaleslider2:SetWidth(460)
+	LunaOptionsFrame.pages[4].scaleslider2:SetWidth(250)
 	getglobal("LunaTargetTargetTargetFrameScaleSliderText"):SetText("Scale: "..LunaOptions.frames["LunaTargetTargetTargetFrame"].scale)
+	
+	LunaOptionsFrame.pages[4].BarSelect2 = CreateFrame("Button", "BarSelector4.5", LunaOptionsFrame.pages[4], "UIDropDownMenuTemplate")
+	LunaOptionsFrame.pages[4].BarSelect2:SetPoint("TOPRIGHT", LunaOptionsFrame.pages[4], "TOPRIGHT", -100 , -210)
+	UIDropDownMenu_SetWidth(80, LunaOptionsFrame.pages[4].BarSelect2)
+	UIDropDownMenu_JustifyText("LEFT", LunaOptionsFrame.pages[4].BarSelect2)
+	UIDropDownMenu_Initialize(LunaOptionsFrame.pages[4].BarSelect2, TargetTargetTargetBarSelectorInit)
+	UIDropDownMenu_SetSelectedID(LunaOptionsFrame.pages[4].BarSelect2, 1)
+	
+	LunaOptionsFrame.pages[4].barheight2 = CreateFrame("Slider", "BarSizer4.5", LunaOptionsFrame.pages[4], "OptionsSliderTemplate")
+	LunaOptionsFrame.pages[4].barheight2.frame = "LunaTargetTargetTargetFrame"
+	LunaOptionsFrame.pages[4].barheight2:SetMinMaxValues(0,10)
+	LunaOptionsFrame.pages[4].barheight2:SetValueStep(1)
+	LunaOptionsFrame.pages[4].barheight2:SetScript("OnValueChanged", OnBarHeight)
+	LunaOptionsFrame.pages[4].barheight2:SetPoint("TOP", LunaOptionsFrame.pages[4].BarSelect2, "BOTTOM", 55, -15)
+	LunaOptionsFrame.pages[4].barheight2:SetWidth(200)
+	
+	LunaOptionsFrame.pages[4].barorder2 = CreateFrame("Slider", "BarOrderSlider4.5", LunaOptionsFrame.pages[4], "OptionsSliderTemplate")
+	LunaOptionsFrame.pages[4].barorder2.frame = "LunaTargetTargetTargetFrame"
+	LunaOptionsFrame.pages[4].barorder2:SetMinMaxValues(1,table.getn(LunaOptions.frames["LunaTargetTargetTargetFrame"].bars))
+	LunaOptionsFrame.pages[4].barorder2:SetValueStep(1)
+	LunaOptionsFrame.pages[4].barorder2:SetScript("OnValueChanged", OnOrderSlider)
+	LunaOptionsFrame.pages[4].barorder2:SetPoint("TOP", LunaOptionsFrame.pages[4].barheight2, "BOTTOM", 0, -20)
+	LunaOptionsFrame.pages[4].barorder2:SetWidth(200)
+	
+	for k,v in pairs(LunaOptions.frames["LunaTargetTargetTargetFrame"].bars) do
+		if v[1] == UIDropDownMenu_GetText(LunaOptionsFrame.pages[4].BarSelect2) then
+			LunaOptionsFrame.pages[4].barheight2:SetValue(v[2])
+			LunaOptionsFrame.pages[4].barorder2:SetValue(k)
+			break
+		end
+	end	
+	
+	getglobal("BarSizer4.5Text"):SetText("Bar height weight: "..LunaOptionsFrame.pages[4].barheight2:GetValue())
+	getglobal("BarOrderSlider4.5Text"):SetText("Bar Position: "..LunaOptionsFrame.pages[4].barorder2:GetValue())
+	
+	LunaOptionsFrame.pages[5].BarSelect = CreateFrame("Button", "BarSelector5", LunaOptionsFrame.pages[5], "UIDropDownMenuTemplate")
+	LunaOptionsFrame.pages[5].BarSelect:SetPoint("TOPRIGHT", LunaOptionsFrame.pages[5].BuffPosition, "BOTTOMRIGHT", 0 , -30)
+	UIDropDownMenu_SetWidth(80, LunaOptionsFrame.pages[5].BarSelect)
+	UIDropDownMenu_JustifyText("LEFT", LunaOptionsFrame.pages[5].BarSelect)
+	UIDropDownMenu_Initialize(LunaOptionsFrame.pages[5].BarSelect, PartyBarSelectorInit)
+	UIDropDownMenu_SetSelectedID(LunaOptionsFrame.pages[5].BarSelect, 1)
+	
+	LunaOptionsFrame.pages[5].barheight = CreateFrame("Slider", "BarSizer5", LunaOptionsFrame.pages[5], "OptionsSliderTemplate")
+	LunaOptionsFrame.pages[5].barheight.frame = "LunaPartyFrames"
+	LunaOptionsFrame.pages[5].barheight:SetMinMaxValues(0,10)
+	LunaOptionsFrame.pages[5].barheight:SetValueStep(1)
+	LunaOptionsFrame.pages[5].barheight:SetScript("OnValueChanged", OnBarHeight)
+	LunaOptionsFrame.pages[5].barheight:SetPoint("TOP", LunaOptionsFrame.pages[5].BarSelect, "BOTTOM", 70, -20)
+	LunaOptionsFrame.pages[5].barheight:SetWidth(230)
+	
+	LunaOptionsFrame.pages[5].barorder = CreateFrame("Slider", "BarOrderSlider5", LunaOptionsFrame.pages[5], "OptionsSliderTemplate")
+	LunaOptionsFrame.pages[5].barorder.frame = "LunaPartyFrames"
+	LunaOptionsFrame.pages[5].barorder:SetMinMaxValues(1,table.getn(LunaOptions.frames["LunaPartyFrames"].bars))
+	LunaOptionsFrame.pages[5].barorder:SetValueStep(1)
+	LunaOptionsFrame.pages[5].barorder:SetScript("OnValueChanged", OnOrderSlider)
+	LunaOptionsFrame.pages[5].barorder:SetPoint("TOP", LunaOptionsFrame.pages[5].barheight, "BOTTOM", 0, -20)
+	LunaOptionsFrame.pages[5].barorder:SetWidth(230)
+	
+	local place
+	for k,v in pairs(LunaOptions.frames["LunaPartyFrames"].bars) do
+		if v[1] == UIDropDownMenu_GetText(LunaOptionsFrame.pages[5].BarSelect) then
+			LunaOptionsFrame.pages[5].barheight:SetValue(v[2])
+			LunaOptionsFrame.pages[5].barorder:SetValue(k)
+			break
+		end
+	end	
+	
+	getglobal("BarSizer5Text"):SetText("Bar height weight: "..LunaOptionsFrame.pages[5].barheight:GetValue())
+	getglobal("BarOrderSlider5Text"):SetText("Bar Position: "..LunaOptionsFrame.pages[5].barorder:GetValue())
 	
 	LunaOptionsFrame.pages[5].spaceslider = CreateFrame("Slider", "SpaceSlider", LunaOptionsFrame.pages[5], "OptionsSliderTemplate")
 	LunaOptionsFrame.pages[5].spaceslider:SetMinMaxValues(0,150)
@@ -734,7 +1120,7 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[5].spaceslider:SetScript("OnValueChanged", PartySpaceAdjust)
 	LunaOptionsFrame.pages[5].spaceslider:SetPoint("TOPLEFT", LunaOptionsFrame.pages[5].scaleslider, "TOPLEFT", 0, -40)
 	LunaOptionsFrame.pages[5].spaceslider:SetValue(LunaOptions.PartySpace)
-	LunaOptionsFrame.pages[5].spaceslider:SetWidth(230)
+	LunaOptionsFrame.pages[5].spaceslider:SetWidth(220)
 	getglobal("SpaceSliderText"):SetText("Party Space between units: "..LunaOptions.PartySpace)
 	
 	LunaOptionsFrame.pages[5].RangeCheck = CreateFrame("CheckButton", "RangeCheck", LunaOptionsFrame.pages[5], "UICheckButtonTemplate")
@@ -802,5 +1188,6 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[7].RaidGrpNameswitch:SetScript("OnClick", ToggleRaidGroupNames)
 	LunaOptionsFrame.pages[7].RaidGrpNameswitch:SetChecked(LunaOptions.frames[LunaOptions.Raidlayout].ShowRaidGroupTitles)
 	getglobal("RaidGroupNamesSwitchText"):SetText("Show Group Names")
-
+	
+	LunaOptionsFrame:SetScale(1.3)
 end

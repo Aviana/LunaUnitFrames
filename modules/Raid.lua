@@ -5,11 +5,11 @@ local function Luna_Raid_OnClick()
 	local button = arg1
 	if (button == "LeftButton") then
 		if (SpellIsTargeting()) then
-			SpellTargetUnit(this.id)
+			SpellTargetUnit(this.unit)
 		elseif (CursorHasItem()) then
-			DropItemOnUnit(this.id)
+			DropItemOnUnit(this.unit)
 		else
-			TargetUnit(this.id)
+			TargetUnit(this.unit)
 		end
 		return
 	end
@@ -60,25 +60,36 @@ local function UpdateRaidMember()
 		for i=1,8 do
 			for z=1,5 do
 				if LunaUnitFrames.frames.RaidFrames[i].member[z]:IsShown() then
-					LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetValue(UnitHealth(LunaUnitFrames.frames.RaidFrames[i].member[z].id))
-					LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetMinMaxValues(0, UnitHealthMax(LunaUnitFrames.frames.RaidFrames[i].member[z].id))
-					if UnitIsConnected(LunaUnitFrames.frames.RaidFrames[i].member[z].id) then
-						local missinghp = (UnitHealth(LunaUnitFrames.frames.RaidFrames[i].member[z].id)-UnitHealthMax(LunaUnitFrames.frames.RaidFrames[i].member[z].id))
-						if UnitIsDeadOrGhost(LunaUnitFrames.frames.RaidFrames[i].member[z].id) then
+					if UnitIsConnected(LunaUnitFrames.frames.RaidFrames[i].member[z].unit) then
+						local missinghp = (UnitHealth(LunaUnitFrames.frames.RaidFrames[i].member[z].unit)-UnitHealthMax(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
+						if UnitIsDeadOrGhost(LunaUnitFrames.frames.RaidFrames[i].member[z].unit) then
+							LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetValue(0)
 							LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetText("DEAD")
 						elseif missinghp == 0 then
+							LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetValue(UnitHealth(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
+							LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetValue(UnitMana(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
 							if LunaOptions.Raidlayout == "GRID" then
-								LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetText(string.sub(UnitName(LunaUnitFrames.frames.RaidFrames[i].member[z].id),1,3))
+								LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetText(string.sub(UnitName(LunaUnitFrames.frames.RaidFrames[i].member[z].unit),1,3))
 							else
-								LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetText(UnitName(LunaUnitFrames.frames.RaidFrames[i].member[z].id))
+								LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetText(UnitName(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
 							end
 						else
+							LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetValue(UnitHealth(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
+							LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetValue(UnitMana(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
 							LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetText(missinghp)
 						end
+					else
+						LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetValue(0)
+						LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetValue(0)
+						if LunaOptions.Raidlayout == "GRID" then
+							LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetText("OFF")
+						else
+							LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetText("OFFLINE")
+						end
 					end
-					LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetValue(UnitMana(LunaUnitFrames.frames.RaidFrames[i].member[z].id))
-					LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetMinMaxValues(0, UnitManaMax(LunaUnitFrames.frames.RaidFrames[i].member[z].id))
-					local _, time = LunaUnitFrames.proximity:GetUnitRange(LunaUnitFrames.frames.RaidFrames[i].member[z].id)
+					LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetMinMaxValues(0, UnitManaMax(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
+					LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetMinMaxValues(0, UnitHealthMax(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
+					local _, time = LunaUnitFrames.proximity:GetUnitRange(LunaUnitFrames.frames.RaidFrames[i].member[z].unit)
 					local seen = now - (time or 100)
 					if time and seen < 3 then
 						LunaUnitFrames.frames.RaidFrames[i].member[z]:SetAlpha(1)
@@ -92,35 +103,38 @@ local function UpdateRaidMember()
 		for i=1,8 do
 			for z=1,5 do
 				if LunaUnitFrames.frames.RaidFrames[i].member[z]:IsShown() then
-					LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetValue(UnitHealth(LunaUnitFrames.frames.RaidFrames[i].member[z].id))
-					LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetMinMaxValues(0, UnitHealthMax(LunaUnitFrames.frames.RaidFrames[i].member[z].id))
-					if UnitIsConnected(LunaUnitFrames.frames.RaidFrames[i].member[z].id) then
-						local missinghp = (UnitHealth(LunaUnitFrames.frames.RaidFrames[i].member[z].id)-UnitHealthMax(LunaUnitFrames.frames.RaidFrames[i].member[z].id))
-						if UnitIsDeadOrGhost(LunaUnitFrames.frames.RaidFrames[i].member[z].id) then
+					if UnitIsConnected(LunaUnitFrames.frames.RaidFrames[i].member[z].unit) then
+						local missinghp = (UnitHealth(LunaUnitFrames.frames.RaidFrames[i].member[z].unit)-UnitHealthMax(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
+						if UnitIsDeadOrGhost(LunaUnitFrames.frames.RaidFrames[i].member[z].unit) then
+							LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetValue(0)
 							LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetText("DEAD")
 						elseif missinghp == 0 then
+							LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetValue(UnitHealth(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
+							LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetValue(UnitMana(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
 							if LunaOptions.Raidlayout == "GRID" then
-								LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetText(string.sub(UnitName(LunaUnitFrames.frames.RaidFrames[i].member[z].id),1,3))
+								LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetText(string.sub(UnitName(LunaUnitFrames.frames.RaidFrames[i].member[z].unit),1,3))
 							else
-								LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetText(UnitName(LunaUnitFrames.frames.RaidFrames[i].member[z].id))
+								LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetText(UnitName(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
 							end
 						else
+							LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetValue(UnitHealth(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
+							LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetValue(UnitMana(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
 							LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetText(missinghp)
 						end
+					else
+						LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetValue(0)
+						LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetValue(0)
+						if LunaOptions.Raidlayout == "GRID" then
+							LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetText("OFF")
+						else
+							LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetText("OFFLINE")
+						end
 					end
-					LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetValue(UnitMana(LunaUnitFrames.frames.RaidFrames[i].member[z].id))
-					LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetMinMaxValues(0, UnitManaMax(LunaUnitFrames.frames.RaidFrames[i].member[z].id))
+					LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetMinMaxValues(0, UnitManaMax(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
+					LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetMinMaxValues(0, UnitHealthMax(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
 				end
 			end
 		end
-	end
-end
-
-local function ToggleMemberStatus(event)
-	if event == "PARTY_MEMBER_ENABLE" then
-		this.Name:SetText(UnitName(LunaUnitFrames.frames.RaidFrames[i].member[z].id))
-	else
-		this.Name:SetText("offline")
 	end
 end
 
@@ -145,14 +159,16 @@ function LunaUnitFrames:CreateRaidFrames()
 			LunaUnitFrames.frames.RaidFrames[i].member[z] = CreateFrame("Button", "RaidMember"..(z+(5*(i-1))), UIParent)
 			LunaUnitFrames.frames.RaidFrames[i].member[z]:SetBackdrop(LunaOptions.backdrop)
 			LunaUnitFrames.frames.RaidFrames[i].member[z]:SetBackdropColor(0,0,0,1)
+			LunaUnitFrames.frames.RaidFrames[i].member[z]:RegisterForClicks('LeftButtonUp', 'RightButtonUp')
 			LunaUnitFrames.frames.RaidFrames[i].member[z]:SetScript("OnClick", Luna_Raid_OnClick)
+			LunaUnitFrames.frames.RaidFrames[i].member[z]:SetScript("OnEnter", UnitFrame_OnEnter)
+			LunaUnitFrames.frames.RaidFrames[i].member[z]:SetScript("OnLeave", UnitFrame_OnLeave)
 			LunaUnitFrames.frames.RaidFrames[i].member[z]:RegisterEvent("UNIT_DISPLAYPOWER")
 			LunaUnitFrames.frames.RaidFrames[i].member[z]:RegisterEvent("UNIT_AURA")
-			LunaUnitFrames.frames.RaidFrames[i].member[z]:RegisterEvent("PARTY_MEMBER_ENABLE")
 			LunaUnitFrames.frames.RaidFrames[i].member[z].onEvent = function ()
-																	if this.id == arg1 then
+																	if this.unit == arg1 then
 																		if event == "UNIT_DISPLAYPOWER" then
-																			local power = UnitPowerType(this.id)
+																			local power = UnitPowerType(this.unit)
 																			if power == 1 then
 																				this.PowerBar:SetStatusBarColor(LunaOptions.PowerColors["Rage"][1], LunaOptions.PowerColors["Rage"][2], LunaOptions.PowerColors["Rage"][3])
 																			elseif power == 3 then
@@ -163,14 +179,13 @@ function LunaUnitFrames:CreateRaidFrames()
 																		else
 																			this.Debuff:SetNormalTexture(nil)
 																			for i=1,16 do
-																				local texture, stacks = UnitDebuff(this.id,i,1)
+																				local texture, stacks = UnitDebuff(this.unit,i,1)
 																				if texture then
-																					this.Debuff:SetNormalTexture(texture) -- LunaUnitFrames.frames.RaidFrames[1].member[1].Debuff:SetNormalTexture("Interface\CharacterFrame\Disconnect-Icon")
+																					this.Debuff:SetNormalTexture(texture)
 																					break
 																				end
 																			end
 																		end
-																		ToggleMemberStatus(event)
 																	end
 																end
 			LunaUnitFrames.frames.RaidFrames[i].member[z]:SetScript("OnEvent", LunaUnitFrames.frames.RaidFrames[i].member[z].onEvent)
@@ -189,14 +204,7 @@ function LunaUnitFrames:CreateRaidFrames()
 			
 			LunaUnitFrames.frames.RaidFrames[i].member[z].Debuff = CreateFrame("Button", nil, LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar)
 			LunaUnitFrames.frames.RaidFrames[i].member[z].Debuff:EnableMouse(0)
-			
-			LunaUnitFrames.frames.RaidFrames[i].member[z].connect = LunaUnitFrames.frames.RaidFrames[i].member[z]:CreateTexture(nil, "OVERLAY")
-			LunaUnitFrames.frames.RaidFrames[i].member[z].connect:SetHeight(64)
-			LunaUnitFrames.frames.RaidFrames[i].member[z].connect:SetWidth(64)
-			LunaUnitFrames.frames.RaidFrames[i].member[z].connect:SetPoint("CENTER", LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar, "CENTER", 0, 0)
-			LunaUnitFrames.frames.RaidFrames[i].member[z].connect:SetTexture("Interface\CharacterFrame\Disconnect-Icon")
-		--	LunaUnitFrames.frames.RaidFrames[i].member[z].connect:SetTexCoord(0, 1, 0, 1)
-			
+						
 		end
 	end
 	LunaUnitFrames.frames.RaidFrames[9] = CreateFrame("Frame", "RaidUpdateFrame")
@@ -224,16 +232,11 @@ function LunaUnitFrames:UpdateRaidRoster()
 		for z=1,5 do
 			local num = RAID_SUBGROUP_LISTS[i][z]
 			if num then
-				local name,_,_,_, class,_,_, online = GetRaidRosterInfo(num)
-				if online then
-					LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetText(string.sub(name,1,3))
-				else
-					LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetText("offline")
-				end
-				LunaUnitFrames.frames.RaidFrames[i].member[z].id = "raid"..RAID_SUBGROUP_LISTS[i][z]
+				LunaUnitFrames.frames.RaidFrames[i].member[z].unit = "raid"..num
+				local class = UnitClass(LunaUnitFrames.frames.RaidFrames[i].member[z].unit)
 				local color = LunaOptions.ClassColors[class]
 				LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetStatusBarColor(color[1],color[2],color[3])
-				local power = UnitPowerType(LunaUnitFrames.frames.RaidFrames[i].member[z].id)
+				local power = UnitPowerType(LunaUnitFrames.frames.RaidFrames[i].member[z].unit)
 				if power == 1 then
 					LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetStatusBarColor(LunaOptions.PowerColors["Rage"][1], LunaOptions.PowerColors["Rage"][2], LunaOptions.PowerColors["Rage"][3])
 				elseif power == 3 then
@@ -284,8 +287,8 @@ function LunaUnitFrames:SetRaidFrameSize()
 				LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetHeight(Size*0.125)
 				LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetWidth(Size*3)
 				LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetFont(LunaOptions.font, Size*0.4)
-				LunaUnitFrames.frames.RaidFrames[i].member[z].Debuff:SetHeight(Size*0.5)
-				LunaUnitFrames.frames.RaidFrames[i].member[z].Debuff:SetWidth(Size*0.5)
+				LunaUnitFrames.frames.RaidFrames[i].member[z].Debuff:SetHeight(Size*0.4)
+				LunaUnitFrames.frames.RaidFrames[i].member[z].Debuff:SetWidth(Size*0.4)
 			end
 		end
 	end
@@ -325,7 +328,6 @@ function LunaUnitFrames:UpdateRaidLayout()
 				LunaUnitFrames.frames.RaidFrames[i].member[z].Debuff:SetPoint("CENTER", LunaUnitFrames.frames.RaidFrames[i].member[z], "CENTER")
 			end
 		end
-		LunaUnitFrames.Raidlayout = "Bars"
 	else
 		for i=1, 8 do
 			LunaUnitFrames.frames.RaidFrames[i]:ClearAllPoints()
@@ -345,13 +347,12 @@ function LunaUnitFrames:UpdateRaidLayout()
 				LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetOrientation("HORIZONTAL")
 				LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetPoint("BOTTOMLEFT", LunaUnitFrames.frames.RaidFrames[i].member[z], "BOTTOMLEFT")
 				LunaUnitFrames.frames.RaidFrames[i].member[z].Name:ClearAllPoints()
-				LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetPoint("LEFT", LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar, "LEFT", 2, 0)
+				LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetPoint("TOPLEFT", LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar, "TOPLEFT", 1, 0)
 				LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetFont(LunaOptions.font, Size*0.4)
 				LunaUnitFrames.frames.RaidFrames[i].member[z].Debuff:ClearAllPoints()
-				LunaUnitFrames.frames.RaidFrames[i].member[z].Debuff:SetPoint("TOPLEFT", LunaUnitFrames.frames.RaidFrames[i].member[z], "TOPRIGHT", 2, 0)
+				LunaUnitFrames.frames.RaidFrames[i].member[z].Debuff:SetPoint("TOPRIGHT", LunaUnitFrames.frames.RaidFrames[i].member[z], "TOPRIGHT", 0, 0)
 			end
 		end
-		LunaUnitFrames.Raidlayout = "BARS"
 	end
 	LunaUnitFrames:SetRaidFrameSize()
 end

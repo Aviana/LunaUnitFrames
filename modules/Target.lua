@@ -101,20 +101,6 @@ function LunaUnitFrames:ToggleTargetLock()
 	end
 end
 
-local function AdjustForCP(hasCP)
-	if hasCP == 1 then
-		local frameHeight = LunaTargetFrame:GetHeight()
-		LunaTargetFrame.HealthBar:SetHeight((frameHeight*0.42)-1)
-		LunaTargetFrame.PowerBar:SetHeight(frameHeight-(frameHeight*0.58)-1)
-		LunaTargetFrame.portrait:SetHeight(frameHeight-LunaTargetFrame.cp[1]:GetHeight())
-	else
-		local frameHeight = LunaTargetFrame:GetHeight()
-		LunaTargetFrame.HealthBar:SetHeight(frameHeight*0.58)
-		LunaTargetFrame.PowerBar:SetHeight(frameHeight-(frameHeight*0.58)-1)
-		LunaTargetFrame.portrait:SetHeight(frameHeight)
-	end
-end
-
 function LunaUnitFrames:CreateTargetFrame()
 
 	LunaTargetFrame = CreateFrame("Button", "LunaTargetFrame", UIParent)
@@ -125,7 +111,7 @@ function LunaUnitFrames:CreateTargetFrame()
 	LunaTargetFrame:SetBackdrop(LunaOptions.backdrop)
 	LunaTargetFrame:SetBackdropColor(0,0,0,1)
 	LunaTargetFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", LunaOptions.frames["LunaTargetFrame"].position.x, LunaOptions.frames["LunaTargetFrame"].position.y)
-	LunaTargetFrame:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up')
+	LunaTargetFrame:RegisterForClicks('LeftButtonUp', 'RightButtonUp')
 	LunaTargetFrame.unit = "target"
 	LunaTargetFrame:SetScript("OnEnter", Luna_Target_Tip)
 	LunaTargetFrame:SetScript("OnLeave", UnitFrame_OnLeave)
@@ -134,14 +120,15 @@ function LunaUnitFrames:CreateTargetFrame()
 	LunaTargetFrame:SetScript("OnDragStop", StopMovingOrSizing)
 	LunaTargetFrame:SetClampedToScreen(1)
 
-	LunaTargetFrame.portrait = CreateFrame("PlayerModel", nil, LunaTargetFrame)
-	LunaTargetFrame.portrait:SetScript("OnShow",function() this:SetCamera(0) end)
-	LunaTargetFrame.portrait.type = "3D"
-	LunaTargetFrame.portrait:SetPoint("TOPRIGHT", LunaTargetFrame, "TOPRIGHT", 1, 0)
-	LunaTargetFrame.portrait.side = "right"
+	LunaTargetFrame.bars = {}
+	
+	LunaTargetFrame.bars["Portrait"] = CreateFrame("PlayerModel", nil, LunaTargetFrame)
+	LunaTargetFrame.bars["Portrait"]:SetScript("OnShow",function() this:SetCamera(0) end)
+	LunaTargetFrame.bars["Portrait"].type = "3D"
+	LunaTargetFrame.bars["Portrait"].side = "right"
 
-	LunaTargetFrame.feedbackText = LunaTargetFrame.portrait:CreateFontString(nil, "OVERLAY", "NumberFontNormalHuge")
-	LunaTargetFrame.feedbackText:SetPoint("CENTER", LunaTargetFrame.portrait, "CENTER", 0, 0)
+	LunaTargetFrame.feedbackText = LunaTargetFrame.bars["Portrait"]:CreateFontString(nil, "OVERLAY", "NumberFontNormalHuge")
+	LunaTargetFrame.feedbackText:SetPoint("CENTER", LunaTargetFrame.bars["Portrait"], "CENTER", 0, 0)
 	LunaTargetFrame.feedbackText:SetTextColor(1,1,1)
 	LunaTargetFrame.feedbackFontHeight = 20
 	LunaTargetFrame.feedbackStartTime = 0
@@ -211,97 +198,92 @@ function LunaUnitFrames:CreateTargetFrame()
 	end
 
 	-- Healthbar
-	LunaTargetFrame.HealthBar = CreateFrame("StatusBar", nil, LunaTargetFrame)
-	LunaTargetFrame.HealthBar:SetStatusBarTexture(LunaOptions.statusbartexture)
-	LunaTargetFrame.HealthBar:SetPoint("TOPRIGHT", LunaTargetFrame.portrait, "TOPLEFT", -1, 0)
+	LunaTargetFrame.bars["Healthbar"] = CreateFrame("StatusBar", nil, LunaTargetFrame)
+	LunaTargetFrame.bars["Healthbar"]:SetStatusBarTexture(LunaOptions.statusbartexture)
 
 	-- Healthbar background
-	LunaTargetFrame.HealthBar.hpbg = LunaTargetFrame.HealthBar:CreateTexture(nil, "BORDER")
-	LunaTargetFrame.HealthBar.hpbg:SetAllPoints(LunaTargetFrame.HealthBar)
-	LunaTargetFrame.HealthBar.hpbg:SetTexture(.25,.25,.25, 0.25)
+	LunaTargetFrame.bars["Healthbar"].hpbg = LunaTargetFrame.bars["Healthbar"]:CreateTexture(nil, "BORDER")
+	LunaTargetFrame.bars["Healthbar"].hpbg:SetAllPoints(LunaTargetFrame.bars["Healthbar"])
+	LunaTargetFrame.bars["Healthbar"].hpbg:SetTexture(.25,.25,.25, 0.25)
 
 	-- Healthbar text
-	LunaTargetFrame.HealthBar.hpp = LunaTargetFrame.HealthBar:CreateFontString(nil, "OVERLAY", LunaTargetFrame.HealthBar)
-	LunaTargetFrame.HealthBar.hpp:SetPoint("RIGHT", -2, -1)
-	LunaTargetFrame.HealthBar.hpp:SetFont(LunaOptions.font, LunaOptions.fontHeight)
-	LunaTargetFrame.HealthBar.hpp:SetShadowColor(0, 0, 0)
-	LunaTargetFrame.HealthBar.hpp:SetShadowOffset(0.8, -0.8)
-	LunaTargetFrame.HealthBar.hpp:SetTextColor(1,1,1)
+	LunaTargetFrame.bars["Healthbar"].hpp = LunaTargetFrame.bars["Healthbar"]:CreateFontString(nil, "OVERLAY", LunaTargetFrame.bars["Healthbar"])
+	LunaTargetFrame.bars["Healthbar"].hpp:SetPoint("RIGHT", -2, -1)
+	LunaTargetFrame.bars["Healthbar"].hpp:SetFont(LunaOptions.font, LunaOptions.fontHeight)
+	LunaTargetFrame.bars["Healthbar"].hpp:SetShadowColor(0, 0, 0)
+	LunaTargetFrame.bars["Healthbar"].hpp:SetShadowOffset(0.8, -0.8)
+	LunaTargetFrame.bars["Healthbar"].hpp:SetTextColor(1,1,1)
 
-	LunaTargetFrame.name = LunaTargetFrame.HealthBar:CreateFontString(nil, "OVERLAY", LunaTargetFrame.HealthBar)
+	LunaTargetFrame.name = LunaTargetFrame.bars["Healthbar"]:CreateFontString(nil, "OVERLAY", LunaTargetFrame.bars["Healthbar"])
 	LunaTargetFrame.name:SetPoint("LEFT", 2, -1)
 	LunaTargetFrame.name:SetJustifyH("LEFT")
 	LunaTargetFrame.name:SetFont(LunaOptions.font, LunaOptions.fontHeight)
 	LunaTargetFrame.name:SetShadowColor(0, 0, 0)
 	LunaTargetFrame.name:SetShadowOffset(0.8, -0.8)
 	LunaTargetFrame.name:SetTextColor(1,1,1)
-	LunaTargetFrame.name:SetText(UnitName("target"))
 
 	-- Manabar
-	LunaTargetFrame.PowerBar = CreateFrame("StatusBar", nil, LunaTargetFrame)
-	LunaTargetFrame.PowerBar:SetStatusBarTexture(LunaOptions.statusbartexture)
-	LunaTargetFrame.PowerBar:SetPoint("TOPLEFT", LunaTargetFrame.HealthBar, "BOTTOMLEFT", 0, -1)
+	LunaTargetFrame.bars["Powerbar"] = CreateFrame("StatusBar", nil, LunaTargetFrame)
+	LunaTargetFrame.bars["Powerbar"]:SetStatusBarTexture(LunaOptions.statusbartexture)
 
 	-- Manabar background
-	LunaTargetFrame.PowerBar.ppbg = LunaTargetFrame.PowerBar:CreateTexture(nil, "BORDER")
-	LunaTargetFrame.PowerBar.ppbg:SetAllPoints(LunaTargetFrame.PowerBar)
-	LunaTargetFrame.PowerBar.ppbg:SetTexture(.25,.25,.25)
+	LunaTargetFrame.bars["Powerbar"].ppbg = LunaTargetFrame.bars["Powerbar"]:CreateTexture(nil, "BORDER")
+	LunaTargetFrame.bars["Powerbar"].ppbg:SetAllPoints(LunaTargetFrame.bars["Powerbar"])
+	LunaTargetFrame.bars["Powerbar"].ppbg:SetTexture(.25,.25,.25)
 
-	LunaTargetFrame.PowerBar.ppp = LunaTargetFrame.PowerBar:CreateFontString(nil, "OVERLAY", LunaTargetFrame.PowerBar)
-	LunaTargetFrame.PowerBar.ppp:SetPoint("RIGHT", -2, -1)
-	LunaTargetFrame.PowerBar.ppp:SetFont(LunaOptions.font, LunaOptions.fontHeight)
-	LunaTargetFrame.PowerBar.ppp:SetShadowColor(0, 0, 0)
-	LunaTargetFrame.PowerBar.ppp:SetShadowOffset(0.8, -0.8)
-	LunaTargetFrame.PowerBar.ppp:SetTextColor(1,1,1)
+	LunaTargetFrame.bars["Powerbar"].ppp = LunaTargetFrame.bars["Powerbar"]:CreateFontString(nil, "OVERLAY", LunaTargetFrame.bars["Powerbar"])
+	LunaTargetFrame.bars["Powerbar"].ppp:SetPoint("RIGHT", -2, -1)
+	LunaTargetFrame.bars["Powerbar"].ppp:SetFont(LunaOptions.font, LunaOptions.fontHeight)
+	LunaTargetFrame.bars["Powerbar"].ppp:SetShadowColor(0, 0, 0)
+	LunaTargetFrame.bars["Powerbar"].ppp:SetShadowOffset(0.8, -0.8)
+	LunaTargetFrame.bars["Powerbar"].ppp:SetTextColor(1,1,1)
 
-	LunaTargetFrame.lvl = LunaTargetFrame.PowerBar:CreateFontString(nil, "OVERLAY")
-	LunaTargetFrame.lvl:SetPoint("LEFT", LunaTargetFrame.PowerBar, "LEFT", 2, -1)
+	LunaTargetFrame.lvl = LunaTargetFrame.bars["Powerbar"]:CreateFontString(nil, "OVERLAY")
+	LunaTargetFrame.lvl:SetPoint("LEFT", LunaTargetFrame.bars["Powerbar"], "LEFT", 2, -1)
 	LunaTargetFrame.lvl:SetFont(LunaOptions.font, LunaOptions.fontHeight)
 	LunaTargetFrame.lvl:SetShadowColor(0, 0, 0)
 	LunaTargetFrame.lvl:SetShadowOffset(0.8, -0.8)
-	LunaTargetFrame.lvl:SetText(UnitLevel("target"))
 
-	LunaTargetFrame.class = LunaTargetFrame.PowerBar:CreateFontString(nil, "OVERLAY")
+	LunaTargetFrame.class = LunaTargetFrame.bars["Powerbar"]:CreateFontString(nil, "OVERLAY")
 	LunaTargetFrame.class:SetPoint("LEFT", LunaTargetFrame.lvl, "RIGHT",  1, 0)
 	LunaTargetFrame.class:SetFont(LunaOptions.font, LunaOptions.fontHeight)
 	LunaTargetFrame.class:SetShadowColor(0, 0, 0)
 	LunaTargetFrame.class:SetShadowOffset(0.8, -0.8)
-	LunaTargetFrame.class:SetText(UnitClass("target"))
 
 	LunaTargetFrame.cp = {}
-
+	LunaTargetFrame.bars["Combo Bar"] = CreateFrame("Frame", nil, LunaTargetFrame)
 	for i=1,5 do
-		LunaTargetFrame.cp[i] = CreateFrame("StatusBar", nil, LunaTargetFrame)
+		LunaTargetFrame.cp[i] = CreateFrame("StatusBar", nil, LunaTargetFrame.bars["Combo Bar"])
 		LunaTargetFrame.cp[i]:SetStatusBarTexture(LunaOptions.statusbartexture)
 		LunaTargetFrame.cp[i]:Hide()
 		LunaTargetFrame.cp[i]:SetStatusBarColor(1, 0.80, 0)
 	end
-	LunaTargetFrame.cp[1]:SetPoint("TOPRIGHT", LunaTargetFrame.portrait, "BOTTOMRIGHT",  -1, 0)
+	LunaTargetFrame.cp[1]:SetPoint("TOPRIGHT", LunaTargetFrame.bars["Combo Bar"], "TOPRIGHT")
 	for i=2,5 do
 		LunaTargetFrame.cp[i]:SetPoint("TOPRIGHT", LunaTargetFrame.cp[i-1], "TOPLEFT",  -1, 0)
 	end
 
-	LunaTargetFrame.icon = LunaTargetFrame.portrait:CreateTexture(nil, "OVERLAY")
+	LunaTargetFrame.icon = LunaTargetFrame.bars["Portrait"]:CreateTexture(nil, "OVERLAY")
 	LunaTargetFrame.icon:SetHeight(20)
 	LunaTargetFrame.icon:SetWidth(20)
-	LunaTargetFrame.icon:SetPoint("CENTER", LunaTargetFrame.portrait, "TOPLEFT", 0, 0)
+	LunaTargetFrame.icon:SetPoint("CENTER", LunaTargetFrame.bars["Portrait"], "TOPRIGHT", 0, 0)
 	LunaTargetFrame.icon:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcons")
 
-	LunaTargetFrame.rank = LunaTargetFrame.portrait:CreateTexture(nil, "OVERLAY")
+	LunaTargetFrame.rank = LunaTargetFrame.bars["Portrait"]:CreateTexture(nil, "OVERLAY")
 	LunaTargetFrame.rank:SetHeight(10)
 	LunaTargetFrame.rank:SetWidth(10)
-	LunaTargetFrame.rank:SetPoint("CENTER", LunaTargetFrame.portrait, "BOTTOMRIGHT", -2, 2)
+	LunaTargetFrame.rank:SetPoint("CENTER", LunaTargetFrame.bars["Portrait"], "BOTTOMLEFT", 2, 2)
 
-	LunaTargetFrame.leader = LunaTargetFrame.portrait:CreateTexture(nil, "OVERLAY")
+	LunaTargetFrame.leader = LunaTargetFrame.bars["Portrait"]:CreateTexture(nil, "OVERLAY")
 	LunaTargetFrame.leader:SetHeight(10)
 	LunaTargetFrame.leader:SetWidth(10)
-	LunaTargetFrame.leader:SetPoint("CENTER", LunaTargetFrame.portrait, "TOPRIGHT", -2, -2)
+	LunaTargetFrame.leader:SetPoint("CENTER", LunaTargetFrame.bars["Portrait"], "TOPLEFT", 2, -2)
 	LunaTargetFrame.leader:SetTexture("Interface\\GroupFrame\\UI-Group-LeaderIcon")
 
-	LunaTargetFrame.loot = LunaTargetFrame.portrait:CreateTexture(nil, "OVERLAY")
+	LunaTargetFrame.loot = LunaTargetFrame.bars["Portrait"]:CreateTexture(nil, "OVERLAY")
 	LunaTargetFrame.loot:SetHeight(10)
 	LunaTargetFrame.loot:SetWidth(10)
-	LunaTargetFrame.loot:SetPoint("CENTER", LunaTargetFrame.portrait, "TOPRIGHT", -2, -12)
+	LunaTargetFrame.loot:SetPoint("CENTER", LunaTargetFrame.bars["Portrait"], "TOPLEFT", 2, -12)
 	LunaTargetFrame.loot:SetTexture("Interface\\GroupFrame\\UI-Group-MasterLooter")
 	
 	LunaTargetFrame:Hide()
@@ -330,20 +312,66 @@ function LunaUnitFrames:CreateTargetFrame()
 	LunaTargetFrame:SetScript("OnUpdate", CombatFeedback_OnUpdate)
 	
 	LunaTargetFrame.AdjustBars = function()
+		local comboPoints = GetComboPoints()
 		local frameHeight = LunaTargetFrame:GetHeight()
-		local frameWidth = (LunaTargetFrame:GetWidth()-frameHeight)
-		LunaTargetFrame.portrait:SetHeight(frameHeight+1)
-		LunaTargetFrame.portrait:SetWidth(frameHeight) --square it
-		LunaTargetFrame.HealthBar:SetWidth(frameWidth)
-		LunaTargetFrame.PowerBar:SetWidth(frameWidth)
-		for i=1, 5 do
-			LunaTargetFrame.cp[i]:SetWidth(((frameWidth+frameHeight)/5)-1)
+		local frameWidth
+		local anchor
+		local totalWeight = 0
+		local gaps = -1
+		if ( comboPoints == 0 ) then
+			LunaTargetFrame.bars["Combo Bar"]:Hide()
+		else
+			LunaTargetFrame.bars["Combo Bar"]:Show()
 		end
-		LunaTargetFrame.cp[5]:SetWidth(LunaTargetFrame.cp[5]:GetWidth()+1)
-		LunaTargetFrame.HealthBar:SetHeight(frameHeight*0.58)
-		LunaTargetFrame.PowerBar:SetHeight(frameHeight-(frameHeight*0.58)-1)
+		if LunaOptions.frames["LunaTargetFrame"].portrait > 1 then    -- We have a square portrait
+			frameWidth = (LunaTargetFrame:GetWidth()-frameHeight)
+			LunaTargetFrame.bars["Portrait"]:SetPoint("TOPLEFT", LunaTargetFrame, "TOPLEFT")
+			LunaTargetFrame.bars["Portrait"]:SetHeight(frameHeight)
+			LunaTargetFrame.bars["Portrait"]:SetWidth(frameHeight)
+			anchor = {"TOPLEFT", LunaTargetFrame.bars["Portrait"], "TOPRIGHT"}
+		else
+			frameWidth = LunaTargetFrame:GetWidth()  -- We have a Bar-Portrait or no portrait
+			anchor = {"TOPLEFT", LunaTargetFrame, "TOPLEFT"}
+		end
+		for k,v in pairs(LunaOptions.frames["LunaTargetFrame"].bars) do
+			if LunaTargetFrame.bars[v[1]]:IsShown() then
+				totalWeight = totalWeight + v[2]
+				gaps = gaps + 1
+			end
+		end
+		local firstbar = 1
+		for k,v in pairs(LunaOptions.frames["LunaTargetFrame"].bars) do
+			local bar = v[1]
+			local weight = v[2]/totalWeight
+			local height = (frameHeight-gaps)*weight
+			LunaTargetFrame.bars[bar]:ClearAllPoints()
+			LunaTargetFrame.bars[bar]:SetHeight(height)
+			LunaTargetFrame.bars[bar]:SetWidth(frameWidth)
+			LunaTargetFrame.bars[bar].rank = k
+			LunaTargetFrame.bars[bar].weight = v[2]
+			
+			if not firstbar and LunaTargetFrame.bars[bar]:IsShown() then
+				LunaTargetFrame.bars[bar]:SetPoint(anchor[1], anchor[2], anchor[3], 0, -1)
+				anchor = {"TOPLEFT", LunaTargetFrame.bars[bar], "BOTTOMLEFT"}
+			elseif LunaTargetFrame.bars[bar]:IsShown() then
+				LunaTargetFrame.bars[bar]:SetPoint(anchor[1], anchor[2], anchor[3])
+				firstbar = nil
+				anchor = {"TOPLEFT", LunaTargetFrame.bars[bar], "BOTTOMLEFT"}
+			end			
+		end
 		for i=1, MAX_COMBO_POINTS do
-			LunaTargetFrame.cp[i]:SetHeight(frameHeight*0.15)
+			if i <= comboPoints then
+				LunaTargetFrame.cp[i]:Show()
+			else
+				LunaTargetFrame.cp[i]:Hide()
+			end
+			LunaTargetFrame.cp[i]:SetHeight(LunaTargetFrame.bars["Combo Bar"]:GetHeight())
+			LunaTargetFrame.cp[i]:SetWidth((frameWidth-4)/5)
+		end
+	end
+	for k,v in pairs(LunaOptions.frames["LunaTargetFrame"].bars) do
+		if v[2] == 0 then
+			LunaTargetFrame.bars[v[1]]:Hide()
 		end
 	end
 	LunaTargetFrame.AdjustBars()
@@ -512,19 +540,7 @@ function Luna_Target_Events:UNIT_AURA()
 end
 
 function Luna_Target_Events:PLAYER_COMBO_POINTS()
-	local combopoints = GetComboPoints()
-	if combopoints > 0 then
-		AdjustForCP(1)
-		for i=1,combopoints do
-			LunaTargetFrame.cp[i]:Show()
-		end
-	else
-		AdjustForCP(0)
-		Luna_Target_Events.UNIT_PORTRAIT_UPDATE()
-		for i=1, MAX_COMBO_POINTS do
-			LunaTargetFrame.cp[i]:Hide()
-		end
-	end
+	LunaTargetFrame.AdjustBars()
 end
 
 function Luna_Target_Events:PLAYER_TARGET_CHANGED()
@@ -533,23 +549,31 @@ end
 Luna_Target_Events.UNIT_FACTION = Luna_Target_Events.PLAYER_TARGET_CHANGED
 
 function Luna_Target_Events:UNIT_HEALTH()
-	LunaTargetFrame.HealthBar:SetMinMaxValues(0, UnitHealthMax("target"))
-	LunaTargetFrame.HealthBar:SetValue(UnitHealth("target"))
-	LunaTargetFrame.HealthBar.hpp:SetText(UnitHealth("target").."/"..UnitHealthMax("target"))
-	if (UnitIsDead("target") or UnitIsGhost("target")) then			-- This prevents negative health
-		LunaTargetFrame.HealthBar:SetValue(0)
+	LunaTargetFrame.bars["Healthbar"]:SetMinMaxValues(0, UnitHealthMax("target"))
+	LunaTargetFrame.bars["Healthbar"]:SetValue(UnitHealth("target"))
+	LunaTargetFrame.bars["Healthbar"].hpp:SetText(UnitHealth("target").."/"..UnitHealthMax("target"))
+	if UnitIsDead("target") then			-- This prevents negative health
+		LunaTargetFrame.bars["Healthbar"].hpp:SetText("DEAD")
+		LunaTargetFrame.bars["Healthbar"]:SetValue(0)
+	elseif UnitIsGhost("target") then
+		LunaTargetFrame.bars["Healthbar"].hpp:SetText("GHOST")
+		LunaTargetFrame.bars["Healthbar"]:SetValue(0)
+	elseif not UnitIsConnected("target") then
+		LunaTargetFrame.bars["Healthbar"].hpp:SetText("OFFLINE")
+		LunaTargetFrame.bars["Healthbar"]:SetValue(0)
 	end
 end
 Luna_Target_Events.UNIT_MAXHEALTH = Luna_Target_Events.UNIT_HEALTH;
 
 function Luna_Target_Events:UNIT_MANA()
-	if (UnitIsDead("target") or UnitIsGhost("target")) then
-		LunaTargetFrame.PowerBar:SetValue(0)
-		LunaTargetFrame.PowerBar.ppp:SetText("0/"..UnitManaMax("target"))
+	if (UnitIsDead("target") or UnitIsGhost("target")) or not UnitIsConnected("target") then
+		LunaTargetFrame.bars["Powerbar"]:SetMinMaxValues(0, UnitManaMax("target"))
+		LunaTargetFrame.bars["Powerbar"]:SetValue(0)
+		LunaTargetFrame.bars["Powerbar"].ppp:SetText("0/"..UnitManaMax("target"))
 	else
-		LunaTargetFrame.PowerBar:SetMinMaxValues(0, UnitManaMax("target"))
-		LunaTargetFrame.PowerBar:SetValue(UnitMana("target"))
-		LunaTargetFrame.PowerBar.ppp:SetText(UnitMana("target").."/"..UnitManaMax("target"))
+		LunaTargetFrame.bars["Powerbar"]:SetMinMaxValues(0, UnitManaMax("target"))
+		LunaTargetFrame.bars["Powerbar"]:SetValue(UnitMana("target"))
+		LunaTargetFrame.bars["Powerbar"].ppp:SetText(UnitMana("target").."/"..UnitManaMax("target"))
 	end
 end
 Luna_Target_Events.UNIT_MAXMANA = Luna_Target_Events.UNIT_MANA;
@@ -567,41 +591,26 @@ function LunaUnitFrames:UpdateTargetFrame()
 	local class = UnitClass("target")
 	if UnitIsPlayer("target") then
 		local color = LunaOptions.ClassColors[class]
-		LunaTargetFrame.HealthBar:SetStatusBarColor(color[1],color[2],color[3])
-		LunaTargetFrame.HealthBar.hpbg:SetVertexColor(color[1],color[2],color[3], 0.25)
+		LunaTargetFrame.bars["Healthbar"]:SetStatusBarColor(color[1],color[2],color[3])
+		LunaTargetFrame.bars["Healthbar"].hpbg:SetVertexColor(color[1],color[2],color[3], 0.25)
 	elseif UnitIsTapped("target") and not UnitIsTappedByPlayer("target") then
-		LunaTargetFrame.HealthBar:SetStatusBarColor(0.5, 0.5, 0.5)
-		LunaTargetFrame.HealthBar.hpbg:SetVertexColor(0.5, 0.5, 0.5, 0.25)
+		LunaTargetFrame.bars["Healthbar"]:SetStatusBarColor(0.5, 0.5, 0.5)
+		LunaTargetFrame.bars["Healthbar"].hpbg:SetVertexColor(0.5, 0.5, 0.5, 0.25)
 	else
 		reaction = UnitReaction("target", "player")
 		if reaction and reaction < 4 then
-			LunaTargetFrame.HealthBar:SetStatusBarColor(0.9, 0, 0)
-			LunaTargetFrame.HealthBar.hpbg:SetVertexColor(0.9, 0, 0, 0.25)
+			LunaTargetFrame.bars["Healthbar"]:SetStatusBarColor(0.9, 0, 0)
+			LunaTargetFrame.bars["Healthbar"].hpbg:SetVertexColor(0.9, 0, 0, 0.25)
 		elseif reaction and reaction > 4 then
-			LunaTargetFrame.HealthBar:SetStatusBarColor(0, 0.8, 0)
-			LunaTargetFrame.HealthBar.hpbg:SetVertexColor(0, 0.8, 0, 0.25)
+			LunaTargetFrame.bars["Healthbar"]:SetStatusBarColor(0, 0.8, 0)
+			LunaTargetFrame.bars["Healthbar"].hpbg:SetVertexColor(0, 0.8, 0, 0.25)
 		else
-			LunaTargetFrame.HealthBar:SetStatusBarColor(0.93, 0.93, 0)
-			LunaTargetFrame.HealthBar.hpbg:SetVertexColor(0.93, 0.93, 0, 0.25)
+			LunaTargetFrame.bars["Healthbar"]:SetStatusBarColor(0.93, 0.93, 0)
+			LunaTargetFrame.bars["Healthbar"].hpbg:SetVertexColor(0.93, 0.93, 0, 0.25)
 		end
 	end
-	if (UnitIsDead(LunaTargetFrame.unit) or UnitIsGhost(LunaTargetFrame.unit) or not UnitIsConnected(LunaTargetFrame.unit)) then
-		LunaTargetFrame.HealthBar:SetMinMaxValues(0, UnitHealthMax(LunaTargetFrame.unit))
-		LunaTargetFrame.HealthBar:SetValue(0)
-		LunaTargetFrame.HealthBar.hpp:SetText("0/"..UnitHealthMax(LunaTargetFrame.unit))
-			
-		LunaTargetFrame.PowerBar:SetMinMaxValues(0, UnitManaMax(LunaTargetFrame.unit))
-		LunaTargetFrame.PowerBar:SetValue(0)
-		LunaTargetFrame.PowerBar.ppp:SetText("0/"..UnitManaMax(LunaTargetFrame.unit))
-	else
-		LunaTargetFrame.HealthBar:SetMinMaxValues(0, UnitHealthMax(LunaTargetFrame.unit))
-		LunaTargetFrame.HealthBar:SetValue(UnitHealth(LunaTargetFrame.unit))
-		LunaTargetFrame.HealthBar.hpp:SetText(UnitHealth(LunaTargetFrame.unit).."/"..UnitHealthMax(LunaTargetFrame.unit))
-			
-		LunaTargetFrame.PowerBar:SetMinMaxValues(0, UnitManaMax(LunaTargetFrame.unit))
-		LunaTargetFrame.PowerBar:SetValue(UnitMana(LunaTargetFrame.unit))
-		LunaTargetFrame.PowerBar.ppp:SetText(UnitMana(LunaTargetFrame.unit).."/"..UnitManaMax(LunaTargetFrame.unit))
-	end	
+	Luna_Target_Events.UNIT_HEALTH()
+	Luna_Target_Events.UNIT_MANA()
 	Luna_Target_Events.PLAYER_COMBO_POINTS()
 	Luna_Target_Events.PARTY_LEADER_CHANGED()
 	Luna_Target_Events.UNIT_PORTRAIT_UPDATE()
@@ -649,29 +658,29 @@ function Luna_Target_Events:UNIT_DISPLAYPOWER()
 	local targetpower = UnitPowerType("target")
 	
 	if UnitManaMax("target") == 0 then
-		LunaTargetFrame.PowerBar:SetStatusBarColor(0, 0, 0, .25)
-		LunaTargetFrame.PowerBar.ppbg:SetVertexColor(0, 0, 0, .25)
+		LunaTargetFrame.bars["Powerbar"]:SetStatusBarColor(0, 0, 0, .25)
+		LunaTargetFrame.bars["Powerbar"].ppbg:SetVertexColor(0, 0, 0, .25)
 	elseif targetpower == 1 then
-		LunaTargetFrame.PowerBar:SetStatusBarColor(LunaOptions.PowerColors["Rage"][1], LunaOptions.PowerColors["Rage"][2], LunaOptions.PowerColors["Rage"][3])
-		LunaTargetFrame.PowerBar.ppbg:SetVertexColor(LunaOptions.PowerColors["Rage"][1], LunaOptions.PowerColors["Rage"][2], LunaOptions.PowerColors["Rage"][3], .25)
+		LunaTargetFrame.bars["Powerbar"]:SetStatusBarColor(LunaOptions.PowerColors["Rage"][1], LunaOptions.PowerColors["Rage"][2], LunaOptions.PowerColors["Rage"][3])
+		LunaTargetFrame.bars["Powerbar"].ppbg:SetVertexColor(LunaOptions.PowerColors["Rage"][1], LunaOptions.PowerColors["Rage"][2], LunaOptions.PowerColors["Rage"][3], .25)
 	elseif targetpower == 2 then
-		LunaTargetFrame.PowerBar:SetStatusBarColor(LunaOptions.PowerColors["Focus"][1],LunaOptions.PowerColors["Focus"][2],LunaOptions.PowerColors["Focus"][3])
-		LunaTargetFrame.PowerBar.ppbg:SetVertexColor(LunaOptions.PowerColors["Focus"][1],LunaOptions.PowerColors["Focus"][2],LunaOptions.PowerColors["Focus"][3], 0.25)
+		LunaTargetFrame.bars["Powerbar"]:SetStatusBarColor(LunaOptions.PowerColors["Focus"][1],LunaOptions.PowerColors["Focus"][2],LunaOptions.PowerColors["Focus"][3])
+		LunaTargetFrame.bars["Powerbar"].ppbg:SetVertexColor(LunaOptions.PowerColors["Focus"][1],LunaOptions.PowerColors["Focus"][2],LunaOptions.PowerColors["Focus"][3], 0.25)
 	elseif targetpower == 3 then
-		LunaTargetFrame.PowerBar:SetStatusBarColor(LunaOptions.PowerColors["Energy"][1], LunaOptions.PowerColors["Energy"][2], LunaOptions.PowerColors["Energy"][3])
-		LunaTargetFrame.PowerBar.ppbg:SetVertexColor(LunaOptions.PowerColors["Energy"][1], LunaOptions.PowerColors["Energy"][2], LunaOptions.PowerColors["Energy"][3], .25)
+		LunaTargetFrame.bars["Powerbar"]:SetStatusBarColor(LunaOptions.PowerColors["Energy"][1], LunaOptions.PowerColors["Energy"][2], LunaOptions.PowerColors["Energy"][3])
+		LunaTargetFrame.bars["Powerbar"].ppbg:SetVertexColor(LunaOptions.PowerColors["Energy"][1], LunaOptions.PowerColors["Energy"][2], LunaOptions.PowerColors["Energy"][3], .25)
 	elseif not UnitIsDeadOrGhost("target") then
-		LunaTargetFrame.PowerBar:SetStatusBarColor(LunaOptions.PowerColors["Mana"][1], LunaOptions.PowerColors["Mana"][2], LunaOptions.PowerColors["Mana"][3])
-		LunaTargetFrame.PowerBar.ppbg:SetVertexColor(LunaOptions.PowerColors["Mana"][1], LunaOptions.PowerColors["Mana"][2], LunaOptions.PowerColors["Mana"][3], .25)
+		LunaTargetFrame.bars["Powerbar"]:SetStatusBarColor(LunaOptions.PowerColors["Mana"][1], LunaOptions.PowerColors["Mana"][2], LunaOptions.PowerColors["Mana"][3])
+		LunaTargetFrame.bars["Powerbar"].ppbg:SetVertexColor(LunaOptions.PowerColors["Mana"][1], LunaOptions.PowerColors["Mana"][2], LunaOptions.PowerColors["Mana"][3], .25)
 	else
-		LunaTargetFrame.PowerBar:SetStatusBarColor(0, 0, 0, .25)
-		LunaTargetFrame.PowerBar.ppbg:SetVertexColor(0, 0, 0, .25)
+		LunaTargetFrame.bars["Powerbar"]:SetStatusBarColor(0, 0, 0, .25)
+		LunaTargetFrame.bars["Powerbar"].ppbg:SetVertexColor(0, 0, 0, .25)
 	end
 	Luna_Target_Events.UNIT_MANA()
 end
 
 function Luna_Target_Events:UNIT_PORTRAIT_UPDATE()
-	local portrait = LunaTargetFrame.portrait
+	local portrait = LunaTargetFrame.bars["Portrait"]
 	if(portrait.type == "3D") then
 		if(not UnitExists("target") or not UnitIsConnected("target") or not UnitIsVisible("target")) then
 			portrait:SetModelScale(4.25)
@@ -689,7 +698,7 @@ end
 
 function Luna_Target_Events:UNIT_LEVEL()
 	local lvl = UnitLevel("target")
-	if lvl == -1 then
+	if lvl < 1 then
 		LunaTargetFrame.lvl:SetText("??")
 	else
 		LunaTargetFrame.lvl:SetText(lvl)
