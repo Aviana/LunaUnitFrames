@@ -101,6 +101,28 @@ function LunaUnitFrames:ToggleTargetLock()
 	end
 end
 
+local function SetIconPositions()
+	if LunaOptions.frames["LunaTargetFrame"].portrait == 1 then
+		LunaTargetFrame.RaidIcon:ClearAllPoints()
+		LunaTargetFrame.RaidIcon:SetPoint("CENTER", LunaTargetFrame, "TOP")
+		LunaTargetFrame.PVPRank:ClearAllPoints()
+		LunaTargetFrame.PVPRank:SetPoint("CENTER", LunaTargetFrame, "BOTTOMLEFT", -2, 2)
+		LunaTargetFrame.Leader:ClearAllPoints()
+		LunaTargetFrame.Leader:SetPoint("CENTER", LunaTargetFrame, "TOPLEFT", -1, -2)
+		LunaTargetFrame.Loot:ClearAllPoints()
+		LunaTargetFrame.Loot:SetPoint("CENTER", LunaTargetFrame, "TOPLEFT", -2, -12)
+	else
+		LunaTargetFrame.RaidIcon:ClearAllPoints()
+		LunaTargetFrame.RaidIcon:SetPoint("CENTER", LunaTargetFrame.bars["Portrait"], "TOPRIGHT")
+		LunaTargetFrame.PVPRank:ClearAllPoints()
+		LunaTargetFrame.PVPRank:SetPoint("CENTER", LunaTargetFrame.bars["Portrait"], "BOTTOMLEFT", 2, 2)
+		LunaTargetFrame.Leader:ClearAllPoints()
+		LunaTargetFrame.Leader:SetPoint("CENTER", LunaTargetFrame.bars["Portrait"], "TOPLEFT", 2, -2)
+		LunaTargetFrame.Loot:ClearAllPoints()
+		LunaTargetFrame.Loot:SetPoint("CENTER", LunaTargetFrame.bars["Portrait"], "TOPLEFT", 2, -12)
+	end
+end
+
 function LunaUnitFrames:CreateTargetFrame()
 
 	LunaTargetFrame = CreateFrame("Button", "LunaTargetFrame", UIParent)
@@ -263,28 +285,26 @@ function LunaUnitFrames:CreateTargetFrame()
 		LunaTargetFrame.cp[i]:SetPoint("TOPRIGHT", LunaTargetFrame.cp[i-1], "TOPLEFT",  -1, 0)
 	end
 
-	LunaTargetFrame.icon = LunaTargetFrame.bars["Portrait"]:CreateTexture(nil, "OVERLAY")
-	LunaTargetFrame.icon:SetHeight(20)
-	LunaTargetFrame.icon:SetWidth(20)
-	LunaTargetFrame.icon:SetPoint("CENTER", LunaTargetFrame.bars["Portrait"], "TOPRIGHT", 0, 0)
-	LunaTargetFrame.icon:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcons")
+	LunaTargetFrame.iconholder = CreateFrame("Frame", nil, LunaTargetFrame)
+	
+	LunaTargetFrame.RaidIcon = LunaTargetFrame.iconholder:CreateTexture(nil, "OVERLAY")
+	LunaTargetFrame.RaidIcon:SetHeight(20)
+	LunaTargetFrame.RaidIcon:SetWidth(20)
+	LunaTargetFrame.RaidIcon:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcons")
 
-	LunaTargetFrame.rank = LunaTargetFrame.bars["Portrait"]:CreateTexture(nil, "OVERLAY")
-	LunaTargetFrame.rank:SetHeight(10)
-	LunaTargetFrame.rank:SetWidth(10)
-	LunaTargetFrame.rank:SetPoint("CENTER", LunaTargetFrame.bars["Portrait"], "BOTTOMLEFT", 2, 2)
+	LunaTargetFrame.PVPRank = LunaTargetFrame.iconholder:CreateTexture(nil, "OVERLAY")
+	LunaTargetFrame.PVPRank:SetHeight(10)
+	LunaTargetFrame.PVPRank:SetWidth(10)
 
-	LunaTargetFrame.leader = LunaTargetFrame.bars["Portrait"]:CreateTexture(nil, "OVERLAY")
-	LunaTargetFrame.leader:SetHeight(10)
-	LunaTargetFrame.leader:SetWidth(10)
-	LunaTargetFrame.leader:SetPoint("CENTER", LunaTargetFrame.bars["Portrait"], "TOPLEFT", 2, -2)
-	LunaTargetFrame.leader:SetTexture("Interface\\GroupFrame\\UI-Group-LeaderIcon")
+	LunaTargetFrame.Leader = LunaTargetFrame.iconholder:CreateTexture(nil, "OVERLAY")
+	LunaTargetFrame.Leader:SetHeight(10)
+	LunaTargetFrame.Leader:SetWidth(10)
+	LunaTargetFrame.Leader:SetTexture("Interface\\GroupFrame\\UI-Group-LeaderIcon")
 
-	LunaTargetFrame.loot = LunaTargetFrame.bars["Portrait"]:CreateTexture(nil, "OVERLAY")
-	LunaTargetFrame.loot:SetHeight(10)
-	LunaTargetFrame.loot:SetWidth(10)
-	LunaTargetFrame.loot:SetPoint("CENTER", LunaTargetFrame.bars["Portrait"], "TOPLEFT", 2, -12)
-	LunaTargetFrame.loot:SetTexture("Interface\\GroupFrame\\UI-Group-MasterLooter")
+	LunaTargetFrame.Loot = LunaTargetFrame.iconholder:CreateTexture(nil, "OVERLAY")
+	LunaTargetFrame.Loot:SetHeight(10)
+	LunaTargetFrame.Loot:SetWidth(10)
+	LunaTargetFrame.Loot:SetTexture("Interface\\GroupFrame\\UI-Group-MasterLooter")
 	
 	LunaTargetFrame:Hide()
 	LunaTargetFrame:RegisterEvent("UNIT_HEALTH")
@@ -374,8 +394,32 @@ function LunaUnitFrames:CreateTargetFrame()
 			LunaTargetFrame.bars[v[1]]:Hide()
 		end
 	end
+	SetIconPositions()
 	LunaTargetFrame.AdjustBars()
 	LunaUnitFrames:UpdateTargetBuffLayout()
+end
+
+function LunaUnitFrames:ConvertTargetPortrait()
+	if LunaOptions.frames["LunaTargetFrame"].portrait == 1 then
+		table.insert(LunaOptions.frames["LunaTargetFrame"].bars, 1, {"Portrait", 4})
+	else
+		for k,v in pairs(LunaOptions.frames["LunaTargetFrame"].bars) do
+			if v[1] == "Portrait" then
+				table.remove(LunaOptions.frames["LunaTargetFrame"].bars, k)
+			end
+		end
+	end
+	UIDropDownMenu_SetText("Healthbar", LunaOptionsFrame.pages[3].BarSelect)
+	LunaOptionsFrame.pages[3].barorder:SetMinMaxValues(1,table.getn(LunaOptions.frames["LunaTargetFrame"].bars))
+	for k,v in pairs(LunaOptions.frames["LunaTargetFrame"].bars) do
+		if v[1] == UIDropDownMenu_GetText(LunaOptionsFrame.pages[3].BarSelect) then
+			LunaOptionsFrame.pages[3].barheight:SetValue(v[2])
+			LunaOptionsFrame.pages[3].barorder:SetValue(k)
+			break
+		end
+	end
+	SetIconPositions()
+	LunaTargetFrame.AdjustBars()
 end
 
 function LunaUnitFrames:UpdateTargetBuffLayout()
@@ -479,24 +523,24 @@ function LunaUnitFrames:UpdateTargetBuffSize()
 end
 
 function Luna_Target_Events:PARTY_LOOT_METHOD_CHANGED()
-	local lootmaster;
-	_, lootmaster = GetLootMethod()
-	if lootmaster == 0 and UnitIsUnit("player", "target") then
-		LunaTargetFrame.loot:Show()
-	elseif lootmaster and UnitIsUnit("party"..lootmaster, "target") then
-		LunaTargetFrame.loot:Show()
+	local Lootmaster;
+	_, Lootmaster = GetLootMethod()
+	if Lootmaster == 0 and UnitIsUnit("player", "target") then
+		LunaTargetFrame.Loot:Show()
+	elseif Lootmaster and UnitIsUnit("party"..Lootmaster, "target") then
+		LunaTargetFrame.Loot:Show()
 	else
-		LunaTargetFrame.loot:Hide()
+		LunaTargetFrame.Loot:Hide()
 	end
 end
 
 function Luna_Target_Events:RAID_TARGET_UPDATE()
 	local index = GetRaidTargetIndex("target");
 	if (index) then
-		SetRaidTargetIconTexture(LunaTargetFrame.icon, index);
-		LunaTargetFrame.icon:Show();
+		SetRaidTargetIconTexture(LunaTargetFrame.RaidIcon, index);
+		LunaTargetFrame.RaidIcon:Show();
 	else
-		LunaTargetFrame.icon:Hide();
+		LunaTargetFrame.RaidIcon:Hide();
 	end
 end
 
@@ -625,30 +669,30 @@ function LunaUnitFrames:UpdateTargetFrame()
 		LunaTargetFrame.class:SetText(UnitClass("target"))
 		local rankNumber = UnitPVPRank("target");
 		if (rankNumber == 0) then
-			LunaTargetFrame.rank:Hide();
+			LunaTargetFrame.PVPRank:Hide();
 		elseif (rankNumber < 14) then
 			rankNumber = rankNumber - 4;
-			LunaTargetFrame.rank:SetTexture("Interface\\PvPRankBadges\\PvPRank0"..rankNumber);
-			LunaTargetFrame.rank:Show();
+			LunaTargetFrame.PVPRank:SetTexture("Interface\\PvPRankBadges\\PvPRank0"..rankNumber);
+			LunaTargetFrame.PVPRank:Show();
 		else
 			rankNumber = rankNumber - 4;
-			LunaTargetFrame.rank:SetTexture("Interface\\PvPRankBadges\\PvPRank"..rankNumber);
-			LunaTargetFrame.rank:Show();
+			LunaTargetFrame.PVPRank:SetTexture("Interface\\PvPRankBadges\\PvPRank"..rankNumber);
+			LunaTargetFrame.PVPRank:Show();
 		end
 	elseif UnitClassification("target") == "normal" then
 		LunaTargetFrame.class:SetText(UnitCreatureType("target"))
-		LunaTargetFrame.rank:Hide()
+		LunaTargetFrame.PVPRank:Hide()
 	else
 		LunaTargetFrame.class:SetText(UnitClassification("target").." "..UnitCreatureType("target"))
-		LunaTargetFrame.rank:Hide()
+		LunaTargetFrame.PVPRank:Hide()
 	end
 end
 
 function Luna_Target_Events:PARTY_LEADER_CHANGED()
 	if UnitIsPartyLeader("target") then
-		LunaTargetFrame.leader:Show()
+		LunaTargetFrame.Leader:Show()
 	else
-		LunaTargetFrame.leader:Hide()
+		LunaTargetFrame.Leader:Hide()
 	end
 end
 
@@ -689,7 +733,6 @@ function Luna_Target_Events:UNIT_PORTRAIT_UPDATE()
 		else
 			portrait:SetUnit("target")
 			portrait:SetCamera(0)
-			portrait:Show()
 		end
 	else
 		SetPortraitTexture(portrait, "target")

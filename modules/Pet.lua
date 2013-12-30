@@ -307,6 +307,28 @@ function LunaUnitFrames:CreatePetFrame()
 	LunaUnitFrames:UpdatePetBuffLayout()
 end
 
+function LunaUnitFrames:ConvertPetPortrait()
+	if LunaOptions.frames["LunaPetFrame"].portrait == 1 then
+		table.insert(LunaOptions.frames["LunaPetFrame"].bars, 1, {"Portrait", 4})
+	else
+		for k,v in pairs(LunaOptions.frames["LunaPetFrame"].bars) do
+			if v[1] == "Portrait" then
+				table.remove(LunaOptions.frames["LunaPetFrame"].bars, k)
+			end
+		end
+	end
+	UIDropDownMenu_SetText("Healthbar", LunaOptionsFrame.pages[2].BarSelect)
+	LunaOptionsFrame.pages[2].barorder:SetMinMaxValues(1,table.getn(LunaOptions.frames["LunaPlayerFrame"].bars))
+	for k,v in pairs(LunaOptions.frames["LunaPetFrame"].bars) do
+		if v[1] == UIDropDownMenu_GetText(LunaOptionsFrame.pages[2].BarSelect) then
+			LunaOptionsFrame.pages[2].barheight:SetValue(v[2])
+			LunaOptionsFrame.pages[2].barorder:SetValue(k)
+			break
+		end
+	end
+	LunaPetFrame.AdjustBars()
+end
+
 function LunaUnitFrames:UpdatePetFrame()
 	if not UnitExists("pet") or LunaOptions.frames["LunaPetFrame"].enabled == 0 then
 		LunaPetFrame:Hide()
@@ -588,7 +610,6 @@ function Luna_Pet_Events:UNIT_PORTRAIT_UPDATE()
 			else
 				portrait:SetUnit(arg1)
 				portrait:SetCamera(0)
-				portrait:Show()
 			end
 		else
 			SetPortraitTexture(portrait, arg1)

@@ -112,6 +112,33 @@ function LunaUnitFrames:UpdatePartyPosition()
 	end
 end
 
+local function SetIconPositions()
+	if LunaOptions.frames["LunaPartyFrames"].portrait == 1 then
+		for i=1,4 do
+			LunaPartyFrames[i].icon:ClearAllPoints()
+			LunaPartyFrames[i].icon:SetPoint("CENTER", LunaPartyFrames[i], "TOP")
+			LunaPartyFrames[i].PVPRank:ClearAllPoints()
+			LunaPartyFrames[i].PVPRank:SetPoint("CENTER", LunaPartyFrames[i], "BOTTOMLEFT", -2, 2)
+			LunaPartyFrames[i].Leader:ClearAllPoints()
+			LunaPartyFrames[i].Leader:SetPoint("CENTER", LunaPartyFrames[i], "TOPLEFT", -1, -2)
+			LunaPartyFrames[i].Loot:ClearAllPoints()
+			LunaPartyFrames[i].Loot:SetPoint("CENTER", LunaPartyFrames[i], "TOPLEFT", -2, -12)
+		end
+	else
+		for i=1,4 do
+			LunaPartyFrames[i].icon:ClearAllPoints()
+			LunaPartyFrames[i].icon:SetPoint("CENTER", LunaPartyFrames[i].bars["Portrait"], "TOPRIGHT")
+			LunaPartyFrames[i].PVPRank:ClearAllPoints()
+			LunaPartyFrames[i].PVPRank:SetPoint("CENTER", LunaPartyFrames[i].bars["Portrait"], "BOTTOMLEFT", 2, 2)
+			LunaPartyFrames[i].Leader:ClearAllPoints()
+			LunaPartyFrames[i].Leader:SetPoint("CENTER", LunaPartyFrames[i].bars["Portrait"], "TOPLEFT", 2, -2)
+			LunaPartyFrames[i].Loot:ClearAllPoints()
+			LunaPartyFrames[i].Loot:SetPoint("CENTER", LunaPartyFrames[i].bars["Portrait"], "TOPLEFT", 2, -12)
+		end
+	end
+end
+
+
 function LunaUnitFrames:CreatePartyFrames()
 	for i=1, 4 do
 		LunaPartyFrames[i] = CreateFrame("Button", "LunaPartyFrame"..i, UIParent)
@@ -290,27 +317,25 @@ function LunaUnitFrames:CreatePartyFrames()
 		LunaPartyFrames[i].class:SetShadowOffset(0.8, -0.8)
 		LunaPartyFrames[i].class:SetText(UnitClass("party"..i))
 
-		LunaPartyFrames[i].icon = LunaPartyFrames[i].bars["Portrait"]:CreateTexture(nil, "OVERLAY")
+		LunaPartyFrames[i].iconholder = CreateFrame("Frame", nil, LunaPartyFrames[i])
+		
+		LunaPartyFrames[i].icon = LunaPartyFrames[i].iconholder:CreateTexture(nil, "OVERLAY")
 		LunaPartyFrames[i].icon:SetHeight(20)
 		LunaPartyFrames[i].icon:SetWidth(20)
-		LunaPartyFrames[i].icon:SetPoint("CENTER", LunaPartyFrames[i].bars["Portrait"], "TOPRIGHT", 0, 0)
 		LunaPartyFrames[i].icon:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcons")
 
-		LunaPartyFrames[i].PVPRank = LunaPartyFrames[i].bars["Portrait"]:CreateTexture(nil, "OVERLAY")
+		LunaPartyFrames[i].PVPRank = LunaPartyFrames[i].iconholder:CreateTexture(nil, "OVERLAY")
 		LunaPartyFrames[i].PVPRank:SetHeight(10)
 		LunaPartyFrames[i].PVPRank:SetWidth(10)
-		LunaPartyFrames[i].PVPRank:SetPoint("CENTER", LunaPartyFrames[i].bars["Portrait"], "BOTTOMLEFT", 2, 2)
 
-		LunaPartyFrames[i].Leader = LunaPartyFrames[i].bars["Portrait"]:CreateTexture(nil, "OVERLAY")
+		LunaPartyFrames[i].Leader = LunaPartyFrames[i].iconholder:CreateTexture(nil, "OVERLAY")
 		LunaPartyFrames[i].Leader:SetHeight(10)
 		LunaPartyFrames[i].Leader:SetWidth(10)
-		LunaPartyFrames[i].Leader:SetPoint("CENTER", LunaPartyFrames[i].bars["Portrait"], "TOPLEFT", 2, -2)
 		LunaPartyFrames[i].Leader:SetTexture("Interface\\GroupFrame\\UI-Group-LeaderIcon")
 
-		LunaPartyFrames[i].Loot = LunaPartyFrames[i].bars["Portrait"]:CreateTexture(nil, "OVERLAY")
+		LunaPartyFrames[i].Loot = LunaPartyFrames[i].iconholder:CreateTexture(nil, "OVERLAY")
 		LunaPartyFrames[i].Loot:SetHeight(10)
 		LunaPartyFrames[i].Loot:SetWidth(10)
-		LunaPartyFrames[i].Loot:SetPoint("CENTER", LunaPartyFrames[i].bars["Portrait"], "TOPLEFT", 2, -12)
 		LunaPartyFrames[i].Loot:SetTexture("Interface\\GroupFrame\\UI-Group-MasterLooter")
 		
 		for k,v in pairs(LunaOptions.frames["LunaPartyFrames"].bars) do
@@ -329,11 +354,35 @@ function LunaUnitFrames:CreatePartyFrames()
 		frame:ClearAllPoints()
 		frame:SetPoint("BOTTOMLEFT", UIParent, "TOPLEFT", 0, 50)
 	end
+	SetIconPositions()
 	LunaUnitFrames:UpdatePartyUnitFrameSize()
 	LunaUnitFrames:UpdatePartyPosition()
 	LunaUnitFrames:UpdatePartyFrames()
 	LunaUnitFrames:UpdatePartyBuffLayout()
 	GrpRangeCheck:SetScript("OnUpdate", GrpRangeCheck.onUpdate)
+end
+
+function LunaUnitFrames:ConvertPartyPortraits()
+	if LunaOptions.frames["LunaPartyFrames"].portrait == 1 then
+		table.insert(LunaOptions.frames["LunaPartyFrames"].bars, 1, {"Portrait", 4})
+	else
+		for k,v in pairs(LunaOptions.frames["LunaPartyFrames"].bars) do
+			if v[1] == "Portrait" then
+				table.remove(LunaOptions.frames["LunaPartyFrames"].bars, k)
+			end
+		end
+	end
+	UIDropDownMenu_SetText("Healthbar", LunaOptionsFrame.pages[5].BarSelect)
+	LunaOptionsFrame.pages[5].barorder:SetMinMaxValues(1,table.getn(LunaOptions.frames["LunaPartyFrames"].bars))
+	for k,v in pairs(LunaOptions.frames["LunaPartyFrames"].bars) do
+		if v[1] == UIDropDownMenu_GetText(LunaOptionsFrame.pages[5].BarSelect) then
+			LunaOptionsFrame.pages[5].barheight:SetValue(v[2])
+			LunaOptionsFrame.pages[5].barorder:SetValue(k)
+			break
+		end
+	end
+	SetIconPositions()
+	LunaUnitFrames:UpdatePartyUnitFrameSize()
 end
 
 local function updateBuffs()
@@ -842,7 +891,6 @@ function Luna_Party_Events:UNIT_PORTRAIT_UPDATE()
 			else
 				portrait:SetUnit(arg1)
 				portrait:SetCamera(0)
-				portrait:Show()
 			end
 		else
 			SetPortraitTexture(portrait, arg1)

@@ -277,10 +277,26 @@ function HideBlizzardCastbarToggle()
 end
 
 function PortraitmodeToggle()
-	if LunaOptionsFrame.pages[1].Portraitmode:GetChecked() == 1 then
-		LunaPlayerFrame.portrait.type = "3D"
+	if this:GetChecked() == 1 then
+		LunaOptions.frames[this.frame].portrait = 1
 	else
-		print("Luna Unit Frames: Not yet implemented!")
+		LunaOptions.frames[this.frame].portrait = 2
+		if this.frame == "LunaPartyFrames" then
+			for i=1,4 do
+				LunaPartyFrames[i].bars["Portrait"]:Show()
+			end
+		else
+			getglobal(this.frame).bars["Portrait"]:Show()
+		end
+	end
+	if this.frame == "LunaPlayerFrame" then
+		LunaUnitFrames:ConvertPlayerPortrait()
+	elseif this.frame == "LunaPetFrame" then
+		LunaUnitFrames:ConvertPetPortrait()
+	elseif this.frame == "LunaTargetFrame" then
+		LunaUnitFrames:ConvertTargetPortrait()
+	elseif this.frame == "LunaPartyFrames" then
+		LunaUnitFrames:ConvertPartyPortraits()
 	end
 end
 
@@ -808,14 +824,14 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[1].HideBlizzCast:SetChecked(LunaOptions.hideBlizzCastbar)
 	getglobal("HideBlizzCastText"):SetText("Hide original Blizzard Castbar")
 
-	LunaOptionsFrame.pages[1].Portraitmode = CreateFrame("CheckButton", "Portraitmode", LunaOptionsFrame.pages[1], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[1].Portraitmode = CreateFrame("CheckButton", "PortraitmodePlayer", LunaOptionsFrame.pages[1], "UICheckButtonTemplate")
 	LunaOptionsFrame.pages[1].Portraitmode:SetHeight(20)
 	LunaOptionsFrame.pages[1].Portraitmode:SetWidth(20)
+	LunaOptionsFrame.pages[1].Portraitmode.frame = "LunaPlayerFrame"
 	LunaOptionsFrame.pages[1].Portraitmode:SetPoint("TOPLEFT", LunaOptionsFrame.pages[1].HideBlizzCast, "TOPLEFT", 0, -30)
 	LunaOptionsFrame.pages[1].Portraitmode:SetScript("OnClick", PortraitmodeToggle)
-	LunaOptionsFrame.pages[1].Portraitmode:SetChecked(1)
-	getglobal("PortraitmodeText"):SetText("Enable 3D Portrait")
-	LunaOptionsFrame.pages[1].Portraitmode:Disable()
+	LunaOptionsFrame.pages[1].Portraitmode:SetChecked((LunaOptions.frames["LunaPlayerFrame"].portrait == 1))
+	getglobal("PortraitmodePlayerText"):SetText("Display Portrait as Bar")
 	
 	LunaOptionsFrame.pages[1].EnergyTicker = CreateFrame("CheckButton", "EnergyTicker", LunaOptionsFrame.pages[1], "UICheckButtonTemplate")
 	LunaOptionsFrame.pages[1].EnergyTicker:SetHeight(20)
@@ -890,6 +906,15 @@ function LunaOptionsModule:CreateMenu()
 
 	getglobal("BarSizerText"):SetText("Bar height weight: "..LunaOptionsFrame.pages[1].barheight:GetValue())
 	getglobal("BarOrderSliderText"):SetText("Bar Position: "..LunaOptionsFrame.pages[1].barorder:GetValue())
+	
+	LunaOptionsFrame.pages[2].Portraitmode = CreateFrame("CheckButton", "PortraitmodePet", LunaOptionsFrame.pages[2], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[2].Portraitmode:SetHeight(20)
+	LunaOptionsFrame.pages[2].Portraitmode:SetWidth(20)
+	LunaOptionsFrame.pages[2].Portraitmode.frame = "LunaPetFrame"
+	LunaOptionsFrame.pages[2].Portraitmode:SetPoint("TOPLEFT", LunaOptionsFrame.pages[2].scaleslider, "TOPLEFT", 0, -40)
+	LunaOptionsFrame.pages[2].Portraitmode:SetScript("OnClick", PortraitmodeToggle)
+	LunaOptionsFrame.pages[2].Portraitmode:SetChecked((LunaOptions.frames["LunaPetFrame"].portrait == 1))
+	getglobal("PortraitmodePetText"):SetText("Display Portrait as Bar")
 
 	LunaOptionsFrame.pages[2].BarSelect = CreateFrame("Button", "BarSelector2", LunaOptionsFrame.pages[2], "UIDropDownMenuTemplate")
 	LunaOptionsFrame.pages[2].BarSelect:SetPoint("TOPRIGHT", LunaOptionsFrame.pages[2].BuffPosition, "BOTTOMRIGHT", 0 , -30)
@@ -925,6 +950,15 @@ function LunaOptionsModule:CreateMenu()
 	
 	getglobal("BarSizer2Text"):SetText("Bar height weight: "..LunaOptionsFrame.pages[2].barheight:GetValue())
 	getglobal("BarOrderSlider2Text"):SetText("Bar Position: "..LunaOptionsFrame.pages[2].barorder:GetValue())
+	
+	LunaOptionsFrame.pages[3].Portraitmode = CreateFrame("CheckButton", "PortraitmodeTarget", LunaOptionsFrame.pages[3], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[3].Portraitmode:SetHeight(20)
+	LunaOptionsFrame.pages[3].Portraitmode:SetWidth(20)
+	LunaOptionsFrame.pages[3].Portraitmode.frame = "LunaTargetFrame"
+	LunaOptionsFrame.pages[3].Portraitmode:SetPoint("TOPLEFT", LunaOptionsFrame.pages[3].scaleslider, "TOPLEFT", 0, -40)
+	LunaOptionsFrame.pages[3].Portraitmode:SetScript("OnClick", PortraitmodeToggle)
+	LunaOptionsFrame.pages[3].Portraitmode:SetChecked((LunaOptions.frames["LunaTargetFrame"].portrait == 1))
+	getglobal("PortraitmodeTargetText"):SetText("Display Portrait as Bar")
 
 	LunaOptionsFrame.pages[3].BarSelect = CreateFrame("Button", "BarSelector3", LunaOptionsFrame.pages[3], "UIDropDownMenuTemplate")
 	LunaOptionsFrame.pages[3].BarSelect:SetPoint("TOPRIGHT", LunaOptionsFrame.pages[3].BuffPosition, "BOTTOMRIGHT", 0 , -30)
@@ -1121,7 +1155,7 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[5].spaceslider:SetPoint("TOPLEFT", LunaOptionsFrame.pages[5].scaleslider, "TOPLEFT", 0, -40)
 	LunaOptionsFrame.pages[5].spaceslider:SetValue(LunaOptions.PartySpace)
 	LunaOptionsFrame.pages[5].spaceslider:SetWidth(220)
-	getglobal("SpaceSliderText"):SetText("Party Space between units: "..LunaOptions.PartySpace)
+	getglobal("SpaceSliderText"):SetText("Space between units: "..LunaOptions.PartySpace)
 	
 	LunaOptionsFrame.pages[5].RangeCheck = CreateFrame("CheckButton", "RangeCheck", LunaOptionsFrame.pages[5], "UICheckButtonTemplate")
 	LunaOptionsFrame.pages[5].RangeCheck:SetHeight(20)
@@ -1146,6 +1180,15 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[5].PartyGrowth:SetScript("OnClick", PartyGrowthToggle)
 	LunaOptionsFrame.pages[5].PartyGrowth:SetChecked(LunaOptions.VerticalParty)
 	getglobal("PartyGrowthText"):SetText("Grow Party Frames vertically")
+	
+	LunaOptionsFrame.pages[5].Portraitmode = CreateFrame("CheckButton", "PortraitmodeParty", LunaOptionsFrame.pages[5], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[5].Portraitmode:SetHeight(20)
+	LunaOptionsFrame.pages[5].Portraitmode:SetWidth(20)
+	LunaOptionsFrame.pages[5].Portraitmode.frame = "LunaPartyFrames"
+	LunaOptionsFrame.pages[5].Portraitmode:SetPoint("TOPLEFT", LunaOptionsFrame.pages[5].PartyGrowth, "TOPLEFT", 0, -30)
+	LunaOptionsFrame.pages[5].Portraitmode:SetScript("OnClick", PortraitmodeToggle)
+	LunaOptionsFrame.pages[5].Portraitmode:SetChecked((LunaOptions.frames["LunaPartyFrames"].portrait == 1))
+	getglobal("PortraitmodePartyText"):SetText("Display Portrait as Bar")
 
 	LunaOptionsFrame.pages[7].enable = CreateFrame("CheckButton", "LunaRaidEnableButton", LunaOptionsFrame.pages[7], "UICheckButtonTemplate")
 	LunaOptionsFrame.pages[7].enable:SetPoint("TOPLEFT", LunaOptionsFrame.pages[7], "TOPLEFT", 10, -10)

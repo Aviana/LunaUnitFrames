@@ -140,6 +140,32 @@ local function Luna_Player_OnUpdate()
 	end
 end
 
+local function SetIconPositions()
+	if LunaOptions.frames["LunaPlayerFrame"].portrait == 1 then
+		LunaPlayerFrame.RaidIcon:ClearAllPoints()
+		LunaPlayerFrame.RaidIcon:SetPoint("CENTER", LunaPlayerFrame, "TOP")
+		LunaPlayerFrame.PVPRank:ClearAllPoints()
+		LunaPlayerFrame.PVPRank:SetPoint("CENTER", LunaPlayerFrame, "BOTTOMLEFT", -2, 2)
+		LunaPlayerFrame.Leader:ClearAllPoints()
+		LunaPlayerFrame.Leader:SetPoint("CENTER", LunaPlayerFrame, "TOPLEFT", -1, -2)
+		LunaPlayerFrame.Loot:ClearAllPoints()
+		LunaPlayerFrame.Loot:SetPoint("CENTER", LunaPlayerFrame, "TOPLEFT", -2, -12)
+		LunaPlayerFrame.Combat:ClearAllPoints()
+		LunaPlayerFrame.Combat:SetPoint("CENTER", LunaPlayerFrame, "BOTTOMRIGHT", 2, 2)
+	else
+		LunaPlayerFrame.RaidIcon:ClearAllPoints()
+		LunaPlayerFrame.RaidIcon:SetPoint("CENTER", LunaPlayerFrame.bars["Portrait"], "TOPRIGHT")
+		LunaPlayerFrame.PVPRank:ClearAllPoints()
+		LunaPlayerFrame.PVPRank:SetPoint("CENTER", LunaPlayerFrame.bars["Portrait"], "BOTTOMLEFT", 2, 2)
+		LunaPlayerFrame.Leader:ClearAllPoints()
+		LunaPlayerFrame.Leader:SetPoint("CENTER", LunaPlayerFrame.bars["Portrait"], "TOPLEFT", 2, -2)
+		LunaPlayerFrame.Loot:ClearAllPoints()
+		LunaPlayerFrame.Loot:SetPoint("CENTER", LunaPlayerFrame.bars["Portrait"], "TOPLEFT", 2, -12)
+		LunaPlayerFrame.Combat:ClearAllPoints()
+		LunaPlayerFrame.Combat:SetPoint("CENTER", LunaPlayerFrame.bars["Portrait"], "BOTTOMRIGHT", -2, 2)
+	end
+end
+
 function LunaUnitFrames:CreatePlayerFrame()
 	LunaPlayerFrame = CreateFrame("Button", "LunaPlayerFrame", UIParent)
 
@@ -336,11 +362,6 @@ function LunaUnitFrames:CreatePlayerFrame()
 	Background:SetTexture(0, 0, 1, 0.20)
 	LunaPlayerFrame.bars["Castbar"].bg = Background
 
-	-- Add a spark
-	local Spark = Castbar:CreateTexture(nil, "OVERLAY")
-	Spark:SetBlendMode("ADD")
-	LunaPlayerFrame.bars["Castbar"].Spark = Spark
-
 	-- Add a timer
 	local Time = Castbar:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
 	Time:SetPoint("RIGHT", Castbar)
@@ -351,40 +372,32 @@ function LunaUnitFrames:CreatePlayerFrame()
 	Text:SetPoint("LEFT", Castbar)
 	LunaPlayerFrame.bars["Castbar"].Text = Text
 
-	local icon = LunaPlayerFrame.bars["Portrait"]:CreateTexture(nil, "OVERLAY")
-	icon:SetHeight(20)
-	icon:SetWidth(20)
-	icon:SetPoint("CENTER", LunaPlayerFrame.bars["Portrait"], "TOPRIGHT", 0, 0)
-	icon:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcons")
-	LunaPlayerFrame.RaidIcon = icon
+	LunaPlayerFrame.iconholder = CreateFrame("Frame", nil, LunaPlayerFrame)
+	
+	LunaPlayerFrame.RaidIcon = LunaPlayerFrame.iconholder:CreateTexture(nil, "OVERLAY")
+	LunaPlayerFrame.RaidIcon:SetHeight(20)
+	LunaPlayerFrame.RaidIcon:SetWidth(20)
+	LunaPlayerFrame.RaidIcon:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcons")
 
-	local rank = LunaPlayerFrame.bars["Portrait"]:CreateTexture(nil, "OVERLAY")
-	rank:SetHeight(10)
-	rank:SetWidth(10)
-	rank:SetPoint("CENTER", LunaPlayerFrame.bars["Portrait"], "BOTTOMLEFT", 2, 2)
-	LunaPlayerFrame.PVPRank = rank
+	LunaPlayerFrame.PVPRank = LunaPlayerFrame.iconholder:CreateTexture(nil, "OVERLAY")
+	LunaPlayerFrame.PVPRank:SetHeight(10)
+	LunaPlayerFrame.PVPRank:SetWidth(10)
 
-	local leader = LunaPlayerFrame.bars["Portrait"]:CreateTexture(nil, "OVERLAY")
-	leader:SetHeight(10)
-	leader:SetWidth(10)
-	leader:SetPoint("CENTER", LunaPlayerFrame.bars["Portrait"], "TOPLEFT", 2, -2)
-	leader:SetTexture("Interface\\GroupFrame\\UI-Group-LeaderIcon")
-	LunaPlayerFrame.Leader = leader
+	LunaPlayerFrame.Leader = LunaPlayerFrame.iconholder:CreateTexture(nil, "OVERLAY")
+	LunaPlayerFrame.Leader:SetHeight(10)
+	LunaPlayerFrame.Leader:SetWidth(10)
+	LunaPlayerFrame.Leader:SetTexture("Interface\\GroupFrame\\UI-Group-LeaderIcon")
 
-	local loot = LunaPlayerFrame.bars["Portrait"]:CreateTexture(nil, "OVERLAY")
-	loot:SetHeight(10)
-	loot:SetWidth(10)
-	loot:SetPoint("CENTER", LunaPlayerFrame.bars["Portrait"], "TOPLEFT", 2, -12)
-	loot:SetTexture("Interface\\GroupFrame\\UI-Group-MasterLooter")
-	LunaPlayerFrame.Loot = loot
+	LunaPlayerFrame.Loot = LunaPlayerFrame.iconholder:CreateTexture(nil, "OVERLAY")
+	LunaPlayerFrame.Loot:SetHeight(10)
+	LunaPlayerFrame.Loot:SetWidth(10)
+	LunaPlayerFrame.Loot:SetTexture("Interface\\GroupFrame\\UI-Group-MasterLooter")
 
-	local state = LunaPlayerFrame.bars["Portrait"]:CreateTexture(nil, "OVERLAY")
-	state:SetHeight(14)
-	state:SetWidth(14)
-	state:SetPoint("CENTER", LunaPlayerFrame.bars["Portrait"], "BOTTOMRIGHT", -2, 2)
-	state:SetTexture("Interface\\CharacterFrame\\UI-StateIcon")
-	state:SetTexCoord(0.57, 0.90, 0.08, 0.41)
-	LunaPlayerFrame.Combat = state
+	LunaPlayerFrame.Combat = LunaPlayerFrame.iconholder:CreateTexture(nil, "OVERLAY")
+	LunaPlayerFrame.Combat:SetHeight(14)
+	LunaPlayerFrame.Combat:SetWidth(14)
+	LunaPlayerFrame.Combat:SetTexture("Interface\\CharacterFrame\\UI-StateIcon")
+	LunaPlayerFrame.Combat:SetTexCoord(0.57, 0.90, 0.08, 0.41)
 		
 	-- Registering Shit
 	LunaPlayerFrame:RegisterEvent("UNIT_HEALTH")
@@ -487,6 +500,7 @@ function LunaUnitFrames:CreatePlayerFrame()
 			LunaPlayerFrame.bars[v[1]]:Hide()
 		end
 	end
+	SetIconPositions()
 	LunaPlayerFrame.AdjustBars()
 	LunaUnitFrames:UpdatePlayerBuffLayout()
 	LunaUnitFrames:UpdatePlayerFrame()
@@ -599,6 +613,29 @@ function LunaUnitFrames:UpdatePlayerBuffSize()
 	end	
 end
 
+function LunaUnitFrames:ConvertPlayerPortrait()
+	if LunaOptions.frames["LunaPlayerFrame"].portrait == 1 then
+		table.insert(LunaOptions.frames["LunaPlayerFrame"].bars, 1, {"Portrait", 4})
+	else
+		for k,v in pairs(LunaOptions.frames["LunaPlayerFrame"].bars) do
+			if v[1] == "Portrait" then
+				table.remove(LunaOptions.frames["LunaPlayerFrame"].bars, k)
+			end
+		end
+	end
+	UIDropDownMenu_SetText("Healthbar", LunaOptionsFrame.pages[1].BarSelect)
+	LunaOptionsFrame.pages[1].barorder:SetMinMaxValues(1,table.getn(LunaOptions.frames["LunaPlayerFrame"].bars))
+	for k,v in pairs(LunaOptions.frames["LunaPlayerFrame"].bars) do
+		if v[1] == UIDropDownMenu_GetText(LunaOptionsFrame.pages[1].BarSelect) then
+			LunaOptionsFrame.pages[1].barheight:SetValue(v[2])
+			LunaOptionsFrame.pages[1].barorder:SetValue(k)
+			break
+		end
+	end
+	SetIconPositions()
+	LunaPlayerFrame.AdjustBars()
+end
+
 function LunaUnitFrames:UpdatePlayerFrame()
 	Luna_HideBlizz(PlayerFrame)
 	if LunaOptions.frames["LunaPlayerFrame"].enabled == 0 then
@@ -608,10 +645,6 @@ function LunaUnitFrames:UpdatePlayerFrame()
 		LunaPlayerFrame:Show()
 	end
 	local class = UnitClass("player")
-	local maxHealth = UnitHealthMax("player")
-	local health = UnitHealth("player")
-	local maxMana = UnitManaMax("player")
-	local mana = UnitMana("player")
 	
 	local rankNumber = UnitPVPRank("player");
 	if (rankNumber == 0) then
@@ -626,17 +659,12 @@ function LunaUnitFrames:UpdatePlayerFrame()
 		LunaPlayerFrame.PVPRank:Show();
 	end
 	
-	LunaPlayerFrame.bars["Healthbar"]:SetMinMaxValues(0, maxHealth)
-	LunaPlayerFrame.bars["Healthbar"]:SetValue(health)
-	LunaPlayerFrame.bars["Healthbar"].hpp:SetText(health.."/"..maxHealth)
 	local color = LunaOptions.ClassColors[class]
 	LunaPlayerFrame.bars["Healthbar"]:SetStatusBarColor(color[1],color[2],color[3])
 	LunaPlayerFrame.bars["Healthbar"].hpbg:SetVertexColor(color[1],color[2],color[3], 0.25)
 
-	LunaPlayerFrame.bars["Powerbar"]:SetMinMaxValues(0, maxMana)
-	LunaPlayerFrame.bars["Powerbar"]:SetValue(mana)
-	LunaPlayerFrame.bars["Powerbar"].ppp:SetText(mana.."/"..maxMana)
-	
+	Luna_Player_Events.UNIT_HEALTH()
+	Luna_Player_Events.UNIT_MANA()
 	Luna_Player_Events.PARTY_LEADER_CHANGED()
 	Luna_Player_Events.RAID_TARGET_UPDATE()
 	Luna_Player_Events.UNIT_DISPLAYPOWER()
@@ -809,10 +837,12 @@ end
 
 function Luna_Player_Events:UNIT_HEALTH()
 	LunaPlayerFrame.bars["Healthbar"]:SetMinMaxValues(0, UnitHealthMax("player"))
-	LunaPlayerFrame.bars["Healthbar"]:SetValue(UnitHealth("player"))
-	LunaPlayerFrame.bars["Healthbar"].hpp:SetText(UnitHealth("player").."/"..UnitHealthMax("player"))
 	if (UnitIsDead("player") or UnitIsGhost("player")) then
+		LunaPlayerFrame.bars["Healthbar"].hpp:SetText("DEAD")
 		LunaPlayerFrame.bars["Healthbar"]:SetValue(0)
+	else
+		LunaPlayerFrame.bars["Healthbar"].hpp:SetText(UnitHealth("player").."/"..UnitHealthMax("player"))
+		LunaPlayerFrame.bars["Healthbar"]:SetValue(UnitHealth("player"))
 	end
 end
 Luna_Player_Events.UNIT_MAXHEALTH = Luna_Player_Events.UNIT_HEALTH;
@@ -823,8 +853,13 @@ function Luna_Player_Events:UNIT_MANA()
 	end
 	LunaPlayerFrame.bars["Powerbar"].oldMana = UnitMana("player")
 	LunaPlayerFrame.bars["Powerbar"]:SetMinMaxValues(0, UnitManaMax("player"))
-	LunaPlayerFrame.bars["Powerbar"]:SetValue(UnitMana("player"))
-	LunaPlayerFrame.bars["Powerbar"].ppp:SetText(UnitMana("player").."/"..UnitManaMax("player"))
+	if (UnitIsDead("player") or UnitIsGhost("player")) then
+		LunaPlayerFrame.bars["Powerbar"]:SetValue(0)
+		LunaPlayerFrame.bars["Powerbar"].ppp:SetText("0/"..UnitManaMax("player"))
+	else
+		LunaPlayerFrame.bars["Powerbar"]:SetValue(UnitMana("player"))
+		LunaPlayerFrame.bars["Powerbar"].ppp:SetText(UnitMana("player").."/"..UnitManaMax("player"))
+	end
 end
 Luna_Player_Events.UNIT_MAXMANA = Luna_Player_Events.UNIT_MANA;
 Luna_Player_Events.UNIT_ENERGY = Luna_Player_Events.UNIT_MANA;
@@ -865,7 +900,6 @@ function Luna_Player_Events:UNIT_PORTRAIT_UPDATE()
 		else
 			portrait:SetUnit("player")
 			portrait:SetCamera(0)
-			portrait:Show()
 		end
 	else
 		SetPortraitTexture(portrait, "player")
