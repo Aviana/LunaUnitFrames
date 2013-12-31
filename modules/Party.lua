@@ -344,6 +344,9 @@ function LunaUnitFrames:CreatePartyFrames()
 			end
 		end
 	end
+	
+	ShowPartyFrame = function() end  -- Hide Blizz stuff
+	HidePartyFrame = ShowPartyFrame
 	local frame
 	for num = 1, 4 do
 		frame = getglobal("PartyMemberFrame"..num)
@@ -354,6 +357,8 @@ function LunaUnitFrames:CreatePartyFrames()
 		frame:ClearAllPoints()
 		frame:SetPoint("BOTTOMLEFT", UIParent, "TOPLEFT", 0, 50)
 	end
+	
+	
 	SetIconPositions()
 	LunaUnitFrames:UpdatePartyUnitFrameSize()
 	LunaUnitFrames:UpdatePartyPosition()

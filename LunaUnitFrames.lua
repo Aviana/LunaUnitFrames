@@ -18,8 +18,6 @@ function LunaUnitFrames:OnEvent()
 		LunaUnitFrames:CreateRaidFrames()
 		LunaUnitFrames:CreateXPBar()
 		LunaOptionsModule:CreateMenu()
-	elseif event == "PLAYER_LOGIN" then	
-		
 	elseif event == "RAID_ROSTER_UPDATE" or event == "PLAYER_ENTERING_WORLD" then
 		LunaUnitFrames:UpdateRaidRoster()
 	end
