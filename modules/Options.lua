@@ -173,7 +173,10 @@ local function HeightAdjust()
 	local amount = this:GetValue()
 	if frame then
 		if this.frame == "LunaPartyFrames" then
-			LunaUnitFrames:UpdatePartyFrameSize()
+			for i=1,4 do
+				frame[i]:SetHeight(amount)
+			end
+			LunaUnitFrames:UpdatePartyUnitFrameSize()
 		elseif this.frame == "LunaPartyPetFrames" then
 			for i=1,4 do
 				frame[i]:SetHeight(amount)
@@ -194,10 +197,8 @@ local function WidthAdjust()
 		if this.frame == "LunaPartyFrames" then
 			for i=1,4 do
 				frame[i]:SetWidth(amount)
-				local frameWidth = (frame[i]:GetWidth()-frame[i]:GetHeight())
-				frame[i].HealthBar:SetWidth(frameWidth)
-				frame[i].PowerBar:SetWidth(frameWidth)
 			end
+			LunaUnitFrames:UpdatePartyUnitFrameSize()
 		elseif this.frame == "LunaPartyPetFrames" then
 			for i=1,4 do
 				frame[i]:SetWidth(amount)
