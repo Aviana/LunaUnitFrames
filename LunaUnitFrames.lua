@@ -28,3 +28,18 @@ SLASH_LUF1, SLASH_LUF2, SLASH_LUF3 = "/luf", "/luna", "/lunaunitframes"
 function SlashCmdList.LUF(msg, editbox)
 	LunaOptionsFrame:Show()
 end
+
+SLASH_LUFMO1, SLASH_LUFMO2 = "/lunamo", "/lunamouseover"
+function SlashCmdList.LUFMO(msg, editbox)
+	if GetMouseFocus().unit then
+		if UnitIsUnit("target", GetMouseFocus().unit) then
+			CastSpellByName(msg)
+		else
+			TargetUnit(GetMouseFocus().unit)
+			CastSpellByName(msg)
+			TargetLastTarget()
+		end
+	else 
+		CastSpellByName(msg)
+	end
+end
