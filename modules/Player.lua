@@ -86,20 +86,6 @@ function LunaUnitFrames:TogglePlayerLock()
 		LunaOptionsFrame.Button7:SetText("Lock Frames")
 	end
 end
-
-local function AdjustForCastbar(isCasting)
-	if isCasting == 1 then
-		local frameHeight = LunaPlayerFrame:GetHeight()
-		LunaPlayerFrame.bars["Healthbar"]:SetHeight((frameHeight*0.43)-1)
-		LunaPlayerFrame.bars["Powerbar"]:SetHeight(frameHeight-(frameHeight*0.69))
-		LunaPlayerFrame.bars["Castbar"]:Show()
-	else
-		local frameHeight = LunaPlayerFrame:GetHeight()
-		LunaPlayerFrame.bars["Healthbar"]:SetHeight(frameHeight*0.58)
-		LunaPlayerFrame.bars["Powerbar"]:SetHeight(frameHeight-(frameHeight*0.58)-1)
-		LunaPlayerFrame.bars["Castbar"]:Hide()
-	end
-end
 			
 local function Luna_Player_OnUpdate()
 	local sign
@@ -152,6 +138,8 @@ local function SetIconPositions()
 		LunaPlayerFrame.Loot:SetPoint("CENTER", LunaPlayerFrame, "TOPLEFT", -2, -12)
 		LunaPlayerFrame.Combat:ClearAllPoints()
 		LunaPlayerFrame.Combat:SetPoint("CENTER", LunaPlayerFrame, "BOTTOMRIGHT", 2, 2)
+		LunaPlayerFrame.feedbackText:ClearAllPoints()
+		LunaPlayerFrame.feedbackText:SetPoint("CENTER", LunaPlayerFrame, "CENTER", 0, 0)
 	else
 		LunaPlayerFrame.RaidIcon:ClearAllPoints()
 		LunaPlayerFrame.RaidIcon:SetPoint("CENTER", LunaPlayerFrame.bars["Portrait"], "TOPRIGHT")
@@ -163,6 +151,8 @@ local function SetIconPositions()
 		LunaPlayerFrame.Loot:SetPoint("CENTER", LunaPlayerFrame.bars["Portrait"], "TOPLEFT", 2, -12)
 		LunaPlayerFrame.Combat:ClearAllPoints()
 		LunaPlayerFrame.Combat:SetPoint("CENTER", LunaPlayerFrame.bars["Portrait"], "BOTTOMRIGHT", -2, 2)
+		LunaPlayerFrame.feedbackText:ClearAllPoints()
+		LunaPlayerFrame.feedbackText:SetPoint("CENTER", LunaPlayerFrame.bars["Portrait"], "CENTER", 0, 0)
 	end
 end
 
@@ -190,13 +180,6 @@ function LunaUnitFrames:CreatePlayerFrame()
 	LunaPlayerFrame.bars["Portrait"]:SetScript("OnShow",function() this:SetCamera(0) end)
 	LunaPlayerFrame.bars["Portrait"].type = "3D"
 	LunaPlayerFrame.bars["Portrait"].side = "left"
-
-	LunaPlayerFrame.feedbackText = LunaPlayerFrame.bars["Portrait"]:CreateFontString(nil, "OVERLAY", "NumberFontNormalHuge")
-	LunaPlayerFrame.feedbackText:SetPoint("CENTER", LunaPlayerFrame.bars["Portrait"], "CENTER", 0, 0)
-	LunaPlayerFrame.feedbackText:SetTextColor(1,1,1)
-	LunaPlayerFrame.feedbackFontHeight = 20
-	LunaPlayerFrame.feedbackStartTime = 0
-	
 
 	LunaPlayerFrame.Buffs = {}
 
@@ -374,6 +357,11 @@ function LunaUnitFrames:CreatePlayerFrame()
 
 	LunaPlayerFrame.iconholder = CreateFrame("Frame", nil, LunaPlayerFrame)
 	
+	LunaPlayerFrame.feedbackText = LunaPlayerFrame.iconholder:CreateFontString(nil, "OVERLAY", "NumberFontNormalHuge")
+	LunaPlayerFrame.feedbackText:SetTextColor(1,1,1)
+	LunaPlayerFrame.feedbackFontHeight = 20
+	LunaPlayerFrame.feedbackStartTime = 0
+	
 	LunaPlayerFrame.RaidIcon = LunaPlayerFrame.iconholder:CreateTexture(nil, "OVERLAY")
 	LunaPlayerFrame.RaidIcon:SetHeight(20)
 	LunaPlayerFrame.RaidIcon:SetWidth(20)
@@ -494,6 +482,7 @@ function LunaUnitFrames:CreatePlayerFrame()
 				anchor = {"TOPLEFT", LunaPlayerFrame.bars[bar], "BOTTOMLEFT"}
 			end			
 		end
+		LunaPlayerFrame.bars["Powerbar"].Ticker:SetHeight(LunaPlayerFrame.bars["Powerbar"]:GetHeight())
 	end
 	for k,v in pairs(LunaOptions.frames["LunaPlayerFrame"].bars) do
 		if v[2] == 0 then

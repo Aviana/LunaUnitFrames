@@ -111,6 +111,8 @@ local function SetIconPositions()
 		LunaTargetFrame.Leader:SetPoint("CENTER", LunaTargetFrame, "TOPLEFT", -1, -2)
 		LunaTargetFrame.Loot:ClearAllPoints()
 		LunaTargetFrame.Loot:SetPoint("CENTER", LunaTargetFrame, "TOPLEFT", -2, -12)
+		LunaTargetFrame.feedbackText:ClearAllPoints()
+		LunaTargetFrame.feedbackText:SetPoint("CENTER", LunaTargetFrame, "CENTER", 0, 0)
 	else
 		LunaTargetFrame.RaidIcon:ClearAllPoints()
 		LunaTargetFrame.RaidIcon:SetPoint("CENTER", LunaTargetFrame.bars["Portrait"], "TOPRIGHT")
@@ -120,6 +122,40 @@ local function SetIconPositions()
 		LunaTargetFrame.Leader:SetPoint("CENTER", LunaTargetFrame.bars["Portrait"], "TOPLEFT", 2, -2)
 		LunaTargetFrame.Loot:ClearAllPoints()
 		LunaTargetFrame.Loot:SetPoint("CENTER", LunaTargetFrame.bars["Portrait"], "TOPLEFT", 2, -12)
+		LunaTargetFrame.feedbackText:ClearAllPoints()
+		LunaTargetFrame.feedbackText:SetPoint("CENTER", LunaTargetFrame.bars["Portrait"], "CENTER", 0, 0)
+	end
+end
+
+local function Castbar_OnUpdate()
+	local sign
+	local current_time = LunaTargetFrame.bars["Castbar"].maxValue - GetTime()
+	if (LunaTargetFrame.bars["Castbar"].channeling) then
+		current_time = LunaTargetFrame.bars["Castbar"].endTime - GetTime()
+	end
+	local text = string.sub(math.max(current_time,0)+0.001,1,4)
+	LunaTargetFrame.bars["Castbar"].Time:SetText(text)
+	
+	if (LunaTargetFrame.bars["Castbar"].casting) then
+		local status = GetTime()
+		if (status > LunaTargetFrame.bars["Castbar"].maxValue) then
+			status = LunaTargetFrame.bars["Castbar"].maxValue
+			LunaTargetFrame.bars["Castbar"].casting = nil
+			LunaTargetFrame.AdjustBars()
+		end
+		LunaTargetFrame.bars["Castbar"]:SetValue(status)
+	elseif (LunaTargetFrame.bars["Castbar"].channeling) then
+		local time = GetTime()
+		if (time > LunaTargetFrame.bars["Castbar"].endTime) then
+			time = LunaTargetFrame.bars["Castbar"].endTime
+		end
+		if (time == LunaTargetFrame.bars["Castbar"].endTime) then
+			LunaTargetFrame.bars["Castbar"].channeling = nil
+			LunaTargetFrame.AdjustBars()
+			return
+		end
+		local barValue = LunaTargetFrame.bars["Castbar"].startTime + (LunaTargetFrame.bars["Castbar"].endTime - time)
+		LunaTargetFrame.bars["Castbar"]:SetValue(barValue)
 	end
 end
 
@@ -148,12 +184,6 @@ function LunaUnitFrames:CreateTargetFrame()
 	LunaTargetFrame.bars["Portrait"]:SetScript("OnShow",function() this:SetCamera(0) end)
 	LunaTargetFrame.bars["Portrait"].type = "3D"
 	LunaTargetFrame.bars["Portrait"].side = "right"
-
-	LunaTargetFrame.feedbackText = LunaTargetFrame.bars["Portrait"]:CreateFontString(nil, "OVERLAY", "NumberFontNormalHuge")
-	LunaTargetFrame.feedbackText:SetPoint("CENTER", LunaTargetFrame.bars["Portrait"], "CENTER", 0, 0)
-	LunaTargetFrame.feedbackText:SetTextColor(1,1,1)
-	LunaTargetFrame.feedbackFontHeight = 20
-	LunaTargetFrame.feedbackStartTime = 0
 
 	LunaTargetFrame.Buffs = {}
 
@@ -272,6 +302,32 @@ function LunaUnitFrames:CreateTargetFrame()
 	LunaTargetFrame.class:SetShadowColor(0, 0, 0)
 	LunaTargetFrame.class:SetShadowOffset(0.8, -0.8)
 
+	-- Castbar
+	local Castbar = CreateFrame("StatusBar", nil, LunaTargetFrame)
+	Castbar:SetStatusBarTexture(LunaOptions.statusbartexture)
+	Castbar:SetStatusBarColor(1, 0.7, 0.3)
+	LunaTargetFrame.bars["Castbar"] = Castbar
+	LunaTargetFrame.bars["Castbar"].maxValue = 0
+	LunaTargetFrame.bars["Castbar"].casting = nil
+	LunaTargetFrame.bars["Castbar"].channeling = nil
+	LunaTargetFrame.bars["Castbar"]:Hide()
+
+	-- Add a background
+	local Background = Castbar:CreateTexture(nil, 'BACKGROUND')
+	Background:SetAllPoints(Castbar)
+	Background:SetTexture(0, 0, 1, 0.20)
+	LunaTargetFrame.bars["Castbar"].bg = Background
+
+	-- Add a timer
+	local Time = Castbar:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+	Time:SetPoint("RIGHT", Castbar)
+	LunaTargetFrame.bars["Castbar"].Time = Time
+
+	-- Add spell text
+	local Text = Castbar:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+	Text:SetPoint("LEFT", Castbar)
+	LunaTargetFrame.bars["Castbar"].Text = Text
+	
 	LunaTargetFrame.cp = {}
 	LunaTargetFrame.bars["Combo Bar"] = CreateFrame("Frame", nil, LunaTargetFrame)
 	for i=1,5 do
@@ -286,6 +342,11 @@ function LunaUnitFrames:CreateTargetFrame()
 	end
 
 	LunaTargetFrame.iconholder = CreateFrame("Frame", nil, LunaTargetFrame)
+	
+	LunaTargetFrame.feedbackText = LunaTargetFrame.iconholder:CreateFontString(nil, "OVERLAY", "NumberFontNormalHuge")
+	LunaTargetFrame.feedbackText:SetTextColor(1,1,1)
+	LunaTargetFrame.feedbackFontHeight = 20
+	LunaTargetFrame.feedbackStartTime = 0
 	
 	LunaTargetFrame.RaidIcon = LunaTargetFrame.iconholder:CreateTexture(nil, "OVERLAY")
 	LunaTargetFrame.RaidIcon:SetHeight(20)
@@ -330,6 +391,7 @@ function LunaUnitFrames:CreateTargetFrame()
 	LunaTargetFrame:SetScript("OnClick", Luna_Target_OnClick)
 	LunaTargetFrame:SetScript("OnEvent", Luna_Target_OnEvent)
 	LunaTargetFrame:SetScript("OnUpdate", CombatFeedback_OnUpdate)
+	LunaTargetFrame.bars["Castbar"]:SetScript("OnUpdate", Castbar_OnUpdate)
 	
 	LunaTargetFrame.AdjustBars = function()
 		local comboPoints = GetComboPoints()
@@ -338,6 +400,11 @@ function LunaUnitFrames:CreateTargetFrame()
 		local anchor
 		local totalWeight = 0
 		local gaps = -1
+		if LunaTargetFrame.bars["Castbar"].casting or LunaTargetFrame.bars["Castbar"].channeling then
+			LunaTargetFrame.bars["Castbar"]:Show()
+		else
+			LunaTargetFrame.bars["Castbar"]:Hide()
+		end
 		if ( comboPoints == 0 ) then
 			LunaTargetFrame.bars["Combo Bar"]:Hide()
 		else
@@ -399,6 +466,35 @@ function LunaUnitFrames:CreateTargetFrame()
 	LunaUnitFrames:UpdateTargetBuffLayout()
 end
 
+function LunaUnitFrames:StartTargetCast(start, spell, dur, isChannel)
+	if (start+dur) > GetTime() then
+		if isChannel then
+			LunaTargetFrame.bars["Castbar"].maxValue = 1
+			LunaTargetFrame.bars["Castbar"].endTime = (start + dur)
+			LunaTargetFrame.bars["Castbar"].duration = dur
+			LunaTargetFrame.bars["Castbar"]:SetMinMaxValues(start, LunaTargetFrame.bars["Castbar"].endTime)
+			LunaTargetFrame.bars["Castbar"]:SetValue(LunaTargetFrame.bars["Castbar"].endTime)
+			LunaTargetFrame.bars["Castbar"].casting = nil
+			LunaTargetFrame.bars["Castbar"].channeling = 1	
+		else
+			LunaTargetFrame.bars["Castbar"].maxValue = (start + dur)
+			LunaTargetFrame.bars["Castbar"].casting = 1
+			LunaTargetFrame.bars["Castbar"].channeling = nil
+			LunaTargetFrame.bars["Castbar"]:SetMinMaxValues(start, LunaTargetFrame.bars["Castbar"].maxValue)
+			LunaTargetFrame.bars["Castbar"]:SetValue(start)
+		end
+		LunaTargetFrame.bars["Castbar"].startTime = start
+		LunaTargetFrame.bars["Castbar"].Text:SetText(spell)
+		LunaTargetFrame.AdjustBars()
+	end
+end
+
+function LunaUnitFrames:StopTargetCast()
+	LunaTargetFrame.bars["Castbar"].casting = nil
+	LunaTargetFrame.bars["Castbar"].channeling = nil
+	LunaTargetFrame.AdjustBars()
+end
+	
 function LunaUnitFrames:ConvertTargetPortrait()
 	if LunaOptions.frames["LunaTargetFrame"].portrait == 1 then
 		table.insert(LunaOptions.frames["LunaTargetFrame"].bars, 1, {"Portrait", 4})

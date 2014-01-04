@@ -19,4 +19,5 @@ modules\PartyPet.lua
 modules\Raid.lua
 modules\SwingBar.lua
 modules\ExperienceBar.lua
+modules\Enemycastbar.lua
 modules\Options.lua
