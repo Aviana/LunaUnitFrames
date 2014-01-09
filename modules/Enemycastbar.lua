@@ -137,10 +137,10 @@ EnemyCastBar_Spells = {
 	["Mind Control"] = {t=3.0};
 	["Mana Burn"] = {t=2.5};
 	["Holy Fire"] = {t=3.0, d=15.0};
-	["Mind Soothe"] = {t=1.5};
+	["Mind Soothe"] = {t=0};
 	["Prayer of Healing"] = {t=3.0};
 	["Shackle Undead"] = {t=1.5};
-	["Fade"] = {t=10.0, c="gains", d=30.0};
+	["Fade"] = {t=0};
 	["Psychic Scream"] = {t=0.0};
 	["Silence"] = {t=0.0, ni = 1};
 	["Blackout"] = {t=0.0};
@@ -241,10 +241,24 @@ EnemyCastBar_Raids = {
 		
 }
 
+EnemyCastBar_NonAfflictions = {
+	["Frostbolt"] = true;
+	["Fireball"] = true;
+	["Pyroblast"] = true;
+	["Entangling Roots"] = true;
+	["Soothe Animal"] = true;
+	["Mind Soothe"] = true;
+	["Immolate"] = true;
+	["Corruption"] = true;
+	["Regrowth"] = true;
+	["Mind Control"] = true;
+	["Holy Fire"] = true;
+}
+	
+
 EnemyCastBar_SPELL_GAINS 				= "(.+) gains (.+)."
 EnemyCastBar_SPELL_CAST 				= "(.+) begins to cast (.+)."
 EnemyCastBar_SPELL_PERFORM				= "(.+) begins to perform (.+)."
-EnemyCastBar_SPELL_CASTS				= "(.+) casts (.+)."
 EnemyCastBar_SPELL_AFFLICTED			= "(.+) (.+) afflicted by (.+).";
 
 
@@ -297,6 +311,7 @@ function EnemyCastBar_Gfind(arg1)
 			EnemyCastBar_Control(mob, spell, "gains")
 			return
 		end
+
 		for mob, crap, spell in string.gfind(arg1, EnemyCastBar_SPELL_AFFLICTED) do
 			EnemyCastBar_Control(mob, spell, "afflicted")
 			return
@@ -305,38 +320,36 @@ function EnemyCastBar_Gfind(arg1)
 end
 
 function EnemyCastBar_Control(mob, spell, special)
-	--DEFAULT_CHAT_FRAME:AddMessage("ECB Control - "..mob.." ("..spell..")");
-	if (EnemyCastBar_Raids[spell] ~= nil) then
+	if EnemyCastBar_Raids[spell] ~= nil then
 		castime = EnemyCastBar_Raids[spell].t
 		-- Spell might have the same name but a different cast time on another mob, ie. Onyxia/Nefarian on Bellowing Roar
-		if (EnemyCastBar_Raids[spell].r) then
+		if EnemyCastBar_Raids[spell].r then
 			if (mob == EnemyCastBar_Raids[spell].r) then
 				castime = EnemyCastBar_Raids[spell].a
 			end
 		end
-		if (EnemyCastBar_Raids[spell].m) then
+		if EnemyCastBar_Raids[spell].m then
 			mob = EnemyCastBar_Raids[spell].m
 		end
 		EnemyCastBar_Show(mob, spell, castime)
 	else
-		if (EnemyCastBar_Spells[spell] ~= nil) then
-			if (special == "afflicted") then
-				if spell ~= "Frostbolt" and spell ~= "Fireball" then
+		if EnemyCastBar_Spells[spell] ~= nil then
+			if special == "afflicted" then
+				if not EnemyCastBar_NonAfflictions[spell] then
 					EnemyCastBar_Hide(mob, spell)
 				end
 				return
 			end
-			if (EnemyCastBar_Spells[spell].i ~= nil) then
-				castime = EnemyCastBar_Spells[spell].i
-				EnemyCastBar_Show(mob, spell, castime)
-			end
 			castime = EnemyCastBar_Spells[spell].t
-			if (special == "gains") then
-				EnemyCastBar_Hide(mob, spell)
+			if special == "gains" then
+				if not EnemyCastBar_NonAfflictions[spell] then
+					EnemyCastBar_Hide(mob, spell)
+				end
+				return
 			end
 			-- Spell might have the same name but a different cast time on another mob, ie. Death Talon Hatchers/Players on Bellowing Roar
-			if (EnemyCastBar_Spells[spell].r) then
-				if (mob == EnemyCastBar_Spells[spell].r) then
+			if EnemyCastBar_Spells[spell].r then
+				if mob == EnemyCastBar_Spells[spell].r then
 					castime = EnemyCastBar_Spells[spell].a
 				end
 			end
