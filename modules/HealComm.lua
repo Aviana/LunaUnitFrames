@@ -620,7 +620,11 @@ end
 LunaUnitFrames.HealComm.OnEvent = function()
 	if ( event == "SPELLCAST_START" ) then
 		if ( luna_SpellCast and luna_SpellCast[1] == arg1 and LunaUnitFrames.HealComm.Spells[arg1] ) then
-			local Bonus = tonumber(BonusScanner:GetBonus("HEAL"))
+			if BonusScanner then
+				local Bonus = tonumber(BonusScanner:GetBonus("HEAL"))
+			else
+				local Bonus = 0
+			end
 			local zone = GetRealZoneText()
 			if zone == "Warsong Gulch" or zone == "Arathi Basin" or zone == "Alterac Valley" then
 				SendAddonMessage( "LunaComm", "Heal/"..luna_SpellCast[3].."/"..math.floor(LunaUnitFrames.HealComm.Spells[luna_SpellCast[1]][tonumber(luna_SpellCast[2])](Bonus)).."/"..arg2.."/", "BATTLEGROUND" )
