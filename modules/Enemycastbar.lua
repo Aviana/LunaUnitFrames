@@ -253,6 +253,7 @@ EnemyCastBar_NonAfflictions = {
 	["Regrowth"] = true;
 	["Mind Control"] = true;
 	["Holy Fire"] = true;
+	["Greater Heal"] = true;
 }
 	
 

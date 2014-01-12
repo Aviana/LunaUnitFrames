@@ -173,6 +173,7 @@ function LunaUnitFrames:CreatePlayerFrame()
 	LunaPlayerFrame:RegisterForDrag("LeftButton")
 	LunaPlayerFrame:SetScript("OnDragStop", StopMovingOrSizing)
 	LunaPlayerFrame:SetClampedToScreen(1)
+	LunaPlayerFrame:SetFrameStrata("BACKGROUND")
 
 	LunaPlayerFrame.bars = {}
 	
@@ -249,12 +250,22 @@ function LunaUnitFrames:CreatePlayerFrame()
 	-- Healthbar
 	local hp = CreateFrame("StatusBar", nil, LunaPlayerFrame)
 	hp:SetStatusBarTexture(LunaOptions.statusbartexture)
+	hp:SetFrameStrata("MEDIUM")
 	LunaPlayerFrame.bars["Healthbar"] = hp
+	
+	local incHeal = CreateFrame("StatusBar", nil, LunaPlayerFrame)
+	incHeal:SetFrameStrata("LOW")
+	incHeal:SetStatusBarTexture(LunaOptions.statusbartexture)
+	incHeal:SetPoint("TOPLEFT", LunaPlayerFrame.bars["Healthbar"], "TOPLEFT")
+	incHeal:SetValue(0)
+	incHeal:SetStatusBarColor(0, 1, 0, 0.6)
+	incHeal.healvalue = 0
+	LunaPlayerFrame.incHeal = incHeal
 
 	-- Healthbar background
-	local hpbg = hp:CreateTexture(nil, "BORDER")
+	local hpbg = LunaPlayerFrame:CreateTexture(nil, "BACKGROUND")
 	hpbg:SetAllPoints(hp)
-	hpbg:SetTexture(.25,.25,.25)
+	hpbg:SetTexture(.25,.25,.25,.25)
 	LunaPlayerFrame.bars["Healthbar"].hpbg = hpbg
 
 	-- Healthbar text
@@ -293,7 +304,7 @@ function LunaUnitFrames:CreatePlayerFrame()
 	-- Manabar background
 	local ppbg = pp:CreateTexture(nil, "BORDER")
 	ppbg:SetAllPoints(pp)
-	ppbg:SetTexture(.25,.25,.25)
+	ppbg:SetTexture(.25,.25,.25,.25)
 	LunaPlayerFrame.bars["Powerbar"].ppbg = ppbg
 
 	local ppp = pp:CreateFontString(nil, "OVERLAY", pp)
@@ -356,6 +367,7 @@ function LunaUnitFrames:CreatePlayerFrame()
 	LunaPlayerFrame.bars["Castbar"].Text = Text
 
 	LunaPlayerFrame.iconholder = CreateFrame("Frame", nil, LunaPlayerFrame)
+	LunaPlayerFrame.iconholder:SetFrameStrata("MEDIUM")
 	
 	LunaPlayerFrame.feedbackText = LunaPlayerFrame.iconholder:CreateFontString(nil, "OVERLAY", "NumberFontNormalHuge")
 	LunaPlayerFrame.feedbackText:SetTextColor(1,1,1)
@@ -449,7 +461,7 @@ function LunaUnitFrames:CreatePlayerFrame()
 		if LunaOptions.frames["LunaPlayerFrame"].portrait > 1 then    -- We have a square portrait
 			frameWidth = (LunaPlayerFrame:GetWidth()-frameHeight)
 			LunaPlayerFrame.bars["Portrait"]:SetPoint("TOPLEFT", LunaPlayerFrame, "TOPLEFT")
-			LunaPlayerFrame.bars["Portrait"]:SetHeight(frameHeight)
+			LunaPlayerFrame.bars["Portrait"]:SetHeight(frameHeight+1)
 			LunaPlayerFrame.bars["Portrait"]:SetWidth(frameHeight)
 			anchor = {"TOPLEFT", LunaPlayerFrame.bars["Portrait"], "TOPRIGHT"}
 		else
@@ -482,6 +494,8 @@ function LunaUnitFrames:CreatePlayerFrame()
 				anchor = {"TOPLEFT", LunaPlayerFrame.bars[bar], "BOTTOMLEFT"}
 			end			
 		end
+		LunaPlayerFrame.incHeal:SetHeight(LunaPlayerFrame.bars["Healthbar"]:GetHeight())
+		LunaPlayerFrame.incHeal:SetWidth(LunaPlayerFrame.bars["Healthbar"]:GetWidth()*1.2)
 		LunaPlayerFrame.bars["Powerbar"].Ticker:SetHeight(LunaPlayerFrame.bars["Powerbar"]:GetHeight())
 	end
 	for k,v in pairs(LunaOptions.frames["LunaPlayerFrame"].bars) do
@@ -493,6 +507,17 @@ function LunaUnitFrames:CreatePlayerFrame()
 	LunaPlayerFrame.AdjustBars()
 	LunaUnitFrames:UpdatePlayerBuffLayout()
 	LunaUnitFrames:UpdatePlayerFrame()
+end
+
+function LunaUnitFrames:PlayerUpdateHeal()
+	local healamount = 0
+	if LunaUnitFrames.HealComm.Heals[UnitName("player")] then
+		for k,v in LunaUnitFrames.HealComm.Heals[UnitName("player")] do
+			healamount = healamount+v.amount
+		end
+	end
+	LunaPlayerFrame.incHeal.healvalue = healamount
+	Luna_Player_Events.UNIT_HEALTH()
 end
 
 function LunaUnitFrames:UpdatePlayerBuffLayout()
@@ -825,6 +850,8 @@ function Luna_Player_Events:RAID_TARGET_UPDATE()
 end
 
 function Luna_Player_Events:UNIT_HEALTH()
+	LunaPlayerFrame.incHeal:SetMinMaxValues(0, UnitHealthMax("player")*1.2)
+	LunaPlayerFrame.incHeal:SetValue(UnitHealth("player")+LunaPlayerFrame.incHeal.healvalue)
 	LunaPlayerFrame.bars["Healthbar"]:SetMinMaxValues(0, UnitHealthMax("player"))
 	if (UnitIsDead("player") or UnitIsGhost("player")) then
 		LunaPlayerFrame.bars["Healthbar"].hpp:SetText("DEAD")

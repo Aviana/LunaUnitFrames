@@ -1,3 +1,4 @@
+local banzai = AceLibrary("Banzai-1.0")
 local RangeTime = 0
 LunaUnitFrames.frames.RaidFrames = {}
 
@@ -35,6 +36,32 @@ local function StopMovingOrSizing()
 	end
 end
 
+local function getHeal(unit)
+	local healamount = 0
+	if LunaUnitFrames.HealComm.Heals[unit] then
+		for k,v in LunaUnitFrames.HealComm.Heals[unit] do
+			healamount = healamount+v.amount
+		end
+		return healamount
+	else
+		return 0
+	end
+end
+
+local function UnitisResurrecting(unit)
+	local resstime
+	if LunaUnitFrames.HealComm.pendingResurrections[unit] then
+		for k,v in pairs(LunaUnitFrames.HealComm.pendingResurrections[unit]) do
+			if v < GetTime() then
+				LunaUnitFrames.HealComm.pendingResurrections[unit][k] = nil
+			elseif not resstime or resstime > v then
+				resstime = v
+			end
+		end
+	end
+	return resstime
+end
+
 function LunaUnitFrames:ToggleRaidFrameLock()
 	if LunaUnitFrames.frames.RaidFrames[1]:IsMovable() then
 		for i=1,8 do
@@ -60,35 +87,63 @@ local function UpdateRaidMember()
 		for i=1,8 do
 			for z=1,5 do
 				if LunaUnitFrames.frames.RaidFrames[i].member[z]:IsShown() then
+					if banzai:GetUnitAggroByUnitId(LunaUnitFrames.frames.RaidFrames[i].member[z].unit) then
+						LunaUnitFrames.frames.RaidFrames[i].member[z]:SetBackdropColor(1,0,0,1)
+					else
+						LunaUnitFrames.frames.RaidFrames[i].member[z]:SetBackdropColor(0,0,0,1)
+					end
 					if UnitIsConnected(LunaUnitFrames.frames.RaidFrames[i].member[z].unit) then
+						local healamount = getHeal(UnitName(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
 						local missinghp = (UnitHealth(LunaUnitFrames.frames.RaidFrames[i].member[z].unit)-UnitHealthMax(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
-						if UnitIsDeadOrGhost(LunaUnitFrames.frames.RaidFrames[i].member[z].unit) then
+						if UnitHealth(LunaUnitFrames.frames.RaidFrames[i].member[z].unit) < 2 then
 							LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetValue(0)
-							LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetText("DEAD")
-						elseif missinghp == 0 then
-							LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetValue(UnitHealth(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
-							LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetValue(UnitMana(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
-							if LunaOptions.Raidlayout == "GRID" then
-								LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetText(string.sub(UnitName(LunaUnitFrames.frames.RaidFrames[i].member[z].unit),1,3))
+							LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetValue(0)
+							if UnitisResurrecting(UnitName(LunaUnitFrames.frames.RaidFrames[i].member[z].unit)) then
+								LunaUnitFrames.frames.RaidFrames[i].member[z].RezIcon:Show()
 							else
-								LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetText(UnitName(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
+								LunaUnitFrames.frames.RaidFrames[i].member[z].RezIcon:Hide()
 							end
+							LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:Hide()
+							LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetText("DEAD")
 						else
 							LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetValue(UnitHealth(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
+							LunaUnitFrames.frames.RaidFrames[i].member[z].HealBar:SetValue(UnitHealth(LunaUnitFrames.frames.RaidFrames[i].member[z].unit)+healamount)
 							LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetValue(UnitMana(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
-							LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetText(missinghp)
+							LunaUnitFrames.frames.RaidFrames[i].member[z].RezIcon:Hide()
+							if LunaOptions.Raidlayout == "GRID" then
+								LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:Hide()
+								if missinghp == 0 then
+									LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetText(string.sub(UnitName(LunaUnitFrames.frames.RaidFrames[i].member[z].unit),1,3))
+								else
+									LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetText(missinghp)
+								end
+							else
+								LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetText(UnitName(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
+								if missinghp == 0 and healamount == 0 then
+									LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:Hide()
+								elseif healamount > 0 then
+									LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:Show()
+									LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:SetText(missinghp.." |cFF00FF00+"..LunaUnitFrames.HealComm.Heals[LunaUnitFrames.HealComm.Lookup[UnitName(LunaUnitFrames.frames.RaidFrames[i].member[z].unit)]][UnitName(LunaUnitFrames.frames.RaidFrames[i].member[z].unit)].amount)
+								else
+									LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:Show()
+									LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:SetText(missinghp)
+								end
+							end
 						end
 					else
 						LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetValue(0)
+						LunaUnitFrames.frames.RaidFrames[i].member[z].HealBar:SetValue(0)
 						LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetValue(0)
 						if LunaOptions.Raidlayout == "GRID" then
 							LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetText("OFF")
 						else
-							LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetText("OFFLINE")
+							LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:SetText("OFFLINE")
+							LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetText(UnitName(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
 						end
 					end
 					LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetMinMaxValues(0, UnitManaMax(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
 					LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetMinMaxValues(0, UnitHealthMax(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
+					LunaUnitFrames.frames.RaidFrames[i].member[z].HealBar:SetMinMaxValues(0, UnitHealthMax(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
 					local _, time = LunaUnitFrames.proximity:GetUnitRange(LunaUnitFrames.frames.RaidFrames[i].member[z].unit)
 					local seen = now - (time or 100)
 					if time and seen < 3 then
@@ -103,35 +158,58 @@ local function UpdateRaidMember()
 		for i=1,8 do
 			for z=1,5 do
 				if LunaUnitFrames.frames.RaidFrames[i].member[z]:IsShown() then
+					if banzai:GetUnitAggroByUnitId(LunaUnitFrames.frames.RaidFrames[i].member[z].unit) then
+						LunaUnitFrames.frames.RaidFrames[i].member[z]:SetBackdropColor(1,0,0,1)
+					else
+						LunaUnitFrames.frames.RaidFrames[i].member[z]:SetBackdropColor(0,0,0,1)
+					end
 					if UnitIsConnected(LunaUnitFrames.frames.RaidFrames[i].member[z].unit) then
+						local healamount = getHeal(UnitName(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
 						local missinghp = (UnitHealth(LunaUnitFrames.frames.RaidFrames[i].member[z].unit)-UnitHealthMax(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
-						if UnitIsDeadOrGhost(LunaUnitFrames.frames.RaidFrames[i].member[z].unit) then
+						if UnitHealth(LunaUnitFrames.frames.RaidFrames[i].member[z].unit) < 2 then
 							LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetValue(0)
+							LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetValue(0)
+							LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:Hide()
 							LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetText("DEAD")
-						elseif missinghp == 0 then
-							LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetValue(UnitHealth(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
-							LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetValue(UnitMana(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
-							if LunaOptions.Raidlayout == "GRID" then
-								LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetText(string.sub(UnitName(LunaUnitFrames.frames.RaidFrames[i].member[z].unit),1,3))
-							else
-								LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetText(UnitName(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
-							end
 						else
 							LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetValue(UnitHealth(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
+							LunaUnitFrames.frames.RaidFrames[i].member[z].HealBar:SetValue(UnitHealth(LunaUnitFrames.frames.RaidFrames[i].member[z].unit)+healamount)
 							LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetValue(UnitMana(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
-							LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetText(missinghp)
+							LunaUnitFrames.frames.RaidFrames[i].member[z].RezIcon:Hide()
+							if LunaOptions.Raidlayout == "GRID" then
+								LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:Hide()
+								if missinghp == 0 then
+									LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetText(string.sub(UnitName(LunaUnitFrames.frames.RaidFrames[i].member[z].unit),1,3))
+								else
+									LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetText(missinghp)
+								end
+							else
+								LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetText(UnitName(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
+								if missinghp == 0 and healamount == 0 then
+									LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:Hide()
+								elseif healamount > 0 then
+									LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:Show()
+									LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:SetText(missinghp.." |cFF00FF00+"..LunaUnitFrames.HealComm.Heals[LunaUnitFrames.HealComm.Lookup[UnitName(LunaUnitFrames.frames.RaidFrames[i].member[z].unit)]][UnitName(LunaUnitFrames.frames.RaidFrames[i].member[z].unit)].amount)
+								else
+									LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:Show()
+									LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:SetText(missinghp)
+								end
+							end
 						end
 					else
 						LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetValue(0)
+						LunaUnitFrames.frames.RaidFrames[i].member[z].HealBar:SetValue(0)
 						LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetValue(0)
 						if LunaOptions.Raidlayout == "GRID" then
 							LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetText("OFF")
 						else
-							LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetText("OFFLINE")
+							LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:SetText("OFFLINE")
+							LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetText(UnitName(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
 						end
 					end
 					LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetMinMaxValues(0, UnitManaMax(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
 					LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetMinMaxValues(0, UnitHealthMax(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
+					LunaUnitFrames.frames.RaidFrames[i].member[z].HealBar:SetMinMaxValues(0, UnitHealthMax(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
 				end
 			end
 		end
@@ -188,9 +266,17 @@ function LunaUnitFrames:CreateRaidFrames()
 																		end
 																	end
 																end
-			LunaUnitFrames.frames.RaidFrames[i].member[z]:SetScript("OnEvent", LunaUnitFrames.frames.RaidFrames[i].member[z].onEvent)
-			LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar = CreateFrame("StatusBar", nil, LunaUnitFrames.frames.RaidFrames[i].member[z])
+			LunaUnitFrames.frames.RaidFrames[i].member[z]:SetScript("OnEvent", LunaUnitFrames.frames.RaidFrames[i].member[z].onEvent)													
+																
+			LunaUnitFrames.frames.RaidFrames[i].member[z].HealBar = CreateFrame("StatusBar", nil, LunaUnitFrames.frames.RaidFrames[i].member[z])
+			LunaUnitFrames.frames.RaidFrames[i].member[z].HealBar:SetStatusBarTexture(LunaOptions.statusbartexture)
+			LunaUnitFrames.frames.RaidFrames[i].member[z].HealBar:SetStatusBarColor(0, 1, 0, 0.6)
+			LunaUnitFrames.frames.RaidFrames[i].member[z].HealBar:SetValue(0)
+			
+			LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar = CreateFrame("StatusBar", nil, LunaUnitFrames.frames.RaidFrames[i].member[z].HealBar)
 			LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetStatusBarTexture(LunaOptions.statusbartexture)
+			
+			LunaUnitFrames.frames.RaidFrames[i].member[z].HealBar:SetPoint("BOTTOMLEFT", LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar, "BOTTOMLEFT")
 			
 			LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar = CreateFrame("StatusBar", nil, LunaUnitFrames.frames.RaidFrames[i].member[z])
 			LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetStatusBarTexture(LunaOptions.statusbartexture)
@@ -201,9 +287,21 @@ function LunaUnitFrames:CreateRaidFrames()
 			LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetShadowOffset(0.8, -0.8)
 			LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetTextColor(1,1,1)
 			
+			LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext = LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:CreateFontString(nil, "OVERLAY", LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar)
+			LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:SetJustifyH("CENTER")
+			LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:SetShadowColor(0, 0, 0)
+			LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:SetShadowOffset(0.8, -0.8)
+			LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:SetTextColor(1,1,1)
+			LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:SetPoint("BOTTOM", LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar, "BOTTOM")
 			
 			LunaUnitFrames.frames.RaidFrames[i].member[z].Debuff = CreateFrame("Button", nil, LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar)
 			LunaUnitFrames.frames.RaidFrames[i].member[z].Debuff:EnableMouse(0)
+			
+			LunaUnitFrames.frames.RaidFrames[i].member[z].RezIcon = CreateFrame("Button", nil, LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar)
+			LunaUnitFrames.frames.RaidFrames[i].member[z].RezIcon:EnableMouse(0)
+			LunaUnitFrames.frames.RaidFrames[i].member[z].RezIcon:SetNormalTexture("Interface\\Icons\\Spell_Holy_Resurrection")
+			LunaUnitFrames.frames.RaidFrames[i].member[z].RezIcon:SetAllPoints(LunaUnitFrames.frames.RaidFrames[i].member[z].Debuff)
+			LunaUnitFrames.frames.RaidFrames[i].member[z].RezIcon:Hide()
 						
 		end
 	end
@@ -224,7 +322,7 @@ function LunaUnitFrames:UpdateRaidRoster()
 		return
 	end
 	for i=1,8 do
-		if LunaOptions.frames[LunaOptions.Raidlayout].ShowRaidGroupTitles == 1 then
+		if LunaOptions.frames[LunaOptions.Raidlayout].ShowRaidGroupTitles == 1 and getn(RAID_SUBGROUP_LISTS[i]) > 0 then
 			LunaUnitFrames.frames.RaidFrames[i]:Show()
 		else
 			LunaUnitFrames.frames.RaidFrames[i]:Hide()
@@ -266,6 +364,8 @@ function LunaUnitFrames:SetRaidFrameSize()
 				LunaUnitFrames.frames.RaidFrames[i].member[z]:SetWidth(Size)
 				LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetHeight(Size)
 				LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetWidth(Size*0.875)
+				LunaUnitFrames.frames.RaidFrames[i].member[z].HealBar:SetHeight(Size)
+				LunaUnitFrames.frames.RaidFrames[i].member[z].HealBar:SetWidth(Size*0.875)
 				LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetHeight(Size)
 				LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetWidth(Size*0.125)
 				LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetFont(LunaOptions.font, Size*0.4)
@@ -284,9 +384,12 @@ function LunaUnitFrames:SetRaidFrameSize()
 				LunaUnitFrames.frames.RaidFrames[i].member[z]:SetWidth(Size*3)
 				LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetHeight(Size*0.875)
 				LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetWidth(Size*3)
+				LunaUnitFrames.frames.RaidFrames[i].member[z].HealBar:SetHeight(Size*0.875)
+				LunaUnitFrames.frames.RaidFrames[i].member[z].HealBar:SetWidth(Size*3)
 				LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetHeight(Size*0.125)
 				LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetWidth(Size*3)
 				LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetFont(LunaOptions.font, Size*0.4)
+				LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:SetFont(LunaOptions.font, Size*0.4)
 				LunaUnitFrames.frames.RaidFrames[i].member[z].Debuff:SetHeight(Size*0.4)
 				LunaUnitFrames.frames.RaidFrames[i].member[z].Debuff:SetWidth(Size*0.4)
 			end
@@ -317,6 +420,7 @@ function LunaUnitFrames:UpdateRaidLayout()
 				end
 				LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:ClearAllPoints()
 				LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetOrientation("VERTICAL")
+				LunaUnitFrames.frames.RaidFrames[i].member[z].HealBar:SetOrientation("VERTICAL")
 				LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetPoint("TOPLEFT", LunaUnitFrames.frames.RaidFrames[i].member[z], "TOPLEFT")
 				LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:ClearAllPoints()
 				LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetOrientation("VERTICAL")
@@ -324,6 +428,7 @@ function LunaUnitFrames:UpdateRaidLayout()
 				LunaUnitFrames.frames.RaidFrames[i].member[z].Name:ClearAllPoints()
 				LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetPoint("CENTER", LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar)
 				LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetFont(LunaOptions.font, Size*0.4)
+				LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:Hide()
 				LunaUnitFrames.frames.RaidFrames[i].member[z].Debuff:ClearAllPoints()
 				LunaUnitFrames.frames.RaidFrames[i].member[z].Debuff:SetPoint("CENTER", LunaUnitFrames.frames.RaidFrames[i].member[z], "CENTER")
 			end
@@ -342,6 +447,7 @@ function LunaUnitFrames:UpdateRaidLayout()
 				end
 				LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:ClearAllPoints()
 				LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetOrientation("HORIZONTAL")
+				LunaUnitFrames.frames.RaidFrames[i].member[z].HealBar:SetOrientation("HORIZONTAL")
 				LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetPoint("TOPLEFT", LunaUnitFrames.frames.RaidFrames[i].member[z], "TOPLEFT")
 				LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:ClearAllPoints()
 				LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetOrientation("HORIZONTAL")
@@ -349,6 +455,7 @@ function LunaUnitFrames:UpdateRaidLayout()
 				LunaUnitFrames.frames.RaidFrames[i].member[z].Name:ClearAllPoints()
 				LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetPoint("TOPLEFT", LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar, "TOPLEFT", 1, 0)
 				LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetFont(LunaOptions.font, Size*0.4)
+				LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:Show()
 				LunaUnitFrames.frames.RaidFrames[i].member[z].Debuff:ClearAllPoints()
 				LunaUnitFrames.frames.RaidFrames[i].member[z].Debuff:SetPoint("TOPRIGHT", LunaUnitFrames.frames.RaidFrames[i].member[z], "TOPRIGHT", 0, 0)
 			end

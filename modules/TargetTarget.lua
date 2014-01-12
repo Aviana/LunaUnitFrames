@@ -151,7 +151,7 @@ function LunaUnitFrames:CreateTargetTargetFrame()
 	-- Healthbar background
 	local hpbg = LunaTargetTargetFrame.bars["Healthbar"]:CreateTexture(nil, "BORDER")
 	hpbg:SetAllPoints(LunaTargetTargetFrame.bars["Healthbar"])
-	hpbg:SetTexture(.25,.25,.25)
+	hpbg:SetTexture(.25,.25,.25,.25)
 	LunaTargetTargetFrame.bars["Healthbar"].hpbg = hpbg
 
 	-- Healthbar text
@@ -188,7 +188,7 @@ function LunaUnitFrames:CreateTargetTargetFrame()
 	-- Manabar background
 	local ppbg = LunaTargetTargetFrame.bars["Powerbar"]:CreateTexture(nil, "BORDER")
 	ppbg:SetAllPoints(LunaTargetTargetFrame.bars["Powerbar"])
-	ppbg:SetTexture(.25,.25,.25)
+	ppbg:SetTexture(.25,.25,.25,.25)
 	LunaTargetTargetFrame.bars["Powerbar"].ppbg = ppbg
 
 	local ppp = LunaTargetTargetFrame.bars["Powerbar"]:CreateFontString(nil, "OVERLAY", LunaTargetTargetFrame.bars["Powerbar"])
@@ -295,26 +295,18 @@ function LunaUnitFrames:UpdateTargetTargetFrame()
 			LunaTargetTargetFrame.bars["Healthbar"].hpbg:SetVertexColor(0.93, 0.93, 0, 0.25)
 		end
 	end
-	if UnitIsDead(LunaTargetTargetFrame.unit) then
-		LunaTargetTargetFrame.bars["Healthbar"]:SetMinMaxValues(0, UnitHealthMax(LunaTargetTargetFrame.unit))
-		LunaTargetTargetFrame.bars["Healthbar"]:SetValue(0)
-		LunaTargetTargetFrame.bars["Healthbar"].hpp:SetText("DEAD")
-			
-		LunaTargetTargetFrame.bars["Powerbar"]:SetMinMaxValues(0, UnitManaMax(LunaTargetTargetFrame.unit))
-		LunaTargetTargetFrame.bars["Powerbar"]:SetValue(0)
-		LunaTargetTargetFrame.bars["Powerbar"].ppp:SetText("0/"..UnitManaMax(LunaTargetTargetFrame.unit))
-	elseif UnitIsGhost(LunaTargetTargetFrame.unit) then
-		LunaTargetTargetFrame.bars["Healthbar"]:SetMinMaxValues(0, UnitHealthMax(LunaTargetTargetFrame.unit))
-		LunaTargetTargetFrame.bars["Healthbar"]:SetValue(0)
-		LunaTargetTargetFrame.bars["Healthbar"].hpp:SetText("GHOST")
-			
-		LunaTargetTargetFrame.bars["Powerbar"]:SetMinMaxValues(0, UnitManaMax(LunaTargetTargetFrame.unit))
-		LunaTargetTargetFrame.bars["Powerbar"]:SetValue(0)
-		LunaTargetTargetFrame.bars["Powerbar"].ppp:SetText("0/"..UnitManaMax(LunaTargetTargetFrame.unit))
-	elseif not UnitIsConnected(LunaTargetTargetFrame.unit) then
+	if not UnitIsConnected(LunaTargetTargetFrame.unit) then
 		LunaTargetTargetFrame.bars["Healthbar"]:SetMinMaxValues(0, UnitHealthMax(LunaTargetTargetFrame.unit))
 		LunaTargetTargetFrame.bars["Healthbar"]:SetValue(0)
 		LunaTargetTargetFrame.bars["Healthbar"].hpp:SetText("OFFLINE")
+			
+		LunaTargetTargetFrame.bars["Powerbar"]:SetMinMaxValues(0, UnitManaMax(LunaTargetTargetFrame.unit))
+		LunaTargetTargetFrame.bars["Powerbar"]:SetValue(0)
+		LunaTargetTargetFrame.bars["Powerbar"].ppp:SetText("0/"..UnitManaMax(LunaTargetTargetFrame.unit))
+	elseif UnitHealth(LunaTargetTargetFrame.unit) < 2 then
+		LunaTargetTargetFrame.bars["Healthbar"]:SetMinMaxValues(0, UnitHealthMax(LunaTargetTargetFrame.unit))
+		LunaTargetTargetFrame.bars["Healthbar"]:SetValue(0)
+		LunaTargetTargetFrame.bars["Healthbar"].hpp:SetText("DEAD")
 			
 		LunaTargetTargetFrame.bars["Powerbar"]:SetMinMaxValues(0, UnitManaMax(LunaTargetTargetFrame.unit))
 		LunaTargetTargetFrame.bars["Powerbar"]:SetValue(0)
@@ -400,7 +392,7 @@ function LunaUnitFrames:CreateTargetTargetTargetFrame()
 	-- Healthbar background
 	local hpbg = LunaTargetTargetTargetFrame.bars["Healthbar"]:CreateTexture(nil, "BORDER")
 	hpbg:SetAllPoints(LunaTargetTargetTargetFrame.bars["Healthbar"])
-	hpbg:SetTexture(.25,.25,.25)
+	hpbg:SetTexture(.25,.25,.25,.25)
 	LunaTargetTargetTargetFrame.bars["Healthbar"].hpbg = hpbg
 
 	-- Healthbar text
@@ -437,7 +429,7 @@ function LunaUnitFrames:CreateTargetTargetTargetFrame()
 	-- Manabar background
 	local ppbg = LunaTargetTargetTargetFrame.bars["Powerbar"]:CreateTexture(nil, "BORDER")
 	ppbg:SetAllPoints(LunaTargetTargetTargetFrame.bars["Powerbar"])
-	ppbg:SetTexture(.25,.25,.25)
+	ppbg:SetTexture(.25,.25,.25,.25)
 	LunaTargetTargetTargetFrame.bars["Powerbar"].ppbg = ppbg
 
 	local ppp = LunaTargetTargetTargetFrame.bars["Powerbar"]:CreateFontString(nil, "OVERLAY", LunaTargetTargetTargetFrame.bars["Powerbar"])
@@ -538,26 +530,18 @@ function LunaUnitFrames:UpdateTargetTargetTargetFrame()
 			LunaTargetTargetTargetFrame.bars["Healthbar"].hpbg:SetVertexColor(0.93, 0.93, 0, 0.25)
 		end
 	end
-	if UnitIsDead(LunaTargetTargetTargetFrame.unit) then
-		LunaTargetTargetTargetFrame.bars["Healthbar"]:SetMinMaxValues(0, UnitHealthMax(LunaTargetTargetTargetFrame.unit))
-		LunaTargetTargetTargetFrame.bars["Healthbar"]:SetValue(0)
-		LunaTargetTargetTargetFrame.bars["Healthbar"].hpp:SetText("DEAD")
-			
-		LunaTargetTargetTargetFrame.bars["Powerbar"]:SetMinMaxValues(0, UnitManaMax(LunaTargetTargetTargetFrame.unit))
-		LunaTargetTargetTargetFrame.bars["Powerbar"]:SetValue(0)
-		LunaTargetTargetTargetFrame.bars["Powerbar"].ppp:SetText("0/"..UnitManaMax(LunaTargetTargetTargetFrame.unit))
-	elseif UnitIsGhost(LunaTargetTargetTargetFrame.unit) then
-		LunaTargetTargetTargetFrame.bars["Healthbar"]:SetMinMaxValues(0, UnitHealthMax(LunaTargetTargetTargetFrame.unit))
-		LunaTargetTargetTargetFrame.bars["Healthbar"]:SetValue(0)
-		LunaTargetTargetTargetFrame.bars["Healthbar"].hpp:SetText("GHOST")
-			
-		LunaTargetTargetTargetFrame.bars["Powerbar"]:SetMinMaxValues(0, UnitManaMax(LunaTargetTargetTargetFrame.unit))
-		LunaTargetTargetTargetFrame.bars["Powerbar"]:SetValue(0)
-		LunaTargetTargetTargetFrame.bars["Powerbar"].ppp:SetText("0/"..UnitManaMax(LunaTargetTargetTargetFrame.unit))
-	elseif not UnitIsConnected(LunaTargetTargetTargetFrame.unit) then
+	if not UnitIsConnected(LunaTargetTargetTargetFrame.unit) then
 		LunaTargetTargetTargetFrame.bars["Healthbar"]:SetMinMaxValues(0, UnitHealthMax(LunaTargetTargetTargetFrame.unit))
 		LunaTargetTargetTargetFrame.bars["Healthbar"]:SetValue(0)
 		LunaTargetTargetTargetFrame.bars["Healthbar"].hpp:SetText("OFFLINE")
+			
+		LunaTargetTargetTargetFrame.bars["Powerbar"]:SetMinMaxValues(0, UnitManaMax(LunaTargetTargetTargetFrame.unit))
+		LunaTargetTargetTargetFrame.bars["Powerbar"]:SetValue(0)
+		LunaTargetTargetTargetFrame.bars["Powerbar"].ppp:SetText("0/"..UnitManaMax(LunaTargetTargetTargetFrame.unit))
+	elseif UnitHealth(LunaTargetTargetTargetFrame.unit) < 2 then
+		LunaTargetTargetTargetFrame.bars["Healthbar"]:SetMinMaxValues(0, UnitHealthMax(LunaTargetTargetTargetFrame.unit))
+		LunaTargetTargetTargetFrame.bars["Healthbar"]:SetValue(0)
+		LunaTargetTargetTargetFrame.bars["Healthbar"].hpp:SetText("DEAD")
 			
 		LunaTargetTargetTargetFrame.bars["Powerbar"]:SetMinMaxValues(0, UnitManaMax(LunaTargetTargetTargetFrame.unit))
 		LunaTargetTargetTargetFrame.bars["Powerbar"]:SetValue(0)

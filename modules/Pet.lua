@@ -185,7 +185,7 @@ function LunaUnitFrames:CreatePetFrame()
 	-- Healthbar background
 	LunaPetFrame.bars["Healthbar"].hpbg = LunaPetFrame.bars["Healthbar"]:CreateTexture(nil, "BORDER")
 	LunaPetFrame.bars["Healthbar"].hpbg:SetAllPoints(LunaPetFrame.bars["Healthbar"])
-	LunaPetFrame.bars["Healthbar"].hpbg:SetTexture(.25,.25,.25)
+	LunaPetFrame.bars["Healthbar"].hpbg:SetTexture(.25,.25,.25,.25)
 
 	-- Healthbar text
 	LunaPetFrame.bars["Healthbar"].hpp = LunaPetFrame.bars["Healthbar"]:CreateFontString(nil, "OVERLAY", LunaPetFrame.bars["Healthbar"])
@@ -211,7 +211,7 @@ function LunaUnitFrames:CreatePetFrame()
 	-- Manabar background
 	LunaPetFrame.bars["Powerbar"].ppbg = LunaPetFrame.bars["Powerbar"]:CreateTexture(nil, "BORDER")
 	LunaPetFrame.bars["Powerbar"].ppbg:SetAllPoints(LunaPetFrame.bars["Powerbar"])
-	LunaPetFrame.bars["Powerbar"].ppbg:SetTexture(.25,.25,.25)
+	LunaPetFrame.bars["Powerbar"].ppbg:SetTexture(.25,.25,.25,.25)
 
 	LunaPetFrame.bars["Powerbar"].ppp = LunaPetFrame.bars["Powerbar"]:CreateFontString(nil, "OVERLAY", LunaPetFrame.bars["Powerbar"])
 	LunaPetFrame.bars["Powerbar"].ppp:SetPoint("RIGHT", -2, -1)
@@ -264,7 +264,7 @@ function LunaUnitFrames:CreatePetFrame()
 		if LunaOptions.frames["LunaPetFrame"].portrait > 1 then    -- We have a square portrait
 			frameWidth = (LunaPetFrame:GetWidth()-frameHeight)
 			LunaPetFrame.bars["Portrait"]:SetPoint("TOPLEFT", LunaPetFrame, "TOPLEFT")
-			LunaPetFrame.bars["Portrait"]:SetHeight(frameHeight)
+			LunaPetFrame.bars["Portrait"]:SetHeight(frameHeight+1)
 			LunaPetFrame.bars["Portrait"]:SetWidth(frameHeight)
 			anchor = {"TOPLEFT", LunaPetFrame.bars["Portrait"], "TOPRIGHT"}
 		else

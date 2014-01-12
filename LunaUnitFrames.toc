@@ -4,9 +4,15 @@
 ## Author: Avi
 ## Dependencies:
 ## SavedVariables: LunaOptions
-## OptionalDeps: ProximityLib
+## OptionalDeps: Ace2, ProximityLib, RosterLib, BanzaiLib
 
+libs\AceLibrary\AceLibrary.lua
+libs\AceOO-2.0\AceOO-2.0.lua
+libs\AceEvent-2.0\AceEvent-2.0.lua
+
+libs\RosterLib-2.0\RosterLib-2.0.lua
 libs\ProximityLib\ProximityLib.lua
+libs\Banzai-1.0\Banzai-1.0.lua
 
 LunaUnitFrames.lua
 
@@ -20,4 +26,5 @@ modules\Raid.lua
 modules\SwingBar.lua
 modules\ExperienceBar.lua
 modules\Enemycastbar.lua
+modules\HealComm.lua
 modules\Options.lua
