@@ -97,6 +97,7 @@ local function UpdateRaidMember()
 						local missinghp = (UnitHealth(LunaUnitFrames.frames.RaidFrames[i].member[z].unit)-UnitHealthMax(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
 						if UnitHealth(LunaUnitFrames.frames.RaidFrames[i].member[z].unit) < 2 then
 							LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetValue(0)
+							LunaUnitFrames.frames.RaidFrames[i].member[z].HealBar:SetValue(0)
 							LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetValue(0)
 							if UnitisResurrecting(UnitName(LunaUnitFrames.frames.RaidFrames[i].member[z].unit)) then
 								LunaUnitFrames.frames.RaidFrames[i].member[z].RezIcon:Show()
@@ -123,7 +124,7 @@ local function UpdateRaidMember()
 									LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:Hide()
 								elseif healamount > 0 then
 									LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:Show()
-									LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:SetText(missinghp.." |cFF00FF00+"..LunaUnitFrames.HealComm.Heals[LunaUnitFrames.HealComm.Lookup[UnitName(LunaUnitFrames.frames.RaidFrames[i].member[z].unit)]][UnitName(LunaUnitFrames.frames.RaidFrames[i].member[z].unit)].amount)
+									LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:SetText(missinghp.." |cFF00FF00+"..healamount)
 								else
 									LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:Show()
 									LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:SetText(missinghp)
@@ -168,6 +169,7 @@ local function UpdateRaidMember()
 						local missinghp = (UnitHealth(LunaUnitFrames.frames.RaidFrames[i].member[z].unit)-UnitHealthMax(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
 						if UnitHealth(LunaUnitFrames.frames.RaidFrames[i].member[z].unit) < 2 then
 							LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetValue(0)
+							LunaUnitFrames.frames.RaidFrames[i].member[z].HealBar:SetValue(0)
 							LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetValue(0)
 							LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:Hide()
 							LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetText("DEAD")
@@ -189,7 +191,7 @@ local function UpdateRaidMember()
 									LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:Hide()
 								elseif healamount > 0 then
 									LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:Show()
-									LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:SetText(missinghp.." |cFF00FF00+"..LunaUnitFrames.HealComm.Heals[LunaUnitFrames.HealComm.Lookup[UnitName(LunaUnitFrames.frames.RaidFrames[i].member[z].unit)]][UnitName(LunaUnitFrames.frames.RaidFrames[i].member[z].unit)].amount)
+									LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:SetText(missinghp.." |cFF00FF00+"..healamount)
 								else
 									LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:Show()
 									LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:SetText(missinghp)
