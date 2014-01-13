@@ -139,6 +139,7 @@ local function UpdateRaidMember()
 							LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetText("OFF")
 						else
 							LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:SetText("OFFLINE")
+							LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:Show()
 							LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetText(UnitName(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
 						end
 					end
@@ -206,6 +207,7 @@ local function UpdateRaidMember()
 							LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetText("OFF")
 						else
 							LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:SetText("OFFLINE")
+							LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:Show()
 							LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetText(UnitName(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
 						end
 					end
