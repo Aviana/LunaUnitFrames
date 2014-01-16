@@ -9,6 +9,7 @@
 libs\AceLibrary\AceLibrary.lua
 libs\AceOO-2.0\AceOO-2.0.lua
 libs\AceEvent-2.0\AceEvent-2.0.lua
+libs\AceAddon-2.0\AceAddon-2.0.lua
 
 libs\RosterLib-2.0\RosterLib-2.0.lua
 libs\ProximityLib\ProximityLib.lua

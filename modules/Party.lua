@@ -388,7 +388,11 @@ function LunaUnitFrames:PartyUpdateHeal()
 		end
 		LunaPartyFrames[i].incHeal.healvalue = healamount
 		LunaPartyFrames[i].incHeal:SetMinMaxValues(0, UnitHealthMax("party"..i)*1.2)
-		LunaPartyFrames[i].incHeal:SetValue(UnitHealth("party"..i)+LunaPartyFrames[i].incHeal.healvalue)
+		if UnitIsDeadOrGhost(LunaPartyFrames[i].unit) or not UnitIsConnected(LunaPartyFrames[i].unit) then
+			LunaPartyFrames[i].incHeal:SetValue(0)
+		else
+			LunaPartyFrames[i].incHeal:SetValue(UnitHealth("party"..i)+LunaPartyFrames[i].incHeal.healvalue)
+		end
 	end
 end
 
@@ -801,7 +805,11 @@ end
 function Luna_Party_Events:UNIT_HEALTH()
 	if this.unit == arg1 then
 		this.incHeal:SetMinMaxValues(0, UnitHealthMax(this.unit)*1.2)
-		this.incHeal:SetValue(UnitHealth(this.unit)+this.incHeal.healvalue)
+		if UnitIsDeadOrGhost(this.unit) or not UnitIsConnected(this.unit) then
+			this.incHeal:SetValue(0)
+		else
+			this.incHeal:SetValue(UnitHealth(this.unit)+this.incHeal.healvalue)
+		end
 		this.bars["Healthbar"]:SetMinMaxValues(0, UnitHealthMax(this.unit))
 		this.bars["Healthbar"]:SetValue(UnitHealth(this.unit))
 		this.bars["Healthbar"].hpp:SetText(UnitHealth(this.unit).."/"..UnitHealthMax(this.unit))

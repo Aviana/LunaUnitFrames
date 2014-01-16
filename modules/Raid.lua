@@ -104,8 +104,13 @@ local function UpdateRaidMember()
 							else
 								LunaUnitFrames.frames.RaidFrames[i].member[z].RezIcon:Hide()
 							end
-							LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:Hide()
-							LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetText("DEAD")
+							if LunaOptions.Raidlayout == "GRID" then
+								LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:Hide()
+								LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetText("DEAD")
+							else
+								LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetText(UnitName(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
+								LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:SetText("DEAD")
+							end
 						else
 							LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetValue(UnitHealth(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
 							LunaUnitFrames.frames.RaidFrames[i].member[z].HealBar:SetValue(UnitHealth(LunaUnitFrames.frames.RaidFrames[i].member[z].unit)+healamount)
@@ -172,8 +177,13 @@ local function UpdateRaidMember()
 							LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetValue(0)
 							LunaUnitFrames.frames.RaidFrames[i].member[z].HealBar:SetValue(0)
 							LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetValue(0)
-							LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:Hide()
-							LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetText("DEAD")
+							if LunaOptions.Raidlayout == "GRID" then
+								LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:Hide()
+								LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetText("DEAD")
+							else
+								LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetText(UnitName(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
+								LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:SetText("DEAD")
+							end
 						else
 							LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetValue(UnitHealth(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
 							LunaUnitFrames.frames.RaidFrames[i].member[z].HealBar:SetValue(UnitHealth(LunaUnitFrames.frames.RaidFrames[i].member[z].unit)+healamount)
@@ -337,7 +347,11 @@ function LunaUnitFrames:UpdateRaidRoster()
 				LunaUnitFrames.frames.RaidFrames[i].member[z].unit = "raid"..num
 				local class = UnitClass(LunaUnitFrames.frames.RaidFrames[i].member[z].unit)
 				local color = LunaOptions.ClassColors[class]
-				LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetStatusBarColor(color[1],color[2],color[3])
+				if not color then
+					LunaUnitFrames.frames.RaidFrames[i].member[z]:Hide()
+				else
+					LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetStatusBarColor(color[1],color[2],color[3])
+				end
 				local power = UnitPowerType(LunaUnitFrames.frames.RaidFrames[i].member[z].unit)
 				if power == 1 then
 					LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetStatusBarColor(LunaOptions.PowerColors["Rage"][1], LunaOptions.PowerColors["Rage"][2], LunaOptions.PowerColors["Rage"][3])

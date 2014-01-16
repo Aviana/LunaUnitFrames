@@ -19,6 +19,7 @@ EnemyCastBar_Spells = {
 	["Arcane Bomb"] = {t=1, ni=1};
 	["Sleep"] = {t=1.5, ni=1};
 	["Reckless Charge"] = {t=0};
+	["Dark Mending"] = {t=2};
 
 		-- First Aid
 	["First Aid"] = {t=8.0, ni=1};

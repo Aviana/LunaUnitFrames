@@ -177,6 +177,7 @@ local function HeightAdjust()
 				frame[i]:SetHeight(amount)
 			end
 			LunaUnitFrames:UpdatePartyUnitFrameSize()
+			LunaUnitFrames:UpdatePartyBuffSize()
 		elseif this.frame == "LunaPartyPetFrames" then
 			for i=1,4 do
 				frame[i]:SetHeight(amount)
@@ -184,6 +185,7 @@ local function HeightAdjust()
 		else
 			frame:SetHeight(amount)
 			frame:AdjustBars()
+			frame:UpdateBuffSize()
 		end
 		LunaOptions.frames[this.frame].size.y = amount
 		getglobal(this.frame.."HeightSliderText"):SetText("Height: "..amount)
@@ -199,6 +201,7 @@ local function WidthAdjust()
 				frame[i]:SetWidth(amount)
 			end
 			LunaUnitFrames:UpdatePartyUnitFrameSize()
+			LunaUnitFrames:UpdatePartyBuffSize()
 		elseif this.frame == "LunaPartyPetFrames" then
 			for i=1,4 do
 				frame[i]:SetWidth(amount)
@@ -206,27 +209,15 @@ local function WidthAdjust()
 		elseif this.frame == "LunaPlayerFrame" and LunaUnitFrames.frames.ExperienceBar and LunaUnitFrames.frames.ExperienceBar:IsShown() then
 			frame:SetWidth(amount)
 			frame:AdjustBars()
+			frame:UpdateBuffSize()
 			LunaUnitFrames:ResizeXPBar()
 		else
 			frame:SetWidth(amount)
 			frame:AdjustBars()
+			frame:UpdateBuffSize()
 		end
 		LunaOptions.frames[this.frame].size.x = amount
 		getglobal(this.frame.."WidthSliderText"):SetText("Width: "..amount)
-	end
-end
-
-function TargetWidthAdjust()
-	if LunaTargetFrame then
-		LunaTargetFrame:SetWidth(this:GetValue())
-		LunaTarget:AdjustBars()
-	end
-end
-
-function TargetHeightAdjust()
-	if LunaTargetFrame then
-		LunaTargetFrame:SetHeight(this:GetValue())
-		LunaTarget:AdjustBars()
 	end
 end
 

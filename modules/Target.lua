@@ -470,6 +470,22 @@ function LunaUnitFrames:CreateTargetFrame()
 		LunaTargetFrame.incHeal:SetHeight(LunaTargetFrame.bars["Healthbar"]:GetHeight())
 		LunaTargetFrame.incHeal:SetWidth(LunaTargetFrame.bars["Healthbar"]:GetWidth()*1.2)
 	end
+	LunaTargetFrame.UpdateBuffSize = function ()
+		local size
+		if LunaOptions.frames["LunaTargetFrame"].ShowBuffs == 2 or LunaOptions.frames["LunaTargetFrame"].ShowBuffs == 3 then
+			size = (LunaTargetFrame:GetWidth()-15)/16
+		else
+			size = (LunaTargetFrame:GetHeight()-3)/4
+		end
+		for i=1, 16 do
+			LunaTargetFrame.Buffs[i]:SetHeight(size)
+			LunaTargetFrame.Buffs[i]:SetWidth(size)
+			LunaTargetFrame.Buffs[i].stacks:SetFont(LunaOptions.font, size*0.75)
+			LunaTargetFrame.Debuffs[i]:SetHeight(size)
+			LunaTargetFrame.Debuffs[i]:SetWidth(size)
+			LunaTargetFrame.Debuffs[i].stacks:SetFont(LunaOptions.font, size*0.75)
+		end	
+	end
 	for k,v in pairs(LunaOptions.frames["LunaTargetFrame"].bars) do
 		if v[2] == 0 then
 			LunaTargetFrame.bars[v[1]]:Hide()
@@ -567,6 +583,7 @@ function LunaUnitFrames:UpdateTargetBuffLayout()
 			LunaTargetFrame.Debuffs[i]:ClearAllPoints()
 			LunaTargetFrame.Debuffs[i]:SetPoint("TOPLEFT", LunaTargetFrame.Debuffs[i-1], "TOPRIGHT",1, 0)
 		end
+		LunaTargetFrame.UpdateBuffSize()
 		Luna_Target_Events:UNIT_AURA()
 	elseif LunaOptions.frames["LunaTargetFrame"].ShowBuffs == 3 then
 		LunaTargetFrame:RegisterEvent("UNIT_AURA")
@@ -580,6 +597,7 @@ function LunaUnitFrames:UpdateTargetBuffLayout()
 			LunaTargetFrame.Debuffs[i]:ClearAllPoints()
 			LunaTargetFrame.Debuffs[i]:SetPoint("TOPLEFT", LunaTargetFrame.Debuffs[i-1], "TOPRIGHT", 1, 0)
 		end
+		LunaTargetFrame.UpdateBuffSize()
 		Luna_Target_Events:UNIT_AURA()
 	elseif LunaOptions.frames["LunaTargetFrame"].ShowBuffs == 4 then
 		LunaTargetFrame:RegisterEvent("UNIT_AURA")
@@ -603,6 +621,7 @@ function LunaUnitFrames:UpdateTargetBuffLayout()
 			LunaTargetFrame.Debuffs[i]:ClearAllPoints()
 			LunaTargetFrame.Debuffs[i]:SetPoint("TOPRIGHT", LunaTargetFrame.Debuffs[i-1], "TOPLEFT",1, 0)
 		end
+		LunaTargetFrame.UpdateBuffSize()
 		Luna_Target_Events:UNIT_AURA()
 	else
 		LunaTargetFrame:RegisterEvent("UNIT_AURA")
@@ -626,26 +645,9 @@ function LunaUnitFrames:UpdateTargetBuffLayout()
 			LunaTargetFrame.Debuffs[i]:ClearAllPoints()
 			LunaTargetFrame.Debuffs[i]:SetPoint("TOPLEFT", LunaTargetFrame.Debuffs[i-1], "TOPRIGHT",1, 0)
 		end
+		LunaTargetFrame.UpdateBuffSize()
 		Luna_Target_Events:UNIT_AURA()
 	end
-	LunaUnitFrames:UpdateTargetBuffSize()
-end
-
-function LunaUnitFrames:UpdateTargetBuffSize()
-	local size
-	if LunaOptions.frames["LunaTargetFrame"].ShowBuffs == 2 or LunaOptions.frames["LunaTargetFrame"].ShowBuffs == 3 then
-		size = (LunaTargetFrame:GetWidth()-15)/16
-	else
-		size = (LunaTargetFrame:GetHeight()-3)/4
-	end
-	for i=1, 16 do
-		LunaTargetFrame.Buffs[i]:SetHeight(size)
-		LunaTargetFrame.Buffs[i]:SetWidth(size)
-		LunaTargetFrame.Buffs[i].stacks:SetFont(LunaOptions.font, size*0.75)
-		LunaTargetFrame.Debuffs[i]:SetHeight(size)
-		LunaTargetFrame.Debuffs[i]:SetWidth(size)
-		LunaTargetFrame.Debuffs[i].stacks:SetFont(LunaOptions.font, size*0.75)
-	end	
 end
 
 function Luna_Target_Events:PARTY_LOOT_METHOD_CHANGED()
@@ -721,7 +723,11 @@ Luna_Target_Events.UNIT_FACTION = Luna_Target_Events.PLAYER_TARGET_CHANGED
 
 function Luna_Target_Events:UNIT_HEALTH()
 	LunaTargetFrame.incHeal:SetMinMaxValues(0, UnitHealthMax("target")*1.2)
-	LunaTargetFrame.incHeal:SetValue(UnitHealth("target")+LunaTargetFrame.incHeal.healvalue)
+	if UnitIsDeadOrGhost("target") or not UnitIsConnected("target") then
+		LunaTargetFrame.incHeal:SetValue(0)
+	else
+		LunaTargetFrame.incHeal:SetValue(UnitHealth("target")+LunaTargetFrame.incHeal.healvalue)
+	end
 	LunaTargetFrame.bars["Healthbar"]:SetMinMaxValues(0, UnitHealthMax("target"))
 	if not UnitIsConnected("target") then
 		LunaTargetFrame.bars["Healthbar"].hpp:SetText("OFFLINE")
@@ -782,6 +788,7 @@ function LunaUnitFrames:UpdateTargetFrame()
 	end
 	Luna_Target_Events.UNIT_HEALTH()
 	Luna_Target_Events.UNIT_MANA()
+	Luna_Target_Events.UNIT_DISPLAYPOWER()
 	Luna_Target_Events.PLAYER_COMBO_POINTS()
 	Luna_Target_Events.PARTY_LEADER_CHANGED()
 	Luna_Target_Events.UNIT_PORTRAIT_UPDATE()

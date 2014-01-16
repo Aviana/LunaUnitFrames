@@ -498,6 +498,22 @@ function LunaUnitFrames:CreatePlayerFrame()
 		LunaPlayerFrame.incHeal:SetWidth(LunaPlayerFrame.bars["Healthbar"]:GetWidth()*1.2)
 		LunaPlayerFrame.bars["Powerbar"].Ticker:SetHeight(LunaPlayerFrame.bars["Powerbar"]:GetHeight())
 	end
+	LunaPlayerFrame.UpdateBuffSize = function ()
+		local size
+		if LunaOptions.frames["LunaPlayerFrame"].ShowBuffs == 2 or LunaOptions.frames["LunaPlayerFrame"].ShowBuffs == 3 then
+			size = (LunaPlayerFrame:GetWidth()-15)/16
+		else
+			size = (LunaPlayerFrame:GetHeight()-3)/4
+		end
+		for i=1, 16 do
+			LunaPlayerFrame.Buffs[i]:SetHeight(size)
+			LunaPlayerFrame.Buffs[i]:SetWidth(size)
+			LunaPlayerFrame.Buffs[i].stacks:SetFont(LunaOptions.font, size*0.75)
+			LunaPlayerFrame.Debuffs[i]:SetHeight(size)
+			LunaPlayerFrame.Debuffs[i]:SetWidth(size)
+			LunaPlayerFrame.Debuffs[i].stacks:SetFont(LunaOptions.font, size*0.75)
+		end	
+	end
 	for k,v in pairs(LunaOptions.frames["LunaPlayerFrame"].bars) do
 		if v[2] == 0 then
 			LunaPlayerFrame.bars[v[1]]:Hide()
@@ -539,7 +555,7 @@ function LunaUnitFrames:UpdatePlayerBuffLayout()
 			LunaPlayerFrame.Debuffs[i]:ClearAllPoints()
 			LunaPlayerFrame.Debuffs[i]:SetPoint("TOPLEFT", LunaPlayerFrame.Debuffs[i-1], "TOPRIGHT",1, 0)
 		end
-		LunaUnitFrames:UpdatePlayerBuffSize()
+		LunaPlayerFrame.UpdateBuffSize()
 		Luna_Player_Events:UNIT_AURA()
 	elseif LunaOptions.frames["LunaPlayerFrame"].ShowBuffs == 3 then
 		LunaPlayerFrame:RegisterEvent("UNIT_AURA")
@@ -557,7 +573,7 @@ function LunaUnitFrames:UpdatePlayerBuffLayout()
 			LunaPlayerFrame.Debuffs[i]:ClearAllPoints()
 			LunaPlayerFrame.Debuffs[i]:SetPoint("TOPLEFT", LunaPlayerFrame.Debuffs[i-1], "TOPRIGHT", 1, 0)
 		end
-		LunaUnitFrames:UpdatePlayerBuffSize()
+		LunaPlayerFrame.UpdateBuffSize()
 		Luna_Player_Events:UNIT_AURA()
 	elseif LunaOptions.frames["LunaPlayerFrame"].ShowBuffs == 4 then
 		LunaPlayerFrame:RegisterEvent("UNIT_AURA")
@@ -581,7 +597,7 @@ function LunaUnitFrames:UpdatePlayerBuffLayout()
 			LunaPlayerFrame.Debuffs[i]:ClearAllPoints()
 			LunaPlayerFrame.Debuffs[i]:SetPoint("TOPRIGHT", LunaPlayerFrame.Debuffs[i-1], "TOPLEFT",1, 0)
 		end
-		LunaUnitFrames:UpdatePlayerBuffSize()
+		LunaPlayerFrame.UpdateBuffSize()
 		Luna_Player_Events:UNIT_AURA()
 	else
 		LunaPlayerFrame:RegisterEvent("UNIT_AURA")
@@ -605,26 +621,9 @@ function LunaUnitFrames:UpdatePlayerBuffLayout()
 			LunaPlayerFrame.Debuffs[i]:ClearAllPoints()
 			LunaPlayerFrame.Debuffs[i]:SetPoint("TOPLEFT", LunaPlayerFrame.Debuffs[i-1], "TOPRIGHT",1, 0)
 		end
-		LunaUnitFrames:UpdatePlayerBuffSize()
+		LunaPlayerFrame.UpdateBuffSize()
 		Luna_Player_Events:UNIT_AURA()
 	end
-end
-
-function LunaUnitFrames:UpdatePlayerBuffSize()
-	local size
-	if LunaOptions.frames["LunaPlayerFrame"].ShowBuffs == 2 or LunaOptions.frames["LunaPlayerFrame"].ShowBuffs == 3 then
-		size = (LunaPlayerFrame:GetWidth()-15)/16
-	else
-		size = (LunaPlayerFrame:GetHeight()-3)/4
-	end
-	for i=1, 16 do
-		LunaPlayerFrame.Buffs[i]:SetHeight(size)
-		LunaPlayerFrame.Buffs[i]:SetWidth(size)
-		LunaPlayerFrame.Buffs[i].stacks:SetFont(LunaOptions.font, size*0.75)
-		LunaPlayerFrame.Debuffs[i]:SetHeight(size)
-		LunaPlayerFrame.Debuffs[i]:SetWidth(size)
-		LunaPlayerFrame.Debuffs[i].stacks:SetFont(LunaOptions.font, size*0.75)
-	end	
 end
 
 function LunaUnitFrames:ConvertPlayerPortrait()
@@ -851,7 +850,11 @@ end
 
 function Luna_Player_Events:UNIT_HEALTH()
 	LunaPlayerFrame.incHeal:SetMinMaxValues(0, UnitHealthMax("player")*1.2)
-	LunaPlayerFrame.incHeal:SetValue(UnitHealth("player")+LunaPlayerFrame.incHeal.healvalue)
+	if UnitIsDeadOrGhost("player") then
+		LunaPlayerFrame.incHeal:SetValue(0)
+	else
+		LunaPlayerFrame.incHeal:SetValue(UnitHealth("player")+LunaPlayerFrame.incHeal.healvalue)
+	end
 	LunaPlayerFrame.bars["Healthbar"]:SetMinMaxValues(0, UnitHealthMax("player"))
 	if (UnitIsDead("player") or UnitIsGhost("player")) then
 		LunaPlayerFrame.bars["Healthbar"].hpp:SetText("DEAD")
