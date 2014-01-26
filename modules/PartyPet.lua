@@ -1,10 +1,6 @@
 local Luna_PartyPet_Events = {}
 LunaPartyPetFrames = {}
 
-function Luna_PartyPet_Tip()
-	UnitFrame_OnEnter()
-end
-
 function Luna_PartyPet_OnClick()
 	local button = arg1
 	if (button == "LeftButton") then
@@ -52,7 +48,7 @@ function LunaUnitFrames:CreatePartyPetFrames()
 		LunaPartyPetFrames[i]:SetPoint("BOTTOMLEFT", LunaPartyFrames[i], "BOTTOMRIGHT", 5, 0)
 		LunaPartyPetFrames[i]:RegisterForClicks('LeftButtonUp', 'RightButtonUp')
 		LunaPartyPetFrames[i].unit = "partypet"..i
-		LunaPartyPetFrames[i]:SetScript("OnEnter", Luna_PartyPet_Tip)
+		LunaPartyPetFrames[i]:SetScript("OnEnter", UnitFrame_OnEnter)
 		LunaPartyPetFrames[i]:SetScript("OnLeave", UnitFrame_OnLeave)
 		LunaPartyPetFrames[i]:SetScript("OnClick", Luna_PartyPet_OnClick)
 		LunaPartyPetFrames[i]:SetScript("OnEvent", Luna_PartyPet_OnEvent)

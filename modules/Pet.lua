@@ -5,10 +5,6 @@ local function Luna_HideBlizz(frame)
 	frame:Hide()
 end	
 	
-local function Luna_Pet_Tip()
-	UnitFrame_OnEnter()
-end
-	
 local function Luna_Party_SetBuffTooltip()
 	GameTooltip:SetOwner(this, "ANCHOR_BOTTOMRIGHT")
 	if (this.id > 16) then
@@ -91,16 +87,18 @@ function LunaUnitFrames:CreatePetFrame()
 	LunaPetFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", LunaOptions.frames["LunaPetFrame"].position.x, LunaOptions.frames["LunaPetFrame"].position.y)
 	LunaPetFrame:RegisterForClicks('LeftButtonUp', 'RightButtonUp')
 	LunaPetFrame.unit = "pet"
-	LunaPetFrame:SetScript("OnEnter", Luna_Pet_Tip)
+	LunaPetFrame:SetScript("OnEnter", UnitFrame_OnEnter)
 	LunaPetFrame:SetScript("OnLeave", UnitFrame_OnLeave)
 	LunaPetFrame:SetMovable(0)
 	LunaPetFrame:RegisterForDrag("LeftButton")
 	LunaPetFrame:SetScript("OnDragStop", StopMovingOrSizing)
 	LunaPetFrame:SetClampedToScreen(1)
 
+	LunaPetFrame.AuraAnchor = CreateFrame("Frame", nil, LunaPetFrame)	
+	
 	LunaPetFrame.Buffs = {}
 
-	LunaPetFrame.Buffs[1] = CreateFrame("Button", nil, LunaPetFrame)
+	LunaPetFrame.Buffs[1] = CreateFrame("Button", nil, LunaPlayerFrame.AuraAnchor)
 	LunaPetFrame.Buffs[1].texturepath = UnitBuff(LunaPetFrame.unit,1)
 	LunaPetFrame.Buffs[1].id = 1
 	LunaPetFrame.Buffs[1]:SetNormalTexture(LunaPetFrame.Buffs[1].texturepath)
@@ -117,7 +115,7 @@ function LunaUnitFrames:CreatePetFrame()
 	LunaPetFrame.Buffs[1].stacks:SetText("8")
 
 	for z=2, 16 do
-		LunaPetFrame.Buffs[z] = CreateFrame("Button", nil, LunaPetFrame)
+		LunaPetFrame.Buffs[z] = CreateFrame("Button", nil, LunaPlayerFrame.AuraAnchor)
 		LunaPetFrame.Buffs[z].texturepath = UnitBuff(LunaPetFrame.unit,z)
 		LunaPetFrame.Buffs[z].id = z
 		LunaPetFrame.Buffs[z]:SetNormalTexture(LunaPetFrame.Buffs[z].texturepath)
@@ -136,7 +134,7 @@ function LunaUnitFrames:CreatePetFrame()
 
 	LunaPetFrame.Debuffs = {}
 
-	LunaPetFrame.Debuffs[1] = CreateFrame("Button", nil, LunaPetFrame)
+	LunaPetFrame.Debuffs[1] = CreateFrame("Button", nil, LunaPlayerFrame.AuraAnchor)
 	LunaPetFrame.Debuffs[1].texturepath = UnitDebuff(LunaPetFrame.unit,1)
 	LunaPetFrame.Debuffs[1].id = 17
 	LunaPetFrame.Debuffs[1]:SetNormalTexture(LunaPetFrame.Debuffs[1].texturepath)
@@ -153,7 +151,7 @@ function LunaUnitFrames:CreatePetFrame()
 	LunaPetFrame.Debuffs[1].stacks:SetText("8")
 
 	for z=2, 16 do
-		LunaPetFrame.Debuffs[z] = CreateFrame("Button", nil, LunaPetFrame)
+		LunaPetFrame.Debuffs[z] = CreateFrame("Button", nil, LunaPlayerFrame.AuraAnchor)
 		LunaPetFrame.Debuffs[z].texturepath = UnitDebuff(LunaPetFrame.unit,z)
 		LunaPetFrame.Debuffs[z].id = z+16
 		LunaPetFrame.Debuffs[z]:SetNormalTexture(LunaPetFrame.Debuffs[z].texturepath)
@@ -299,19 +297,133 @@ function LunaUnitFrames:CreatePetFrame()
 		end
 	end
 	LunaPetFrame.UpdateBuffSize = function ()
-		local size
-		if LunaOptions.frames["LunaPetFrame"].ShowBuffs == 2 or LunaOptions.frames["LunaPetFrame"].ShowBuffs == 3 then
-			size = (LunaPetFrame:GetWidth()-15)/16
+		local buffcount = LunaOptions.frames["LunaPetFrame"].BuffInRow or 16
+		if LunaOptions.frames["LunaPetFrame"].ShowBuffs == 1 then
+			LunaPetFrame:UnregisterEvent("UNIT_AURA")
+			for i=1, 16 do
+				LunaPetFrame.Buffs[i]:Hide()
+				LunaPetFrame.Debuffs[i]:Hide()
+			end
+		elseif LunaOptions.frames["LunaPetFrame"].ShowBuffs == 2 then
+			local buffsize = ((LunaPetFrame:GetWidth()-(buffcount-1))/buffcount)
+			LunaPetFrame:RegisterEvent("UNIT_AURA")
+			LunaPetFrame.AuraAnchor:ClearAllPoints()
+			LunaPetFrame.AuraAnchor:SetPoint("BOTTOMLEFT", LunaPetFrame, "TOPLEFT", -1, 3)
+			LunaPetFrame.AuraAnchor:SetWidth(LunaPetFrame:GetWidth())
+			local buffid = 1
+			local row = 0
+			while buffid < 17 do
+				for z=1, buffcount do
+					LunaPetFrame.Buffs[buffid]:ClearAllPoints()
+					LunaPetFrame.Buffs[buffid]:SetPoint("BOTTOMLEFT", LunaPetFrame.AuraAnchor, "BOTTOMLEFT", ((z-1)*(buffsize+1)), (buffsize+1)*row)
+					LunaPetFrame.Buffs[buffid]:SetHeight(buffsize)
+					LunaPetFrame.Buffs[buffid]:SetWidth(buffsize)
+					LunaPetFrame.Buffs[buffid].stacks:SetFont(LunaOptions.font, buffsize*0.75)
+					
+					LunaPetFrame.Debuffs[buffid]:ClearAllPoints()
+					LunaPetFrame.Debuffs[buffid]:SetPoint("BOTTOMLEFT", LunaPetFrame.AuraAnchor, "TOPLEFT", ((z-1)*(buffsize+1)), (buffsize+1)*row)
+					LunaPetFrame.Debuffs[buffid]:SetHeight(buffsize)
+					LunaPetFrame.Debuffs[buffid]:SetWidth(buffsize)
+					LunaPetFrame.Debuffs[buffid].stacks:SetFont(LunaOptions.font, buffsize*0.75)
+					
+					buffid = buffid + 1
+					if buffid == 17 then
+						break
+					end
+				end
+				row = row + 1
+			end
+			Luna_Pet_Events:UNIT_AURA()
+		elseif LunaOptions.frames["LunaPetFrame"].ShowBuffs == 3 then
+			local buffsize = ((LunaPetFrame:GetWidth()-(buffcount-1))/buffcount)
+			LunaPetFrame:RegisterEvent("UNIT_AURA")
+			LunaPetFrame.AuraAnchor:ClearAllPoints()
+			LunaPetFrame.AuraAnchor:SetWidth(LunaPetFrame:GetWidth())
+			local buffid = 1
+			local row = 0
+			while buffid < 17 do
+				for z=1, buffcount do
+					LunaPetFrame.Buffs[buffid]:ClearAllPoints()
+					LunaPetFrame.Buffs[buffid]:SetPoint("TOPLEFT", LunaPetFrame.AuraAnchor, "TOPLEFT", ((z-1)*(buffsize+1)), (buffsize+1)*row*(-1))
+					LunaPetFrame.Buffs[buffid]:SetHeight(buffsize)
+					LunaPetFrame.Buffs[buffid]:SetWidth(buffsize)
+					LunaPetFrame.Buffs[buffid].stacks:SetFont(LunaOptions.font, buffsize*0.75)
+					
+					LunaPetFrame.Debuffs[buffid]:ClearAllPoints()
+					LunaPetFrame.Debuffs[buffid]:SetPoint("TOPLEFT", LunaPetFrame.AuraAnchor, "BOTTOMLEFT", ((z-1)*(buffsize+1)), (buffsize+1)*row*(-1))
+					LunaPetFrame.Debuffs[buffid]:SetHeight(buffsize)
+					LunaPetFrame.Debuffs[buffid]:SetWidth(buffsize)
+					LunaPetFrame.Debuffs[buffid].stacks:SetFont(LunaOptions.font, buffsize*0.75)
+					
+					buffid = buffid + 1
+					if buffid == 17 then
+						break
+					end
+				end
+				row = row + 1
+			end
+			LunaPetFrame.AuraAnchor:SetPoint("TOPLEFT", LunaPetFrame, "BOTTOMLEFT", -1, -3)
+			Luna_Pet_Events:UNIT_AURA()
+		elseif LunaOptions.frames["LunaPetFrame"].ShowBuffs == 4 then
+			local buffsize = (((LunaPetFrame:GetHeight()/2)-(math.ceil(16/buffcount)-1))/math.ceil(16/buffcount))
+			LunaPetFrame:RegisterEvent("UNIT_AURA")
+			LunaPetFrame.AuraAnchor:ClearAllPoints()
+			LunaPetFrame.AuraAnchor:SetWidth((buffsize*buffcount)+(buffcount-1))
+			local buffid = 1
+			local row = 0
+			while buffid < 17 do
+				for z=1, buffcount do
+					LunaPetFrame.Buffs[buffid]:ClearAllPoints()
+					LunaPetFrame.Buffs[buffid]:SetPoint("TOPRIGHT", LunaPetFrame.AuraAnchor, "TOPRIGHT", ((z-1)*(buffsize+1))*(-1), (buffsize+1)*row*(-1))
+					LunaPetFrame.Buffs[buffid]:SetHeight(buffsize)
+					LunaPetFrame.Buffs[buffid]:SetWidth(buffsize)
+					LunaPetFrame.Buffs[buffid].stacks:SetFont(LunaOptions.font, buffsize*0.75)
+					
+					LunaPetFrame.Debuffs[buffid]:ClearAllPoints()
+					LunaPetFrame.Debuffs[buffid]:SetPoint("TOPRIGHT", LunaPetFrame.AuraAnchor, "BOTTOMRIGHT", ((z-1)*(buffsize+1))*(-1), (buffsize+1)*row*(-1))
+					LunaPetFrame.Debuffs[buffid]:SetHeight(buffsize)
+					LunaPetFrame.Debuffs[buffid]:SetWidth(buffsize)
+					LunaPetFrame.Debuffs[buffid].stacks:SetFont(LunaOptions.font, buffsize*0.75)
+					
+					buffid = buffid + 1
+					if buffid == 17 then
+						break
+					end
+				end
+				row = row + 1
+			end
+			LunaPetFrame.AuraAnchor:SetPoint("TOPRIGHT", LunaPetFrame, "TOPLEFT", -3, 0)
+			Luna_Pet_Events:UNIT_AURA()
 		else
-			size = (LunaPetFrame:GetHeight()-3)/4
-		end
-		for i=1, 16 do
-			LunaPetFrame.Buffs[i]:SetHeight(size)
-			LunaPetFrame.Buffs[i]:SetWidth(size)
-			LunaPetFrame.Buffs[i].stacks:SetFont(LunaOptions.font, size*0.75)
-			LunaPetFrame.Debuffs[i]:SetHeight(size)
-			LunaPetFrame.Debuffs[i]:SetWidth(size)
-			LunaPetFrame.Debuffs[i].stacks:SetFont(LunaOptions.font, size*0.75)
+			local buffsize = (((LunaPetFrame:GetHeight()/2)-(math.ceil(16/buffcount)-1))/math.ceil(16/buffcount))
+			LunaPetFrame:RegisterEvent("UNIT_AURA")
+			LunaPetFrame.AuraAnchor:ClearAllPoints()
+			LunaPetFrame.AuraAnchor:SetWidth((buffsize*buffcount)+(buffcount-1))
+			local buffid = 1
+			local row = 0
+			while buffid < 17 do
+				for z=1, buffcount do
+					LunaPetFrame.Buffs[buffid]:ClearAllPoints()
+					LunaPetFrame.Buffs[buffid]:SetPoint("TOPLEFT", LunaPetFrame.AuraAnchor, "TOPLEFT", ((z-1)*(buffsize+1)), (buffsize+1)*row*(-1))
+					LunaPetFrame.Buffs[buffid]:SetHeight(buffsize)
+					LunaPetFrame.Buffs[buffid]:SetWidth(buffsize)
+					LunaPetFrame.Buffs[buffid].stacks:SetFont(LunaOptions.font, buffsize*0.75)
+					
+					LunaPetFrame.Debuffs[buffid]:ClearAllPoints()
+					LunaPetFrame.Debuffs[buffid]:SetPoint("TOPLEFT", LunaPetFrame.AuraAnchor, "BOTTOMLEFT", ((z-1)*(buffsize+1)), (buffsize+1)*row*(-1))
+					LunaPetFrame.Debuffs[buffid]:SetHeight(buffsize)
+					LunaPetFrame.Debuffs[buffid]:SetWidth(buffsize)
+					LunaPetFrame.Debuffs[buffid].stacks:SetFont(LunaOptions.font, buffsize*0.75)
+					
+					buffid = buffid + 1
+					if buffid == 17 then
+						break
+					end
+				end
+				row = row + 1
+			end
+			LunaPetFrame.AuraAnchor:SetPoint("TOPLEFT", LunaPetFrame, "TOPRIGHT", 3, 0)
+			Luna_Pet_Events:UNIT_AURA()
 		end
 	end
 	for k,v in pairs(LunaOptions.frames["LunaPetFrame"].bars) do
@@ -320,7 +432,7 @@ function LunaUnitFrames:CreatePetFrame()
 		end
 	end
 	LunaPetFrame.AdjustBars()
-	LunaUnitFrames:UpdatePetBuffLayout()
+	LunaPetFrame.UpdateBuffSize()
 end
 
 function LunaUnitFrames:ConvertPetPortrait()
@@ -334,7 +446,7 @@ function LunaUnitFrames:ConvertPetPortrait()
 		end
 	end
 	UIDropDownMenu_SetText("Healthbar", LunaOptionsFrame.pages[2].BarSelect)
-	LunaOptionsFrame.pages[2].barorder:SetMinMaxValues(1,table.getn(LunaOptions.frames["LunaPlayerFrame"].bars))
+	LunaOptionsFrame.pages[2].barorder:SetMinMaxValues(1,table.getn(LunaOptions.frames["LunaPetFrame"].bars))
 	for k,v in pairs(LunaOptions.frames["LunaPetFrame"].bars) do
 		if v[1] == UIDropDownMenu_GetText(LunaOptionsFrame.pages[2].BarSelect) then
 			LunaOptionsFrame.pages[2].barheight:SetValue(v[2])
@@ -433,94 +545,9 @@ function LunaUnitFrames:UpdatePetFrame()
 	Luna_Pet_Events.UNIT_MANA()
 end
 
-function LunaUnitFrames:UpdatePetBuffLayout()
-	if LunaOptions.frames["LunaPetFrame"].ShowBuffs == 1 then
-		LunaPetFrame:UnregisterEvent("UNIT_AURA")
-		for i=1, 16 do
-			LunaPetFrame.Buffs[i]:Hide()
-			LunaPetFrame.Debuffs[i]:Hide()
-		end
-	elseif LunaOptions.frames["LunaPetFrame"].ShowBuffs == 2 then
-		LunaPetFrame:RegisterEvent("UNIT_AURA")
-		LunaPetFrame.Buffs[1]:ClearAllPoints()
-		LunaPetFrame.Buffs[1]:SetPoint("BOTTOMLEFT", LunaPetFrame, "TOPLEFT", -1, 3)
-		LunaPetFrame.Debuffs[1]:ClearAllPoints()
-		LunaPetFrame.Debuffs[1]:SetPoint("BOTTOMLEFT", LunaPetFrame.Buffs[1], "TOPLEFT", 0, 3)
-		for i=2, 16 do
-			LunaPetFrame.Buffs[i]:ClearAllPoints()
-			LunaPetFrame.Buffs[i]:SetPoint("TOPLEFT", LunaPetFrame.Buffs[i-1], "TOPRIGHT",1, 0)
-			LunaPetFrame.Debuffs[i]:ClearAllPoints()
-			LunaPetFrame.Debuffs[i]:SetPoint("TOPLEFT", LunaPetFrame.Debuffs[i-1], "TOPRIGHT",1, 0)
-		end
-		LunaPetFrame.UpdateBuffSize()
-		Luna_Pet_Events:UNIT_AURA()
-	elseif LunaOptions.frames["LunaPetFrame"].ShowBuffs == 3 then
-		LunaPetFrame:RegisterEvent("UNIT_AURA")
-		LunaPetFrame.Buffs[1]:ClearAllPoints()
-		LunaPetFrame.Buffs[1]:SetPoint("TOPLEFT", LunaPetFrame, "BOTTOMLEFT", -1, -3)
-		LunaPetFrame.Debuffs[1]:ClearAllPoints()
-		LunaPetFrame.Debuffs[1]:SetPoint("TOPLEFT", LunaPetFrame.Buffs[1], "BOTTOMLEFT", 0, -3)
-		for i=2, 16 do
-			LunaPetFrame.Buffs[i]:ClearAllPoints()
-			LunaPetFrame.Buffs[i]:SetPoint("TOPLEFT", LunaPetFrame.Buffs[i-1], "TOPRIGHT", 1, 0)
-			LunaPetFrame.Debuffs[i]:ClearAllPoints()
-			LunaPetFrame.Debuffs[i]:SetPoint("TOPLEFT", LunaPetFrame.Debuffs[i-1], "TOPRIGHT", 1, 0)
-		end
-		LunaPetFrame.UpdateBuffSize()
-		Luna_Pet_Events:UNIT_AURA()
-	elseif LunaOptions.frames["LunaPetFrame"].ShowBuffs == 4 then
-		LunaPetFrame:RegisterEvent("UNIT_AURA")
-		LunaPetFrame.Buffs[1]:ClearAllPoints()
-		LunaPetFrame.Buffs[1]:SetPoint("TOPRIGHT", LunaPetFrame, "TOPLEFT", -3, 1)
-		LunaPetFrame.Debuffs[1]:ClearAllPoints()
-		LunaPetFrame.Debuffs[1]:SetPoint("TOPLEFT", LunaPetFrame.Buffs[9], "BOTTOMLEFT", 0, -1)
-		LunaPetFrame.Buffs[9]:ClearAllPoints()
-		LunaPetFrame.Buffs[9]:SetPoint("TOPLEFT", LunaPetFrame.Buffs[1], "BOTTOMLEFT", 0, -1)
-		LunaPetFrame.Debuffs[9]:ClearAllPoints()
-		LunaPetFrame.Debuffs[9]:SetPoint("TOPLEFT", LunaPetFrame.Debuffs[1], "BOTTOMLEFT", 0, -1)
-		for i=2, 8 do
-			LunaPetFrame.Buffs[i]:ClearAllPoints()
-			LunaPetFrame.Buffs[i]:SetPoint("TOPRIGHT", LunaPetFrame.Buffs[i-1], "TOPLEFT",1, 0)
-			LunaPetFrame.Debuffs[i]:ClearAllPoints()
-			LunaPetFrame.Debuffs[i]:SetPoint("TOPRIGHT", LunaPetFrame.Debuffs[i-1], "TOPLEFT",1, 0)
-		end
-		for i=10, 16 do
-			LunaPetFrame.Buffs[i]:ClearAllPoints()
-			LunaPetFrame.Buffs[i]:SetPoint("TOPRIGHT", LunaPetFrame.Buffs[i-1], "TOPLEFT",1, 0)
-			LunaPetFrame.Debuffs[i]:ClearAllPoints()
-			LunaPetFrame.Debuffs[i]:SetPoint("TOPRIGHT", LunaPetFrame.Debuffs[i-1], "TOPLEFT",1, 0)
-		end
-		LunaPetFrame.UpdateBuffSize()
-		Luna_Pet_Events:UNIT_AURA()
-	else
-		LunaPetFrame:RegisterEvent("UNIT_AURA")
-		LunaPetFrame.Buffs[1]:ClearAllPoints()
-		LunaPetFrame.Buffs[1]:SetPoint("TOPLEFT", LunaPetFrame, "TOPRIGHT", 3, 1)
-		LunaPetFrame.Debuffs[1]:ClearAllPoints()
-		LunaPetFrame.Debuffs[1]:SetPoint("TOPLEFT", LunaPetFrame.Buffs[9], "BOTTOMLEFT", 0, -1)
-		LunaPetFrame.Buffs[9]:ClearAllPoints()
-		LunaPetFrame.Buffs[9]:SetPoint("TOPLEFT", LunaPetFrame.Buffs[1], "BOTTOMLEFT", 0, -1)
-		LunaPetFrame.Debuffs[9]:ClearAllPoints()
-		LunaPetFrame.Debuffs[9]:SetPoint("TOPLEFT", LunaPetFrame.Debuffs[1], "BOTTOMLEFT", 0, -1)
-		for i=2, 8 do
-			LunaPetFrame.Buffs[i]:ClearAllPoints()
-			LunaPetFrame.Buffs[i]:SetPoint("TOPLEFT", LunaPetFrame.Buffs[i-1], "TOPRIGHT",1, 0)
-			LunaPetFrame.Debuffs[i]:ClearAllPoints()
-			LunaPetFrame.Debuffs[i]:SetPoint("TOPLEFT", LunaPetFrame.Debuffs[i-1], "TOPRIGHT",1, 0)
-		end
-		for i=10, 16 do
-			LunaPetFrame.Buffs[i]:ClearAllPoints()
-			LunaPetFrame.Buffs[i]:SetPoint("TOPLEFT", LunaPetFrame.Buffs[i-1], "TOPRIGHT",1, 0)
-			LunaPetFrame.Debuffs[i]:ClearAllPoints()
-			LunaPetFrame.Debuffs[i]:SetPoint("TOPLEFT", LunaPetFrame.Debuffs[i-1], "TOPRIGHT",1, 0)
-		end
-		LunaPetFrame.UpdateBuffSize()
-		Luna_Pet_Events:UNIT_AURA()
-	end
-end
-
 function Luna_Pet_Events:UNIT_AURA()
 	if this.unit == arg1 then
+		local pos
 		for i=1, 16 do
 			local path, stacks = UnitBuff(this.unit,i)
 			this.Buffs[i].texturepath = path
@@ -536,10 +563,16 @@ function Luna_Pet_Events:UNIT_AURA()
 			else
 				this.Buffs[i]:EnableMouse(0)
 				this.Buffs[i]:Hide()
+				if not pos then
+					pos = i
+				end
 			end
 			this.Buffs[i]:SetNormalTexture(this.Buffs[i].texturepath)
 		end
-
+		if not pos then
+			pos = 17
+		end
+		LunaPetFrame.AuraAnchor:SetHeight((LunaPetFrame.Buffs[1]:GetHeight()*math.ceil((pos-1)/(LunaOptions.frames["LunaPetFrame"].BuffInRow or 16)))+(math.ceil((pos-1)/(LunaOptions.frames["LunaPetFrame"].BuffInRow or 16))-1)+1.1)
 		for i=1, 16 do
 			local path, stacks = UnitDebuff(this.unit,i)
 			this.Debuffs[i].texturepath = path

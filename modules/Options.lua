@@ -119,6 +119,7 @@ local function ToggleRaidLayout()
 	LunaUnitFrames:UpdateRaidRoster()
 	LunaOptionsFrame.pages[7].scaleslider:SetValue(LunaOptions.frames[LunaOptions.Raidlayout].size)
 	LunaOptionsFrame.pages[7].paddingslider:SetValue(LunaOptions.frames[LunaOptions.Raidlayout].padding)
+	LunaOptionsFrame.pages[7].pBarswitch:SetChecked(LunaOptions.frames[LunaOptions.Raidlayout].pBars or 1)
 	LunaOptionsFrame.pages[7].RaidGrpNameswitch:SetChecked(LunaOptions.frames[LunaOptions.Raidlayout].ShowRaidGroupTitles)
 end
 
@@ -304,7 +305,7 @@ end
 local function PlayerBuffPosSelectChoice()
 	UIDropDownMenu_SetSelectedID(LunaOptionsFrame.pages[1].BuffPosition, this:GetID())
 	LunaOptions.frames["LunaPlayerFrame"].ShowBuffs = this:GetID()
-	LunaUnitFrames:UpdatePlayerBuffLayout()
+	LunaPlayerFrame.UpdateBuffSize()
 end
 
 local function PlayerBuffPosSelect()
@@ -336,6 +337,20 @@ local function PlayerBarSelectorInit()
 		info.checkable = nil
 		UIDropDownMenu_AddButton(info, 1)
 	end
+end
+
+local function BuffInRow()
+	local frame = getglobal(this.frame)
+	amount = this:GetValue()
+	if frame then
+		LunaOptions.frames[this.frame].BuffInRow = amount
+		if this.frame == "LunaPartyFrames" then
+			LunaUnitFrames:UpdatePartyBuffSize()
+		else
+			frame.UpdateBuffSize()
+		end
+		getglobal(this.frame.."BuffInRowText"):SetText("Auras per row: "..amount)
+	end	
 end
 
 local function PetBarSelectorInit()
@@ -496,7 +511,7 @@ end
 local function PetBuffPosSelectChoice()
 	UIDropDownMenu_SetSelectedID(LunaOptionsFrame.pages[2].BuffPosition, this:GetID())
 	LunaOptions.frames["LunaPetFrame"].ShowBuffs = this:GetID()
-	LunaUnitFrames:UpdatePetBuffLayout()
+	LunaPetFrame.UpdateBuffSize()
 end
 
 local function PetBuffPosSelect()
@@ -513,7 +528,7 @@ end
 local function TargetBuffPosSelectChoice()
 	UIDropDownMenu_SetSelectedID(LunaOptionsFrame.pages[3].BuffPosition, this:GetID())
 	LunaOptions.frames["LunaTargetFrame"].ShowBuffs = this:GetID()
-	LunaUnitFrames:UpdateTargetBuffLayout()
+	LunaTargetFrame.UpdateBuffSize()
 end
 
 local function TargetBuffPosSelect()
@@ -530,7 +545,7 @@ end
 local function PartyBuffPosSelectChoice()
 	UIDropDownMenu_SetSelectedID(LunaOptionsFrame.pages[5].BuffPosition, this:GetID())
 	LunaOptions.frames["LunaPartyFrames"].ShowBuffs = this:GetID()
-	LunaUnitFrames:UpdatePartyBuffLayout()
+	LunaUnitFrames:UpdatePartyBuffSize()
 end
 
 local function PartyBuffPosSelect()
@@ -627,6 +642,15 @@ local function enableRaid()
 		LunaOptions.enableRaid = 1
 	end
 	LunaUnitFrames:UpdateRaidRoster()
+end
+
+local function ToggleRaidPowerBars()
+	if LunaOptions.frames[LunaOptions.Raidlayout].pBars == 0 then
+		LunaOptions.frames[LunaOptions.Raidlayout].pBars = 1
+	else
+		LunaOptions.frames[LunaOptions.Raidlayout].pBars = 0
+	end
+	LunaUnitFrames:UpdateRaidLayout()
 end
 
 function LunaOptionsModule:CreateMenu()
@@ -840,7 +864,7 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[1].XPBar:SetScript("OnClick", XPBarToggle)
 	LunaOptionsFrame.pages[1].XPBar:SetChecked(LunaOptions.XPBar)
 	getglobal("XPBarSwitchText"):SetText("Enable XP Bar")
-	
+		
 	for k,i in ipairs({1,2,3,5}) do
 		LunaOptionsFrame.pages[i].BuffPosition = CreateFrame("Button", "BuffSwitch"..i, LunaOptionsFrame.pages[i], "UIDropDownMenuTemplate")
 		LunaOptionsFrame.pages[i].BuffPosition:SetPoint("TOPRIGHT", LunaOptionsFrame.pages[i].scaleslider, "BOTTOMRIGHT", -120 , -15)
@@ -851,7 +875,7 @@ function LunaOptionsModule:CreateMenu()
 		LunaOptionsFrame.pages[i].BuffSwitchDesc:SetPoint("LEFT", LunaOptionsFrame.pages[i].BuffPosition, "RIGHT", -10, 0)
 		LunaOptionsFrame.pages[i].BuffSwitchDesc:SetFont("Fonts\\FRIZQT__.TTF", 10)
 		LunaOptionsFrame.pages[i].BuffSwitchDesc:SetTextColor(1,0.82,0)
-		LunaOptionsFrame.pages[i].BuffSwitchDesc:SetText("(De)Buff Position")
+		LunaOptionsFrame.pages[i].BuffSwitchDesc:SetText("Aura Position")
 	end
 	
 	UIDropDownMenu_Initialize(LunaOptionsFrame.pages[1].BuffPosition, PlayerBuffPosSelect)
@@ -864,11 +888,21 @@ function LunaOptionsModule:CreateMenu()
 	UIDropDownMenu_SetSelectedID(LunaOptionsFrame.pages[5].BuffPosition, LunaOptions.frames["LunaPartyFrames"].ShowBuffs)
 	
 	LunaOptionsFrame.pages[1].BarSelect = CreateFrame("Button", "BarSelector", LunaOptionsFrame.pages[1], "UIDropDownMenuTemplate")
-	LunaOptionsFrame.pages[1].BarSelect:SetPoint("TOPRIGHT", LunaOptionsFrame.pages[1].BuffPosition, "BOTTOMRIGHT", 0 , -30)
+	LunaOptionsFrame.pages[1].BarSelect:SetPoint("TOPRIGHT", LunaOptionsFrame.pages[1].BuffPosition, "BOTTOMRIGHT", 0 , -40)
 	UIDropDownMenu_SetWidth(80, LunaOptionsFrame.pages[1].BarSelect)
 	UIDropDownMenu_JustifyText("LEFT", LunaOptionsFrame.pages[1].BarSelect)
 	UIDropDownMenu_Initialize(LunaOptionsFrame.pages[1].BarSelect, PlayerBarSelectorInit)
 	UIDropDownMenu_SetSelectedID(LunaOptionsFrame.pages[1].BarSelect, 1)
+
+	LunaOptionsFrame.pages[1].BuffInRowslider = CreateFrame("Slider", "LunaPlayerFrameBuffInRow", LunaOptionsFrame.pages[1], "OptionsSliderTemplate")
+	LunaOptionsFrame.pages[1].BuffInRowslider:SetMinMaxValues(1,16)
+	LunaOptionsFrame.pages[1].BuffInRowslider:SetValueStep(1)
+	LunaOptionsFrame.pages[1].BuffInRowslider:SetScript("OnValueChanged", BuffInRow)
+	LunaOptionsFrame.pages[1].BuffInRowslider:SetPoint("TOPLEFT", LunaOptionsFrame.pages[1].BuffPosition, "BOTTOMLEFT", 20, -6)
+	LunaOptionsFrame.pages[1].BuffInRowslider:SetValue(LunaOptions.frames["LunaPlayerFrame"].BuffInRow or 16)
+	LunaOptionsFrame.pages[1].BuffInRowslider.frame = "LunaPlayerFrame"
+	LunaOptionsFrame.pages[1].BuffInRowslider:SetWidth(230)
+	getglobal("LunaPlayerFrameBuffInRowText"):SetText("Auras per row: "..(LunaOptions.frames["LunaPlayerFrame"].BuffInRow or 16))
 	
 	LunaOptionsFrame.pages[1].barheight = CreateFrame("Slider", "BarSizer", LunaOptionsFrame.pages[1], "OptionsSliderTemplate")
 	LunaOptionsFrame.pages[1].barheight.frame = "LunaPlayerFrame"
@@ -908,13 +942,23 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[2].Portraitmode:SetChecked((LunaOptions.frames["LunaPetFrame"].portrait == 1))
 	getglobal("PortraitmodePetText"):SetText("Display Portrait as Bar")
 
+	LunaOptionsFrame.pages[2].BuffInRowslider = CreateFrame("Slider", "LunaPetFrameBuffInRow", LunaOptionsFrame.pages[2], "OptionsSliderTemplate")
+	LunaOptionsFrame.pages[2].BuffInRowslider:SetMinMaxValues(1,16)
+	LunaOptionsFrame.pages[2].BuffInRowslider:SetValueStep(1)
+	LunaOptionsFrame.pages[2].BuffInRowslider:SetScript("OnValueChanged", BuffInRow)
+	LunaOptionsFrame.pages[2].BuffInRowslider:SetPoint("TOPLEFT", LunaOptionsFrame.pages[2].BuffPosition, "BOTTOMLEFT", 20, -6)
+	LunaOptionsFrame.pages[2].BuffInRowslider:SetValue(LunaOptions.frames["LunaPetFrame"].BuffInRow or 16)
+	LunaOptionsFrame.pages[2].BuffInRowslider.frame = "LunaPetFrame"
+	LunaOptionsFrame.pages[2].BuffInRowslider:SetWidth(230)
+	getglobal("LunaPetFrameBuffInRowText"):SetText("Auras per row: "..(LunaOptions.frames["LunaPetFrame"].BuffInRow or 16))
+	
 	LunaOptionsFrame.pages[2].BarSelect = CreateFrame("Button", "BarSelector2", LunaOptionsFrame.pages[2], "UIDropDownMenuTemplate")
-	LunaOptionsFrame.pages[2].BarSelect:SetPoint("TOPRIGHT", LunaOptionsFrame.pages[2].BuffPosition, "BOTTOMRIGHT", 0 , -30)
+	LunaOptionsFrame.pages[2].BarSelect:SetPoint("TOPRIGHT", LunaOptionsFrame.pages[2].BuffPosition, "BOTTOMRIGHT", 0 , -40)
 	UIDropDownMenu_SetWidth(80, LunaOptionsFrame.pages[2].BarSelect)
 	UIDropDownMenu_JustifyText("LEFT", LunaOptionsFrame.pages[2].BarSelect)
 	UIDropDownMenu_Initialize(LunaOptionsFrame.pages[2].BarSelect, PetBarSelectorInit)
 	UIDropDownMenu_SetSelectedID(LunaOptionsFrame.pages[2].BarSelect, 1)
-	
+		
 	LunaOptionsFrame.pages[2].barheight = CreateFrame("Slider", "BarSizer2", LunaOptionsFrame.pages[2], "OptionsSliderTemplate")
 	LunaOptionsFrame.pages[2].barheight.frame = "LunaPetFrame"
 	LunaOptionsFrame.pages[2].barheight:SetMinMaxValues(0,10)
@@ -952,8 +996,18 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[3].Portraitmode:SetChecked((LunaOptions.frames["LunaTargetFrame"].portrait == 1))
 	getglobal("PortraitmodeTargetText"):SetText("Display Portrait as Bar")
 
+	LunaOptionsFrame.pages[3].BuffInRowslider = CreateFrame("Slider", "LunaTargetFrameBuffInRow", LunaOptionsFrame.pages[3], "OptionsSliderTemplate")
+	LunaOptionsFrame.pages[3].BuffInRowslider:SetMinMaxValues(1,16)
+	LunaOptionsFrame.pages[3].BuffInRowslider:SetValueStep(1)
+	LunaOptionsFrame.pages[3].BuffInRowslider:SetScript("OnValueChanged", BuffInRow)
+	LunaOptionsFrame.pages[3].BuffInRowslider:SetPoint("TOPLEFT", LunaOptionsFrame.pages[3].BuffPosition, "BOTTOMLEFT", 20, -6)
+	LunaOptionsFrame.pages[3].BuffInRowslider:SetValue(LunaOptions.frames["LunaTargetFrame"].BuffInRow or 16)
+	LunaOptionsFrame.pages[3].BuffInRowslider.frame = "LunaTargetFrame"
+	LunaOptionsFrame.pages[3].BuffInRowslider:SetWidth(230)
+	getglobal("LunaTargetFrameBuffInRowText"):SetText("Auras per row: "..(LunaOptions.frames["LunaTargetFrame"].BuffInRow or 16))
+	
 	LunaOptionsFrame.pages[3].BarSelect = CreateFrame("Button", "BarSelector3", LunaOptionsFrame.pages[3], "UIDropDownMenuTemplate")
-	LunaOptionsFrame.pages[3].BarSelect:SetPoint("TOPRIGHT", LunaOptionsFrame.pages[3].BuffPosition, "BOTTOMRIGHT", 0 , -30)
+	LunaOptionsFrame.pages[3].BarSelect:SetPoint("TOPRIGHT", LunaOptionsFrame.pages[3].BuffPosition, "BOTTOMRIGHT", 0 , -40)
 	UIDropDownMenu_SetWidth(80, LunaOptionsFrame.pages[3].BarSelect)
 	UIDropDownMenu_JustifyText("LEFT", LunaOptionsFrame.pages[3].BarSelect)
 	UIDropDownMenu_Initialize(LunaOptionsFrame.pages[3].BarSelect, TargetBarSelectorInit)
@@ -1105,8 +1159,18 @@ function LunaOptionsModule:CreateMenu()
 	getglobal("BarSizer4.5Text"):SetText("Bar height weight: "..LunaOptionsFrame.pages[4].barheight2:GetValue())
 	getglobal("BarOrderSlider4.5Text"):SetText("Bar Position: "..LunaOptionsFrame.pages[4].barorder2:GetValue())
 	
+	LunaOptionsFrame.pages[5].BuffInRowslider = CreateFrame("Slider", "LunaPartyFramesBuffInRow", LunaOptionsFrame.pages[5], "OptionsSliderTemplate")
+	LunaOptionsFrame.pages[5].BuffInRowslider:SetMinMaxValues(1,16)
+	LunaOptionsFrame.pages[5].BuffInRowslider:SetValueStep(1)
+	LunaOptionsFrame.pages[5].BuffInRowslider:SetScript("OnValueChanged", BuffInRow)
+	LunaOptionsFrame.pages[5].BuffInRowslider:SetPoint("TOPLEFT", LunaOptionsFrame.pages[5].BuffPosition, "BOTTOMLEFT", 20, -6)
+	LunaOptionsFrame.pages[5].BuffInRowslider:SetValue(LunaOptions.frames["LunaPartyFrames"].BuffInRow or 16)
+	LunaOptionsFrame.pages[5].BuffInRowslider.frame = "LunaPartyFrames"
+	LunaOptionsFrame.pages[5].BuffInRowslider:SetWidth(230)
+	getglobal("LunaPartyFramesBuffInRowText"):SetText("Auras per row: "..(LunaOptions.frames["LunaPartyFrames"].BuffInRow or 16))
+	
 	LunaOptionsFrame.pages[5].BarSelect = CreateFrame("Button", "BarSelector5", LunaOptionsFrame.pages[5], "UIDropDownMenuTemplate")
-	LunaOptionsFrame.pages[5].BarSelect:SetPoint("TOPRIGHT", LunaOptionsFrame.pages[5].BuffPosition, "BOTTOMRIGHT", 0 , -30)
+	LunaOptionsFrame.pages[5].BarSelect:SetPoint("TOPRIGHT", LunaOptionsFrame.pages[5].BuffPosition, "BOTTOMRIGHT", 0 , -40)
 	UIDropDownMenu_SetWidth(80, LunaOptionsFrame.pages[5].BarSelect)
 	UIDropDownMenu_JustifyText("LEFT", LunaOptionsFrame.pages[5].BarSelect)
 	UIDropDownMenu_Initialize(LunaOptionsFrame.pages[5].BarSelect, PartyBarSelectorInit)
@@ -1223,6 +1287,14 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[7].RaidGrpNameswitch:SetScript("OnClick", ToggleRaidGroupNames)
 	LunaOptionsFrame.pages[7].RaidGrpNameswitch:SetChecked(LunaOptions.frames[LunaOptions.Raidlayout].ShowRaidGroupTitles)
 	getglobal("RaidGroupNamesSwitchText"):SetText("Show Group Names")
+	
+	LunaOptionsFrame.pages[7].pBarswitch = CreateFrame("CheckButton", "RaidGroupPowerSwitch", LunaOptionsFrame.pages[7], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[7].pBarswitch:SetHeight(20)
+	LunaOptionsFrame.pages[7].pBarswitch:SetWidth(20)
+	LunaOptionsFrame.pages[7].pBarswitch:SetPoint("TOPLEFT", LunaOptionsFrame.pages[7].RaidGrpNameswitch, "TOPLEFT", 0, -30)
+	LunaOptionsFrame.pages[7].pBarswitch:SetScript("OnClick", ToggleRaidPowerBars)
+	LunaOptionsFrame.pages[7].pBarswitch:SetChecked(LunaOptions.frames[LunaOptions.Raidlayout].pBars or 1)
+	getglobal("RaidGroupPowerSwitchText"):SetText("Show Power Bars")
 	
 	LunaOptionsFrame:SetScale(1.3)
 end

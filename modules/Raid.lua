@@ -371,6 +371,7 @@ end
 function LunaUnitFrames:SetRaidFrameSize()
 	local raidlayout = LunaOptions.Raidlayout
 	local Size = LunaOptions.frames[raidlayout].size
+	local pBars = LunaOptions.frames[raidlayout].pBars or 1
 	if raidlayout == "GRID" then
 		for i=1,8 do
 			LunaUnitFrames.frames.RaidFrames[i]:SetHeight(Size*0.375)
@@ -381,11 +382,16 @@ function LunaUnitFrames:SetRaidFrameSize()
 				LunaUnitFrames.frames.RaidFrames[i].member[z]:SetHeight(Size)
 				LunaUnitFrames.frames.RaidFrames[i].member[z]:SetWidth(Size)
 				LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetHeight(Size)
-				LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetWidth(Size*0.875)
 				LunaUnitFrames.frames.RaidFrames[i].member[z].HealBar:SetHeight(Size)
-				LunaUnitFrames.frames.RaidFrames[i].member[z].HealBar:SetWidth(Size*0.875)
-				LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetHeight(Size)
-				LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetWidth(Size*0.125)
+				if pBars == 1 then
+					LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetWidth(Size*0.875)
+					LunaUnitFrames.frames.RaidFrames[i].member[z].HealBar:SetWidth(Size*0.875)
+					LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetHeight(Size)
+					LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetWidth(Size*0.125)
+				else
+					LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetWidth(Size)
+					LunaUnitFrames.frames.RaidFrames[i].member[z].HealBar:SetWidth(Size)
+				end
 				LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetFont(LunaOptions.font, Size*0.4)
 				LunaUnitFrames.frames.RaidFrames[i].member[z].Debuff:SetHeight(Size*0.6)
 				LunaUnitFrames.frames.RaidFrames[i].member[z].Debuff:SetWidth(Size*0.6)
@@ -400,12 +406,17 @@ function LunaUnitFrames:SetRaidFrameSize()
 			for z=1,5 do
 				LunaUnitFrames.frames.RaidFrames[i].member[z]:SetHeight(Size)
 				LunaUnitFrames.frames.RaidFrames[i].member[z]:SetWidth(Size*3)
-				LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetHeight(Size*0.875)
 				LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetWidth(Size*3)
-				LunaUnitFrames.frames.RaidFrames[i].member[z].HealBar:SetHeight(Size*0.875)
 				LunaUnitFrames.frames.RaidFrames[i].member[z].HealBar:SetWidth(Size*3)
-				LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetHeight(Size*0.125)
-				LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetWidth(Size*3)
+				if pBars == 1 then
+					LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetHeight(Size*0.875)
+					LunaUnitFrames.frames.RaidFrames[i].member[z].HealBar:SetHeight(Size*0.875)
+					LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetHeight(Size*0.125)
+					LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetWidth(Size*3)
+				else
+					LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetHeight(Size)
+					LunaUnitFrames.frames.RaidFrames[i].member[z].HealBar:SetHeight(Size)
+				end
 				LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetFont(LunaOptions.font, Size*0.4)
 				LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:SetFont(LunaOptions.font, Size*0.4)
 				LunaUnitFrames.frames.RaidFrames[i].member[z].Debuff:SetHeight(Size*0.4)
@@ -419,6 +430,7 @@ function LunaUnitFrames:UpdateRaidLayout()
 	local raidlayout = LunaOptions.Raidlayout
 	local Size = LunaOptions.frames[raidlayout].size
 	local Padding = LunaOptions.frames[raidlayout].padding
+	local pBars = LunaOptions.frames[raidlayout].pBars or 1
 	if raidlayout == "GRID" then
 		for i=1, 8 do
 			if i == 1 then
@@ -440,11 +452,16 @@ function LunaUnitFrames:UpdateRaidLayout()
 				LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetOrientation("VERTICAL")
 				LunaUnitFrames.frames.RaidFrames[i].member[z].HealBar:SetOrientation("VERTICAL")
 				LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetPoint("TOPLEFT", LunaUnitFrames.frames.RaidFrames[i].member[z], "TOPLEFT")
-				LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:ClearAllPoints()
-				LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetOrientation("VERTICAL")
-				LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetPoint("BOTTOMRIGHT", LunaUnitFrames.frames.RaidFrames[i].member[z], "BOTTOMRIGHT")
+				if pBars == 1 then
+					LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:ClearAllPoints()
+					LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetOrientation("VERTICAL")
+					LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetPoint("BOTTOMRIGHT", LunaUnitFrames.frames.RaidFrames[i].member[z], "BOTTOMRIGHT")
+					LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:Show()
+				else
+					LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:Hide()
+				end
 				LunaUnitFrames.frames.RaidFrames[i].member[z].Name:ClearAllPoints()
-				LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetPoint("CENTER", LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar)
+				LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetPoint("CENTER", LunaUnitFrames.frames.RaidFrames[i].member[z])
 				LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetFont(LunaOptions.font, Size*0.4)
 				LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:Hide()
 				LunaUnitFrames.frames.RaidFrames[i].member[z].Debuff:ClearAllPoints()
@@ -467,9 +484,14 @@ function LunaUnitFrames:UpdateRaidLayout()
 				LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetOrientation("HORIZONTAL")
 				LunaUnitFrames.frames.RaidFrames[i].member[z].HealBar:SetOrientation("HORIZONTAL")
 				LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetPoint("TOPLEFT", LunaUnitFrames.frames.RaidFrames[i].member[z], "TOPLEFT")
-				LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:ClearAllPoints()
-				LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetOrientation("HORIZONTAL")
-				LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetPoint("BOTTOMLEFT", LunaUnitFrames.frames.RaidFrames[i].member[z], "BOTTOMLEFT")
+				if pBars == 1 then
+					LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:ClearAllPoints()
+					LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetOrientation("HORIZONTAL")
+					LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetPoint("BOTTOMLEFT", LunaUnitFrames.frames.RaidFrames[i].member[z], "BOTTOMLEFT")
+					LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:Show()
+				else
+					LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:Hide()
+				end
 				LunaUnitFrames.frames.RaidFrames[i].member[z].Name:ClearAllPoints()
 				LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetPoint("TOPLEFT", LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar, "TOPLEFT", 1, 0)
 				LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetFont(LunaOptions.font, Size*0.4)

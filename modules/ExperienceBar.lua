@@ -39,11 +39,11 @@ end
 function LunaUnitFrames:UpdateXPBar()
 	if UnitXPMax("player") == 0 or LunaOptions.XPBar == 0 then
 		LunaUnitFrames.frames.ExperienceBar:Hide()
-		LunaUnitFrames:UpdatePlayerBuffLayout()
+		LunaPlayerFrame.UpdateBuffSize()
 		return
 	else
 		LunaUnitFrames.frames.ExperienceBar:Show()
-		LunaUnitFrames:UpdatePlayerBuffLayout()
+		LunaPlayerFrame.UpdateBuffSize()
 	end
 	LunaUnitFrames.frames.ExperienceBar.RestedBar:SetMinMaxValues(0,UnitXPMax("player"))
 	if GetXPExhaustion() then

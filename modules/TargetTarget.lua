@@ -3,10 +3,6 @@ local Luna_TargetTarget_Events = {}
 local tot = CreateFrame("Frame")
 tot.time = 0
 
-function Luna_TargetTarget_Tip()
-	UnitFrame_OnEnter()
-end
-
 local dropdown = CreateFrame("Frame", "LunaUnitDropDownMenuTargetTarget", UIParent, "UIDropDownMenuTemplate")
 function Luna_TargetTargetDropDown_Initialize()
 	local menu, name;
@@ -134,7 +130,7 @@ function LunaUnitFrames:CreateTargetTargetFrame()
 	LunaTargetTargetFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", LunaOptions.frames["LunaTargetTargetFrame"].position.x, LunaOptions.frames["LunaTargetTargetFrame"].position.y)
 	LunaTargetTargetFrame:RegisterForClicks('LeftButtonUp', 'RightButtonUp')
 	LunaTargetTargetFrame.unit = "targettarget"
-	LunaTargetTargetFrame:SetScript("OnEnter", Luna_TargetTarget_Tip)
+	LunaTargetTargetFrame:SetScript("OnEnter", UnitFrame_OnEnter)
 	LunaTargetTargetFrame:SetScript("OnLeave", UnitFrame_OnLeave)
 	LunaTargetTargetFrame:SetMovable(0)
 	LunaTargetTargetFrame:RegisterForDrag("LeftButton")
@@ -375,7 +371,7 @@ function LunaUnitFrames:CreateTargetTargetTargetFrame()
 	LunaTargetTargetTargetFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", LunaOptions.frames["LunaTargetTargetTargetFrame"].position.x, LunaOptions.frames["LunaTargetTargetTargetFrame"].position.y)
 	LunaTargetTargetTargetFrame:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up')
 	LunaTargetTargetTargetFrame.unit = "targettargettarget"
-	LunaTargetTargetTargetFrame:SetScript("OnEnter", Luna_TargetTarget_Tip)
+	LunaTargetTargetTargetFrame:SetScript("OnEnter", UnitFrame_OnEnter)
 	LunaTargetTargetTargetFrame:SetScript("OnLeave", UnitFrame_OnLeave)
 	LunaTargetTargetTargetFrame:SetMovable(0)
 	LunaTargetTargetTargetFrame:RegisterForDrag("LeftButton")
