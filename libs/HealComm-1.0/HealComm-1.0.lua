@@ -1,10 +1,92 @@
+--[[
+Name: HealComm-1.0
+Revision: $Rev: 10000 $
+Author(s): aviana
+Website: https://github.com/Aviana
+Description: A library to provide communication of heals and resurrections.
+Dependencies: AceLibrary, AceEvent-2.0, RosterLib-2.0
+]]
+
+local MAJOR_VERSION = "HealComm-1.0"
+local MINOR_VERSION = "$Revision: 10000 $"
+
+if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
+if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end
+if not AceLibrary:HasInstance("RosterLib-2.0") then error(MAJOR_VERSION .. " requires RosterLib-2.0") end
+if not AceLibrary:HasInstance("AceEvent-2.0") then error(MAJOR_VERSION .. " requires AceEvent-2.0") end
+
 local roster = AceLibrary("RosterLib-2.0")
-LunaUnitFrames.HealComm = CreateFrame("Frame")
-LunaUnitFrames.HealComm.SpecialEventScheduler = AceLibrary("AceAddon-2.0"):new("AceEvent-2.0")
-LunaUnitFrames.HealComm.pendingResurrections = {}
-LunaUnitFrames.HealComm.Heals = {}
-LunaUnitFrames.HealComm.Lookup = {}
-LunaUnitFrames.HealComm.Spells = {
+local HealComm = CreateFrame("Frame")
+
+------------------------------------------------
+-- activate, enable, disable
+------------------------------------------------
+
+local function activate(self, oldLib, oldDeactivate)
+	HealComm = self
+	if oldLib then
+		self.Heals = oldLib.Heals
+		self.Lookup = oldlib.Lookup
+		self.pendingResurrections = oldlib.pendingResurrections
+		oldLib:UnregisterAllEvents()
+		oldLib:CancelAllScheduledEvents()
+	end
+	if not self.Heals then
+		self.Heals = {}
+	end
+	if not self.Lookup then
+		self.Lookup = {}
+	end
+	if not self.pendingResurrections then
+		self.pendingResurrections = {}
+	end
+	if oldDeactivate then oldDeactivate(oldLib) end
+end
+
+
+local function external(self, major, instance)
+	if major == "AceEvent-2.0" then
+		HealComm.SpecialEventScheduler = instance
+		HealComm.SpecialEventScheduler:embed(self)
+		self:UnregisterAllEvents()
+		self:CancelAllScheduledEvents()
+		if HealComm.SpecialEventScheduler:IsFullyInitialized() then
+			self:AceEvent_FullyInitialized()
+		else
+			self:RegisterEvent("AceEvent_FullyInitialized", "AceEvent_FullyInitialized", true)
+		end		
+	end
+end
+
+
+function HealComm:Enable()
+-- not used anymore, but as addons still might be calling this method, we're keeping it.
+end
+
+
+function HealComm:Disable()
+-- not used anymore, but as addons still might be calling this method, we're keeping it.
+end
+
+------------------------------------------------
+-- Internal functions
+------------------------------------------------
+
+function HealComm:AceEvent_FullyInitialized()
+	self:TriggerEvent("HealComm_Enabled")
+	self:RegisterEvent("SPELLCAST_START", HealComm.OnEvent)
+	self:RegisterEvent("SPELLCAST_INTERRUPTED", HealComm.OnEvent)
+	self:RegisterEvent("SPELLCAST_FAILED", HealComm.OnEvent)
+	self:RegisterEvent("SPELLCAST_DELAYED", HealComm.OnEvent)
+	self:RegisterEvent("CHAT_MSG_ADDON", HealComm.OnEvent)
+	self:RegisterEvent("UNIT_HEALTH" , HealComm.OnHealth)
+end
+
+------------------------------------------------
+-- Addon Code
+------------------------------------------------
+
+HealComm.Spells = {
 	["Holy Light"] = {
 		[1] = function (SpellPower)
 			local _,_,_,_,talentRank,_ = GetTalentInfo(1,5)
@@ -380,6 +462,64 @@ LunaUnitFrames.HealComm.Spells = {
 			return (759*shMod+((3/3.5) * (SpellPower+sgMod)))
 		end;
 	};
+	["Flash Heal"] = {
+		[1] = function (SpellPower)
+			local _,_,_,_,talentRank,_ = GetTalentInfo(2,14)
+			local _,Spirit,_,_ = UnitStat("player",5)
+			local sgMod = Spirit * 5*talentRank/100
+			local _,_,_,_,talentRank2,_ = GetTalentInfo(2,15)
+			local shMod = 2*talentRank2/100 + 1
+			return (216*shMod+((1.5/3.5) * (SpellPower+sgMod)))
+		end;
+		[2] = function (SpellPower)
+			local _,_,_,_,talentRank,_ = GetTalentInfo(2,14)
+			local _,Spirit,_,_ = UnitStat("player",5)
+			local sgMod = Spirit * 5*talentRank/100
+			local _,_,_,_,talentRank2,_ = GetTalentInfo(2,15)
+			local shMod = 2*talentRank2/100 + 1
+			return (287*shMod+((1.5/3.5) * (SpellPower+sgMod)))
+		end;
+		[3] = function (SpellPower)
+			local _,_,_,_,talentRank,_ = GetTalentInfo(2,14)
+			local _,Spirit,_,_ = UnitStat("player",5)
+			local sgMod = Spirit * 5*talentRank/100
+			local _,_,_,_,talentRank2,_ = GetTalentInfo(2,15)
+			local shMod = 2*talentRank2/100 + 1
+			return (361*shMod+((1.5/3.5) * (SpellPower+sgMod)))
+		end;
+		[4] = function (SpellPower)
+			local _,_,_,_,talentRank,_ = GetTalentInfo(2,14)
+			local _,Spirit,_,_ = UnitStat("player",5)
+			local sgMod = Spirit * 5*talentRank/100
+			local _,_,_,_,talentRank2,_ = GetTalentInfo(2,15)
+			local shMod = 2*talentRank2/100 + 1
+			return (440*shMod+((1.5/3.5) * (SpellPower+sgMod)))
+		end;
+		[5] = function (SpellPower)
+			local _,_,_,_,talentRank,_ = GetTalentInfo(2,14)
+			local _,Spirit,_,_ = UnitStat("player",5)
+			local sgMod = Spirit * 5*talentRank/100
+			local _,_,_,_,talentRank2,_ = GetTalentInfo(2,15)
+			local shMod = 2*talentRank2/100 + 1
+			return (568*shMod+((1.5/3.5) * (SpellPower+sgMod)))
+		end;
+		[6] = function (SpellPower)
+			local _,_,_,_,talentRank,_ = GetTalentInfo(2,14)
+			local _,Spirit,_,_ = UnitStat("player",5)
+			local sgMod = Spirit * 5*talentRank/100
+			local _,_,_,_,talentRank2,_ = GetTalentInfo(2,15)
+			local shMod = 2*talentRank2/100 + 1
+			return (705*shMod+((1.5/3.5) * (SpellPower+sgMod)))
+		end;
+		[7] = function (SpellPower)
+			local _,_,_,_,talentRank,_ = GetTalentInfo(2,14)
+			local _,Spirit,_,_ = UnitStat("player",5)
+			local sgMod = Spirit * 5*talentRank/100
+			local _,_,_,_,talentRank2,_ = GetTalentInfo(2,15)
+			local shMod = 2*talentRank2/100 + 1
+			return (886*shMod+((1.5/3.5) * (SpellPower+sgMod)))
+		end;
+	};
 	["Greater Heal"] = {
 		[1] = function (SpellPower)
 			local _,_,_,_,talentRank,_ = GetTalentInfo(2,14)
@@ -422,7 +562,7 @@ LunaUnitFrames.HealComm.Spells = {
 			return (2081*shMod+((3/3.5) * (SpellPower+sgMod)))
 		end;
 	};
-	["Prayer of Healing"] = {
+--[[	["Prayer of Healing"] = {
 		[1] = function (SpellPower)
 			local _,_,_,_,talentRank,_ = GetTalentInfo(2,14)
 			local _,Spirit,_,_ = UnitStat("player",5)
@@ -455,7 +595,7 @@ LunaUnitFrames.HealComm.Spells = {
 			local shMod = 2*talentRank2/100 + 1
 			return (965*shMod+((3/3.5/3) * (SpellPower+sgMod)))
 		end;
-	};
+	}; --]]
 	["Healing Touch"] = {
 		[1] = function (SpellPower)
 			local _,_,_,_,talentRank,_ = GetTalentInfo(3,12)
@@ -562,7 +702,7 @@ LunaUnitFrames.HealComm.Spells = {
 	};
 }
 
-LunaUnitFrames.HealComm.Resurrections = {
+HealComm.Resurrections = {
 	["Resurrection"] = true;
 	["Rebirth"] = true;
 	["Redemption"] = true;
@@ -570,69 +710,210 @@ LunaUnitFrames.HealComm.Resurrections = {
 }
 
 local function strsplit(pString, pPattern)
-   local Table = {}  -- NOTE: use {n = 0} in Lua-5.0
-   local fpat = "(.-)" .. pPattern
-   local last_end = 1
-   local s, e, cap = strfind(pString, fpat, 1)
-   while s do
-      if s ~= 1 or cap ~= "" then
-         table.insert(Table,cap)
-      end
-      last_end = e+1
-      s, e, cap = strfind(pString, fpat, last_end)
-   end
-   if last_end <= strlen(pString) then
-      cap = strfind(pString, last_end)
-      table.insert(Table, cap)
-  end
- 
-   return Table
+	local Table = {}
+	local fpat = "(.-)" .. pPattern
+	local last_end = 1
+	local s, e, cap = strfind(pString, fpat, 1)
+	while s do
+		if s ~= 1 or cap ~= "" then
+			table.insert(Table,cap)
+		end
+		last_end = e+1
+		s, e, cap = strfind(pString, fpat, last_end)
+	end
+	if last_end <= strlen(pString) then
+		cap = strfind(pString, last_end)
+		table.insert(Table, cap)
+	end
+	return Table
 end
 
-LunaUnitFrames.HealComm:RegisterEvent("SPELLCAST_START")
-LunaUnitFrames.HealComm:RegisterEvent("SPELLCAST_INTERRUPTED")
-LunaUnitFrames.HealComm:RegisterEvent("SPELLCAST_FAILED")
-LunaUnitFrames.HealComm:RegisterEvent("SPELLCAST_DELAYED")
-LunaUnitFrames.HealComm:RegisterEvent("CHAT_MSG_ADDON")
+local luna_SpellSpell = nil
+local luna_RankRank = nil
+local luna_SpellCast = nil
 
-luna_SpellSpell = nil
-luna_RankRank = nil
-luna_SpellCast = nil
-
-LunaTip = CreateFrame("GameTooltip", "LunaTip", nil, "GameTooltipTemplate")
+local LunaTip = CreateFrame("GameTooltip", "LunaTip", nil, "GameTooltipTemplate")
 LunaTip:SetOwner(WorldFrame, "ANCHOR_NONE")
 
-local function startResurrection(caster, target)
-	if not LunaUnitFrames.HealComm.pendingResurrections[target] then
-		LunaUnitFrames.HealComm.pendingResurrections[target] = {}
+HealComm.Buffs = {
+	["Power Infusion"] = {amount = 0, mod = 0.2, icon = "Interface\\Icons\\Spell_Holy_PowerInfusion"};
+	["Divine Favor"] = {amount = 0, mod = 0.5, icon = "Interface\\Icons\\Spell_Holy_Heal"};
+	["Nature Aligned"] = {amount = 0, mod = 0.2, icon = "Interface\\Icons\\Spell_Nature_SpiritArmor"};
+	["Crusader's Wrath"] = {amount = 95, mod = 0, icon = "Interface\\Icons\\Spell_Nature_GroundingTotem"};
+	["The Furious Storm"] = {amount = 95, mod = 0, icon = "Interface\\Icons\\Spell_Nature_CallStorm"};
+	["Holy Power"] = {amount = 80, mod = 0, icon = "Interface\\Icons\\Spell_Holy_HolyNova"};
+	["Prayer Beads Blessing"] = {amount = 190, mod = 0, icon = "Interface\\Icons\\Inv_Jewelry_Necklace_11"};
+	["Chromatic Infusion"] = {amount = 190, mod = 0, icon = "Interface\\Icons\\Spell_Holy_MindVision"};
+	["Ascendance"] = {amount = 75, mod = 0, icon = "Interface\\Icons\\Spell_Lightning_LightningBolt01"};
+	["Ephemeral Power"] = {amount = 175, mod = 0, icon = "Interface\\Icons\\Spell_Holy_MindVision"};
+	["Unstable Power"] = {amount = 34, mod = 0, icon = "Interface\\Icons\\Spell_Lightning_LightningBolt01"};
+	["Healing of the Ages"] = {amount = 350, mod = 0, icon = "Interface\\Icons\\Spell_Nature_HealingWaveGreater"};
+	["Essence of Sapphiron"] = {amount = 130, mod = 0, icon = "Interface\\Icons\\Inv_Trinket_Naxxramas06"};
+	["The Eye of the Dead"] = {amount = 450, mod = 0, icon = "Interface\\Icons\\Inv_Trinket_Naxxramas01"}
+}
+	
+HealComm.Debuffs = {
+	["Mortal Strike"] = {amount = 0, mod = 0.5, icon = "Interface\\Icons\\Ability_Warrior_SavageBlow"};
+	["Wound Poison"] = {amount = -135, mod = 0, icon = "Interface\\Icons\\Ability_Warrior_SavageBlow"};
+	["Curse of the Deadwood"] = {amount = 0, mod = 0.5, icon = "Interface\\Icons\\Spell_Shadow_GatherShadows"};
+	["Veil of Shadow"] = {amount = 0, mod = 0.75, icon = "Interface\\Icons\\Spell_Shadow_GatherShadows"};
+	["Gehennas' Curse"] = {amount = 0, mod = 0.75, icon = "Interface\\Icons\\Spell_Shadow_GatherShadows"};
+	["Mortal Wound"] = {amount = 0, mod = 0.1, icon = "Interface\\Icons\\Ability_CriticalStrike"};
+	["Necrotic Poison"] = {amount = 0, mod = 0.9, icon = "Interface\\Icons\\Ability_CriticalStrike"};
+	["Necrotic Aura"] = {amount = 0, mod = 1, icon = "Interface\\Icons\\Ability_CriticalStrike"}
+}
+	
+local function GetBuffSpellPower()
+	local Spellpower = 0
+	local healmod = 1
+	for i=1, 16 do
+		local buffTexture, buffApplications = UnitBuff("player", i)
+		if not buffTexture then
+			return Spellpower, healmod
+		end
+		LunaTip:SetUnitBuff("player", i)
+		local buffName = LunaTipTextLeft1:GetText()
+		if HealComm.Buffs[buffName] and HealComm.Buffs[buffName].icon == buffTexture then
+			Spellpower = (HealComm.Buffs[buffName].amount * buffApplications) + Spellpower
+			healmod = (HealComm.Buffs[buffName].mod * buffApplications) + healmod
+		end
 	end
-	LunaUnitFrames.HealComm.pendingResurrections[target][caster] = GetTime()+70
+	return Spellpower, healmod
 end
 
-local function cancelResurrection(caster)
-	for k,v in pairs(LunaUnitFrames.HealComm.pendingResurrections) do
+local function GetTargetSpellPower(spell)
+	local targetpower = 0
+	local targetmod = 1
+	local buffTexture, buffApplications
+	local debuffTexture, debuffApplications
+	for i=1, 16 do
+		if UnitIsVisible("target") and UnitIsConnected("target") and UnitReaction("target", "player") > 4 then
+			buffTexture, buffApplications = UnitBuff("target", i)
+			LunaTip:SetUnitBuff("target", i)
+		else
+			buffTexture, buffApplications = UnitBuff("player", i)
+			LunaTip:SetUnitBuff("player", i)
+		end
+		if not buffTexture then
+			break
+		end
+		local buffName = LunaTipTextLeft1:GetText()
+		if (buffTexture == "Interface\\Icons\\Spell_Holy_PrayerOfHealing02" or buffTexture == "Interface\\Icons\\Spell_Holy_GreaterBlessingofLight") then
+			local _,_, HLBonus, FoLBonus = string.find(LunaTipTextLeft2:GetText(),"Receives up to (%d+) extra healing from Holy Light spells%, and up to (%d+) extra healing from Flash of Light spells%.")
+			if (spell == "Flash of Light") then
+				targetpower = FoLBonus + targetpower
+			elseif spell == "Holy Light" then
+				targetpower = HLBonus + targetpower
+			end
+		end
+		if buffName == "Healing Way" and spell == "Healing Wave" then
+			targetmod = targetmod * ((buffApplications * 0.06) + 1)
+		end
+	end
+	for i=1, 16 do
+		if UnitIsVisible("target") and UnitIsConnected("target") and UnitReaction("target", "player") > 4 then
+			debuffTexture, debuffApplications = UnitDebuff("target", i)
+			LunaTip:SetUnitDebuff("target", i)
+		else
+			debuffTexture, debuffApplications = UnitDebuff("player", i)
+			LunaTip:SetUnitDebuff("player", i)
+		end
+		if not debuffTexture then
+			break
+		end
+		local debuffName = LunaTipTextLeft1:GetText()
+		if HealComm.Debuffs[debuffName] then
+			targetpower = (HealComm.Debuffs[debuffName].amount * debuffApplications) + targetpower
+			targetmod = (1-(HealComm.Debuffs[debuffName].mod * debuffApplications)) * targetmod
+		end
+	end
+	return targetpower, targetmod
+end			
+
+function HealComm.OnHealth()
+	local name = UnitName(arg1)
+	if HealComm.pendingResurrections[name] then
+		for k,v in pairs(HealComm.pendingResurrections[name]) do
+			HealComm.pendingResurrections[name][k] = nil
+		end
+		HealComm.SpecialEventScheduler:TriggerEvent("HealComm_Ressupdate", name)
+	end
+end
+			
+function HealComm.stopHeal(caster)
+	if HealComm.SpecialEventScheduler:IsEventScheduled(caster) then
+		HealComm.SpecialEventScheduler:CancelScheduledEvent(caster)
+	end
+	if HealComm.Lookup[caster] then
+		HealComm.Heals[HealComm.Lookup[caster]][caster] = nil
+		HealComm.SpecialEventScheduler:TriggerEvent("HealComm_Healupdate", HealComm.Lookup[caster])
+		HealComm.Lookup[caster] = nil
+	end
+end
+
+function HealComm.startHeal(caster, target, size, casttime)
+	HealComm.SpecialEventScheduler:ScheduleEvent(caster, HealComm.stopHeal, (casttime/1000), caster)
+	if not HealComm.Heals[target] then
+		HealComm.Heals[target] = {}
+	end
+	if HealComm.Lookup[caster] then
+		HealComm.Heals[HealComm.Lookup[caster]][caster] = nil
+		HealComm.Lookup[caster] = nil
+	end
+	HealComm.Heals[target][caster] = {amount = size, ctime = (casttime/1000)+GetTime()}
+	HealComm.Lookup[caster] = target
+	HealComm.SpecialEventScheduler:TriggerEvent("HealComm_Healupdate", target)
+end
+
+function HealComm.delayHeal(caster, delay)
+	HealComm.SpecialEventScheduler:CancelScheduledEvent(caster)
+	if HealComm.Heals[HealComm.Lookup[caster]] then
+		HealComm.Heals[HealComm.Lookup[caster]][caster].ctime = HealComm.Heals[HealComm.Lookup[caster]][caster].ctime + (delay/1000)
+		HealComm.SpecialEventScheduler:ScheduleEvent(caster, HealComm.stopHeal, (HealComm.Heals[HealComm.Lookup[caster]][caster].ctime-GetTime()), caster)
+	end
+end
+
+function HealComm.startResurrection(caster, target)
+	if not HealComm.pendingResurrections[target] then
+		HealComm.pendingResurrections[target] = {}
+	end
+	HealComm.pendingResurrections[target][caster] = GetTime()+70
+	HealComm.SpecialEventScheduler:ScheduleEvent(caster..target, HealComm.RessExpire, 70, caster, target)
+	HealComm.SpecialEventScheduler:TriggerEvent("HealComm_Ressupdate", target)
+end
+
+function HealComm.cancelResurrection(caster)
+	for k,v in pairs(HealComm.pendingResurrections) do
 		if v[caster] and (v[caster]-GetTime()) > 60 then
-			LunaUnitFrames.HealComm.pendingResurrections[k][caster] = nil
+			HealComm.pendingResurrections[k][caster] = nil
+			HealComm.SpecialEventScheduler:TriggerEvent("HealComm_Ressupdate", k)
 		end
 	end
 end
 
-LunaUnitFrames.HealComm.OnEvent = function()
+function HealComm.RessExpire(caster, target)
+	HealComm.pendingResurrections[target][caster] = nil
+	HealComm.SpecialEventScheduler:TriggerEvent("HealComm_Ressupdate", target)
+end
+
+HealComm.OnEvent = function()
 	if ( event == "SPELLCAST_START" ) then
-		if ( luna_SpellCast and luna_SpellCast[1] == arg1 and LunaUnitFrames.HealComm.Spells[arg1] ) then
+		if ( luna_SpellCast and luna_SpellCast[1] == arg1 and HealComm.Spells[arg1] ) then
 			local Bonus = 0
 			if BonusScanner then
 				Bonus = tonumber(BonusScanner:GetBonus("HEAL"))
 			end
+			local buffpower, buffmod = GetBuffSpellPower()
+			Bonus = Bonus + buffpower
 			local zone = GetRealZoneText()
 			if zone == "Warsong Gulch" or zone == "Arathi Basin" or zone == "Alterac Valley" then
-				SendAddonMessage( "LunaComm", "Heal/"..luna_SpellCast[3].."/"..math.floor(LunaUnitFrames.HealComm.Spells[luna_SpellCast[1]][tonumber(luna_SpellCast[2])](Bonus)).."/"..arg2.."/", "BATTLEGROUND" )
+				SendAddonMessage( "LunaComm", "Heal/"..luna_SpellCast[3].."/"..(math.floor(HealComm.Spells[luna_SpellCast[1]][tonumber(luna_SpellCast[2])](Bonus))*buffmod).."/"..arg2.."/", "BATTLEGROUND" )
 			else
-				SendAddonMessage( "LunaComm", "Heal/"..luna_SpellCast[3].."/"..math.floor(LunaUnitFrames.HealComm.Spells[luna_SpellCast[1]][tonumber(luna_SpellCast[2])](Bonus)).."/"..arg2.."/", "RAID" )
+				SendAddonMessage( "LunaComm", "Heal/"..luna_SpellCast[3].."/"..(math.floor(HealComm.Spells[luna_SpellCast[1]][tonumber(luna_SpellCast[2])](Bonus))*buffmod).."/"..arg2.."/", "RAID" )
 			end
 			luna_spellIsCasting = arg1
-			LunaUnitFrames.HealComm.SpecialEventScheduler:startHeal(UnitName("player"), luna_SpellCast[3], math.floor(LunaUnitFrames.HealComm.Spells[luna_SpellCast[1]][tonumber(luna_SpellCast[2])](Bonus)), arg2)
-		elseif ( luna_SpellCast and luna_SpellCast[1] == arg1 and LunaUnitFrames.HealComm.Resurrections[arg1] ) then
+			HealComm.startHeal(UnitName("player"), luna_SpellCast[3], ((math.floor(HealComm.Spells[luna_SpellCast[1]][tonumber(luna_SpellCast[2])](Bonus))+luna_SpellCast[4])*buffmod*luna_SpellCast[5]), arg2)
+		elseif ( luna_SpellCast and luna_SpellCast[1] == arg1 and HealComm.Resurrections[arg1] ) then
 			local zone = GetRealZoneText()
 			if zone == "Warsong Gulch" or zone == "Arathi Basin" or zone == "Alterac Valley" then
 				SendAddonMessage( "LunaComm", "Resurrection/"..luna_SpellCast[3].."/start/", "BATTLEGROUND" )
@@ -640,9 +921,9 @@ LunaUnitFrames.HealComm.OnEvent = function()
 				SendAddonMessage( "LunaComm", "Resurrection/"..luna_SpellCast[3].."/start/", "RAID" )
 			end
 			luna_spellIsCasting = arg1
-			startResurrection(UnitName("player"), luna_SpellCast[3])
+			HealComm.startResurrection(UnitName("player"), luna_SpellCast[3])
 		end
-	elseif (event == "SPELLCAST_INTERRUPTED" or event == "SPELLCAST_FAILED") and LunaUnitFrames.HealComm.Spells[luna_spellIsCasting] then
+	elseif (event == "SPELLCAST_INTERRUPTED" or event == "SPELLCAST_FAILED") and HealComm.Spells[luna_spellIsCasting] then
 		local zone = GetRealZoneText()
 		if zone == "Warsong Gulch" or zone == "Arathi Basin" or zone == "Alterac Valley" then
 			SendAddonMessage( "LunaComm", "Healstop", "BATTLEGROUND" )
@@ -653,8 +934,8 @@ LunaUnitFrames.HealComm.OnEvent = function()
 		luna_SpellCast =  nil
 		luna_RankRank = nil
 		luna_SpellSpell =  nil
-		LunaUnitFrames.HealComm.SpecialEventScheduler:stopHeal(UnitName("player"))
-	elseif (event == "SPELLCAST_INTERRUPTED" or event == "SPELLCAST_FAILED") and LunaUnitFrames.HealComm.Resurrections[luna_spellIsCasting] then
+		HealComm.stopHeal(UnitName("player"))
+	elseif (event == "SPELLCAST_INTERRUPTED" or event == "SPELLCAST_FAILED") and HealComm.Resurrections[luna_spellIsCasting] then
 		local zone = GetRealZoneText()
 		if zone == "Warsong Gulch" or zone == "Arathi Basin" or zone == "Alterac Valley" then
 			SendAddonMessage( "LunaComm", "Resurrection/stop/", "BATTLEGROUND" )
@@ -665,67 +946,58 @@ LunaUnitFrames.HealComm.OnEvent = function()
 		luna_SpellCast =  nil
 		luna_RankRank = nil
 		luna_SpellSpell =  nil
-		cancelResurrection(UnitName("player"))
+		HealComm.cancelResurrection(UnitName("player"))
 	elseif event == "SPELLCAST_DELAYED" then
 		local zone = GetRealZoneText()
 		if zone == "Warsong Gulch" or zone == "Arathi Basin" or zone == "Alterac Valley" then
-			SendAddonMessage( "LunaComm", "Healdelay/"..arg1.."/", "BATTLEGROUND" )
+			SendAddonMessage( "HealComm", "Healdelay/"..arg1.."/", "BATTLEGROUND" )
 		else
-			SendAddonMessage( "LunaComm", "Healdelay/"..arg1.."/", "RAID" )
+			SendAddonMessage( "HealComm", "Healdelay/"..arg1.."/", "RAID" )
 		end
-		LunaUnitFrames.HealComm.SpecialEventScheduler:delayHeal(UnitName("player"), arg1)
+		HealComm.delayHeal(UnitName("player"), arg1)
 	elseif event == "CHAT_MSG_ADDON" then
 		if arg1 ~= "LunaComm" or arg4 == UnitName("player") then
 			return
 		end
 		local result = strsplit(arg2,"/")
 		if result[1] == "Heal" then
-			LunaUnitFrames.HealComm.SpecialEventScheduler:startHeal(arg4, result[2], result[3], result[4])
+			HealComm.startHeal(arg4, result[2], result[3], result[4])
 		elseif arg2 == "Healstop" then
-			LunaUnitFrames.HealComm.SpecialEventScheduler:stopHeal(arg4)
+			HealComm.stopHeal(arg4)
 		elseif result[1] == "Healdelay" then
-			LunaUnitFrames.HealComm.SpecialEventScheduler:delayHeal(arg4, result[2])
+			HealComm.delayHeal(arg4, result[2])
 		elseif result[1] == "Resurrection" and result[2] == "stop" then
-			cancelResurrection(arg4)
+			HealComm.cancelResurrection(arg4)
 		elseif result[1] == "Resurrection" and result[3] == "start" then
-			startResurrection(arg4, result[2])
+			HealComm.startResurrection(arg4, result[2])
 		end
 	end
 end
 
-LunaUnitFrames.HealComm:SetScript("OnEvent", LunaUnitFrames.HealComm.OnEvent)
-
-function LunaUnitFrames.HealComm.SpecialEventScheduler.stopHeal(self, caster)
-	if LunaUnitFrames.HealComm.SpecialEventScheduler:IsEventScheduled(caster) then
-		LunaUnitFrames.HealComm.SpecialEventScheduler:CancelScheduledEvent(caster)
+function HealComm:getHeal(unit)
+	local healamount = 0
+	if HealComm.Heals[unit] then
+		for k,v in HealComm.Heals[unit] do
+			healamount = healamount+v.amount
+		end
+		return healamount
+	else
+		return 0
 	end
-	if LunaUnitFrames.HealComm.Lookup[caster] then
-		LunaUnitFrames.HealComm.Heals[LunaUnitFrames.HealComm.Lookup[caster]][caster] = nil
-		LunaUnitFrames.HealComm.Lookup[caster] = nil
-	end
-	LunaUnitFrames:PlayerUpdateHeal()
-	LunaUnitFrames:TargetUpdateHeal()
-	LunaUnitFrames:PartyUpdateHeal()
 end
 
-function LunaUnitFrames.HealComm.SpecialEventScheduler:startHeal(caster, target, size, casttime)
-	LunaUnitFrames.HealComm.SpecialEventScheduler:ScheduleEvent(caster, LunaUnitFrames.HealComm.SpecialEventScheduler.stopHeal, (casttime/1000), this, caster)
-	if not LunaUnitFrames.HealComm.Heals[target] then
-		LunaUnitFrames.HealComm.Heals[target] = {}
+function HealComm:UnitisResurrecting(unit)
+	local resstime
+	if HealComm.pendingResurrections[unit] then
+		for k,v in pairs(HealComm.pendingResurrections[unit]) do
+			if v < GetTime() then
+				HealComm.pendingResurrections[unit][k] = nil
+			elseif not resstime or resstime > v then
+				resstime = v
+			end
+		end
 	end
-	LunaUnitFrames.HealComm.Heals[target][caster] = {amount = size, ctime = (casttime/1000)+GetTime()}
-	LunaUnitFrames.HealComm.Lookup[caster] = target
-	LunaUnitFrames:PlayerUpdateHeal()
-	LunaUnitFrames:TargetUpdateHeal()
-	LunaUnitFrames:PartyUpdateHeal()
-end
-
-function LunaUnitFrames.HealComm.SpecialEventScheduler:delayHeal(caster, delay)
-	LunaUnitFrames.HealComm.SpecialEventScheduler:CancelScheduledEvent(caster)
-	if LunaUnitFrames.HealComm.Heals[LunaUnitFrames.HealComm.Lookup[caster]] then
-		LunaUnitFrames.HealComm.Heals[LunaUnitFrames.HealComm.Lookup[caster]][caster].ctime = LunaUnitFrames.HealComm.Heals[LunaUnitFrames.HealComm.Lookup[caster]][caster].ctime + (delay/1000)
-		LunaUnitFrames.HealComm.SpecialEventScheduler:ScheduleEvent(caster, LunaUnitFrames.HealComm.SpecialEventScheduler.stopHeal, (LunaUnitFrames.HealComm.Heals[LunaUnitFrames.HealComm.Lookup[caster]][caster].ctime-GetTime()), this, caster)
-	end
+	return resstime
 end
 
 luna_oldCastSpell = CastSpell
@@ -874,6 +1146,11 @@ TargetUnit = luna_newTargetUnit
 
 function luna_ProcessSpellCast(spellName, rank, targetName)
 	if ( spellName and rank and targetName ) then
-		luna_SpellCast = { spellName, rank, targetName }
+		local power, mod = GetTargetSpellPower(spellName)
+		luna_SpellCast = { spellName, rank, targetName, power, mod }
 	end
 end
+
+HealComm:SetScript("OnEvent", HealComm.OnEvent)
+
+AceLibrary:Register(HealComm, MAJOR_VERSION, MINOR_VERSION, activate, nil, external)

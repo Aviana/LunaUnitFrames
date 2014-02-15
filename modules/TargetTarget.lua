@@ -298,7 +298,7 @@ function LunaUnitFrames:UpdateTargetTargetFrame()
 			
 		LunaTargetTargetFrame.bars["Powerbar"]:SetMinMaxValues(0, UnitManaMax(LunaTargetTargetFrame.unit))
 		LunaTargetTargetFrame.bars["Powerbar"]:SetValue(0)
-		LunaTargetTargetFrame.bars["Powerbar"].ppp:SetText("0/"..UnitManaMax(LunaTargetTargetFrame.unit))
+		LunaTargetTargetFrame.bars["Powerbar"].ppp:SetText(LunaUnitFrames:GetPowerString(LunaTargetTargetFrame.unit))
 	elseif UnitHealth(LunaTargetTargetFrame.unit) < 2 then
 		LunaTargetTargetFrame.bars["Healthbar"]:SetMinMaxValues(0, UnitHealthMax(LunaTargetTargetFrame.unit))
 		LunaTargetTargetFrame.bars["Healthbar"]:SetValue(0)
@@ -306,15 +306,15 @@ function LunaUnitFrames:UpdateTargetTargetFrame()
 			
 		LunaTargetTargetFrame.bars["Powerbar"]:SetMinMaxValues(0, UnitManaMax(LunaTargetTargetFrame.unit))
 		LunaTargetTargetFrame.bars["Powerbar"]:SetValue(0)
-		LunaTargetTargetFrame.bars["Powerbar"].ppp:SetText("0/"..UnitManaMax(LunaTargetTargetFrame.unit))
+		LunaTargetTargetFrame.bars["Powerbar"].ppp:SetText(LunaUnitFrames:GetPowerString(LunaTargetTargetFrame.unit))
 	else
 		LunaTargetTargetFrame.bars["Healthbar"]:SetMinMaxValues(0, UnitHealthMax(LunaTargetTargetFrame.unit))
 		LunaTargetTargetFrame.bars["Healthbar"]:SetValue(UnitHealth(LunaTargetTargetFrame.unit))
-		LunaTargetTargetFrame.bars["Healthbar"].hpp:SetText(UnitHealth(LunaTargetTargetFrame.unit).."/"..UnitHealthMax(LunaTargetTargetFrame.unit))
+		LunaTargetTargetFrame.bars["Healthbar"].hpp:SetText(LunaUnitFrames:GetHealthString("targettarget"))
 			
 		LunaTargetTargetFrame.bars["Powerbar"]:SetMinMaxValues(0, UnitManaMax(LunaTargetTargetFrame.unit))
 		LunaTargetTargetFrame.bars["Powerbar"]:SetValue(UnitMana(LunaTargetTargetFrame.unit))
-		LunaTargetTargetFrame.bars["Powerbar"].ppp:SetText(UnitMana(LunaTargetTargetFrame.unit).."/"..UnitManaMax(LunaTargetTargetFrame.unit))
+		LunaTargetTargetFrame.bars["Powerbar"].ppp:SetText(LunaUnitFrames:GetPowerString(LunaTargetTargetFrame.unit))
 	end
 	local targetpower = UnitPowerType("targettarget")
 	
@@ -533,7 +533,7 @@ function LunaUnitFrames:UpdateTargetTargetTargetFrame()
 			
 		LunaTargetTargetTargetFrame.bars["Powerbar"]:SetMinMaxValues(0, UnitManaMax(LunaTargetTargetTargetFrame.unit))
 		LunaTargetTargetTargetFrame.bars["Powerbar"]:SetValue(0)
-		LunaTargetTargetTargetFrame.bars["Powerbar"].ppp:SetText("0/"..UnitManaMax(LunaTargetTargetTargetFrame.unit))
+		LunaTargetTargetTargetFrame.bars["Powerbar"].ppp:SetText(LunaUnitFrames:GetPowerString(LunaTargetTargetTargetFrame.unit))
 	elseif UnitHealth(LunaTargetTargetTargetFrame.unit) < 2 then
 		LunaTargetTargetTargetFrame.bars["Healthbar"]:SetMinMaxValues(0, UnitHealthMax(LunaTargetTargetTargetFrame.unit))
 		LunaTargetTargetTargetFrame.bars["Healthbar"]:SetValue(0)
@@ -541,15 +541,15 @@ function LunaUnitFrames:UpdateTargetTargetTargetFrame()
 			
 		LunaTargetTargetTargetFrame.bars["Powerbar"]:SetMinMaxValues(0, UnitManaMax(LunaTargetTargetTargetFrame.unit))
 		LunaTargetTargetTargetFrame.bars["Powerbar"]:SetValue(0)
-		LunaTargetTargetTargetFrame.bars["Powerbar"].ppp:SetText("0/"..UnitManaMax(LunaTargetTargetTargetFrame.unit))
+		LunaTargetTargetTargetFrame.bars["Powerbar"].ppp:SetText(LunaUnitFrames:GetPowerString(LunaTargetTargetTargetFrame.unit))
 	else
 		LunaTargetTargetTargetFrame.bars["Healthbar"]:SetMinMaxValues(0, UnitHealthMax(LunaTargetTargetTargetFrame.unit))
 		LunaTargetTargetTargetFrame.bars["Healthbar"]:SetValue(UnitHealth(LunaTargetTargetTargetFrame.unit))
-		LunaTargetTargetTargetFrame.bars["Healthbar"].hpp:SetText(UnitHealth(LunaTargetTargetTargetFrame.unit).."/"..UnitHealthMax(LunaTargetTargetTargetFrame.unit))
+		LunaTargetTargetTargetFrame.bars["Healthbar"].hpp:SetText(LunaUnitFrames:GetHealthString("targettargettarget"))
 			
 		LunaTargetTargetTargetFrame.bars["Powerbar"]:SetMinMaxValues(0, UnitManaMax(LunaTargetTargetTargetFrame.unit))
 		LunaTargetTargetTargetFrame.bars["Powerbar"]:SetValue(UnitMana(LunaTargetTargetTargetFrame.unit))
-		LunaTargetTargetTargetFrame.bars["Powerbar"].ppp:SetText(UnitMana(LunaTargetTargetTargetFrame.unit).."/"..UnitManaMax(LunaTargetTargetTargetFrame.unit))
+		LunaTargetTargetTargetFrame.bars["Powerbar"].ppp:SetText(LunaUnitFrames:GetPowerString(LunaTargetTargetTargetFrame.unit))
 	end
 	local targetpower = UnitPowerType("targettargettarget")
 	

@@ -597,9 +597,10 @@ end
 function Luna_Pet_Events:UNIT_HEALTH()
 	LunaPetFrame.bars["Healthbar"]:SetMinMaxValues(0, UnitHealthMax("pet"))
 	LunaPetFrame.bars["Healthbar"]:SetValue(UnitHealth("pet"))
-	LunaPetFrame.bars["Healthbar"].hpp:SetText(UnitHealth("pet").."/"..UnitHealthMax("pet"))
+	LunaPetFrame.bars["Healthbar"].hpp:SetText(LunaUnitFrames:GetHealthString("pet"))
 	if UnitIsDead("pet") then
 		LunaPetFrame.bars["Healthbar"]:SetValue(0)
+		LunaPetFrame.bars["Healthbar"].hpp:SetText("DEAD")
 	end
 end
 Luna_Pet_Events.UNIT_MAXHEALTH = Luna_Pet_Events.UNIT_HEALTH
@@ -607,7 +608,7 @@ Luna_Pet_Events.UNIT_MAXHEALTH = Luna_Pet_Events.UNIT_HEALTH
 function Luna_Pet_Events:UNIT_MANA()
 	LunaPetFrame.bars["Powerbar"]:SetMinMaxValues(0, UnitManaMax("pet"))
 	LunaPetFrame.bars["Powerbar"]:SetValue(UnitMana("pet"))
-	LunaPetFrame.bars["Powerbar"].ppp:SetText(UnitMana("pet").."/"..UnitManaMax("pet"))
+	LunaPetFrame.bars["Powerbar"].ppp:SetText(LunaUnitFrames:GetPowerString("pet"))
 end
 Luna_Pet_Events.UNIT_MAXMANA = Luna_Pet_Events.UNIT_MANA
 Luna_Pet_Events.UNIT_ENERGY = Luna_Pet_Events.UNIT_MANA

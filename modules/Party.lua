@@ -1,3 +1,5 @@
+local HealComm = AceLibrary("HealComm-1.0")
+local AceEvent = AceLibrary("AceEvent-2.0")
 local Luna_Party_Events = {}
 LunaPartyFrames = {}
 
@@ -197,6 +199,7 @@ function LunaUnitFrames:CreatePartyFrames()
 		LunaPartyFrames[i].Buffs[1].stacks = LunaPartyFrames[i].Buffs[1]:CreateFontString(nil, "OVERLAY", LunaPartyFrames[i].Buffs[1])
 		LunaPartyFrames[i].Buffs[1].stacks:SetPoint("BOTTOMRIGHT", LunaPartyFrames[i].Buffs[1], 0, 0)
 		LunaPartyFrames[i].Buffs[1].stacks:SetJustifyH("LEFT")
+		LunaPartyFrames[i].Buffs[1].stacks:SetFont(LunaOptions.font, LunaOptions.fontHeight)
 		LunaPartyFrames[i].Buffs[1].stacks:SetShadowColor(0, 0, 0)
 		LunaPartyFrames[i].Buffs[1].stacks:SetShadowOffset(0.8, -0.8)
 		LunaPartyFrames[i].Buffs[1].stacks:SetTextColor(1,1,1)
@@ -213,6 +216,7 @@ function LunaUnitFrames:CreatePartyFrames()
 			LunaPartyFrames[i].Buffs[z].stacks = LunaPartyFrames[i].Buffs[z]:CreateFontString(nil, "OVERLAY", LunaPartyFrames[i].Buffs[z])
 			LunaPartyFrames[i].Buffs[z].stacks:SetPoint("BOTTOMRIGHT", LunaPartyFrames[i].Buffs[z], 0, 0)
 			LunaPartyFrames[i].Buffs[z].stacks:SetJustifyH("LEFT")
+			LunaPartyFrames[i].Buffs[z].stacks:SetFont(LunaOptions.font, LunaOptions.fontHeight)
 			LunaPartyFrames[i].Buffs[z].stacks:SetShadowColor(0, 0, 0)
 			LunaPartyFrames[i].Buffs[z].stacks:SetShadowOffset(0.8, -0.8)
 			LunaPartyFrames[i].Buffs[z].stacks:SetTextColor(1,1,1)
@@ -231,6 +235,7 @@ function LunaUnitFrames:CreatePartyFrames()
 		LunaPartyFrames[i].Debuffs[1].stacks = LunaPartyFrames[i].Debuffs[1]:CreateFontString(nil, "OVERLAY", LunaPartyFrames[i].Debuffs[1])
 		LunaPartyFrames[i].Debuffs[1].stacks:SetPoint("BOTTOMRIGHT", LunaPartyFrames[i].Debuffs[1], 0, 0)
 		LunaPartyFrames[i].Debuffs[1].stacks:SetJustifyH("LEFT")
+		LunaPartyFrames[i].Debuffs[1].stacks:SetFont(LunaOptions.font, LunaOptions.fontHeight)
 		LunaPartyFrames[i].Debuffs[1].stacks:SetShadowColor(0, 0, 0)
 		LunaPartyFrames[i].Debuffs[1].stacks:SetShadowOffset(0.8, -0.8)
 		LunaPartyFrames[i].Debuffs[1].stacks:SetTextColor(1,1,1)
@@ -247,6 +252,7 @@ function LunaUnitFrames:CreatePartyFrames()
 			LunaPartyFrames[i].Debuffs[z].stacks = LunaPartyFrames[i].Debuffs[z]:CreateFontString(nil, "OVERLAY", LunaPartyFrames[i].Debuffs[z])
 			LunaPartyFrames[i].Debuffs[z].stacks:SetPoint("BOTTOMRIGHT", LunaPartyFrames[i].Debuffs[z], 0, 0)
 			LunaPartyFrames[i].Debuffs[z].stacks:SetJustifyH("LEFT")
+			LunaPartyFrames[i].Debuffs[z].stacks:SetFont(LunaOptions.font, LunaOptions.fontHeight)
 			LunaPartyFrames[i].Debuffs[z].stacks:SetShadowColor(0, 0, 0)
 			LunaPartyFrames[i].Debuffs[z].stacks:SetShadowOffset(0.8, -0.8)
 			LunaPartyFrames[i].Debuffs[z].stacks:SetTextColor(1,1,1)
@@ -266,12 +272,10 @@ function LunaUnitFrames:CreatePartyFrames()
 		LunaPartyFrames[i].bars["Healthbar"]:SetFrameStrata("MEDIUM")
 		
 		LunaPartyFrames[i].incHeal = CreateFrame("StatusBar", nil, LunaPartyFrames[i])
-		LunaPartyFrames[i].incHeal:SetFrameStrata("LOW")
 		LunaPartyFrames[i].incHeal:SetStatusBarTexture(LunaOptions.statusbartexture)
-		LunaPartyFrames[i].incHeal:SetPoint("TOPLEFT", LunaPartyFrames[i].bars["Healthbar"], "TOPLEFT")
-		LunaPartyFrames[i].incHeal:SetValue(0)
+		LunaPartyFrames[i].incHeal:SetMinMaxValues(0, 1)
+		LunaPartyFrames[i].incHeal:SetValue(1)
 		LunaPartyFrames[i].incHeal:SetStatusBarColor(0, 1, 0, 0.6)
-		LunaPartyFrames[i].incHeal.healvalue = 0
 
 	-- Healthbar background
 		LunaPartyFrames[i].bars["Healthbar"].hpbg = LunaPartyFrames[i]:CreateTexture(nil, "BACKGROUND")
@@ -372,6 +376,7 @@ function LunaUnitFrames:CreatePartyFrames()
 	LunaUnitFrames:UpdatePartyFrames()
 	LunaUnitFrames:UpdatePartyBuffSize()
 	GrpRangeCheck:SetScript("OnUpdate", GrpRangeCheck.onUpdate)
+	AceEvent:RegisterEvent("HealComm_Healupdate" , LunaUnitFrames.PartyUpdateHeal)
 end
 
 local function updateBuffs()
@@ -556,20 +561,25 @@ function LunaUnitFrames:UpdatePartyBuffSize()
 	end
 end
 
-function LunaUnitFrames:PartyUpdateHeal()
+function LunaUnitFrames.PartyUpdateHeal(target)
 	for i=1,4 do
-		local healamount = 0
-		if LunaUnitFrames.HealComm.Heals[UnitName("party"..i)] then
-			for k,v in LunaUnitFrames.HealComm.Heals[UnitName("party"..i)] do
-				healamount = healamount+v.amount
+		if UnitName("party"..i) == target or target == nil then
+			local healed = HealComm:getHeal(UnitName("party"..i))
+			if( healed > 0 ) then
+				LunaPartyFrames[i].incHeal:Show()
+				local health, maxHealth = UnitHealth(LunaPartyFrames[i].unit), UnitHealthMax(LunaPartyFrames[i].unit)
+				local healthWidth = LunaPartyFrames[i].bars["Healthbar"]:GetWidth() * (health / maxHealth)
+				local incWidth = LunaPartyFrames[i].bars["Healthbar"]:GetWidth() * (healed / maxHealth)
+				if( (healthWidth + incWidth) > (LunaPartyFrames[i].bars["Healthbar"]:GetWidth() * 1.2) ) then
+					incWidth = LunaPartyFrames[i].bars["Healthbar"]:GetWidth() * 1.2 + healthWidth
+				end
+				LunaPartyFrames[i].incHeal:SetWidth(incWidth)
+				LunaPartyFrames[i].incHeal:SetHeight(LunaPartyFrames[i].bars["Healthbar"]:GetHeight())
+				LunaPartyFrames[i].incHeal:ClearAllPoints()
+				LunaPartyFrames[i].incHeal:SetPoint("TOPLEFT", LunaPartyFrames[i].bars["Healthbar"], "TOPLEFT", healthWidth, 0)
+			else
+				LunaPartyFrames[i].incHeal:Hide()
 			end
-		end
-		LunaPartyFrames[i].incHeal.healvalue = healamount
-		LunaPartyFrames[i].incHeal:SetMinMaxValues(0, UnitHealthMax("party"..i)*1.2)
-		if UnitIsDeadOrGhost(LunaPartyFrames[i].unit) or not UnitIsConnected(LunaPartyFrames[i].unit) then
-			LunaPartyFrames[i].incHeal:SetValue(0)
-		else
-			LunaPartyFrames[i].incHeal:SetValue(UnitHealth("party"..i)+LunaPartyFrames[i].incHeal.healvalue)
 		end
 	end
 end
@@ -643,8 +653,7 @@ function LunaUnitFrames:UpdatePartyUnitFrameSize()
 				anchor = {"TOPLEFT", LunaPartyFrames[i].bars[bar], "BOTTOMLEFT"}
 			end			
 		end
-		LunaPartyFrames[i].incHeal:SetHeight(LunaPartyFrames[i].bars["Healthbar"]:GetHeight())
-		LunaPartyFrames[i].incHeal:SetWidth(LunaPartyFrames[i].bars["Healthbar"]:GetWidth()*1.2)
+		LunaUnitFrames.PartyUpdateHeal(UnitName(LunaPartyFrames[i].unit))
 	end
 end
 
@@ -696,7 +705,7 @@ function LunaUnitFrames:UpdatePartyFrames()
 			
 				LunaPartyFrames[i].bars["Powerbar"]:SetMinMaxValues(0, UnitManaMax(LunaPartyFrames[i].unit))
 				LunaPartyFrames[i].bars["Powerbar"]:SetValue(0)
-				LunaPartyFrames[i].bars["Powerbar"].ppp:SetText("0/"..UnitManaMax(LunaPartyFrames[i].unit))
+				LunaPartyFrames[i].bars["Powerbar"].ppp:SetText(LunaUnitFrames:GetPowerString(LunaPartyFrames[i].unit))
 			elseif UnitHealth(LunaPartyFrames[i].unit) < 2 then
 				LunaPartyFrames[i].bars["Healthbar"]:SetMinMaxValues(0, UnitHealthMax(LunaPartyFrames[i].unit))
 				LunaPartyFrames[i].bars["Healthbar"]:SetValue(0)
@@ -704,15 +713,15 @@ function LunaUnitFrames:UpdatePartyFrames()
 			
 				LunaPartyFrames[i].bars["Powerbar"]:SetMinMaxValues(0, UnitManaMax(LunaPartyFrames[i].unit))
 				LunaPartyFrames[i].bars["Powerbar"]:SetValue(0)
-				LunaPartyFrames[i].bars["Powerbar"].ppp:SetText("0/"..UnitManaMax(LunaPartyFrames[i].unit))
+				LunaPartyFrames[i].bars["Powerbar"].ppp:SetText(LunaUnitFrames:GetPowerString(LunaPartyFrames[i].unit))
 			else
 				LunaPartyFrames[i].bars["Healthbar"]:SetMinMaxValues(0, UnitHealthMax(LunaPartyFrames[i].unit))
 				LunaPartyFrames[i].bars["Healthbar"]:SetValue(UnitHealth(LunaPartyFrames[i].unit))
-				LunaPartyFrames[i].bars["Healthbar"].hpp:SetText(UnitHealth(LunaPartyFrames[i].unit).."/"..UnitHealthMax(LunaPartyFrames[i].unit))
+				LunaPartyFrames[i].bars["Healthbar"].hpp:SetText(LunaUnitFrames:GetHealthString(LunaPartyFrames[i].unit))
 			
 				LunaPartyFrames[i].bars["Powerbar"]:SetMinMaxValues(0, UnitManaMax(LunaPartyFrames[i].unit))
 				LunaPartyFrames[i].bars["Powerbar"]:SetValue(UnitMana(LunaPartyFrames[i].unit))
-				LunaPartyFrames[i].bars["Powerbar"].ppp:SetText(UnitMana(LunaPartyFrames[i].unit).."/"..UnitManaMax(LunaPartyFrames[i].unit))
+				LunaPartyFrames[i].bars["Powerbar"].ppp:SetText(LunaUnitFrames:GetPowerString(LunaPartyFrames[i].unit))
 			end
 			
 
@@ -763,12 +772,12 @@ function LunaUnitFrames:UpdatePartyFrames()
 				LunaPartyFrames[i].PVPRank:SetTexture("Interface\\PvPRankBadges\\PvPRank"..rankNumber);
 				LunaPartyFrames[i].PVPRank:Show();
 			end
-			updateBuffs()
+			LunaUnitFrames.PartyUpdateHeal(UnitName("party"..i))
 		else
 			LunaPartyFrames[i]:Hide()
 		end
 	end
-	LunaUnitFrames:PartyUpdateHeal()
+	updateBuffs()
 end
 
 function Luna_Party_Events:RAID_TARGET_UPDATE()
@@ -832,15 +841,10 @@ end
 
 function Luna_Party_Events:UNIT_HEALTH()
 	if this.unit == arg1 then
-		this.incHeal:SetMinMaxValues(0, UnitHealthMax(this.unit)*1.2)
-		if UnitIsDeadOrGhost(this.unit) or not UnitIsConnected(this.unit) then
-			this.incHeal:SetValue(0)
-		else
-			this.incHeal:SetValue(UnitHealth(this.unit)+this.incHeal.healvalue)
-		end
+		LunaUnitFrames.PartyUpdateHeal(UnitName(arg1))
 		this.bars["Healthbar"]:SetMinMaxValues(0, UnitHealthMax(this.unit))
 		this.bars["Healthbar"]:SetValue(UnitHealth(this.unit))
-		this.bars["Healthbar"].hpp:SetText(UnitHealth(this.unit).."/"..UnitHealthMax(this.unit))
+		this.bars["Healthbar"].hpp:SetText(LunaUnitFrames:GetHealthString(this.unit))
 		if (UnitIsDead(this.unit) or UnitIsGhost(this.unit)) then			-- This prevents negative health
 			this.bars["Healthbar"]:SetValue(0)
 		end
@@ -868,11 +872,11 @@ function Luna_Party_Events:UNIT_MANA()
 	if this.unit == arg1 then
 		if (UnitHealth(this.unit) < 2 or not UnitIsConnected(this.unit)) then
 			this.bars["Powerbar"]:SetValue(0)
-			this.bars["Powerbar"].ppp:SetText("0/"..UnitManaMax(this.unit))
+			this.bars["Powerbar"].ppp:SetText(LunaUnitFrames:GetPowerString(this.unit))
 		else
 			this.bars["Powerbar"]:SetMinMaxValues(0, UnitManaMax(this.unit))
 			this.bars["Powerbar"]:SetValue(UnitMana(this.unit))
-			this.bars["Powerbar"].ppp:SetText(UnitMana(this.unit).."/"..UnitManaMax(this.unit))
+			this.bars["Powerbar"].ppp:SetText(LunaUnitFrames:GetPowerString(this.unit))
 		end
 	end
 end

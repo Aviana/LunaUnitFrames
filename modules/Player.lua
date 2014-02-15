@@ -1,3 +1,5 @@
+local HealComm = AceLibrary("HealComm-1.0")
+local AceEvent = AceLibrary("AceEvent-2.0")
 local info = {text = "Reset Instances", func = ResetInstances, notCheckable = 1}
 local Luna_Player_Events = {}
 
@@ -74,12 +76,12 @@ function LunaUnitFrames:TogglePlayerLock()
 	if LunaPlayerFrame:IsMovable() then
 		LunaPlayerFrame:SetScript("OnDragStart", nil)
 		LunaPlayerFrame:SetMovable(0)
-		LunaOptionsFrame.Button7:SetText("Unlock Frames")
+		LunaOptionsFrame.Button8:SetText("Unlock Frames")
 	else
 		LunaPlayerFrame:SetScript("OnDragStart", StartMoving)
 		LunaPlayerFrame:SetMovable(1)
 		
-		LunaOptionsFrame.Button7:SetText("Lock Frames")
+		LunaOptionsFrame.Button8:SetText("Lock Frames")
 	end
 end
 			
@@ -253,12 +255,10 @@ function LunaUnitFrames:CreatePlayerFrame()
 	LunaPlayerFrame.bars["Healthbar"] = hp
 	
 	local incHeal = CreateFrame("StatusBar", nil, LunaPlayerFrame)
-	incHeal:SetFrameStrata("LOW")
 	incHeal:SetStatusBarTexture(LunaOptions.statusbartexture)
-	incHeal:SetPoint("TOPLEFT", LunaPlayerFrame.bars["Healthbar"], "TOPLEFT")
-	incHeal:SetValue(0)
+	incHeal:SetMinMaxValues(0, 1)
+	incHeal:SetValue(1)
 	incHeal:SetStatusBarColor(0, 1, 0, 0.6)
-	incHeal.healvalue = 0
 	LunaPlayerFrame.incHeal = incHeal
 
 	-- Healthbar background
@@ -493,8 +493,7 @@ function LunaUnitFrames:CreatePlayerFrame()
 				anchor = {"TOPLEFT", LunaPlayerFrame.bars[bar], "BOTTOMLEFT"}
 			end			
 		end
-		LunaPlayerFrame.incHeal:SetHeight(LunaPlayerFrame.bars["Healthbar"]:GetHeight())
-		LunaPlayerFrame.incHeal:SetWidth(LunaPlayerFrame.bars["Healthbar"]:GetWidth()*1.2)
+		LunaUnitFrames.PlayerUpdateHeal(UnitName("player"))
 		LunaPlayerFrame.bars["Powerbar"].Ticker:SetHeight(LunaPlayerFrame.bars["Powerbar"]:GetHeight())
 	end
 	LunaPlayerFrame.UpdateBuffSize = function ()
@@ -635,17 +634,29 @@ function LunaUnitFrames:CreatePlayerFrame()
 	LunaPlayerFrame.AdjustBars()
 	LunaPlayerFrame.UpdateBuffSize()
 	LunaUnitFrames:UpdatePlayerFrame()
+	AceEvent:RegisterEvent("HealComm_Healupdate" , LunaUnitFrames.PlayerUpdateHeal)
 end
 
-function LunaUnitFrames:PlayerUpdateHeal()
-	local healamount = 0
-	if LunaUnitFrames.HealComm.Heals[UnitName("player")] then
-		for k,v in LunaUnitFrames.HealComm.Heals[UnitName("player")] do
-			healamount = healamount+v.amount
-		end
+function LunaUnitFrames.PlayerUpdateHeal(target)
+	if target ~= UnitName("player") then
+		return
 	end
-	LunaPlayerFrame.incHeal.healvalue = healamount
-	Luna_Player_Events.UNIT_HEALTH()
+	local healed = HealComm:getHeal(target)
+	if( healed > 0 ) then
+		LunaPlayerFrame.incHeal:Show()
+		local health, maxHealth = UnitHealth(LunaPlayerFrame.unit), UnitHealthMax(LunaPlayerFrame.unit)
+		local healthWidth = LunaPlayerFrame.bars["Healthbar"]:GetWidth() * (health / maxHealth)
+		local incWidth = LunaPlayerFrame.bars["Healthbar"]:GetWidth() * (healed / maxHealth)
+		if( (healthWidth + incWidth) > (LunaPlayerFrame.bars["Healthbar"]:GetWidth() * 1.2) ) then
+			incWidth = LunaPlayerFrame.bars["Healthbar"]:GetWidth() * 1.2 - healthWidth
+		end
+		LunaPlayerFrame.incHeal:SetWidth(incWidth)
+		LunaPlayerFrame.incHeal:SetHeight(LunaPlayerFrame.bars["Healthbar"]:GetHeight())
+		LunaPlayerFrame.incHeal:ClearAllPoints()
+		LunaPlayerFrame.incHeal:SetPoint("TOPLEFT", LunaPlayerFrame.bars["Healthbar"], "TOPLEFT", healthWidth, 0)
+	else
+		LunaPlayerFrame.incHeal:Hide()
+	end
 end
 
 function LunaUnitFrames:ConvertPlayerPortrait()
@@ -879,18 +890,13 @@ function Luna_Player_Events:RAID_TARGET_UPDATE()
 end
 
 function Luna_Player_Events:UNIT_HEALTH()
-	LunaPlayerFrame.incHeal:SetMinMaxValues(0, UnitHealthMax("player")*1.2)
-	if UnitIsDeadOrGhost("player") then
-		LunaPlayerFrame.incHeal:SetValue(0)
-	else
-		LunaPlayerFrame.incHeal:SetValue(UnitHealth("player")+LunaPlayerFrame.incHeal.healvalue)
-	end
+	LunaUnitFrames.PlayerUpdateHeal(UnitName("player"))
 	LunaPlayerFrame.bars["Healthbar"]:SetMinMaxValues(0, UnitHealthMax("player"))
 	if (UnitIsDead("player") or UnitIsGhost("player")) then
 		LunaPlayerFrame.bars["Healthbar"].hpp:SetText("DEAD")
 		LunaPlayerFrame.bars["Healthbar"]:SetValue(0)
 	else
-		LunaPlayerFrame.bars["Healthbar"].hpp:SetText(UnitHealth("player").."/"..UnitHealthMax("player"))
+		LunaPlayerFrame.bars["Healthbar"].hpp:SetText(LunaUnitFrames:GetHealthString("player"))
 		LunaPlayerFrame.bars["Healthbar"]:SetValue(UnitHealth("player"))
 	end
 end
@@ -904,11 +910,10 @@ function Luna_Player_Events:UNIT_MANA()
 	LunaPlayerFrame.bars["Powerbar"]:SetMinMaxValues(0, UnitManaMax("player"))
 	if (UnitIsDead("player") or UnitIsGhost("player")) then
 		LunaPlayerFrame.bars["Powerbar"]:SetValue(0)
-		LunaPlayerFrame.bars["Powerbar"].ppp:SetText("0/"..UnitManaMax("player"))
 	else
 		LunaPlayerFrame.bars["Powerbar"]:SetValue(UnitMana("player"))
-		LunaPlayerFrame.bars["Powerbar"].ppp:SetText(UnitMana("player").."/"..UnitManaMax("player"))
 	end
+	LunaPlayerFrame.bars["Powerbar"].ppp:SetText(LunaUnitFrames:GetPowerString("player"))
 end
 Luna_Player_Events.UNIT_MAXMANA = Luna_Player_Events.UNIT_MANA;
 Luna_Player_Events.UNIT_ENERGY = Luna_Player_Events.UNIT_MANA;

@@ -4,6 +4,40 @@ LunaUnitFrames.proximity = ProximityLib:GetInstance("1")
 LunaUnitFrames:RegisterEvent("ADDON_LOADED")
 LunaUnitFrames:RegisterEvent("RAID_ROSTER_UPDATE")
 LunaUnitFrames:RegisterEvent("PLAYER_ENTERING_WORLD")
+
+function LunaUnitFrames:GetHealthString(unit)
+	local result
+	if LunaOptions.HealerModeHealth and UnitIsFriend("player",unit) then
+		result = (UnitHealthMax(unit) - UnitHealth(unit))*(-1)
+		if result == 0 then
+			result = ""
+		end
+	else
+		result = UnitHealth(unit).."/"..UnitHealthMax(unit)
+	end
+	if LunaOptions.Percentages then
+		result = result.."  "..math.floor(((UnitHealth(unit) / UnitHealthMax(unit)) * 100)+0.5).."%"
+	end
+	return result
+end
+
+function LunaUnitFrames:GetPowerString(unit)
+	local result
+	if UnitManaMax(unit) == 0 then
+		return ""
+	end
+	if (UnitIsDead(unit) or UnitIsGhost(unit)) then
+		result = "0/"..UnitManaMax(unit)
+	else
+		result = UnitMana(unit).."/"..UnitManaMax(unit)
+	end
+	if LunaOptions.Percentages then
+		result = result.."  "..math.floor(((UnitMana(unit) / UnitManaMax(unit)) * 100)+0.5).."%"
+	end
+	return result
+end
+	
+
 function LunaUnitFrames:OnEvent()
 	if event == "ADDON_LOADED" and arg1 == "LunaUnitFrames" then
 		--Load the Addon here

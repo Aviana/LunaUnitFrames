@@ -97,7 +97,7 @@ function LunaUnitFrames:UpdatePartyPetFrames()
 		if UnitIsVisible(LunaPartyPetFrames[i].unit) and LunaOptions.frames["LunaPartyPetFrames"].enabled == 1 then
 			LunaPartyPetFrames[i].HealthBar:SetMinMaxValues(0, UnitHealthMax(LunaPartyPetFrames[i].unit))
 			LunaPartyPetFrames[i].HealthBar:SetValue(UnitHealth(LunaPartyPetFrames[i].unit))
-			LunaPartyPetFrames[i].HealthBar.hpp:SetText(UnitHealth(LunaPartyPetFrames[i].unit).."/"..UnitHealthMax(LunaPartyPetFrames[i].unit))
+			LunaPartyPetFrames[i].HealthBar.hpp:SetText(LunaUnitFrames:GetHealthString(LunaPartyPetFrames[i].unit))
 			if UnitIsDead(LunaPartyPetFrames[i].unit) then			-- This prevents negative health
 				LunaPartyPetFrames[i].HealthBar:SetValue(0)
 			end
@@ -113,10 +113,10 @@ function Luna_PartyPet_Events:UNIT_HEALTH()
 	if this.unit == arg1 then
 		this.HealthBar:SetMinMaxValues(0, UnitHealthMax(this.unit))
 		this.HealthBar:SetValue(UnitHealth(this.unit))
-		this.HealthBar.hpp:SetText(UnitHealth(this.unit).."/"..UnitHealthMax(this.unit))
+		this.HealthBar.hpp:SetText(LunaUnitFrames:GetHealthString(this.unit))
 		if UnitIsDead(this.unit) then			-- This prevents negative health
 			this.HealthBar:SetValue(0)
-			this.HealthBar.hpp:SetText("0/"..UnitHealthMax(this.unit))
+			this.HealthBar.hpp:SetText("DEAD")
 		end
 	end
 end
