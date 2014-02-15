@@ -295,25 +295,25 @@ end
 
 function OptionFunctions.HideCastBarToggle()
 	if LunaOptionsFrame.pages[1].HideCastbar:GetChecked() == 1 then
-		UnRegisterCastbar("LunaPlayerFrame")
+		OptionFunctions.UnRegisterCastbar("LunaPlayerFrame")
 		LunaPlayerFrame.bars["Castbar"]:Hide()
 		LunaPlayerFrame.bars["Castbar"].casting = nil
 		LunaPlayerFrame.bars["Castbar"].channeling = nil
 		LunaOptions.hideCastbar = 1
 		LunaPlayerFrame.AdjustBars()
 	else
-		RegisterCastbar("LunaPlayerFrame")
+		OptionFunctions.RegisterCastbar("LunaPlayerFrame")
 		LunaOptions.hideCastbar = 0
 	end
 end
 
 function OptionFunctions.HideBlizzardCastbarToggle()
 	if LunaOptionsFrame.pages[1].HideBlizzCast:GetChecked() == 1 then
-		UnRegisterCastbar("CastingBarFrame")
+		OptionFunctions.UnRegisterCastbar("CastingBarFrame")
 		CastingBarFrame:Hide()
 		LunaOptions.hideBlizzCastbar = 1
 	else
-		RegisterCastbar("CastingBarFrame")
+		OptionFunctions.RegisterCastbar("CastingBarFrame")
 		LunaOptions.hideBlizzCastbar = 0
 	end
 end
@@ -522,7 +522,6 @@ end
 
 function OnBarHeight()
 	local weight = this:GetValue()
-	ChatFrame1:AddMessage(this:GetName())
 	if this.frame == "LunaPartyFrames" then
 		for i=1,4 do
 			if weight == 0 then
@@ -710,6 +709,26 @@ function OptionFunctions.ToggleHealerMode()
 		LunaOptions.HealerModeHealth = nil
 	end
 	OptionFunctions.UpdateAll()
+end
+
+function OptionFunctions.TogglePercents()
+	if not LunaOptions.Percentages then
+		LunaOptions.Percentages = 1
+	else
+		LunaOptions.Percentages = nil
+	end
+	LunaUnitFrames:UpdatePlayerFrame()
+	LunaUnitFrames:UpdatePetFrame()
+	LunaUnitFrames:UpdateTargetFrame()
+	LunaUnitFrames:UpdatePartyFrames()
+end
+
+function OptionFunctions.OverhealAdjust()
+	LunaOptions.overheal = this:GetValue()
+	getglobal(this:GetName().."Text"):SetText("Overlap percent of healbar: "..LunaOptions.overheal)
+	LunaUnitFrames:UpdatePlayerFrame()
+	LunaUnitFrames:UpdateTargetFrame()
+	LunaUnitFrames:UpdatePartyFrames()
 end
 
 function LunaOptionsModule:CreateMenu()
@@ -943,20 +962,20 @@ function LunaOptionsModule:CreateMenu()
 		LunaOptionsFrame.pages[i].BuffSwitchDesc:SetText("Aura Position")
 	end
 	
-	UIDropDownMenu_Initialize(LunaOptionsFrame.pages[1].BuffPosition, PlayerBuffPosSelect)
+	UIDropDownMenu_Initialize(LunaOptionsFrame.pages[1].BuffPosition, OptionFunctions.PlayerBuffPosSelect)
 	UIDropDownMenu_SetSelectedID(LunaOptionsFrame.pages[1].BuffPosition, LunaOptions.frames["LunaPlayerFrame"].ShowBuffs)
-	UIDropDownMenu_Initialize(LunaOptionsFrame.pages[2].BuffPosition, PetBuffPosSelect)
+	UIDropDownMenu_Initialize(LunaOptionsFrame.pages[2].BuffPosition, OptionFunctions.PetBuffPosSelect)
 	UIDropDownMenu_SetSelectedID(LunaOptionsFrame.pages[2].BuffPosition, LunaOptions.frames["LunaPetFrame"].ShowBuffs)
-	UIDropDownMenu_Initialize(LunaOptionsFrame.pages[3].BuffPosition, TargetBuffPosSelect)
+	UIDropDownMenu_Initialize(LunaOptionsFrame.pages[3].BuffPosition, OptionFunctions.TargetBuffPosSelect)
 	UIDropDownMenu_SetSelectedID(LunaOptionsFrame.pages[3].BuffPosition, LunaOptions.frames["LunaTargetFrame"].ShowBuffs)
-	UIDropDownMenu_Initialize(LunaOptionsFrame.pages[5].BuffPosition, PartyBuffPosSelect)
+	UIDropDownMenu_Initialize(LunaOptionsFrame.pages[5].BuffPosition, OptionFunctions.PartyBuffPosSelect)
 	UIDropDownMenu_SetSelectedID(LunaOptionsFrame.pages[5].BuffPosition, LunaOptions.frames["LunaPartyFrames"].ShowBuffs)
 	
 	LunaOptionsFrame.pages[1].BarSelect = CreateFrame("Button", "BarSelector", LunaOptionsFrame.pages[1], "UIDropDownMenuTemplate")
 	LunaOptionsFrame.pages[1].BarSelect:SetPoint("TOPRIGHT", LunaOptionsFrame.pages[1].BuffPosition, "BOTTOMRIGHT", 0 , -40)
 	UIDropDownMenu_SetWidth(80, LunaOptionsFrame.pages[1].BarSelect)
 	UIDropDownMenu_JustifyText("LEFT", LunaOptionsFrame.pages[1].BarSelect)
-	UIDropDownMenu_Initialize(LunaOptionsFrame.pages[1].BarSelect, PlayerBarSelectorInit)
+	UIDropDownMenu_Initialize(LunaOptionsFrame.pages[1].BarSelect, OptionFunctions.PlayerBarSelectorInit)
 	UIDropDownMenu_SetSelectedID(LunaOptionsFrame.pages[1].BarSelect, 1)
 
 	LunaOptionsFrame.pages[1].BuffInRowslider = CreateFrame("Slider", "LunaPlayerFrameBuffInRow", LunaOptionsFrame.pages[1], "OptionsSliderTemplate")
@@ -1021,7 +1040,7 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[2].BarSelect:SetPoint("TOPRIGHT", LunaOptionsFrame.pages[2].BuffPosition, "BOTTOMRIGHT", 0 , -40)
 	UIDropDownMenu_SetWidth(80, LunaOptionsFrame.pages[2].BarSelect)
 	UIDropDownMenu_JustifyText("LEFT", LunaOptionsFrame.pages[2].BarSelect)
-	UIDropDownMenu_Initialize(LunaOptionsFrame.pages[2].BarSelect, PetBarSelectorInit)
+	UIDropDownMenu_Initialize(LunaOptionsFrame.pages[2].BarSelect, OptionFunctions.PetBarSelectorInit)
 	UIDropDownMenu_SetSelectedID(LunaOptionsFrame.pages[2].BarSelect, 1)
 		
 	LunaOptionsFrame.pages[2].barheight = CreateFrame("Slider", "BarSizer2", LunaOptionsFrame.pages[2], "OptionsSliderTemplate")
@@ -1075,7 +1094,7 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[3].BarSelect:SetPoint("TOPRIGHT", LunaOptionsFrame.pages[3].BuffPosition, "BOTTOMRIGHT", 0 , -40)
 	UIDropDownMenu_SetWidth(80, LunaOptionsFrame.pages[3].BarSelect)
 	UIDropDownMenu_JustifyText("LEFT", LunaOptionsFrame.pages[3].BarSelect)
-	UIDropDownMenu_Initialize(LunaOptionsFrame.pages[3].BarSelect, TargetBarSelectorInit)
+	UIDropDownMenu_Initialize(LunaOptionsFrame.pages[3].BarSelect, OptionFunctions.TargetBarSelectorInit)
 	UIDropDownMenu_SetSelectedID(LunaOptionsFrame.pages[3].BarSelect, 1)
 	
 	LunaOptionsFrame.pages[3].barheight = CreateFrame("Slider", "BarSizer3", LunaOptionsFrame.pages[3], "OptionsSliderTemplate")
@@ -1113,7 +1132,7 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[4].BarSelect:SetPoint("TOPRIGHT", LunaOptionsFrame.pages[4], "TOPRIGHT", -100 , -35)
 	UIDropDownMenu_SetWidth(80, LunaOptionsFrame.pages[4].BarSelect)
 	UIDropDownMenu_JustifyText("LEFT", LunaOptionsFrame.pages[4].BarSelect)
-	UIDropDownMenu_Initialize(LunaOptionsFrame.pages[4].BarSelect, TargetTargetBarSelectorInit)
+	UIDropDownMenu_Initialize(LunaOptionsFrame.pages[4].BarSelect, OptionFunctions.TargetTargetBarSelectorInit)
 	UIDropDownMenu_SetSelectedID(LunaOptionsFrame.pages[4].BarSelect, 1)
 	
 	LunaOptionsFrame.pages[4].barheight = CreateFrame("Slider", "BarSizer4", LunaOptionsFrame.pages[4], "OptionsSliderTemplate")
@@ -1194,7 +1213,7 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[4].BarSelect2:SetPoint("TOPRIGHT", LunaOptionsFrame.pages[4], "TOPRIGHT", -100 , -210)
 	UIDropDownMenu_SetWidth(80, LunaOptionsFrame.pages[4].BarSelect2)
 	UIDropDownMenu_JustifyText("LEFT", LunaOptionsFrame.pages[4].BarSelect2)
-	UIDropDownMenu_Initialize(LunaOptionsFrame.pages[4].BarSelect2, TargetTargetTargetBarSelectorInit)
+	UIDropDownMenu_Initialize(LunaOptionsFrame.pages[4].BarSelect2, OptionFunctions.TargetTargetTargetBarSelectorInit)
 	UIDropDownMenu_SetSelectedID(LunaOptionsFrame.pages[4].BarSelect2, 1)
 	
 	LunaOptionsFrame.pages[4].barheight2 = CreateFrame("Slider", "BarSizer4.5", LunaOptionsFrame.pages[4], "OptionsSliderTemplate")
@@ -1238,7 +1257,7 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[5].BarSelect:SetPoint("TOPRIGHT", LunaOptionsFrame.pages[5].BuffPosition, "BOTTOMRIGHT", 0 , -40)
 	UIDropDownMenu_SetWidth(80, LunaOptionsFrame.pages[5].BarSelect)
 	UIDropDownMenu_JustifyText("LEFT", LunaOptionsFrame.pages[5].BarSelect)
-	UIDropDownMenu_Initialize(LunaOptionsFrame.pages[5].BarSelect, PartyBarSelectorInit)
+	UIDropDownMenu_Initialize(LunaOptionsFrame.pages[5].BarSelect, OptionFunctions.PartyBarSelectorInit)
 	UIDropDownMenu_SetSelectedID(LunaOptionsFrame.pages[5].BarSelect, 1)
 	
 	LunaOptionsFrame.pages[5].barheight = CreateFrame("Slider", "BarSizer5", LunaOptionsFrame.pages[5], "OptionsSliderTemplate")
@@ -1396,6 +1415,23 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[8].hmodeswitch:SetScript("OnClick", OptionFunctions.ToggleHealerMode)
 	LunaOptionsFrame.pages[8].hmodeswitch:SetChecked(LunaOptions.HealerModeHealth or 0)
 	getglobal("HealerModeSwitchText"):SetText("Healer-mode healthtext")
+	
+	LunaOptionsFrame.pages[8].percentswitch = CreateFrame("CheckButton", "PercentSwitch", LunaOptionsFrame.pages[8], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[8].percentswitch:SetHeight(20)
+	LunaOptionsFrame.pages[8].percentswitch:SetWidth(20)
+	LunaOptionsFrame.pages[8].percentswitch:SetPoint("TOPLEFT", LunaOptionsFrame.pages[8].hmodeswitch, "TOPLEFT", 0, -30)
+	LunaOptionsFrame.pages[8].percentswitch:SetScript("OnClick", OptionFunctions.TogglePercents)
+	LunaOptionsFrame.pages[8].percentswitch:SetChecked(LunaOptions.Percentages or 0)
+	getglobal("PercentSwitchText"):SetText("Display percent after values")
+	
+	LunaOptionsFrame.pages[8].overhealslider = CreateFrame("Slider", "OverhealSlider", LunaOptionsFrame.pages[8], "OptionsSliderTemplate")
+	LunaOptionsFrame.pages[8].overhealslider:SetMinMaxValues(0,20)
+	LunaOptionsFrame.pages[8].overhealslider:SetValueStep(1)
+	LunaOptionsFrame.pages[8].overhealslider:SetScript("OnValueChanged", OptionFunctions.OverhealAdjust)
+	LunaOptionsFrame.pages[8].overhealslider:SetPoint("TOPLEFT", LunaOptionsFrame.pages[8].percentswitch, "BOTTOMLEFT", 0, -20)
+	LunaOptionsFrame.pages[8].overhealslider:SetValue(LunaOptions.overheal or 20)
+	LunaOptionsFrame.pages[8].overhealslider:SetWidth(215)
+	getglobal("OverhealSliderText"):SetText("Overlap percent of healbar: "..(LunaOptions.overheal or 20))
 																	
 	LunaOptionsFrame:SetScale(1.3)
 end

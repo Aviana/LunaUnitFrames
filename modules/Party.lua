@@ -565,13 +565,13 @@ function LunaUnitFrames.PartyUpdateHeal(target)
 	for i=1,4 do
 		if UnitName("party"..i) == target or target == nil then
 			local healed = HealComm:getHeal(UnitName("party"..i))
-			if( healed > 0 ) then
+			local health, maxHealth = UnitHealth(LunaPartyFrames[i].unit), UnitHealthMax(LunaPartyFrames[i].unit)
+			if( healed > 0 and (health < maxHealth or (LunaOptions.overheal or 20) > 0 )) then
 				LunaPartyFrames[i].incHeal:Show()
-				local health, maxHealth = UnitHealth(LunaPartyFrames[i].unit), UnitHealthMax(LunaPartyFrames[i].unit)
 				local healthWidth = LunaPartyFrames[i].bars["Healthbar"]:GetWidth() * (health / maxHealth)
 				local incWidth = LunaPartyFrames[i].bars["Healthbar"]:GetWidth() * (healed / maxHealth)
-				if( (healthWidth + incWidth) > (LunaPartyFrames[i].bars["Healthbar"]:GetWidth() * 1.2) ) then
-					incWidth = LunaPartyFrames[i].bars["Healthbar"]:GetWidth() * 1.2 + healthWidth
+				if( (healthWidth + incWidth) > (LunaPartyFrames[i].bars["Healthbar"]:GetWidth() * (1+((LunaOptions.overheal or 20)/100))) ) then
+					incWidth = LunaPartyFrames[i].bars["Healthbar"]:GetWidth() * (1+((LunaOptions.overheal or 20)/100)) - healthWidth
 				end
 				LunaPartyFrames[i].incHeal:SetWidth(incWidth)
 				LunaPartyFrames[i].incHeal:SetHeight(LunaPartyFrames[i].bars["Healthbar"]:GetHeight())

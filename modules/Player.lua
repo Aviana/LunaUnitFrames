@@ -642,13 +642,13 @@ function LunaUnitFrames.PlayerUpdateHeal(target)
 		return
 	end
 	local healed = HealComm:getHeal(target)
-	if( healed > 0 ) then
+	local health, maxHealth = UnitHealth(LunaPlayerFrame.unit), UnitHealthMax(LunaPlayerFrame.unit)
+	if( healed > 0 and (health < maxHealth or (LunaOptions.overheal or 20) > 0 )) then
 		LunaPlayerFrame.incHeal:Show()
-		local health, maxHealth = UnitHealth(LunaPlayerFrame.unit), UnitHealthMax(LunaPlayerFrame.unit)
 		local healthWidth = LunaPlayerFrame.bars["Healthbar"]:GetWidth() * (health / maxHealth)
 		local incWidth = LunaPlayerFrame.bars["Healthbar"]:GetWidth() * (healed / maxHealth)
-		if( (healthWidth + incWidth) > (LunaPlayerFrame.bars["Healthbar"]:GetWidth() * 1.2) ) then
-			incWidth = LunaPlayerFrame.bars["Healthbar"]:GetWidth() * 1.2 - healthWidth
+		if (healthWidth + incWidth) > (LunaPlayerFrame.bars["Healthbar"]:GetWidth() * (1+((LunaOptions.overheal or 20)/100)) ) then
+			incWidth = LunaPlayerFrame.bars["Healthbar"]:GetWidth() * (1+((LunaOptions.overheal or 20)/100)) - healthWidth
 		end
 		LunaPlayerFrame.incHeal:SetWidth(incWidth)
 		LunaPlayerFrame.incHeal:SetHeight(LunaPlayerFrame.bars["Healthbar"]:GetHeight())

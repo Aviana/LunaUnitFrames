@@ -26,6 +26,7 @@ local function activate(self, oldLib, oldDeactivate)
 	HealComm = self
 	if oldLib then
 		self.Heals = oldLib.Heals
+		self.GrpHeals = oldLib.GrpHeals
 		self.Lookup = oldlib.Lookup
 		self.pendingResurrections = oldlib.pendingResurrections
 		oldLib:UnregisterAllEvents()
@@ -33,6 +34,9 @@ local function activate(self, oldLib, oldDeactivate)
 	end
 	if not self.Heals then
 		self.Heals = {}
+	end
+	if not self.GrpHeals then
+		self.GrpHeals = {}
 	end
 	if not self.Lookup then
 		self.Lookup = {}
@@ -562,7 +566,7 @@ HealComm.Spells = {
 			return (2081*shMod+((3/3.5) * (SpellPower+sgMod)))
 		end;
 	};
---[[	["Prayer of Healing"] = {
+	["Prayer of Healing"] = {
 		[1] = function (SpellPower)
 			local _,_,_,_,talentRank,_ = GetTalentInfo(2,14)
 			local _,Spirit,_,_ = UnitStat("player",5)
@@ -595,7 +599,7 @@ HealComm.Spells = {
 			local shMod = 2*talentRank2/100 + 1
 			return (965*shMod+((3/3.5/3) * (SpellPower+sgMod)))
 		end;
-	}; --]]
+	};
 	["Healing Touch"] = {
 		[1] = function (SpellPower)
 			local _,_,_,_,talentRank,_ = GetTalentInfo(3,12)
@@ -728,12 +732,12 @@ local function strsplit(pString, pPattern)
 	return Table
 end
 
-local luna_SpellSpell = nil
-local luna_RankRank = nil
-local luna_SpellCast = nil
+local healcomm_SpellSpell = nil
+local healcomm_RankRank = nil
+local healcomm_SpellCast = nil
 
-local LunaTip = CreateFrame("GameTooltip", "LunaTip", nil, "GameTooltipTemplate")
-LunaTip:SetOwner(WorldFrame, "ANCHOR_NONE")
+local healcommTip = CreateFrame("GameTooltip", "healcommTip", nil, "GameTooltipTemplate")
+healcommTip:SetOwner(WorldFrame, "ANCHOR_NONE")
 
 HealComm.Buffs = {
 	["Power Infusion"] = {amount = 0, mod = 0.2, icon = "Interface\\Icons\\Spell_Holy_PowerInfusion"};
@@ -771,8 +775,8 @@ local function GetBuffSpellPower()
 		if not buffTexture then
 			return Spellpower, healmod
 		end
-		LunaTip:SetUnitBuff("player", i)
-		local buffName = LunaTipTextLeft1:GetText()
+		healcommTip:SetUnitBuff("player", i)
+		local buffName = healcommTipTextLeft1:GetText()
 		if HealComm.Buffs[buffName] and HealComm.Buffs[buffName].icon == buffTexture then
 			Spellpower = (HealComm.Buffs[buffName].amount * buffApplications) + Spellpower
 			healmod = (HealComm.Buffs[buffName].mod * buffApplications) + healmod
@@ -789,17 +793,17 @@ local function GetTargetSpellPower(spell)
 	for i=1, 16 do
 		if UnitIsVisible("target") and UnitIsConnected("target") and UnitReaction("target", "player") > 4 then
 			buffTexture, buffApplications = UnitBuff("target", i)
-			LunaTip:SetUnitBuff("target", i)
+			healcommTip:SetUnitBuff("target", i)
 		else
 			buffTexture, buffApplications = UnitBuff("player", i)
-			LunaTip:SetUnitBuff("player", i)
+			healcommTip:SetUnitBuff("player", i)
 		end
 		if not buffTexture then
 			break
 		end
-		local buffName = LunaTipTextLeft1:GetText()
+		local buffName = healcommTipTextLeft1:GetText()
 		if (buffTexture == "Interface\\Icons\\Spell_Holy_PrayerOfHealing02" or buffTexture == "Interface\\Icons\\Spell_Holy_GreaterBlessingofLight") then
-			local _,_, HLBonus, FoLBonus = string.find(LunaTipTextLeft2:GetText(),"Receives up to (%d+) extra healing from Holy Light spells%, and up to (%d+) extra healing from Flash of Light spells%.")
+			local _,_, HLBonus, FoLBonus = string.find(healcommTipTextLeft2:GetText(),"Receives up to (%d+) extra healing from Holy Light spells%, and up to (%d+) extra healing from Flash of Light spells%.")
 			if (spell == "Flash of Light") then
 				targetpower = FoLBonus + targetpower
 			elseif spell == "Holy Light" then
@@ -813,15 +817,15 @@ local function GetTargetSpellPower(spell)
 	for i=1, 16 do
 		if UnitIsVisible("target") and UnitIsConnected("target") and UnitReaction("target", "player") > 4 then
 			debuffTexture, debuffApplications = UnitDebuff("target", i)
-			LunaTip:SetUnitDebuff("target", i)
+			healcommTip:SetUnitDebuff("target", i)
 		else
 			debuffTexture, debuffApplications = UnitDebuff("player", i)
-			LunaTip:SetUnitDebuff("player", i)
+			healcommTip:SetUnitDebuff("player", i)
 		end
 		if not debuffTexture then
 			break
 		end
-		local debuffName = LunaTipTextLeft1:GetText()
+		local debuffName = healcommTipTextLeft1:GetText()
 		if HealComm.Debuffs[debuffName] then
 			targetpower = (HealComm.Debuffs[debuffName].amount * debuffApplications) + targetpower
 			targetmod = (1-(HealComm.Debuffs[debuffName].mod * debuffApplications)) * targetmod
@@ -873,6 +877,31 @@ function HealComm.delayHeal(caster, delay)
 	end
 end
 
+function HealComm.startGrpHeal(caster, size, casttime, party1, party2, party3, party4, party5)
+	HealComm.SpecialEventScheduler:ScheduleEvent(caster, HealComm.stopGrpHeal, (casttime/1000), caster)
+	HealComm.GrpHeals[caster] = {amount = size, ctime = (casttime/1000)+GetTime(), targets = {party1, party2, party3, party4, party5}}
+	for i=1,getn(HealComm.GrpHeals[caster].targets) do
+		HealComm.SpecialEventScheduler:TriggerEvent("HealComm_Healupdate", HealComm.GrpHeals[caster].targets[i])
+	end
+end
+
+function HealComm.stopGrpHeal(caster)
+	if HealComm.SpecialEventScheduler:IsEventScheduled(caster) then
+		HealComm.SpecialEventScheduler:CancelScheduledEvent(caster)
+	end
+	local targets = HealComm.GrpHeals[caster].targets
+	HealComm.GrpHeals[caster] = nil
+	for i=1,getn(targets) do
+		HealComm.SpecialEventScheduler:TriggerEvent("HealComm_Healupdate", targets[i])
+	end
+end
+
+function HealComm.delayGrpHeal(caster, delay)
+	HealComm.SpecialEventScheduler:CancelScheduledEvent(caster)
+	HealComm.GrpHeals[caster].ctime = HealComm.GrpHeals[caster].ctime + (delay/1000)
+	HealComm.SpecialEventScheduler:ScheduleEvent(caster, HealComm.stopGrpHeal, (HealComm.GrpHeals[caster].ctime-GetTime()), caster)
+end
+
 function HealComm.startResurrection(caster, target)
 	if not HealComm.pendingResurrections[target] then
 		HealComm.pendingResurrections[target] = {}
@@ -896,80 +925,93 @@ function HealComm.RessExpire(caster, target)
 	HealComm.SpecialEventScheduler:TriggerEvent("HealComm_Ressupdate", target)
 end
 
+function HealComm.SendAddonMessage(msg)
+	local zone = GetRealZoneText()
+	if zone == "Warsong Gulch" or zone == "Arathi Basin" or zone == "Alterac Valley" then
+		SendAddonMessage("HealComm", msg, "BATTLEGROUND")
+	else
+		SendAddonMessage("HealComm", msg, "RAID")
+	end
+end
+
 HealComm.OnEvent = function()
 	if ( event == "SPELLCAST_START" ) then
-		if ( luna_SpellCast and luna_SpellCast[1] == arg1 and HealComm.Spells[arg1] ) then
+		if ( healcomm_SpellCast and healcomm_SpellCast[1] == arg1 and HealComm.Spells[arg1] ) then
 			local Bonus = 0
 			if BonusScanner then
 				Bonus = tonumber(BonusScanner:GetBonus("HEAL"))
 			end
 			local buffpower, buffmod = GetBuffSpellPower()
-			Bonus = Bonus + buffpower
-			local zone = GetRealZoneText()
-			if zone == "Warsong Gulch" or zone == "Arathi Basin" or zone == "Alterac Valley" then
-				SendAddonMessage( "LunaComm", "Heal/"..luna_SpellCast[3].."/"..(math.floor(HealComm.Spells[luna_SpellCast[1]][tonumber(luna_SpellCast[2])](Bonus))*buffmod).."/"..arg2.."/", "BATTLEGROUND" )
+			local Bonus = Bonus + buffpower
+			healcomm_spellIsCasting = arg1
+			local amount = (math.floor(HealComm.Spells[healcomm_SpellCast[1]][tonumber(healcomm_SpellCast[2])](Bonus))*buffmod)
+			if arg1 == "Prayer of Healing" then
+				local targets = {UnitName("player")}
+				local targetsstring = UnitName("player").."/"
+				for i=1,4 do
+					if CheckInteractDistance("party"..i, 4) then
+						table.insert(targets, i ,UnitName("party"..i))
+						targetsstring = targetsstring..UnitName("party"..i).."/"
+					end
+				end
+				HealComm.SendAddonMessage("GrpHeal/"..amount.."/"..arg2.."/"..targetsstring)
+				HealComm.startGrpHeal(UnitName("player"), amount, arg2, targets[1], targets[2], targets[3], targets[4], targets[5])
 			else
-				SendAddonMessage( "LunaComm", "Heal/"..luna_SpellCast[3].."/"..(math.floor(HealComm.Spells[luna_SpellCast[1]][tonumber(luna_SpellCast[2])](Bonus))*buffmod).."/"..arg2.."/", "RAID" )
+				HealComm.SendAddonMessage("Heal/"..healcomm_SpellCast[3].."/"..amount.."/"..arg2.."/")
+				HealComm.startHeal(UnitName("player"), healcomm_SpellCast[3], amount, arg2)
 			end
-			luna_spellIsCasting = arg1
-			HealComm.startHeal(UnitName("player"), luna_SpellCast[3], ((math.floor(HealComm.Spells[luna_SpellCast[1]][tonumber(luna_SpellCast[2])](Bonus))+luna_SpellCast[4])*buffmod*luna_SpellCast[5]), arg2)
-		elseif ( luna_SpellCast and luna_SpellCast[1] == arg1 and HealComm.Resurrections[arg1] ) then
-			local zone = GetRealZoneText()
-			if zone == "Warsong Gulch" or zone == "Arathi Basin" or zone == "Alterac Valley" then
-				SendAddonMessage( "LunaComm", "Resurrection/"..luna_SpellCast[3].."/start/", "BATTLEGROUND" )
-			else
-				SendAddonMessage( "LunaComm", "Resurrection/"..luna_SpellCast[3].."/start/", "RAID" )
-			end
-			luna_spellIsCasting = arg1
-			HealComm.startResurrection(UnitName("player"), luna_SpellCast[3])
+		elseif ( healcomm_SpellCast and healcomm_SpellCast[1] == arg1 and HealComm.Resurrections[arg1] ) then
+			HealComm.SendAddonMessage("Resurrection/"..healcomm_SpellCast[3].."/start/")
+			healcomm_spellIsCasting = arg1
+			HealComm.startResurrection(UnitName("player"), healcomm_SpellCast[3])
 		end
-	elseif (event == "SPELLCAST_INTERRUPTED" or event == "SPELLCAST_FAILED") and HealComm.Spells[luna_spellIsCasting] then
-		local zone = GetRealZoneText()
-		if zone == "Warsong Gulch" or zone == "Arathi Basin" or zone == "Alterac Valley" then
-			SendAddonMessage( "LunaComm", "Healstop", "BATTLEGROUND" )
+	elseif (event == "SPELLCAST_INTERRUPTED" or event == "SPELLCAST_FAILED") and HealComm.Spells[healcomm_spellIsCasting] then
+		if healcomm_spellIsCasting == "Prayer of Healing" then
+			HealComm.SendAddonMessage("GrpHealstop")
+			HealComm.stopGrpHeal(UnitName("player"))
 		else
-			SendAddonMessage( "LunaComm", "Healstop", "RAID" )
+			HealComm.SendAddonMessage("Healstop")
+			HealComm.stopHeal(UnitName("player"))
 		end
-		luna_spellIsCasting = nil
-		luna_SpellCast =  nil
-		luna_RankRank = nil
-		luna_SpellSpell =  nil
-		HealComm.stopHeal(UnitName("player"))
-	elseif (event == "SPELLCAST_INTERRUPTED" or event == "SPELLCAST_FAILED") and HealComm.Resurrections[luna_spellIsCasting] then
-		local zone = GetRealZoneText()
-		if zone == "Warsong Gulch" or zone == "Arathi Basin" or zone == "Alterac Valley" then
-			SendAddonMessage( "LunaComm", "Resurrection/stop/", "BATTLEGROUND" )
-		else
-			SendAddonMessage( "LunaComm", "Resurrection/stop/", "RAID" )
-		end
-		luna_spellIsCasting = nil
-		luna_SpellCast =  nil
-		luna_RankRank = nil
-		luna_SpellSpell =  nil
+		healcomm_spellIsCasting = nil
+		healcomm_SpellCast =  nil
+		healcomm_RankRank = nil
+		healcomm_SpellSpell =  nil
+	elseif (event == "SPELLCAST_INTERRUPTED" or event == "SPELLCAST_FAILED") and HealComm.Resurrections[healcomm_spellIsCasting] then
+		HealComm.SendAddonMessage("Resurrection/stop/")
+		healcomm_spellIsCasting = nil
+		healcomm_SpellCast =  nil
+		healcomm_RankRank = nil
+		healcomm_SpellSpell =  nil
 		HealComm.cancelResurrection(UnitName("player"))
 	elseif event == "SPELLCAST_DELAYED" then
-		local zone = GetRealZoneText()
-		if zone == "Warsong Gulch" or zone == "Arathi Basin" or zone == "Alterac Valley" then
-			SendAddonMessage( "HealComm", "Healdelay/"..arg1.."/", "BATTLEGROUND" )
+		if healcomm_spellIsCasting == "Prayer of Healing" then
+			HealComm.SendAddonMessage("GrpHealdelay/"..arg1.."/")
+			HealComm.delayGrpHeal(UnitName("player"), arg1)
 		else
-			SendAddonMessage( "HealComm", "Healdelay/"..arg1.."/", "RAID" )
+			HealComm.SendAddonMessage("Healdelay/"..arg1.."/")
+			HealComm.delayHeal(UnitName("player"), arg1)
 		end
-		HealComm.delayHeal(UnitName("player"), arg1)
 	elseif event == "CHAT_MSG_ADDON" then
-		if arg1 ~= "LunaComm" or arg4 == UnitName("player") then
-			return
-		end
-		local result = strsplit(arg2,"/")
-		if result[1] == "Heal" then
-			HealComm.startHeal(arg4, result[2], result[3], result[4])
-		elseif arg2 == "Healstop" then
-			HealComm.stopHeal(arg4)
-		elseif result[1] == "Healdelay" then
-			HealComm.delayHeal(arg4, result[2])
-		elseif result[1] == "Resurrection" and result[2] == "stop" then
-			HealComm.cancelResurrection(arg4)
-		elseif result[1] == "Resurrection" and result[3] == "start" then
-			HealComm.startResurrection(arg4, result[2])
+		if arg1 == "HealComm" or arg1 == "healcommComm" and arg4 ~= UnitName("player") then
+			local result = strsplit(arg2,"/")
+			if result[1] == "Heal" then
+				HealComm.startHeal(arg4, result[2], result[3], result[4])
+			elseif arg2 == "Healstop" then
+				HealComm.stopHeal(arg4)
+			elseif result[1] == "Healdelay" then
+				HealComm.delayHeal(arg4, result[2])
+			elseif result[1] == "Resurrection" and result[2] == "stop" then
+				HealComm.cancelResurrection(arg4)
+			elseif result[1] == "Resurrection" and result[3] == "start" then
+				HealComm.startResurrection(arg4, result[2])
+			elseif result[1] == "GrpHeal" then
+				HealComm.startGrpHeal(arg4, result[2], result[3], result[4], result[5], result[6], result[7], result[8])
+			elseif result[1] == "GrpHealstop" then
+				HealComm.stopGrpHeal(arg4)
+			elseif result[1] == "GrpHealdelay" then
+				HealComm.delayGrpHeal(arg4, result[2])
+			end
 		end
 	end
 end
@@ -980,10 +1022,15 @@ function HealComm:getHeal(unit)
 		for k,v in HealComm.Heals[unit] do
 			healamount = healamount+v.amount
 		end
-		return healamount
-	else
-		return 0
 	end
+	for k,v in pairs(HealComm.GrpHeals) do
+		for j,c in pairs(v.targets) do
+			if unit == c then
+				healamount = healamount+v.amount
+			end
+		end
+	end
+	return healamount
 end
 
 function HealComm:UnitisResurrecting(unit)
@@ -1000,31 +1047,31 @@ function HealComm:UnitisResurrecting(unit)
 	return resstime
 end
 
-luna_oldCastSpell = CastSpell
-function luna_newCastSpell(spellId, spellbookTabNum)
+healcomm_oldCastSpell = CastSpell
+function healcomm_newCastSpell(spellId, spellbookTabNum)
 	-- Call the original function so there's no delay while we process
-	luna_oldCastSpell(spellId, spellbookTabNum)
+	healcomm_oldCastSpell(spellId, spellbookTabNum)
 	
 	local spellName, rank = GetSpellName(spellId, spellbookTabNum)
 	_,_,rank = string.find(rank,"(%d+)")
 	if ( SpellIsTargeting() ) then 
        -- Spell is waiting for a target
-       luna_SpellSpell = spellName
-	   luna_RankRank = rank
+       healcomm_SpellSpell = spellName
+	   healcomm_RankRank = rank
 	elseif ( UnitIsVisible("target") and UnitIsConnected("target") and UnitReaction("target", "player") > 4 ) then
        -- Spell is being cast on the current target.  
        -- If ClearTarget() had been called, we'd be waiting target
-	   luna_ProcessSpellCast(spellName, rank, UnitName("target"))
+	   healcomm_ProcessSpellCast(spellName, rank, UnitName("target"))
 	else
-		luna_ProcessSpellCast(spellName, rank, UnitName("player"))
+		healcomm_ProcessSpellCast(spellName, rank, UnitName("player"))
 	end
 end
-CastSpell = luna_newCastSpell
+CastSpell = healcomm_newCastSpell
 
-luna_oldCastSpellByName = CastSpellByName
-function luna_newCastSpellByName(spellName, onSelf)
+healcomm_oldCastSpellByName = CastSpellByName
+function healcomm_newCastSpellByName(spellName, onSelf)
 	-- Call the original function
-	luna_oldCastSpellByName(spellName, onSelf)
+	healcomm_oldCastSpellByName(spellName, onSelf)
 	local _,_,rank = string.find(spellName,"(%d+)")
 	local _, _, spellName = string.find(spellName, "^([^%(]+)")
 	if not rank then
@@ -1040,57 +1087,57 @@ function luna_newCastSpellByName(spellName, onSelf)
 	end
 	if ( spellName ) then
 		if ( SpellIsTargeting() ) then
-			luna_SpellSpell = spellName
+			healcomm_SpellSpell = spellName
 		else
 			if UnitIsVisible("target") and UnitIsConnected("target") and UnitReaction("target", "player") > 4 then
-				luna_ProcessSpellCast(spellName, rank, UnitName("target"))
+				healcomm_ProcessSpellCast(spellName, rank, UnitName("target"))
 			else
-				luna_ProcessSpellCast(spellName, rank, UnitName("player"))
+				healcomm_ProcessSpellCast(spellName, rank, UnitName("player"))
 			end
 		end
 	end
 end
-CastSpellByName = luna_newCastSpellByName
+CastSpellByName = healcomm_newCastSpellByName
 
-luna_oldWorldFrameOnMouseDown = WorldFrame:GetScript("OnMouseDown")
+healcomm_oldWorldFrameOnMouseDown = WorldFrame:GetScript("OnMouseDown")
 WorldFrame:SetScript("OnMouseDown", function()
 	-- If we're waiting to target
 	local targetName
 	
-	if ( luna_SpellSpell and UnitName("mouseover") ) then
+	if ( healcomm_SpellSpell and UnitName("mouseover") ) then
 		targetName = UnitName("mouseover")
-	elseif ( luna_SpellSpell and GameTooltipTextLeft1:IsVisible() ) then
+	elseif ( healcomm_SpellSpell and GameTooltipTextLeft1:IsVisible() ) then
 		local _, _, name = string.find(GameTooltipTextLeft1:GetText(), "^Corpse of (.+)$")
 		if ( name ) then
 			targetName = name
 		end
 	end
-	if ( luna_oldWorldFrameOnMouseDown ) then
-		luna_oldWorldFrameOnMouseDown()
+	if ( healcomm_oldWorldFrameOnMouseDown ) then
+		healcomm_oldWorldFrameOnMouseDown()
 	end
-	if ( luna_SpellSpell and targetName ) then
-		luna_ProcessSpellCast(luna_SpellSpell, luna_RankRank, targetName)
+	if ( healcomm_SpellSpell and targetName ) then
+		healcomm_ProcessSpellCast(healcomm_SpellSpell, healcomm_RankRank, targetName)
 	end
 end)
 
-luna_oldUseAction = UseAction
-function luna_newUseAction(a1, a2, a3)
+healcomm_oldUseAction = UseAction
+function healcomm_newUseAction(a1, a2, a3)
 	
-	LunaTip:SetAction(a1)
-	local spellName = LunaTipTextLeft1:GetText()
-	luna_SpellSpell = spellName
+	healcommTip:SetAction(a1)
+	local spellName = healcommTipTextLeft1:GetText()
+	healcomm_SpellSpell = spellName
 	
 	-- Call the original function
-	luna_oldUseAction(a1, a2, a3)
+	healcomm_oldUseAction(a1, a2, a3)
 	
 	-- Test to see if this is a macro
-	if ( GetActionText(a1) or not luna_SpellSpell ) then
+	if ( GetActionText(a1) or not healcomm_SpellSpell ) then
 		return
 	end
-	local rank = LunaTipTextRight1:GetText()
+	local rank = healcommTipTextRight1:GetText()
 	if rank then
 		_,_,rank = string.find(rank,"(%d+)")
-		luna_RankRank = rank
+		healcomm_RankRank = rank
 	end
 	
 	if ( SpellIsTargeting() ) then
@@ -1098,56 +1145,56 @@ function luna_newUseAction(a1, a2, a3)
 		return
 	elseif ( UnitIsVisible("target") and UnitIsConnected("target") and UnitReaction("target", "player") > 4 ) then
 		-- Spell is being cast on the current target
-		luna_ProcessSpellCast(spellName, rank, UnitName("target"))
+		healcomm_ProcessSpellCast(spellName, rank, UnitName("target"))
 	else
 		-- Spell is being cast on the player
-		luna_ProcessSpellCast(spellName, rank, UnitName("player"))
+		healcomm_ProcessSpellCast(spellName, rank, UnitName("player"))
 	end
 end
-UseAction = luna_newUseAction
+UseAction = healcomm_newUseAction
 
-luna_oldSpellTargetUnit = SpellTargetUnit
-function luna_newSpellTargetUnit(unit)
+healcomm_oldSpellTargetUnit = SpellTargetUnit
+function healcomm_newSpellTargetUnit(unit)
 	-- Call the original function
 	local shallTargetUnit
 	if ( SpellIsTargeting() ) then
 		shallTargetUnit = true
 	end
-	luna_oldSpellTargetUnit(unit)
-	if ( shallTargetUnit and luna_SpellSpell and not SpellIsTargeting() ) then
-		luna_ProcessSpellCast(luna_SpellSpell, luna_RankRank, UnitName(unit))
-		luna_SpellSpell = nil
-		luna_RankRank = nil
+	healcomm_oldSpellTargetUnit(unit)
+	if ( shallTargetUnit and healcomm_SpellSpell and not SpellIsTargeting() ) then
+		healcomm_ProcessSpellCast(healcomm_SpellSpell, healcomm_RankRank, UnitName(unit))
+		healcomm_SpellSpell = nil
+		healcomm_RankRank = nil
 	end
 end
-SpellTargetUnit = luna_newSpellTargetUnit
+SpellTargetUnit = healcomm_newSpellTargetUnit
 
-luna_oldSpellStopTargeting = SpellStopTargeting
-function luna_newSpellStopTargeting()
-	luna_oldSpellStopTargeting()
-	luna_SpellSpell = nil
-	luna_RankRank = nil
+healcomm_oldSpellStopTargeting = SpellStopTargeting
+function healcomm_newSpellStopTargeting()
+	healcomm_oldSpellStopTargeting()
+	healcomm_SpellSpell = nil
+	healcomm_RankRank = nil
 end
-SpellStopTargeting = luna_newSpellStopTargeting
+SpellStopTargeting = healcomm_newSpellStopTargeting
 
-luna_oldTargetUnit = TargetUnit
-function luna_newTargetUnit(unit)
+healcomm_oldTargetUnit = TargetUnit
+function healcomm_newTargetUnit(unit)
 	-- Call the original function
-	luna_oldTargetUnit(unit)
+	healcomm_oldTargetUnit(unit)
 	
 	-- Look to see if we're currently waiting for a target internally
 	-- If we are, then well glean the target info here.
 	
-	if ( luna_SpellSpell and UnitExists(unit) ) then
-		luna_ProcessSpellCast(luna_SpellSpell, luna_RankRank, UnitName(unit))
+	if ( healcomm_SpellSpell and UnitExists(unit) ) then
+		healcomm_ProcessSpellCast(healcomm_SpellSpell, healcomm_RankRank, UnitName(unit))
 	end
 end
-TargetUnit = luna_newTargetUnit
+TargetUnit = healcomm_newTargetUnit
 
-function luna_ProcessSpellCast(spellName, rank, targetName)
+function healcomm_ProcessSpellCast(spellName, rank, targetName)
 	if ( spellName and rank and targetName ) then
 		local power, mod = GetTargetSpellPower(spellName)
-		luna_SpellCast = { spellName, rank, targetName, power, mod }
+		healcomm_SpellCast = { spellName, rank, targetName, power, mod }
 	end
 end
 
