@@ -383,7 +383,7 @@ end
 function LunaUnitFrames.Raid_Displaypower(unitid)
 	if string.sub(unitid, 1, 4) == "raid" and RAID_SUBGROUP_LISTS then
 		local raidnumber = string.sub(unitid, 5)
-		if string.sub(raidnumber, 3) == pet then
+		if not UnitIsPlayer(unitid) then
 			return
 		end
 		local _,_,subgroup = GetRaidRosterInfo(raidnumber)
@@ -407,7 +407,7 @@ end
 function LunaUnitFrames.Raid_Aura(unitid)
 	if string.sub(unitid, 1, 4) == "raid" and RAID_SUBGROUP_LISTS then
 		local raidnumber = string.sub(unitid, 5)
-		if string.sub(raidnumber, 3) == pet then
+		if not UnitIsPlayer(unitid) then
 			return
 		end
 		local _,_,subgroup = GetRaidRosterInfo(tonumber(raidnumber))
@@ -451,7 +451,7 @@ end
 function LunaUnitFrames.Raid_Aggro(unitid)
 	if string.sub(unitid, 1, 4) == "raid" then
 		local raidnumber = string.sub(unitid, 5)
-		if string.sub(raidnumber, 3) == pet then
+		if not UnitIsPlayer(unitid) then
 			return
 		end
 		local _,_,subgroup = GetRaidRosterInfo(tonumber(raidnumber))
