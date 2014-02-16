@@ -484,3 +484,9 @@ function LunaUnitFrames.Raid_Res(unitName)
 		end
 	end
 end
+
+function LunaUnitFrames.Raid_Update()
+	for i=1,40 do
+		LunaUnitFrames.Raid_Aura("raid"..i)
+	end
+end
