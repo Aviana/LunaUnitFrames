@@ -186,9 +186,9 @@ end
 
 function OptionFunctions.ToggleRaidGroupNames()
 	if this:GetChecked() == 1 then
-		LunaOptions.frames[LunaOptions.Raidlayout].ShowRaidGroupTitles = 1
+		LunaOptions.frames["LunaRaidFrames"].ShowRaidGroupTitles = 1
 	else
-		LunaOptions.frames[LunaOptions.Raidlayout].ShowRaidGroupTitles = 0
+		LunaOptions.frames["LunaRaidFrames"].ShowRaidGroupTitles = 0
 	end
 	LunaUnitFrames:UpdateRaidRoster()
 end
@@ -362,7 +362,7 @@ function OptionFunctions.PlayerBuffPosSelect()
 	for k,v in ipairs({"Hide","Top","Bottom","Left","Right"}) do
 		info.text=v
 		info.value=k
-		info.func= PlayerBuffPosSelectChoice
+		info.func= OptionFunctions.PlayerBuffPosSelectChoice
 		info.checked = nil
 		UIDropDownMenu_AddButton(info, 1)
 	end
@@ -568,7 +568,7 @@ function OptionFunctions.PetBuffPosSelect()
 	for k,v in ipairs({"Hide","Top","Bottom","Left","Right"}) do
 		info.text=v
 		info.value=k
-		info.func= PetBuffPosSelectChoice
+		info.func= OptionFunctions.PetBuffPosSelectChoice
 		info.checked = nil
 		UIDropDownMenu_AddButton(info, 1)
 	end
@@ -585,7 +585,7 @@ function OptionFunctions.TargetBuffPosSelect()
 	for k,v in ipairs({"Hide","Top","Bottom","Left","Right"}) do
 		info.text=v
 		info.value=k
-		info.func= TargetBuffPosSelectChoice
+		info.func= OptionFunctions.TargetBuffPosSelectChoice
 		info.checked = nil
 		UIDropDownMenu_AddButton(info, 1)
 	end
@@ -602,7 +602,7 @@ function OptionFunctions.PartyBuffPosSelect()
 	for k,v in ipairs({"Hide","Top","Bottom","Left","Right"}) do
 		info.text=v
 		info.value=k
-		info.func= PartyBuffPosSelectChoice
+		info.func= OptionFunctions.PartyBuffPosSelectChoice
 		info.checked = nil
 		UIDropDownMenu_AddButton(info, 1)
 	end
@@ -611,12 +611,12 @@ end
 function OptionFunctions.EnergyTickerToggle()
 	if LunaOptions.EnergyTicker == 1 then
 		LunaOptions.EnergyTicker = 0
-		LunaPlayerFrame.PowerBar:SetScript("OnUpdate", nil)
-		LunaPlayerFrame.PowerBar.Ticker:Hide()
+		LunaPlayerFrame.bars["Powerbar"]:SetScript("OnUpdate", nil)
+		LunaPlayerFrame.bars["Powerbar"].Ticker:Hide()
 	else
 		LunaOptions.EnergyTicker = 1
-		LunaPlayerFrame.PowerBar:SetScript("OnUpdate", LunaPlayerFrame.PowerBar.EnergyUpdate)
-		LunaPlayerFrame.PowerBar.Ticker:Show()
+		LunaPlayerFrame.bars["Powerbar"]:SetScript("OnUpdate", LunaPlayerFrame.bars["Powerbar"].EnergyUpdate)
+		LunaPlayerFrame.bars["Powerbar"].Ticker:Show()
 	end
 end
 
@@ -681,7 +681,7 @@ function OptionFunctions.enableFrame()
 	else
 		LunaOptions.frames[this.frame].enabled = 1
 	end
-	UpdateAll()
+	OptionFunctions.UpdateAll()
 end
 
 function OptionFunctions.enableRaid()
@@ -693,15 +693,36 @@ function OptionFunctions.enableRaid()
 	LunaUnitFrames:UpdateRaidRoster()
 end
 
+function OptionFunctions.ToggleVertRaidHealthBars()
+	if not LunaOptions.frames["LunaRaidFrames"].verticalHealth then
+		LunaOptions.frames["LunaRaidFrames"].verticalHealth = 1
+	else
+		LunaOptions.frames["LunaRaidFrames"].verticalHealth = nil
+	end
+	LunaUnitFrames:UpdateRaidLayout()
+end
+	
 function OptionFunctions.ToggleRaidPowerBars()
 	if not LunaOptions.frames["LunaRaidFrames"].pBars then
 		LunaOptions.frames["LunaRaidFrames"].pBars = 1
+		LunaOptionsFrame.pages[7].pBarvertswitch:Enable()
+		LunaOptionsFrame.pages[7].pBarvertswitch:SetChecked(nil)
 	else
 		LunaOptions.frames["LunaRaidFrames"].pBars = nil
+		LunaOptionsFrame.pages[7].pBarvertswitch:Disable()
 	end
 	LunaUnitFrames:UpdateRaidLayout()
 end
 
+function OptionFunctions.ToggleVertRaidPowerBars()
+	if not (LunaOptions.frames["LunaRaidFrames"].pBars == 2) then
+		LunaOptions.frames["LunaRaidFrames"].pBars = 2
+	else
+		LunaOptions.frames["LunaRaidFrames"].pBars = 1
+	end
+	LunaUnitFrames:UpdateRaidLayout()
+end
+	
 function OptionFunctions.ToggleHealerMode()
 	if not LunaOptions.HealerModeHealth then
 		LunaOptions.HealerModeHealth = 1
@@ -729,6 +750,15 @@ function OptionFunctions.OverhealAdjust()
 	LunaUnitFrames:UpdatePlayerFrame()
 	LunaUnitFrames:UpdateTargetFrame()
 	LunaUnitFrames:UpdatePartyFrames()
+end
+
+function OptionFunctions.ToggleInvertHealthBars()
+	if not LunaOptions.frames["LunaRaidFrames"].inverthealth then
+		LunaOptions.frames["LunaRaidFrames"].inverthealth = 1
+	else
+		LunaOptions.frames["LunaRaidFrames"].inverthealth = nil
+	end
+	LunaUnitFrames:UpdateRaidRoster()
 end
 
 function LunaOptionsModule:CreateMenu()
@@ -1382,19 +1412,43 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[7].RaidGrpNameswitch:SetChecked(LunaOptions.frames["LunaRaidFrames"].ShowRaidGroupTitles)
 	getglobal("RaidGroupNamesSwitchText"):SetText("Show Group Names")
 	
+	LunaOptionsFrame.pages[7].RaidGrpHealthVertswitch = CreateFrame("CheckButton", "RaidGroupHealthVertSwitch", LunaOptionsFrame.pages[7], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[7].RaidGrpHealthVertswitch:SetHeight(20)
+	LunaOptionsFrame.pages[7].RaidGrpHealthVertswitch:SetWidth(20)
+	LunaOptionsFrame.pages[7].RaidGrpHealthVertswitch:SetPoint("TOPLEFT", LunaOptionsFrame.pages[7].RaidGrpNameswitch, "TOPLEFT", 0, -30)
+	LunaOptionsFrame.pages[7].RaidGrpHealthVertswitch:SetScript("OnClick", OptionFunctions.ToggleVertRaidHealthBars)
+	LunaOptionsFrame.pages[7].RaidGrpHealthVertswitch:SetChecked(LunaOptions.frames["LunaRaidFrames"].verticalHealth)
+	getglobal("RaidGroupHealthVertSwitchText"):SetText("Vertical Health Bars")
+	
 	LunaOptionsFrame.pages[7].pBarswitch = CreateFrame("CheckButton", "RaidGroupPowerSwitch", LunaOptionsFrame.pages[7], "UICheckButtonTemplate")
 	LunaOptionsFrame.pages[7].pBarswitch:SetHeight(20)
 	LunaOptionsFrame.pages[7].pBarswitch:SetWidth(20)
-	LunaOptionsFrame.pages[7].pBarswitch:SetPoint("TOPLEFT", LunaOptionsFrame.pages[7].RaidGrpNameswitch, "TOPLEFT", 0, -30)
+	LunaOptionsFrame.pages[7].pBarswitch:SetPoint("TOPLEFT", LunaOptionsFrame.pages[7].RaidGrpHealthVertswitch, "TOPLEFT", 0, -30)
 	LunaOptionsFrame.pages[7].pBarswitch:SetScript("OnClick", OptionFunctions.ToggleRaidPowerBars)
-	LunaOptionsFrame.pages[7].pBarswitch:SetChecked(LunaOptions.frames["LunaRaidFrames"].pBars or 0)
+	LunaOptionsFrame.pages[7].pBarswitch:SetChecked(LunaOptions.frames["LunaRaidFrames"].pBars)
 	getglobal("RaidGroupPowerSwitchText"):SetText("Show Power Bars")
 	
+	LunaOptionsFrame.pages[7].pBarvertswitch = CreateFrame("CheckButton", "RaidGroupPowerVertSwitch", LunaOptionsFrame.pages[7], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[7].pBarvertswitch:SetHeight(20)
+	LunaOptionsFrame.pages[7].pBarvertswitch:SetWidth(20)
+	LunaOptionsFrame.pages[7].pBarvertswitch:SetPoint("TOPLEFT", LunaOptionsFrame.pages[7].pBarswitch, "TOPLEFT", 10, -20)
+	LunaOptionsFrame.pages[7].pBarvertswitch:SetScript("OnClick", OptionFunctions.ToggleVertRaidPowerBars)
+	LunaOptionsFrame.pages[7].pBarvertswitch:SetChecked(LunaOptions.frames["LunaRaidFrames"].pBars == 2)
+	getglobal("RaidGroupPowerVertSwitchText"):SetText("Vertical Power Bars")
+	
+	LunaOptionsFrame.pages[7].inverthealth = CreateFrame("CheckButton", "RaidGroupInvertHealthSwitch", LunaOptionsFrame.pages[7], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[7].inverthealth:SetHeight(20)
+	LunaOptionsFrame.pages[7].inverthealth:SetWidth(20)
+	LunaOptionsFrame.pages[7].inverthealth:SetPoint("TOPLEFT", LunaOptionsFrame.pages[7].pBarvertswitch, "TOPLEFT", -10, -30)
+	LunaOptionsFrame.pages[7].inverthealth:SetScript("OnClick", OptionFunctions.ToggleInvertHealthBars)
+	LunaOptionsFrame.pages[7].inverthealth:SetChecked(LunaOptions.frames["LunaRaidFrames"].inverthealth)
+	getglobal("RaidGroupInvertHealthSwitchText"):SetText("Invert Health Bars")
+	
 	LunaOptionsFrame.pages[7].BuffwatchDesc = LunaOptionsFrame.pages[7]:CreateFontString(nil, "OVERLAY", LunaOptionsFrame.pages[7])
-	LunaOptionsFrame.pages[7].BuffwatchDesc:SetPoint("TOPLEFT", LunaOptionsFrame.pages[7].pBarswitch, "TOPLEFT", 0, -30)
+	LunaOptionsFrame.pages[7].BuffwatchDesc:SetPoint("TOPLEFT", LunaOptionsFrame.pages[7].paddingslider, "TOPLEFT", 230, 10)
 	LunaOptionsFrame.pages[7].BuffwatchDesc:SetFont("Fonts\\FRIZQT__.TTF", 10)
 	LunaOptionsFrame.pages[7].BuffwatchDesc:SetTextColor(1,0.82,0)
-	LunaOptionsFrame.pages[7].BuffwatchDesc:SetText("Buff to display on raidframe (can be part of name):")
+	LunaOptionsFrame.pages[7].BuffwatchDesc:SetText("Track Buff (Can be part of name):")
 	
 	LunaOptionsFrame.pages[7].Buffwatch = CreateFrame("Editbox", BuffwatchInput, LunaOptionsFrame.pages[7], "InputBoxTemplate")
 	LunaOptionsFrame.pages[7].Buffwatch:SetHeight(20)
