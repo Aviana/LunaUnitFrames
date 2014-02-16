@@ -900,7 +900,7 @@ function Luna_Target_Events:UNIT_PORTRAIT_UPDATE()
 		if(not UnitExists("target") or not UnitIsConnected("target") or not UnitIsVisible("target")) then
 			portrait:SetModelScale(4.25)
 			portrait:SetPosition(0, 0, -1)
-			portrait:SetModel"Interface\\Buttons\\talktomequestionmark.mdx"
+			portrait:SetModel("Interface\\Buttons\\talktomequestionmark.mdx")
 		else
 			portrait:SetUnit("target")
 			portrait:SetCamera(0)

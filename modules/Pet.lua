@@ -5,16 +5,16 @@ local function Luna_HideBlizz(frame)
 	frame:Hide()
 end	
 	
-local function Luna_Party_SetBuffTooltip()
+local function Luna_Pet_SetBuffTooltip()
 	GameTooltip:SetOwner(this, "ANCHOR_BOTTOMRIGHT")
 	if (this.id > 16) then
-		GameTooltip:SetUnitDebuff(this:GetParent().unit, this.id-16)
+		GameTooltip:SetUnitDebuff("pet", this.id-16)
 	else
-		GameTooltip:SetUnitBuff(this:GetParent().unit, this.id)
+		GameTooltip:SetUnitBuff("pet", this.id)
 	end
 end
 
-local function Luna_Party_SetBuffTooltipLeave()
+local function Luna_Pet_SetBuffTooltipLeave()
 	GameTooltip:Hide()
 end
 
@@ -98,12 +98,12 @@ function LunaUnitFrames:CreatePetFrame()
 	
 	LunaPetFrame.Buffs = {}
 
-	LunaPetFrame.Buffs[1] = CreateFrame("Button", nil, LunaPlayerFrame.AuraAnchor)
+	LunaPetFrame.Buffs[1] = CreateFrame("Button", nil, LunaPetFrame.AuraAnchor)
 	LunaPetFrame.Buffs[1].texturepath = UnitBuff(LunaPetFrame.unit,1)
 	LunaPetFrame.Buffs[1].id = 1
 	LunaPetFrame.Buffs[1]:SetNormalTexture(LunaPetFrame.Buffs[1].texturepath)
-	LunaPetFrame.Buffs[1]:SetScript("OnEnter", Luna_Party_SetBuffTooltip)
-	LunaPetFrame.Buffs[1]:SetScript("OnLeave", Luna_Party_SetBuffTooltipLeave)
+	LunaPetFrame.Buffs[1]:SetScript("OnEnter", Luna_Pet_SetBuffTooltip)
+	LunaPetFrame.Buffs[1]:SetScript("OnLeave", Luna_Pet_SetBuffTooltipLeave)
 
 	LunaPetFrame.Buffs[1].stacks = LunaPetFrame.Buffs[1]:CreateFontString(nil, "OVERLAY", LunaPetFrame.Buffs[1])
 	LunaPetFrame.Buffs[1].stacks:SetPoint("BOTTOMRIGHT", LunaPetFrame.Buffs[1], 0, 0)
@@ -115,12 +115,12 @@ function LunaUnitFrames:CreatePetFrame()
 	LunaPetFrame.Buffs[1].stacks:SetText("8")
 
 	for z=2, 16 do
-		LunaPetFrame.Buffs[z] = CreateFrame("Button", nil, LunaPlayerFrame.AuraAnchor)
+		LunaPetFrame.Buffs[z] = CreateFrame("Button", nil, LunaPetFrame.AuraAnchor)
 		LunaPetFrame.Buffs[z].texturepath = UnitBuff(LunaPetFrame.unit,z)
 		LunaPetFrame.Buffs[z].id = z
 		LunaPetFrame.Buffs[z]:SetNormalTexture(LunaPetFrame.Buffs[z].texturepath)
-		LunaPetFrame.Buffs[z]:SetScript("OnEnter", Luna_Party_SetBuffTooltip)
-		LunaPetFrame.Buffs[z]:SetScript("OnLeave", Luna_Party_SetBuffTooltipLeave)
+		LunaPetFrame.Buffs[z]:SetScript("OnEnter", Luna_Pet_SetBuffTooltip)
+		LunaPetFrame.Buffs[z]:SetScript("OnLeave", Luna_Pet_SetBuffTooltipLeave)
 		
 		LunaPetFrame.Buffs[z].stacks = LunaPetFrame.Buffs[z]:CreateFontString(nil, "OVERLAY", LunaPetFrame.Buffs[z])
 		LunaPetFrame.Buffs[z].stacks:SetPoint("BOTTOMRIGHT", LunaPetFrame.Buffs[z], 0, 0)
@@ -134,12 +134,12 @@ function LunaUnitFrames:CreatePetFrame()
 
 	LunaPetFrame.Debuffs = {}
 
-	LunaPetFrame.Debuffs[1] = CreateFrame("Button", nil, LunaPlayerFrame.AuraAnchor)
+	LunaPetFrame.Debuffs[1] = CreateFrame("Button", nil, LunaPetFrame.AuraAnchor)
 	LunaPetFrame.Debuffs[1].texturepath = UnitDebuff(LunaPetFrame.unit,1)
 	LunaPetFrame.Debuffs[1].id = 17
 	LunaPetFrame.Debuffs[1]:SetNormalTexture(LunaPetFrame.Debuffs[1].texturepath)
-	LunaPetFrame.Debuffs[1]:SetScript("OnEnter", Luna_Party_SetBuffTooltip)
-	LunaPetFrame.Debuffs[1]:SetScript("OnLeave", Luna_Party_SetBuffTooltipLeave)
+	LunaPetFrame.Debuffs[1]:SetScript("OnEnter", Luna_Pet_SetBuffTooltip)
+	LunaPetFrame.Debuffs[1]:SetScript("OnLeave", Luna_Pet_SetBuffTooltipLeave)
 
 	LunaPetFrame.Debuffs[1].stacks = LunaPetFrame.Debuffs[1]:CreateFontString(nil, "OVERLAY", LunaPetFrame.Debuffs[1])
 	LunaPetFrame.Debuffs[1].stacks:SetPoint("BOTTOMRIGHT", LunaPetFrame.Debuffs[1], 0, 0)
@@ -151,12 +151,12 @@ function LunaUnitFrames:CreatePetFrame()
 	LunaPetFrame.Debuffs[1].stacks:SetText("8")
 
 	for z=2, 16 do
-		LunaPetFrame.Debuffs[z] = CreateFrame("Button", nil, LunaPlayerFrame.AuraAnchor)
+		LunaPetFrame.Debuffs[z] = CreateFrame("Button", nil, LunaPetFrame.AuraAnchor)
 		LunaPetFrame.Debuffs[z].texturepath = UnitDebuff(LunaPetFrame.unit,z)
 		LunaPetFrame.Debuffs[z].id = z+16
 		LunaPetFrame.Debuffs[z]:SetNormalTexture(LunaPetFrame.Debuffs[z].texturepath)
-		LunaPetFrame.Debuffs[z]:SetScript("OnEnter", Luna_Party_SetBuffTooltip)
-		LunaPetFrame.Debuffs[z]:SetScript("OnLeave", Luna_Party_SetBuffTooltipLeave)
+		LunaPetFrame.Debuffs[z]:SetScript("OnEnter", Luna_Pet_SetBuffTooltip)
+		LunaPetFrame.Debuffs[z]:SetScript("OnLeave", Luna_Pet_SetBuffTooltipLeave)
 		
 		LunaPetFrame.Debuffs[z].stacks = LunaPetFrame.Debuffs[z]:CreateFontString(nil, "OVERLAY", LunaPetFrame.Debuffs[z])
 		LunaPetFrame.Debuffs[z].stacks:SetPoint("BOTTOMRIGHT", LunaPetFrame.Debuffs[z], 0, 0)
@@ -468,7 +468,7 @@ function LunaUnitFrames:UpdatePetFrame()
 		if(not UnitExists(LunaPetFrame.unit) or not UnitIsConnected(LunaPetFrame.unit) or not UnitIsVisible(LunaPetFrame.unit)) then
 			LunaPetFrame.bars["Portrait"]:SetModelScale(4.25)
 			LunaPetFrame.bars["Portrait"]:SetPosition(0, 0, -1)
-			LunaPetFrame.bars["Portrait"]:SetModel"Interface\\Buttons\\talktomequestionmark.mdx"
+			LunaPetFrame.bars["Portrait"]:SetModel("Interface\\Buttons\\talktomequestionmark.mdx")
 		else
 			LunaPetFrame.bars["Portrait"]:SetUnit(LunaPetFrame.unit)
 			LunaPetFrame.bars["Portrait"]:SetCamera(0)
@@ -546,50 +546,50 @@ function LunaUnitFrames:UpdatePetFrame()
 end
 
 function Luna_Pet_Events:UNIT_AURA()
-	if this.unit == arg1 then
+	if arg1 == "pet" or arg1 == "LunaUnitFrames" or arg1 == "LeftButton" then
 		local pos
 		for i=1, 16 do
-			local path, stacks = UnitBuff(this.unit,i)
-			this.Buffs[i].texturepath = path
-			if this.Buffs[i].texturepath then
-				this.Buffs[i]:EnableMouse(1)
-				this.Buffs[i]:Show()
+			local path, stacks = UnitBuff(LunaPetFrame.unit,i)
+			LunaPetFrame.Buffs[i].texturepath = path
+			if LunaPetFrame.Buffs[i].texturepath then
+				LunaPetFrame.Buffs[i]:EnableMouse(1)
+				LunaPetFrame.Buffs[i]:Show()
 				if stacks > 1 then
-					this.Buffs[i].stacks:SetText(stacks)
-					this.Buffs[i].stacks:Show()
+					LunaPetFrame.Buffs[i].stacks:SetText(stacks)
+					LunaPetFrame.Buffs[i].stacks:Show()
 				else
-					this.Buffs[i].stacks:Hide()
+					LunaPetFrame.Buffs[i].stacks:Hide()
 				end
 			else
-				this.Buffs[i]:EnableMouse(0)
-				this.Buffs[i]:Hide()
+				LunaPetFrame.Buffs[i]:EnableMouse(0)
+				LunaPetFrame.Buffs[i]:Hide()
 				if not pos then
 					pos = i
 				end
 			end
-			this.Buffs[i]:SetNormalTexture(this.Buffs[i].texturepath)
+			LunaPetFrame.Buffs[i]:SetNormalTexture(LunaPetFrame.Buffs[i].texturepath)
 		end
 		if not pos then
 			pos = 17
 		end
 		LunaPetFrame.AuraAnchor:SetHeight((LunaPetFrame.Buffs[1]:GetHeight()*math.ceil((pos-1)/(LunaOptions.frames["LunaPetFrame"].BuffInRow or 16)))+(math.ceil((pos-1)/(LunaOptions.frames["LunaPetFrame"].BuffInRow or 16))-1)+1.1)
 		for i=1, 16 do
-			local path, stacks = UnitDebuff(this.unit,i)
-			this.Debuffs[i].texturepath = path
-			if this.Debuffs[i].texturepath then
-				this.Debuffs[i]:EnableMouse(1)
-				this.Debuffs[i]:Show()
+			local path, stacks = UnitDebuff(LunaPetFrame.unit,i)
+			LunaPetFrame.Debuffs[i].texturepath = path
+			if LunaPetFrame.Debuffs[i].texturepath then
+				LunaPetFrame.Debuffs[i]:EnableMouse(1)
+				LunaPetFrame.Debuffs[i]:Show()
 				if stacks > 1 then
-					this.Debuffs[i].stacks:SetText(stacks)
-					this.Debuffs[i].stacks:Show()
+					LunaPetFrame.Debuffs[i].stacks:SetText(stacks)
+					LunaPetFrame.Debuffs[i].stacks:Show()
 				else
-					this.Debuffs[i].stacks:Hide()
+					LunaPetFrame.Debuffs[i].stacks:Hide()
 				end
 			else
-				this.Debuffs[i]:EnableMouse(0)
-				this.Debuffs[i]:Hide()
+				LunaPetFrame.Debuffs[i]:EnableMouse(0)
+				LunaPetFrame.Debuffs[i]:Hide()
 			end
-			this.Debuffs[i]:SetNormalTexture(this.Debuffs[i].texturepath)
+			LunaPetFrame.Debuffs[i]:SetNormalTexture(LunaPetFrame.Debuffs[i].texturepath)
 		end
 	end
 end
@@ -639,7 +639,7 @@ function Luna_Pet_Events:UNIT_PORTRAIT_UPDATE()
 			if(not UnitExists(arg1) or not UnitIsConnected(arg1) or not UnitIsVisible(arg1)) then
 				portrait:SetModelScale(4.25)
 				portrait:SetPosition(0, 0, -1)
-				portrait:SetModel"Interface\\Buttons\\talktomequestionmark.mdx"
+				portrait:SetModel("Interface\\Buttons\\talktomequestionmark.mdx")
 			else
 				portrait:SetUnit(arg1)
 				portrait:SetCamera(0)

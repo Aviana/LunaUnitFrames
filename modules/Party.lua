@@ -687,7 +687,7 @@ function LunaUnitFrames:UpdatePartyFrames()
 				if(not UnitExists(LunaPartyFrames[i].unit) or not UnitIsConnected(LunaPartyFrames[i].unit) or not UnitIsVisible(LunaPartyFrames[i].unit)) then
 					LunaPartyFrames[i].bars["Portrait"]:SetModelScale(4.25)
 					LunaPartyFrames[i].bars["Portrait"]:SetPosition(0, 0, -1)
-					LunaPartyFrames[i].bars["Portrait"]:SetModel"Interface\\Buttons\\talktomequestionmark.mdx"
+					LunaPartyFrames[i].bars["Portrait"]:SetModel("Interface\\Buttons\\talktomequestionmark.mdx")
 				else
 					LunaPartyFrames[i].bars["Portrait"]:SetUnit(LunaPartyFrames[i].unit)
 					LunaPartyFrames[i].bars["Portrait"]:SetCamera(0)
@@ -951,7 +951,7 @@ function Luna_Party_Events:UNIT_PORTRAIT_UPDATE()
 			if(not UnitExists(arg1) or not UnitIsConnected(arg1) or not UnitIsVisible(arg1)) then
 				portrait:SetModelScale(4.25)
 				portrait:SetPosition(0, 0, -1)
-				portrait:SetModel"Interface\\Buttons\\talktomequestionmark.mdx"
+				portrait:SetModel("Interface\\Buttons\\talktomequestionmark.mdx")
 			else
 				portrait:SetUnit(arg1)
 				portrait:SetCamera(0)
