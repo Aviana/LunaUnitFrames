@@ -612,12 +612,11 @@ function OptionFunctions.EnergyTickerToggle()
 	if LunaOptions.EnergyTicker == 1 then
 		LunaOptions.EnergyTicker = 0
 		LunaPlayerFrame.bars["Powerbar"]:SetScript("OnUpdate", nil)
-		LunaPlayerFrame.bars["Powerbar"].Ticker:Hide()
 	else
 		LunaOptions.EnergyTicker = 1
 		LunaPlayerFrame.bars["Powerbar"]:SetScript("OnUpdate", LunaPlayerFrame.bars["Powerbar"].EnergyUpdate)
-		LunaPlayerFrame.bars["Powerbar"].Ticker:Show()
 	end
+	LunaUnitFrames:UpdatePlayerFrame()
 end
 
 function OptionFunctions.PartyGrowthToggle()
