@@ -86,11 +86,15 @@ local function AdjustBars(frame)
 		frame.HealBar:Hide()
 	end
 	if vertHealth and health < maxHealth then
-		frame.bg:Show()
+		if LunaOptions.frames["LunaRaidFrames"].inverthealth then
+			frame.bg:Show()
+		end
 		frame.bg:SetHeight(frameHeight-healthHeight)
 		frame.bg:SetWidth(frameWidth)
 	elseif health < maxHealth then
-		frame.bg:Show()
+		if LunaOptions.frames["LunaRaidFrames"].inverthealth then
+			frame.bg:Show()
+		end
 		frame.bg:SetHeight(frameHeight)
 		frame.bg:SetWidth(frameWidth - healthWidth)
 	else
@@ -104,7 +108,7 @@ local function UpdateRaidMember()
 	for i=1,8 do
 		for z=1,5 do
 			if LunaUnitFrames.frames.RaidFrames[i].member[z]:IsShown() then
-				if (RangeTime > LunaOptions.Rangefreq) then
+	--			if (RangeTime > LunaOptions.Rangefreq) then
 					local _, time = LunaUnitFrames.proximity:GetUnitRange(LunaUnitFrames.frames.RaidFrames[i].member[z].unit)
 					local seen = now - (time or 100)
 					if time and seen < 3 then
@@ -112,14 +116,14 @@ local function UpdateRaidMember()
 					else
 						LunaUnitFrames.frames.RaidFrames[i].member[z]:SetAlpha(0.5)
 					end
-					RangeTime = 0
-				end
+	--			end
 				if UnitIsConnected(LunaUnitFrames.frames.RaidFrames[i].member[z].unit) then
 					local healamount = HealComm:getHeal(UnitName(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
 					local missinghp = (UnitHealth(LunaUnitFrames.frames.RaidFrames[i].member[z].unit)-UnitHealthMax(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
 					if UnitHealth(LunaUnitFrames.frames.RaidFrames[i].member[z].unit) < 2 then
 						LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetValue(0)
 						LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetValue(0)
+						LunaUnitFrames.frames.RaidFrames[i].member[z].HealBar:Hide()
 						LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:SetText(UnitName(LunaUnitFrames.frames.RaidFrames[i].member[z].unit).."\n".."DEAD")
 					else
 						AdjustBars(LunaUnitFrames.frames.RaidFrames[i].member[z])
@@ -377,7 +381,7 @@ function LunaUnitFrames:UpdateRaidLayout()
 end
 
 function LunaUnitFrames.Raid_Displaypower(unitid)
-	if string.sub(unitid, 1, 4) == "raid" then
+	if string.sub(unitid, 1, 4) == "raid" and RAID_SUBGROUP_LISTS then
 		local raidnumber = string.sub(unitid, 5)
 		local _,_,subgroup = GetRaidRosterInfo(raidnumber)
 		local frame
