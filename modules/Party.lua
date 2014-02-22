@@ -284,11 +284,12 @@ function LunaUnitFrames:CreatePartyFrames()
 
 	-- Healthbar text
 		LunaPartyFrames[i].bars["Healthbar"].hpp = LunaPartyFrames[i].bars["Healthbar"]:CreateFontString(nil, "OVERLAY", LunaPartyFrames[i].bars["Healthbar"])
-		LunaPartyFrames[i].bars["Healthbar"].hpp:SetPoint("RIGHT", -2, -1)
+		LunaPartyFrames[i].bars["Healthbar"].hpp:SetPoint("RIGHT", -2, 0)
 		LunaPartyFrames[i].bars["Healthbar"].hpp:SetFont(LunaOptions.font, LunaOptions.fontHeight)
 		LunaPartyFrames[i].bars["Healthbar"].hpp:SetShadowColor(0, 0, 0)
 		LunaPartyFrames[i].bars["Healthbar"].hpp:SetShadowOffset(0.8, -0.8)
 		LunaPartyFrames[i].bars["Healthbar"].hpp:SetTextColor(1,1,1)
+		LunaPartyFrames[i].bars["Healthbar"].hpp:SetJustifyH("RIGHT")
 
 		LunaPartyFrames[i].name = LunaPartyFrames[i].bars["Healthbar"]:CreateFontString(nil, "OVERLAY", LunaPartyFrames[i].bars["Healthbar"])
 		LunaPartyFrames[i].name:SetPoint("LEFT", 2, -1)
@@ -309,11 +310,12 @@ function LunaUnitFrames:CreatePartyFrames()
 		LunaPartyFrames[i].bars["Powerbar"].ppbg:SetTexture(.25,.25,.25,.25)
 
 		LunaPartyFrames[i].bars["Powerbar"].ppp = LunaPartyFrames[i].bars["Powerbar"]:CreateFontString(nil, "OVERLAY", LunaPartyFrames[i].bars["Powerbar"])
-		LunaPartyFrames[i].bars["Powerbar"].ppp:SetPoint("RIGHT", -2, -1)
+		LunaPartyFrames[i].bars["Powerbar"].ppp:SetPoint("RIGHT", -2, 0)
 		LunaPartyFrames[i].bars["Powerbar"].ppp:SetFont(LunaOptions.font, LunaOptions.fontHeight)
 		LunaPartyFrames[i].bars["Powerbar"].ppp:SetShadowColor(0, 0, 0)
 		LunaPartyFrames[i].bars["Powerbar"].ppp:SetShadowOffset(0.8, -0.8)
 		LunaPartyFrames[i].bars["Powerbar"].ppp:SetTextColor(1,1,1)
+		LunaPartyFrames[i].bars["Powerbar"].ppp:SetJustifyH("RIGHT")
 
 		LunaPartyFrames[i].lvl = LunaPartyFrames[i].bars["Powerbar"]:CreateFontString(nil, "OVERLAY")
 		LunaPartyFrames[i].lvl:SetPoint("LEFT", LunaPartyFrames[i].bars["Powerbar"], "LEFT", 2, -1)
@@ -357,18 +359,14 @@ function LunaUnitFrames:CreatePartyFrames()
 			end
 		end
 	end
-	
-	ShowPartyFrame = function() end  -- Hide Blizz stuff
-	HidePartyFrame = ShowPartyFrame
-	local frame
-	for num = 1, 4 do
-		frame = getglobal("PartyMemberFrame"..num)
-		frame:Hide()
-		frame:UnregisterAllEvents()
-		getglobal("PartyMemberFrame"..num.."HealthBar"):UnregisterAllEvents()
-		getglobal("PartyMemberFrame"..num.."ManaBar"):UnregisterAllEvents()
-		frame:ClearAllPoints()
-		frame:SetPoint("BOTTOMLEFT", UIParent, "TOPLEFT", 0, 50)
+	if LunaOptions.frames["LunaPartyFrames"].enabled == 1 then
+		LunaUnitFrames.RaidOptionsFrame_UpdatePartyFrames = RaidOptionsFrame_UpdatePartyFrames
+		RaidOptionsFrame_UpdatePartyFrames = function () end
+		for i=1,4 do
+			local frame = getglobal("PartyMemberFrame"..i)
+			frame:UnregisterAllEvents()
+			frame:Hide()
+		end
 	end
 	SetIconPositions()
 	LunaUnitFrames:UpdatePartyUnitFrameSize()
@@ -654,6 +652,29 @@ function LunaUnitFrames:UpdatePartyUnitFrameSize()
 			end			
 		end
 		LunaUnitFrames.PartyUpdateHeal(UnitName(LunaPartyFrames[i].unit))
+		local healthheight = (LunaPartyFrames[i].bars["Healthbar"]:GetHeight()/23.4)*11
+		LunaPartyFrames[i].bars["Healthbar"].hpp:SetFont(LunaOptions.font, healthheight)
+		LunaPartyFrames[i].name:SetFont(LunaOptions.font, healthheight)
+		if healthheight < 6 then
+			LunaPartyFrames[i].bars["Healthbar"].hpp:Hide()
+			LunaPartyFrames[i].name:Hide()
+		else
+			LunaPartyFrames[i].bars["Healthbar"].hpp:Show()
+			LunaPartyFrames[i].name:Show()
+		end
+		local powerheight = (LunaPartyFrames[i].bars["Powerbar"]:GetHeight()/23.4)*11
+		LunaPartyFrames[i].bars["Powerbar"].ppp:SetFont(LunaOptions.font, powerheight)
+		LunaPartyFrames[i].lvl:SetFont(LunaOptions.font, powerheight)
+		LunaPartyFrames[i].class:SetFont(LunaOptions.font, powerheight)
+		if powerheight < 6 then
+			LunaPartyFrames[i].bars["Powerbar"].ppp:Hide()
+			LunaPartyFrames[i].lvl:Hide()
+			LunaPartyFrames[i].class:Hide()
+		else
+			LunaPartyFrames[i].bars["Powerbar"].ppp:Show()
+			LunaPartyFrames[i].lvl:Show()
+			LunaPartyFrames[i].class:Show()
+		end
 	end
 end
 

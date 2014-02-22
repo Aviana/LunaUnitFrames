@@ -152,11 +152,12 @@ function LunaUnitFrames:CreateTargetTargetFrame()
 
 	-- Healthbar text
 	local hpp = LunaTargetTargetFrame.bars["Healthbar"]:CreateFontString(nil, "OVERLAY", LunaTargetTargetFrame.bars["Healthbar"])
-	hpp:SetPoint("RIGHT", -2, -1)
+	hpp:SetPoint("RIGHT", -2, 0)
 	hpp:SetFont(LunaOptions.font, LunaOptions.fontHeight)
 	hpp:SetShadowColor(0, 0, 0)
 	hpp:SetShadowOffset(0.8, -0.8)
 	hpp:SetTextColor(1,1,1)
+	hpp:SetJustifyH("RIGHT")
 	LunaTargetTargetFrame.bars["Healthbar"].hpp = hpp
 
 	local name = LunaTargetTargetFrame.bars["Healthbar"]:CreateFontString(nil, "OVERLAY", LunaTargetTargetFrame.bars["Healthbar"])
@@ -188,11 +189,12 @@ function LunaUnitFrames:CreateTargetTargetFrame()
 	LunaTargetTargetFrame.bars["Powerbar"].ppbg = ppbg
 
 	local ppp = LunaTargetTargetFrame.bars["Powerbar"]:CreateFontString(nil, "OVERLAY", LunaTargetTargetFrame.bars["Powerbar"])
-	ppp:SetPoint("RIGHT", -2, -1)
+	ppp:SetPoint("RIGHT", -2, 0)
 	ppp:SetFont(LunaOptions.font, LunaOptions.fontHeight)
 	ppp:SetShadowColor(0, 0, 0)
 	ppp:SetShadowOffset(0.8, -0.8)
 	ppp:SetTextColor(1,1,1)
+	ppp:SetJustifyH("RIGHT")
 	LunaTargetTargetFrame.bars["Powerbar"].ppp = ppp
 	
 	local lvl
@@ -248,6 +250,29 @@ function LunaUnitFrames:CreateTargetTargetFrame()
 				firstbar = nil
 				anchor = {"TOPLEFT", LunaTargetTargetFrame.bars[bar], "BOTTOMLEFT"}
 			end			
+		end
+		local healthheight = (LunaTargetTargetFrame.bars["Healthbar"]:GetHeight()/23.4)*11
+		LunaTargetTargetFrame.bars["Healthbar"].hpp:SetFont(LunaOptions.font, healthheight)
+		LunaTargetTargetFrame.name:SetFont(LunaOptions.font, healthheight)
+		if healthheight < 6 then
+			LunaTargetTargetFrame.bars["Healthbar"].hpp:Hide()
+			LunaTargetTargetFrame.name:Hide()
+		else
+			LunaTargetTargetFrame.bars["Healthbar"].hpp:Show()
+			LunaTargetTargetFrame.name:Show()
+		end
+		local powerheight = (LunaTargetTargetFrame.bars["Powerbar"]:GetHeight()/23.4)*11
+		LunaTargetTargetFrame.bars["Powerbar"].ppp:SetFont(LunaOptions.font, powerheight)
+		LunaTargetTargetFrame.Lvl:SetFont(LunaOptions.font, powerheight)
+		LunaTargetTargetFrame.class:SetFont(LunaOptions.font, powerheight)
+		if powerheight < 6 then
+			LunaTargetTargetFrame.bars["Powerbar"].ppp:Hide()
+			LunaTargetTargetFrame.Lvl:Hide()
+			LunaTargetTargetFrame.class:Hide()
+		else
+			LunaTargetTargetFrame.bars["Powerbar"].ppp:Show()
+			LunaTargetTargetFrame.Lvl:Show()
+			LunaTargetTargetFrame.class:Show()
 		end
 	end
 	for k,v in pairs(LunaOptions.frames["LunaTargetTargetFrame"].bars) do
@@ -393,11 +418,12 @@ function LunaUnitFrames:CreateTargetTargetTargetFrame()
 
 	-- Healthbar text
 	local hpp = LunaTargetTargetTargetFrame.bars["Healthbar"]:CreateFontString(nil, "OVERLAY", LunaTargetTargetTargetFrame.bars["Healthbar"])
-	hpp:SetPoint("RIGHT", -2, -1)
+	hpp:SetPoint("RIGHT", -2, 0)
 	hpp:SetFont(LunaOptions.font, LunaOptions.fontHeight)
 	hpp:SetShadowColor(0, 0, 0)
 	hpp:SetShadowOffset(0.8, -0.8)
 	hpp:SetTextColor(1,1,1)
+	hpp:SetJustifyH("RIGHT")
 	LunaTargetTargetTargetFrame.bars["Healthbar"].hpp = hpp
 
 	local name = LunaTargetTargetTargetFrame.bars["Healthbar"]:CreateFontString(nil, "OVERLAY", LunaTargetTargetTargetFrame.bars["Healthbar"])
@@ -429,11 +455,12 @@ function LunaUnitFrames:CreateTargetTargetTargetFrame()
 	LunaTargetTargetTargetFrame.bars["Powerbar"].ppbg = ppbg
 
 	local ppp = LunaTargetTargetTargetFrame.bars["Powerbar"]:CreateFontString(nil, "OVERLAY", LunaTargetTargetTargetFrame.bars["Powerbar"])
-	ppp:SetPoint("RIGHT", -2, -1)
+	ppp:SetPoint("RIGHT", -2, 0)
 	ppp:SetFont(LunaOptions.font, LunaOptions.fontHeight)
 	ppp:SetShadowColor(0, 0, 0)
 	ppp:SetShadowOffset(0.8, -0.8)
 	ppp:SetTextColor(1,1,1)
+	ppp:SetJustifyH("RIGHT")
 	LunaTargetTargetTargetFrame.bars["Powerbar"].ppp = ppp
 	
 	local lvl
@@ -487,6 +514,29 @@ function LunaUnitFrames:CreateTargetTargetTargetFrame()
 				firstbar = nil
 				anchor = {"TOPLEFT", LunaTargetTargetTargetFrame.bars[bar], "BOTTOMLEFT"}
 			end			
+		end
+		local healthheight = (LunaTargetTargetTargetFrame.bars["Healthbar"]:GetHeight()/23.4)*11
+		LunaTargetTargetTargetFrame.bars["Healthbar"].hpp:SetFont(LunaOptions.font, healthheight)
+		LunaTargetTargetTargetFrame.name:SetFont(LunaOptions.font, healthheight)
+		if healthheight < 6 then
+			LunaTargetTargetTargetFrame.bars["Healthbar"].hpp:Hide()
+			LunaTargetTargetTargetFrame.name:Hide()
+		else
+			LunaTargetTargetTargetFrame.bars["Healthbar"].hpp:Show()
+			LunaTargetTargetTargetFrame.name:Show()
+		end
+		local powerheight = (LunaTargetTargetTargetFrame.bars["Powerbar"]:GetHeight()/23.4)*11
+		LunaTargetTargetTargetFrame.bars["Powerbar"].ppp:SetFont(LunaOptions.font, powerheight)
+		LunaTargetTargetTargetFrame.Lvl:SetFont(LunaOptions.font, powerheight)
+		LunaTargetTargetTargetFrame.class:SetFont(LunaOptions.font, powerheight)
+		if powerheight < 6 then
+			LunaTargetTargetTargetFrame.bars["Powerbar"].ppp:Hide()
+			LunaTargetTargetTargetFrame.Lvl:Hide()
+			LunaTargetTargetTargetFrame.class:Hide()
+		else
+			LunaTargetTargetTargetFrame.bars["Powerbar"].ppp:Show()
+			LunaTargetTargetTargetFrame.Lvl:Show()
+			LunaTargetTargetTargetFrame.class:Show()
 		end
 	end
 	for k,v in pairs(LunaOptions.frames["LunaTargetTargetTargetFrame"].bars) do

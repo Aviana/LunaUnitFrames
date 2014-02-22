@@ -271,6 +271,52 @@ function OptionFunctions.WidthAdjust()
 	end
 end
 
+function OptionFunctions.RegisterTarget()
+	ClearTarget()
+	TargetFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+	TargetFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
+	TargetFrame:RegisterEvent("UNIT_HEALTH")
+	TargetFrame:RegisterEvent("UNIT_LEVEL")
+	TargetFrame:RegisterEvent("UNIT_FACTION")
+	TargetFrame:RegisterEvent("UNIT_CLASSIFICATION_CHANGED")
+	TargetFrame:RegisterEvent("UNIT_AURA")
+	TargetFrame:RegisterEvent("PLAYER_FLAGS_CHANGED")
+	TargetFrame:RegisterEvent("PARTY_MEMBERS_CHANGED")
+	TargetFrame:RegisterEvent("RAID_TARGET_UPDATE")
+	ComboFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
+	ComboFrame:RegisterEvent("PLAYER_COMBO_POINTS")
+	ComboPointsFrame_OnEvent()
+	LunaTargetFrame:UnregisterAllEvents()
+end
+
+function OptionFunctions.UnRegisterTarget()
+	ClearTarget()
+	TargetFrame:UnregisterAllEvents()
+	TargetFrame:Hide()
+	ComboFrame:UnregisterAllEvents()
+	ComboFrame:Hide()
+	LunaTargetFrame:RegisterEvent("UNIT_HEALTH")
+	LunaTargetFrame:RegisterEvent("UNIT_MAXHEALTH")
+	LunaTargetFrame:RegisterEvent("UNIT_MAXMANA")
+	LunaTargetFrame:RegisterEvent("UNIT_MANA")
+	LunaTargetFrame:RegisterEvent("UNIT_RAGE")
+	LunaTargetFrame:RegisterEvent("UNIT_MAXRAGE")
+	LunaTargetFrame:RegisterEvent("UNIT_ENERGY")
+	LunaTargetFrame:RegisterEvent("UNIT_MAXENERGY")
+	LunaTargetFrame:RegisterEvent("UNIT_DISPLAYPOWER")
+	LunaTargetFrame:RegisterEvent("UNIT_PORTRAIT_UPDATE")
+	LunaTargetFrame:RegisterEvent("UNIT_LEVEL")
+	LunaTargetFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
+	LunaTargetFrame:RegisterEvent("PLAYER_COMBO_POINTS")
+	LunaTargetFrame:RegisterEvent("RAID_TARGET_UPDATE")
+	LunaTargetFrame:RegisterEvent("PARTY_LEADER_CHANGED")
+	LunaTargetFrame:RegisterEvent("PARTY_MEMBERS_CHANGED")
+	LunaTargetFrame:RegisterEvent("PARTY_LOOT_METHOD_CHANGED")
+	LunaTargetFrame:RegisterEvent("UNIT_SPELLMISS")
+	LunaTargetFrame:RegisterEvent("UNIT_COMBAT")
+	LunaTargetFrame:RegisterEvent("UNIT_FACTION")
+end
+
 function OptionFunctions.RegisterCastbar(frame)
 	getglobal(frame):RegisterEvent("SPELLCAST_START")
 	getglobal(frame):RegisterEvent("SPELLCAST_STOP")
@@ -677,8 +723,42 @@ end
 function OptionFunctions.enableFrame()
 	if LunaOptions.frames[this.frame].enabled == 1 then
 		LunaOptions.frames[this.frame].enabled = 0
+		if this.frame == "LunaTargetFrame" then
+			OptionFunctions.RegisterTarget()
+		elseif this.frame == "LunaPartyFrames" then
+			RaidOptionsFrame_UpdatePartyFrames = LunaUnitFrames.RaidOptionsFrame_UpdatePartyFrames
+			for i=1,4 do
+				local frame = getglobal("PartyMemberFrame"..i)
+				frame:RegisterEvent("PARTY_MEMBERS_CHANGED")
+				frame:RegisterEvent("PARTY_LEADER_CHANGED")
+				frame:RegisterEvent("PARTY_MEMBER_ENABLE")
+				frame:RegisterEvent("PARTY_MEMBER_DISABLE")
+				frame:RegisterEvent("PARTY_LOOT_METHOD_CHANGED")
+				frame:RegisterEvent("UNIT_PVP_UPDATE")
+				frame:RegisterEvent("UNIT_AURA")
+				frame:RegisterEvent("UNIT_PET")
+				frame:RegisterEvent("VARIABLES_LOADED")
+				frame:RegisterEvent("UNIT_NAME_UPDATE")
+				frame:RegisterEvent("UNIT_PORTRAIT_UPDATE")
+				frame:RegisterEvent("UNIT_DISPLAYPOWER")
+
+				UnitFrame_OnEvent("PARTY_MEMBERS_CHANGED")
+				ShowPartyFrame()
+			end
+		end
 	else
 		LunaOptions.frames[this.frame].enabled = 1
+		if this.frame == "LunaTargetFrame" then
+			OptionFunctions.UnRegisterTarget()
+		elseif this.frame == "LunaPartyFrames" then
+			LunaUnitFrames.RaidOptionsFrame_UpdatePartyFrames = RaidOptionsFrame_UpdatePartyFrames
+			RaidOptionsFrame_UpdatePartyFrames = function () end
+			for i=1,4 do
+				local frame = getglobal("PartyMemberFrame"..i)
+				frame:UnregisterAllEvents()
+				frame:Hide()
+			end
+		end
 	end
 	OptionFunctions.UpdateAll()
 end
@@ -811,13 +891,13 @@ function LunaOptionsModule:CreateMenu()
 		LunaOptionsFrame.pages[i].name:SetText(v.title.." Configuration")
 				
 		if i < 7 then
-			LunaOptionsFrame.pages[i].enable = CreateFrame("CheckButton", v.title.."EnableButton", LunaOptionsFrame.pages[i], "UICheckButtonTemplate")
-			LunaOptionsFrame.pages[i].enable:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i], "TOPLEFT", 10, -10)
-			LunaOptionsFrame.pages[i].enable:SetHeight(20)
-			LunaOptionsFrame.pages[i].enable:SetWidth(20)
-			LunaOptionsFrame.pages[i].enable:SetScript("OnClick", OptionFunctions.enableFrame)
-			LunaOptionsFrame.pages[i].enable:SetChecked(LunaOptions.frames[v.frame].enabled)
-			LunaOptionsFrame.pages[i].enable.frame = v.frame
+			LunaOptionsFrame.pages[i].enablebutton = CreateFrame("CheckButton", v.title.."EnableButton", LunaOptionsFrame.pages[i], "UICheckButtonTemplate")
+			LunaOptionsFrame.pages[i].enablebutton:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i], "TOPLEFT", 10, -10)
+			LunaOptionsFrame.pages[i].enablebutton:SetHeight(20)
+			LunaOptionsFrame.pages[i].enablebutton:SetWidth(20)
+			LunaOptionsFrame.pages[i].enablebutton:SetScript("OnClick", OptionFunctions.enableFrame)
+			LunaOptionsFrame.pages[i].enablebutton:SetChecked(LunaOptions.frames[v.frame].enabled)
+			LunaOptionsFrame.pages[i].enablebutton.frame = v.frame
 			getglobal(v.title.."EnableButtonText"):SetText("Enable")
 			
 			LunaOptionsFrame.pages[i].heightslider = CreateFrame("Slider", v.frame.."HeightSlider", LunaOptionsFrame.pages[i], "OptionsSliderTemplate")

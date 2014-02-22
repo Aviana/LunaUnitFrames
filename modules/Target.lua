@@ -64,9 +64,6 @@ local function Luna_HideBlizz(frame)
 	frame:Hide()
 end
 
-Luna_HideBlizz(TargetFrame)
-Luna_HideBlizz(ComboFrame)
-
 local function Luna_Target_SetBuffTooltip()
 	GameTooltip:SetOwner(this, "ANCHOR_BOTTOMRIGHT")
 	if (this.id > 16) then
@@ -269,11 +266,12 @@ function LunaUnitFrames:CreateTargetFrame()
 
 	-- Healthbar text
 	LunaTargetFrame.bars["Healthbar"].hpp = LunaTargetFrame.bars["Healthbar"]:CreateFontString(nil, "OVERLAY", LunaTargetFrame.bars["Healthbar"])
-	LunaTargetFrame.bars["Healthbar"].hpp:SetPoint("RIGHT", -2, -1)
+	LunaTargetFrame.bars["Healthbar"].hpp:SetPoint("RIGHT", -2, 0)
 	LunaTargetFrame.bars["Healthbar"].hpp:SetFont(LunaOptions.font, LunaOptions.fontHeight)
 	LunaTargetFrame.bars["Healthbar"].hpp:SetShadowColor(0, 0, 0)
 	LunaTargetFrame.bars["Healthbar"].hpp:SetShadowOffset(0.8, -0.8)
 	LunaTargetFrame.bars["Healthbar"].hpp:SetTextColor(1,1,1)
+	LunaTargetFrame.bars["Healthbar"].hpp:SetJustifyH("RIGHT")
 
 	LunaTargetFrame.name = LunaTargetFrame.bars["Healthbar"]:CreateFontString(nil, "OVERLAY", LunaTargetFrame.bars["Healthbar"])
 	LunaTargetFrame.name:SetPoint("LEFT", 2, -1)
@@ -293,11 +291,12 @@ function LunaUnitFrames:CreateTargetFrame()
 	LunaTargetFrame.bars["Powerbar"].ppbg:SetTexture(.25,.25,.25,.25)
 
 	LunaTargetFrame.bars["Powerbar"].ppp = LunaTargetFrame.bars["Powerbar"]:CreateFontString(nil, "OVERLAY", LunaTargetFrame.bars["Powerbar"])
-	LunaTargetFrame.bars["Powerbar"].ppp:SetPoint("RIGHT", -2, -1)
+	LunaTargetFrame.bars["Powerbar"].ppp:SetPoint("RIGHT", -2, 0)
 	LunaTargetFrame.bars["Powerbar"].ppp:SetFont(LunaOptions.font, LunaOptions.fontHeight)
 	LunaTargetFrame.bars["Powerbar"].ppp:SetShadowColor(0, 0, 0)
 	LunaTargetFrame.bars["Powerbar"].ppp:SetShadowOffset(0.8, -0.8)
 	LunaTargetFrame.bars["Powerbar"].ppp:SetTextColor(1,1,1)
+	LunaTargetFrame.bars["Powerbar"].ppp:SetJustifyH("RIGHT")
 
 	LunaTargetFrame.lvl = LunaTargetFrame.bars["Powerbar"]:CreateFontString(nil, "OVERLAY")
 	LunaTargetFrame.lvl:SetPoint("LEFT", LunaTargetFrame.bars["Powerbar"], "LEFT", 2, -1)
@@ -328,12 +327,20 @@ function LunaUnitFrames:CreateTargetFrame()
 	LunaTargetFrame.bars["Castbar"].bg = Background
 
 	-- Add a timer
-	local Time = Castbar:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+	local Time = Castbar:CreateFontString(nil, "OVERLAY", castbar)
+	Time:SetFont(LunaOptions.font, 10)
+	Time:SetTextColor(1, 0.82, 0, 1)
+	Time:SetShadowColor(0, 0, 0)
+	Time:SetShadowOffset(0.8, -0.8)
 	Time:SetPoint("RIGHT", Castbar)
 	LunaTargetFrame.bars["Castbar"].Time = Time
 
 	-- Add spell text
-	local Text = Castbar:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+	local Text = Castbar:CreateFontString(nil, "OVERLAY", castbar)
+	Text:SetFont(LunaOptions.font, 10)
+	Text:SetTextColor(1, 0.82, 0, 1)
+	Text:SetShadowColor(0, 0, 0)
+	Text:SetShadowOffset(0.8, -0.8)
 	Text:SetPoint("LEFT", Castbar)
 	LunaTargetFrame.bars["Castbar"].Text = Text
 	
@@ -403,6 +410,11 @@ function LunaUnitFrames:CreateTargetFrame()
 	LunaTargetFrame:SetScript("OnUpdate", CombatFeedback_OnUpdate)
 	LunaTargetFrame.bars["Castbar"]:SetScript("OnUpdate", Castbar_OnUpdate)
 	
+	if LunaOptions.frames["LunaTargetFrame"].enabled == 1 then
+		Luna_HideBlizz(TargetFrame)
+		Luna_HideBlizz(ComboFrame)
+	end
+	
 	LunaTargetFrame.AdjustBars = function()
 		local comboPoints = GetComboPoints()
 		local frameHeight = LunaTargetFrame:GetHeight()
@@ -467,6 +479,39 @@ function LunaUnitFrames:CreateTargetFrame()
 		end
 		if UnitExists("target") then
 			LunaUnitFrames.TargetUpdateHeal(UnitName("target"))
+		end
+		local healthheight = (LunaTargetFrame.bars["Healthbar"]:GetHeight()/23.4)*11
+		LunaTargetFrame.bars["Healthbar"].hpp:SetFont(LunaOptions.font, healthheight)
+		LunaTargetFrame.name:SetFont(LunaOptions.font, healthheight)
+		if healthheight < 6 then
+			LunaTargetFrame.bars["Healthbar"].hpp:Hide()
+			LunaTargetFrame.name:Hide()
+		else
+			LunaTargetFrame.bars["Healthbar"].hpp:Show()
+			LunaTargetFrame.name:Show()
+		end
+		local powerheight = (LunaTargetFrame.bars["Powerbar"]:GetHeight()/23.4)*11
+		LunaTargetFrame.bars["Powerbar"].ppp:SetFont(LunaOptions.font, powerheight)
+		LunaTargetFrame.lvl:SetFont(LunaOptions.font, powerheight)
+		LunaTargetFrame.class:SetFont(LunaOptions.font, powerheight)
+		if powerheight < 6 then
+			LunaTargetFrame.bars["Powerbar"].ppp:Hide()
+			LunaTargetFrame.lvl:Hide()
+			LunaTargetFrame.class:Hide()
+		else
+			LunaTargetFrame.bars["Powerbar"].ppp:Show()
+			LunaTargetFrame.lvl:Show()
+			LunaTargetFrame.class:Show()
+		end
+		local castheight = (LunaTargetFrame.bars["Castbar"]:GetHeight()/11.7)*11
+		LunaTargetFrame.bars["Castbar"].Text:SetFont(LunaOptions.font, castheight)
+		LunaTargetFrame.bars["Castbar"].Time:SetFont(LunaOptions.font, castheight)
+		if castheight < 6 then
+			LunaTargetFrame.bars["Castbar"].Text:Hide()
+			LunaTargetFrame.bars["Castbar"].Time:Hide()
+		else
+			LunaTargetFrame.bars["Castbar"].Text:Show()
+			LunaTargetFrame.bars["Castbar"].Time:Show()
 		end
 	end
 	LunaTargetFrame.UpdateBuffSize = function ()
@@ -697,12 +742,12 @@ function Luna_Target_Events:PARTY_LOOT_METHOD_CHANGED()
 end
 
 function Luna_Target_Events:RAID_TARGET_UPDATE()
-	local index = GetRaidTargetIndex("target");
+	local index = GetRaidTargetIndex("target")
 	if (index) then
-		SetRaidTargetIconTexture(LunaTargetFrame.RaidIcon, index);
-		LunaTargetFrame.RaidIcon:Show();
+		SetRaidTargetIconTexture(LunaTargetFrame.RaidIcon, index)
+		LunaTargetFrame.RaidIcon:Show()
 	else
-		LunaTargetFrame.RaidIcon:Hide();
+		LunaTargetFrame.RaidIcon:Hide()
 	end
 end
 
@@ -801,6 +846,7 @@ function LunaUnitFrames:UpdateTargetFrame()
 		LunaTargetFrame:Show()
 	else
 		LunaTargetFrame:Hide()
+		return
 	end
 	local class = UnitClass("target")
 	if UnitIsPlayer("target") then

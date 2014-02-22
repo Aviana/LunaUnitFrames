@@ -16,7 +16,7 @@ function LunaUnitFrames:GetHealthString(unit)
 		result = UnitHealth(unit).."/"..UnitHealthMax(unit)
 	end
 	if LunaOptions.Percentages then
-		result = result.."  "..math.floor(((UnitHealth(unit) / UnitHealthMax(unit)) * 100)+0.5).."%"
+		result = math.floor(((UnitHealth(unit) / UnitHealthMax(unit)) * 100)+0.5).."%\n"..result
 	end
 	return result
 end
@@ -32,7 +32,7 @@ function LunaUnitFrames:GetPowerString(unit)
 		result = UnitMana(unit).."/"..UnitManaMax(unit)
 	end
 	if LunaOptions.Percentages then
-		result = result.."  "..math.floor(((UnitMana(unit) / UnitManaMax(unit)) * 100)+0.5).."%"
+		result = math.floor(((UnitMana(unit) / UnitManaMax(unit)) * 100)+0.5).."%\n"..result
 	end
 	return result
 end

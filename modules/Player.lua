@@ -41,6 +41,28 @@ local function Luna_HideBlizz(frame)
 	frame:Hide()
 end
 
+function Luna_ShowBlizz()
+	PlayerFrame:RegisterEvent("UNIT_LEVEL")
+	PlayerFrame:RegisterEvent("UNIT_COMBAT")
+	PlayerFrame:RegisterEvent("UNIT_FACTION")
+	PlayerFrame:RegisterEvent("UNIT_MAXMANA")
+	PlayerFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+	PlayerFrame:RegisterEvent("PLAYER_ENTER_COMBAT")
+	PlayerFrame:RegisterEvent("PLAYER_LEAVE_COMBAT")
+	PlayerFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
+	PlayerFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+	PlayerFrame:RegisterEvent("PLAYER_UPDATE_RESTING")
+	PlayerFrame:RegisterEvent("PARTY_MEMBERS_CHANGED")
+	PlayerFrame:RegisterEvent("PARTY_LEADER_CHANGED")
+	PlayerFrame:RegisterEvent("PARTY_LOOT_METHOD_CHANGED")
+	PlayerFrame:RegisterEvent("RAID_ROSTER_UPDATE")
+	PlayerFrame:RegisterEvent("PLAYTIME_CHANGED")
+	PlayerFrame:Show()
+	PlayerFrame_Update()
+	UnitFrameHealthBar_Update(PlayerFrame.healthhar, "player")
+	UnitFrameManaBar_Update(PlayerFrame.manabar, "player")
+end
+
 local function Luna_Player_SetBuffTooltip()
 	GameTooltip:SetOwner(this, "ANCHOR_BOTTOMRIGHT")
 	if (this.id > 16) then
@@ -269,11 +291,12 @@ function LunaUnitFrames:CreatePlayerFrame()
 
 	-- Healthbar text
 	local hpp = hp:CreateFontString(nil, "OVERLAY", hp)
-	hpp:SetPoint("RIGHT", -2, -1)
+	hpp:SetPoint("RIGHT", -2, 0)
 	hpp:SetFont(LunaOptions.font, LunaOptions.fontHeight)
 	hpp:SetShadowColor(0, 0, 0)
 	hpp:SetShadowOffset(0.8, -0.8)
 	hpp:SetTextColor(1,1,1)
+	hpp:SetJustifyH("RIGHT")
 	LunaPlayerFrame.bars["Healthbar"].hpp = hpp
 
 	local name = hp:CreateFontString(nil, "OVERLAY", hp)
@@ -307,11 +330,12 @@ function LunaUnitFrames:CreatePlayerFrame()
 	LunaPlayerFrame.bars["Powerbar"].ppbg = ppbg
 
 	local ppp = pp:CreateFontString(nil, "OVERLAY", pp)
-	ppp:SetPoint("RIGHT", -2, -1)
+	ppp:SetPoint("RIGHT", -2, 0)
 	ppp:SetFont(LunaOptions.font, LunaOptions.fontHeight)
 	ppp:SetShadowColor(0, 0, 0)
 	ppp:SetShadowOffset(0.8, -0.8)
 	ppp:SetTextColor(1,1,1)
+	ppp:SetJustifyH("RIGHT")
 	LunaPlayerFrame.bars["Powerbar"].ppp = ppp
 
 	LunaPlayerFrame.bars["Powerbar"].Ticker = LunaPlayerFrame.bars["Powerbar"]:CreateTexture(nil, "OVERLAY")
@@ -356,12 +380,20 @@ function LunaUnitFrames:CreatePlayerFrame()
 	LunaPlayerFrame.bars["Castbar"].bg = Background
 
 	-- Add a timer
-	local Time = Castbar:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+	local Time = Castbar:CreateFontString(nil, "OVERLAY", castbar)
+	Time:SetFont(LunaOptions.font, 10)
+	Time:SetTextColor(1, 0.82, 0, 1)
+	Time:SetShadowColor(0, 0, 0)
+	Time:SetShadowOffset(0.8, -0.8)
 	Time:SetPoint("RIGHT", Castbar)
 	LunaPlayerFrame.bars["Castbar"].Time = Time
 
 	-- Add spell text
-	local Text = Castbar:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+	local Text = Castbar:CreateFontString(nil, "OVERLAY", castbar)
+	Text:SetFont(LunaOptions.font, 10)
+	Text:SetTextColor(1, 0.82, 0, 1)
+	Text:SetShadowColor(0, 0, 0)
+	Text:SetShadowOffset(0.8, -0.8)
 	Text:SetPoint("LEFT", Castbar)
 	LunaPlayerFrame.bars["Castbar"].Text = Text
 
@@ -494,6 +526,39 @@ function LunaUnitFrames:CreatePlayerFrame()
 			end			
 		end
 		LunaUnitFrames.PlayerUpdateHeal(UnitName("player"))
+		local healthheight = (LunaPlayerFrame.bars["Healthbar"]:GetHeight()/23.4)*11
+		LunaPlayerFrame.bars["Healthbar"].hpp:SetFont(LunaOptions.font, healthheight)
+		LunaPlayerFrame.name:SetFont(LunaOptions.font, healthheight)
+		if healthheight < 6 then
+			LunaPlayerFrame.bars["Healthbar"].hpp:Hide()
+			LunaPlayerFrame.name:Hide()
+		else
+			LunaPlayerFrame.bars["Healthbar"].hpp:Show()
+			LunaPlayerFrame.name:Show()
+		end
+		local powerheight = (LunaPlayerFrame.bars["Powerbar"]:GetHeight()/23.4)*11
+		LunaPlayerFrame.bars["Powerbar"].ppp:SetFont(LunaOptions.font, powerheight)
+		LunaPlayerFrame.Lvl:SetFont(LunaOptions.font, powerheight)
+		LunaPlayerFrame.Class:SetFont(LunaOptions.font, powerheight)
+		if powerheight < 6 then
+			LunaPlayerFrame.bars["Powerbar"].ppp:Hide()
+			LunaPlayerFrame.Lvl:Hide()
+			LunaPlayerFrame.Class:Hide()
+		else
+			LunaPlayerFrame.bars["Powerbar"].ppp:Show()
+			LunaPlayerFrame.Lvl:Show()
+			LunaPlayerFrame.Class:Show()
+		end
+		local castheight = (LunaPlayerFrame.bars["Castbar"]:GetHeight()/11.7)*11
+		LunaPlayerFrame.bars["Castbar"].Text:SetFont(LunaOptions.font, castheight)
+		LunaPlayerFrame.bars["Castbar"].Time:SetFont(LunaOptions.font, castheight)
+		if castheight < 6 then
+			LunaPlayerFrame.bars["Castbar"].Text:Hide()
+			LunaPlayerFrame.bars["Castbar"].Time:Hide()
+		else
+			LunaPlayerFrame.bars["Castbar"].Text:Show()
+			LunaPlayerFrame.bars["Castbar"].Time:Show()
+		end
 		LunaPlayerFrame.bars["Powerbar"].Ticker:SetHeight(LunaPlayerFrame.bars["Powerbar"]:GetHeight())
 	end
 	LunaPlayerFrame.UpdateBuffSize = function ()
@@ -683,12 +748,13 @@ function LunaUnitFrames:ConvertPlayerPortrait()
 end
 
 function LunaUnitFrames:UpdatePlayerFrame()
-	Luna_HideBlizz(PlayerFrame)
 	if LunaOptions.frames["LunaPlayerFrame"].enabled == 0 then
 		LunaPlayerFrame:Hide()
+		Luna_ShowBlizz()
 		return
 	else
 		LunaPlayerFrame:Show()
+		Luna_HideBlizz(PlayerFrame)
 	end
 	local class = UnitClass("player")
 	

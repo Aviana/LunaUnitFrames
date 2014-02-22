@@ -1,9 +1,4 @@
 local Luna_Pet_Events = {}
-
-local function Luna_HideBlizz(frame)
-	frame:UnregisterAllEvents()
-	frame:Hide()
-end	
 	
 local function Luna_Pet_SetBuffTooltip()
 	GameTooltip:SetOwner(this, "ANCHOR_BOTTOMRIGHT")
@@ -187,11 +182,12 @@ function LunaUnitFrames:CreatePetFrame()
 
 	-- Healthbar text
 	LunaPetFrame.bars["Healthbar"].hpp = LunaPetFrame.bars["Healthbar"]:CreateFontString(nil, "OVERLAY", LunaPetFrame.bars["Healthbar"])
-	LunaPetFrame.bars["Healthbar"].hpp:SetPoint("RIGHT", -2, -1)
+	LunaPetFrame.bars["Healthbar"].hpp:SetPoint("RIGHT", -2, 0)
 	LunaPetFrame.bars["Healthbar"].hpp:SetFont(LunaOptions.font, LunaOptions.fontHeight)
 	LunaPetFrame.bars["Healthbar"].hpp:SetShadowColor(0, 0, 0)
 	LunaPetFrame.bars["Healthbar"].hpp:SetShadowOffset(0.8, -0.8)
 	LunaPetFrame.bars["Healthbar"].hpp:SetTextColor(1,1,1)
+	LunaPetFrame.bars["Healthbar"].hpp:SetJustifyH("RIGHT")
 
 	LunaPetFrame.name = LunaPetFrame.bars["Healthbar"]:CreateFontString(nil, "OVERLAY", LunaPetFrame.bars["Healthbar"])
 	LunaPetFrame.name:SetPoint("LEFT", 2, -1)
@@ -212,11 +208,12 @@ function LunaUnitFrames:CreatePetFrame()
 	LunaPetFrame.bars["Powerbar"].ppbg:SetTexture(.25,.25,.25,.25)
 
 	LunaPetFrame.bars["Powerbar"].ppp = LunaPetFrame.bars["Powerbar"]:CreateFontString(nil, "OVERLAY", LunaPetFrame.bars["Powerbar"])
-	LunaPetFrame.bars["Powerbar"].ppp:SetPoint("RIGHT", -2, -1)
+	LunaPetFrame.bars["Powerbar"].ppp:SetPoint("RIGHT", -2, 0)
 	LunaPetFrame.bars["Powerbar"].ppp:SetFont(LunaOptions.font, LunaOptions.fontHeight)
 	LunaPetFrame.bars["Powerbar"].ppp:SetShadowColor(0, 0, 0)
 	LunaPetFrame.bars["Powerbar"].ppp:SetShadowOffset(0.8, -0.8)
 	LunaPetFrame.bars["Powerbar"].ppp:SetTextColor(1,1,1)
+	LunaPetFrame.bars["Powerbar"].ppp:SetJustifyH("RIGHT")
 
 	LunaPetFrame.lvl = LunaPetFrame.bars["Powerbar"]:CreateFontString(nil, "OVERLAY")
 	LunaPetFrame.lvl:SetPoint("LEFT", LunaPetFrame.bars["Powerbar"], "LEFT", 2, -1)
@@ -294,6 +291,29 @@ function LunaUnitFrames:CreatePetFrame()
 				firstbar = nil
 				anchor = {"TOPLEFT", LunaPetFrame.bars[bar], "BOTTOMLEFT"}
 			end			
+		end
+		local healthheight = (LunaPetFrame.bars["Healthbar"]:GetHeight()/23.4)*11
+		LunaPetFrame.bars["Healthbar"].hpp:SetFont(LunaOptions.font, healthheight)
+		LunaPetFrame.name:SetFont(LunaOptions.font, healthheight)
+		if healthheight < 6 then
+			LunaPetFrame.bars["Healthbar"].hpp:Hide()
+			LunaPetFrame.name:Hide()
+		else
+			LunaPetFrame.bars["Healthbar"].hpp:Show()
+			LunaPetFrame.name:Show()
+		end
+		local powerheight = (LunaPetFrame.bars["Powerbar"]:GetHeight()/23.4)*11
+		LunaPetFrame.bars["Powerbar"].ppp:SetFont(LunaOptions.font, powerheight)
+		LunaPetFrame.lvl:SetFont(LunaOptions.font, powerheight)
+		LunaPetFrame.class:SetFont(LunaOptions.font, powerheight)
+		if powerheight < 6 then
+			LunaPetFrame.bars["Powerbar"].ppp:Hide()
+			LunaPetFrame.lvl:Hide()
+			LunaPetFrame.class:Hide()
+		else
+			LunaPetFrame.bars["Powerbar"].ppp:Show()
+			LunaPetFrame.lvl:Show()
+			LunaPetFrame.class:Show()
 		end
 	end
 	LunaPetFrame.UpdateBuffSize = function ()
