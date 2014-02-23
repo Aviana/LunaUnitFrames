@@ -653,8 +653,10 @@ function LunaUnitFrames:UpdatePartyUnitFrameSize()
 		end
 		LunaUnitFrames.PartyUpdateHeal(UnitName(LunaPartyFrames[i].unit))
 		local healthheight = (LunaPartyFrames[i].bars["Healthbar"]:GetHeight()/23.4)*11
-		LunaPartyFrames[i].bars["Healthbar"].hpp:SetFont(LunaOptions.font, healthheight)
-		LunaPartyFrames[i].name:SetFont(LunaOptions.font, healthheight)
+		if healthheight > 0 then
+			LunaPartyFrames[i].bars["Healthbar"].hpp:SetFont(LunaOptions.font, healthheight)
+			LunaPartyFrames[i].name:SetFont(LunaOptions.font, healthheight)
+		end
 		if healthheight < 6 then
 			LunaPartyFrames[i].bars["Healthbar"].hpp:Hide()
 			LunaPartyFrames[i].name:Hide()
@@ -663,9 +665,11 @@ function LunaUnitFrames:UpdatePartyUnitFrameSize()
 			LunaPartyFrames[i].name:Show()
 		end
 		local powerheight = (LunaPartyFrames[i].bars["Powerbar"]:GetHeight()/23.4)*11
-		LunaPartyFrames[i].bars["Powerbar"].ppp:SetFont(LunaOptions.font, powerheight)
-		LunaPartyFrames[i].lvl:SetFont(LunaOptions.font, powerheight)
-		LunaPartyFrames[i].class:SetFont(LunaOptions.font, powerheight)
+		if powerheight > 0 then
+			LunaPartyFrames[i].bars["Powerbar"].ppp:SetFont(LunaOptions.font, powerheight)
+			LunaPartyFrames[i].lvl:SetFont(LunaOptions.font, powerheight)
+			LunaPartyFrames[i].class:SetFont(LunaOptions.font, powerheight)
+		end
 		if powerheight < 6 then
 			LunaPartyFrames[i].bars["Powerbar"].ppp:Hide()
 			LunaPartyFrames[i].lvl:Hide()

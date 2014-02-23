@@ -527,8 +527,10 @@ function LunaUnitFrames:CreatePlayerFrame()
 		end
 		LunaUnitFrames.PlayerUpdateHeal(UnitName("player"))
 		local healthheight = (LunaPlayerFrame.bars["Healthbar"]:GetHeight()/23.4)*11
-		LunaPlayerFrame.bars["Healthbar"].hpp:SetFont(LunaOptions.font, healthheight)
-		LunaPlayerFrame.name:SetFont(LunaOptions.font, healthheight)
+		if healthheight > 0 then
+			LunaPlayerFrame.bars["Healthbar"].hpp:SetFont(LunaOptions.font, healthheight)
+			LunaPlayerFrame.name:SetFont(LunaOptions.font, healthheight)
+		end
 		if healthheight < 6 then
 			LunaPlayerFrame.bars["Healthbar"].hpp:Hide()
 			LunaPlayerFrame.name:Hide()
@@ -537,9 +539,11 @@ function LunaUnitFrames:CreatePlayerFrame()
 			LunaPlayerFrame.name:Show()
 		end
 		local powerheight = (LunaPlayerFrame.bars["Powerbar"]:GetHeight()/23.4)*11
-		LunaPlayerFrame.bars["Powerbar"].ppp:SetFont(LunaOptions.font, powerheight)
-		LunaPlayerFrame.Lvl:SetFont(LunaOptions.font, powerheight)
-		LunaPlayerFrame.Class:SetFont(LunaOptions.font, powerheight)
+		if powerheight > 0 then
+			LunaPlayerFrame.bars["Powerbar"].ppp:SetFont(LunaOptions.font, powerheight)
+			LunaPlayerFrame.Lvl:SetFont(LunaOptions.font, powerheight)
+			LunaPlayerFrame.Class:SetFont(LunaOptions.font, powerheight)
+		end
 		if powerheight < 6 then
 			LunaPlayerFrame.bars["Powerbar"].ppp:Hide()
 			LunaPlayerFrame.Lvl:Hide()

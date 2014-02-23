@@ -293,8 +293,10 @@ function LunaUnitFrames:CreatePetFrame()
 			end			
 		end
 		local healthheight = (LunaPetFrame.bars["Healthbar"]:GetHeight()/23.4)*11
-		LunaPetFrame.bars["Healthbar"].hpp:SetFont(LunaOptions.font, healthheight)
-		LunaPetFrame.name:SetFont(LunaOptions.font, healthheight)
+		if healthheight > 0 then
+			LunaPetFrame.bars["Healthbar"].hpp:SetFont(LunaOptions.font, healthheight)
+			LunaPetFrame.name:SetFont(LunaOptions.font, healthheight)
+		end
 		if healthheight < 6 then
 			LunaPetFrame.bars["Healthbar"].hpp:Hide()
 			LunaPetFrame.name:Hide()
@@ -303,9 +305,11 @@ function LunaUnitFrames:CreatePetFrame()
 			LunaPetFrame.name:Show()
 		end
 		local powerheight = (LunaPetFrame.bars["Powerbar"]:GetHeight()/23.4)*11
-		LunaPetFrame.bars["Powerbar"].ppp:SetFont(LunaOptions.font, powerheight)
-		LunaPetFrame.lvl:SetFont(LunaOptions.font, powerheight)
-		LunaPetFrame.class:SetFont(LunaOptions.font, powerheight)
+		if powerheight > 0 then
+			LunaPetFrame.bars["Powerbar"].ppp:SetFont(LunaOptions.font, powerheight)
+			LunaPetFrame.lvl:SetFont(LunaOptions.font, powerheight)
+			LunaPetFrame.class:SetFont(LunaOptions.font, powerheight)
+		end
 		if powerheight < 6 then
 			LunaPetFrame.bars["Powerbar"].ppp:Hide()
 			LunaPetFrame.lvl:Hide()

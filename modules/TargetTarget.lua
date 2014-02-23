@@ -252,8 +252,10 @@ function LunaUnitFrames:CreateTargetTargetFrame()
 			end			
 		end
 		local healthheight = (LunaTargetTargetFrame.bars["Healthbar"]:GetHeight()/23.4)*11
-		LunaTargetTargetFrame.bars["Healthbar"].hpp:SetFont(LunaOptions.font, healthheight)
-		LunaTargetTargetFrame.name:SetFont(LunaOptions.font, healthheight)
+		if healthheight > 0 then
+			LunaTargetTargetFrame.bars["Healthbar"].hpp:SetFont(LunaOptions.font, healthheight)
+			LunaTargetTargetFrame.name:SetFont(LunaOptions.font, healthheight)
+		end
 		if healthheight < 6 then
 			LunaTargetTargetFrame.bars["Healthbar"].hpp:Hide()
 			LunaTargetTargetFrame.name:Hide()
@@ -262,9 +264,11 @@ function LunaUnitFrames:CreateTargetTargetFrame()
 			LunaTargetTargetFrame.name:Show()
 		end
 		local powerheight = (LunaTargetTargetFrame.bars["Powerbar"]:GetHeight()/23.4)*11
-		LunaTargetTargetFrame.bars["Powerbar"].ppp:SetFont(LunaOptions.font, powerheight)
-		LunaTargetTargetFrame.Lvl:SetFont(LunaOptions.font, powerheight)
-		LunaTargetTargetFrame.class:SetFont(LunaOptions.font, powerheight)
+		if powerheight > 0 then
+			LunaTargetTargetFrame.bars["Powerbar"].ppp:SetFont(LunaOptions.font, powerheight)
+			LunaTargetTargetFrame.Lvl:SetFont(LunaOptions.font, powerheight)
+			LunaTargetTargetFrame.class:SetFont(LunaOptions.font, powerheight)
+		end
 		if powerheight < 6 then
 			LunaTargetTargetFrame.bars["Powerbar"].ppp:Hide()
 			LunaTargetTargetFrame.Lvl:Hide()
@@ -516,8 +520,10 @@ function LunaUnitFrames:CreateTargetTargetTargetFrame()
 			end			
 		end
 		local healthheight = (LunaTargetTargetTargetFrame.bars["Healthbar"]:GetHeight()/23.4)*11
-		LunaTargetTargetTargetFrame.bars["Healthbar"].hpp:SetFont(LunaOptions.font, healthheight)
-		LunaTargetTargetTargetFrame.name:SetFont(LunaOptions.font, healthheight)
+		if healthheight > 0 then
+			LunaTargetTargetTargetFrame.bars["Healthbar"].hpp:SetFont(LunaOptions.font, healthheight)
+			LunaTargetTargetTargetFrame.name:SetFont(LunaOptions.font, healthheight)
+		end
 		if healthheight < 6 then
 			LunaTargetTargetTargetFrame.bars["Healthbar"].hpp:Hide()
 			LunaTargetTargetTargetFrame.name:Hide()
@@ -526,9 +532,11 @@ function LunaUnitFrames:CreateTargetTargetTargetFrame()
 			LunaTargetTargetTargetFrame.name:Show()
 		end
 		local powerheight = (LunaTargetTargetTargetFrame.bars["Powerbar"]:GetHeight()/23.4)*11
-		LunaTargetTargetTargetFrame.bars["Powerbar"].ppp:SetFont(LunaOptions.font, powerheight)
-		LunaTargetTargetTargetFrame.Lvl:SetFont(LunaOptions.font, powerheight)
-		LunaTargetTargetTargetFrame.class:SetFont(LunaOptions.font, powerheight)
+		if powerheight > 0 then
+			LunaTargetTargetTargetFrame.bars["Powerbar"].ppp:SetFont(LunaOptions.font, powerheight)
+			LunaTargetTargetTargetFrame.Lvl:SetFont(LunaOptions.font, powerheight)
+			LunaTargetTargetTargetFrame.class:SetFont(LunaOptions.font, powerheight)
+		end
 		if powerheight < 6 then
 			LunaTargetTargetTargetFrame.bars["Powerbar"].ppp:Hide()
 			LunaTargetTargetTargetFrame.Lvl:Hide()
