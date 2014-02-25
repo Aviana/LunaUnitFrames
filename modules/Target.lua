@@ -101,13 +101,24 @@ local function SetIconPositions()
 		LunaTargetFrame.RaidIcon:ClearAllPoints()
 		LunaTargetFrame.RaidIcon:SetPoint("CENTER", LunaTargetFrame, "TOP")
 		LunaTargetFrame.PVPRank:ClearAllPoints()
-		LunaTargetFrame.PVPRank:SetPoint("CENTER", LunaTargetFrame, "BOTTOMLEFT", -2, 2)
+		LunaTargetFrame.PVPRank:SetPoint("CENTER", LunaTargetFrame, "BOTTOMRIGHT", 0, 2)
 		LunaTargetFrame.Leader:ClearAllPoints()
-		LunaTargetFrame.Leader:SetPoint("CENTER", LunaTargetFrame, "TOPLEFT", -1, -2)
+		LunaTargetFrame.Leader:SetPoint("CENTER", LunaTargetFrame, "TOPRIGHT", 0, -2)
 		LunaTargetFrame.Loot:ClearAllPoints()
-		LunaTargetFrame.Loot:SetPoint("CENTER", LunaTargetFrame, "TOPLEFT", -2, -12)
+		LunaTargetFrame.Loot:SetPoint("CENTER", LunaTargetFrame, "TOPRIGHT", 0, -12)
 		LunaTargetFrame.feedbackText:ClearAllPoints()
 		LunaTargetFrame.feedbackText:SetPoint("CENTER", LunaTargetFrame, "CENTER", 0, 0)
+	elseif LunaOptions.fliptarget then
+		LunaTargetFrame.RaidIcon:ClearAllPoints()
+		LunaTargetFrame.RaidIcon:SetPoint("CENTER", LunaTargetFrame.bars["Portrait"], "TOPLEFT")
+		LunaTargetFrame.PVPRank:ClearAllPoints()
+		LunaTargetFrame.PVPRank:SetPoint("CENTER", LunaTargetFrame.bars["Portrait"], "BOTTOMRIGHT", -2, 2)
+		LunaTargetFrame.Leader:ClearAllPoints()
+		LunaTargetFrame.Leader:SetPoint("CENTER", LunaTargetFrame.bars["Portrait"], "TOPRIGHT", -2, -2)
+		LunaTargetFrame.Loot:ClearAllPoints()
+		LunaTargetFrame.Loot:SetPoint("CENTER", LunaTargetFrame.bars["Portrait"], "TOPRIGHT", -2, -12)
+		LunaTargetFrame.feedbackText:ClearAllPoints()
+		LunaTargetFrame.feedbackText:SetPoint("CENTER", LunaTargetFrame.bars["Portrait"], "CENTER", 0, 0)
 	else
 		LunaTargetFrame.RaidIcon:ClearAllPoints()
 		LunaTargetFrame.RaidIcon:SetPoint("CENTER", LunaTargetFrame.bars["Portrait"], "TOPRIGHT")
@@ -434,10 +445,16 @@ function LunaUnitFrames:CreateTargetFrame()
 		end
 		if LunaOptions.frames["LunaTargetFrame"].portrait > 1 then    -- We have a square portrait
 			frameWidth = (LunaTargetFrame:GetWidth()-frameHeight)
-			LunaTargetFrame.bars["Portrait"]:SetPoint("TOPLEFT", LunaTargetFrame, "TOPLEFT")
+			LunaTargetFrame.bars["Portrait"]:ClearAllPoints()
 			LunaTargetFrame.bars["Portrait"]:SetHeight(frameHeight+1)
 			LunaTargetFrame.bars["Portrait"]:SetWidth(frameHeight)
-			anchor = {"TOPLEFT", LunaTargetFrame.bars["Portrait"], "TOPRIGHT"}
+			if LunaOptions.fliptarget then
+				LunaTargetFrame.bars["Portrait"]:SetPoint("TOPRIGHT", LunaTargetFrame, "TOPRIGHT")
+				anchor = {"TOPRIGHT", LunaTargetFrame.bars["Portrait"], "TOPLEFT"}
+			else
+				LunaTargetFrame.bars["Portrait"]:SetPoint("TOPLEFT", LunaTargetFrame, "TOPLEFT")
+				anchor = {"TOPLEFT", LunaTargetFrame.bars["Portrait"], "TOPRIGHT"}
+			end
 		else
 			frameWidth = LunaTargetFrame:GetWidth()  -- We have a Bar-Portrait or no portrait
 			anchor = {"TOPLEFT", LunaTargetFrame, "TOPLEFT"}
@@ -517,6 +534,7 @@ function LunaUnitFrames:CreateTargetFrame()
 			LunaTargetFrame.bars["Castbar"].Text:Show()
 			LunaTargetFrame.bars["Castbar"].Time:Show()
 		end
+		SetIconPositions()
 	end
 	LunaTargetFrame.UpdateBuffSize = function ()
 		local buffcount = LunaOptions.frames["LunaTargetFrame"].BuffInRow or 16
@@ -653,7 +671,6 @@ function LunaUnitFrames:CreateTargetFrame()
 			LunaTargetFrame.bars[v[1]]:Hide()
 		end
 	end
-	SetIconPositions()
 	LunaTargetFrame.AdjustBars()
 	LunaTargetFrame.UpdateBuffSize()
 	AceEvent:RegisterEvent("HealComm_Healupdate" , LunaUnitFrames.TargetUpdateHeal)

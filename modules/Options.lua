@@ -646,6 +646,15 @@ function OptionFunctions.EnergyTickerToggle()
 	LunaUnitFrames:UpdatePlayerFrame()
 end
 
+function OptionFunctions.ToggleFlipTarget()
+	if LunaOptions.fliptarget then
+		LunaOptions.fliptarget = nil
+	else
+		LunaOptions.fliptarget = 1
+	end
+	LunaTargetFrame.AdjustBars()
+end
+
 function OptionFunctions.PartyGrowthToggle()
 	if LunaOptions.VerticalParty == 1 then
 		LunaOptions.VerticalParty = 0
@@ -1233,6 +1242,14 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[3].Portraitmode:SetScript("OnClick", OptionFunctions.PortraitmodeToggle)
 	LunaOptionsFrame.pages[3].Portraitmode:SetChecked((LunaOptions.frames["LunaTargetFrame"].portrait == 1))
 	getglobal("PortraitmodeTargetText"):SetText("Display Portrait as Bar")
+	
+	LunaOptionsFrame.pages[3].fliptarget = CreateFrame("CheckButton", "FlipTarget", LunaOptionsFrame.pages[3], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[3].fliptarget:SetHeight(20)
+	LunaOptionsFrame.pages[3].fliptarget:SetWidth(20)
+	LunaOptionsFrame.pages[3].fliptarget:SetPoint("TOPLEFT", LunaOptionsFrame.pages[3].Portraitmode, "TOPLEFT", 0, -30)
+	LunaOptionsFrame.pages[3].fliptarget:SetScript("OnClick", OptionFunctions.ToggleFlipTarget)
+	LunaOptionsFrame.pages[3].fliptarget:SetChecked(LunaOptions.fliptarget)
+	getglobal("FlipTargetText"):SetText("Flip Target Layout")
 
 	LunaOptionsFrame.pages[3].BuffInRowslider = CreateFrame("Slider", "LunaTargetFrameBuffInRow", LunaOptionsFrame.pages[3], "OptionsSliderTemplate")
 	LunaOptionsFrame.pages[3].BuffInRowslider:SetMinMaxValues(1,16)
