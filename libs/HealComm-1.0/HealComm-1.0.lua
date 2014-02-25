@@ -1083,7 +1083,9 @@ function healcomm_newCastSpellByName(spellName, onSelf)
 			end
 			i = i+1
 		end
-		_,_,rank = string.find(rank,"(%d+)")
+		if rank then
+			_,_,rank = string.find(rank,"(%d+)")
+		end
 	end
 	if ( spellName ) then
 		if ( SpellIsTargeting() ) then

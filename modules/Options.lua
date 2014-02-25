@@ -193,6 +193,33 @@ function OptionFunctions.ToggleRaidGroupNames()
 	LunaUnitFrames:UpdateRaidRoster()
 end
 
+function OptionFunctions.ToggleDispelableDebuffs()
+	if not LunaOptions.showdispelable then
+		LunaOptions.showdispelable = 1
+	else
+		LunaOptions.showdispelable = nil
+	end
+	LunaUnitFrames.Raid_Update()
+end
+
+function OptionFunctions.ToggleAggro()
+	if not LunaOptions.aggro then
+		LunaOptions.aggro = 1
+	else
+		LunaOptions.aggro = nil
+	end
+	LunaUnitFrames:UpdateRaidRoster()
+end
+
+function OptionFunctions.ToggleInterlock()
+	if not LunaOptions.raidinterlock then
+		LunaOptions.raidinterlock = 1
+	else
+		LunaOptions.raidinterlock = nil
+	end
+	LunaUnitFrames:UpdateRaidLayout()
+end
+
 function OptionFunctions.ScaleAdjust()
 	local amount = (math.floor(this:GetValue()*10 + 0.5)/10)
 	frame = getglobal(this.frame)
@@ -269,52 +296,6 @@ function OptionFunctions.WidthAdjust()
 		LunaOptions.frames[this.frame].size.x = amount
 		getglobal(this.frame.."WidthSliderText"):SetText("Width: "..amount)
 	end
-end
-
-function OptionFunctions.RegisterTarget()
-	ClearTarget()
-	TargetFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
-	TargetFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
-	TargetFrame:RegisterEvent("UNIT_HEALTH")
-	TargetFrame:RegisterEvent("UNIT_LEVEL")
-	TargetFrame:RegisterEvent("UNIT_FACTION")
-	TargetFrame:RegisterEvent("UNIT_CLASSIFICATION_CHANGED")
-	TargetFrame:RegisterEvent("UNIT_AURA")
-	TargetFrame:RegisterEvent("PLAYER_FLAGS_CHANGED")
-	TargetFrame:RegisterEvent("PARTY_MEMBERS_CHANGED")
-	TargetFrame:RegisterEvent("RAID_TARGET_UPDATE")
-	ComboFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
-	ComboFrame:RegisterEvent("PLAYER_COMBO_POINTS")
-	ComboPointsFrame_OnEvent()
-	LunaTargetFrame:UnregisterAllEvents()
-end
-
-function OptionFunctions.UnRegisterTarget()
-	ClearTarget()
-	TargetFrame:UnregisterAllEvents()
-	TargetFrame:Hide()
-	ComboFrame:UnregisterAllEvents()
-	ComboFrame:Hide()
-	LunaTargetFrame:RegisterEvent("UNIT_HEALTH")
-	LunaTargetFrame:RegisterEvent("UNIT_MAXHEALTH")
-	LunaTargetFrame:RegisterEvent("UNIT_MAXMANA")
-	LunaTargetFrame:RegisterEvent("UNIT_MANA")
-	LunaTargetFrame:RegisterEvent("UNIT_RAGE")
-	LunaTargetFrame:RegisterEvent("UNIT_MAXRAGE")
-	LunaTargetFrame:RegisterEvent("UNIT_ENERGY")
-	LunaTargetFrame:RegisterEvent("UNIT_MAXENERGY")
-	LunaTargetFrame:RegisterEvent("UNIT_DISPLAYPOWER")
-	LunaTargetFrame:RegisterEvent("UNIT_PORTRAIT_UPDATE")
-	LunaTargetFrame:RegisterEvent("UNIT_LEVEL")
-	LunaTargetFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
-	LunaTargetFrame:RegisterEvent("PLAYER_COMBO_POINTS")
-	LunaTargetFrame:RegisterEvent("RAID_TARGET_UPDATE")
-	LunaTargetFrame:RegisterEvent("PARTY_LEADER_CHANGED")
-	LunaTargetFrame:RegisterEvent("PARTY_MEMBERS_CHANGED")
-	LunaTargetFrame:RegisterEvent("PARTY_LOOT_METHOD_CHANGED")
-	LunaTargetFrame:RegisterEvent("UNIT_SPELLMISS")
-	LunaTargetFrame:RegisterEvent("UNIT_COMBAT")
-	LunaTargetFrame:RegisterEvent("UNIT_FACTION")
 end
 
 function OptionFunctions.RegisterCastbar(frame)
@@ -700,6 +681,15 @@ function OptionFunctions.PartyinRaidToggle()
 	LunaUnitFrames:UpdatePartyFrames()
 end
 
+function OptionFunctions.PartyInRaidFrame()
+	if LunaOptions.partyraidframe == 1 then
+		LunaOptions.partyraidframe = nil
+	else
+		LunaOptions.partyraidframe = 1
+	end
+	LunaUnitFrames:UpdateRaidRoster()
+end
+
 function OptionFunctions.LockFrames()
 	LunaUnitFrames:TogglePlayerLock()
 	LunaUnitFrames:ToggleTargetLock()
@@ -720,45 +710,100 @@ function OptionFunctions.UpdateAll()
 	LunaUnitFrames:UpdateRaidRoster()
 end
 
+function OptionFunctions.ToggleBlizzPlayer()
+	if not LunaOptions.BlizzPlayer then
+		PlayerFrame:RegisterEvent("UNIT_LEVEL")
+		PlayerFrame:RegisterEvent("UNIT_COMBAT")
+		PlayerFrame:RegisterEvent("UNIT_FACTION")
+		PlayerFrame:RegisterEvent("UNIT_MAXMANA")
+		PlayerFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+		PlayerFrame:RegisterEvent("PLAYER_ENTER_COMBAT")
+		PlayerFrame:RegisterEvent("PLAYER_LEAVE_COMBAT")
+		PlayerFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
+		PlayerFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+		PlayerFrame:RegisterEvent("PLAYER_UPDATE_RESTING")
+		PlayerFrame:RegisterEvent("PARTY_MEMBERS_CHANGED")
+		PlayerFrame:RegisterEvent("PARTY_LEADER_CHANGED")
+		PlayerFrame:RegisterEvent("PARTY_LOOT_METHOD_CHANGED")
+		PlayerFrame:RegisterEvent("RAID_ROSTER_UPDATE")
+		PlayerFrame:RegisterEvent("PLAYTIME_CHANGED")
+		PlayerFrame:Show()
+		PlayerFrame_Update()
+		UnitFrameHealthBar_Update(PlayerFrame.healthhar, "player")
+		UnitFrameManaBar_Update(PlayerFrame.manabar, "player")
+		LunaOptions.BlizzPlayer = 1
+	else
+		PlayerFrame:UnregisterAllEvents()
+		PlayerFrame:Hide()
+		LunaOptions.BlizzPlayer = nil
+	end
+end
+
+function OptionFunctions.ToggleBlizzTarget()
+	ClearTarget()
+	if not LunaOptions.BlizzTarget then
+		TargetFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+		TargetFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
+		TargetFrame:RegisterEvent("UNIT_HEALTH")
+		TargetFrame:RegisterEvent("UNIT_LEVEL")
+		TargetFrame:RegisterEvent("UNIT_FACTION")
+		TargetFrame:RegisterEvent("UNIT_CLASSIFICATION_CHANGED")
+		TargetFrame:RegisterEvent("UNIT_AURA")
+		TargetFrame:RegisterEvent("PLAYER_FLAGS_CHANGED")
+		TargetFrame:RegisterEvent("PARTY_MEMBERS_CHANGED")
+		TargetFrame:RegisterEvent("RAID_TARGET_UPDATE")
+		ComboFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
+		ComboFrame:RegisterEvent("PLAYER_COMBO_POINTS")
+		ComboPointsFrame_OnEvent()
+		LunaOptions.BlizzTarget = 1
+	else
+		TargetFrame:UnregisterAllEvents()
+		TargetFrame:Hide()
+		ComboFrame:UnregisterAllEvents()
+		ComboFrame:Hide()
+		LunaOptions.BlizzTarget = nil
+	end
+end
+
+function OptionFunctions.ToggleBlizzParty()
+	if not LunaOptions.BlizzParty then
+		RaidOptionsFrame_UpdatePartyFrames = LunaUnitFrames.RaidOptionsFrame_UpdatePartyFrames
+		for i=1,4 do
+			local frame = getglobal("PartyMemberFrame"..i)
+			frame:RegisterEvent("PARTY_MEMBERS_CHANGED")
+			frame:RegisterEvent("PARTY_LEADER_CHANGED")
+			frame:RegisterEvent("PARTY_MEMBER_ENABLE")
+			frame:RegisterEvent("PARTY_MEMBER_DISABLE")
+			frame:RegisterEvent("PARTY_LOOT_METHOD_CHANGED")
+			frame:RegisterEvent("UNIT_PVP_UPDATE")
+			frame:RegisterEvent("UNIT_AURA")
+			frame:RegisterEvent("UNIT_PET")
+			frame:RegisterEvent("VARIABLES_LOADED")
+			frame:RegisterEvent("UNIT_NAME_UPDATE")
+			frame:RegisterEvent("UNIT_PORTRAIT_UPDATE")
+			frame:RegisterEvent("UNIT_DISPLAYPOWER")
+
+			UnitFrame_OnEvent("PARTY_MEMBERS_CHANGED")
+			ShowPartyFrame()
+		end
+		LunaOptions.BlizzParty = 1
+	else
+		LunaUnitFrames.RaidOptionsFrame_UpdatePartyFrames = RaidOptionsFrame_UpdatePartyFrames
+		RaidOptionsFrame_UpdatePartyFrames = function () end
+		for i=1,4 do
+			local frame = getglobal("PartyMemberFrame"..i)
+			frame:UnregisterAllEvents()
+			frame:Hide()
+		end
+		LunaOptions.BlizzParty = nil
+	end
+end
+
 function OptionFunctions.enableFrame()
 	if LunaOptions.frames[this.frame].enabled == 1 then
 		LunaOptions.frames[this.frame].enabled = 0
-		if this.frame == "LunaTargetFrame" then
-			OptionFunctions.RegisterTarget()
-		elseif this.frame == "LunaPartyFrames" then
-			RaidOptionsFrame_UpdatePartyFrames = LunaUnitFrames.RaidOptionsFrame_UpdatePartyFrames
-			for i=1,4 do
-				local frame = getglobal("PartyMemberFrame"..i)
-				frame:RegisterEvent("PARTY_MEMBERS_CHANGED")
-				frame:RegisterEvent("PARTY_LEADER_CHANGED")
-				frame:RegisterEvent("PARTY_MEMBER_ENABLE")
-				frame:RegisterEvent("PARTY_MEMBER_DISABLE")
-				frame:RegisterEvent("PARTY_LOOT_METHOD_CHANGED")
-				frame:RegisterEvent("UNIT_PVP_UPDATE")
-				frame:RegisterEvent("UNIT_AURA")
-				frame:RegisterEvent("UNIT_PET")
-				frame:RegisterEvent("VARIABLES_LOADED")
-				frame:RegisterEvent("UNIT_NAME_UPDATE")
-				frame:RegisterEvent("UNIT_PORTRAIT_UPDATE")
-				frame:RegisterEvent("UNIT_DISPLAYPOWER")
-
-				UnitFrame_OnEvent("PARTY_MEMBERS_CHANGED")
-				ShowPartyFrame()
-			end
-		end
 	else
 		LunaOptions.frames[this.frame].enabled = 1
-		if this.frame == "LunaTargetFrame" then
-			OptionFunctions.UnRegisterTarget()
-		elseif this.frame == "LunaPartyFrames" then
-			LunaUnitFrames.RaidOptionsFrame_UpdatePartyFrames = RaidOptionsFrame_UpdatePartyFrames
-			RaidOptionsFrame_UpdatePartyFrames = function () end
-			for i=1,4 do
-				local frame = getglobal("PartyMemberFrame"..i)
-				frame:UnregisterAllEvents()
-				frame:Hide()
-			end
-		end
 	end
 	OptionFunctions.UpdateAll()
 end
@@ -1438,6 +1483,14 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[5].Portraitmode:SetScript("OnClick", OptionFunctions.PortraitmodeToggle)
 	LunaOptionsFrame.pages[5].Portraitmode:SetChecked((LunaOptions.frames["LunaPartyFrames"].portrait == 1))
 	getglobal("PortraitmodePartyText"):SetText("Display Portrait as Bar")
+	
+	LunaOptionsFrame.pages[5].inraidframe = CreateFrame("CheckButton", "PartyInRaidFrame", LunaOptionsFrame.pages[5], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[5].inraidframe:SetHeight(20)
+	LunaOptionsFrame.pages[5].inraidframe:SetWidth(20)
+	LunaOptionsFrame.pages[5].inraidframe:SetPoint("TOPLEFT", LunaOptionsFrame.pages[5].Portraitmode, "TOPLEFT", 0, -30)
+	LunaOptionsFrame.pages[5].inraidframe:SetScript("OnClick", OptionFunctions.PartyInRaidFrame)
+	LunaOptionsFrame.pages[5].inraidframe:SetChecked(LunaOptions.partyraidframe)
+	getglobal("PartyInRaidFrameText"):SetText("Display Party in Raidframe")
 
 	LunaOptionsFrame.pages[7].enable = CreateFrame("CheckButton", "LunaRaidEnableButton", LunaOptionsFrame.pages[7], "UICheckButtonTemplate")
 	LunaOptionsFrame.pages[7].enable:SetPoint("TOPLEFT", LunaOptionsFrame.pages[7], "TOPLEFT", 10, -10)
@@ -1540,7 +1593,31 @@ function LunaOptionsModule:CreateMenu()
 																		LunaOptions.Raidbuff = this:GetText()
 																		LunaUnitFrames.Raid_Update()
 																	end)
+																	
+	LunaOptionsFrame.pages[7].dispdebuffs = CreateFrame("CheckButton", "DispDebuffSwitch", LunaOptionsFrame.pages[7], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[7].dispdebuffs:SetHeight(20)
+	LunaOptionsFrame.pages[7].dispdebuffs:SetWidth(20)
+	LunaOptionsFrame.pages[7].dispdebuffs:SetPoint("TOPLEFT", LunaOptionsFrame.pages[7].Buffwatch, "TOPLEFT", 0, -38)
+	LunaOptionsFrame.pages[7].dispdebuffs:SetScript("OnClick", OptionFunctions.ToggleDispelableDebuffs)
+	LunaOptionsFrame.pages[7].dispdebuffs:SetChecked(LunaOptions.showdispelable)
+	getglobal("DispDebuffSwitchText"):SetText("Show only your dispelable Debuffs")
 
+	LunaOptionsFrame.pages[7].aggro = CreateFrame("CheckButton", "AggroSwitch", LunaOptionsFrame.pages[7], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[7].aggro:SetHeight(20)
+	LunaOptionsFrame.pages[7].aggro:SetWidth(20)
+	LunaOptionsFrame.pages[7].aggro:SetPoint("TOPLEFT", LunaOptionsFrame.pages[7].dispdebuffs, "TOPLEFT", 0, -30)
+	LunaOptionsFrame.pages[7].aggro:SetScript("OnClick", OptionFunctions.ToggleAggro)
+	LunaOptionsFrame.pages[7].aggro:SetChecked(LunaOptions.aggro)
+	getglobal("AggroSwitchText"):SetText("Show aggro warning")
+	
+	LunaOptionsFrame.pages[7].interlock = CreateFrame("CheckButton", "InterlockSwitch", LunaOptionsFrame.pages[7], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[7].interlock:SetHeight(20)
+	LunaOptionsFrame.pages[7].interlock:SetWidth(20)
+	LunaOptionsFrame.pages[7].interlock:SetPoint("TOPLEFT", LunaOptionsFrame.pages[7].aggro, "TOPLEFT", 0, -30)
+	LunaOptionsFrame.pages[7].interlock:SetScript("OnClick", OptionFunctions.ToggleInterlock)
+	LunaOptionsFrame.pages[7].interlock:SetChecked(LunaOptions.raidinterlock)
+	getglobal("InterlockSwitchText"):SetText("Interlock Raid Frames")
+	
 	LunaOptionsFrame.pages[8].hmodeswitch = CreateFrame("CheckButton", "HealerModeSwitch", LunaOptionsFrame.pages[8], "UICheckButtonTemplate")
 	LunaOptionsFrame.pages[8].hmodeswitch:SetHeight(20)
 	LunaOptionsFrame.pages[8].hmodeswitch:SetWidth(20)
@@ -1557,11 +1634,35 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[8].percentswitch:SetChecked(LunaOptions.Percentages or 0)
 	getglobal("PercentSwitchText"):SetText("Display percent after values")
 	
+	LunaOptionsFrame.pages[8].blizzplayer = CreateFrame("CheckButton", "BlizzPlayerSwitch", LunaOptionsFrame.pages[8], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[8].blizzplayer:SetHeight(20)
+	LunaOptionsFrame.pages[8].blizzplayer:SetWidth(20)
+	LunaOptionsFrame.pages[8].blizzplayer:SetPoint("TOPLEFT", LunaOptionsFrame.pages[8].percentswitch, "TOPLEFT", 0, -30)
+	LunaOptionsFrame.pages[8].blizzplayer:SetScript("OnClick", OptionFunctions.ToggleBlizzPlayer)
+	LunaOptionsFrame.pages[8].blizzplayer:SetChecked(LunaOptions.BlizzPlayer)
+	getglobal("BlizzPlayerSwitchText"):SetText("Display Blizzard Player Frame")
+	
+	LunaOptionsFrame.pages[8].blizztarget = CreateFrame("CheckButton", "BlizzTargetSwitch", LunaOptionsFrame.pages[8], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[8].blizztarget:SetHeight(20)
+	LunaOptionsFrame.pages[8].blizztarget:SetWidth(20)
+	LunaOptionsFrame.pages[8].blizztarget:SetPoint("TOPLEFT", LunaOptionsFrame.pages[8].blizzplayer, "TOPLEFT", 0, -30)
+	LunaOptionsFrame.pages[8].blizztarget:SetScript("OnClick", OptionFunctions.ToggleBlizzTarget)
+	LunaOptionsFrame.pages[8].blizztarget:SetChecked(LunaOptions.BlizzTarget)
+	getglobal("BlizzTargetSwitchText"):SetText("Display Blizzard Target Frame")
+	
+	LunaOptionsFrame.pages[8].blizzparty = CreateFrame("CheckButton", "BlizzPartySwitch", LunaOptionsFrame.pages[8], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[8].blizzparty:SetHeight(20)
+	LunaOptionsFrame.pages[8].blizzparty:SetWidth(20)
+	LunaOptionsFrame.pages[8].blizzparty:SetPoint("TOPLEFT", LunaOptionsFrame.pages[8].blizztarget, "TOPLEFT", 0, -30)
+	LunaOptionsFrame.pages[8].blizzparty:SetScript("OnClick", OptionFunctions.ToggleBlizzParty)
+	LunaOptionsFrame.pages[8].blizzparty:SetChecked(LunaOptions.BlizzParty)
+	getglobal("BlizzPartySwitchText"):SetText("Display Blizzard Party Frames")
+	
 	LunaOptionsFrame.pages[8].overhealslider = CreateFrame("Slider", "OverhealSlider", LunaOptionsFrame.pages[8], "OptionsSliderTemplate")
 	LunaOptionsFrame.pages[8].overhealslider:SetMinMaxValues(0,20)
 	LunaOptionsFrame.pages[8].overhealslider:SetValueStep(1)
 	LunaOptionsFrame.pages[8].overhealslider:SetScript("OnValueChanged", OptionFunctions.OverhealAdjust)
-	LunaOptionsFrame.pages[8].overhealslider:SetPoint("TOPLEFT", LunaOptionsFrame.pages[8].percentswitch, "BOTTOMLEFT", 0, -20)
+	LunaOptionsFrame.pages[8].overhealslider:SetPoint("TOPLEFT", LunaOptionsFrame.pages[8].blizzparty, "BOTTOMLEFT", 0, -20)
 	LunaOptionsFrame.pages[8].overhealslider:SetValue(LunaOptions.overheal or 20)
 	LunaOptionsFrame.pages[8].overhealslider:SetWidth(215)
 	getglobal("OverhealSliderText"):SetText("Overlap percent of healbar: "..(LunaOptions.overheal or 20))

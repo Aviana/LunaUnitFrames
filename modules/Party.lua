@@ -359,7 +359,7 @@ function LunaUnitFrames:CreatePartyFrames()
 			end
 		end
 	end
-	if LunaOptions.frames["LunaPartyFrames"].enabled == 1 then
+	if not LunaOptions.BlizzParty then
 		LunaUnitFrames.RaidOptionsFrame_UpdatePartyFrames = RaidOptionsFrame_UpdatePartyFrames
 		RaidOptionsFrame_UpdatePartyFrames = function () end
 		for i=1,4 do

@@ -2,6 +2,7 @@ LunaUnitFrames = CreateFrame("Frame")
 LunaUnitFrames.frames = {}
 LunaUnitFrames.proximity = ProximityLib:GetInstance("1")
 LunaUnitFrames:RegisterEvent("ADDON_LOADED")
+LunaUnitFrames:RegisterEvent("PARTY_MEMBERS_CHANGED")
 LunaUnitFrames:RegisterEvent("RAID_ROSTER_UPDATE")
 LunaUnitFrames:RegisterEvent("PLAYER_ENTERING_WORLD")
 
@@ -52,7 +53,7 @@ function LunaUnitFrames:OnEvent()
 		LunaUnitFrames:CreateRaidFrames()
 		LunaUnitFrames:CreateXPBar()
 		LunaOptionsModule:CreateMenu()
-	elseif event == "RAID_ROSTER_UPDATE" or event == "PLAYER_ENTERING_WORLD" then
+	elseif event == "RAID_ROSTER_UPDATE" or event == "PLAYER_ENTERING_WORLD" or event == "PARTY_MEMBERS_CHANGED" then
 		LunaUnitFrames:UpdateRaidRoster()
 	end
 end

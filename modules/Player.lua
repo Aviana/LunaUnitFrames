@@ -41,28 +41,6 @@ local function Luna_HideBlizz(frame)
 	frame:Hide()
 end
 
-function Luna_ShowBlizz()
-	PlayerFrame:RegisterEvent("UNIT_LEVEL")
-	PlayerFrame:RegisterEvent("UNIT_COMBAT")
-	PlayerFrame:RegisterEvent("UNIT_FACTION")
-	PlayerFrame:RegisterEvent("UNIT_MAXMANA")
-	PlayerFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
-	PlayerFrame:RegisterEvent("PLAYER_ENTER_COMBAT")
-	PlayerFrame:RegisterEvent("PLAYER_LEAVE_COMBAT")
-	PlayerFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
-	PlayerFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
-	PlayerFrame:RegisterEvent("PLAYER_UPDATE_RESTING")
-	PlayerFrame:RegisterEvent("PARTY_MEMBERS_CHANGED")
-	PlayerFrame:RegisterEvent("PARTY_LEADER_CHANGED")
-	PlayerFrame:RegisterEvent("PARTY_LOOT_METHOD_CHANGED")
-	PlayerFrame:RegisterEvent("RAID_ROSTER_UPDATE")
-	PlayerFrame:RegisterEvent("PLAYTIME_CHANGED")
-	PlayerFrame:Show()
-	PlayerFrame_Update()
-	UnitFrameHealthBar_Update(PlayerFrame.healthhar, "player")
-	UnitFrameManaBar_Update(PlayerFrame.manabar, "player")
-end
-
 local function Luna_Player_SetBuffTooltip()
 	GameTooltip:SetOwner(this, "ANCHOR_BOTTOMRIGHT")
 	if (this.id > 16) then
@@ -454,6 +432,10 @@ function LunaUnitFrames:CreatePlayerFrame()
 	LunaPlayerFrame:RegisterEvent("UNIT_COMBAT")
 	LunaPlayerFrame:RegisterEvent("PLAYER_ALIVE")
 	
+	if not LunaOptions.BlizzPlayer then
+		Luna_HideBlizz(PlayerFrame)
+	end
+	
 	if LunaOptions.hideCastbar == 0 then
 		LunaPlayerFrame:RegisterEvent("SPELLCAST_CHANNEL_START")
 		LunaPlayerFrame:RegisterEvent("SPELLCAST_CHANNEL_STOP")
@@ -754,11 +736,9 @@ end
 function LunaUnitFrames:UpdatePlayerFrame()
 	if LunaOptions.frames["LunaPlayerFrame"].enabled == 0 then
 		LunaPlayerFrame:Hide()
-		Luna_ShowBlizz()
 		return
 	else
 		LunaPlayerFrame:Show()
-		Luna_HideBlizz(PlayerFrame)
 	end
 	local class = UnitClass("player")
 	

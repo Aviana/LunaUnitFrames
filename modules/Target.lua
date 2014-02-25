@@ -410,7 +410,7 @@ function LunaUnitFrames:CreateTargetFrame()
 	LunaTargetFrame:SetScript("OnUpdate", CombatFeedback_OnUpdate)
 	LunaTargetFrame.bars["Castbar"]:SetScript("OnUpdate", Castbar_OnUpdate)
 	
-	if LunaOptions.frames["LunaTargetFrame"].enabled == 1 then
+	if not LunaOptions.BlizzTarget then
 		Luna_HideBlizz(TargetFrame)
 		Luna_HideBlizz(ComboFrame)
 	end
