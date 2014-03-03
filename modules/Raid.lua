@@ -290,7 +290,7 @@ function LunaUnitFrames:UpdateRaidRoster()
 				frame:Hide()
 			else
 				frame:Show()
-				local class = UnitClass(frame.unit)
+				local _,class = UnitClass(frame.unit)
 				local color = LunaOptions.ClassColors[class]
 				if not color then
 					frame:Hide()
@@ -340,7 +340,7 @@ function LunaUnitFrames:UpdateRaidRoster()
 				local num = RAID_SUBGROUP_LISTS[i][z]
 				if num then
 					LunaUnitFrames.frames.RaidFrames[i].member[z].unit = "raid"..num
-					local class = UnitClass(LunaUnitFrames.frames.RaidFrames[i].member[z].unit)
+					local _,class = UnitClass(LunaUnitFrames.frames.RaidFrames[i].member[z].unit)
 					local color = LunaOptions.ClassColors[class]
 					if not color then
 						LunaUnitFrames.frames.RaidFrames[i].member[z]:Hide()
@@ -554,8 +554,8 @@ function LunaUnitFrames.Raid_Aggro(unitid)
 			end
 		end
 	elseif string.sub(unitid, 1, 5) == "party" then
-		local partynumber = string.sub(unitid, 5)
-		local frame = LunaUnitFrames.frames.RaidFrames[1].member[partynumber+1]
+		local partynumber = string.sub(unitid, 6)
+		local frame = LunaUnitFrames.frames.RaidFrames[1].member[tonumber(partynumber)+1]
 		if banzai:GetUnitAggroByUnitId(frame.unit) then
 			frame.aggro:Show()
 		else

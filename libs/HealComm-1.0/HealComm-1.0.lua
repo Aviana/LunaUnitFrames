@@ -19,6 +19,157 @@ local roster = AceLibrary("RosterLib-2.0")
 local HealComm = CreateFrame("Frame")
 
 ------------------------------------------------
+-- Locales
+------------------------------------------------
+
+local L = {}
+if( GetLocale() == "deDE" ) then
+	L["Holy Light"] = "Heiliges Licht"
+	L["Flash of Light"] = "Lichtblitz"
+	L["Healing Wave"] = "Welle der Heilung"
+	L["Lesser Healing Wave"] = "Geringe Welle der Heilung"
+	L["Chain Heal"] = "Kettenheilung"
+	L["Lesser Heal"] = "Geringe Heilung"
+	L["Heal"] = "Heilung"
+	L["Flash Heal"] = "Blitzheilung"
+	L["Greater Heal"] = "Große Heilung"
+	L["Prayer of Healing"] = "Gebet der Heilung"
+	L["Healing Touch"] = "Heilende Berührung"
+	L["Regrowth"] = "Nachwachsen"
+	L["Resurrection"] = "Wiederbelebung"
+	L["Rebirth"] = "Wiedergeburt"
+	L["Redemption"] = "Erlösung"
+	L["Ancestral Spirit"] = "Geist der Ahnen"
+	L["Libram of Divinity"] = "Buchband der Offenbarung"
+	L["Libram of Light"] = "Buchband des Lichts"
+	L["Totem of Sustaining"] = "Totem der Erhaltung"
+	L["Totem of Life"] = "Totem des Lebens"
+	L["Power Infusion"] = "Seele der Macht"
+	L["Divine Favor"] = "Göttliche Gunst"
+	L["Nature Aligned"] = "Naturverbundenheit"
+	L["Crusader's Wrath"] = "Zorn des Kreuzfahrers"
+	L["The Furious Storm"] = "Der wilde Sturm"
+	L["Holy Power"] = "Heilige Kraft"
+	L["Prayer Beads Blessing"] = "Segen der Gebetsperlen"
+	L["Chromatic Infusion"] = "Erfüllt mit chromatischer Macht"
+	L["Ascendance"] = "Überlegenheit"
+	L["Ephemeral Power"] = "Ephemere Macht"
+	L["Unstable Power"] = "Instabile Macht"
+	L["Healing of the Ages"] = "Heilung der Urzeiten"
+	L["Essence of Sapphiron"] = "Essenz Saphirons"
+	L["The Eye of the Dead"] = "Das Auge des Todes"
+	L["Mortal Strike"] = "Tödlicher Stoß"
+	L["Wound Poison"] = "Wundgift"
+	L["Curse of the Deadwood"] = "Fluch der Totenwaldfelle"
+	L["Veil of Shadow"] = "Schattenschleier"
+	L["Gehennas' Curse"] = "Gehennas' Fluch"
+	L["Mortal Wound"] = "Trauma"
+	L["Necrotic Poison"] = "Nekrotisches Gift"
+	L["Necrotic Aura"] = "Nekrotische Aura"
+	L["Healing Way"] = "Pfad der Heilung"
+	L["Warsong Gulch"] = "Kriegshymnenschlucht"
+	L["Arathi Basin"] = "Arathibecken"
+	L["Alterac Valley"] = "Alteractal"
+	L["Blessing of Light"] = "Erhält bis zu (%d+) extra Heilung durch %'Heiliges Licht%' und bis zu (%d+) extra Heilung durch den Zauber %'Lichtblitz%'%."
+elseif ( GetLocale() == "frFR" ) then
+	L["Holy Light"] = "Lumière sacrée"
+	L["Flash of Light"] = "Eclair lumineux"
+	L["Healing Wave"] = "Vague de soins"
+	L["Lesser Healing Wave"] = "Vague de soins inférieurs"
+	L["Chain Heal"] = "Salve de guérison"
+	L["Lesser Heal"] = "Soins inférieurs"
+	L["Heal"] = "Soins"
+	L["Flash Heal"] = "Soins rapides"
+	L["Greater Heal"] = "Soins supérieurs"
+	L["Prayer of Healing"] = "Prière de soins"
+	L["Healing Touch"] = "Toucher guérisseur"
+	L["Regrowth"] = "Rétablissement"
+	L["Resurrection"] = "Résurrection"
+	L["Rebirth"] = "Renaissance"
+	L["Redemption"] = "Rédemption"
+	L["Ancestral Spirit"] = "Esprit ancestral"
+	L["Libram of Divinity"] = "Libram de divinité"
+	L["Libram of Light"] = "Libram de lumière"
+	L["Totem of Sustaining"] = "Totem de soutien"
+	L["Totem of Life"] = "Totem de vie"
+	L["Power Infusion"] = "Infusion de puissance"
+	L["Divine Favor"] = "Faveur divine"
+	L["Nature Aligned"] = "Alignement sur la nature"
+	L["Crusader's Wrath"] = "Colère du croisé"
+	L["The Furious Storm"] = "La tempête furieuse"
+	L["Holy Power"] = "Puissance sacrée"
+	L["Prayer Beads Blessing"] = "Bénédiction du chapelet"
+	L["Chromatic Infusion"] = "Infusion chromatique"
+	L["Ascendance"] = "Ascendance"
+	L["Ephemeral Power"] = "Puissance éphémère"
+	L["Unstable Power"] = "Puissance instable"
+	L["Healing of the Ages"] = "Soins des âges"
+	L["Essence of Sapphiron"] = "Essence de Saphiron"
+	L["The Eye of the Dead"] = "L'Oeil du mort"
+	L["Mortal Strike"] = "Frappe mortelle"
+	L["Wound Poison"] = "Poison douloureux"
+	L["Curse of the Deadwood"] = "Malédiction des Mort-bois"
+	L["Veil of Shadow"] = "Voile de l'ombre"
+	L["Gehennas' Curse"] = "Malédiction de Gehennas"
+	L["Mortal Wound"] = "Blessures mortelles"
+	L["Necrotic Poison"] = "Poison nécrotique"
+	L["Necrotic Aura"] = "Aura nécrotique"
+	L["Healing Way"] = "Flots de soins"
+	L["Warsong Gulch"] = "Goulet des Chanteguerres"
+	L["Arathi Basin"] = "Bassin Arathi"
+	L["Alterac Valley"] = "Vallée d’Alterac"
+	L["Blessing of Light"] = "Les sorts de Lumière sacrée rendent jusqu%'à (%d+) points de vie supplémentaires%, les sorts d%'Eclair lumineux jusqu%'à (%d+)%."
+else
+	L["Holy Light"] = "Holy Light"
+	L["Flash of Light"] = "Flash of Light"
+	L["Healing Wave"] = "Healing Wave"
+	L["Lesser Healing Wave"] = "Lesser Healing Wave"
+	L["Chain Heal"] = "Chain Heal"
+	L["Lesser Heal"] = "Lesser Heal"
+	L["Heal"] = "Heal"
+	L["Flash Heal"] = "Flash Heal"
+	L["Greater Heal"] = "Greater Heal"
+	L["Prayer of Healing"] = "Prayer of Healing"
+	L["Healing Touch"] = "Healing Touch"
+	L["Regrowth"] = "Regrowth"
+	L["Resurrection"] = "Resurrection"
+	L["Rebirth"] = "Rebirth"
+	L["Redemption"] = "Redemption"
+	L["Ancestral Spirit"] = "Ancestral Spirit"
+	L["Libram of Divinity"] = "Libram of Divinity"
+	L["Libram of Light"] = "Libram of Light"
+	L["Totem of Sustaining"] = "Totem of Sustaining"
+	L["Totem of Life"] = "Totem of Life"
+	L["Power Infusion"] = "Power Infusion"
+	L["Divine Favor"] = "Divine Favor"
+	L["Nature Aligned"] = "Nature Aligned"
+	L["Crusader's Wrath"] = "Crusader's Wrath"
+	L["The Furious Storm"] = "The Furious Storm"
+	L["Holy Power"] = "Holy Power"
+	L["Prayer Beads Blessing"] = "Prayer Beads Blessing"
+	L["Chromatic Infusion"] = "Chromatic Infusion"
+	L["Ascendance"] = "Ascendance"
+	L["Ephemeral Power"] = "Ephemeral Power"
+	L["Unstable Power"] = "Unstable Power"
+	L["Healing of the Ages"] = "Healing of the Ages"
+	L["Essence of Sapphiron"] = "Essence of Sapphiron"
+	L["The Eye of the Dead"] = "The Eye of the Dead"
+	L["Mortal Strike"] = "Mortal Strike"
+	L["Wound Poison"] = "Wound Poison"
+	L["Curse of the Deadwood"] = "Curse of the Deadwood"
+	L["Veil of Shadow"] = "Veil of Shadow"
+	L["Gehennas' Curse"] = "Gehennas' Curse"
+	L["Mortal Wound"] = "Mortal Wound"
+	L["Necrotic Poison"] = "Necrotic Poison"
+	L["Necrotic Aura"] = "Necrotic Aura"
+	L["Healing Way"] = "Healing Way"
+	L["Warsong Gulch"] = "Warsong Gulch"
+	L["Arathi Basin"] = "Arathi Basin"
+	L["Alterac Valley"] = "Alterac Valley"
+	L["Blessing of Light"] = "Receives up to (%d+) extra healing from Holy Light spells%, and up to (%d+) extra healing from Flash of Light spells%."
+end
+	
+------------------------------------------------
 -- activate, enable, disable
 ------------------------------------------------
 
@@ -62,7 +213,6 @@ local function external(self, major, instance)
 	end
 end
 
-
 function HealComm:Enable()
 -- not used anymore, but as addons still might be calling this method, we're keeping it.
 end
@@ -91,7 +241,7 @@ end
 ------------------------------------------------
 
 HealComm.Spells = {
-	["Holy Light"] = {
+	[L["Holy Light"]] = {
 		[1] = function (SpellPower)
 			local _,_,_,_,talentRank,_ = GetTalentInfo(1,5)
 			local hlMod = 4*talentRank/100 + 1
@@ -138,7 +288,7 @@ HealComm.Spells = {
 			return (1681*hlMod+((2.5/3.5) * SpellPower))
 		end;
 	};
-	["Flash of Light"] = {
+	[L["Flash of Light"]] = {
 		[1] = function (SpellPower)
 			local lp = 0
 			if GetInventoryItemLink("player",GetInventorySlotInfo("RangedSlot")) then
@@ -245,7 +395,7 @@ HealComm.Spells = {
 			return (481*hlMod+lp+((1.5/3.5) * SpellPower))
 		end;
 	};
-	["Healing Wave"] = {
+	[L["Healing Wave"]] = {
 		[1] = function (SpellPower)
 			local _,_,_,_,talentRank,_ = GetTalentInfo(3,14)
 			local pMod = 2*talentRank/100 + 1
@@ -297,7 +447,7 @@ HealComm.Spells = {
 			return (1736*pMod+((3/3.5) * SpellPower))
 		end;
 	};
-	["Lesser Healing Wave"] = {
+	[L["Lesser Healing Wave"]] = {
 		[1] = function (SpellPower)
 			local tp = 0
 			if GetInventoryItemLink("player",GetInventorySlotInfo("RangedSlot")) then
@@ -389,7 +539,7 @@ HealComm.Spells = {
 			return (881*pMod+tp+((1.5/3.5) * SpellPower))
 		end;
 	};
-	["Chain Heal"] = {
+	[L["Chain Heal"]] = {
 		[1] = function (SpellPower)
 			local _,_,_,_,talentRank,_ = GetTalentInfo(3,14)
 			local pMod = 2*talentRank/100 + 1
@@ -406,7 +556,7 @@ HealComm.Spells = {
 			return (591*pMod+((2.5/3.5) * SpellPower))
 		end;
 	};
-	["Lesser Heal"] = {
+	[L["Lesser Heal"]] = {
 		[1] = function (SpellPower)
 			local _,_,_,_,talentRank,_ = GetTalentInfo(2,14)
 			local _,Spirit,_,_ = UnitStat("player",5)
@@ -432,7 +582,7 @@ HealComm.Spells = {
 			return (147*shMod+((2.5/3.5) * (SpellPower+sgMod))*0.6)
 		end;
 	};
-	["Heal"] = {
+	[L["Heal"]] = {
 		[1] = function (SpellPower)
 			local _,_,_,_,talentRank,_ = GetTalentInfo(2,14)
 			local _,Spirit,_,_ = UnitStat("player",5)
@@ -466,7 +616,7 @@ HealComm.Spells = {
 			return (759*shMod+((3/3.5) * (SpellPower+sgMod)))
 		end;
 	};
-	["Flash Heal"] = {
+	[L["Flash Heal"]] = {
 		[1] = function (SpellPower)
 			local _,_,_,_,talentRank,_ = GetTalentInfo(2,14)
 			local _,Spirit,_,_ = UnitStat("player",5)
@@ -524,7 +674,7 @@ HealComm.Spells = {
 			return (886*shMod+((1.5/3.5) * (SpellPower+sgMod)))
 		end;
 	};
-	["Greater Heal"] = {
+	[L["Greater Heal"]] = {
 		[1] = function (SpellPower)
 			local _,_,_,_,talentRank,_ = GetTalentInfo(2,14)
 			local _,Spirit,_,_ = UnitStat("player",5)
@@ -566,7 +716,7 @@ HealComm.Spells = {
 			return (2081*shMod+((3/3.5) * (SpellPower+sgMod)))
 		end;
 	};
-	["Prayer of Healing"] = {
+	[L["Prayer of Healing"]] = {
 		[1] = function (SpellPower)
 			local _,_,_,_,talentRank,_ = GetTalentInfo(2,14)
 			local _,Spirit,_,_ = UnitStat("player",5)
@@ -600,7 +750,7 @@ HealComm.Spells = {
 			return (965*shMod+((3/3.5/3) * (SpellPower+sgMod)))
 		end;
 	};
-	["Healing Touch"] = {
+	[L["Healing Touch"]] = {
 		[1] = function (SpellPower)
 			local _,_,_,_,talentRank,_ = GetTalentInfo(3,12)
 			local gnMod = 2*talentRank/100 + 1
@@ -657,7 +807,7 @@ HealComm.Spells = {
 			return ((2473*gnMod)+SpellPower)
 		end;
 	};
-	["Regrowth"] = {
+	[L["Regrowth"]] = {
 		[1] = function (SpellPower)
 			local _,_,_,_,talentRank,_ = GetTalentInfo(3,12)
 			local gnMod = 2*talentRank/100 + 1
@@ -707,10 +857,10 @@ HealComm.Spells = {
 }
 
 HealComm.Resurrections = {
-	["Resurrection"] = true;
-	["Rebirth"] = true;
-	["Redemption"] = true;
-	["Ancestral Spirit"] = true;
+	[L["Resurrection"]] = true;
+	[L["Rebirth"]] = true;
+	[L["Redemption"]] = true;
+	[L["Ancestral Spirit"]] = true;
 }
 
 local function strsplit(pString, pPattern)
@@ -740,31 +890,31 @@ local healcommTip = CreateFrame("GameTooltip", "healcommTip", nil, "GameTooltipT
 healcommTip:SetOwner(WorldFrame, "ANCHOR_NONE")
 
 HealComm.Buffs = {
-	["Power Infusion"] = {amount = 0, mod = 0.2, icon = "Interface\\Icons\\Spell_Holy_PowerInfusion"};
-	["Divine Favor"] = {amount = 0, mod = 0.5, icon = "Interface\\Icons\\Spell_Holy_Heal"};
-	["Nature Aligned"] = {amount = 0, mod = 0.2, icon = "Interface\\Icons\\Spell_Nature_SpiritArmor"};
-	["Crusader's Wrath"] = {amount = 95, mod = 0, icon = "Interface\\Icons\\Spell_Nature_GroundingTotem"};
-	["The Furious Storm"] = {amount = 95, mod = 0, icon = "Interface\\Icons\\Spell_Nature_CallStorm"};
-	["Holy Power"] = {amount = 80, mod = 0, icon = "Interface\\Icons\\Spell_Holy_HolyNova"};
-	["Prayer Beads Blessing"] = {amount = 190, mod = 0, icon = "Interface\\Icons\\Inv_Jewelry_Necklace_11"};
-	["Chromatic Infusion"] = {amount = 190, mod = 0, icon = "Interface\\Icons\\Spell_Holy_MindVision"};
-	["Ascendance"] = {amount = 75, mod = 0, icon = "Interface\\Icons\\Spell_Lightning_LightningBolt01"};
-	["Ephemeral Power"] = {amount = 175, mod = 0, icon = "Interface\\Icons\\Spell_Holy_MindVision"};
-	["Unstable Power"] = {amount = 34, mod = 0, icon = "Interface\\Icons\\Spell_Lightning_LightningBolt01"};
-	["Healing of the Ages"] = {amount = 350, mod = 0, icon = "Interface\\Icons\\Spell_Nature_HealingWaveGreater"};
-	["Essence of Sapphiron"] = {amount = 130, mod = 0, icon = "Interface\\Icons\\Inv_Trinket_Naxxramas06"};
-	["The Eye of the Dead"] = {amount = 450, mod = 0, icon = "Interface\\Icons\\Inv_Trinket_Naxxramas01"}
+	[L["Power Infusion"]] = {amount = 0, mod = 0.2, icon = "Interface\\Icons\\Spell_Holy_PowerInfusion"};
+	[L["Divine Favor"]] = {amount = 0, mod = 0.5, icon = "Interface\\Icons\\Spell_Holy_Heal"};
+	[L["Nature Aligned"]] = {amount = 0, mod = 0.2, icon = "Interface\\Icons\\Spell_Nature_SpiritArmor"};
+	[L["Crusader's Wrath"]] = {amount = 95, mod = 0, icon = "Interface\\Icons\\Spell_Nature_GroundingTotem"};
+	[L["The Furious Storm"]] = {amount = 95, mod = 0, icon = "Interface\\Icons\\Spell_Nature_CallStorm"};
+	[L["Holy Power"]] = {amount = 80, mod = 0, icon = "Interface\\Icons\\Spell_Holy_HolyNova"};
+	[L["Prayer Beads Blessing"]] = {amount = 190, mod = 0, icon = "Interface\\Icons\\Inv_Jewelry_Necklace_11"};
+	[L["Chromatic Infusion"]] = {amount = 190, mod = 0, icon = "Interface\\Icons\\Spell_Holy_MindVision"};
+	[L["Ascendance"]] = {amount = 75, mod = 0, icon = "Interface\\Icons\\Spell_Lightning_LightningBolt01"};
+	[L["Ephemeral Power"]] = {amount = 175, mod = 0, icon = "Interface\\Icons\\Spell_Holy_MindVision"};
+	[L["Unstable Power"]] = {amount = 34, mod = 0, icon = "Interface\\Icons\\Spell_Lightning_LightningBolt01"};
+	[L["Healing of the Ages"]] = {amount = 350, mod = 0, icon = "Interface\\Icons\\Spell_Nature_HealingWaveGreater"};
+	[L["Essence of Sapphiron"]] = {amount = 130, mod = 0, icon = "Interface\\Icons\\Inv_Trinket_Naxxramas06"};
+	[L["The Eye of the Dead"]] = {amount = 450, mod = 0, icon = "Interface\\Icons\\Inv_Trinket_Naxxramas01"}
 }
 	
 HealComm.Debuffs = {
-	["Mortal Strike"] = {amount = 0, mod = 0.5, icon = "Interface\\Icons\\Ability_Warrior_SavageBlow"};
-	["Wound Poison"] = {amount = -135, mod = 0, icon = "Interface\\Icons\\Ability_Warrior_SavageBlow"};
-	["Curse of the Deadwood"] = {amount = 0, mod = 0.5, icon = "Interface\\Icons\\Spell_Shadow_GatherShadows"};
-	["Veil of Shadow"] = {amount = 0, mod = 0.75, icon = "Interface\\Icons\\Spell_Shadow_GatherShadows"};
-	["Gehennas' Curse"] = {amount = 0, mod = 0.75, icon = "Interface\\Icons\\Spell_Shadow_GatherShadows"};
-	["Mortal Wound"] = {amount = 0, mod = 0.1, icon = "Interface\\Icons\\Ability_CriticalStrike"};
-	["Necrotic Poison"] = {amount = 0, mod = 0.9, icon = "Interface\\Icons\\Ability_CriticalStrike"};
-	["Necrotic Aura"] = {amount = 0, mod = 1, icon = "Interface\\Icons\\Ability_CriticalStrike"}
+	[L["Mortal Strike"]] = {amount = 0, mod = 0.5, icon = "Interface\\Icons\\Ability_Warrior_SavageBlow"};
+	[L["Wound Poison"]] = {amount = -135, mod = 0, icon = "Interface\\Icons\\Ability_Warrior_SavageBlow"};
+	[L["Curse of the Deadwood"]] = {amount = 0, mod = 0.5, icon = "Interface\\Icons\\Spell_Shadow_GatherShadows"};
+	[L["Veil of Shadow"]] = {amount = 0, mod = 0.75, icon = "Interface\\Icons\\Spell_Shadow_GatherShadows"};
+	[L["Gehennas' Curse"]] = {amount = 0, mod = 0.75, icon = "Interface\\Icons\\Spell_Shadow_GatherShadows"};
+	[L["Mortal Wound"]] = {amount = 0, mod = 0.1, icon = "Interface\\Icons\\Ability_CriticalStrike"};
+	[L["Necrotic Poison"]] = {amount = 0, mod = 0.9, icon = "Interface\\Icons\\Ability_CriticalStrike"};
+	[L["Necrotic Aura"]] = {amount = 0, mod = 1, icon = "Interface\\Icons\\Ability_CriticalStrike"}
 }
 	
 local function GetBuffSpellPower()
@@ -803,14 +953,14 @@ local function GetTargetSpellPower(spell)
 		end
 		local buffName = healcommTipTextLeft1:GetText()
 		if (buffTexture == "Interface\\Icons\\Spell_Holy_PrayerOfHealing02" or buffTexture == "Interface\\Icons\\Spell_Holy_GreaterBlessingofLight") then
-			local _,_, HLBonus, FoLBonus = string.find(healcommTipTextLeft2:GetText(),"Receives up to (%d+) extra healing from Holy Light spells%, and up to (%d+) extra healing from Flash of Light spells%.")
-			if (spell == "Flash of Light") then
+			local _,_, HLBonus, FoLBonus = string.find(healcommTipTextLeft2:GetText(),L["Blessing of Light"])
+			if (spell == L["Flash of Light"]) then
 				targetpower = FoLBonus + targetpower
-			elseif spell == "Holy Light" then
+			elseif spell == L["Holy Light"] then
 				targetpower = HLBonus + targetpower
 			end
 		end
-		if buffName == "Healing Way" and spell == "Healing Wave" then
+		if buffName == L["Healing Way"] and spell == L["Healing Wave"] then
 			targetmod = targetmod * ((buffApplications * 0.06) + 1)
 		end
 	end
@@ -927,7 +1077,7 @@ end
 
 function HealComm.SendAddonMessage(msg)
 	local zone = GetRealZoneText()
-	if zone == "Warsong Gulch" or zone == "Arathi Basin" or zone == "Alterac Valley" then
+	if zone == L["Warsong Gulch"] or zone == L["Arathi Basin"] or zone == L["Alterac Valley"] then
 		SendAddonMessage("HealComm", msg, "BATTLEGROUND")
 	else
 		SendAddonMessage("HealComm", msg, "RAID")
@@ -942,10 +1092,11 @@ HealComm.OnEvent = function()
 				Bonus = tonumber(BonusScanner:GetBonus("HEAL"))
 			end
 			local buffpower, buffmod = GetBuffSpellPower()
+			local targetpower, targetmod = healcomm_SpellCast[4], healcomm_SpellCast[5]
 			local Bonus = Bonus + buffpower
 			healcomm_spellIsCasting = arg1
-			local amount = (math.floor(HealComm.Spells[healcomm_SpellCast[1]][tonumber(healcomm_SpellCast[2])](Bonus))*buffmod)
-			if arg1 == "Prayer of Healing" then
+			local amount = ((math.floor(HealComm.Spells[healcomm_SpellCast[1]][tonumber(healcomm_SpellCast[2])](Bonus))+targetpower)*buffmod*targetmod)
+			if arg1 == L["Prayer of Healing"] then
 				local targets = {UnitName("player")}
 				local targetsstring = UnitName("player").."/"
 				for i=1,4 do
@@ -966,7 +1117,7 @@ HealComm.OnEvent = function()
 			HealComm.startResurrection(UnitName("player"), healcomm_SpellCast[3])
 		end
 	elseif (event == "SPELLCAST_INTERRUPTED" or event == "SPELLCAST_FAILED") and HealComm.Spells[healcomm_spellIsCasting] then
-		if healcomm_spellIsCasting == "Prayer of Healing" then
+		if healcomm_spellIsCasting == L["Prayer of Healing"] then
 			HealComm.SendAddonMessage("GrpHealstop")
 			HealComm.stopGrpHeal(UnitName("player"))
 		else
@@ -985,7 +1136,7 @@ HealComm.OnEvent = function()
 		healcomm_SpellSpell =  nil
 		HealComm.cancelResurrection(UnitName("player"))
 	elseif event == "SPELLCAST_DELAYED" then
-		if healcomm_spellIsCasting == "Prayer of Healing" then
+		if healcomm_spellIsCasting == L["Prayer of Healing"] then
 			HealComm.SendAddonMessage("GrpHealdelay/"..arg1.."/")
 			HealComm.delayGrpHeal(UnitName("player"), arg1)
 		else
@@ -993,7 +1144,7 @@ HealComm.OnEvent = function()
 			HealComm.delayHeal(UnitName("player"), arg1)
 		end
 	elseif event == "CHAT_MSG_ADDON" then
-		if arg1 == "HealComm" or arg1 == "healcommComm" and arg4 ~= UnitName("player") then
+		if arg1 == "HealComm" and arg4 ~= UnitName("player") then
 			local result = strsplit(arg2,"/")
 			if result[1] == "Heal" then
 				HealComm.startHeal(arg4, result[2], result[3], result[4])

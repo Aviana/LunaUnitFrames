@@ -740,7 +740,7 @@ function LunaUnitFrames:UpdatePlayerFrame()
 	else
 		LunaPlayerFrame:Show()
 	end
-	local class = UnitClass("player")
+	local _,class = UnitClass("player")
 	
 	local rankNumber = UnitPVPRank("player");
 	if (rankNumber == 0) then

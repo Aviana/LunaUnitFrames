@@ -41,6 +41,18 @@ end
 
 function LunaUnitFrames:OnEvent()
 	if event == "ADDON_LOADED" and arg1 == "LunaUnitFrames" then
+		-- Compatibility Code (to be removed several versions later)
+		LunaOptions.ClassColors = {	WARRIOR = {0.78, 0.61, 0.43},
+						MAGE = {0.41, 0.8, 0.94},
+						ROGUE = {1, 0.96, 0.41},
+						DRUID = {1, 0.49, 0.04},
+						HUNTER = {0.67, 0.83, 0.45},
+						SHAMAN = {0.14, 0.35, 1.0},
+						PRIEST = {1, 1, 1},
+						WARLOCK = {0.58, 0.51, 0.79},
+						PALADIN = {0.96, 0.55, 0.73}
+						}
+		-----------------------------------------------------------
 		--Load the Addon here
 		ChatFrame1:AddMessage("Luna Unit Frames loaded. Enjoy the ride!")
 		LunaUnitFrames:CreatePlayerFrame()

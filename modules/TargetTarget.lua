@@ -299,7 +299,7 @@ function LunaUnitFrames:UpdateTargetTargetFrame()
 		LunaTargetTargetFrame:Hide()
 		return
 	end
-	local class = UnitClass("targettarget")
+	local _,class = UnitClass("targettarget")
 	if UnitIsPlayer("targettarget") then
 		local color = LunaOptions.ClassColors[class]
 		LunaTargetTargetFrame.bars["Healthbar"]:SetStatusBarColor(color[1],color[2],color[3])
@@ -563,7 +563,7 @@ function LunaUnitFrames:UpdateTargetTargetTargetFrame()
 		LunaTargetTargetTargetFrame:Hide()
 		return
 	end
-	local class = UnitClass("targettargettarget")
+	local _,class = UnitClass("targettargettarget")
 	if UnitIsPlayer("targettargettarget") then
 		local color = LunaOptions.ClassColors[class]
 		LunaTargetTargetTargetFrame.bars["Healthbar"]:SetStatusBarColor(color[1],color[2],color[3])

@@ -9,19 +9,9 @@ local OptionsPageNames = {{title = "Player Frame", frame = "LunaPlayerFrame"},
 						{title = "Raid Frames", frame = "LunaUnitFrames.frames.RaidFrames"},
 						{title = "General", frame = "LunaUnitFrames"}
 						}
-
+						
 local function ResetSettings()
 	LunaOptions = {}
-	LunaOptions.ClassColors = {	Warrior = {0.78, 0.61, 0.43},
-						Mage = {0.41, 0.8, 0.94},
-						Rogue = {1, 0.96, 0.41},
-						Druid = {1, 0.49, 0.04},
-						Hunter = {0.67, 0.83, 0.45},
-						Shaman = {0.14, 0.35, 1.0},
-						Priest = {1, 1, 1},
-						Warlock = {0.58, 0.51, 0.79},
-						Paladin = {0.96, 0.55, 0.73}
-						}
 	LunaOptions.PowerColors = {
 		["Mana"] = { 48/255, 113/255, 191/255}, -- Mana
 		["Rage"] = { 226/255, 45/255, 75/255}, -- Rage
