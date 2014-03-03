@@ -261,9 +261,6 @@ function LunaUnitFrames:CreateRaidFrames()
 	LunaUnitFrames:UpdateRaidLayout()
 	LunaUnitFrames:UpdateRaidRoster()
 	LunaUnitFrames.frames.RaidFrames[9]:SetScript("OnUpdate", UpdateRaidMember)
-	AceEvent:RegisterEvent("Banzai_UnitGainedAggro", LunaUnitFrames.Raid_Aggro)
-	AceEvent:RegisterEvent("Banzai_UnitLostAggro", LunaUnitFrames.Raid_Aggro)
-	AceEvent:RegisterEvent("HealComm_Ressupdate", LunaUnitFrames.Raid_Res)
 end
 
 function LunaUnitFrames:UpdateRaidRoster()
@@ -274,8 +271,12 @@ function LunaUnitFrames:UpdateRaidRoster()
 				LunaUnitFrames.frames.RaidFrames[i].member[z]:Hide()
 			end
 		end
+		AceEvent:UnregisterAllEvents()
 		return
 	end
+	AceEvent:RegisterEvent("Banzai_UnitGainedAggro", LunaUnitFrames.Raid_Aggro)
+	AceEvent:RegisterEvent("Banzai_UnitLostAggro", LunaUnitFrames.Raid_Aggro)
+	AceEvent:RegisterEvent("HealComm_Ressupdate", LunaUnitFrames.Raid_Res)
 	if GetNumPartyMembers() > 0 and GetNumRaidMembers() == 0 then
 		if (LunaOptions.frames["LunaRaidFrames"].ShowRaidGroupTitles or 1) == 1 then
 			LunaUnitFrames.frames.RaidFrames[1]:Show()
