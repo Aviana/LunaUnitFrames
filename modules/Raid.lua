@@ -271,7 +271,11 @@ function LunaUnitFrames:UpdateRaidRoster()
 				LunaUnitFrames.frames.RaidFrames[i].member[z]:Hide()
 			end
 		end
-		AceEvent:UnregisterAllEvents()
+		if AceEvent:IsEventRegistered("Banzai_UnitGainedAggro") then
+			AceEvent:UnregisterEvent("Banzai_UnitGainedAggro")
+			AceEvent:UnregisterEvent("Banzai_UnitLostAggro")
+			AceEvent:UnregisterEvent("HealComm_Ressupdate")
+		end
 		return
 	end
 	AceEvent:RegisterEvent("Banzai_UnitGainedAggro", LunaUnitFrames.Raid_Aggro)
