@@ -261,6 +261,9 @@ function LunaUnitFrames:CreateRaidFrames()
 	LunaUnitFrames:UpdateRaidLayout()
 	LunaUnitFrames:UpdateRaidRoster()
 	LunaUnitFrames.frames.RaidFrames[9]:SetScript("OnUpdate", UpdateRaidMember)
+	AceEvent:RegisterEvent("Banzai_UnitGainedAggro", LunaUnitFrames.Raid_Aggro)
+	AceEvent:RegisterEvent("Banzai_UnitLostAggro", LunaUnitFrames.Raid_Aggro)
+	AceEvent:RegisterEvent("HealComm_Ressupdate", LunaUnitFrames.Raid_Res)
 end
 
 function LunaUnitFrames:UpdateRaidRoster()
@@ -268,19 +271,12 @@ function LunaUnitFrames:UpdateRaidRoster()
 		for i=1,8 do
 			LunaUnitFrames.frames.RaidFrames[i]:Hide()
 			for z=1,5 do
+				LunaUnitFrames.frames.RaidFrames[i].member[z].unit = "player"
 				LunaUnitFrames.frames.RaidFrames[i].member[z]:Hide()
 			end
 		end
-		if AceEvent:IsEventRegistered("Banzai_UnitGainedAggro") then
-			AceEvent:UnregisterEvent("Banzai_UnitGainedAggro")
-			AceEvent:UnregisterEvent("Banzai_UnitLostAggro")
-			AceEvent:UnregisterEvent("HealComm_Ressupdate")
-		end
 		return
 	end
-	AceEvent:RegisterEvent("Banzai_UnitGainedAggro", LunaUnitFrames.Raid_Aggro)
-	AceEvent:RegisterEvent("Banzai_UnitLostAggro", LunaUnitFrames.Raid_Aggro)
-	AceEvent:RegisterEvent("HealComm_Ressupdate", LunaUnitFrames.Raid_Res)
 	if GetNumPartyMembers() > 0 and GetNumRaidMembers() == 0 then
 		if (LunaOptions.frames["LunaRaidFrames"].ShowRaidGroupTitles or 1) == 1 then
 			LunaUnitFrames.frames.RaidFrames[1]:Show()
@@ -288,9 +284,13 @@ function LunaUnitFrames:UpdateRaidRoster()
 			LunaUnitFrames.frames.RaidFrames[1]:Hide()
 		end
 		local z=1
-		LunaUnitFrames.frames.RaidFrames[1].member[1].unit = "player"
-		local frame = LunaUnitFrames.frames.RaidFrames[1].member[1]
-		while z < 5 do
+		while z < 6 do
+			if z == 1 then
+				LunaUnitFrames.frames.RaidFrames[1].member[1].unit = "player"
+			else
+				LunaUnitFrames.frames.RaidFrames[1].member[z].unit = "party"..(z-1)
+			end
+			frame = LunaUnitFrames.frames.RaidFrames[1].member[z]
 			if not UnitExists(frame.unit) then
 				frame:Hide()
 			else
@@ -331,8 +331,6 @@ function LunaUnitFrames:UpdateRaidRoster()
 				end
 			end
 			z = z+1
-			LunaUnitFrames.frames.RaidFrames[1].member[z].unit = "party"..(z-1)
-			frame = LunaUnitFrames.frames.RaidFrames[1].member[z]
 		end
 	elseif RAID_SUBGROUP_LISTS then
 		for i=1,8 do
