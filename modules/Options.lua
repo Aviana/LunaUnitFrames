@@ -1256,7 +1256,7 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[3].HideHealing:SetPoint("TOPLEFT", LunaOptionsFrame.pages[3].fliptarget, "TOPLEFT", 0, -30)
 	LunaOptionsFrame.pages[3].HideHealing:SetScript("OnClick", OptionFunctions.ToggleHideHealing)
 	LunaOptionsFrame.pages[3].HideHealing:SetChecked(LunaOptions.HideHealing or 0)
-	getglobal("HideHealingText"):SetText("Hide Incomming Heals")
+	getglobal("HideHealingText"):SetText("Hide Incoming Heals")
 	
 	LunaOptionsFrame.pages[3].BuffInRowslider = CreateFrame("Slider", "LunaTargetFrameBuffInRow", LunaOptionsFrame.pages[3], "OptionsSliderTemplate")
 	LunaOptionsFrame.pages[3].BuffInRowslider:SetMinMaxValues(1,16)
