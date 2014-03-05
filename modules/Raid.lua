@@ -284,7 +284,7 @@ function LunaUnitFrames:UpdateRaidRoster()
 			LunaUnitFrames.frames.RaidFrames[1]:Hide()
 		end
 		local z=1
-		while z < 5 do
+		while z < 6 do
 			if z == 1 then
 				LunaUnitFrames.frames.RaidFrames[1].member[1].unit = "player"
 			else
