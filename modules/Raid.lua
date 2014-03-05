@@ -284,9 +284,13 @@ function LunaUnitFrames:UpdateRaidRoster()
 			LunaUnitFrames.frames.RaidFrames[1]:Hide()
 		end
 		local z=1
-		LunaUnitFrames.frames.RaidFrames[1].member[1].unit = "player"
-		local frame = LunaUnitFrames.frames.RaidFrames[1].member[1]
 		while z < 5 do
+			if z == 1 then
+				LunaUnitFrames.frames.RaidFrames[1].member[1].unit = "player"
+			else
+				LunaUnitFrames.frames.RaidFrames[1].member[z].unit = "party"..(z-1)
+			end
+			frame = LunaUnitFrames.frames.RaidFrames[1].member[z]
 			if not UnitExists(frame.unit) then
 				frame:Hide()
 			else
@@ -327,8 +331,6 @@ function LunaUnitFrames:UpdateRaidRoster()
 				end
 			end
 			z = z+1
-			LunaUnitFrames.frames.RaidFrames[1].member[z].unit = "party"..(z-1)
-			frame = LunaUnitFrames.frames.RaidFrames[1].member[z]
 		end
 	elseif RAID_SUBGROUP_LISTS then
 		for i=1,8 do
