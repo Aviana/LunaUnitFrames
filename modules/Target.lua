@@ -682,7 +682,7 @@ function LunaUnitFrames.TargetUpdateHeal(target)
 	end
 	local healed = HealComm:getHeal(target)
 	local health, maxHealth = UnitHealth(LunaTargetFrame.unit), UnitHealthMax(LunaTargetFrame.unit)
-	if( healed > 0 and (health < maxHealth or (LunaOptions.overheal or 20) > 0 )) then
+	if( LunaOptions.HideHealing == nil and healed > 0 and (health < maxHealth or (LunaOptions.overheal or 20) > 0 )) then
 		LunaTargetFrame.incHeal:Show()
 		local healthWidth = LunaTargetFrame.bars["Healthbar"]:GetWidth() * (health / maxHealth)
 		local incWidth = LunaTargetFrame.bars["Healthbar"]:GetWidth() * (healed / maxHealth)

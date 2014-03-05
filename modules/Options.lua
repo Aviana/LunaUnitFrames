@@ -645,6 +645,15 @@ function OptionFunctions.ToggleFlipTarget()
 	LunaTargetFrame.AdjustBars()
 end
 
+function OptionFunctions.ToggleHideHealing()
+	if LunaOptions.HideHealing then
+		LunaOptions.HideHealing = nil
+	else
+		LunaOptions.HideHealing = 1
+	end
+	LunaTargetFrame.AdjustBars()
+end
+
 function OptionFunctions.PartyGrowthToggle()
 	if LunaOptions.VerticalParty == 1 then
 		LunaOptions.VerticalParty = 0
@@ -1241,6 +1250,14 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[3].fliptarget:SetChecked(LunaOptions.fliptarget)
 	getglobal("FlipTargetText"):SetText("Flip Target Layout")
 
+	LunaOptionsFrame.pages[3].HideHealing = CreateFrame("CheckButton", "HideHealing", LunaOptionsFrame.pages[3], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[3].HideHealing:SetHeight(20)
+	LunaOptionsFrame.pages[3].HideHealing:SetWidth(20)
+	LunaOptionsFrame.pages[3].HideHealing:SetPoint("TOPLEFT", LunaOptionsFrame.pages[3].fliptarget, "TOPLEFT", 0, -30)
+	LunaOptionsFrame.pages[3].HideHealing:SetScript("OnClick", OptionFunctions.ToggleHideHealing)
+	LunaOptionsFrame.pages[3].HideHealing:SetChecked(LunaOptions.HideHealing or 0)
+	getglobal("HideHealingText"):SetText("Hide Incomming Heals")
+	
 	LunaOptionsFrame.pages[3].BuffInRowslider = CreateFrame("Slider", "LunaTargetFrameBuffInRow", LunaOptionsFrame.pages[3], "OptionsSliderTemplate")
 	LunaOptionsFrame.pages[3].BuffInRowslider:SetMinMaxValues(1,16)
 	LunaOptionsFrame.pages[3].BuffInRowslider:SetValueStep(1)
