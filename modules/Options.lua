@@ -854,6 +854,15 @@ function OptionFunctions.ToggleVertRaidPowerBars()
 	end
 	LunaUnitFrames:UpdateRaidLayout()
 end
+
+function OptionFunctions.ToggleCenterIcon()
+	if not LunaOptions.frames["LunaRaidFrames"].centerIcon then
+		LunaOptions.frames["LunaRaidFrames"].centerIcon = 1
+	else
+		LunaOptions.frames["LunaRaidFrames"].centerIcon = nil
+	end
+	LunaUnitFrames:UpdateRaidLayout()
+end
 	
 function OptionFunctions.ToggleHealerMode()
 	if not LunaOptions.HealerModeHealth then
@@ -1641,6 +1650,14 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[7].interlock:SetScript("OnClick", OptionFunctions.ToggleInterlock)
 	LunaOptionsFrame.pages[7].interlock:SetChecked(LunaOptions.raidinterlock)
 	getglobal("InterlockSwitchText"):SetText("Interlock Raid Frames")
+	
+	LunaOptionsFrame.pages[7].centericon = CreateFrame("CheckButton", "CenterIconSwitch", LunaOptionsFrame.pages[7], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[7].centericon:SetHeight(20)
+	LunaOptionsFrame.pages[7].centericon:SetWidth(20)
+	LunaOptionsFrame.pages[7].centericon:SetPoint("TOPLEFT", LunaOptionsFrame.pages[7].interlock, "TOPLEFT", 0, -30)
+	LunaOptionsFrame.pages[7].centericon:SetScript("OnClick", OptionFunctions.ToggleCenterIcon)
+	LunaOptionsFrame.pages[7].centericon:SetChecked(LunaOptions.frames["LunaRaidFrames"].centerIcon)
+	getglobal("CenterIconSwitchText"):SetText("Display Debuffs as a Center Icon")
 	
 	LunaOptionsFrame.pages[8].hmodeswitch = CreateFrame("CheckButton", "HealerModeSwitch", LunaOptionsFrame.pages[8], "UICheckButtonTemplate")
 	LunaOptionsFrame.pages[8].hmodeswitch:SetHeight(20)

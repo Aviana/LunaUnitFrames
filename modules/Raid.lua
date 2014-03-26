@@ -252,6 +252,10 @@ function LunaUnitFrames:CreateRaidFrames()
 			LunaUnitFrames.frames.RaidFrames[i].member[z].debuff.texture:SetTexture(LunaOptions.indicator)
 			LunaUnitFrames.frames.RaidFrames[i].member[z].debuff.texture:SetAllPoints(LunaUnitFrames.frames.RaidFrames[i].member[z].debuff)
 			LunaUnitFrames.frames.RaidFrames[i].member[z].debuff:Hide()
+			
+			
+			
+			
 			LunaUnitFrames.frames.RaidFrames[i].member[z]:RegisterEvent("UNIT_AURA")
 			LunaUnitFrames.frames.RaidFrames[i].member[z]:RegisterEvent("UNIT_DISPLAYPOWER")
 			LunaUnitFrames.frames.RaidFrames[i].member[z]:SetScript("OnEvent", RaidEventhandler)
@@ -429,10 +433,20 @@ function LunaUnitFrames:SetRaidFrameSize()
 			LunaUnitFrames.frames.RaidFrames[i].member[z].aggro:SetWidth(height*0.25)
 			LunaUnitFrames.frames.RaidFrames[i].member[z].buff:SetHeight(height*0.25)
 			LunaUnitFrames.frames.RaidFrames[i].member[z].buff:SetWidth(height*0.25)
-			LunaUnitFrames.frames.RaidFrames[i].member[z].debuff:SetHeight(height*0.25)
-			LunaUnitFrames.frames.RaidFrames[i].member[z].debuff:SetWidth(height*0.25)
 			LunaUnitFrames.frames.RaidFrames[i].member[z].RezIcon:SetHeight(height/1.5)
 			LunaUnitFrames.frames.RaidFrames[i].member[z].RezIcon:SetWidth(height/1.5)
+			if LunaOptions.frames["LunaRaidFrames"].centerIcon then
+				if height > width then
+					LunaUnitFrames.frames.RaidFrames[i].member[z].debuff:SetHeight(width*0.6)
+					LunaUnitFrames.frames.RaidFrames[i].member[z].debuff:SetWidth(width*0.6)
+				else
+					LunaUnitFrames.frames.RaidFrames[i].member[z].debuff:SetHeight(height*0.6)
+					LunaUnitFrames.frames.RaidFrames[i].member[z].debuff:SetWidth(height*0.6)
+				end
+			else
+				LunaUnitFrames.frames.RaidFrames[i].member[z].debuff:SetHeight(height*0.25)
+				LunaUnitFrames.frames.RaidFrames[i].member[z].debuff:SetWidth(height*0.25)
+			end
 		end
 	end
 end
@@ -486,6 +500,14 @@ function LunaUnitFrames:UpdateRaidLayout()
 				LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:Hide()
 			end
 			LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetPoint("BOTTOMRIGHT", LunaUnitFrames.frames.RaidFrames[i].member[z], "BOTTOMRIGHT")
+			if LunaOptions.frames["LunaRaidFrames"].centerIcon then
+				LunaUnitFrames.frames.RaidFrames[i].member[z].debuff:ClearAllPoints()
+				LunaUnitFrames.frames.RaidFrames[i].member[z].debuff:SetPoint("CENTER", LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar, "CENTER")
+			else
+				LunaUnitFrames.frames.RaidFrames[i].member[z].debuff:ClearAllPoints()
+				LunaUnitFrames.frames.RaidFrames[i].member[z].debuff:SetPoint("TOPRIGHT", LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar, "TOPRIGHT")
+			end
+			LunaUnitFrames.Raid_Update()
 		end
 	end
 	LunaUnitFrames:SetRaidFrameSize()
@@ -509,16 +531,19 @@ function LunaUnitFrames.Raid_Aura(unitid)
 	if this.unit ~= unitid then
 		return
 	end
-	local _,_,dispeltype = UnitDebuff(this.unit,1,1)
+	local texture,_,dispeltype = UnitDebuff(this.unit,1,1)
 	if not dispeltype and not LunaOptions.showdispelable then
 		for i=1,16 do
-			_,_,dispeltype = UnitDebuff(this.unit,i)
+			texture,_,dispeltype = UnitDebuff(this.unit,i)
 			if dispeltype then
 				break
 			end
 		end
 	end
-	if dispeltype then
+	if LunaOptions.frames["LunaRaidFrames"].centerIcon and texture then
+		this.debuff.texture:SetTexture(texture)
+		this.debuff:Show()
+	elseif dispeltype then
 		local r,g,b = unpack(LunaOptions.DebuffTypeColor[dispeltype])
 		this.debuff.texture:SetTexture(r,g,b)
 		this.debuff:Show()
@@ -599,16 +624,19 @@ function LunaUnitFrames.Raid_Update()
 	for i=1,8 do
 		for z=1,5 do
 			if LunaUnitFrames.frames.RaidFrames[i].member[z]:IsVisible() then
-				local _,_,dispeltype = UnitDebuff(LunaUnitFrames.frames.RaidFrames[i].member[z].unit,1,1)
+				local texture,_,dispeltype = UnitDebuff(LunaUnitFrames.frames.RaidFrames[i].member[z].unit,1,1)
 				if not dispeltype and not LunaOptions.showdispelable then
 					for h=1,16 do
-						_,_,dispeltype = UnitDebuff(LunaUnitFrames.frames.RaidFrames[i].member[z].unit,h)
+						texture,_,dispeltype = UnitDebuff(LunaUnitFrames.frames.RaidFrames[i].member[z].unit,h)
 						if dispeltype then
 							break
 						end
 					end
 				end
-				if dispeltype then
+				if LunaOptions.frames["LunaRaidFrames"].centerIcon and texture then
+					LunaUnitFrames.frames.RaidFrames[i].member[z].debuff.texture:SetTexture(texture)
+					LunaUnitFrames.frames.RaidFrames[i].member[z].debuff:Show()
+				elseif dispeltype then
 					local r,g,b = unpack(LunaOptions.DebuffTypeColor[dispeltype])
 					LunaUnitFrames.frames.RaidFrames[i].member[z].debuff.texture:SetTexture(r,g,b)
 					LunaUnitFrames.frames.RaidFrames[i].member[z].debuff:Show()
