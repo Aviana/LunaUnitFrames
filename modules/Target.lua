@@ -835,7 +835,7 @@ function Luna_Target_Events:UNIT_HEALTH()
 	if not UnitIsConnected("target") then
 		LunaTargetFrame.bars["Healthbar"].hpp:SetText("OFFLINE")
 		LunaTargetFrame.bars["Healthbar"]:SetValue(0)
-	elseif UnitHealth("target") < 2 then			-- This prevents negative health
+	elseif UnitHealth("target") < 1 then			-- This prevents negative health
 		LunaTargetFrame.bars["Healthbar"].hpp:SetText("DEAD")
 		LunaTargetFrame.bars["Healthbar"]:SetValue(0)
 	else
@@ -846,7 +846,7 @@ end
 Luna_Target_Events.UNIT_MAXHEALTH = Luna_Target_Events.UNIT_HEALTH;
 
 function Luna_Target_Events:UNIT_MANA()
-	if UnitHealth("target") < 2 or not UnitIsConnected("target") then
+	if UnitHealth("target") < 1 or not UnitIsConnected("target") then
 		LunaTargetFrame.bars["Powerbar"]:SetMinMaxValues(0, UnitManaMax("target"))
 		LunaTargetFrame.bars["Powerbar"]:SetValue(0)
 		LunaTargetFrame.bars["Powerbar"].ppp:SetText(LunaUnitFrames:GetPowerString("target"))

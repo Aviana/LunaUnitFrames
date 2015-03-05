@@ -328,7 +328,7 @@ function LunaUnitFrames:UpdateTargetTargetFrame()
 		LunaTargetTargetFrame.bars["Powerbar"]:SetMinMaxValues(0, UnitManaMax(LunaTargetTargetFrame.unit))
 		LunaTargetTargetFrame.bars["Powerbar"]:SetValue(0)
 		LunaTargetTargetFrame.bars["Powerbar"].ppp:SetText(LunaUnitFrames:GetPowerString(LunaTargetTargetFrame.unit))
-	elseif UnitHealth(LunaTargetTargetFrame.unit) < 2 then
+	elseif UnitHealth(LunaTargetTargetFrame.unit) < 1 then
 		LunaTargetTargetFrame.bars["Healthbar"]:SetMinMaxValues(0, UnitHealthMax(LunaTargetTargetFrame.unit))
 		LunaTargetTargetFrame.bars["Healthbar"]:SetValue(0)
 		LunaTargetTargetFrame.bars["Healthbar"].hpp:SetText("DEAD")
@@ -592,7 +592,7 @@ function LunaUnitFrames:UpdateTargetTargetTargetFrame()
 		LunaTargetTargetTargetFrame.bars["Powerbar"]:SetMinMaxValues(0, UnitManaMax(LunaTargetTargetTargetFrame.unit))
 		LunaTargetTargetTargetFrame.bars["Powerbar"]:SetValue(0)
 		LunaTargetTargetTargetFrame.bars["Powerbar"].ppp:SetText(LunaUnitFrames:GetPowerString(LunaTargetTargetTargetFrame.unit))
-	elseif UnitHealth(LunaTargetTargetTargetFrame.unit) < 2 then
+	elseif UnitHealth(LunaTargetTargetTargetFrame.unit) < 1 then
 		LunaTargetTargetTargetFrame.bars["Healthbar"]:SetMinMaxValues(0, UnitHealthMax(LunaTargetTargetTargetFrame.unit))
 		LunaTargetTargetTargetFrame.bars["Healthbar"]:SetValue(0)
 		LunaTargetTargetTargetFrame.bars["Healthbar"].hpp:SetText("DEAD")
