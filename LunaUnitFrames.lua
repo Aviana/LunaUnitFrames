@@ -8,16 +8,23 @@ LunaUnitFrames:RegisterEvent("PLAYER_ENTERING_WORLD")
 
 function LunaUnitFrames:GetHealthString(unit)
 	local result
+	local Health, maxHealth
+	if MobHealth3 and (unit == "target" or unit == "targettarget" or unit == "targettargettarget") then
+		Health, maxHealth = MobHealth3:GetUnitHealth(unit)
+	else
+		Health = UnitHealth(unit)
+		maxHealth = UnitHealthMax(unit)
+	end
 	if LunaOptions.HealerModeHealth and UnitIsFriend("player",unit) then
-		result = (UnitHealthMax(unit) - UnitHealth(unit))*(-1)
+		result = (maxHealth - Health)*(-1)
 		if result == 0 then
 			result = ""
 		end
 	else
-		result = UnitHealth(unit).."/"..UnitHealthMax(unit)
+		result = Health.."/"..maxHealth
 	end
 	if LunaOptions.Percentages then
-		result = math.floor(((UnitHealth(unit) / UnitHealthMax(unit)) * 100)+0.5).."%\n"..result
+		result = math.floor(((Health / maxHealth) * 100)+0.5).."%\n"..result
 	end
 	return result
 end

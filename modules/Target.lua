@@ -682,6 +682,9 @@ function LunaUnitFrames.TargetUpdateHeal(target)
 	end
 	local healed = HealComm:getHeal(target)
 	local health, maxHealth = UnitHealth(LunaTargetFrame.unit), UnitHealthMax(LunaTargetFrame.unit)
+	if MobHealth3 then
+		health, maxHealth = MobHealth3:GetUnitHealth("target")
+	end
 	if( LunaOptions.HideHealing == nil and healed > 0 and (health < maxHealth or (LunaOptions.overheal or 20) > 0 )) then
 		LunaTargetFrame.incHeal:Show()
 		local healthWidth = LunaTargetFrame.bars["Healthbar"]:GetWidth() * (health / maxHealth)
@@ -831,15 +834,21 @@ Luna_Target_Events.UNIT_FACTION = Luna_Target_Events.PLAYER_TARGET_CHANGED
 
 function Luna_Target_Events:UNIT_HEALTH()
 	LunaUnitFrames.TargetUpdateHeal(UnitName("target"))
-	LunaTargetFrame.bars["Healthbar"]:SetMinMaxValues(0, UnitHealthMax("target"))
+	local Health, maxHealth
+	if MobHealth3 then
+		Health, maxHealth = MobHealth3:GetUnitHealth("target")
+	else
+		maxHealth = UnitHealthMax("target")
+	end
+	LunaTargetFrame.bars["Healthbar"]:SetMinMaxValues(0, maxHealth)
 	if not UnitIsConnected("target") then
 		LunaTargetFrame.bars["Healthbar"].hpp:SetText("OFFLINE")
 		LunaTargetFrame.bars["Healthbar"]:SetValue(0)
-	elseif UnitHealth("target") < 1 then			-- This prevents negative health
+	elseif Health < 1 then			-- This prevents negative health
 		LunaTargetFrame.bars["Healthbar"].hpp:SetText("DEAD")
 		LunaTargetFrame.bars["Healthbar"]:SetValue(0)
 	else
-		LunaTargetFrame.bars["Healthbar"]:SetValue(UnitHealth("target"))
+		LunaTargetFrame.bars["Healthbar"]:SetValue(Health)
 		LunaTargetFrame.bars["Healthbar"].hpp:SetText(LunaUnitFrames:GetHealthString("target"))
 	end
 end

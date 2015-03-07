@@ -293,6 +293,13 @@ function Luna_TargetTarget_Events:PLAYER_TARGET_CHANGED()
 end
 
 function LunaUnitFrames:UpdateTargetTargetFrame()
+	local Health, maxHealth
+	if MobHealth3 then
+		Health, maxHealth = MobHealth3:GetUnitHealth(LunaTargetTargetFrame.unit)
+	else
+		Health = UnitHealth(LunaTargetTargetFrame.unit)
+		maxHealth = UnitHealthMax(LunaTargetTargetFrame.unit)
+	end
 	if LunaOptions.frames["LunaTargetTargetFrame"].enabled == 1 and UnitExists("targettarget") then
 		LunaTargetTargetFrame:Show()
 	else
@@ -321,15 +328,15 @@ function LunaUnitFrames:UpdateTargetTargetFrame()
 		end
 	end
 	if not UnitIsConnected(LunaTargetTargetFrame.unit) then
-		LunaTargetTargetFrame.bars["Healthbar"]:SetMinMaxValues(0, UnitHealthMax(LunaTargetTargetFrame.unit))
+		LunaTargetTargetFrame.bars["Healthbar"]:SetMinMaxValues(0, maxHealth)
 		LunaTargetTargetFrame.bars["Healthbar"]:SetValue(0)
 		LunaTargetTargetFrame.bars["Healthbar"].hpp:SetText("OFFLINE")
 			
 		LunaTargetTargetFrame.bars["Powerbar"]:SetMinMaxValues(0, UnitManaMax(LunaTargetTargetFrame.unit))
 		LunaTargetTargetFrame.bars["Powerbar"]:SetValue(0)
 		LunaTargetTargetFrame.bars["Powerbar"].ppp:SetText(LunaUnitFrames:GetPowerString(LunaTargetTargetFrame.unit))
-	elseif UnitHealth(LunaTargetTargetFrame.unit) < 1 then
-		LunaTargetTargetFrame.bars["Healthbar"]:SetMinMaxValues(0, UnitHealthMax(LunaTargetTargetFrame.unit))
+	elseif Health < 1 then
+		LunaTargetTargetFrame.bars["Healthbar"]:SetMinMaxValues(0, maxHealth)
 		LunaTargetTargetFrame.bars["Healthbar"]:SetValue(0)
 		LunaTargetTargetFrame.bars["Healthbar"].hpp:SetText("DEAD")
 			
@@ -337,8 +344,8 @@ function LunaUnitFrames:UpdateTargetTargetFrame()
 		LunaTargetTargetFrame.bars["Powerbar"]:SetValue(0)
 		LunaTargetTargetFrame.bars["Powerbar"].ppp:SetText(LunaUnitFrames:GetPowerString(LunaTargetTargetFrame.unit))
 	else
-		LunaTargetTargetFrame.bars["Healthbar"]:SetMinMaxValues(0, UnitHealthMax(LunaTargetTargetFrame.unit))
-		LunaTargetTargetFrame.bars["Healthbar"]:SetValue(UnitHealth(LunaTargetTargetFrame.unit))
+		LunaTargetTargetFrame.bars["Healthbar"]:SetMinMaxValues(0, maxHealth)
+		LunaTargetTargetFrame.bars["Healthbar"]:SetValue(Health)
 		LunaTargetTargetFrame.bars["Healthbar"].hpp:SetText(LunaUnitFrames:GetHealthString("targettarget"))
 			
 		LunaTargetTargetFrame.bars["Powerbar"]:SetMinMaxValues(0, UnitManaMax(LunaTargetTargetFrame.unit))
@@ -563,6 +570,13 @@ function LunaUnitFrames:UpdateTargetTargetTargetFrame()
 		LunaTargetTargetTargetFrame:Hide()
 		return
 	end
+	local Health, maxHealth
+	if MobHealth3 then
+		Health, maxHealth = MobHealth3:GetUnitHealth(LunaTargetTargetTargetFrame.unit)
+	else
+		Health = UnitHealth(LunaTargetTargetTargetFrame.unit)
+		maxHealth = UnitHealthMax(LunaTargetTargetTargetFrame.unit)
+	end
 	local _,class = UnitClass("targettargettarget")
 	if UnitIsPlayer("targettargettarget") then
 		local color = LunaOptions.ClassColors[class]
@@ -585,15 +599,15 @@ function LunaUnitFrames:UpdateTargetTargetTargetFrame()
 		end
 	end
 	if not UnitIsConnected(LunaTargetTargetTargetFrame.unit) then
-		LunaTargetTargetTargetFrame.bars["Healthbar"]:SetMinMaxValues(0, UnitHealthMax(LunaTargetTargetTargetFrame.unit))
+		LunaTargetTargetTargetFrame.bars["Healthbar"]:SetMinMaxValues(0, maxHealth)
 		LunaTargetTargetTargetFrame.bars["Healthbar"]:SetValue(0)
 		LunaTargetTargetTargetFrame.bars["Healthbar"].hpp:SetText("OFFLINE")
 			
 		LunaTargetTargetTargetFrame.bars["Powerbar"]:SetMinMaxValues(0, UnitManaMax(LunaTargetTargetTargetFrame.unit))
 		LunaTargetTargetTargetFrame.bars["Powerbar"]:SetValue(0)
 		LunaTargetTargetTargetFrame.bars["Powerbar"].ppp:SetText(LunaUnitFrames:GetPowerString(LunaTargetTargetTargetFrame.unit))
-	elseif UnitHealth(LunaTargetTargetTargetFrame.unit) < 1 then
-		LunaTargetTargetTargetFrame.bars["Healthbar"]:SetMinMaxValues(0, UnitHealthMax(LunaTargetTargetTargetFrame.unit))
+	elseif Health < 1 then
+		LunaTargetTargetTargetFrame.bars["Healthbar"]:SetMinMaxValues(0, maxHealth)
 		LunaTargetTargetTargetFrame.bars["Healthbar"]:SetValue(0)
 		LunaTargetTargetTargetFrame.bars["Healthbar"].hpp:SetText("DEAD")
 			
@@ -601,8 +615,8 @@ function LunaUnitFrames:UpdateTargetTargetTargetFrame()
 		LunaTargetTargetTargetFrame.bars["Powerbar"]:SetValue(0)
 		LunaTargetTargetTargetFrame.bars["Powerbar"].ppp:SetText(LunaUnitFrames:GetPowerString(LunaTargetTargetTargetFrame.unit))
 	else
-		LunaTargetTargetTargetFrame.bars["Healthbar"]:SetMinMaxValues(0, UnitHealthMax(LunaTargetTargetTargetFrame.unit))
-		LunaTargetTargetTargetFrame.bars["Healthbar"]:SetValue(UnitHealth(LunaTargetTargetTargetFrame.unit))
+		LunaTargetTargetTargetFrame.bars["Healthbar"]:SetMinMaxValues(0, maxHealth)
+		LunaTargetTargetTargetFrame.bars["Healthbar"]:SetValue(Health)
 		LunaTargetTargetTargetFrame.bars["Healthbar"].hpp:SetText(LunaUnitFrames:GetHealthString("targettargettarget"))
 			
 		LunaTargetTargetTargetFrame.bars["Powerbar"]:SetMinMaxValues(0, UnitManaMax(LunaTargetTargetTargetFrame.unit))
