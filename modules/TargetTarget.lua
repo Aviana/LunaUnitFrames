@@ -96,6 +96,32 @@ function Luna_TargetTarget_OnUpdate()
 	end
 end
 
+local function Luna_TargetTarget_SetBuffTooltip()
+	GameTooltip:SetOwner(this, "ANCHOR_BOTTOMRIGHT")
+	if (this.id > 16) then
+		GameTooltip:SetUnitDebuff("targettarget", this.id-16)
+	else
+		GameTooltip:SetUnitBuff("targettarget", this.id)
+	end
+end
+
+local function Luna_TargetTarget_SetBuffTooltipLeave()
+	GameTooltip:Hide()
+end
+
+local function Luna_TargetTargetTarget_SetBuffTooltip()
+	GameTooltip:SetOwner(this, "ANCHOR_BOTTOMRIGHT")
+	if (this.id > 16) then
+		GameTooltip:SetUnitDebuff("targettargettarget", this.id-16)
+	else
+		GameTooltip:SetUnitBuff("targettargettarget", this.id)
+	end
+end
+
+local function Luna_TargetTargetTarget_SetBuffTooltipLeave()
+	GameTooltip:Hide()
+end
+
 local function StartMoving()
 	this:StartMoving()
 end
@@ -188,6 +214,72 @@ function LunaUnitFrames:CreateTargetTargetFrame()
 	ppbg:SetTexture(.25,.25,.25,.25)
 	LunaTargetTargetFrame.bars["Powerbar"].ppbg = ppbg
 
+	LunaTargetTargetFrame.AuraAnchor = CreateFrame("Frame", nil, LunaTargetTargetFrame)
+	
+	LunaTargetTargetFrame.Buffs = {}
+
+	LunaTargetTargetFrame.Buffs[1] = CreateFrame("Button", nil, LunaTargetTargetFrame.AuraAnchor)
+	LunaTargetTargetFrame.Buffs[1].texturepath = UnitBuff("targettarget",1)
+	LunaTargetTargetFrame.Buffs[1].id = 1
+	LunaTargetTargetFrame.Buffs[1]:SetNormalTexture(LunaTargetTargetFrame.Buffs[1].texturepath)
+	LunaTargetTargetFrame.Buffs[1]:SetScript("OnEnter", Luna_TargetTarget_SetBuffTooltip)
+	LunaTargetTargetFrame.Buffs[1]:SetScript("OnLeave", Luna_TargetTarget_SetBuffTooltipLeave)
+
+	LunaTargetTargetFrame.Buffs[1].stacks = LunaTargetTargetFrame.Buffs[1]:CreateFontString(nil, "OVERLAY", LunaTargetTargetFrame.Buffs[1])
+	LunaTargetTargetFrame.Buffs[1].stacks:SetPoint("BOTTOMRIGHT", LunaTargetTargetFrame.Buffs[1], 0, 0)
+	LunaTargetTargetFrame.Buffs[1].stacks:SetJustifyH("LEFT")
+	LunaTargetTargetFrame.Buffs[1].stacks:SetShadowColor(0, 0, 0)
+	LunaTargetTargetFrame.Buffs[1].stacks:SetShadowOffset(0.8, -0.8)
+	LunaTargetTargetFrame.Buffs[1].stacks:SetTextColor(1,1,1)
+	
+	for i=2, 16 do
+		LunaTargetTargetFrame.Buffs[i] = CreateFrame("Button", nil, LunaTargetTargetFrame.AuraAnchor)
+		LunaTargetTargetFrame.Buffs[i].texturepath = UnitBuff("targettarget",i)
+		LunaTargetTargetFrame.Buffs[i].id = i
+		LunaTargetTargetFrame.Buffs[i]:SetNormalTexture(LunaTargetTargetFrame.Buffs[i].texturepath)
+		LunaTargetTargetFrame.Buffs[i]:SetScript("OnEnter", Luna_TargetTarget_SetBuffTooltip)
+		LunaTargetTargetFrame.Buffs[i]:SetScript("OnLeave", Luna_TargetTarget_SetBuffTooltipLeave)
+		
+		LunaTargetTargetFrame.Buffs[i].stacks = LunaTargetTargetFrame.Buffs[i]:CreateFontString(nil, "OVERLAY", LunaTargetTargetFrame.Buffs[i])
+		LunaTargetTargetFrame.Buffs[i].stacks:SetPoint("BOTTOMRIGHT", LunaTargetTargetFrame.Buffs[i], 0, 0)
+		LunaTargetTargetFrame.Buffs[i].stacks:SetJustifyH("LEFT")
+		LunaTargetTargetFrame.Buffs[i].stacks:SetShadowColor(0, 0, 0)
+		LunaTargetTargetFrame.Buffs[i].stacks:SetShadowOffset(0.8, -0.8)
+		LunaTargetTargetFrame.Buffs[i].stacks:SetTextColor(1,1,1)
+	end
+
+	LunaTargetTargetFrame.Debuffs = {}
+
+	LunaTargetTargetFrame.Debuffs[1] = CreateFrame("Button", nil, LunaTargetTargetFrame.AuraAnchor)
+	LunaTargetTargetFrame.Debuffs[1].texturepath = UnitDebuff("targettarget",1)
+	LunaTargetTargetFrame.Debuffs[1].id = 17
+	LunaTargetTargetFrame.Debuffs[1]:SetNormalTexture(LunaTargetTargetFrame.Debuffs[1].texturepath)
+	LunaTargetTargetFrame.Debuffs[1]:SetScript("OnEnter", Luna_TargetTarget_SetBuffTooltip)
+	LunaTargetTargetFrame.Debuffs[1]:SetScript("OnLeave", Luna_TargetTarget_SetBuffTooltipLeave)
+
+	LunaTargetTargetFrame.Debuffs[1].stacks = LunaTargetTargetFrame.Debuffs[1]:CreateFontString(nil, "OVERLAY", LunaTargetTargetFrame.Debuffs[1])
+	LunaTargetTargetFrame.Debuffs[1].stacks:SetPoint("BOTTOMRIGHT", LunaTargetTargetFrame.Debuffs[1], 0, 0)
+	LunaTargetTargetFrame.Debuffs[1].stacks:SetJustifyH("LEFT")
+	LunaTargetTargetFrame.Debuffs[1].stacks:SetShadowColor(0, 0, 0)
+	LunaTargetTargetFrame.Debuffs[1].stacks:SetShadowOffset(0.8, -0.8)
+	LunaTargetTargetFrame.Debuffs[1].stacks:SetTextColor(1,1,1)
+
+	for i=2, 16 do
+		LunaTargetTargetFrame.Debuffs[i] = CreateFrame("Button", nil, LunaTargetTargetFrame.AuraAnchor)
+		LunaTargetTargetFrame.Debuffs[i].texturepath = UnitDebuff("targettarget",i)
+		LunaTargetTargetFrame.Debuffs[i].id = i+16
+		LunaTargetTargetFrame.Debuffs[i]:SetNormalTexture(LunaTargetTargetFrame.Debuffs[i].texturepath)
+		LunaTargetTargetFrame.Debuffs[i]:SetScript("OnEnter", Luna_TargetTarget_SetBuffTooltip)
+		LunaTargetTargetFrame.Debuffs[i]:SetScript("OnLeave", Luna_TargetTarget_SetBuffTooltipLeave)
+		
+		LunaTargetTargetFrame.Debuffs[i].stacks = LunaTargetTargetFrame.Debuffs[i]:CreateFontString(nil, "OVERLAY", LunaTargetTargetFrame.Debuffs[i])
+		LunaTargetTargetFrame.Debuffs[i].stacks:SetPoint("BOTTOMRIGHT", LunaTargetTargetFrame.Debuffs[i], 0, 0)
+		LunaTargetTargetFrame.Debuffs[i].stacks:SetJustifyH("LEFT")
+		LunaTargetTargetFrame.Debuffs[i].stacks:SetShadowColor(0, 0, 0)
+		LunaTargetTargetFrame.Debuffs[i].stacks:SetShadowOffset(0.8, -0.8)
+		LunaTargetTargetFrame.Debuffs[i].stacks:SetTextColor(1,1,1)
+	end
+	
 	local ppp = LunaTargetTargetFrame.bars["Powerbar"]:CreateFontString(nil, "OVERLAY", LunaTargetTargetFrame.bars["Powerbar"])
 	ppp:SetPoint("RIGHT", -2, 0)
 	ppp:SetFont(LunaOptions.font, LunaOptions.fontHeight)
@@ -279,11 +371,133 @@ function LunaUnitFrames:CreateTargetTargetFrame()
 			LunaTargetTargetFrame.class:Show()
 		end
 	end
+	LunaTargetTargetFrame.UpdateBuffSize = function ()
+		local buffcount = LunaOptions.frames["LunaTargetTargetFrame"].BuffInRow or 16
+		if LunaOptions.frames["LunaTargetTargetFrame"].ShowBuffs == 1 then
+			for i=1, 16 do
+				LunaTargetTargetFrame.Buffs[i]:Hide()
+				LunaTargetTargetFrame.Debuffs[i]:Hide()
+			end
+		elseif LunaOptions.frames["LunaTargetTargetFrame"].ShowBuffs == 2 then
+			local buffsize = ((LunaTargetTargetFrame:GetWidth()-(buffcount-1))/buffcount)
+			LunaTargetTargetFrame.AuraAnchor:ClearAllPoints()
+			LunaTargetTargetFrame.AuraAnchor:SetPoint("BOTTOMLEFT", LunaTargetTargetFrame, "TOPLEFT", -1, 3)
+			LunaTargetTargetFrame.AuraAnchor:SetWidth(LunaTargetTargetFrame:GetWidth())
+			local buffid = 1
+			local row = 0
+			while buffid < 17 do
+				for z=1, buffcount do
+					LunaTargetTargetFrame.Buffs[buffid]:ClearAllPoints()
+					LunaTargetTargetFrame.Buffs[buffid]:SetPoint("BOTTOMLEFT", LunaTargetTargetFrame.AuraAnchor, "BOTTOMLEFT", ((z-1)*(buffsize+1)), (buffsize+1)*row)
+					LunaTargetTargetFrame.Buffs[buffid]:SetHeight(buffsize)
+					LunaTargetTargetFrame.Buffs[buffid]:SetWidth(buffsize)
+					LunaTargetTargetFrame.Buffs[buffid].stacks:SetFont(LunaOptions.font, buffsize*0.75)
+					
+					LunaTargetTargetFrame.Debuffs[buffid]:ClearAllPoints()
+					LunaTargetTargetFrame.Debuffs[buffid]:SetPoint("BOTTOMLEFT", LunaTargetTargetFrame.AuraAnchor, "TOPLEFT", ((z-1)*(buffsize+1)), (buffsize+1)*row)
+					LunaTargetTargetFrame.Debuffs[buffid]:SetHeight(buffsize)
+					LunaTargetTargetFrame.Debuffs[buffid]:SetWidth(buffsize)
+					LunaTargetTargetFrame.Debuffs[buffid].stacks:SetFont(LunaOptions.font, buffsize*0.75)
+					
+					buffid = buffid + 1
+					if buffid == 17 then
+						break
+					end
+				end
+				row = row + 1
+			end
+		elseif LunaOptions.frames["LunaTargetTargetFrame"].ShowBuffs == 3 then
+			local buffsize = ((LunaTargetTargetFrame:GetWidth()-(buffcount-1))/buffcount)
+			LunaTargetTargetFrame.AuraAnchor:ClearAllPoints()
+			LunaTargetTargetFrame.AuraAnchor:SetWidth(LunaTargetTargetFrame:GetWidth())
+			local buffid = 1
+			local row = 0
+			while buffid < 17 do
+				for z=1, buffcount do
+					LunaTargetTargetFrame.Buffs[buffid]:ClearAllPoints()
+					LunaTargetTargetFrame.Buffs[buffid]:SetPoint("TOPLEFT", LunaTargetTargetFrame.AuraAnchor, "TOPLEFT", ((z-1)*(buffsize+1)), (buffsize+1)*row*(-1))
+					LunaTargetTargetFrame.Buffs[buffid]:SetHeight(buffsize)
+					LunaTargetTargetFrame.Buffs[buffid]:SetWidth(buffsize)
+					LunaTargetTargetFrame.Buffs[buffid].stacks:SetFont(LunaOptions.font, buffsize*0.75)
+					
+					LunaTargetTargetFrame.Debuffs[buffid]:ClearAllPoints()
+					LunaTargetTargetFrame.Debuffs[buffid]:SetPoint("TOPLEFT", LunaTargetTargetFrame.AuraAnchor, "BOTTOMLEFT", ((z-1)*(buffsize+1)), (buffsize+1)*row*(-1))
+					LunaTargetTargetFrame.Debuffs[buffid]:SetHeight(buffsize)
+					LunaTargetTargetFrame.Debuffs[buffid]:SetWidth(buffsize)
+					LunaTargetTargetFrame.Debuffs[buffid].stacks:SetFont(LunaOptions.font, buffsize*0.75)
+					
+					buffid = buffid + 1
+					if buffid == 17 then
+						break
+					end
+				end
+				row = row + 1
+			end
+			LunaTargetTargetFrame.AuraAnchor:SetPoint("TOPLEFT", LunaTargetTargetFrame, "BOTTOMLEFT", -1, -3)
+		elseif LunaOptions.frames["LunaTargetTargetFrame"].ShowBuffs == 4 then
+			local buffsize = (((LunaTargetTargetFrame:GetHeight()/2)-(math.ceil(16/buffcount)-1))/math.ceil(16/buffcount))
+			LunaTargetTargetFrame.AuraAnchor:ClearAllPoints()
+			LunaTargetTargetFrame.AuraAnchor:SetWidth((buffsize*buffcount)+(buffcount-1))
+			local buffid = 1
+			local row = 0
+			while buffid < 17 do
+				for z=1, buffcount do
+					LunaTargetTargetFrame.Buffs[buffid]:ClearAllPoints()
+					LunaTargetTargetFrame.Buffs[buffid]:SetPoint("TOPRIGHT", LunaTargetTargetFrame.AuraAnchor, "TOPRIGHT", ((z-1)*(buffsize+1))*(-1), (buffsize+1)*row*(-1))
+					LunaTargetTargetFrame.Buffs[buffid]:SetHeight(buffsize)
+					LunaTargetTargetFrame.Buffs[buffid]:SetWidth(buffsize)
+					LunaTargetTargetFrame.Buffs[buffid].stacks:SetFont(LunaOptions.font, buffsize*0.75)
+					
+					LunaTargetTargetFrame.Debuffs[buffid]:ClearAllPoints()
+					LunaTargetTargetFrame.Debuffs[buffid]:SetPoint("TOPRIGHT", LunaTargetTargetFrame.AuraAnchor, "BOTTOMRIGHT", ((z-1)*(buffsize+1))*(-1), (buffsize+1)*row*(-1))
+					LunaTargetTargetFrame.Debuffs[buffid]:SetHeight(buffsize)
+					LunaTargetTargetFrame.Debuffs[buffid]:SetWidth(buffsize)
+					LunaTargetTargetFrame.Debuffs[buffid].stacks:SetFont(LunaOptions.font, buffsize*0.75)
+					
+					buffid = buffid + 1
+					if buffid == 17 then
+						break
+					end
+				end
+				row = row + 1
+			end
+			LunaTargetTargetFrame.AuraAnchor:SetPoint("TOPRIGHT", LunaTargetTargetFrame, "TOPLEFT", -3, 0)
+		else
+			local buffsize = (((LunaTargetTargetFrame:GetHeight()/2)-(math.ceil(16/buffcount)-1))/math.ceil(16/buffcount))
+			LunaTargetTargetFrame.AuraAnchor:ClearAllPoints()
+			LunaTargetTargetFrame.AuraAnchor:SetWidth((buffsize*buffcount)+(buffcount-1))
+			local buffid = 1
+			local row = 0
+			while buffid < 17 do
+				for z=1, buffcount do
+					LunaTargetTargetFrame.Buffs[buffid]:ClearAllPoints()
+					LunaTargetTargetFrame.Buffs[buffid]:SetPoint("TOPLEFT", LunaTargetTargetFrame.AuraAnchor, "TOPLEFT", ((z-1)*(buffsize+1)), (buffsize+1)*row*(-1))
+					LunaTargetTargetFrame.Buffs[buffid]:SetHeight(buffsize)
+					LunaTargetTargetFrame.Buffs[buffid]:SetWidth(buffsize)
+					LunaTargetTargetFrame.Buffs[buffid].stacks:SetFont(LunaOptions.font, buffsize*0.75)
+					
+					LunaTargetTargetFrame.Debuffs[buffid]:ClearAllPoints()
+					LunaTargetTargetFrame.Debuffs[buffid]:SetPoint("TOPLEFT", LunaTargetTargetFrame.AuraAnchor, "BOTTOMLEFT", ((z-1)*(buffsize+1)), (buffsize+1)*row*(-1))
+					LunaTargetTargetFrame.Debuffs[buffid]:SetHeight(buffsize)
+					LunaTargetTargetFrame.Debuffs[buffid]:SetWidth(buffsize)
+					LunaTargetTargetFrame.Debuffs[buffid].stacks:SetFont(LunaOptions.font, buffsize*0.75)
+					
+					buffid = buffid + 1
+					if buffid == 17 then
+						break
+					end
+				end
+				row = row + 1
+			end
+			LunaTargetTargetFrame.AuraAnchor:SetPoint("TOPLEFT", LunaTargetTargetFrame, "TOPRIGHT", 3, 0)
+		end
+	end
 	for k,v in pairs(LunaOptions.frames["LunaTargetTargetFrame"].bars) do
 		if v[2] == 0 then
 			LunaTargetTargetFrame.bars[v[1]]:Hide()
 		end
 	end
+	LunaTargetTargetFrame.UpdateBuffSize()
 	LunaTargetTargetFrame.AdjustBars()	
 end
 
@@ -394,6 +608,52 @@ function LunaUnitFrames:UpdateTargetTargetFrame()
 	else
 		LunaTargetTargetFrame.RaidIcon:Hide()
 	end
+	if LunaOptions.frames["LunaTargetTargetFrame"].ShowBuffs ~= 1 then
+		local pos
+		for i=1, 16 do
+			local path, stacks = UnitBuff("targettarget",i)
+			LunaTargetTargetFrame.Buffs[i].texturepath = path
+			if LunaTargetTargetFrame.Buffs[i].texturepath then
+				LunaTargetTargetFrame.Buffs[i]:EnableMouse(1)
+				LunaTargetTargetFrame.Buffs[i]:Show()
+				if stacks > 1 then
+					LunaTargetTargetFrame.Buffs[i].stacks:SetText(stacks)
+					LunaTargetTargetFrame.Buffs[i].stacks:Show()
+				else
+					LunaTargetTargetFrame.Buffs[i].stacks:Hide()
+				end
+			else
+				LunaTargetTargetFrame.Buffs[i]:EnableMouse(0)
+				LunaTargetTargetFrame.Buffs[i]:Hide()
+				if not pos then
+					pos = i
+				end
+			end
+			LunaTargetTargetFrame.Buffs[i]:SetNormalTexture(LunaTargetTargetFrame.Buffs[i].texturepath)
+		end
+		if not pos then
+			pos = 17
+		end
+		LunaTargetTargetFrame.AuraAnchor:SetHeight((LunaTargetTargetFrame.Buffs[1]:GetHeight()*math.ceil((pos-1)/(LunaOptions.frames["LunaTargetTargetFrame"].BuffInRow or 16)))+(math.ceil((pos-1)/(LunaOptions.frames["LunaTargetTargetFrame"].BuffInRow or 16))-1)+1.1)
+		for i=1, 16 do
+			local path, stacks = UnitDebuff("targettarget",i)
+			LunaTargetTargetFrame.Debuffs[i].texturepath = path
+			if LunaTargetTargetFrame.Debuffs[i].texturepath then
+				LunaTargetTargetFrame.Debuffs[i]:EnableMouse(1)
+				LunaTargetTargetFrame.Debuffs[i]:Show()
+				if stacks > 1 then
+					LunaTargetTargetFrame.Debuffs[i].stacks:SetText(stacks)
+					LunaTargetTargetFrame.Debuffs[i].stacks:Show()
+				else
+					LunaTargetTargetFrame.Debuffs[i].stacks:Hide()
+				end
+			else
+				LunaTargetTargetFrame.Debuffs[i]:EnableMouse(0)
+				LunaTargetTargetFrame.Debuffs[i]:Hide()
+			end
+			LunaTargetTargetFrame.Debuffs[i]:SetNormalTexture(LunaTargetTargetFrame.Debuffs[i].texturepath)
+		end
+	end
 end
 
 function LunaUnitFrames:CreateTargetTargetTargetFrame()
@@ -465,6 +725,72 @@ function LunaUnitFrames:CreateTargetTargetTargetFrame()
 	ppbg:SetTexture(.25,.25,.25,.25)
 	LunaTargetTargetTargetFrame.bars["Powerbar"].ppbg = ppbg
 
+	LunaTargetTargetTargetFrame.AuraAnchor = CreateFrame("Frame", nil, LunaTargetTargetTargetFrame)
+	
+	LunaTargetTargetTargetFrame.Buffs = {}
+
+	LunaTargetTargetTargetFrame.Buffs[1] = CreateFrame("Button", nil, LunaTargetTargetTargetFrame.AuraAnchor)
+	LunaTargetTargetTargetFrame.Buffs[1].texturepath = UnitBuff("targettargettarget",1)
+	LunaTargetTargetTargetFrame.Buffs[1].id = 1
+	LunaTargetTargetTargetFrame.Buffs[1]:SetNormalTexture(LunaTargetTargetTargetFrame.Buffs[1].texturepath)
+	LunaTargetTargetTargetFrame.Buffs[1]:SetScript("OnEnter", Luna_TargetTargetTarget_SetBuffTooltip)
+	LunaTargetTargetTargetFrame.Buffs[1]:SetScript("OnLeave", Luna_TargetTargetTarget_SetBuffTooltipLeave)
+
+	LunaTargetTargetTargetFrame.Buffs[1].stacks = LunaTargetTargetTargetFrame.Buffs[1]:CreateFontString(nil, "OVERLAY", LunaTargetTargetTargetFrame.Buffs[1])
+	LunaTargetTargetTargetFrame.Buffs[1].stacks:SetPoint("BOTTOMRIGHT", LunaTargetTargetTargetFrame.Buffs[1], 0, 0)
+	LunaTargetTargetTargetFrame.Buffs[1].stacks:SetJustifyH("LEFT")
+	LunaTargetTargetTargetFrame.Buffs[1].stacks:SetShadowColor(0, 0, 0)
+	LunaTargetTargetTargetFrame.Buffs[1].stacks:SetShadowOffset(0.8, -0.8)
+	LunaTargetTargetTargetFrame.Buffs[1].stacks:SetTextColor(1,1,1)
+	
+	for i=2, 16 do
+		LunaTargetTargetTargetFrame.Buffs[i] = CreateFrame("Button", nil, LunaTargetTargetTargetFrame.AuraAnchor)
+		LunaTargetTargetTargetFrame.Buffs[i].texturepath = UnitBuff("targettargettarget",i)
+		LunaTargetTargetTargetFrame.Buffs[i].id = i
+		LunaTargetTargetTargetFrame.Buffs[i]:SetNormalTexture(LunaTargetTargetTargetFrame.Buffs[i].texturepath)
+		LunaTargetTargetTargetFrame.Buffs[i]:SetScript("OnEnter", Luna_TargetTargetTarget_SetBuffTooltip)
+		LunaTargetTargetTargetFrame.Buffs[i]:SetScript("OnLeave", Luna_TargetTargetTarget_SetBuffTooltipLeave)
+		
+		LunaTargetTargetTargetFrame.Buffs[i].stacks = LunaTargetTargetTargetFrame.Buffs[i]:CreateFontString(nil, "OVERLAY", LunaTargetTargetTargetFrame.Buffs[i])
+		LunaTargetTargetTargetFrame.Buffs[i].stacks:SetPoint("BOTTOMRIGHT", LunaTargetTargetTargetFrame.Buffs[i], 0, 0)
+		LunaTargetTargetTargetFrame.Buffs[i].stacks:SetJustifyH("LEFT")
+		LunaTargetTargetTargetFrame.Buffs[i].stacks:SetShadowColor(0, 0, 0)
+		LunaTargetTargetTargetFrame.Buffs[i].stacks:SetShadowOffset(0.8, -0.8)
+		LunaTargetTargetTargetFrame.Buffs[i].stacks:SetTextColor(1,1,1)
+	end
+
+	LunaTargetTargetTargetFrame.Debuffs = {}
+
+	LunaTargetTargetTargetFrame.Debuffs[1] = CreateFrame("Button", nil, LunaTargetTargetTargetFrame.AuraAnchor)
+	LunaTargetTargetTargetFrame.Debuffs[1].texturepath = UnitDebuff("targettargettarget",1)
+	LunaTargetTargetTargetFrame.Debuffs[1].id = 17
+	LunaTargetTargetTargetFrame.Debuffs[1]:SetNormalTexture(LunaTargetTargetTargetFrame.Debuffs[1].texturepath)
+	LunaTargetTargetTargetFrame.Debuffs[1]:SetScript("OnEnter", Luna_TargetTargetTarget_SetBuffTooltip)
+	LunaTargetTargetTargetFrame.Debuffs[1]:SetScript("OnLeave", Luna_TargetTargetTarget_SetBuffTooltipLeave)
+
+	LunaTargetTargetTargetFrame.Debuffs[1].stacks = LunaTargetTargetTargetFrame.Debuffs[1]:CreateFontString(nil, "OVERLAY", LunaTargetTargetTargetFrame.Debuffs[1])
+	LunaTargetTargetTargetFrame.Debuffs[1].stacks:SetPoint("BOTTOMRIGHT", LunaTargetTargetTargetFrame.Debuffs[1], 0, 0)
+	LunaTargetTargetTargetFrame.Debuffs[1].stacks:SetJustifyH("LEFT")
+	LunaTargetTargetTargetFrame.Debuffs[1].stacks:SetShadowColor(0, 0, 0)
+	LunaTargetTargetTargetFrame.Debuffs[1].stacks:SetShadowOffset(0.8, -0.8)
+	LunaTargetTargetTargetFrame.Debuffs[1].stacks:SetTextColor(1,1,1)
+
+	for i=2, 16 do
+		LunaTargetTargetTargetFrame.Debuffs[i] = CreateFrame("Button", nil, LunaTargetTargetTargetFrame.AuraAnchor)
+		LunaTargetTargetTargetFrame.Debuffs[i].texturepath = UnitDebuff("targettargettarget",i)
+		LunaTargetTargetTargetFrame.Debuffs[i].id = i+16
+		LunaTargetTargetTargetFrame.Debuffs[i]:SetNormalTexture(LunaTargetTargetTargetFrame.Debuffs[i].texturepath)
+		LunaTargetTargetTargetFrame.Debuffs[i]:SetScript("OnEnter", Luna_TargetTargetTarget_SetBuffTooltip)
+		LunaTargetTargetTargetFrame.Debuffs[i]:SetScript("OnLeave", Luna_TargetTargetTarget_SetBuffTooltipLeave)
+		
+		LunaTargetTargetTargetFrame.Debuffs[i].stacks = LunaTargetTargetTargetFrame.Debuffs[i]:CreateFontString(nil, "OVERLAY", LunaTargetTargetTargetFrame.Debuffs[i])
+		LunaTargetTargetTargetFrame.Debuffs[i].stacks:SetPoint("BOTTOMRIGHT", LunaTargetTargetTargetFrame.Debuffs[i], 0, 0)
+		LunaTargetTargetTargetFrame.Debuffs[i].stacks:SetJustifyH("LEFT")
+		LunaTargetTargetTargetFrame.Debuffs[i].stacks:SetShadowColor(0, 0, 0)
+		LunaTargetTargetTargetFrame.Debuffs[i].stacks:SetShadowOffset(0.8, -0.8)
+		LunaTargetTargetTargetFrame.Debuffs[i].stacks:SetTextColor(1,1,1)
+	end	
+	
 	local ppp = LunaTargetTargetTargetFrame.bars["Powerbar"]:CreateFontString(nil, "OVERLAY", LunaTargetTargetTargetFrame.bars["Powerbar"])
 	ppp:SetPoint("RIGHT", -2, 0)
 	ppp:SetFont(LunaOptions.font, LunaOptions.fontHeight)
@@ -554,13 +880,134 @@ function LunaUnitFrames:CreateTargetTargetTargetFrame()
 			LunaTargetTargetTargetFrame.class:Show()
 		end
 	end
+	LunaTargetTargetTargetFrame.UpdateBuffSize = function ()
+		local buffcount = LunaOptions.frames["LunaTargetTargetTargetFrame"].BuffInRow or 16
+		if LunaOptions.frames["LunaTargetTargetTargetFrame"].ShowBuffs == 1 then
+			for i=1, 16 do
+				LunaTargetTargetTargetFrame.Buffs[i]:Hide()
+				LunaTargetTargetTargetFrame.Debuffs[i]:Hide()
+			end
+		elseif LunaOptions.frames["LunaTargetTargetTargetFrame"].ShowBuffs == 2 then
+			local buffsize = ((LunaTargetTargetTargetFrame:GetWidth()-(buffcount-1))/buffcount)
+			LunaTargetTargetTargetFrame.AuraAnchor:ClearAllPoints()
+			LunaTargetTargetTargetFrame.AuraAnchor:SetPoint("BOTTOMLEFT", LunaTargetTargetTargetFrame, "TOPLEFT", -1, 3)
+			LunaTargetTargetTargetFrame.AuraAnchor:SetWidth(LunaTargetTargetTargetFrame:GetWidth())
+			local buffid = 1
+			local row = 0
+			while buffid < 17 do
+				for z=1, buffcount do
+					LunaTargetTargetTargetFrame.Buffs[buffid]:ClearAllPoints()
+					LunaTargetTargetTargetFrame.Buffs[buffid]:SetPoint("BOTTOMLEFT", LunaTargetTargetTargetFrame.AuraAnchor, "BOTTOMLEFT", ((z-1)*(buffsize+1)), (buffsize+1)*row)
+					LunaTargetTargetTargetFrame.Buffs[buffid]:SetHeight(buffsize)
+					LunaTargetTargetTargetFrame.Buffs[buffid]:SetWidth(buffsize)
+					LunaTargetTargetTargetFrame.Buffs[buffid].stacks:SetFont(LunaOptions.font, buffsize*0.75)
+					
+					LunaTargetTargetTargetFrame.Debuffs[buffid]:ClearAllPoints()
+					LunaTargetTargetTargetFrame.Debuffs[buffid]:SetPoint("BOTTOMLEFT", LunaTargetTargetTargetFrame.AuraAnchor, "TOPLEFT", ((z-1)*(buffsize+1)), (buffsize+1)*row)
+					LunaTargetTargetTargetFrame.Debuffs[buffid]:SetHeight(buffsize)
+					LunaTargetTargetTargetFrame.Debuffs[buffid]:SetWidth(buffsize)
+					LunaTargetTargetTargetFrame.Debuffs[buffid].stacks:SetFont(LunaOptions.font, buffsize*0.75)
+					
+					buffid = buffid + 1
+					if buffid == 17 then
+						break
+					end
+				end
+				row = row + 1
+			end
+		elseif LunaOptions.frames["LunaTargetTargetTargetFrame"].ShowBuffs == 3 then
+			local buffsize = ((LunaTargetTargetTargetFrame:GetWidth()-(buffcount-1))/buffcount)
+			LunaTargetTargetTargetFrame.AuraAnchor:ClearAllPoints()
+			LunaTargetTargetTargetFrame.AuraAnchor:SetWidth(LunaTargetTargetTargetFrame:GetWidth())
+			local buffid = 1
+			local row = 0
+			while buffid < 17 do
+				for z=1, buffcount do
+					LunaTargetTargetTargetFrame.Buffs[buffid]:ClearAllPoints()
+					LunaTargetTargetTargetFrame.Buffs[buffid]:SetPoint("TOPLEFT", LunaTargetTargetTargetFrame.AuraAnchor, "TOPLEFT", ((z-1)*(buffsize+1)), (buffsize+1)*row*(-1))
+					LunaTargetTargetTargetFrame.Buffs[buffid]:SetHeight(buffsize)
+					LunaTargetTargetTargetFrame.Buffs[buffid]:SetWidth(buffsize)
+					LunaTargetTargetTargetFrame.Buffs[buffid].stacks:SetFont(LunaOptions.font, buffsize*0.75)
+					
+					LunaTargetTargetTargetFrame.Debuffs[buffid]:ClearAllPoints()
+					LunaTargetTargetTargetFrame.Debuffs[buffid]:SetPoint("TOPLEFT", LunaTargetTargetTargetFrame.AuraAnchor, "BOTTOMLEFT", ((z-1)*(buffsize+1)), (buffsize+1)*row*(-1))
+					LunaTargetTargetTargetFrame.Debuffs[buffid]:SetHeight(buffsize)
+					LunaTargetTargetTargetFrame.Debuffs[buffid]:SetWidth(buffsize)
+					LunaTargetTargetTargetFrame.Debuffs[buffid].stacks:SetFont(LunaOptions.font, buffsize*0.75)
+					
+					buffid = buffid + 1
+					if buffid == 17 then
+						break
+					end
+				end
+				row = row + 1
+			end
+			LunaTargetTargetTargetFrame.AuraAnchor:SetPoint("TOPLEFT", LunaTargetTargetTargetFrame, "BOTTOMLEFT", -1, -3)
+		elseif LunaOptions.frames["LunaTargetTargetTargetFrame"].ShowBuffs == 4 then
+			local buffsize = (((LunaTargetTargetTargetFrame:GetHeight()/2)-(math.ceil(16/buffcount)-1))/math.ceil(16/buffcount))
+			LunaTargetTargetTargetFrame.AuraAnchor:ClearAllPoints()
+			LunaTargetTargetTargetFrame.AuraAnchor:SetWidth((buffsize*buffcount)+(buffcount-1))
+			local buffid = 1
+			local row = 0
+			while buffid < 17 do
+				for z=1, buffcount do
+					LunaTargetTargetTargetFrame.Buffs[buffid]:ClearAllPoints()
+					LunaTargetTargetTargetFrame.Buffs[buffid]:SetPoint("TOPRIGHT", LunaTargetTargetTargetFrame.AuraAnchor, "TOPRIGHT", ((z-1)*(buffsize+1))*(-1), (buffsize+1)*row*(-1))
+					LunaTargetTargetTargetFrame.Buffs[buffid]:SetHeight(buffsize)
+					LunaTargetTargetTargetFrame.Buffs[buffid]:SetWidth(buffsize)
+					LunaTargetTargetTargetFrame.Buffs[buffid].stacks:SetFont(LunaOptions.font, buffsize*0.75)
+					
+					LunaTargetTargetTargetFrame.Debuffs[buffid]:ClearAllPoints()
+					LunaTargetTargetTargetFrame.Debuffs[buffid]:SetPoint("TOPRIGHT", LunaTargetTargetTargetFrame.AuraAnchor, "BOTTOMRIGHT", ((z-1)*(buffsize+1))*(-1), (buffsize+1)*row*(-1))
+					LunaTargetTargetTargetFrame.Debuffs[buffid]:SetHeight(buffsize)
+					LunaTargetTargetTargetFrame.Debuffs[buffid]:SetWidth(buffsize)
+					LunaTargetTargetTargetFrame.Debuffs[buffid].stacks:SetFont(LunaOptions.font, buffsize*0.75)
+					
+					buffid = buffid + 1
+					if buffid == 17 then
+						break
+					end
+				end
+				row = row + 1
+			end
+			LunaTargetTargetTargetFrame.AuraAnchor:SetPoint("TOPRIGHT", LunaTargetTargetTargetFrame, "TOPLEFT", -3, 0)
+		else
+			local buffsize = (((LunaTargetTargetTargetFrame:GetHeight()/2)-(math.ceil(16/buffcount)-1))/math.ceil(16/buffcount))
+			LunaTargetTargetTargetFrame.AuraAnchor:ClearAllPoints()
+			LunaTargetTargetTargetFrame.AuraAnchor:SetWidth((buffsize*buffcount)+(buffcount-1))
+			local buffid = 1
+			local row = 0
+			while buffid < 17 do
+				for z=1, buffcount do
+					LunaTargetTargetTargetFrame.Buffs[buffid]:ClearAllPoints()
+					LunaTargetTargetTargetFrame.Buffs[buffid]:SetPoint("TOPLEFT", LunaTargetTargetTargetFrame.AuraAnchor, "TOPLEFT", ((z-1)*(buffsize+1)), (buffsize+1)*row*(-1))
+					LunaTargetTargetTargetFrame.Buffs[buffid]:SetHeight(buffsize)
+					LunaTargetTargetTargetFrame.Buffs[buffid]:SetWidth(buffsize)
+					LunaTargetTargetTargetFrame.Buffs[buffid].stacks:SetFont(LunaOptions.font, buffsize*0.75)
+					
+					LunaTargetTargetTargetFrame.Debuffs[buffid]:ClearAllPoints()
+					LunaTargetTargetTargetFrame.Debuffs[buffid]:SetPoint("TOPLEFT", LunaTargetTargetTargetFrame.AuraAnchor, "BOTTOMLEFT", ((z-1)*(buffsize+1)), (buffsize+1)*row*(-1))
+					LunaTargetTargetTargetFrame.Debuffs[buffid]:SetHeight(buffsize)
+					LunaTargetTargetTargetFrame.Debuffs[buffid]:SetWidth(buffsize)
+					LunaTargetTargetTargetFrame.Debuffs[buffid].stacks:SetFont(LunaOptions.font, buffsize*0.75)
+					
+					buffid = buffid + 1
+					if buffid == 17 then
+						break
+					end
+				end
+				row = row + 1
+			end
+			LunaTargetTargetTargetFrame.AuraAnchor:SetPoint("TOPLEFT", LunaTargetTargetTargetFrame, "TOPRIGHT", 3, 0)
+		end
+	end
 	for k,v in pairs(LunaOptions.frames["LunaTargetTargetTargetFrame"].bars) do
 		if v[2] == 0 then
 			LunaTargetTargetTargetFrame.bars[v[1]]:Hide()
 		end
 	end
 	LunaTargetTargetTargetFrame.AdjustBars()
-		
+	LunaTargetTargetTargetFrame.UpdateBuffSize()
 end
 
 function LunaUnitFrames:UpdateTargetTargetTargetFrame()
@@ -664,5 +1111,51 @@ function LunaUnitFrames:UpdateTargetTargetTargetFrame()
 		LunaTargetTargetTargetFrame.RaidIcon:Show()
 	else
 		LunaTargetTargetTargetFrame.RaidIcon:Hide()
+	end
+	if LunaOptions.frames["LunaTargetTargetTargetFrame"].ShowBuffs ~= 1 then
+		local pos
+		for i=1, 16 do
+			local path, stacks = UnitBuff("targettargettarget",i)
+			LunaTargetTargetTargetFrame.Buffs[i].texturepath = path
+			if LunaTargetTargetTargetFrame.Buffs[i].texturepath then
+				LunaTargetTargetTargetFrame.Buffs[i]:EnableMouse(1)
+				LunaTargetTargetTargetFrame.Buffs[i]:Show()
+				if stacks > 1 then
+					LunaTargetTargetTargetFrame.Buffs[i].stacks:SetText(stacks)
+					LunaTargetTargetTargetFrame.Buffs[i].stacks:Show()
+				else
+					LunaTargetTargetTargetFrame.Buffs[i].stacks:Hide()
+				end
+			else
+				LunaTargetTargetTargetFrame.Buffs[i]:EnableMouse(0)
+				LunaTargetTargetTargetFrame.Buffs[i]:Hide()
+				if not pos then
+					pos = i
+				end
+			end
+			LunaTargetTargetTargetFrame.Buffs[i]:SetNormalTexture(LunaTargetTargetTargetFrame.Buffs[i].texturepath)
+		end
+		if not pos then
+			pos = 17
+		end
+		LunaTargetTargetTargetFrame.AuraAnchor:SetHeight((LunaTargetTargetTargetFrame.Buffs[1]:GetHeight()*math.ceil((pos-1)/(LunaOptions.frames["LunaTargetTargetTargetFrame"].BuffInRow or 16)))+(math.ceil((pos-1)/(LunaOptions.frames["LunaTargetTargetTargetFrame"].BuffInRow or 16))-1)+1.1)
+		for i=1, 16 do
+			local path, stacks = UnitDebuff("targettargettarget",i)
+			LunaTargetTargetTargetFrame.Debuffs[i].texturepath = path
+			if LunaTargetTargetTargetFrame.Debuffs[i].texturepath then
+				LunaTargetTargetTargetFrame.Debuffs[i]:EnableMouse(1)
+				LunaTargetTargetTargetFrame.Debuffs[i]:Show()
+				if stacks > 1 then
+					LunaTargetTargetTargetFrame.Debuffs[i].stacks:SetText(stacks)
+					LunaTargetTargetTargetFrame.Debuffs[i].stacks:Show()
+				else
+					LunaTargetTargetTargetFrame.Debuffs[i].stacks:Hide()
+				end
+			else
+				LunaTargetTargetTargetFrame.Debuffs[i]:EnableMouse(0)
+				LunaTargetTargetTargetFrame.Debuffs[i]:Hide()
+			end
+			LunaTargetTargetTargetFrame.Debuffs[i]:SetNormalTexture(LunaTargetTargetTargetFrame.Debuffs[i].texturepath)
+		end
 	end
 end
