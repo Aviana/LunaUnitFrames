@@ -838,6 +838,7 @@ function Luna_Target_Events:UNIT_HEALTH()
 	if MobHealth3 then
 		Health, maxHealth = MobHealth3:GetUnitHealth("target")
 	else
+		Health = UnitHealth("target")
 		maxHealth = UnitHealthMax("target")
 	end
 	LunaTargetFrame.bars["Healthbar"]:SetMinMaxValues(0, maxHealth)
