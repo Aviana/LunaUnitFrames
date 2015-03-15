@@ -50,7 +50,7 @@ local function ResetSettings()
 	LunaOptions.resIcon = "Interface\\AddOns\\LunaUnitFrames\\media\\Raid-Icon-Rez"
 	LunaOptions.indicator = "Interface\\AddOns\\LunaUnitFrames\\media\\indicator"
 		
-	LunaOptions.frames = {	["LunaPlayerFrame"] = {position = {x = 10, y = -20}, size = {x = 240, y = 40}, scale = 1, enabled = 1, ShowBuffs = 1, portrait = 2, bars = {{"Healthbar", 6}, {"Powerbar", 4}, {"Castbar", 3}}},
+	LunaOptions.frames = {	["LunaPlayerFrame"] = {position = {x = 10, y = -20}, size = {x = 240, y = 40}, scale = 1, enabled = 1, ShowBuffs = 1, portrait = 2, bars = {{"Healthbar", 6}, {"Powerbar", 4}, {"Castbar", 3}, {"Druidbar", 3}}},
 							["LunaTargetFrame"] = {position = {x = 280, y = -20}, size = {x = 240, y = 40}, scale = 1, enabled = 1, ShowBuffs = 3, portrait = 2, bars = {{"Healthbar", 6}, {"Powerbar", 4}, {"Castbar", 3}, {"Combo Bar", 2}}},
 							["LunaTargetTargetFrame"] = {position = {x = 550, y = -20}, size = {x = 150, y = 40}, scale = 1, enabled = 1, ShowBuffs = 1, bars = {{"Healthbar", 6}, {"Powerbar", 4}}},
 							["LunaTargetTargetTargetFrame"] = {position = {x = 730, y = -20}, size = {x = 150, y = 40}, scale = 1, enabled = 1, ShowBuffs = 1, bars = {{"Healthbar", 6}, {"Powerbar", 4}}},
@@ -112,6 +112,7 @@ local function ResetSettings()
 	LunaOptions.PartySpace = 40
 	LunaOptions.VerticalParty = 1
 	LunaOptions.Raidbuff = ""
+	LunaOptions.DruidBar = nil
 end
 
 if LunaOptions == nil then
@@ -567,6 +568,11 @@ function OnBarHeight()
 		for k,v in pairs(LunaOptions.frames[this.frame].bars) do
 			if v[1] == UIDropDownMenu_GetText(this:GetParent().BarSelect) then
 				v[2] = weight
+				if v[1] == "Druidbar" and weight == 0 then
+					LunaOptions.DruidBar = nil
+				elseif v[1] == "Druidbar" then
+					LunaOptions.DruidBar = 1
+				end
 				break
 			end
 		end

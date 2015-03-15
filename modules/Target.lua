@@ -285,7 +285,7 @@ function LunaUnitFrames:CreateTargetFrame()
 	LunaTargetFrame.bars["Healthbar"].hpp:SetJustifyH("RIGHT")
 
 	LunaTargetFrame.name = LunaTargetFrame.bars["Healthbar"]:CreateFontString(nil, "OVERLAY", LunaTargetFrame.bars["Healthbar"])
-	LunaTargetFrame.name:SetPoint("LEFT", 2, -1)
+	LunaTargetFrame.name:SetPoint("LEFT", 2, 0)
 	LunaTargetFrame.name:SetJustifyH("LEFT")
 	LunaTargetFrame.name:SetFont(LunaOptions.font, LunaOptions.fontHeight)
 	LunaTargetFrame.name:SetShadowColor(0, 0, 0)
@@ -310,7 +310,7 @@ function LunaUnitFrames:CreateTargetFrame()
 	LunaTargetFrame.bars["Powerbar"].ppp:SetJustifyH("RIGHT")
 
 	LunaTargetFrame.lvl = LunaTargetFrame.bars["Powerbar"]:CreateFontString(nil, "OVERLAY")
-	LunaTargetFrame.lvl:SetPoint("LEFT", LunaTargetFrame.bars["Powerbar"], "LEFT", 2, -1)
+	LunaTargetFrame.lvl:SetPoint("LEFT", LunaTargetFrame.bars["Powerbar"], "LEFT", 2, 0)
 	LunaTargetFrame.lvl:SetFont(LunaOptions.font, LunaOptions.fontHeight)
 	LunaTargetFrame.lvl:SetShadowColor(0, 0, 0)
 	LunaTargetFrame.lvl:SetShadowOffset(0.8, -0.8)
@@ -502,7 +502,7 @@ function LunaUnitFrames:CreateTargetFrame()
 			LunaTargetFrame.bars["Healthbar"].hpp:SetFont(LunaOptions.font, healthheight)
 			LunaTargetFrame.name:SetFont(LunaOptions.font, healthheight)
 		end
-		if healthheight < 6 then
+		if LunaTargetFrame.bars["Healthbar"]:GetHeight() < 6 then
 			LunaTargetFrame.bars["Healthbar"].hpp:Hide()
 			LunaTargetFrame.name:Hide()
 		else
@@ -515,7 +515,7 @@ function LunaUnitFrames:CreateTargetFrame()
 			LunaTargetFrame.lvl:SetFont(LunaOptions.font, powerheight)
 			LunaTargetFrame.class:SetFont(LunaOptions.font, powerheight)
 		end
-		if powerheight < 6 then
+		if LunaTargetFrame.bars["Powerbar"]:GetHeight() < 6 then
 			LunaTargetFrame.bars["Powerbar"].ppp:Hide()
 			LunaTargetFrame.lvl:Hide()
 			LunaTargetFrame.class:Hide()
@@ -527,7 +527,7 @@ function LunaUnitFrames:CreateTargetFrame()
 		local castheight = (LunaTargetFrame.bars["Castbar"]:GetHeight()/11.7)*11
 		LunaTargetFrame.bars["Castbar"].Text:SetFont(LunaOptions.font, castheight)
 		LunaTargetFrame.bars["Castbar"].Time:SetFont(LunaOptions.font, castheight)
-		if castheight < 6 then
+		if LunaTargetFrame.bars["Castbar"]:GetHeight() < 6 then
 			LunaTargetFrame.bars["Castbar"].Text:Hide()
 			LunaTargetFrame.bars["Castbar"].Time:Hide()
 		else

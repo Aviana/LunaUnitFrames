@@ -187,7 +187,7 @@ function LunaUnitFrames:CreateTargetTargetFrame()
 	LunaTargetTargetFrame.bars["Healthbar"].hpp = hpp
 
 	local name = LunaTargetTargetFrame.bars["Healthbar"]:CreateFontString(nil, "OVERLAY", LunaTargetTargetFrame.bars["Healthbar"])
-	name:SetPoint("LEFT", LunaTargetTargetFrame.bars["Healthbar"], 2, -1)
+	name:SetPoint("LEFT", LunaTargetTargetFrame.bars["Healthbar"], 2, 0)
 	name:SetJustifyH("LEFT")
 	name:SetFont(LunaOptions.font, LunaOptions.fontHeight)
 	name:SetShadowColor(0, 0, 0)
@@ -291,7 +291,7 @@ function LunaUnitFrames:CreateTargetTargetFrame()
 	
 	local lvl
 	lvl = LunaTargetTargetFrame.bars["Powerbar"]:CreateFontString(nil, "OVERLAY")
-	lvl:SetPoint("LEFT", LunaTargetTargetFrame.bars["Powerbar"], "LEFT", 2, -1)
+	lvl:SetPoint("LEFT", LunaTargetTargetFrame.bars["Powerbar"], "LEFT", 2, 0)
 	lvl:SetFont(LunaOptions.font, LunaOptions.fontHeight)
 	lvl:SetShadowColor(0, 0, 0)
 	lvl:SetShadowOffset(0.8, -0.8)
@@ -348,7 +348,7 @@ function LunaUnitFrames:CreateTargetTargetFrame()
 			LunaTargetTargetFrame.bars["Healthbar"].hpp:SetFont(LunaOptions.font, healthheight)
 			LunaTargetTargetFrame.name:SetFont(LunaOptions.font, healthheight)
 		end
-		if healthheight < 6 then
+		if LunaTargetTargetFrame.bars["Healthbar"]:GetHeight() < 6 then
 			LunaTargetTargetFrame.bars["Healthbar"].hpp:Hide()
 			LunaTargetTargetFrame.name:Hide()
 		else
@@ -361,7 +361,7 @@ function LunaUnitFrames:CreateTargetTargetFrame()
 			LunaTargetTargetFrame.Lvl:SetFont(LunaOptions.font, powerheight)
 			LunaTargetTargetFrame.class:SetFont(LunaOptions.font, powerheight)
 		end
-		if powerheight < 6 then
+		if LunaTargetTargetFrame.bars["Powerbar"]:GetHeight() < 6 then
 			LunaTargetTargetFrame.bars["Powerbar"].ppp:Hide()
 			LunaTargetTargetFrame.Lvl:Hide()
 			LunaTargetTargetFrame.class:Hide()
@@ -698,7 +698,7 @@ function LunaUnitFrames:CreateTargetTargetTargetFrame()
 	LunaTargetTargetTargetFrame.bars["Healthbar"].hpp = hpp
 
 	local name = LunaTargetTargetTargetFrame.bars["Healthbar"]:CreateFontString(nil, "OVERLAY", LunaTargetTargetTargetFrame.bars["Healthbar"])
-	name:SetPoint("LEFT", LunaTargetTargetTargetFrame.bars["Healthbar"], 2, -1)
+	name:SetPoint("LEFT", LunaTargetTargetTargetFrame.bars["Healthbar"], 2, 0)
 	name:SetJustifyH("LEFT")
 	name:SetFont(LunaOptions.font, LunaOptions.fontHeight)
 	name:SetShadowColor(0, 0, 0)
@@ -802,7 +802,7 @@ function LunaUnitFrames:CreateTargetTargetTargetFrame()
 	
 	local lvl
 	lvl = LunaTargetTargetTargetFrame.bars["Powerbar"]:CreateFontString(nil, "OVERLAY")
-	lvl:SetPoint("LEFT", LunaTargetTargetTargetFrame.bars["Powerbar"], "LEFT", 2, -1)
+	lvl:SetPoint("LEFT", LunaTargetTargetTargetFrame.bars["Powerbar"], "LEFT", 2, 0)
 	lvl:SetFont(LunaOptions.font, LunaOptions.fontHeight)
 	lvl:SetShadowColor(0, 0, 0)
 	lvl:SetShadowOffset(0.8, -0.8)
@@ -857,7 +857,7 @@ function LunaUnitFrames:CreateTargetTargetTargetFrame()
 			LunaTargetTargetTargetFrame.bars["Healthbar"].hpp:SetFont(LunaOptions.font, healthheight)
 			LunaTargetTargetTargetFrame.name:SetFont(LunaOptions.font, healthheight)
 		end
-		if healthheight < 6 then
+		if LunaTargetTargetTargetFrame.bars["Healthbar"]:GetHeight() < 6 then
 			LunaTargetTargetTargetFrame.bars["Healthbar"].hpp:Hide()
 			LunaTargetTargetTargetFrame.name:Hide()
 		else
@@ -870,7 +870,7 @@ function LunaUnitFrames:CreateTargetTargetTargetFrame()
 			LunaTargetTargetTargetFrame.Lvl:SetFont(LunaOptions.font, powerheight)
 			LunaTargetTargetTargetFrame.class:SetFont(LunaOptions.font, powerheight)
 		end
-		if powerheight < 6 then
+		if LunaTargetTargetTargetFrame.bars["Powerbar"]:GetHeight() < 6 then
 			LunaTargetTargetTargetFrame.bars["Powerbar"].ppp:Hide()
 			LunaTargetTargetTargetFrame.Lvl:Hide()
 			LunaTargetTargetTargetFrame.class:Hide()

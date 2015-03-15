@@ -278,7 +278,7 @@ function LunaUnitFrames:CreatePlayerFrame()
 	LunaPlayerFrame.bars["Healthbar"].hpp = hpp
 
 	local name = hp:CreateFontString(nil, "OVERLAY", hp)
-	name:SetPoint("LEFT", 2, -1)
+	name:SetPoint("LEFT", 2, 0)
 	name:SetJustifyH("LEFT")
 	name:SetFont(LunaOptions.font, LunaOptions.fontHeight)
 	name:SetShadowColor(0, 0, 0)
@@ -326,7 +326,7 @@ function LunaUnitFrames:CreatePlayerFrame()
 	
 	local lvl
 	lvl = pp:CreateFontString(nil, "OVERLAY")
-	lvl:SetPoint("LEFT", pp, "LEFT", 2, -1)
+	lvl:SetPoint("LEFT", pp, "LEFT", 2, 0)
 	lvl:SetFont(LunaOptions.font, LunaOptions.fontHeight)
 	lvl:SetShadowColor(0, 0, 0)
 	lvl:SetShadowOffset(0.8, -0.8)
@@ -408,6 +408,28 @@ function LunaUnitFrames:CreatePlayerFrame()
 	LunaPlayerFrame.Combat:SetTexture("Interface\\CharacterFrame\\UI-StateIcon")
 	LunaPlayerFrame.Combat:SetTexCoord(0.57, 0.90, 0.08, 0.41)
 		
+	-- Druidbar
+	local db = CreateFrame("StatusBar", nil, LunaPlayerFrame)
+	db:SetStatusBarTexture(LunaOptions.statusbartexture)
+	LunaPlayerFrame.bars["Druidbar"] = db
+	LunaPlayerFrame.bars["Druidbar"]:SetStatusBarColor(LunaOptions.PowerColors["Mana"][1], LunaOptions.PowerColors["Mana"][2], LunaOptions.PowerColors["Mana"][3])
+	
+	-- Druidbar background
+	local dbbg = db:CreateTexture(nil, "BORDER")
+	dbbg:SetAllPoints(db)
+	dbbg:SetTexture(.25,.25,.25,.25)
+	LunaPlayerFrame.bars["Druidbar"].dbbg = dbbg
+	LunaPlayerFrame.bars["Druidbar"].dbbg:SetVertexColor(LunaOptions.PowerColors["Mana"][1], LunaOptions.PowerColors["Mana"][2], LunaOptions.PowerColors["Mana"][3], .25)
+
+	local dbp = db:CreateFontString(nil, "OVERLAY", db)
+	dbp:SetPoint("CENTER", db)
+	dbp:SetFont(LunaOptions.font, LunaOptions.fontHeight)
+	dbp:SetShadowColor(0, 0, 0)
+	dbp:SetShadowOffset(0.8, -0.8)
+	dbp:SetTextColor(1,1,1)
+	dbp:SetJustifyH("CENTER")
+	LunaPlayerFrame.bars["Druidbar"].dbp = dbp
+		
 	-- Registering Shit
 	LunaPlayerFrame:RegisterEvent("UNIT_HEALTH")
 	LunaPlayerFrame:RegisterEvent("UNIT_MAXHEALTH")
@@ -466,10 +488,17 @@ function LunaUnitFrames:CreatePlayerFrame()
 		local anchor
 		local totalWeight = 0
 		local gaps = -1
+		local _, class = UnitClass("player")
+		
 		if LunaPlayerFrame.bars["Castbar"].casting or LunaPlayerFrame.bars["Castbar"].channeling then
 			LunaPlayerFrame.bars["Castbar"]:Show()
 		else
 			LunaPlayerFrame.bars["Castbar"]:Hide()
+		end
+		if class == "DRUID" and UnitPowerType("player") ~= 0 and LunaOptions.DruidBar == 1 then
+			LunaPlayerFrame.bars["Druidbar"]:Show()
+		else
+			LunaPlayerFrame.bars["Druidbar"]:Hide()
 		end
 		if LunaOptions.frames["LunaPlayerFrame"].portrait > 1 then    -- We have a square portrait
 			frameWidth = (LunaPlayerFrame:GetWidth()-frameHeight)
@@ -508,25 +537,25 @@ function LunaUnitFrames:CreatePlayerFrame()
 			end			
 		end
 		LunaUnitFrames.PlayerUpdateHeal(UnitName("player"))
-		local healthheight = (LunaPlayerFrame.bars["Healthbar"]:GetHeight()/23.4)*11
+		local healthheight = (LunaPlayerFrame.bars["Healthbar"]:GetHeight()/2)
 		if healthheight > 0 then
 			LunaPlayerFrame.bars["Healthbar"].hpp:SetFont(LunaOptions.font, healthheight)
 			LunaPlayerFrame.name:SetFont(LunaOptions.font, healthheight)
 		end
-		if healthheight < 6 then
+		if LunaPlayerFrame.bars["Healthbar"]:GetHeight() < 6 then
 			LunaPlayerFrame.bars["Healthbar"].hpp:Hide()
 			LunaPlayerFrame.name:Hide()
 		else
 			LunaPlayerFrame.bars["Healthbar"].hpp:Show()
 			LunaPlayerFrame.name:Show()
 		end
-		local powerheight = (LunaPlayerFrame.bars["Powerbar"]:GetHeight()/23.4)*11
+		local powerheight = (LunaPlayerFrame.bars["Powerbar"]:GetHeight()/2)
 		if powerheight > 0 then
 			LunaPlayerFrame.bars["Powerbar"].ppp:SetFont(LunaOptions.font, powerheight)
 			LunaPlayerFrame.Lvl:SetFont(LunaOptions.font, powerheight)
 			LunaPlayerFrame.Class:SetFont(LunaOptions.font, powerheight)
 		end
-		if powerheight < 6 then
+		if LunaPlayerFrame.bars["Powerbar"]:GetHeight() < 6 then
 			LunaPlayerFrame.bars["Powerbar"].ppp:Hide()
 			LunaPlayerFrame.Lvl:Hide()
 			LunaPlayerFrame.Class:Hide()
@@ -535,15 +564,22 @@ function LunaUnitFrames:CreatePlayerFrame()
 			LunaPlayerFrame.Lvl:Show()
 			LunaPlayerFrame.Class:Show()
 		end
-		local castheight = (LunaPlayerFrame.bars["Castbar"]:GetHeight()/11.7)*11
+		local castheight = (LunaPlayerFrame.bars["Castbar"]:GetHeight())
 		LunaPlayerFrame.bars["Castbar"].Text:SetFont(LunaOptions.font, castheight)
 		LunaPlayerFrame.bars["Castbar"].Time:SetFont(LunaOptions.font, castheight)
-		if castheight < 6 then
+		if LunaPlayerFrame.bars["Castbar"]:GetHeight() < 6 then
 			LunaPlayerFrame.bars["Castbar"].Text:Hide()
 			LunaPlayerFrame.bars["Castbar"].Time:Hide()
 		else
 			LunaPlayerFrame.bars["Castbar"].Text:Show()
 			LunaPlayerFrame.bars["Castbar"].Time:Show()
+		end
+		local dbheight = (LunaPlayerFrame.bars["Druidbar"]:GetHeight())
+		if LunaPlayerFrame.bars["Druidbar"]:GetHeight() < 6 then
+			LunaPlayerFrame.bars["Druidbar"].dbp:Hide()
+		else
+			LunaPlayerFrame.bars["Druidbar"].dbp:SetFont(LunaOptions.font, dbheight)
+			LunaPlayerFrame.bars["Druidbar"].dbp:Show()
 		end
 		LunaPlayerFrame.bars["Powerbar"].Ticker:SetHeight(LunaPlayerFrame.bars["Powerbar"]:GetHeight())
 	end
@@ -686,6 +722,7 @@ function LunaUnitFrames:CreatePlayerFrame()
 	LunaPlayerFrame.UpdateBuffSize()
 	LunaUnitFrames:UpdatePlayerFrame()
 	AceEvent:RegisterEvent("HealComm_Healupdate" , LunaUnitFrames.PlayerUpdateHeal)
+	AceEvent:RegisterEvent("DruidManaLib_Manaupdate" , LunaUnitFrames.DruidBarUpdate)
 end
 
 function LunaUnitFrames.PlayerUpdateHeal(target)
@@ -708,6 +745,13 @@ function LunaUnitFrames.PlayerUpdateHeal(target)
 	else
 		LunaPlayerFrame.incHeal:Hide()
 	end
+end
+
+function LunaUnitFrames.DruidBarUpdate()
+	local mana, maxmana = DruidManaLib:GetMana()
+	LunaPlayerFrame.bars["Druidbar"]:SetMinMaxValues(0, maxmana)
+	LunaPlayerFrame.bars["Druidbar"]:SetValue(mana)
+	LunaPlayerFrame.bars["Druidbar"].dbp:SetText(mana.."/"..maxmana)
 end
 
 function LunaUnitFrames:ConvertPlayerPortrait()
@@ -991,6 +1035,8 @@ function Luna_Player_Events:UNIT_DISPLAYPOWER()
 		LunaPlayerFrame.bars["Powerbar"].ppbg:SetVertexColor(LunaOptions.PowerColors["Mana"][1], LunaOptions.PowerColors["Mana"][2], LunaOptions.PowerColors["Mana"][3], .25)
 		LunaPlayerFrame.bars["Powerbar"].Ticker:Hide()
 	end
+	local mana, maxmana = DruidManaLib:GetMana()
+	LunaPlayerFrame.AdjustBars()
 	Luna_Player_Events.UNIT_MANA()
 end
 

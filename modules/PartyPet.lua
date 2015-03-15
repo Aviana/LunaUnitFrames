@@ -75,14 +75,14 @@ function LunaUnitFrames:CreatePartyPetFrames()
 
 		-- Healthbar text
 		LunaPartyPetFrames[i].HealthBar.hpp = LunaPartyPetFrames[i].HealthBar:CreateFontString(nil, "OVERLAY", LunaPartyPetFrames[i].HealthBar)
-		LunaPartyPetFrames[i].HealthBar.hpp:SetPoint("RIGHT", -2, -1)
+		LunaPartyPetFrames[i].HealthBar.hpp:SetPoint("RIGHT", -2, 0)
 		LunaPartyPetFrames[i].HealthBar.hpp:SetFont(LunaOptions.font, LunaOptions.fontHeight)
 		LunaPartyPetFrames[i].HealthBar.hpp:SetShadowColor(0, 0, 0)
 		LunaPartyPetFrames[i].HealthBar.hpp:SetShadowOffset(0.8, -0.8)
 		LunaPartyPetFrames[i].HealthBar.hpp:SetTextColor(1,1,1)
 		
 		LunaPartyPetFrames[i].name = LunaPartyPetFrames[i].HealthBar:CreateFontString(nil, "OVERLAY", LunaPartyPetFrames[i].HealthBar)
-		LunaPartyPetFrames[i].name:SetPoint("LEFT", 2, -1)
+		LunaPartyPetFrames[i].name:SetPoint("LEFT", 2, 0)
 		LunaPartyPetFrames[i].name:SetJustifyH("LEFT")
 		LunaPartyPetFrames[i].name:SetFont(LunaOptions.font, LunaOptions.fontHeight)
 		LunaPartyPetFrames[i].name:SetShadowColor(0, 0, 0)

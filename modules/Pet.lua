@@ -190,7 +190,7 @@ function LunaUnitFrames:CreatePetFrame()
 	LunaPetFrame.bars["Healthbar"].hpp:SetJustifyH("RIGHT")
 
 	LunaPetFrame.name = LunaPetFrame.bars["Healthbar"]:CreateFontString(nil, "OVERLAY", LunaPetFrame.bars["Healthbar"])
-	LunaPetFrame.name:SetPoint("LEFT", 2, -1)
+	LunaPetFrame.name:SetPoint("LEFT", 2, 0)
 	LunaPetFrame.name:SetJustifyH("LEFT")
 	LunaPetFrame.name:SetFont(LunaOptions.font, LunaOptions.fontHeight)
 	LunaPetFrame.name:SetShadowColor(0, 0, 0)
@@ -216,7 +216,7 @@ function LunaUnitFrames:CreatePetFrame()
 	LunaPetFrame.bars["Powerbar"].ppp:SetJustifyH("RIGHT")
 
 	LunaPetFrame.lvl = LunaPetFrame.bars["Powerbar"]:CreateFontString(nil, "OVERLAY")
-	LunaPetFrame.lvl:SetPoint("LEFT", LunaPetFrame.bars["Powerbar"], "LEFT", 2, -1)
+	LunaPetFrame.lvl:SetPoint("LEFT", LunaPetFrame.bars["Powerbar"], "LEFT", 2, 0)
 	LunaPetFrame.lvl:SetFont(LunaOptions.font, LunaOptions.fontHeight)
 	LunaPetFrame.lvl:SetShadowColor(0, 0, 0)
 	LunaPetFrame.lvl:SetShadowOffset(0.8, -0.8)
@@ -297,7 +297,7 @@ function LunaUnitFrames:CreatePetFrame()
 			LunaPetFrame.bars["Healthbar"].hpp:SetFont(LunaOptions.font, healthheight)
 			LunaPetFrame.name:SetFont(LunaOptions.font, healthheight)
 		end
-		if healthheight < 6 then
+		if LunaPetFrame.bars["Healthbar"]:GetHeight() < 6 then
 			LunaPetFrame.bars["Healthbar"].hpp:Hide()
 			LunaPetFrame.name:Hide()
 		else
@@ -310,7 +310,7 @@ function LunaUnitFrames:CreatePetFrame()
 			LunaPetFrame.lvl:SetFont(LunaOptions.font, powerheight)
 			LunaPetFrame.class:SetFont(LunaOptions.font, powerheight)
 		end
-		if powerheight < 6 then
+		if LunaPetFrame.bars["Powerbar"]:GetHeight() < 6 then
 			LunaPetFrame.bars["Powerbar"].ppp:Hide()
 			LunaPetFrame.lvl:Hide()
 			LunaPetFrame.class:Hide()
