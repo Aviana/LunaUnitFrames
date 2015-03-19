@@ -52,6 +52,9 @@ function LunaUnitFrames:OnEvent()
 		if table.getn(LunaOptions.frames["LunaPlayerFrame"].bars) < 4 then
 			LunaOptions.frames["LunaPlayerFrame"].bars[4] = {"Druidbar", 0}
 		end
+		if table.getn(LunaOptions.frames["LunaPlayerFrame"].bars) < 5 then
+			LunaOptions.frames["LunaPlayerFrame"].bars[5] = {"Totembar", 0}
+		end
 		LunaOptions.ClassColors = {	WARRIOR = {0.78, 0.61, 0.43},
 						MAGE = {0.41, 0.8, 0.94},
 						ROGUE = {1, 0.96, 0.41},

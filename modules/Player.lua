@@ -3,6 +3,13 @@ local AceEvent = AceLibrary("AceEvent-2.0")
 local info = {text = "Reset Instances", func = ResetInstances, notCheckable = 1}
 local Luna_Player_Events = {}
 
+local totemcolors = {
+					{1,0,0},
+					{0,0,1},
+					{0.78,0.61,0.43},
+					{0.41,0.80,0.94}
+				}
+
 local dropdown = CreateFrame("Frame", "LunaUnitDropDownMenu", UIParent, "UIDropDownMenuTemplate")
 local function Luna_PlayerDropDown_Initialize()
 	UnitPopup_ShowMenu(dropdown, "SELF" , "player")
@@ -121,6 +128,20 @@ local function Luna_Player_OnUpdate()
 		end
 		local barValue = LunaPlayerFrame.bars["Castbar"].startTime + (LunaPlayerFrame.bars["Castbar"].endTime - time)
 		LunaPlayerFrame.bars["Castbar"]:SetValue(barValue)
+	end
+end
+
+local function Luna_Player_TotemOnUpdate()
+	for i=1, 4 do
+		if LunaPlayerFrame.totems[i].active then
+			if LunaPlayerFrame.totems[i].maxValue >= GetTime() then
+				LunaPlayerFrame.totems[i]:SetValue(LunaPlayerFrame.totems[i].maxValue-GetTime())
+			else
+				LunaPlayerFrame.totems[i]:SetValue(0)
+				LunaPlayerFrame.totems[i].active = nil
+				LunaPlayerFrame.AdjustBars()
+			end
+		end
 	end
 end
 
@@ -429,6 +450,23 @@ function LunaUnitFrames:CreatePlayerFrame()
 	dbp:SetTextColor(1,1,1)
 	dbp:SetJustifyH("CENTER")
 	LunaPlayerFrame.bars["Druidbar"].dbp = dbp
+	
+	-- Totembar
+	
+	LunaPlayerFrame.totems = {}
+	LunaPlayerFrame.bars["Totembar"] = CreateFrame("Frame", nil, LunaPlayerFrame)
+	for i=1,4 do
+		LunaPlayerFrame.totems[i] = CreateFrame("StatusBar", nil, LunaPlayerFrame.bars["Totembar"])
+		LunaPlayerFrame.totems[i]:SetStatusBarTexture(LunaOptions.statusbartexture)
+		LunaPlayerFrame.totems[i]:Hide()
+		LunaPlayerFrame.totems[i]:SetStatusBarColor(unpack(totemcolors[i]))
+		LunaPlayerFrame.totems[i]:SetMinMaxValues(0,1)
+		LunaPlayerFrame.totems[i]:SetValue(0)
+	end
+	LunaPlayerFrame.totems[1]:SetPoint("TOPLEFT", LunaPlayerFrame.bars["Totembar"], "TOPLEFT")
+	for i=2,4 do
+		LunaPlayerFrame.totems[i]:SetPoint("TOPLEFT", LunaPlayerFrame.totems[i-1], "TOPRIGHT",  1, 0)
+	end
 		
 	-- Registering Shit
 	LunaPlayerFrame:RegisterEvent("UNIT_HEALTH")
@@ -471,6 +509,7 @@ function LunaUnitFrames:CreatePlayerFrame()
 	LunaPlayerFrame:SetScript("OnClick", Luna_Player_OnClick)
 	LunaPlayerFrame:SetScript("OnEvent", Luna_Player_OnEvent)
 	LunaPlayerFrame.bars["Castbar"]:SetScript("OnUpdate", Luna_Player_OnUpdate)
+	LunaPlayerFrame.bars["Totembar"]:SetScript("OnUpdate", Luna_Player_TotemOnUpdate)
 	if LunaOptions.EnergyTicker == 1 then
 		LunaPlayerFrame.bars["Powerbar"]:SetScript("OnUpdate", LunaPlayerFrame.bars["Powerbar"].EnergyUpdate)
 	end
@@ -499,6 +538,11 @@ function LunaUnitFrames:CreatePlayerFrame()
 			LunaPlayerFrame.bars["Druidbar"]:Show()
 		else
 			LunaPlayerFrame.bars["Druidbar"]:Hide()
+		end
+		if class == "SHAMAN" and LunaOptions.TotemBar == 1 and (LunaPlayerFrame.totems[1].active or LunaPlayerFrame.totems[2].active or LunaPlayerFrame.totems[3].active or LunaPlayerFrame.totems[4].active) then
+			LunaPlayerFrame.bars["Totembar"]:Show()
+		else
+			LunaPlayerFrame.bars["Totembar"]:Hide()
 		end
 		if LunaOptions.frames["LunaPlayerFrame"].portrait > 1 then    -- We have a square portrait
 			frameWidth = (LunaPlayerFrame:GetWidth()-frameHeight)
@@ -580,6 +624,16 @@ function LunaUnitFrames:CreatePlayerFrame()
 		else
 			LunaPlayerFrame.bars["Druidbar"].dbp:SetFont(LunaOptions.font, dbheight)
 			LunaPlayerFrame.bars["Druidbar"].dbp:Show()
+		end
+--		LunaPlayerFrame.bars["Totembar"]:SetHeight(LunaPlayerFrame.bars["Totembar"]:GetHeight()+1)
+		for i=1, 4 do
+			if 1 then
+				LunaPlayerFrame.totems[i]:Show()
+			else
+				LunaPlayerFrame.totems[i]:Hide()
+			end
+			LunaPlayerFrame.totems[i]:SetHeight(LunaPlayerFrame.bars["Totembar"]:GetHeight())
+			LunaPlayerFrame.totems[i]:SetWidth((frameWidth-3)/4)
 		end
 		LunaPlayerFrame.bars["Powerbar"].Ticker:SetHeight(LunaPlayerFrame.bars["Powerbar"]:GetHeight())
 	end
@@ -754,6 +808,14 @@ function LunaUnitFrames.DruidBarUpdate()
 	LunaPlayerFrame.bars["Druidbar"].dbp:SetText(mana.."/"..maxmana)
 end
 
+function LunaUnitFrames.SetTotemTimer(totemtype, timeleft)
+	LunaPlayerFrame.totems[totemtype].maxValue = GetTime()+timeleft
+	LunaPlayerFrame.totems[totemtype]:SetMinMaxValues(0,timeleft)
+	LunaPlayerFrame.totems[totemtype]:SetValue(0)
+	LunaPlayerFrame.totems[totemtype].active = 1
+	LunaPlayerFrame.AdjustBars()
+end
+
 function LunaUnitFrames:ConvertPlayerPortrait()
 	if LunaOptions.frames["LunaPlayerFrame"].portrait == 1 then
 		table.insert(LunaOptions.frames["LunaPlayerFrame"].bars, 1, {"Portrait", 4})
@@ -824,7 +886,7 @@ function Luna_Player_Events:SPELLCAST_CHANNEL_START()
 	LunaPlayerFrame.bars["Castbar"].holdTime = 0
 	LunaPlayerFrame.bars["Castbar"].casting = nil
 	LunaPlayerFrame.bars["Castbar"].channeling = 1
-	LunaPlayerFrame.bars["Castbar"].delaySum = 0	
+	LunaPlayerFrame.bars["Castbar"].delaySum = 0
 	LunaPlayerFrame.bars["Castbar"].Text:SetText("Channeling")
 	LunaPlayerFrame.AdjustBars()
 end
