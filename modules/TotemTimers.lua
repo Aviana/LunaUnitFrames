@@ -1,8 +1,9 @@
 local SpellCast = nil
+local totemtimers = CreateFrame("Frame")
 local totemTip = CreateFrame("GameTooltip", "totemTip", nil, "GameTooltipTemplate")
 totemTip:SetOwner(WorldFrame, "ANCHOR_NONE")
 
-TotemDB = {
+local TotemDB = {
 		["Searing Totem"] = {
 			["type"] = 1,
 			["dur"] = {30,
@@ -142,18 +143,23 @@ TotemDB = {
 			["dur"] = {120}
 		}
 	}
-		
+
+totemtimers.OnEvent = function()
+	if ( event == "SPELLCAST_STOP" ) then
+		if SpellCast and TotemDB[SpellCast[1]] then
+			LunaUnitFrames.SetTotemTimer(TotemDB[SpellCast[1]]["type"], TotemDB[SpellCast[1]]["dur"][tonumber(SpellCast[2])])
+		end
+	end
+end
+	
 local function ProcessSpellCast(spellName, rank)
 	if (spellName and rank) then
 		SpellCast = {spellName, rank}
-		if TotemDB[spellName] then
-			LunaUnitFrames.SetTotemTimer(TotemDB[spellName]["type"], TotemDB[spellName]["dur"][tonumber(rank)])
-		end
 	end
 end	
 		
-oldCastSpell = CastSpell
-function newCastSpell(spellId, spellbookTabNum)
+local oldCastSpell = CastSpell
+local function newCastSpell(spellId, spellbookTabNum)
 	-- Call the original function so there's no delay while we process
 	oldCastSpell(spellId, spellbookTabNum)
 	local spellName, rank = GetSpellName(spellId, spellbookTabNum)
@@ -162,8 +168,8 @@ function newCastSpell(spellId, spellbookTabNum)
 end
 CastSpell = newCastSpell
 
-oldCastSpellByName = CastSpellByName
-function newCastSpellByName(spellName, onSelf)
+local oldCastSpellByName = CastSpellByName
+local function newCastSpellByName(spellName, onSelf)
 	-- Call the original function
 	oldCastSpellByName(spellName, onSelf)
 	local _,_,rank = string.find(spellName,"(%d+)")
@@ -187,8 +193,8 @@ function newCastSpellByName(spellName, onSelf)
 end
 CastSpellByName = newCastSpellByName
 
-oldUseAction = UseAction
-function newUseAction(a1, a2, a3)
+local oldUseAction = UseAction
+local function newUseAction(a1, a2, a3)
 	totemTip:SetAction(a1)
 	local spellName = totemTipTextLeft1:GetText()
 	-- Call the original function
@@ -204,3 +210,6 @@ function newUseAction(a1, a2, a3)
 	ProcessSpellCast(spellName, rank)
 end
 UseAction = newUseAction
+
+totemtimers:SetScript("OnEvent", totemtimers.OnEvent)
+totemtimers:RegisterEvent("SPELLCAST_STOP", totemtimers.OnEvent)
