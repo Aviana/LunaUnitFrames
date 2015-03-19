@@ -553,7 +553,7 @@ function LunaUnitFrames.Raid_Aura(unitid)
 	if LunaOptions.Raidbuff ~= "" then
 		for i=1,16 do
 			ScanTip:SetUnitBuff(this.unit, i)
-			if ScanTipTextLeft1:GetText() and string.find(ScanTipTextLeft1:GetText(), LunaOptions.Raidbuff) then
+			if ScanTipTextLeft1:GetText() and LunaOptions.Raidbuff and string.find(ScanTipTextLeft1:GetText(), LunaOptions.Raidbuff) then
 				this.buff:Show()
 				ScanTipTextLeft1:SetText("")
 				return
