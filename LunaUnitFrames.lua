@@ -91,15 +91,28 @@ end
 
 SLASH_LUFMO1, SLASH_LUFMO2 = "/lunamo", "/lunamouseover"
 function SlashCmdList.LUFMO(msg, editbox)
+	local func = loadstring(msg)
 	if GetMouseFocus().unit then
 		if UnitIsUnit("target", GetMouseFocus().unit) then
-			CastSpellByName(msg)
+			if func then
+				func()
+			else
+				CastSpellByName(msg)
+			end
 		else
 			TargetUnit(GetMouseFocus().unit)
-			CastSpellByName(msg)
+			if func then
+				func()
+			else
+				CastSpellByName(msg)
+			end
 			TargetLastTarget()
 		end
 	else 
-		CastSpellByName(msg)
+		if func then
+			func()
+		else
+			CastSpellByName(msg)
+		end
 	end
 end
