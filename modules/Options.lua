@@ -114,6 +114,7 @@ local function ResetSettings()
 	LunaOptions.Raidbuff = ""
 	LunaOptions.DruidBar = nil
 	LunaOptions.TotemBar = nil
+	LunaOptions.BTimers = 0
 end
 
 if LunaOptions == nil then
@@ -368,6 +369,23 @@ function OptionFunctions.XPBarToggle()
 		LunaOptions.XPBar = 0
 	end
 	LunaUnitFrames:UpdateXPBar()
+end
+
+function OptionFunctions.BTimerToggle()
+	if LunaOptionsFrame.pages[1].bufftimer:GetChecked() == 1 then
+		LunaOptions.BTimers = 1
+	else
+		LunaOptions.BTimers = 0
+	end
+	if LunaOptions.BTimers == 0 then
+		for i=1, 16 do
+			CooldownFrame_SetTimer(LunaPlayerFrame.Buffs[i].cd,0,0,0)
+		end
+	else
+		for i=1, 16 do
+			LunaPlayerFrame.Buffs[i].endtime = nil
+		end
+	end
 end
 
 function OptionFunctions.PlayerBuffPosSelectChoice()
@@ -1168,6 +1186,14 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[1].XPBar:SetScript("OnClick", OptionFunctions.XPBarToggle)
 	LunaOptionsFrame.pages[1].XPBar:SetChecked(LunaOptions.XPBar)
 	getglobal("XPBarSwitchText"):SetText("Enable XP Bar")
+	
+	LunaOptionsFrame.pages[1].bufftimer = CreateFrame("CheckButton", "BTimerSwitch", LunaOptionsFrame.pages[1], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[1].bufftimer:SetHeight(20)
+	LunaOptionsFrame.pages[1].bufftimer:SetWidth(20)
+	LunaOptionsFrame.pages[1].bufftimer:SetPoint("TOPRIGHT", LunaOptionsFrame.pages[1].XPBar, "TOPRIGHT", 0, -30)
+	LunaOptionsFrame.pages[1].bufftimer:SetScript("OnClick", OptionFunctions.BTimerToggle)
+	LunaOptionsFrame.pages[1].bufftimer:SetChecked(LunaOptions.BTimers or 0)
+	getglobal("BTimerSwitchText"):SetText("Enable radial buff timers")
 		
 	for k,i in ipairs({1,2,3,5}) do
 		LunaOptionsFrame.pages[i].BuffPosition = CreateFrame("Button", "BuffSwitch"..i, LunaOptionsFrame.pages[i], "UIDropDownMenuTemplate")

@@ -961,12 +961,9 @@ function Luna_Target_Events:UNIT_DISPLAYPOWER()
 	elseif targetpower == 3 then
 		LunaTargetFrame.bars["Powerbar"]:SetStatusBarColor(LunaOptions.PowerColors["Energy"][1], LunaOptions.PowerColors["Energy"][2], LunaOptions.PowerColors["Energy"][3])
 		LunaTargetFrame.bars["Powerbar"].ppbg:SetVertexColor(LunaOptions.PowerColors["Energy"][1], LunaOptions.PowerColors["Energy"][2], LunaOptions.PowerColors["Energy"][3], .25)
-	elseif not UnitIsDeadOrGhost("target") then
+	else
 		LunaTargetFrame.bars["Powerbar"]:SetStatusBarColor(LunaOptions.PowerColors["Mana"][1], LunaOptions.PowerColors["Mana"][2], LunaOptions.PowerColors["Mana"][3])
 		LunaTargetFrame.bars["Powerbar"].ppbg:SetVertexColor(LunaOptions.PowerColors["Mana"][1], LunaOptions.PowerColors["Mana"][2], LunaOptions.PowerColors["Mana"][3], .25)
-	else
-		LunaTargetFrame.bars["Powerbar"]:SetStatusBarColor(0, 0, 0, .25)
-		LunaTargetFrame.bars["Powerbar"].ppbg:SetVertexColor(0, 0, 0, .25)
 	end
 	Luna_Target_Events.UNIT_MANA()
 end

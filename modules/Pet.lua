@@ -503,7 +503,7 @@ function LunaUnitFrames:UpdatePetFrame()
 	end
 	Luna_Pet_Events.UNIT_HAPPINESS()
 
-	petpower = UnitPowerType("pet")
+	local petpower = UnitPowerType("pet")
 	if UnitManaMax("pet") == 0 then
 		LunaPetFrame.bars["Powerbar"]:SetStatusBarColor(0, 0, 0, .25)
 		LunaPetFrame.bars["Powerbar"].ppbg:SetVertexColor(0, 0, 0, .25)
@@ -516,12 +516,9 @@ function LunaUnitFrames:UpdatePetFrame()
 	elseif petpower == 3 then
 		LunaPetFrame.bars["Powerbar"]:SetStatusBarColor(LunaOptions.PowerColors["Energy"][1], LunaOptions.PowerColors["Energy"][2], LunaOptions.PowerColors["Energy"][3])
 		LunaPetFrame.bars["Powerbar"].ppbg:SetVertexColor(LunaOptions.PowerColors["Energy"][1], LunaOptions.PowerColors["Energy"][2], LunaOptions.PowerColors["Energy"][3], .25)
-	elseif not UnitIsDeadOrGhost("pet") then
+	else
 		LunaPetFrame.bars["Powerbar"]:SetStatusBarColor(LunaOptions.PowerColors["Mana"][1], LunaOptions.PowerColors["Mana"][2], LunaOptions.PowerColors["Mana"][3])
 		LunaPetFrame.bars["Powerbar"].ppbg:SetVertexColor(LunaOptions.PowerColors["Mana"][1], LunaOptions.PowerColors["Mana"][2], LunaOptions.PowerColors["Mana"][3], .25)
-	else
-		LunaPetFrame.bars["Powerbar"]:SetStatusBarColor(0, 0, 0, .25)
-		LunaPetFrame.bars["Powerbar"].ppbg:SetVertexColor(0, 0, 0, .25)
 	end
 	
 	for z=1, 16 do

@@ -580,12 +580,9 @@ function LunaUnitFrames:UpdateTargetTargetFrame()
 	elseif targetpower == 3 then
 		LunaTargetTargetFrame.bars["Powerbar"]:SetStatusBarColor(LunaOptions.PowerColors["Energy"][1], LunaOptions.PowerColors["Energy"][2], LunaOptions.PowerColors["Energy"][3])
 		LunaTargetTargetFrame.bars["Powerbar"].ppbg:SetVertexColor(LunaOptions.PowerColors["Energy"][1], LunaOptions.PowerColors["Energy"][2], LunaOptions.PowerColors["Energy"][3], .25)
-	elseif not UnitIsDeadOrGhost("targettarget") then
+	else
 		LunaTargetTargetFrame.bars["Powerbar"]:SetStatusBarColor(LunaOptions.PowerColors["Mana"][1], LunaOptions.PowerColors["Mana"][2], LunaOptions.PowerColors["Mana"][3])
 		LunaTargetTargetFrame.bars["Powerbar"].ppbg:SetVertexColor(LunaOptions.PowerColors["Mana"][1], LunaOptions.PowerColors["Mana"][2], LunaOptions.PowerColors["Mana"][3], .25)
-	else
-		LunaTargetTargetFrame.bars["Powerbar"]:SetStatusBarColor(0, 0, 0, .25)
-		LunaTargetTargetFrame.bars["Powerbar"].ppbg:SetVertexColor(0, 0, 0, .25)
 	end
 	
 	if UnitIsPlayer("targettarget") then
@@ -1084,12 +1081,9 @@ function LunaUnitFrames:UpdateTargetTargetTargetFrame()
 	elseif targetpower == 3 then
 		LunaTargetTargetTargetFrame.bars["Powerbar"]:SetStatusBarColor(LunaOptions.PowerColors["Energy"][1], LunaOptions.PowerColors["Energy"][2], LunaOptions.PowerColors["Energy"][3])
 		LunaTargetTargetTargetFrame.bars["Powerbar"].ppbg:SetVertexColor(LunaOptions.PowerColors["Energy"][1], LunaOptions.PowerColors["Energy"][2], LunaOptions.PowerColors["Energy"][3], .25)
-	elseif not UnitIsDeadOrGhost("targettargettarget") then
+	else
 		LunaTargetTargetTargetFrame.bars["Powerbar"]:SetStatusBarColor(LunaOptions.PowerColors["Mana"][1], LunaOptions.PowerColors["Mana"][2], LunaOptions.PowerColors["Mana"][3])
 		LunaTargetTargetTargetFrame.bars["Powerbar"].ppbg:SetVertexColor(LunaOptions.PowerColors["Mana"][1], LunaOptions.PowerColors["Mana"][2], LunaOptions.PowerColors["Mana"][3], .25)
-	else
-		LunaTargetTargetTargetFrame.bars["Powerbar"]:SetStatusBarColor(0, 0, 0, .25)
-		LunaTargetTargetTargetFrame.bars["Powerbar"].ppbg:SetVertexColor(0, 0, 0, .25)
 	end
 	
 	if UnitIsPlayer("targettargettarget") then
