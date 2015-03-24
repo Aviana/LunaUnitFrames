@@ -44,11 +44,7 @@ local function Luna_Player_OnClick()
 end
 
 local function buffcancel()
-	local button = arg1
-	ChatFrame1:AddMessage("We're in")
---	if (button == "RightButton") then
-		CancelPlayerBuff(GetPlayerBuff(this.id-1,"HELPFUL"))
---	end
+	CancelPlayerBuff(GetPlayerBuff(this.id-1,"HELPFUL"))
 end
 
 local function Luna_HideBlizz(frame)
@@ -255,6 +251,8 @@ function LunaUnitFrames:CreatePlayerFrame()
 	LunaPlayerFrame.Buffs[1]:SetScript("OnEnter", Luna_Player_SetBuffTooltip)
 	LunaPlayerFrame.Buffs[1]:SetScript("OnLeave", Luna_Player_SetBuffTooltipLeave)
 	LunaPlayerFrame.Buffs[1]:SetScript("OnClick", buffcancel)
+	LunaPlayerFrame.Buffs[1]:RegisterForClicks("RightButtonUp")
+
 	
 	LunaPlayerFrame.Buffs[1].cd = CreateFrame("Model", nil, LunaPlayerFrame.Buffs[1], "CooldownFrameTemplate")
 	LunaPlayerFrame.Buffs[1].cd:ClearAllPoints()
@@ -277,6 +275,7 @@ function LunaUnitFrames:CreatePlayerFrame()
 		LunaPlayerFrame.Buffs[i]:SetScript("OnEnter", Luna_Player_SetBuffTooltip)
 		LunaPlayerFrame.Buffs[i]:SetScript("OnLeave", Luna_Player_SetBuffTooltipLeave)
 		LunaPlayerFrame.Buffs[i]:SetScript("OnClick", buffcancel)
+		LunaPlayerFrame.Buffs[i]:RegisterForClicks("RightButtonUp")
 		
 		LunaPlayerFrame.Buffs[i].cd = CreateFrame("Model", nil, LunaPlayerFrame.Buffs[i], "CooldownFrameTemplate")
 		LunaPlayerFrame.Buffs[i].cd:ClearAllPoints()
