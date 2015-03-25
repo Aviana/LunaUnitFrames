@@ -45,6 +45,60 @@ function LunaUnitFrames:GetPowerString(unit)
 	return result
 end
 	
+function Luna_OnClick()
+	local button, modifier
+	if (arg1 == "LeftButton") then
+		button = 1
+	else
+		button = 2
+	end
+	if IsShiftKeyDown() then
+		modifier = 2
+	elseif IsAltKeyDown() then
+		modifier = 3
+	elseif IsControlKeyDown() then
+		modifier = 4
+	else
+		modifier = 1
+	end
+	local func = loadstring(LunaOptions.clickcast[modifier][button])
+	if LunaOptions.clickcast[modifier][button] == "target" then
+		if (SpellIsTargeting()) then
+			SpellTargetUnit(this.unit)
+		elseif (CursorHasItem()) then
+			DropItemOnUnit(this.unit)
+		else
+			TargetUnit(this.unit)
+		end
+		return
+	elseif LunaOptions.clickcast[modifier][button] == "menu" then
+		if (SpellIsTargeting()) then
+			SpellStopTargeting()
+			return;
+		else
+			ToggleDropDownMenu(1, nil, this.dropdown, "cursor", 0, 0)
+			if UnitIsUnit("player", this.unit) then
+				if UnitIsPartyLeader("player") then
+					UIDropDownMenu_AddButton({text = "Reset Instances", func = ResetInstances, notCheckable = 1}, 1)
+				end
+			end
+		end
+	elseif UnitIsUnit("target", this.unit) then
+		if func then
+			func()
+		else
+			CastSpellByName(LunaOptions.clickcast[modifier][button])
+		end
+	else
+		TargetUnit(this.unit)
+		if func then
+			func()
+		else
+			CastSpellByName(LunaOptions.clickcast[modifier][button])
+		end
+		TargetLastTarget()
+	end
+end
 
 function LunaUnitFrames:OnEvent()
 	if event == "ADDON_LOADED" and arg1 == "LunaUnitFrames" then
@@ -54,6 +108,14 @@ function LunaUnitFrames:OnEvent()
 		end
 		if table.getn(LunaOptions.frames["LunaPlayerFrame"].bars) < 5 then
 			LunaOptions.frames["LunaPlayerFrame"].bars[5] = {"Totembar", 0}
+		end
+		if not LunaOptions.clickcast then
+			LunaOptions.clickcast = {
+									{"target","menu"},
+									{"",""},
+									{"",""},
+									{"",""}
+									}
 		end
 		LunaOptions.ClassColors = {	WARRIOR = {0.78, 0.61, 0.43},
 						MAGE = {0.41, 0.8, 0.94},

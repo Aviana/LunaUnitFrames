@@ -18,31 +18,6 @@ function Luna_PlayerDropDown_Initialize()
 	UnitPopup_ShowMenu(dropdown, "PET" , "pet")
 end
 
-local function Luna_Pet_OnClick()
-	local button = arg1
-	if (button == "LeftButton") then
-		if (SpellIsTargeting()) then
-			SpellTargetUnit("pet");
-		elseif (CursorHasItem()) then
-			DropItemOnUnit("pet");
-		else
-			TargetUnit("pet");
-		end
-		return;
-	end
-
-	if (button == "RightButton") then
-		if (SpellIsTargeting()) then
-			SpellStopTargeting();
-			return;
-		end
-	end
-
-	if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then
-		ToggleDropDownMenu(1, nil, dropdown, "cursor", 0, 0);
-	end
-end
-
 local function Luna_Pet_OnEvent()
 	local func = Luna_Pet_Events[event]
 	if (func) then
@@ -245,9 +220,16 @@ function LunaUnitFrames:CreatePetFrame()
 	LunaPetFrame:RegisterEvent("UNIT_PET")
 	LunaPetFrame:RegisterEvent("UNIT_LEVEL")
 	LunaPetFrame:RegisterEvent("UNIT_NAME_UPDATE")
-	LunaPetFrame:SetScript("OnClick", Luna_Pet_OnClick)
+	LunaPetFrame:SetScript("OnClick", Luna_OnClick)
 	LunaPetFrame:SetScript("OnEvent", Luna_Pet_OnEvent)
-	UIDropDownMenu_Initialize(dropdown, Luna_PlayerDropDown_Initialize, "MENU")
+	LunaPetFrame.dropdown = CreateFrame("Frame", "LunaPetDropDownMenu", UIParent, "UIDropDownMenuTemplate")
+	LunaPetFrame.initialize = function() 	if this.dropdown then 
+												UnitPopup_ShowMenu(this.dropdown, "PET", this.unit)
+											elseif UIDROPDOWNMENU_OPEN_MENU then 
+												UnitPopup_ShowMenu(getglobal(UIDROPDOWNMENU_OPEN_MENU), "PET", getglobal(UIDROPDOWNMENU_OPEN_MENU):GetParent().unit)
+											end
+							end
+	UIDropDownMenu_Initialize(LunaPetFrame.dropdown, LunaPetFrame.initialize, "MENU")
 	LunaUnitFrames:UpdatePetFrame()
 	
 	LunaPetFrame.AdjustBars = function()

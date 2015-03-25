@@ -1,6 +1,5 @@
 local HealComm = AceLibrary("HealComm-1.0")
 local AceEvent = AceLibrary("AceEvent-2.0")
-local info = {text = "Reset Instances", func = ResetInstances, notCheckable = 1}
 local Luna_Player_Events = {}
 
 local totemcolors = {
@@ -9,39 +8,6 @@ local totemcolors = {
 					{0.78,0.61,0.43},
 					{0.41,0.80,0.94}
 				}
-
-local dropdown = CreateFrame("Frame", "LunaUnitDropDownMenu", UIParent, "UIDropDownMenuTemplate")
-local function Luna_PlayerDropDown_Initialize()
-	UnitPopup_ShowMenu(dropdown, "SELF" , "player")
-end
-
-local function Luna_Player_OnClick()
-	local button = arg1
-	if (button == "LeftButton") then
-		if (SpellIsTargeting()) then
-			SpellTargetUnit("player");
-		elseif (CursorHasItem()) then
-			DropItemOnUnit("player");
-		else
-			TargetUnit("player");
-		end
-		return;
-	end
-
-	if (button == "RightButton") then
-		if (SpellIsTargeting()) then
-			SpellStopTargeting();
-			return;
-		end
-	end
-
-	if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then
-		ToggleDropDownMenu(1, nil, dropdown, "cursor", 0, 0)
-		if UnitIsPartyLeader("player") then
-			UIDropDownMenu_AddButton(info, 1)
-		end
-	end
-end
 
 local function buffcancel()
 	CancelPlayerBuff(GetPlayerBuff(this.id-1,"HELPFUL"))
@@ -573,7 +539,7 @@ function LunaUnitFrames:CreatePlayerFrame()
 		LunaPlayerFrame:RegisterEvent("SPELLCAST_START")
 		LunaPlayerFrame:RegisterEvent("SPELLCAST_STOP")
 	end
-	LunaPlayerFrame:SetScript("OnClick", Luna_Player_OnClick)
+	LunaPlayerFrame:SetScript("OnClick", Luna_OnClick)
 	LunaPlayerFrame:SetScript("OnEvent", Luna_Player_OnEvent)
 	LunaPlayerFrame.bars["Castbar"]:SetScript("OnUpdate", Luna_Player_OnUpdate)
 	LunaPlayerFrame.bars["Totembar"]:SetScript("OnUpdate", Luna_Player_TotemOnUpdate)
@@ -586,7 +552,12 @@ function LunaUnitFrames:CreatePlayerFrame()
 	
 	LunaPlayerFrame:SetScript("OnUpdate", CombatFeedback_OnUpdate)
 	
-	UIDropDownMenu_Initialize(dropdown, Luna_PlayerDropDown_Initialize, "MENU")
+	LunaPlayerFrame.dropdown = CreateFrame("Frame", "LunaUnitDropDownMenu", UIParent, "UIDropDownMenuTemplate")
+	LunaPlayerFrame.initialize = function() if LunaPlayerFrame.dropdown then 
+												UnitPopup_ShowMenu(LunaPlayerFrame.dropdown, "SELF", LunaPlayerFrame.unit)
+											end
+								end
+	UIDropDownMenu_Initialize(LunaPlayerFrame.dropdown, LunaPlayerFrame.initialize, "MENU")
 	
 	LunaPlayerFrame.AdjustBars = function()
 		local frameHeight = LunaPlayerFrame:GetHeight()

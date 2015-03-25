@@ -8,8 +8,23 @@ ScanTip:SetOwner(WorldFrame, "ANCHOR_NONE")
 LunaUnitFrames.frames.RaidFrames = {}
 
 local function Luna_Raid_OnClick()
-	local button = arg1
-	if (button == "LeftButton") then
+	local button, modifier
+	if (arg1 == "LeftButton") then
+		button = 1
+	else
+		button = 2
+	end
+	if IsShiftKeyDown() then
+		modifier = 2
+	elseif IsAltKeyDown() then
+		modifier = 3
+	elseif IsControlKeyDown() then
+		modifier = 4
+	else
+		modifier = 1
+	end
+	local func = loadstring(LunaOptions.clickcast[modifier][button])
+	if LunaOptions.clickcast[modifier][button] == "target" then
 		if (SpellIsTargeting()) then
 			SpellTargetUnit(this.unit)
 		elseif (CursorHasItem()) then
@@ -18,13 +33,25 @@ local function Luna_Raid_OnClick()
 			TargetUnit(this.unit)
 		end
 		return
-	end
-
-	if (button == "RightButton") then
+	elseif LunaOptions.clickcast[modifier][button] == "menu" then
 		if (SpellIsTargeting()) then
 			SpellStopTargeting()
 			return;
 		end
+	elseif UnitIsUnit("target", this.unit) then
+		if func then
+			func()
+		else
+			CastSpellByName(LunaOptions.clickcast[modifier][button])
+		end
+	else
+		TargetUnit(this.unit)
+		if func then
+			func()
+		else
+			CastSpellByName(LunaOptions.clickcast[modifier][button])
+		end
+		TargetLastTarget()
 	end
 end
 

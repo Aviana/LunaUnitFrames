@@ -1,32 +1,6 @@
 local Luna_PartyPet_Events = {}
 LunaPartyPetFrames = {}
 
-function Luna_PartyPet_OnClick()
-	local button = arg1
-	if (button == "LeftButton") then
-		if (SpellIsTargeting()) then
-			SpellTargetUnit(this.unit)
-		elseif (CursorHasItem()) then
-			DropItemOnUnit(this.unit)
-		else
-			TargetUnit(this.unit)
-		end
-		return
-	end
-
-	if (button == "RightButton") then
-		if (SpellIsTargeting()) then
-			SpellStopTargeting()
-			return;
-		end
-	end
-
-	if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then
-		ToggleDropDownMenu(1, nil, this.dropdown, "cursor", 0, 0)
-	end
-
-end
-
 function Luna_PartyPet_OnEvent()
 	local func = Luna_PartyPet_Events[event]
 	if (func) then
@@ -50,13 +24,13 @@ function LunaUnitFrames:CreatePartyPetFrames()
 		LunaPartyPetFrames[i].unit = "partypet"..i
 		LunaPartyPetFrames[i]:SetScript("OnEnter", UnitFrame_OnEnter)
 		LunaPartyPetFrames[i]:SetScript("OnLeave", UnitFrame_OnLeave)
-		LunaPartyPetFrames[i]:SetScript("OnClick", Luna_PartyPet_OnClick)
+		LunaPartyPetFrames[i]:SetScript("OnClick", Luna_OnClick)
 		LunaPartyPetFrames[i]:SetScript("OnEvent", Luna_PartyPet_OnEvent)
 		LunaPartyPetFrames[i]:RegisterEvent("UNIT_HEALTH")
 		LunaPartyPetFrames[i]:RegisterEvent("UNIT_MAXHEALTH")
 		LunaPartyPetFrames[i]:RegisterEvent("UNIT_NAME_UPDATE")
 		LunaPartyPetFrames[i].dropdown = CreateFrame("Frame", "LunaUnitDropDownMenuPartyPet"..i, UIParent, "UIDropDownMenuTemplate")
-		LunaPartyPetFrames[i].DropDown_Initialize = function () UnitPopup_ShowMenu(LunaPartyPetFrames[i].dropdown, "RAID_TARGET_ICON", ("partypet"..i), RAID_TARGET_ICON) end
+		LunaPartyPetFrames[i].DropDown_Initialize = function () UnitPopup_ShowMenu(LunaPartyPetFrames[i].dropdown, "RAID_TARGET_ICON", this.unit, "RAID_TARGET_ICON", RAID_TARGET_ICON) end
 		UIDropDownMenu_Initialize(LunaPartyPetFrames[i].dropdown, LunaPartyPetFrames[i].DropDown_Initialize, "MENU")
 
 		-- Healthbar

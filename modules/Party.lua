@@ -33,32 +33,6 @@ local function Luna_Party_OnEvent()
 	end
 end
 
-function Luna_Party_OnClick()
-	local button = arg1
-	if (button == "LeftButton") then
-		if (SpellIsTargeting()) then
-			SpellTargetUnit(this.unit)
-		elseif (CursorHasItem()) then
-			DropItemOnUnit(this.unit)
-		else
-			TargetUnit(this.unit)
-		end
-		return
-	end
-
-	if (button == "RightButton") then
-		if (SpellIsTargeting()) then
-			SpellStopTargeting()
-			return;
-		end
-	end
-
-	if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then
-		ToggleDropDownMenu(1, nil, this.dropdown, "cursor", 0, 0)
-	end
-
-end
-
 function Luna_Party_SetBuffTooltip()
 	GameTooltip:SetOwner(this, "ANCHOR_BOTTOMRIGHT")
 	if (this.id > 16) then
@@ -171,7 +145,7 @@ function LunaUnitFrames:CreatePartyFrames()
 		LunaPartyFrames[i]:RegisterEvent("RAID_ROSTER_UPDATE")
 		LunaPartyFrames[i]:RegisterEvent("UNIT_PET")
 		LunaPartyFrames[i]:SetScript("OnEvent", Luna_Party_OnEvent)
-		LunaPartyFrames[i]:SetScript("OnClick", Luna_Party_OnClick)
+		LunaPartyFrames[i]:SetScript("OnClick", Luna_OnClick)
 		LunaPartyFrames[i]:SetScript("OnEnter", UnitFrame_OnEnter)
 		LunaPartyFrames[i]:SetScript("OnLeave", UnitFrame_OnLeave)
 		LunaPartyFrames[i].dropdown = CreateFrame("Frame", "LunaUnitDropDownMenuParty"..i, LunaPartyFrames[i], "UIDropDownMenuTemplate")

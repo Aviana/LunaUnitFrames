@@ -99,6 +99,12 @@ local function ResetSettings()
 								},
 							},
 						}
+	LunaOptions.clickcast = {
+							{"target","menu"},
+							{"",""},
+							{"",""},
+							{"",""}
+							}
 	LunaOptions.enableRaid = 1
 	LunaOptions.PartyinRaids = 0
 	LunaOptions.Rangefreq = 0.2
@@ -128,11 +134,11 @@ end
 local OptionFunctions = {}
 
 function OptionFunctions.StartMoving()
-	LunaOptionsFrame:StartMoving()
+	this:StartMoving()
 end
 
 function OptionFunctions.StopMovingOrSizing()
-	LunaOptionsFrame:StopMovingOrSizing()
+	this:StopMovingOrSizing()
 end
 
 function OptionFunctions.ToggleFrame()
@@ -142,6 +148,14 @@ function OptionFunctions.ToggleFrame()
 		else
 			page:Hide()
 		end
+	end
+end
+
+function OptionFunctions.OpenCCC()
+	if cccpopup:IsShown() then
+		cccpopup:Hide()
+	else
+		cccpopup:Show()
 	end
 end
 
@@ -1134,18 +1148,14 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.Button8:SetScript("OnClick", OptionFunctions.LockFrames)
 	LunaOptionsFrame.Button8.id = 8	
 	
-	LunaOptionsFrame.Button9 = CreateFrame("Button", "LunaResetFramesButton", LunaOptionsFrame, "UIPanelButtonTemplate")
+	LunaOptionsFrame.Button9 = CreateFrame("Button", "LunaCCCButton", LunaOptionsFrame, "UIPanelButtonTemplate")
 	LunaOptionsFrame.Button9:SetPoint("TOPLEFT", LunaOptionsFrame.Button8, "BOTTOMLEFT", 0, -10)
 	LunaOptionsFrame.Button9:SetHeight(20)
 	LunaOptionsFrame.Button9:SetWidth(140)
-	LunaOptionsFrame.Button9:SetText("Reset Settings")
-	LunaOptionsFrame.Button9:SetScript("OnClick", OptionFunctions.ResetSettings)
+	LunaOptionsFrame.Button9:SetText("Click casting...")
+	LunaOptionsFrame.Button9:SetScript("OnClick", OptionFunctions.OpenCCC)
 	LunaOptionsFrame.Button9.id = 9
-	
-	LunaOptionsFrame.reset = LunaOptionsFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-	LunaOptionsFrame.reset:SetPoint("TOP", LunaOptionsFrame.Button9, "BOTTOM", 0, -5)
-	LunaOptionsFrame.reset:SetText("[BETA] Requires a UI reload")
-	
+		
 	LunaOptionsFrame.pages[1].HideCastbar = CreateFrame("CheckButton", "HideCastbar", LunaOptionsFrame.pages[1], "UICheckButtonTemplate")
 	LunaOptionsFrame.pages[1].HideCastbar:SetHeight(20)
 	LunaOptionsFrame.pages[1].HideCastbar:SetWidth(20)
@@ -1831,4 +1841,183 @@ function LunaOptionsModule:CreateMenu()
 	getglobal("OverhealSliderText"):SetText("Overlap percent of healbar: "..(LunaOptions.overheal or 20))
 																	
 	LunaOptionsFrame:SetScale(1.3)
+	
+	-- CCC pop-up
+	
+	cccpopup = CreateFrame("Frame", "LunaCCCMenu", LunaOptionsFrame)
+	cccpopup:SetHeight(370)
+	cccpopup:SetWidth(350)
+	cccpopup:SetBackdrop(LunaOptions.backdrop)
+	cccpopup:SetBackdropColor(0.18,0.27,0.5)
+	cccpopup:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+	cccpopup:SetFrameStrata("FULLSCREEN")
+	cccpopup:EnableMouse(1)
+	cccpopup:SetMovable(1)
+	cccpopup:RegisterForDrag("LeftButton")
+	cccpopup:SetScript("OnDragStart", OptionFunctions.StartMoving)
+	cccpopup:SetScript("OnDragStop", OptionFunctions.StopMovingOrSizing)
+	cccpopup:Hide()
+
+	cccpopup.CloseButton = CreateFrame("Button", "LunaOptionsCloseButton", cccpopup,"UIPanelCloseButton")
+	cccpopup.CloseButton:SetPoint("TOPRIGHT", cccpopup, "TOPRIGHT", 0, 0)
+
+	cccpopup.icon = cccpopup:CreateTexture(nil, "ARTWORK", cccpopup)
+	cccpopup.icon:SetTexture(LunaOptions.icontexture)
+	cccpopup.icon:SetHeight(32)
+	cccpopup.icon:SetWidth(32)
+	cccpopup.icon:SetPoint("TOPLEFT", cccpopup, "TOPLEFT", 0, 0)
+
+	cccpopup.name = cccpopup:CreateFontString(nil, "OVERLAY", "NumberFontNormal")
+	cccpopup.name:SetPoint("TOP", cccpopup, "TOP", 0, -10)
+	cccpopup.name:SetShadowColor(0, 0, 0)
+	cccpopup.name:SetShadowOffset(0.8, -0.8)
+	cccpopup.name:SetTextColor(1,1,1)
+	cccpopup.name:SetText("Luna Click Casting Configuration")
+	
+	cccpopup.page = CreateFrame("Frame", nil, cccpopup)
+	cccpopup.page:SetHeight(320)
+	cccpopup.page:SetWidth(330)
+	cccpopup.page:SetBackdrop(LunaOptions.backdrop)
+	cccpopup.page:SetBackdropColor(0,0,0,1)
+	cccpopup.page:SetPoint("BOTTOMRIGHT", cccpopup, "BOTTOMRIGHT", -10, 10)
+
+	cccpopup.page.leftbuttontext = cccpopup.page:CreateFontString(nil, "OVERLAY", cccpopup.page)
+	cccpopup.page.leftbuttontext:SetPoint("TOP", cccpopup.page, "TOP", -50, -10)
+	cccpopup.page.leftbuttontext:SetFont("Fonts\\FRIZQT__.TTF", 10)
+	cccpopup.page.leftbuttontext:SetTextColor(1,0.82,0)
+	cccpopup.page.leftbuttontext:SetText("Left Button")
+	
+	cccpopup.page.rightbuttontext = cccpopup.page:CreateFontString(nil, "OVERLAY", cccpopup.page)
+	cccpopup.page.rightbuttontext:SetPoint("LEFT", cccpopup.page.leftbuttontext, "RIGHT", 70, 0)
+	cccpopup.page.rightbuttontext:SetFont("Fonts\\FRIZQT__.TTF", 10)
+	cccpopup.page.rightbuttontext:SetTextColor(1,0.82,0)
+	cccpopup.page.rightbuttontext:SetText("Right Button")
+	
+	cccpopup.page.nonetext = cccpopup.page:CreateFontString(nil, "OVERLAY", cccpopup.page)
+	cccpopup.page.nonetext:SetPoint("TOPLEFT", cccpopup.page, "TOPLEFT", 10, -40)
+	cccpopup.page.nonetext:SetFont("Fonts\\FRIZQT__.TTF", 10)
+	cccpopup.page.nonetext:SetTextColor(1,0.82,0)
+	cccpopup.page.nonetext:SetText("NONE")
+	
+	cccpopup.page.noneleft = CreateFrame("Editbox", "leftEditBox", cccpopup.page, "InputBoxTemplate")
+	cccpopup.page.noneleft:SetHeight(20)
+	cccpopup.page.noneleft:SetWidth(120)
+	cccpopup.page.noneleft:SetAutoFocus(nil)
+	cccpopup.page.noneleft:SetPoint("LEFT", cccpopup.page.nonetext, "RIGHT", 20, 0)
+	cccpopup.page.noneleft:SetText(LunaOptions.clickcast[1][1])
+	cccpopup.page.noneleft:SetScript("OnEnterPressed", function()
+																		this:ClearFocus();
+																		LunaOptions.clickcast[1][1] = this:GetText()
+																	end)
+	cccpopup.page.noneleft:SetScript("OnEditFocusLost", function() LunaOptions.clickcast[1][1] = this:GetText() end)
+																	
+	cccpopup.page.noneright = CreateFrame("Editbox", "rightEditBox", cccpopup.page, "InputBoxTemplate")
+	cccpopup.page.noneright:SetHeight(20)
+	cccpopup.page.noneright:SetWidth(120)
+	cccpopup.page.noneright:SetAutoFocus(nil)
+	cccpopup.page.noneright:SetPoint("LEFT", cccpopup.page.noneleft, "RIGHT", 10, 0)
+	cccpopup.page.noneright:SetText(LunaOptions.clickcast[1][2])
+	cccpopup.page.noneright:SetScript("OnEnterPressed", function()
+																		this:ClearFocus();
+																		LunaOptions.clickcast[1][2] = this:GetText()
+																	end)
+	cccpopup.page.noneright:SetScript("OnEditFocusLost", function() LunaOptions.clickcast[1][2] = this:GetText() end)
+	
+	cccpopup.page.shifttext = cccpopup.page:CreateFontString(nil, "OVERLAY", cccpopup.page)
+	cccpopup.page.shifttext:SetPoint("TOP", cccpopup.page.nonetext, "BOTTOM", 0, -20)
+	cccpopup.page.shifttext:SetFont("Fonts\\FRIZQT__.TTF", 10)
+	cccpopup.page.shifttext:SetTextColor(1,0.82,0)
+	cccpopup.page.shifttext:SetText("SHIFT")
+	
+	cccpopup.page.shiftleft = CreateFrame("Editbox", "leftshiftEditBox", cccpopup.page, "InputBoxTemplate")
+	cccpopup.page.shiftleft:SetHeight(20)
+	cccpopup.page.shiftleft:SetWidth(120)
+	cccpopup.page.shiftleft:SetAutoFocus(nil)
+	cccpopup.page.shiftleft:SetPoint("TOP", cccpopup.page.noneleft, "BOTTOM", 0, -10)
+	cccpopup.page.shiftleft:SetText(LunaOptions.clickcast[2][1])
+	cccpopup.page.shiftleft:SetScript("OnEnterPressed", function()
+																		this:ClearFocus();
+																		LunaOptions.clickcast[2][1] = this:GetText()
+																	end)
+	cccpopup.page.shiftleft:SetScript("OnEditFocusLost", function() LunaOptions.clickcast[2][1] = this:GetText() end)
+																	
+	cccpopup.page.shiftright = CreateFrame("Editbox", "rightshiftEditBox", cccpopup.page, "InputBoxTemplate")
+	cccpopup.page.shiftright:SetHeight(20)
+	cccpopup.page.shiftright:SetWidth(120)
+	cccpopup.page.shiftright:SetAutoFocus(nil)
+	cccpopup.page.shiftright:SetPoint("TOP", cccpopup.page.noneright, "BOTTOM", 0, -10)
+	cccpopup.page.shiftright:SetText(LunaOptions.clickcast[2][2])
+	cccpopup.page.shiftright:SetScript("OnEnterPressed", function()
+																		this:ClearFocus();
+																		LunaOptions.clickcast[2][2] = this:GetText()
+																	end)
+	cccpopup.page.shiftright:SetScript("OnEditFocusLost", function() LunaOptions.clickcast[2][2] = this:GetText() end)
+	
+	cccpopup.page.alttext = cccpopup.page:CreateFontString(nil, "OVERLAY", cccpopup.page)
+	cccpopup.page.alttext:SetPoint("TOP", cccpopup.page.shifttext, "BOTTOM", 0, -20)
+	cccpopup.page.alttext:SetFont("Fonts\\FRIZQT__.TTF", 10)
+	cccpopup.page.alttext:SetTextColor(1,0.82,0)
+	cccpopup.page.alttext:SetText("ALT")
+	
+	cccpopup.page.altleft = CreateFrame("Editbox", "leftaltEditBox", cccpopup.page, "InputBoxTemplate")
+	cccpopup.page.altleft:SetHeight(20)
+	cccpopup.page.altleft:SetWidth(120)
+	cccpopup.page.altleft:SetAutoFocus(nil)
+	cccpopup.page.altleft:SetPoint("TOP", cccpopup.page.shiftleft, "BOTTOM", 0, -10)
+	cccpopup.page.altleft:SetText(LunaOptions.clickcast[3][1])
+	cccpopup.page.altleft:SetScript("OnEnterPressed", function()
+																		this:ClearFocus();
+																		LunaOptions.clickcast[3][1] = this:GetText()
+																	end)
+	cccpopup.page.altleft:SetScript("OnEditFocusLost", function() LunaOptions.clickcast[3][1] = this:GetText() end)
+																	
+	cccpopup.page.altright = CreateFrame("Editbox", "rightaltEditBox", cccpopup.page, "InputBoxTemplate")
+	cccpopup.page.altright:SetHeight(20)
+	cccpopup.page.altright:SetWidth(120)
+	cccpopup.page.altright:SetAutoFocus(nil)
+	cccpopup.page.altright:SetPoint("TOP", cccpopup.page.shiftright, "BOTTOM", 0, -10)
+	cccpopup.page.altright:SetText(LunaOptions.clickcast[3][2])
+	cccpopup.page.altright:SetScript("OnEnterPressed", function()
+																		this:ClearFocus();
+																		LunaOptions.clickcast[3][2] = this:GetText()
+																	end)
+	cccpopup.page.altright:SetScript("OnEditFocusLost", function() LunaOptions.clickcast[3][2] = this:GetText() end)
+	
+	cccpopup.page.ctrltext = cccpopup.page:CreateFontString(nil, "OVERLAY", cccpopup.page)
+	cccpopup.page.ctrltext:SetPoint("TOP", cccpopup.page.alttext, "BOTTOM", 0, -20)
+	cccpopup.page.ctrltext:SetFont("Fonts\\FRIZQT__.TTF", 10)
+	cccpopup.page.ctrltext:SetTextColor(1,0.82,0)
+	cccpopup.page.ctrltext:SetText("CTRL")
+	
+	cccpopup.page.ctrlleft = CreateFrame("Editbox", "leftctrlEditBox", cccpopup.page, "InputBoxTemplate")
+	cccpopup.page.ctrlleft:SetHeight(20)
+	cccpopup.page.ctrlleft:SetWidth(120)
+	cccpopup.page.ctrlleft:SetAutoFocus(nil)
+	cccpopup.page.ctrlleft:SetPoint("TOP", cccpopup.page.altleft, "BOTTOM", 0, -10)
+	cccpopup.page.ctrlleft:SetText(LunaOptions.clickcast[4][1])
+	cccpopup.page.ctrlleft:SetScript("OnEnterPressed", function()
+																		this:ClearFocus();
+																		LunaOptions.clickcast[4][1] = this:GetText()
+																	end)
+	cccpopup.page.ctrlleft:SetScript("OnEditFocusLost", function() LunaOptions.clickcast[4][1] = this:GetText() end)
+																	
+	cccpopup.page.ctrlright = CreateFrame("Editbox", "rightctrlEditBox", cccpopup.page, "InputBoxTemplate")
+	cccpopup.page.ctrlright:SetHeight(20)
+	cccpopup.page.ctrlright:SetWidth(120)
+	cccpopup.page.ctrlright:SetAutoFocus(nil)
+	cccpopup.page.ctrlright:SetPoint("TOP", cccpopup.page.altright, "BOTTOM", 0, -10)
+	cccpopup.page.ctrlright:SetText(LunaOptions.clickcast[4][2])
+	cccpopup.page.ctrlright:SetScript("OnEnterPressed", function()
+																		this:ClearFocus();
+																		LunaOptions.clickcast[4][2] = this:GetText()
+																	end)
+	cccpopup.page.ctrlright:SetScript("OnEditFocusLost", function() LunaOptions.clickcast[4][2] = this:GetText() end)
+	
+	cccpopup.page.desc = cccpopup.page:CreateFontString(nil, "OVERLAY", cccpopup.page)
+	cccpopup.page.desc:SetPoint("BOTTOMLEFT", cccpopup.page, "BOTTOMLEFT", 10, 10)
+	cccpopup.page.desc:SetFont("Fonts\\FRIZQT__.TTF", 10)
+	cccpopup.page.desc:SetTextColor(1,1,1)
+	cccpopup.page.desc:SetText("HowTo:\n\n\"target\"\nNormal target behaviour\n\n\"menu\"\nNormal popup menu\n\n<Spellname>\nYour spell of choice\n\nfunction()\nA function from the UI or one of your add-ons. While its\nexecuted your target will be the one you click casted.")
+	cccpopup.page.desc:SetJustifyH("LEFT")
+	
 end

@@ -3,7 +3,6 @@ local Luna_TargetTarget_Events = {}
 local tot = CreateFrame("Frame")
 tot.time = 0
 
-local dropdown = CreateFrame("Frame", "LunaUnitDropDownMenuTargetTarget", UIParent, "UIDropDownMenuTemplate")
 function Luna_TargetTargetDropDown_Initialize()
 	local menu, name;
 	if (UnitIsUnit("targettarget", "player")) then
@@ -21,12 +20,10 @@ function Luna_TargetTargetDropDown_Initialize()
 		name = RAID_TARGET_ICON;
 	end
 	if (menu) then
-		UnitPopup_ShowMenu(dropdown, menu, "targettarget", name);
+		UnitPopup_ShowMenu(LunaTargetTargetFrame.dropdown, menu, LunaTargetTargetFrame.unit, name);
 	end
 end
-UIDropDownMenu_Initialize(dropdown, Luna_TargetTargetDropDown_Initialize, "MENU")
 
-local dropdown2 = CreateFrame("Frame", "LunaUnitDropDownMenuTargetTargetTarget", UIParent, "UIDropDownMenuTemplate")
 function Luna_TargetTargetTargetDropDown_Initialize()
 	local menu, name
 	if (UnitIsUnit("targettargettarget", "player")) then
@@ -44,37 +41,7 @@ function Luna_TargetTargetTargetDropDown_Initialize()
 		name = RAID_TARGET_ICON
 	end
 	if (menu) then
-		UnitPopup_ShowMenu(dropdown2, menu, "targettargettarget", name);
-	end
-end
-UIDropDownMenu_Initialize(dropdown2, Luna_TargetTargetTargetDropDown_Initialize, "MENU")
-
-function Luna_TargetTarget_OnClick()
-	local button = arg1
-	if (button == "LeftButton") then
-		if (SpellIsTargeting()) then
-			SpellTargetUnit(this.unit)
-		elseif (CursorHasItem()) then
-			DropItemOnUnit(this.unit)
-		else
-			TargetUnit(this.unit)
-		end
-		return;
-	end
-
-	if (button == "RightButton") then
-		if (SpellIsTargeting()) then
-			SpellStopTargeting();
-			return;
-		end
-	end
-
-	if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then
-		if this.unit == "targettarget" then
-			ToggleDropDownMenu(1, nil, dropdown, "cursor", 0, 0)
-		else
-			ToggleDropDownMenu(1, nil, dropdown2, "cursor", 0, 0)
-		end
+		UnitPopup_ShowMenu(LunaTargetTargetTargetFrame.dropdown, menu, LunaTargetTargetTargetFrame.unit, name);
 	end
 end
 
@@ -307,9 +274,12 @@ function LunaUnitFrames:CreateTargetTargetFrame()
 	
 	LunaTargetTargetFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
 	
-	LunaTargetTargetFrame:SetScript("OnClick", Luna_TargetTarget_OnClick)
+	LunaTargetTargetFrame:SetScript("OnClick", Luna_OnClick)
 	LunaTargetTargetFrame:SetScript("OnEvent", Luna_TargetTarget_OnEvent)
 	tot:SetScript("OnUpdate", Luna_TargetTarget_OnUpdate)
+	
+	LunaTargetTargetFrame.dropdown = CreateFrame("Frame", "LunaUnitDropDownMenuTargetTarget", UIParent, "UIDropDownMenuTemplate")
+	UIDropDownMenu_Initialize(LunaTargetTargetFrame.dropdown, Luna_TargetTargetDropDown_Initialize, "MENU")
 	
 	LunaTargetTargetFrame.AdjustBars = function()
 		local frameHeight = LunaTargetTargetFrame:GetHeight()
@@ -813,9 +783,12 @@ function LunaUnitFrames:CreateTargetTargetTargetFrame()
 	
 	LunaTargetTargetTargetFrame:Hide()
 		
-	LunaTargetTargetTargetFrame:SetScript("OnClick", Luna_TargetTarget_OnClick)
+	LunaTargetTargetTargetFrame:SetScript("OnClick", Luna_OnClick)
 	LunaTargetTargetTargetFrame:SetScript("OnEvent", Luna_TargetTarget_OnEvent)
 	tot:SetScript("OnUpdate", Luna_TargetTarget_OnUpdate)
+	
+	LunaTargetTargetTargetFrame.dropdown = CreateFrame("Frame", "LunaUnitDropDownMenuTargetTargetTarget", UIParent, "UIDropDownMenuTemplate")
+	UIDropDownMenu_Initialize(LunaTargetTargetTargetFrame.dropdown, Luna_TargetTargetTargetDropDown_Initialize, "MENU")
 	
 	LunaTargetTargetTargetFrame.AdjustBars = function()
 		local frameHeight = LunaTargetTargetTargetFrame:GetHeight()

@@ -11,7 +11,6 @@ local function Luna_Target_OnEvent()
 	end
 end
 
-local dropdown = CreateFrame("Frame", "LunaUnitDropDownMenuTarget", UIParent, "UIDropDownMenuTemplate")
 function Luna_TargetDropDown_Initialize()
 	local menu, name;
 	if (UnitIsUnit("target", "player")) then
@@ -29,33 +28,7 @@ function Luna_TargetDropDown_Initialize()
 		name = RAID_TARGET_ICON;
 	end
 	if (menu) then
-		UnitPopup_ShowMenu(dropdown, menu, "target", name);
-	end
-end
-UIDropDownMenu_Initialize(dropdown, Luna_TargetDropDown_Initialize, "MENU");
-
-function Luna_Target_OnClick()
-	local button = arg1
-	if (button == "LeftButton") then
-		if (SpellIsTargeting()) then
-			SpellTargetUnit("target");
-		elseif (CursorHasItem()) then
-			DropItemOnUnit("target");
-		else
-			TargetUnit("target");
-		end
-		return;
-	end
-
-	if (button == "RightButton") then
-		if (SpellIsTargeting()) then
-			SpellStopTargeting();
-			return;
-		end
-	end
-
-	if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then
-		ToggleDropDownMenu(1, nil, dropdown, "cursor", 0, 0)
+		UnitPopup_ShowMenu(LunaTargetFrame.dropdown, menu, "target", name);
 	end
 end
 
@@ -416,10 +389,13 @@ function LunaUnitFrames:CreateTargetFrame()
 	LunaTargetFrame:RegisterEvent("UNIT_SPELLMISS")
 	LunaTargetFrame:RegisterEvent("UNIT_COMBAT")
 	LunaTargetFrame:RegisterEvent("UNIT_FACTION")
-	LunaTargetFrame:SetScript("OnClick", Luna_Target_OnClick)
+	LunaTargetFrame:SetScript("OnClick", Luna_OnClick)
 	LunaTargetFrame:SetScript("OnEvent", Luna_Target_OnEvent)
 	LunaTargetFrame:SetScript("OnUpdate", CombatFeedback_OnUpdate)
 	LunaTargetFrame.bars["Castbar"]:SetScript("OnUpdate", Castbar_OnUpdate)
+	
+	LunaTargetFrame.dropdown = CreateFrame("Frame", "LunaUnitDropDownMenuTarget", UIParent, "UIDropDownMenuTemplate")
+	UIDropDownMenu_Initialize(LunaTargetFrame.dropdown, Luna_TargetDropDown_Initialize, "MENU")
 	
 	if not LunaOptions.BlizzTarget then
 		Luna_HideBlizz(TargetFrame)
