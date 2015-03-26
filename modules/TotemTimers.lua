@@ -120,7 +120,7 @@ local TotemDB = {
 		},
 		["Disease Cleansing Totem"] = {
 			["type"] = 2,
-			["dur"] = {120}
+			["dur"] = {120, 0}
 		},
 		["Sentry Totem"] = {
 			["type"] = 4,
@@ -140,6 +140,10 @@ local TotemDB = {
 		},
 		["Tremor Totem"] = {
 			["type"] = 3,
+			["dur"] = {120}
+		},
+		["Tranquil Air Totem"] = {
+			["type"] = 4,
 			["dur"] = {120}
 		}
 	}
@@ -195,6 +199,7 @@ CastSpellByName = newCastSpellByName
 
 local oldUseAction = UseAction
 local function newUseAction(a1, a2, a3)
+	totemTipTextRight1:SetText("")
 	totemTip:SetAction(a1)
 	local spellName = totemTipTextLeft1:GetText()
 	-- Call the original function
@@ -206,6 +211,8 @@ local function newUseAction(a1, a2, a3)
 	local rank = totemTipTextRight1:GetText()
 	if rank then
 		_,_,rank = string.find(rank,"(%d+)")
+	else
+		rank = "1"
 	end
 	ProcessSpellCast(spellName, rank)
 end
