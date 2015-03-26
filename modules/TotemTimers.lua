@@ -120,7 +120,7 @@ local TotemDB = {
 		},
 		["Disease Cleansing Totem"] = {
 			["type"] = 2,
-			["dur"] = {120, 0}
+			["dur"] = {120}
 		},
 		["Sentry Totem"] = {
 			["type"] = 4,

@@ -118,6 +118,7 @@ function DruidManaLib:AceEvent_FullyInitialized()
 	self:RegisterEvent("UNIT_INVENTORY_CHANGED", DruidManaLib.OnEvent)
 	self:RegisterEvent("PLAYER_AURAS_CHANGED", DruidManaLib.OnEvent)
 	self:RegisterEvent("UPDATE_SHAPESHIFT_FORMS", DruidManaLib.OnEvent)
+	self:RegisterEvent("SPELLCAST_STOP", DruidManaLib.OnEvent)
 end
 
 ------------------------------------------------
@@ -135,6 +136,7 @@ DruidManaLib.waitonce = nil
 DruidManaLib.firstshift = (UnitPowerType("player") ~= 0)
 _, DruidManaLib.init = UnitClass("player")
 DruidManaLib.notyet = nil
+DruidManaLib.inform = nil
 DruidManaLibTip:SetOwner(DruidManaLib, "ANCHOR_NONE")
 
 local function DruidManaLib_GetShapeshiftCost()
@@ -233,13 +235,13 @@ local function DruidManaLib_ReflectionCheck()
 		j = j + 1;
 	end
 	if DruidManaLib.lowregentimer > 0 then 
-		if waitonce then
+		if DruidManaLib.waitonce then
 			local name, iconTexture, tier, column, rank, maxRank, isExceptional, meetsPrereq = GetTalentInfo(3, 6);
 			if rank == 0 then return 0; else
-				managain = ((ceil(UnitStat("player",5) / 5)+15) * (0.05 * rank));
+				managain = ceil(((UnitStat("player",5) / 5)+15) * (0.05 * rank));
 			end
 		else
-			waitonce = true;
+			DruidManaLib.waitonce = true;
 		end
 	elseif DruidManaLib.lowregentimer <= 0 then
 		managain = (ceil(UnitStat("player",5) / 5)+15);
@@ -261,25 +263,28 @@ DruidManaLib.OnEvent = function()
 				DruidManaLib.keepthemana = DruidManaLib.keepthemana + add + DruidManaLib.extra;
 				if DruidManaLib.keepthemana > DruidManaLib.maxmana then DruidManaLib.keepthemana = DruidManaLib.maxmana; end
 			end
-			DruidManaLib.fullmanatimer = 0;
+			DruidManaLib.fullmanatimer = 0
 		elseif event == "PLAYER_AURAS_CHANGED" or event == "UPDATE_SHAPESHIFT_FORMS" then
-			if UnitPowerType("player") == 1 then
+			if UnitPowerType("player") == 1 and not DruidManaLib.inform then
+				DruidManaLib.inform = true
 				--Bear
-				DruidManaLib_Subtract();
-			elseif UnitPowerType("player") == 3 then
+				DruidManaLib_Subtract()
+			elseif UnitPowerType("player") == 3 and not DruidManaLib.inform then
+				DruidManaLib.inform = true
 				--Cat
-				DruidManaLib_Subtract();
-			elseif UnitPowerType("player") == 0 then
-				DruidManaLib.keepthemana = UnitMana("player");
+				DruidManaLib_Subtract()
+			elseif UnitPowerType("player") == 0 and DruidManaLib.inform then
+				DruidManaLib.inform = nil
+				DruidManaLib.keepthemana = UnitMana("player")
 				if DruidManaLib.maxmana ~= UnitManaMax("player") then
-					DruidManaLib.maxmana = UnitManaMax("player");
+					DruidManaLib.maxmana = UnitManaMax("player")
 				end
 				--player/aqua/travel
 			end
 		elseif (event == "SPELLCAST_STOP") then
 			if UnitPowerType("player") == 0 then
 				DruidManaLib.lowregentimer = 5
-				waitonce = nil
+				DruidManaLib.waitonce = nil
 			end
 		end
 	end
