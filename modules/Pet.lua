@@ -196,6 +196,8 @@ function LunaUnitFrames:CreatePetFrame()
 	LunaPetFrame.lvl:SetShadowColor(0, 0, 0)
 	LunaPetFrame.lvl:SetShadowOffset(0.8, -0.8)
 	LunaPetFrame.lvl:SetText(UnitLevel("pet"))
+	local color = GetDifficultyColor(UnitLevel("pet"))
+	LunaPetFrame.lvl:SetVertexColor(color.r, color.g, color.b)
 
 	LunaPetFrame.class = LunaPetFrame.bars["Powerbar"]:CreateFontString(nil, "OVERLAY")
 	LunaPetFrame.class:SetPoint("LEFT", LunaPetFrame.lvl, "RIGHT",  1, 0)
@@ -544,6 +546,8 @@ function LunaUnitFrames:UpdatePetFrame()
 	LunaPetFrame.name:SetText(UnitName(LunaPetFrame.unit))
 	LunaPetFrame.class:SetText(UnitCreatureFamily(LunaPetFrame.unit))
 	LunaPetFrame.lvl:SetText(UnitLevel(LunaPetFrame.unit))
+	local color = GetDifficultyColor(UnitLevel(LunaPetFrame.unit))
+	LunaPetFrame.lvl:SetVertexColor(color.r, color.g, color.b)
 	Luna_Pet_Events.UNIT_HEALTH()
 	Luna_Pet_Events.UNIT_MANA()
 end
@@ -656,6 +660,8 @@ Luna_Pet_Events.UNIT_MODEL_CHANGED = Luna_Pet_Events.UNIT_PORTRAIT_UPDATE
 
 function Luna_Pet_Events:UNIT_LEVEL()
 	LunaPetFrame.lvl:SetText(UnitLevel(LunaPetFrame.unit))
+	local color = GetDifficultyColor(UnitLevel(LunaPetFrame.unit))
+	LunaPetFrame.lvl:SetVertexColor(color.r, color.g, color.b)
 end
 
 function Luna_Pet_Events:UNIT_PET()

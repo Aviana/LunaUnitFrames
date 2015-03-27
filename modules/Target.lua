@@ -967,6 +967,8 @@ function Luna_Target_Events:UNIT_LEVEL()
 	else
 		LunaTargetFrame.lvl:SetText(lvl)
 	end
+	local color = GetDifficultyColor(lvl)
+	LunaTargetFrame.lvl:SetVertexColor(color.r, color.g, color.b)
 end
 
 function Luna_Target_Events:UNIT_COMBAT()

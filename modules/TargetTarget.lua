@@ -567,6 +567,8 @@ function LunaUnitFrames:UpdateTargetTargetFrame()
 	else
 		LunaTargetTargetFrame.Lvl:SetText("??")
 	end
+	local diffcolor = GetDifficultyColor(UnitLevel("targettarget"))
+	LunaTargetTargetFrame.Lvl:SetVertexColor(diffcolor.r, diffcolor.g, diffcolor.b)
 	LunaTargetTargetFrame.name:SetText(UnitName("targettarget"))
 	local index = GetRaidTargetIndex("targettarget")
 	if (index) then
@@ -1071,6 +1073,8 @@ function LunaUnitFrames:UpdateTargetTargetTargetFrame()
 	else
 		LunaTargetTargetTargetFrame.Lvl:SetText("??")
 	end
+	local diffcolor = GetDifficultyColor(UnitLevel("targettargettarget"))
+	LunaTargetTargetTargetFrame.Lvl:SetVertexColor(diffcolor.r, diffcolor.g, diffcolor.b)
 	LunaTargetTargetTargetFrame.name:SetText(UnitName("targettargettarget"))
 	local index = GetRaidTargetIndex("targettargettarget")
 	if (index) then

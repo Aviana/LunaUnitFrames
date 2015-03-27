@@ -17,6 +17,7 @@ if not AceLibrary:HasInstance("AceEvent-2.0") then error(MAJOR_VERSION .. " requ
 DruidManaLib = CreateFrame("Frame")
 local DruidManaLibTip = CreateFrame("GameTooltip", "DruidManaLibTip", nil, "GameTooltipTemplate")
 local DruidManaLibOnUpdateFrame = CreateFrame("Frame")
+DruidManaLibOnUpdateFrame:RegisterEvent("PLAYER_LOGIN")
 
 ------------------------------------------------
 -- Locales
@@ -25,47 +26,23 @@ local DruidManaLibOnUpdateFrame = CreateFrame("Frame")
 local L = {}
 
 if( GetLocale() == "deDE" ) then
-	L["Druid"] = "Druide";
-	L["Innervate"] = "Anregen";
-	L["Form"] = "gestalt";
-	L["Aquatic"] = "Wasser";
-	L["Travel"] = "Reise";
 	L["Equip: Restores %d+ mana per 5 sec."] = "Anlegen: Stellt alle 5 Sek. %d+ Punkt(e) Mana wieder her.";
 	L["Mana Regen %d+ per 5 sec."] = "Manaregeneration %d+ per 5 Sek.";
 	L["Equip: Restores (%d+) mana per 5 sec."] = "Anlegen: Stellt alle 5 Sek. (%d+) Punkt(e) Mana wieder her."
 	L["Mana Regen (%d+) per 5 sec."] = "Manaregeneration (%d+) per 5 Sek.";
-	L["cat form"] = "Katzengestalt";
-	L["bear form"] = "B\195\164rengestalt";
 	L[" "] = " ";
-	L["Metamorphosis Rune"] = "Rune der Metamorphose";
 elseif( GetLocale() == "frFR" ) then
-	L["Druid"] = "Druide";
-	L["Innervate"] = "Innervation";
-	L["Form"] = "Forme";
-	L["Aquatic"] = "aquatique";
-	L["Travel"] = "voyage";
 	L["Equip: Restores %d+ mana per 5 sec."] = "Equip\195\169 : Rend %d+ points de mana toutes les 5 secondes.";
 	L["Mana Regen %d+ per 5 sec."] = "R\195\169cup. mana %d+/5 sec.";
 	L["Equip: Restores (%d+) mana per 5 sec."] = "Equip\195\169 : Rend (%d+) points de mana toutes les 5 secondes."
 	L["Mana Regen (%d+) per 5 sec."] = "R\195\169cup. mana (%d+)/5 sec.";
-	L["cat form"] = "f\195\169lin";
-	L["bear form"] = "d'ours";
 	L[" "] = ":";
-	L["Metamorphosis Rune"] = "Rune de transformation";
 else
-	L["Druid"] = "Druid";
-	L["Innervate"] = "Innervate";
-	L["Form"] = "Form";
-	L["Aquatic"] = "Aquatic";
-	L["Travel"] = "Travel";
 	L["Equip: Restores %d+ mana per 5 sec."] = "Equip: Restores %d+ mana per 5 sec.";
 	L["Mana Regen %d+ per 5 sec."] = "Mana Regen %d+ per 5 sec.";
 	L["Equip: Restores (%d+) mana per 5 sec."] = "Equip: Restores (%d+) mana per 5 sec."
 	L["Mana Regen (%d+) per 5 sec."] = "Mana Regen (%d+) per 5 sec.";
-	L["cat form"] = "cat form";
-	L["bear form"] = "bear form";
 	L[" "] = " ";
-	L["Metamorphosis Rune"] = "Metamorphosis Rune";
 end
 
 ------------------------------------------------
@@ -133,19 +110,17 @@ DruidManaLib.extra = 0
 DruidManaLib.lowregentimer = 0
 DruidManaLib.fullmanatimer = 0
 DruidManaLib.waitonce = nil
-DruidManaLib.firstshift = (UnitPowerType("player") ~= 0)
 _, DruidManaLib.init = UnitClass("player")
-DruidManaLib.notyet = nil
 DruidManaLib.inform = nil
 DruidManaLibTip:SetOwner(DruidManaLib, "ANCHOR_NONE")
 
 local function DruidManaLib_GetShapeshiftCost()
 	DruidManaLib.subtractmana = 0;
 	local a, b, c, d = GetSpellTabInfo(4);
+	local spelltexture
 	for i = 1, c+d, 1 do
-		local spellname = GetSpellName(i, BOOKTYPE_SPELL);
-		spellname = strlower(spellname);
-		if spellname and (strfind(spellname, L["cat form"]) or strfind(spellname, L["bear form"])) then
+		spelltexture = GetSpellTexture(i, BOOKTYPE_SPELL);
+		if spelltexture and spelltexture == "Interface\\Icons\\Ability_Druid_CatForm" then
 			DruidManaLibTip:SetSpell(i, 1);
 			local msg = DruidManaLibTipTextLeft2:GetText();
 			local params;
@@ -202,34 +177,30 @@ local function DruidManaLib_MaxManaScript()
 			end
 		end
 	end
-	DruidManaLib.extra = (DruidManaLib.extra * 2) / 5;
+	DruidManaLib.extra = ceil((DruidManaLib.extra * 2) / 5);
 end
 
 local function DruidManaLib_Subtract()
-	if not firstshift then
-		local j = 1;
-		while (UnitBuff("player",j)) do
-			DruidManaLibTip:SetUnitBuff("player", j);
-			local msg = DruidManaLibTipTextLeft1:GetText();
-			if msg and (strfind(msg,L["Metamorphosis Rune"])) then
-				return;
-			end
-			j = j + 1;
+	local j = 1;
+	local icon
+	while (UnitBuff("player",j)) do
+		icon = UnitBuff("player",j)
+		if icon and icon == "Interface\\Icons\\Inv_Misc_Rune_06" then
+			return
 		end
-		DruidManaLib.keepthemana = DruidManaLib.keepthemana - DruidManaLib.subtractmana;
-	else
-		firstshift = nil;
+		j = j + 1
 	end
+	DruidManaLib.keepthemana = DruidManaLib.keepthemana - DruidManaLib.subtractmana;
 	DruidManaLib.SpecialEventScheduler:TriggerEvent("DruidManaLib_Manaupdate")
 end
 
 local function DruidManaLib_ReflectionCheck()
 	local managain = 0;
 	local j = 1;
+	local icon
 	while (UnitBuff("player",j)) do
-		DruidManaLibTip:SetUnitBuff("player", j);
-		local msg = DruidManaLibTipTextLeft1:GetText();
-		if msg and (strfind(msg,L["Innervate"])) then
+		icon = UnitBuff("player",j)
+		if icon and icon == "Interface\\Icons\\Spell_Nature_Lightning" then
 			return ((ceil(UnitStat(arg1,5) / 5)+15) * 5);
 		end
 		j = j + 1;
@@ -265,16 +236,13 @@ DruidManaLib.OnEvent = function()
 			end
 			DruidManaLib.fullmanatimer = 0
 		elseif event == "PLAYER_AURAS_CHANGED" or event == "UPDATE_SHAPESHIFT_FORMS" then
-			if UnitPowerType("player") == 1 and not DruidManaLib.inform then
-				DruidManaLib.inform = true
+			if UnitPowerType("player") == 1 then
 				--Bear
 				DruidManaLib_Subtract()
-			elseif UnitPowerType("player") == 3 and not DruidManaLib.inform then
-				DruidManaLib.inform = true
+			elseif UnitPowerType("player") == 3 then
 				--Cat
 				DruidManaLib_Subtract()
-			elseif UnitPowerType("player") == 0 and DruidManaLib.inform then
-				DruidManaLib.inform = nil
+			elseif UnitPowerType("player") == 0 then
 				DruidManaLib.keepthemana = UnitMana("player")
 				if DruidManaLib.maxmana ~= UnitManaMax("player") then
 					DruidManaLib.maxmana = UnitManaMax("player")
@@ -293,15 +261,6 @@ local timer = 0
 function DruidManaLib_OnUpdate()
 	timer = timer + arg1
 	if DruidManaLib.init and DruidManaLib.init == "DRUID" then
-		if not DruidManaLib.notyet then
-			DruidManaLib_MaxManaScript();
-			for i = 1, GetNumShapeshiftForms() do
-				local icon = GetShapeshiftFormInfo(i);
-				if icon == "Interface\\Icons\\Ability_Druid_AquaticForm" then aquaformid = i; end
-				if icon == "Interface\\Icons\\Ability_Druid_TravelForm" then travelformid = i; end
-			end
-			DruidManaLib.notyet = true; 
-		end
 		if DruidManaLib.lowregentimer > 0 then
 			DruidManaLib.lowregentimer = DruidManaLib.lowregentimer - arg1;
 			if DruidManaLib.lowregentimer <= 0 then DruidManaLib.lowregentimer = 0; end
@@ -322,6 +281,7 @@ function DruidManaLib_OnUpdate()
 end
 
 DruidManaLibOnUpdateFrame:SetScript("OnUpdate", DruidManaLib_OnUpdate)
+DruidManaLibOnUpdateFrame:SetScript("OnEvent", DruidManaLib_MaxManaScript)
 
 function DruidManaLib:GetMana()
 	return DruidManaLib.keepthemana, DruidManaLib.maxmana

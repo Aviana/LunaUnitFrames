@@ -297,6 +297,8 @@ function LunaUnitFrames:CreatePartyFrames()
 		LunaPartyFrames[i].lvl:SetShadowColor(0, 0, 0)
 		LunaPartyFrames[i].lvl:SetShadowOffset(0.8, -0.8)
 		LunaPartyFrames[i].lvl:SetText(UnitLevel("party"..i))
+		local color = GetDifficultyColor(UnitLevel("party"..i))
+		LunaPartyFrames[i].lvl:SetVertexColor(color.r, color.g, color.b)
 
 		LunaPartyFrames[i].class = LunaPartyFrames[i].bars["Powerbar"]:CreateFontString(nil, "OVERLAY")
 		LunaPartyFrames[i].class:SetPoint("LEFT", LunaPartyFrames[i].lvl, "RIGHT",  1, 0)
@@ -751,6 +753,8 @@ function LunaUnitFrames:UpdatePartyFrames()
 			
 			LunaPartyFrames[i].name:SetText(UnitName(LunaPartyFrames[i].unit))
 			LunaPartyFrames[i].class:SetText(UnitClass(LunaPartyFrames[i].unit))
+			local difcolor = GetDifficultyColor(UnitLevel(LunaPartyFrames[i].unit))
+			LunaPartyFrames[i].lvl:SetVertexColor(difcolor.r, difcolor.g, difcolor.b)
 			if UnitLevel(LunaPartyFrames[i].unit) > 0 then
 				LunaPartyFrames[i].lvl:SetText(UnitLevel(LunaPartyFrames[i].unit))
 			else
@@ -928,6 +932,8 @@ end
 function Luna_Party_Events:UNIT_LEVEL()
 	if arg1 == this.unit then
 		local lvl = UnitLevel(this.unit)
+		local color = GetDifficultyColor(lvl)
+		this.lvl:SetVertexColor(color.r, color.g, color.b)
 		if lvl < 1 then
 			this.lvl:SetText("??")
 		else

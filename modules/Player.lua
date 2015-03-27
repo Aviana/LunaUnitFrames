@@ -386,6 +386,8 @@ function LunaUnitFrames:CreatePlayerFrame()
 	lvl:SetShadowOffset(0.8, -0.8)
 	lvl:SetText(UnitLevel("player"))
 	LunaPlayerFrame.Lvl = lvl
+	local color = GetDifficultyColor(UnitLevel("player"))
+	LunaPlayerFrame.Lvl:SetVertexColor(color.r, color.g, color.b)
 
 	local class = pp:CreateFontString(nil, "OVERLAY")
 	class:SetPoint("LEFT", lvl, "RIGHT",  1, 0)
@@ -1165,6 +1167,8 @@ Luna_Player_Events.UNIT_MODEL_CHANGED = Luna_Player_Events.UNIT_PORTRAIT_UPDATE
 
 function Luna_Player_Events:UNIT_LEVEL()
 	LunaPlayerFrame.Lvl:SetText(UnitLevel("player"))
+	local color = GetDifficultyColor(UnitLevel("player"))
+	LunaPlayerFrame.Lvl:SetVertexColor(color.r, color.g, color.b)
 end
 
 function Luna_Player_Events:UNIT_COMBAT()

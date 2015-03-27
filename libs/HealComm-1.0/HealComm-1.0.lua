@@ -1241,8 +1241,9 @@ function healcomm_newCastSpellByName(spellName, onSelf)
 	if ( spellName ) then
 		if ( SpellIsTargeting() ) then
 			healcomm_SpellSpell = spellName
+			healcomm_RankRank = rank
 		else
-			if UnitIsVisible("target") and UnitIsConnected("target") and UnitReaction("target", "player") > 4 then
+			if UnitIsVisible("target") and UnitIsConnected("target") and UnitReaction("target", "player") > 4 and not onSelf then
 				healcomm_ProcessSpellCast(spellName, rank, UnitName("target"))
 			else
 				healcomm_ProcessSpellCast(spellName, rank, UnitName("player"))
@@ -1332,15 +1333,13 @@ SpellStopTargeting = healcomm_newSpellStopTargeting
 
 healcomm_oldTargetUnit = TargetUnit
 function healcomm_newTargetUnit(unit)
-	-- Call the original function
-	healcomm_oldTargetUnit(unit)
-	
 	-- Look to see if we're currently waiting for a target internally
 	-- If we are, then well glean the target info here.
-	
 	if ( healcomm_SpellSpell and UnitExists(unit) ) then
 		healcomm_ProcessSpellCast(healcomm_SpellSpell, healcomm_RankRank, UnitName(unit))
 	end
+	-- Call the original function
+	healcomm_oldTargetUnit(unit)
 end
 TargetUnit = healcomm_newTargetUnit
 
