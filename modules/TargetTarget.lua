@@ -320,7 +320,7 @@ function LunaUnitFrames:CreateTargetTargetFrame()
 			LunaTargetTargetFrame.bars["Healthbar"].hpp:SetHeight(LunaTargetTargetFrame.bars["Healthbar"]:GetHeight())
 			LunaTargetTargetFrame.bars["Healthbar"].hpp:SetWidth(LunaTargetTargetFrame.bars["Healthbar"]:GetWidth()*0.35)
 			LunaTargetTargetFrame.name:SetFont(LunaOptions.font, healthheight)
-			LunaTargetTargetFrame.name:SetHeight(healthheight)
+			LunaTargetTargetFrame.name:SetHeight(LunaTargetTargetFrame.bars["Healthbar"]:GetHeight())
 			LunaTargetTargetFrame.name:SetWidth(LunaTargetTargetFrame.bars["Healthbar"]:GetWidth()*0.65)
 		end
 		if LunaTargetTargetFrame.bars["Healthbar"]:GetHeight() < 6 then
@@ -582,6 +582,17 @@ function LunaUnitFrames:UpdateTargetTargetFrame()
 	else
 		LunaTargetTargetFrame.RaidIcon:Hide()
 	end
+	local found, dtype
+	for i=1, 16 do
+		_,_,dtype = UnitDebuff("targettarget", i, 1)
+		if dtype and LunaOptions.HighlightDebuffs and not UnitIsEnemy("targettarget","player") then
+			LunaTargetTargetFrame:SetBackdropColor(unpack(LunaOptions.DebuffTypeColor[dtype],1))
+			found = true
+		end
+	end
+	if not found then
+		LunaTargetTargetFrame:SetBackdropColor(0,0,0,1)
+	end
 	if LunaOptions.frames["LunaTargetTargetFrame"].ShowBuffs ~= 1 then
 		local pos
 		for i=1, 16 do
@@ -836,7 +847,7 @@ function LunaUnitFrames:CreateTargetTargetTargetFrame()
 			LunaTargetTargetTargetFrame.bars["Healthbar"].hpp:SetHeight(LunaTargetTargetTargetFrame.bars["Healthbar"]:GetHeight())
 			LunaTargetTargetTargetFrame.bars["Healthbar"].hpp:SetWidth(LunaTargetTargetTargetFrame.bars["Healthbar"]:GetWidth()*0.35)
 			LunaTargetTargetTargetFrame.name:SetFont(LunaOptions.font, healthheight)
-			LunaTargetTargetTargetFrame.name:SetHeight(healthheight)
+			LunaTargetTargetTargetFrame.name:SetHeight(LunaTargetTargetTargetFrame.bars["Healthbar"]:GetHeight())
 			LunaTargetTargetTargetFrame.name:SetWidth(LunaTargetTargetTargetFrame.bars["Healthbar"]:GetWidth()*0.65)
 		end
 		if LunaTargetTargetTargetFrame.bars["Healthbar"]:GetHeight() < 6 then
@@ -1092,6 +1103,17 @@ function LunaUnitFrames:UpdateTargetTargetTargetFrame()
 		LunaTargetTargetTargetFrame.RaidIcon:Show()
 	else
 		LunaTargetTargetTargetFrame.RaidIcon:Hide()
+	end
+	local found, dtype
+	for i=1, 16 do
+		_,_,dtype = UnitDebuff("targettargettarget", i, 1)
+		if dtype and LunaOptions.HighlightDebuffs and not UnitIsEnemy("targettargettarget","player") then
+			LunaTargetTargetTargetFrame:SetBackdropColor(unpack(LunaOptions.DebuffTypeColor[dtype],1))
+			found = true
+		end
+	end
+	if not found then
+		LunaTargetTargetTargetFrame:SetBackdropColor(0,0,0,1)
 	end
 	if LunaOptions.frames["LunaTargetTargetTargetFrame"].ShowBuffs ~= 1 then
 		local pos

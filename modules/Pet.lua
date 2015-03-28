@@ -283,7 +283,6 @@ function LunaUnitFrames:CreatePetFrame()
 			LunaPetFrame.bars["Healthbar"].hpp:SetHeight(LunaPetFrame.bars["Healthbar"]:GetHeight())
 			LunaPetFrame.bars["Healthbar"].hpp:SetWidth(LunaPetFrame.bars["Healthbar"]:GetWidth()*0.45)
 			LunaPetFrame.name:SetFont(LunaOptions.font, healthheight)
-			LunaPetFrame.name:SetHeight(healthheight)
 			LunaPetFrame.name:SetWidth(LunaPetFrame.bars["Healthbar"]:GetWidth()*0.55)
 		end
 		if LunaPetFrame.bars["Healthbar"]:GetHeight() < 6 then

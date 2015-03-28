@@ -390,6 +390,7 @@ function LunaUnitFrames:CreateTargetFrame()
 	LunaTargetFrame:RegisterEvent("UNIT_SPELLMISS")
 	LunaTargetFrame:RegisterEvent("UNIT_COMBAT")
 	LunaTargetFrame:RegisterEvent("UNIT_FACTION")
+	LunaTargetFrame:RegisterEvent("UNIT_AURA")
 	LunaTargetFrame:SetScript("OnClick", Luna_OnClick)
 	LunaTargetFrame:SetScript("OnEvent", Luna_Target_OnEvent)
 	LunaTargetFrame:SetScript("OnUpdate", CombatFeedback_OnUpdate)
@@ -480,7 +481,6 @@ function LunaUnitFrames:CreateTargetFrame()
 			LunaTargetFrame.bars["Healthbar"].hpp:SetHeight(LunaTargetFrame.bars["Healthbar"]:GetHeight())
 			LunaTargetFrame.bars["Healthbar"].hpp:SetWidth(LunaTargetFrame.bars["Healthbar"]:GetWidth()*0.35)
 			LunaTargetFrame.name:SetFont(LunaOptions.font, healthheight)
-			LunaTargetFrame.name:SetHeight(healthheight)
 			LunaTargetFrame.name:SetWidth(LunaTargetFrame.bars["Healthbar"]:GetWidth()*0.65)
 		end
 		if LunaTargetFrame.bars["Healthbar"]:GetHeight() < 6 then
@@ -520,14 +520,12 @@ function LunaUnitFrames:CreateTargetFrame()
 	LunaTargetFrame.UpdateBuffSize = function ()
 		local buffcount = LunaOptions.frames["LunaTargetFrame"].BuffInRow or 16
 		if LunaOptions.frames["LunaTargetFrame"].ShowBuffs == 1 then
-			LunaTargetFrame:UnregisterEvent("UNIT_AURA")
 			for i=1, 16 do
 				LunaTargetFrame.Buffs[i]:Hide()
 				LunaTargetFrame.Debuffs[i]:Hide()
 			end
 		elseif LunaOptions.frames["LunaTargetFrame"].ShowBuffs == 2 then
 			local buffsize = ((LunaTargetFrame:GetWidth()-(buffcount-1))/buffcount)
-			LunaTargetFrame:RegisterEvent("UNIT_AURA")
 			LunaTargetFrame.AuraAnchor:ClearAllPoints()
 			LunaTargetFrame.AuraAnchor:SetPoint("BOTTOMLEFT", LunaTargetFrame, "TOPLEFT", -1, 3)
 			LunaTargetFrame.AuraAnchor:SetWidth(LunaTargetFrame:GetWidth())
@@ -557,7 +555,6 @@ function LunaUnitFrames:CreateTargetFrame()
 			Luna_Target_Events:UNIT_AURA()
 		elseif LunaOptions.frames["LunaTargetFrame"].ShowBuffs == 3 then
 			local buffsize = ((LunaTargetFrame:GetWidth()-(buffcount-1))/buffcount)
-			LunaTargetFrame:RegisterEvent("UNIT_AURA")
 			LunaTargetFrame.AuraAnchor:ClearAllPoints()
 			LunaTargetFrame.AuraAnchor:SetWidth(LunaTargetFrame:GetWidth())
 			local buffid = 1
@@ -587,7 +584,6 @@ function LunaUnitFrames:CreateTargetFrame()
 			Luna_Target_Events:UNIT_AURA()
 		elseif LunaOptions.frames["LunaTargetFrame"].ShowBuffs == 4 then
 			local buffsize = (((LunaTargetFrame:GetHeight()/2)-(math.ceil(16/buffcount)-1))/math.ceil(16/buffcount))
-			LunaTargetFrame:RegisterEvent("UNIT_AURA")
 			LunaTargetFrame.AuraAnchor:ClearAllPoints()
 			LunaTargetFrame.AuraAnchor:SetWidth((buffsize*buffcount)+(buffcount-1))
 			local buffid = 1
@@ -617,7 +613,6 @@ function LunaUnitFrames:CreateTargetFrame()
 			Luna_Target_Events:UNIT_AURA()
 		else
 			local buffsize = (((LunaTargetFrame:GetHeight()/2)-(math.ceil(16/buffcount)-1))/math.ceil(16/buffcount))
-			LunaTargetFrame:RegisterEvent("UNIT_AURA")
 			LunaTargetFrame.AuraAnchor:ClearAllPoints()
 			LunaTargetFrame.AuraAnchor:SetWidth((buffsize*buffcount)+(buffcount-1))
 			local buffid = 1
@@ -757,7 +752,21 @@ function Luna_Target_Events:RAID_TARGET_UPDATE()
 end
 
 function Luna_Target_Events:UNIT_AURA()
+	local found, dtype
 	local pos
+	for i=1,16 do
+		_,_,dtype = UnitDebuff("target", i, 1)
+		if dtype and LunaOptions.HighlightDebuffs and not UnitIsEnemy("target","player") then
+			LunaTargetFrame:SetBackdropColor(unpack(LunaOptions.DebuffTypeColor[dtype],1))
+			found = true
+		end
+	end
+	if not found then
+		LunaTargetFrame:SetBackdropColor(0,0,0,1)
+	end
+	if LunaOptions.frames["LunaTargetFrame"].ShowBuffs == 1 then
+		return
+	end
 	for i=1, 16 do
 		local path, stacks = UnitBuff("target",i)
 		LunaTargetFrame.Buffs[i].texturepath = path

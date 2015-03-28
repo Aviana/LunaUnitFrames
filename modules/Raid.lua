@@ -298,7 +298,7 @@ function LunaUnitFrames:CreateRaidFrames()
 end
 
 function LunaUnitFrames:UpdateRaidRoster()
-	if ((GetNumRaidMembers() == 0 or not RAID_SUBGROUP_LISTS) and (GetNumPartyMembers() == 0 or not LunaOptions.partyraidframe)) or LunaOptions.enableRaid == 0 then
+	if ((GetNumRaidMembers() == 0 or not RAID_SUBGROUP_LISTS) and ((GetNumPartyMembers() == 0 or not LunaOptions.partyraidframe) and not LunaOptions.AlwaysRaid)) or LunaOptions.enableRaid == 0 then
 		for i=1,8 do
 			LunaUnitFrames.frames.RaidFrames[i]:Hide()
 			for z=1,5 do
@@ -308,7 +308,7 @@ function LunaUnitFrames:UpdateRaidRoster()
 		end
 		return
 	end
-	if GetNumPartyMembers() > 0 and GetNumRaidMembers() == 0 then
+	if GetNumRaidMembers() == 0 then
 		if (LunaOptions.frames["LunaRaidFrames"].ShowRaidGroupTitles or 1) == 1 then
 			LunaUnitFrames.frames.RaidFrames[1]:Show()
 		else

@@ -154,6 +154,7 @@ function LunaUnitFrames:CreatePartyFrames()
 		LunaPartyFrames[i]:RegisterEvent("UNIT_AURA")
 		LunaPartyFrames[i]:RegisterEvent("RAID_ROSTER_UPDATE")
 		LunaPartyFrames[i]:RegisterEvent("UNIT_PET")
+		LunaPartyFrames[i]:RegisterEvent("UNIT_AURA")
 		LunaPartyFrames[i]:SetScript("OnEvent", Luna_Party_OnEvent)
 		LunaPartyFrames[i]:SetScript("OnClick", Luna_OnClick)
 		LunaPartyFrames[i]:SetScript("OnEnter", UnitFrame_OnEnter)
@@ -417,14 +418,12 @@ function LunaUnitFrames:UpdatePartyBuffSize()
 	local buffcount = LunaOptions.frames["LunaPartyFrames"].BuffInRow or 16
 	for id=1,4 do
 		if LunaOptions.frames["LunaPartyFrames"].ShowBuffs == 1 then
-			LunaPartyFrames[id]:UnregisterEvent("UNIT_AURA")
 			for i=1, 16 do
 				LunaPartyFrames[id].Buffs[i]:Hide()
 				LunaPartyFrames[id].Debuffs[i]:Hide()
 			end
 		elseif LunaOptions.frames["LunaPartyFrames"].ShowBuffs == 2 then
 			local buffsize = ((LunaPartyFrames[id]:GetWidth()-(buffcount-1))/buffcount)
-			LunaPartyFrames[id]:RegisterEvent("UNIT_AURA")
 			LunaPartyFrames[id].AuraAnchor:ClearAllPoints()
 			LunaPartyFrames[id].AuraAnchor:SetPoint("BOTTOMLEFT", LunaPartyFrames[id], "TOPLEFT", -1, 3)
 			LunaPartyFrames[id].AuraAnchor:SetWidth(LunaPartyFrames[id]:GetWidth())
@@ -454,7 +453,6 @@ function LunaUnitFrames:UpdatePartyBuffSize()
 			updateBuffs()
 		elseif LunaOptions.frames["LunaPartyFrames"].ShowBuffs == 3 then
 			local buffsize = ((LunaPartyFrames[id]:GetWidth()-(buffcount-1))/buffcount)
-			LunaPartyFrames[id]:RegisterEvent("UNIT_AURA")
 			LunaPartyFrames[id].AuraAnchor:ClearAllPoints()
 			LunaPartyFrames[id].AuraAnchor:SetWidth(LunaPartyFrames[id]:GetWidth())
 			local buffid = 1
@@ -484,7 +482,6 @@ function LunaUnitFrames:UpdatePartyBuffSize()
 			updateBuffs()
 		elseif LunaOptions.frames["LunaPartyFrames"].ShowBuffs == 4 then
 			local buffsize = (((LunaPartyFrames[id]:GetHeight()/2)-(math.ceil(16/buffcount)-1))/math.ceil(16/buffcount))
-			LunaPartyFrames[id]:RegisterEvent("UNIT_AURA")
 			LunaPartyFrames[id].AuraAnchor:ClearAllPoints()
 			LunaPartyFrames[id].AuraAnchor:SetWidth((buffsize*buffcount)+(buffcount-1))
 			local buffid = 1
@@ -514,7 +511,6 @@ function LunaUnitFrames:UpdatePartyBuffSize()
 			updateBuffs()
 		else
 			local buffsize = (((LunaPartyFrames[id]:GetHeight()/2)-(math.ceil(16/buffcount)-1))/math.ceil(16/buffcount))
-			LunaPartyFrames[id]:RegisterEvent("UNIT_AURA")
 			LunaPartyFrames[id].AuraAnchor:ClearAllPoints()
 			LunaPartyFrames[id].AuraAnchor:SetWidth((buffsize*buffcount)+(buffcount-1))
 			local buffid = 1
@@ -645,7 +641,6 @@ function LunaUnitFrames:UpdatePartyUnitFrameSize()
 			LunaPartyFrames[i].bars["Healthbar"].hpp:SetHeight(LunaPartyFrames[i].bars["Healthbar"]:GetHeight())
 			LunaPartyFrames[i].bars["Healthbar"].hpp:SetWidth(LunaPartyFrames[i].bars["Healthbar"]:GetWidth()*0.45)
 			LunaPartyFrames[i].name:SetFont(LunaOptions.font, healthheight)
-			LunaPartyFrames[i].name:SetHeight(healthheight)
 			LunaPartyFrames[i].name:SetWidth(LunaPartyFrames[i].bars["Healthbar"]:GetWidth()*0.55)
 		end
 		if LunaPartyFrames[i].bars["Healthbar"]:GetHeight() < 6 then
@@ -808,7 +803,21 @@ end
 
 function Luna_Party_Events:UNIT_AURA()
 	if this.unit == arg1 then
+		local found, dtype
 		local pos
+		for i=1,16 do
+			_,_,dtype = UnitDebuff(this.unit, i, 1)
+			if dtype and LunaOptions.HighlightDebuffs then
+				this:SetBackdropColor(unpack(LunaOptions.DebuffTypeColor[dtype],1))
+				found = true
+			end
+		end
+		if not found then
+			this:SetBackdropColor(0,0,0,1)
+		end
+		if LunaOptions.frames["LunaPartyFrames"].ShowBuffs == 1 then
+			return
+		end
 		for i=1, 16 do
 			local path, stacks = UnitBuff(this.unit,i)
 			this.Buffs[i].texturepath = path
@@ -849,6 +858,11 @@ function Luna_Party_Events:UNIT_AURA()
 			else
 				this.Debuffs[i]:EnableMouse(0)
 				this.Debuffs[i]:Hide()
+			end
+			_,_,dtype = UnitDebuff(this.unit, i, 1)
+			if dtype and LunaOptions.HighlightDebuffs then
+				this:SetBackdropColor(unpack(LunaOptions.DebuffTypeColor[dtype],1))
+				found = true
 			end
 			this.Debuffs[i]:SetNormalTexture(this.Debuffs[i].texturepath)
 		end

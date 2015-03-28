@@ -912,6 +912,14 @@ function OptionFunctions.ToggleBlizzBuffs()
 	end
 end
 
+function OptionFunctions.ToggleHighlightBuffs()
+	if not LunaOptions.HighlightDebuffs then
+		LunaOptions.HighlightDebuffs = 1
+	else
+		LunaOptions.HighlightDebuffs = nil
+	end
+end
+
 function OptionFunctions.enableFrame()
 	if LunaOptions.frames[this.frame].enabled == 1 then
 		LunaOptions.frames[this.frame].enabled = 0
@@ -967,6 +975,15 @@ function OptionFunctions.ToggleCenterIcon()
 		LunaOptions.frames["LunaRaidFrames"].centerIcon = nil
 	end
 	LunaUnitFrames:UpdateRaidLayout()
+end
+
+function OptionFunctions.ToggleAlwaysRaid()
+	if not LunaOptions.AlwaysRaid then
+		LunaOptions.AlwaysRaid = 1
+	else
+		LunaOptions.AlwaysRaid = nil
+	end
+	LunaUnitFrames:UpdateRaidRoster()
 end
 	
 function OptionFunctions.ToggleHealerMode()
@@ -1862,6 +1879,14 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[7].centericon:SetChecked(LunaOptions.frames["LunaRaidFrames"].centerIcon)
 	getglobal("CenterIconSwitchText"):SetText("Display Debuffs as a Center Icon")
 	
+	LunaOptionsFrame.pages[7].alwaysraid = CreateFrame("CheckButton", "AlwaysRaidSwitch", LunaOptionsFrame.pages[7], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[7].alwaysraid:SetHeight(20)
+	LunaOptionsFrame.pages[7].alwaysraid:SetWidth(20)
+	LunaOptionsFrame.pages[7].alwaysraid:SetPoint("TOPLEFT", LunaOptionsFrame.pages[7].centericon, "TOPLEFT", 0, -30)
+	LunaOptionsFrame.pages[7].alwaysraid:SetScript("OnClick", OptionFunctions.ToggleAlwaysRaid)
+	LunaOptionsFrame.pages[7].alwaysraid:SetChecked(LunaOptions.AlwaysRaid)
+	getglobal("AlwaysRaidSwitchText"):SetText("Always display the Raid Frame")
+	
 	LunaOptionsFrame.pages[8].hmodeswitch = CreateFrame("CheckButton", "HealerModeSwitch", LunaOptionsFrame.pages[8], "UICheckButtonTemplate")
 	LunaOptionsFrame.pages[8].hmodeswitch:SetHeight(20)
 	LunaOptionsFrame.pages[8].hmodeswitch:SetWidth(20)
@@ -1910,11 +1935,19 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[8].blizzbuffs:SetChecked(LunaOptions.BlizzBuffs)
 	getglobal("BlizzBuffSwitchText"):SetText("Hide Blizzard Buff Frames")
 	
+	LunaOptionsFrame.pages[8].hbuffs = CreateFrame("CheckButton", "HighlightDebuffsSwitch", LunaOptionsFrame.pages[8], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[8].hbuffs:SetHeight(20)
+	LunaOptionsFrame.pages[8].hbuffs:SetWidth(20)
+	LunaOptionsFrame.pages[8].hbuffs:SetPoint("TOPLEFT", LunaOptionsFrame.pages[8].blizzbuffs, "TOPLEFT", 0, -30)
+	LunaOptionsFrame.pages[8].hbuffs:SetScript("OnClick", OptionFunctions.ToggleHighlightBuffs)
+	LunaOptionsFrame.pages[8].hbuffs:SetChecked(LunaOptions.HighlightDebuffs)
+	getglobal("HighlightDebuffsSwitchText"):SetText("Highlight debuffed units you can dispel")
+	
 	LunaOptionsFrame.pages[8].overhealslider = CreateFrame("Slider", "OverhealSlider", LunaOptionsFrame.pages[8], "OptionsSliderTemplate")
 	LunaOptionsFrame.pages[8].overhealslider:SetMinMaxValues(0,20)
 	LunaOptionsFrame.pages[8].overhealslider:SetValueStep(1)
 	LunaOptionsFrame.pages[8].overhealslider:SetScript("OnValueChanged", OptionFunctions.OverhealAdjust)
-	LunaOptionsFrame.pages[8].overhealslider:SetPoint("TOPLEFT", LunaOptionsFrame.pages[8].blizzbuffs, "BOTTOMLEFT", 0, -20)
+	LunaOptionsFrame.pages[8].overhealslider:SetPoint("TOPLEFT", LunaOptionsFrame.pages[8].hbuffs, "BOTTOMLEFT", 0, -20)
 	LunaOptionsFrame.pages[8].overhealslider:SetValue(LunaOptions.overheal or 20)
 	LunaOptionsFrame.pages[8].overhealslider:SetWidth(215)
 	getglobal("OverhealSliderText"):SetText("Overlap percent of healbar: "..(LunaOptions.overheal or 20))
