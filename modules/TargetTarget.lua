@@ -316,7 +316,11 @@ function LunaUnitFrames:CreateTargetTargetFrame()
 		local healthheight = (LunaTargetTargetFrame.bars["Healthbar"]:GetHeight()/23.4)*11
 		if healthheight > 0 then
 			LunaTargetTargetFrame.bars["Healthbar"].hpp:SetFont(LunaOptions.font, healthheight)
+			LunaTargetTargetFrame.bars["Healthbar"].hpp:SetHeight(healthheight)
+			LunaTargetTargetFrame.bars["Healthbar"].hpp:SetWidth(LunaTargetTargetFrame.bars["Healthbar"]:GetWidth()*0.35)
 			LunaTargetTargetFrame.name:SetFont(LunaOptions.font, healthheight)
+			LunaTargetTargetFrame.name:SetHeight(healthheight)
+			LunaTargetTargetFrame.name:SetWidth(LunaTargetTargetFrame.bars["Healthbar"]:GetWidth()*0.65)
 		end
 		if LunaTargetTargetFrame.bars["Healthbar"]:GetHeight() < 6 then
 			LunaTargetTargetFrame.bars["Healthbar"].hpp:Hide()
@@ -827,7 +831,11 @@ function LunaUnitFrames:CreateTargetTargetTargetFrame()
 		local healthheight = (LunaTargetTargetTargetFrame.bars["Healthbar"]:GetHeight()/23.4)*11
 		if healthheight > 0 then
 			LunaTargetTargetTargetFrame.bars["Healthbar"].hpp:SetFont(LunaOptions.font, healthheight)
+			LunaTargetTargetTargetFrame.bars["Healthbar"].hpp:SetHeight(healthheight)
+			LunaTargetTargetTargetFrame.bars["Healthbar"].hpp:SetWidth(LunaTargetTargetTargetFrame.bars["Healthbar"]:GetWidth()*0.35)
 			LunaTargetTargetTargetFrame.name:SetFont(LunaOptions.font, healthheight)
+			LunaTargetTargetTargetFrame.name:SetHeight(healthheight)
+			LunaTargetTargetTargetFrame.name:SetWidth(LunaTargetTargetTargetFrame.bars["Healthbar"]:GetWidth()*0.65)
 		end
 		if LunaTargetTargetTargetFrame.bars["Healthbar"]:GetHeight() < 6 then
 			LunaTargetTargetTargetFrame.bars["Healthbar"].hpp:Hide()

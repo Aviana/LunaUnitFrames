@@ -5,7 +5,17 @@ LunaPartyFrames = {}
 
 GrpRangeCheck = CreateFrame("Frame")
 GrpRangeCheck.time = 0
+GrpRangeCheck.pettime = 0
 GrpRangeCheck.onUpdate = function ()
+	GrpRangeCheck.pettime = GrpRangeCheck.pettime + arg1
+	if (GrpRangeCheck.pettime > 2) then
+		GrpRangeCheck.pettime = 0
+		for i=1, 4 do
+			if UnitIsVisible(LunaPartyPetFrames[i].unit) then
+				LunaUnitFrames:UpdatePartyPetFrames()
+			end
+		end
+	end
 	if LunaOptions.PartyRange == 1 then
 		GrpRangeCheck.time = GrpRangeCheck.time + arg1
 		if (GrpRangeCheck.time > 0.2) then
@@ -631,7 +641,11 @@ function LunaUnitFrames:UpdatePartyUnitFrameSize()
 		local healthheight = (LunaPartyFrames[i].bars["Healthbar"]:GetHeight()/23.4)*11
 		if healthheight > 0 then
 			LunaPartyFrames[i].bars["Healthbar"].hpp:SetFont(LunaOptions.font, healthheight)
+			LunaPartyFrames[i].bars["Healthbar"].hpp:SetHeight(healthheight)
+			LunaPartyFrames[i].bars["Healthbar"].hpp:SetWidth(LunaPartyFrames[i].bars["Healthbar"]:GetWidth()*0.45)
 			LunaPartyFrames[i].name:SetFont(LunaOptions.font, healthheight)
+			LunaPartyFrames[i].name:SetHeight(healthheight)
+			LunaPartyFrames[i].name:SetWidth(LunaPartyFrames[i].bars["Healthbar"]:GetWidth()*0.55)
 		end
 		if LunaPartyFrames[i].bars["Healthbar"]:GetHeight() < 6 then
 			LunaPartyFrames[i].bars["Healthbar"].hpp:Hide()

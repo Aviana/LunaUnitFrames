@@ -205,7 +205,7 @@ EnemyCastBar_Spells = {
 	["Inferno Effect"] = {t=0};
 	["Shadow Ward"] = {t=0};
 	["Death Coil"] = {t=0.0};
-	["Corruption"] = {t=2};
+	["Corruption"] = {t=0};
 	["Demon Armor"] = {t=0};
 	["Demon Skin"] = {t=0};
 
