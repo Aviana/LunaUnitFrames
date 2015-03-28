@@ -902,6 +902,16 @@ function OptionFunctions.ToggleBlizzParty()
 	end
 end
 
+function OptionFunctions.ToggleBlizzBuffs()
+	if not LunaOptions.BlizzBuffs then
+		BuffFrame:Hide()
+		LunaOptions.BlizzBuffs = 1
+	else
+		LunaOptions.BlizzBuffs = nil
+		BuffFrame:Show()
+	end
+end
+
 function OptionFunctions.enableFrame()
 	if LunaOptions.frames[this.frame].enabled == 1 then
 		LunaOptions.frames[this.frame].enabled = 0
@@ -1892,11 +1902,19 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[8].blizzparty:SetChecked(LunaOptions.BlizzParty)
 	getglobal("BlizzPartySwitchText"):SetText("Display Blizzard Party Frames")
 	
+	LunaOptionsFrame.pages[8].blizzbuffs = CreateFrame("CheckButton", "BlizzBuffSwitch", LunaOptionsFrame.pages[8], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[8].blizzbuffs:SetHeight(20)
+	LunaOptionsFrame.pages[8].blizzbuffs:SetWidth(20)
+	LunaOptionsFrame.pages[8].blizzbuffs:SetPoint("TOPLEFT", LunaOptionsFrame.pages[8].blizzparty, "TOPLEFT", 0, -30)
+	LunaOptionsFrame.pages[8].blizzbuffs:SetScript("OnClick", OptionFunctions.ToggleBlizzBuffs)
+	LunaOptionsFrame.pages[8].blizzbuffs:SetChecked(LunaOptions.BlizzBuffs)
+	getglobal("BlizzBuffSwitchText"):SetText("Hide Blizzard Buff Frames")
+	
 	LunaOptionsFrame.pages[8].overhealslider = CreateFrame("Slider", "OverhealSlider", LunaOptionsFrame.pages[8], "OptionsSliderTemplate")
 	LunaOptionsFrame.pages[8].overhealslider:SetMinMaxValues(0,20)
 	LunaOptionsFrame.pages[8].overhealslider:SetValueStep(1)
 	LunaOptionsFrame.pages[8].overhealslider:SetScript("OnValueChanged", OptionFunctions.OverhealAdjust)
-	LunaOptionsFrame.pages[8].overhealslider:SetPoint("TOPLEFT", LunaOptionsFrame.pages[8].blizzparty, "BOTTOMLEFT", 0, -20)
+	LunaOptionsFrame.pages[8].overhealslider:SetPoint("TOPLEFT", LunaOptionsFrame.pages[8].blizzbuffs, "BOTTOMLEFT", 0, -20)
 	LunaOptionsFrame.pages[8].overhealslider:SetValue(LunaOptions.overheal or 20)
 	LunaOptionsFrame.pages[8].overhealslider:SetWidth(215)
 	getglobal("OverhealSliderText"):SetText("Overlap percent of healbar: "..(LunaOptions.overheal or 20))

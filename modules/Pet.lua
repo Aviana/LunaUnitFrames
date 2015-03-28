@@ -163,6 +163,7 @@ function LunaUnitFrames:CreatePetFrame()
 	LunaPetFrame.bars["Healthbar"].hpp:SetShadowOffset(0.8, -0.8)
 	LunaPetFrame.bars["Healthbar"].hpp:SetTextColor(1,1,1)
 	LunaPetFrame.bars["Healthbar"].hpp:SetJustifyH("RIGHT")
+	LunaPetFrame.bars["Healthbar"].hpp:SetJustifyV("MIDDLE")
 
 	LunaPetFrame.name = LunaPetFrame.bars["Healthbar"]:CreateFontString(nil, "OVERLAY", LunaPetFrame.bars["Healthbar"])
 	LunaPetFrame.name:SetPoint("LEFT", 2, 0)
@@ -279,7 +280,7 @@ function LunaUnitFrames:CreatePetFrame()
 		local healthheight = (LunaPetFrame.bars["Healthbar"]:GetHeight()/23.4)*11
 		if healthheight > 0 then
 			LunaPetFrame.bars["Healthbar"].hpp:SetFont(LunaOptions.font, healthheight)
-			LunaPetFrame.bars["Healthbar"].hpp:SetHeight(healthheight)
+			LunaPetFrame.bars["Healthbar"].hpp:SetHeight(LunaPetFrame.bars["Healthbar"]:GetHeight())
 			LunaPetFrame.bars["Healthbar"].hpp:SetWidth(LunaPetFrame.bars["Healthbar"]:GetWidth()*0.45)
 			LunaPetFrame.name:SetFont(LunaOptions.font, healthheight)
 			LunaPetFrame.name:SetHeight(healthheight)

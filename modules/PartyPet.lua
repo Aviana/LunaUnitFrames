@@ -30,7 +30,7 @@ function LunaUnitFrames:CreatePartyPetFrames()
 		LunaPartyPetFrames[i]:RegisterEvent("UNIT_MAXHEALTH")
 		LunaPartyPetFrames[i]:RegisterEvent("UNIT_NAME_UPDATE")
 		LunaPartyPetFrames[i].dropdown = CreateFrame("Frame", "LunaUnitDropDownMenuPartyPet"..i, UIParent, "UIDropDownMenuTemplate")
-		LunaPartyPetFrames[i].DropDown_Initialize = function () UnitPopup_ShowMenu(LunaPartyPetFrames[i].dropdown, "RAID_TARGET_ICON", this.unit, "RAID_TARGET_ICON", RAID_TARGET_ICON) end
+		LunaPartyPetFrames[i].DropDown_Initialize = function () UnitPopup_ShowMenu(LunaPartyPetFrames[i].dropdown, "RAID_TARGET_ICON", LunaPartyPetFrames[i].unit, "RAID_TARGET_ICON", RAID_TARGET_ICON) end
 		UIDropDownMenu_Initialize(LunaPartyPetFrames[i].dropdown, LunaPartyPetFrames[i].DropDown_Initialize, "MENU")
 
 		-- Healthbar
@@ -57,6 +57,7 @@ function LunaUnitFrames:CreatePartyPetFrames()
 		LunaPartyPetFrames[i].HealthBar.hpp:SetHeight(LunaOptions.fontHeight)
 		LunaPartyPetFrames[i].HealthBar.hpp:SetWidth(LunaPartyPetFrames[i]:GetWidth()/2)
 		LunaPartyPetFrames[i].HealthBar.hpp:SetJustifyH("RIGHT")
+		LunaPartyPetFrames[i].HealthBar.hpp:SetJustifyV("MIDDLE")
 		
 		LunaPartyPetFrames[i].name = LunaPartyPetFrames[i].HealthBar:CreateFontString(nil, "OVERLAY", LunaPartyPetFrames[i].HealthBar)
 		LunaPartyPetFrames[i].name:SetPoint("LEFT", 2, 0)

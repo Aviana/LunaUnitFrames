@@ -151,6 +151,7 @@ function LunaUnitFrames:CreateTargetTargetFrame()
 	hpp:SetShadowOffset(0.8, -0.8)
 	hpp:SetTextColor(1,1,1)
 	hpp:SetJustifyH("RIGHT")
+	hpp:SetJustifyV("MIDDLE")
 	LunaTargetTargetFrame.bars["Healthbar"].hpp = hpp
 
 	local name = LunaTargetTargetFrame.bars["Healthbar"]:CreateFontString(nil, "OVERLAY", LunaTargetTargetFrame.bars["Healthbar"])
@@ -316,7 +317,7 @@ function LunaUnitFrames:CreateTargetTargetFrame()
 		local healthheight = (LunaTargetTargetFrame.bars["Healthbar"]:GetHeight()/23.4)*11
 		if healthheight > 0 then
 			LunaTargetTargetFrame.bars["Healthbar"].hpp:SetFont(LunaOptions.font, healthheight)
-			LunaTargetTargetFrame.bars["Healthbar"].hpp:SetHeight(healthheight)
+			LunaTargetTargetFrame.bars["Healthbar"].hpp:SetHeight(LunaTargetTargetFrame.bars["Healthbar"]:GetHeight())
 			LunaTargetTargetFrame.bars["Healthbar"].hpp:SetWidth(LunaTargetTargetFrame.bars["Healthbar"]:GetWidth()*0.35)
 			LunaTargetTargetFrame.name:SetFont(LunaOptions.font, healthheight)
 			LunaTargetTargetFrame.name:SetHeight(healthheight)
@@ -668,6 +669,7 @@ function LunaUnitFrames:CreateTargetTargetTargetFrame()
 	hpp:SetShadowOffset(0.8, -0.8)
 	hpp:SetTextColor(1,1,1)
 	hpp:SetJustifyH("RIGHT")
+	hpp:SetJustifyV("MIDDLE")
 	LunaTargetTargetTargetFrame.bars["Healthbar"].hpp = hpp
 
 	local name = LunaTargetTargetTargetFrame.bars["Healthbar"]:CreateFontString(nil, "OVERLAY", LunaTargetTargetTargetFrame.bars["Healthbar"])
@@ -831,7 +833,7 @@ function LunaUnitFrames:CreateTargetTargetTargetFrame()
 		local healthheight = (LunaTargetTargetTargetFrame.bars["Healthbar"]:GetHeight()/23.4)*11
 		if healthheight > 0 then
 			LunaTargetTargetTargetFrame.bars["Healthbar"].hpp:SetFont(LunaOptions.font, healthheight)
-			LunaTargetTargetTargetFrame.bars["Healthbar"].hpp:SetHeight(healthheight)
+			LunaTargetTargetTargetFrame.bars["Healthbar"].hpp:SetHeight(LunaTargetTargetTargetFrame.bars["Healthbar"]:GetHeight())
 			LunaTargetTargetTargetFrame.bars["Healthbar"].hpp:SetWidth(LunaTargetTargetTargetFrame.bars["Healthbar"]:GetWidth()*0.35)
 			LunaTargetTargetTargetFrame.name:SetFont(LunaOptions.font, healthheight)
 			LunaTargetTargetTargetFrame.name:SetHeight(healthheight)

@@ -78,6 +78,13 @@ function LunaUnitFrames:CreatePartyTargetFrames()
 		LunaPartyTargetFrames[i].name:SetTextColor(1,1,1)
 		LunaPartyTargetFrames[i].name:SetHeight(LunaOptions.fontHeight)
 		LunaPartyTargetFrames[i].name:SetWidth(LunaPartyTargetFrames[i]:GetWidth()/2)
+		
+		LunaPartyTargetFrames[i].RaidIcon = LunaPartyTargetFrames[i].HealthBar:CreateTexture(nil, "OVERLAY")
+		LunaPartyTargetFrames[i].RaidIcon:SetHeight(10)
+		LunaPartyTargetFrames[i].RaidIcon:SetWidth(10)
+		LunaPartyTargetFrames[i].RaidIcon:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcons")
+		LunaPartyTargetFrames[i].RaidIcon:SetPoint("CENTER", LunaPartyTargetFrames[i].HealthBar, "TOP")
+		
 	end
 	pt:SetScript("OnUpdate", Luna_PartyTarget_OnUpdate)
 end
@@ -108,8 +115,9 @@ function LunaUnitFrames:UpdatePartyTargetFrames()
 					LunaPartyTargetFrames[i].HealthBar.hpbg:SetVertexColor(0.93, 0.93, 0, 0.25)
 				end
 			end
-			LunaPartyTargetFrames[i].HealthBar.hpp:SetText(LunaUnitFrames:GetHealthString(LunaPartyTargetFrames[i].unit))
-			LunaPartyTargetFrames[i].HealthBar.hpp:SetWidth(LunaPartyTargetFrames[i]:GetWidth()/2)
+			LunaPartyTargetFrames[i].HealthBar.hpp:SetText(math.floor(((UnitHealth(LunaPartyTargetFrames[i].unit) / UnitHealthMax(LunaPartyTargetFrames[i].unit)) * 100)+0.5).."%")
+			LunaPartyTargetFrames[i].HealthBar.hpp:SetWidth(LunaPartyTargetFrames[i]:GetWidth()*0.25)
+			LunaPartyTargetFrames[i].HealthBar.hpp:SetHeight(LunaPartyTargetFrames[i]:GetHeight())
 			LunaPartyTargetFrames[i].HealthBar:SetMinMaxValues(0, UnitHealthMax(LunaPartyTargetFrames[i].unit))
 			if UnitIsDead(LunaPartyTargetFrames[i].unit) then			-- This prevents negative health
 				LunaPartyTargetFrames[i].HealthBar:SetValue(0)
@@ -117,7 +125,15 @@ function LunaUnitFrames:UpdatePartyTargetFrames()
 				LunaPartyTargetFrames[i].HealthBar:SetValue(UnitHealth(LunaPartyTargetFrames[i].unit))
 			end
 			LunaPartyTargetFrames[i].name:SetText(UnitName(LunaPartyTargetFrames[i].unit))
-			LunaPartyTargetFrames[i].name:SetWidth(LunaPartyTargetFrames[i]:GetWidth()/2)
+			LunaPartyTargetFrames[i].name:SetWidth(LunaPartyTargetFrames[i]:GetWidth()*0.75)
+			
+			local index = GetRaidTargetIndex(LunaPartyTargetFrames[i].unit)
+			if index then
+				SetRaidTargetIconTexture(LunaPartyTargetFrames[i].RaidIcon, GetRaidTargetIndex(LunaPartyTargetFrames[i].unit))
+			else
+				SetRaidTargetIconTexture(LunaPartyTargetFrames[i].RaidIcon, 0)
+			end
+			
 			LunaPartyTargetFrames[i]:Show()
 		else
 			LunaPartyTargetFrames[i]:Hide()

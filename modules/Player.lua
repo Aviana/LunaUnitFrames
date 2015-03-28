@@ -329,6 +329,7 @@ function LunaUnitFrames:CreatePlayerFrame()
 	hpp:SetShadowOffset(0.8, -0.8)
 	hpp:SetTextColor(1,1,1)
 	hpp:SetJustifyH("RIGHT")
+	hpp:SetJustifyV("MIDDLE")
 	LunaPlayerFrame.bars["Healthbar"].hpp = hpp
 
 	local name = hp:CreateFontString(nil, "OVERLAY", hp)
@@ -624,7 +625,7 @@ function LunaUnitFrames:CreatePlayerFrame()
 		local healthheight = (LunaPlayerFrame.bars["Healthbar"]:GetHeight()/2)
 		if healthheight > 0 then
 			LunaPlayerFrame.bars["Healthbar"].hpp:SetFont(LunaOptions.font, healthheight)
-			LunaPlayerFrame.bars["Healthbar"].hpp:SetHeight(healthheight)
+			LunaPlayerFrame.bars["Healthbar"].hpp:SetHeight(LunaPlayerFrame.bars["Healthbar"]:GetHeight())
 			LunaPlayerFrame.bars["Healthbar"].hpp:SetWidth(LunaPlayerFrame.bars["Healthbar"]:GetWidth()*0.35)
 			LunaPlayerFrame.name:SetFont(LunaOptions.font, healthheight)
 			LunaPlayerFrame.name:SetHeight(healthheight)

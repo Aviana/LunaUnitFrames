@@ -274,6 +274,7 @@ function LunaUnitFrames:CreatePartyFrames()
 		LunaPartyFrames[i].bars["Healthbar"].hpp:SetShadowOffset(0.8, -0.8)
 		LunaPartyFrames[i].bars["Healthbar"].hpp:SetTextColor(1,1,1)
 		LunaPartyFrames[i].bars["Healthbar"].hpp:SetJustifyH("RIGHT")
+		LunaPartyFrames[i].bars["Healthbar"].hpp:SetJustifyV("MIDDLE")
 
 		LunaPartyFrames[i].name = LunaPartyFrames[i].bars["Healthbar"]:CreateFontString(nil, "OVERLAY", LunaPartyFrames[i].bars["Healthbar"])
 		LunaPartyFrames[i].name:SetPoint("LEFT", 2, 0)
@@ -641,7 +642,7 @@ function LunaUnitFrames:UpdatePartyUnitFrameSize()
 		local healthheight = (LunaPartyFrames[i].bars["Healthbar"]:GetHeight()/23.4)*11
 		if healthheight > 0 then
 			LunaPartyFrames[i].bars["Healthbar"].hpp:SetFont(LunaOptions.font, healthheight)
-			LunaPartyFrames[i].bars["Healthbar"].hpp:SetHeight(healthheight)
+			LunaPartyFrames[i].bars["Healthbar"].hpp:SetHeight(LunaPartyFrames[i].bars["Healthbar"]:GetHeight())
 			LunaPartyFrames[i].bars["Healthbar"].hpp:SetWidth(LunaPartyFrames[i].bars["Healthbar"]:GetWidth()*0.45)
 			LunaPartyFrames[i].name:SetFont(LunaOptions.font, healthheight)
 			LunaPartyFrames[i].name:SetHeight(healthheight)

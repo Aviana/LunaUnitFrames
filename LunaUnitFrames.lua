@@ -6,10 +6,16 @@ LunaUnitFrames:RegisterEvent("PARTY_MEMBERS_CHANGED")
 LunaUnitFrames:RegisterEvent("RAID_ROSTER_UPDATE")
 LunaUnitFrames:RegisterEvent("PLAYER_ENTERING_WORLD")
 
+local validUnits = {
+					["target"] = true,
+					["targettarget"] = true,
+					["targettargettarget"] = true
+				}
+
 function LunaUnitFrames:GetHealthString(unit)
 	local result
 	local Health, maxHealth
-	if MobHealth3 and (unit == "target" or unit == "targettarget" or unit == "targettargettarget") then
+	if MobHealth3 and validUnits[unit] then
 		Health, maxHealth = MobHealth3:GetUnitHealth(unit)
 	else
 		Health = UnitHealth(unit)
@@ -144,6 +150,9 @@ function LunaUnitFrames:OnEvent()
 		LunaUnitFrames:CreateRaidFrames()
 		LunaUnitFrames:CreateXPBar()
 		LunaOptionsModule:CreateMenu()
+		if LunaOptions.BlizzBuffs then
+			BuffFrame:Hide()
+		end
 	elseif event == "RAID_ROSTER_UPDATE" or event == "PLAYER_ENTERING_WORLD" or event == "PARTY_MEMBERS_CHANGED" then
 		LunaUnitFrames:UpdateRaidRoster()
 	end
