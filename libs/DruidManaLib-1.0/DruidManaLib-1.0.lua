@@ -111,7 +111,7 @@ DruidManaLib.lowregentimer = 0
 DruidManaLib.fullmanatimer = 0
 DruidManaLib.waitonce = nil
 _, DruidManaLib.init = UnitClass("player")
-DruidManaLib.inform = nil
+DruidManaLib.inform = (UnitPowerType("player") ~= 0)
 DruidManaLibTip:SetOwner(DruidManaLib, "ANCHOR_NONE")
 
 local function DruidManaLib_GetShapeshiftCost()
@@ -236,17 +236,18 @@ DruidManaLib.OnEvent = function()
 			end
 			DruidManaLib.fullmanatimer = 0
 		elseif event == "PLAYER_AURAS_CHANGED" or event == "UPDATE_SHAPESHIFT_FORMS" then
-			if UnitPowerType("player") == 1 then
+			if UnitPowerType("player") == 1 and not DruidManaLib.inform then
 				--Bear
+				DruidManaLib.inform = true
 				DruidManaLib_Subtract()
-			elseif UnitPowerType("player") == 3 then
+			elseif UnitPowerType("player") == 3 and not DruidManaLib.inform then
 				--Cat
+				DruidManaLib.inform = true
 				DruidManaLib_Subtract()
-			elseif UnitPowerType("player") == 0 then
+			elseif UnitPowerType("player") == 0 and DruidManaLib.inform then
+				DruidManaLib.inform = nil
 				DruidManaLib.keepthemana = UnitMana("player")
-				if DruidManaLib.maxmana ~= UnitManaMax("player") then
-					DruidManaLib.maxmana = UnitManaMax("player")
-				end
+				DruidManaLib.maxmana = UnitManaMax("player")
 				--player/aqua/travel
 			end
 		elseif (event == "SPELLCAST_STOP") then
