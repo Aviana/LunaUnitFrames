@@ -2017,10 +2017,8 @@ function LunaOptionsModule:CreateMenu()
 	cccpopup.page.noneleft:SetAutoFocus(nil)
 	cccpopup.page.noneleft:SetPoint("LEFT", cccpopup.page.nonetext, "RIGHT", 20, 0)
 	cccpopup.page.noneleft:SetText(LunaOptions.clickcast[1][1])
-	cccpopup.page.noneleft:SetScript("OnEnterPressed", function()
-																		this:ClearFocus();
-																		LunaOptions.clickcast[1][1] = this:GetText()
-																	end)
+	cccpopup.page.noneleft:SetScript("OnEnterPressed", function() this:ClearFocus() end)
+	cccpopup.page.noneleft:SetScript("OnEditFocusGained", function() cccpopup.current = this end)
 	cccpopup.page.noneleft:SetScript("OnEditFocusLost", function() LunaOptions.clickcast[1][1] = this:GetText() end)
 																	
 	cccpopup.page.noneright = CreateFrame("Editbox", "rightEditBox", cccpopup.page, "InputBoxTemplate")
@@ -2029,10 +2027,8 @@ function LunaOptionsModule:CreateMenu()
 	cccpopup.page.noneright:SetAutoFocus(nil)
 	cccpopup.page.noneright:SetPoint("LEFT", cccpopup.page.noneleft, "RIGHT", 10, 0)
 	cccpopup.page.noneright:SetText(LunaOptions.clickcast[1][2])
-	cccpopup.page.noneright:SetScript("OnEnterPressed", function()
-																		this:ClearFocus();
-																		LunaOptions.clickcast[1][2] = this:GetText()
-																	end)
+	cccpopup.page.noneright:SetScript("OnEnterPressed", function() this:ClearFocus() end)
+	cccpopup.page.noneright:SetScript("OnEditFocusGained", function() cccpopup.current = this end)
 	cccpopup.page.noneright:SetScript("OnEditFocusLost", function() LunaOptions.clickcast[1][2] = this:GetText() end)
 	
 	cccpopup.page.shifttext = cccpopup.page:CreateFontString(nil, "OVERLAY", cccpopup.page)
@@ -2047,10 +2043,8 @@ function LunaOptionsModule:CreateMenu()
 	cccpopup.page.shiftleft:SetAutoFocus(nil)
 	cccpopup.page.shiftleft:SetPoint("TOP", cccpopup.page.noneleft, "BOTTOM", 0, -10)
 	cccpopup.page.shiftleft:SetText(LunaOptions.clickcast[2][1])
-	cccpopup.page.shiftleft:SetScript("OnEnterPressed", function()
-																		this:ClearFocus();
-																		LunaOptions.clickcast[2][1] = this:GetText()
-																	end)
+	cccpopup.page.shiftleft:SetScript("OnEnterPressed", function() this:ClearFocus() end)
+	cccpopup.page.shiftleft:SetScript("OnEditFocusGained", function() cccpopup.current = this end)
 	cccpopup.page.shiftleft:SetScript("OnEditFocusLost", function() LunaOptions.clickcast[2][1] = this:GetText() end)
 																	
 	cccpopup.page.shiftright = CreateFrame("Editbox", "rightshiftEditBox", cccpopup.page, "InputBoxTemplate")
@@ -2059,10 +2053,8 @@ function LunaOptionsModule:CreateMenu()
 	cccpopup.page.shiftright:SetAutoFocus(nil)
 	cccpopup.page.shiftright:SetPoint("TOP", cccpopup.page.noneright, "BOTTOM", 0, -10)
 	cccpopup.page.shiftright:SetText(LunaOptions.clickcast[2][2])
-	cccpopup.page.shiftright:SetScript("OnEnterPressed", function()
-																		this:ClearFocus();
-																		LunaOptions.clickcast[2][2] = this:GetText()
-																	end)
+	cccpopup.page.shiftright:SetScript("OnEnterPressed", function()	this:ClearFocus() end)
+	cccpopup.page.shiftright:SetScript("OnEditFocusGained", function() cccpopup.current = this end)
 	cccpopup.page.shiftright:SetScript("OnEditFocusLost", function() LunaOptions.clickcast[2][2] = this:GetText() end)
 	
 	cccpopup.page.alttext = cccpopup.page:CreateFontString(nil, "OVERLAY", cccpopup.page)
@@ -2077,10 +2069,8 @@ function LunaOptionsModule:CreateMenu()
 	cccpopup.page.altleft:SetAutoFocus(nil)
 	cccpopup.page.altleft:SetPoint("TOP", cccpopup.page.shiftleft, "BOTTOM", 0, -10)
 	cccpopup.page.altleft:SetText(LunaOptions.clickcast[3][1])
-	cccpopup.page.altleft:SetScript("OnEnterPressed", function()
-																		this:ClearFocus();
-																		LunaOptions.clickcast[3][1] = this:GetText()
-																	end)
+	cccpopup.page.altleft:SetScript("OnEnterPressed", function() this:ClearFocus() end)
+	cccpopup.page.altleft:SetScript("OnEditFocusGained", function() cccpopup.current = this end)
 	cccpopup.page.altleft:SetScript("OnEditFocusLost", function() LunaOptions.clickcast[3][1] = this:GetText() end)
 																	
 	cccpopup.page.altright = CreateFrame("Editbox", "rightaltEditBox", cccpopup.page, "InputBoxTemplate")
@@ -2089,10 +2079,8 @@ function LunaOptionsModule:CreateMenu()
 	cccpopup.page.altright:SetAutoFocus(nil)
 	cccpopup.page.altright:SetPoint("TOP", cccpopup.page.shiftright, "BOTTOM", 0, -10)
 	cccpopup.page.altright:SetText(LunaOptions.clickcast[3][2])
-	cccpopup.page.altright:SetScript("OnEnterPressed", function()
-																		this:ClearFocus();
-																		LunaOptions.clickcast[3][2] = this:GetText()
-																	end)
+	cccpopup.page.altright:SetScript("OnEnterPressed", function() this:ClearFocus()	end)
+	cccpopup.page.altright:SetScript("OnEditFocusGained", function() cccpopup.current = this end)
 	cccpopup.page.altright:SetScript("OnEditFocusLost", function() LunaOptions.clickcast[3][2] = this:GetText() end)
 	
 	cccpopup.page.ctrltext = cccpopup.page:CreateFontString(nil, "OVERLAY", cccpopup.page)
@@ -2107,10 +2095,8 @@ function LunaOptionsModule:CreateMenu()
 	cccpopup.page.ctrlleft:SetAutoFocus(nil)
 	cccpopup.page.ctrlleft:SetPoint("TOP", cccpopup.page.altleft, "BOTTOM", 0, -10)
 	cccpopup.page.ctrlleft:SetText(LunaOptions.clickcast[4][1])
-	cccpopup.page.ctrlleft:SetScript("OnEnterPressed", function()
-																		this:ClearFocus();
-																		LunaOptions.clickcast[4][1] = this:GetText()
-																	end)
+	cccpopup.page.ctrlleft:SetScript("OnEnterPressed", function() this:ClearFocus() end)
+	cccpopup.page.ctrlleft:SetScript("OnEditFocusGained", function() cccpopup.current = this end)
 	cccpopup.page.ctrlleft:SetScript("OnEditFocusLost", function() LunaOptions.clickcast[4][1] = this:GetText() end)
 																	
 	cccpopup.page.ctrlright = CreateFrame("Editbox", "rightctrlEditBox", cccpopup.page, "InputBoxTemplate")
@@ -2119,17 +2105,60 @@ function LunaOptionsModule:CreateMenu()
 	cccpopup.page.ctrlright:SetAutoFocus(nil)
 	cccpopup.page.ctrlright:SetPoint("TOP", cccpopup.page.altright, "BOTTOM", 0, -10)
 	cccpopup.page.ctrlright:SetText(LunaOptions.clickcast[4][2])
-	cccpopup.page.ctrlright:SetScript("OnEnterPressed", function()
-																		this:ClearFocus();
-																		LunaOptions.clickcast[4][2] = this:GetText()
-																	end)
+	cccpopup.page.ctrlright:SetScript("OnEnterPressed", function() this:ClearFocus() end)
+	cccpopup.page.ctrlright:SetScript("OnEditFocusGained", function() cccpopup.current = this end)
 	cccpopup.page.ctrlright:SetScript("OnEditFocusLost", function() LunaOptions.clickcast[4][2] = this:GetText() end)
 	
 	cccpopup.page.desc = cccpopup.page:CreateFontString(nil, "OVERLAY", cccpopup.page)
 	cccpopup.page.desc:SetPoint("BOTTOMLEFT", cccpopup.page, "BOTTOMLEFT", 10, 10)
 	cccpopup.page.desc:SetFont("Fonts\\FRIZQT__.TTF", 10)
 	cccpopup.page.desc:SetTextColor(1,1,1)
-	cccpopup.page.desc:SetText("HowTo:\n\n\"target\"\nNormal target behaviour\n\n\"menu\"\nNormal popup menu\n\n<Spellname>\nYour spell of choice\n\nfunction()\nA function from the UI or one of your add-ons. While its\nexecuted your target will be the one you click casted.")
+	cccpopup.page.desc:SetText("HowTo:\n\n\"target\"\nNormal target behaviour\n\n\"menu\"\nNormal popup menu\n\n<Spellname>\nYour spell of choice. Note: You can select a box and then\nshift click spells from your spellbook.\n\nfunction()\nA function from the UI or one of your add-ons. While its\nexecuted your target will be the one you click casted.")
 	cccpopup.page.desc:SetJustifyH("LEFT")
+	
+	local function AddLine(line)
+		if cccpopup.current then
+			cccpopup.current:SetText(line)
+			cccpopup.current:ClearFocus()
+		end
+	end
+	
+	SpellButton_OnClick = function(drag)
+		local id = SpellBook_GetSpellID(this:GetID());
+		if ( id > MAX_SPELLS ) then
+			return;
+		end
+		this:SetChecked("false");
+		if ( drag ) then
+			PickupSpell(id, SpellBookFrame.bookType);
+		elseif ( IsShiftKeyDown() ) then
+			if ( MacroFrame and MacroFrame:IsVisible() ) then
+				local spellName, subSpellName = GetSpellName(id, SpellBookFrame.bookType);
+				if ( spellName and not IsSpellPassive(id, SpellBookFrame.bookType) ) then
+					if ( subSpellName and (strlen(subSpellName) > 0) ) then
+						MacroFrame_AddMacroLine(TEXT(SLASH_CAST1).." "..spellName.."("..subSpellName..")");
+					else
+						MacroFrame_AddMacroLine(TEXT(SLASH_CAST1).." "..spellName);
+					end
+				end
+			elseif ( cccpopup and cccpopup:IsVisible() ) then
+				local spellName, subSpellName = GetSpellName(id, SpellBookFrame.bookType);
+				if ( spellName and not IsSpellPassive(id, SpellBookFrame.bookType) ) then
+					if ( subSpellName and (strlen(subSpellName) > 0) ) then
+						AddLine(spellName.."("..subSpellName..")");		
+					else
+						AddLine(spellName);
+					end
+				end
+			else
+				PickupSpell(id, SpellBookFrame.bookType );
+			end
+		elseif ( arg1 ~= "LeftButton" and SpellBookFrame.bookType == BOOKTYPE_PET ) then
+			ToggleSpellAutocast(id, SpellBookFrame.bookType);
+		else
+			CastSpell(id, SpellBookFrame.bookType);
+			SpellButton_UpdateSelection();
+		end
+	end
 	
 end
