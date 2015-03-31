@@ -53,10 +53,16 @@ end
 	
 function Luna_OnClick()
 	local button, modifier
-	if (arg1 == "LeftButton") then
+	if arg1 == "LeftButton" then
 		button = 1
-	else
+	elseif arg1 == "RightButton" then
 		button = 2
+	elseif arg1 == "MiddleButton" then
+		button = 3
+	elseif arg1 == "Button4" then
+		button = 4
+	else
+		button = 5
 	end
 	if IsShiftKeyDown() then
 		modifier = 2
@@ -115,12 +121,12 @@ function LunaUnitFrames:OnEvent()
 		if table.getn(LunaOptions.frames["LunaPlayerFrame"].bars) < 5 then
 			LunaOptions.frames["LunaPlayerFrame"].bars[5] = {"Totembar", 0}
 		end
-		if not LunaOptions.clickcast then
+		if not LunaOptions.clickcast[4][5] then
 			LunaOptions.clickcast = {
-									{"target","menu"},
-									{"",""},
-									{"",""},
-									{"",""}
+									{"target","menu","","",""},
+									{"","","","",""},
+									{"","","","",""},
+									{"","","","",""}
 									}
 		end
 		if not LunaOptions.frames["LunaPartyTargetFrames"] then

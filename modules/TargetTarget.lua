@@ -496,7 +496,7 @@ function LunaUnitFrames:UpdateTargetTargetFrame()
 		return
 	end
 	local _,class = UnitClass("targettarget")
-	if UnitIsPlayer("targettarget") then
+	if UnitIsPlayer("targettarget") and LunaOptions.hbarcolor then
 		local color = LunaOptions.ClassColors[class]
 		LunaTargetTargetFrame.bars["Healthbar"]:SetStatusBarColor(color[1],color[2],color[3])
 		LunaTargetTargetFrame.bars["Healthbar"].hpbg:SetVertexColor(color[1],color[2],color[3], 0.25)
@@ -506,14 +506,14 @@ function LunaUnitFrames:UpdateTargetTargetFrame()
 	else
 		reaction = UnitReaction("targettarget", "player")
 		if reaction and reaction < 4 then
-			LunaTargetTargetFrame.bars["Healthbar"]:SetStatusBarColor(0.9, 0, 0)
-			LunaTargetTargetFrame.bars["Healthbar"].hpbg:SetVertexColor(0.9, 0, 0, 0.25)
+			LunaTargetTargetFrame.bars["Healthbar"]:SetStatusBarColor(unpack(LunaOptions.MiscColors["hostile"]))
+			LunaTargetTargetFrame.bars["Healthbar"].hpbg:SetVertexColor(unpack(LunaOptions.MiscColors["hostile"]), 0.25)
 		elseif reaction and reaction > 4 then
-			LunaTargetTargetFrame.bars["Healthbar"]:SetStatusBarColor(0, 0.8, 0)
-			LunaTargetTargetFrame.bars["Healthbar"].hpbg:SetVertexColor(0, 0.8, 0, 0.25)
+			LunaTargetTargetFrame.bars["Healthbar"]:SetStatusBarColor(unpack(LunaOptions.MiscColors["friendly"]))
+			LunaTargetTargetFrame.bars["Healthbar"].hpbg:SetVertexColor(unpack(LunaOptions.MiscColors["friendly"]), 0.25)
 		else
-			LunaTargetTargetFrame.bars["Healthbar"]:SetStatusBarColor(0.93, 0.93, 0)
-			LunaTargetTargetFrame.bars["Healthbar"].hpbg:SetVertexColor(0.93, 0.93, 0, 0.25)
+			LunaTargetTargetFrame.bars["Healthbar"]:SetStatusBarColor(unpack(LunaOptions.MiscColors["neutral"]))
+			LunaTargetTargetFrame.bars["Healthbar"].hpbg:SetVertexColor(unpack(LunaOptions.MiscColors["neutral"]), 0.25)
 		end
 	end
 	if not UnitIsConnected(LunaTargetTargetFrame.unit) then
@@ -562,10 +562,13 @@ function LunaUnitFrames:UpdateTargetTargetFrame()
 	
 	if UnitIsPlayer("targettarget") then
 		LunaTargetTargetFrame.class:SetText(UnitClass("targettarget"))
+		LunaTargetTargetFrame.class:SetVertexColor(unpack(LunaOptions.ClassColors[class]))
 	elseif UnitClassification("targettarget") == "normal" then
 		LunaTargetTargetFrame.class:SetText(UnitCreatureType("targettarget"))
+		LunaTargetTargetFrame.class:SetVertexColor(1,1,1)
 	else
 		LunaTargetTargetFrame.class:SetText(UnitClassification("targettarget").." "..UnitCreatureType("targettarget"))
+		LunaTargetTargetFrame.class:SetVertexColor(1,1,1)
 	end
 	if UnitLevel("targettarget") > 0 then
 		LunaTargetTargetFrame.Lvl:SetText(UnitLevel("targettarget"))
@@ -1018,7 +1021,7 @@ function LunaUnitFrames:UpdateTargetTargetTargetFrame()
 		maxHealth = UnitHealthMax(LunaTargetTargetTargetFrame.unit)
 	end
 	local _,class = UnitClass("targettargettarget")
-	if UnitIsPlayer("targettargettarget") then
+	if UnitIsPlayer("targettargettarget") and LunaOptions.hbarcolor then
 		local color = LunaOptions.ClassColors[class]
 		LunaTargetTargetTargetFrame.bars["Healthbar"]:SetStatusBarColor(color[1],color[2],color[3])
 		LunaTargetTargetTargetFrame.bars["Healthbar"].hpbg:SetVertexColor(color[1],color[2],color[3], 0.25)
@@ -1028,14 +1031,14 @@ function LunaUnitFrames:UpdateTargetTargetTargetFrame()
 	else
 		reaction = UnitReaction("targettargettarget", "player")
 		if reaction and reaction < 4 then
-			LunaTargetTargetTargetFrame.bars["Healthbar"]:SetStatusBarColor(0.9, 0, 0)
-			LunaTargetTargetTargetFrame.bars["Healthbar"].hpbg:SetVertexColor(0.9, 0, 0, 0.25)
+			LunaTargetTargetTargetFrame.bars["Healthbar"]:SetStatusBarColor(unpack(LunaOptions.MiscColors["hostile"]))
+			LunaTargetTargetTargetFrame.bars["Healthbar"].hpbg:SetVertexColor(unpack(LunaOptions.MiscColors["hostile"]), 0.25)
 		elseif reaction and reaction > 4 then
-			LunaTargetTargetTargetFrame.bars["Healthbar"]:SetStatusBarColor(0, 0.8, 0)
-			LunaTargetTargetTargetFrame.bars["Healthbar"].hpbg:SetVertexColor(0, 0.8, 0, 0.25)
+			LunaTargetTargetTargetFrame.bars["Healthbar"]:SetStatusBarColor(unpack(LunaOptions.MiscColors["friendly"]))
+			LunaTargetTargetTargetFrame.bars["Healthbar"].hpbg:SetVertexColor(unpack(LunaOptions.MiscColors["friendly"]), 0.25)
 		else
-			LunaTargetTargetTargetFrame.bars["Healthbar"]:SetStatusBarColor(0.93, 0.93, 0)
-			LunaTargetTargetTargetFrame.bars["Healthbar"].hpbg:SetVertexColor(0.93, 0.93, 0, 0.25)
+			LunaTargetTargetTargetFrame.bars["Healthbar"]:SetStatusBarColor(unpack(LunaOptions.MiscColors["neutral"]))
+			LunaTargetTargetTargetFrame.bars["Healthbar"].hpbg:SetVertexColor(unpack(LunaOptions.MiscColors["neutral"]), 0.25)
 		end
 	end
 	if not UnitIsConnected(LunaTargetTargetTargetFrame.unit) then
@@ -1084,10 +1087,13 @@ function LunaUnitFrames:UpdateTargetTargetTargetFrame()
 	
 	if UnitIsPlayer("targettargettarget") then
 		LunaTargetTargetTargetFrame.class:SetText(UnitClass("targettargettarget"))
+		LunaTargetTargetTargetFrame.class:SetVertexColor(unpack(LunaOptions.ClassColors[class]))
 	elseif UnitClassification("targettargettarget") == "normal" then
 		LunaTargetTargetTargetFrame.class:SetText(UnitCreatureType("targettargettarget"))
+		LunaTargetTargetTargetFrame.class:SetVertexColor(1,1,1)
 	else
 		LunaTargetTargetTargetFrame.class:SetText(UnitClassification("targettargettarget").." "..UnitCreatureType("targettargettarget"))
+		LunaTargetTargetTargetFrame.class:SetVertexColor(1,1,1)
 	end
 	if UnitLevel("targettargettarget") > 0 then
 		LunaTargetTargetTargetFrame.Lvl:SetText(UnitLevel("targettargettarget"))

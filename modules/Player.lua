@@ -187,7 +187,7 @@ function LunaUnitFrames:CreatePlayerFrame()
 	LunaPlayerFrame:SetBackdrop(LunaOptions.backdrop)
 	LunaPlayerFrame:SetBackdropColor(0,0,0,1)
 	LunaPlayerFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", LunaOptions.frames["LunaPlayerFrame"].position.x, LunaOptions.frames["LunaPlayerFrame"].position.y)
-	LunaPlayerFrame:RegisterForClicks('LeftButtonUp', 'RightButtonUp')
+	LunaPlayerFrame:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up')
 	LunaPlayerFrame.unit = "player"
 	LunaPlayerFrame:SetScript("OnEnter", UnitFrame_OnEnter)
 	LunaPlayerFrame:SetScript("OnLeave", UnitFrame_OnLeave)
@@ -397,6 +397,8 @@ function LunaUnitFrames:CreatePlayerFrame()
 	class:SetShadowOffset(0.8, -0.8)
 	class:SetText(UnitClass("player"))
 	LunaPlayerFrame.Class = class
+	local _,class = UnitClass("player")
+	LunaPlayerFrame.Class:SetVertexColor(unpack(LunaOptions.ClassColors[class]))
 
 	-- Castbar
 	local Castbar = CreateFrame("StatusBar", nil, LunaPlayerFrame)
@@ -906,7 +908,12 @@ function LunaUnitFrames:UpdatePlayerFrame()
 		LunaPlayerFrame.PVPRank:Show();
 	end
 	
-	local color = LunaOptions.ClassColors[class]
+	local color
+	if LunaOptions.hbarcolor then
+		color = LunaOptions.ClassColors[class]
+	else
+		color = LunaOptions.MiscColors["friendly"]
+	end
 	LunaPlayerFrame.bars["Healthbar"]:SetStatusBarColor(color[1],color[2],color[3])
 	LunaPlayerFrame.bars["Healthbar"].hpbg:SetVertexColor(color[1],color[2],color[3], 0.25)
 

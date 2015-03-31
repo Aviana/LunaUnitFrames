@@ -32,7 +32,7 @@ function LunaUnitFrames:CreatePartyTargetFrames()
 		LunaPartyTargetFrames[i]:SetBackdrop(LunaOptions.backdrop)
 		LunaPartyTargetFrames[i]:SetBackdropColor(0,0,0,1)
 		LunaPartyTargetFrames[i]:SetPoint("TOPLEFT", LunaPartyFrames[i], "TOPRIGHT", 5, 0)
-		LunaPartyTargetFrames[i]:RegisterForClicks('LeftButtonUp', 'RightButtonUp')
+		LunaPartyTargetFrames[i]:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up')
 		LunaPartyTargetFrames[i].unit = "party"..i.."target"
 		LunaPartyTargetFrames[i]:SetScript("OnEnter", UnitFrame_OnEnter)
 		LunaPartyTargetFrames[i]:SetScript("OnLeave", UnitFrame_OnLeave)
@@ -95,7 +95,7 @@ function LunaUnitFrames:UpdatePartyTargetFrames()
 	for i=1,4 do
 		if UnitIsVisible(LunaPartyTargetFrames[i].unit) and LunaOptions.frames["LunaPartyTargetFrames"].enabled == 1 then
 			_,class = UnitClass(LunaPartyTargetFrames[i].unit)
-			if UnitIsPlayer(LunaPartyTargetFrames[i].unit) then
+			if UnitIsPlayer(LunaPartyTargetFrames[i].unit) and LunaOptions.hbarcolor then
 				color = LunaOptions.ClassColors[class]
 				LunaPartyTargetFrames[i].HealthBar:SetStatusBarColor(color[1],color[2],color[3])
 				LunaPartyTargetFrames[i].HealthBar.hpbg:SetVertexColor(color[1],color[2],color[3], 0.25)
@@ -105,14 +105,14 @@ function LunaUnitFrames:UpdatePartyTargetFrames()
 			else
 				reaction = UnitReaction(LunaPartyTargetFrames[i].unit, "player")
 				if reaction and reaction < 4 then
-					LunaPartyTargetFrames[i].HealthBar:SetStatusBarColor(0.9, 0, 0)
-					LunaPartyTargetFrames[i].HealthBar.hpbg:SetVertexColor(0.9, 0, 0, 0.25)
+					LunaPartyTargetFrames[i].HealthBar:SetStatusBarColor(unpack(LunaOptions.MiscColors["hostile"]))
+					LunaPartyTargetFrames[i].HealthBar.hpbg:SetVertexColor(unpack(LunaOptions.MiscColors["hostile"]), 0.25)
 				elseif reaction and reaction > 4 then
-					LunaPartyTargetFrames[i].HealthBar:SetStatusBarColor(0, 0.8, 0)
-					LunaPartyTargetFrames[i].HealthBar.hpbg:SetVertexColor(0, 0.8, 0, 0.25)
+					LunaPartyTargetFrames[i].HealthBar:SetStatusBarColor(unpack(LunaOptions.MiscColors["friendly"]))
+					LunaPartyTargetFrames[i].HealthBar.hpbg:SetVertexColor(unpack(LunaOptions.MiscColors["friendly"]), 0.25)
 				else
-					LunaPartyTargetFrames[i].HealthBar:SetStatusBarColor(0.93, 0.93, 0)
-					LunaPartyTargetFrames[i].HealthBar.hpbg:SetVertexColor(0.93, 0.93, 0, 0.25)
+					LunaPartyTargetFrames[i].HealthBar:SetStatusBarColor(unpack(LunaOptions.MiscColors["neutral"]))
+					LunaPartyTargetFrames[i].HealthBar.hpbg:SetVertexColor(unpack(LunaOptions.MiscColors["neutral"]), 0.25)
 				end
 			end
 			LunaPartyTargetFrames[i].HealthBar.hpp:SetText(math.floor(((UnitHealth(LunaPartyTargetFrames[i].unit) / UnitHealthMax(LunaPartyTargetFrames[i].unit)) * 100)+0.5).."%")

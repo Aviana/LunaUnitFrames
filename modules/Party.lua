@@ -134,7 +134,7 @@ function LunaUnitFrames:CreatePartyFrames()
 		LunaPartyFrames[i]:SetBackdrop(LunaOptions.backdrop)
 		LunaPartyFrames[i]:SetBackdropColor(0,0,0,1)
 		LunaPartyFrames[i]:SetFrameStrata("BACKGROUND")
-		LunaPartyFrames[i]:RegisterForClicks('LeftButtonUp', 'RightButtonUp')
+		LunaPartyFrames[i]:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up')
 		LunaPartyFrames[i].unit = "party"..i
 		LunaPartyFrames[i]:RegisterEvent("UNIT_PORTRAIT_UPDATE")
 		LunaPartyFrames[i]:RegisterEvent("UNIT_MODEL_CHANGED")
@@ -739,7 +739,11 @@ function LunaUnitFrames:UpdatePartyFrames()
 			local color
 			local _,class = UnitClass(LunaPartyFrames[i].unit)
 			if UnitIsConnected(LunaPartyFrames[i].unit) then
-				color = LunaOptions.ClassColors[class]
+				if LunaOptions.hbarcolor then
+					color = LunaOptions.ClassColors[class]
+				else
+					color = LunaOptions.MiscColors["friendly"]
+				end
 			else
 				color = LunaOptions.MiscColors["offline"]
 			end
@@ -763,6 +767,7 @@ function LunaUnitFrames:UpdatePartyFrames()
 			
 			LunaPartyFrames[i].name:SetText(UnitName(LunaPartyFrames[i].unit))
 			LunaPartyFrames[i].class:SetText(UnitClass(LunaPartyFrames[i].unit))
+			LunaPartyFrames[i].class:SetVertexColor(unpack(LunaOptions.ClassColors[class]))
 			local difcolor = GetDifficultyColor(UnitLevel(LunaPartyFrames[i].unit))
 			LunaPartyFrames[i].lvl:SetVertexColor(difcolor.r, difcolor.g, difcolor.b)
 			if UnitLevel(LunaPartyFrames[i].unit) > 0 then

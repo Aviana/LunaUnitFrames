@@ -55,7 +55,7 @@ function LunaUnitFrames:CreatePetFrame()
 	LunaPetFrame:SetBackdrop(LunaOptions.backdrop)
 	LunaPetFrame:SetBackdropColor(0,0,0,1)
 	LunaPetFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", LunaOptions.frames["LunaPetFrame"].position.x, LunaOptions.frames["LunaPetFrame"].position.y)
-	LunaPetFrame:RegisterForClicks('LeftButtonUp', 'RightButtonUp')
+	LunaPetFrame:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up')
 	LunaPetFrame.unit = "pet"
 	LunaPetFrame:SetScript("OnEnter", UnitFrame_OnEnter)
 	LunaPetFrame:SetScript("OnLeave", UnitFrame_OnLeave)
