@@ -2,7 +2,6 @@ local HealComm = AceLibrary("HealComm-1.0")
 local AceEvent = AceLibrary("AceEvent-2.0")
 local banzai = AceLibrary("Banzai-1.0")
 local roster = AceLibrary("RosterLib-2.0")
-local RangeTime = 0
 local ScanTip = CreateFrame("GameTooltip", "ScanTip", nil, "GameTooltipTemplate")
 ScanTip:SetOwner(WorldFrame, "ANCHOR_NONE")
 LunaUnitFrames.frames.RaidFrames = {}
@@ -141,12 +140,10 @@ local function RaidEventhandler()
 end
 
 local function UpdateRaidMember()
-	RangeTime = RangeTime + arg1
 	local now = GetTime()
 	for i=1,8 do
 		for z=1,5 do
 			if LunaUnitFrames.frames.RaidFrames[i].member[z]:IsShown() then
-	--			if (RangeTime > LunaOptions.Rangefreq) then
 					local _, time = LunaUnitFrames.proximity:GetUnitRange(LunaUnitFrames.frames.RaidFrames[i].member[z].unit)
 					local seen = now - (time or 100)
 					if time and seen < 3 then
@@ -154,7 +151,6 @@ local function UpdateRaidMember()
 					else
 						LunaUnitFrames.frames.RaidFrames[i].member[z]:SetAlpha(0.5)
 					end
-	--			end
 				if UnitIsConnected(LunaUnitFrames.frames.RaidFrames[i].member[z].unit) then
 					local healamount = HealComm:getHeal(UnitName(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
 					local missinghp = (UnitHealth(LunaUnitFrames.frames.RaidFrames[i].member[z].unit)-UnitHealthMax(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
@@ -279,9 +275,6 @@ function LunaUnitFrames:CreateRaidFrames()
 			LunaUnitFrames.frames.RaidFrames[i].member[z].debuff.texture:SetTexture(LunaOptions.indicator)
 			LunaUnitFrames.frames.RaidFrames[i].member[z].debuff.texture:SetAllPoints(LunaUnitFrames.frames.RaidFrames[i].member[z].debuff)
 			LunaUnitFrames.frames.RaidFrames[i].member[z].debuff:Hide()
-			
-			
-			
 			
 			LunaUnitFrames.frames.RaidFrames[i].member[z]:RegisterEvent("UNIT_AURA")
 			LunaUnitFrames.frames.RaidFrames[i].member[z]:RegisterEvent("UNIT_DISPLAYPOWER")

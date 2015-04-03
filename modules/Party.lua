@@ -767,7 +767,9 @@ function LunaUnitFrames:UpdatePartyFrames()
 			
 			LunaPartyFrames[i].name:SetText(UnitName(LunaPartyFrames[i].unit))
 			LunaPartyFrames[i].class:SetText(UnitClass(LunaPartyFrames[i].unit))
-			LunaPartyFrames[i].class:SetVertexColor(unpack(LunaOptions.ClassColors[class]))
+			if class then
+				LunaPartyFrames[i].class:SetVertexColor(unpack(LunaOptions.ClassColors[class]))
+			end
 			local difcolor = GetDifficultyColor(UnitLevel(LunaPartyFrames[i].unit))
 			LunaPartyFrames[i].lvl:SetVertexColor(difcolor.r, difcolor.g, difcolor.b)
 			if UnitLevel(LunaPartyFrames[i].unit) > 0 then
