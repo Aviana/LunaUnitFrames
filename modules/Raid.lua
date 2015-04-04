@@ -8,10 +8,16 @@ LunaUnitFrames.frames.RaidFrames = {}
 
 local function Luna_Raid_OnClick()
 	local button, modifier
-	if (arg1 == "LeftButton") then
+	if arg1 == "LeftButton" then
 		button = 1
-	else
+	elseif arg1 == "RightButton" then
 		button = 2
+	elseif arg1 == "MiddleButton" then
+		button = 3
+	elseif arg1 == "Button4" then
+		button = 4
+	else
+		button = 5
 	end
 	if IsShiftKeyDown() then
 		modifier = 2
