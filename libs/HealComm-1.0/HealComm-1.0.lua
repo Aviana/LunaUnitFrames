@@ -863,7 +863,7 @@ HealComm.Resurrections = {
 	[L["Ancestral Spirit"]] = true;
 }
 
-local function strsplit(pString, pPattern)
+function strsplit(pString, pPattern)
 	local Table = {}
 	local fpat = "(.-)" .. pPattern
 	local last_end = 1
@@ -1039,7 +1039,10 @@ function HealComm.stopGrpHeal(caster)
 	if HealComm.SpecialEventScheduler:IsEventScheduled(caster) then
 		HealComm.SpecialEventScheduler:CancelScheduledEvent(caster)
 	end
-	local targets = HealComm.GrpHeals[caster].targets
+	local targets
+	if HealComm.GrpHeals[caster] then
+		targets = HealComm.GrpHeals[caster].targets
+	end
 	HealComm.GrpHeals[caster] = nil
 	for i=1,getn(targets) do
 		HealComm.SpecialEventScheduler:TriggerEvent("HealComm_Healupdate", targets[i])
@@ -1158,7 +1161,7 @@ HealComm.OnEvent = function()
 				HealComm.startResurrection(arg4, result[2])
 			elseif result[1] == "GrpHeal" then
 				HealComm.startGrpHeal(arg4, result[2], result[3], result[4], result[5], result[6], result[7], result[8])
-			elseif result[1] == "GrpHealstop" then
+			elseif arg2 == "GrpHealstop" then
 				HealComm.stopGrpHeal(arg4)
 			elseif result[1] == "GrpHealdelay" then
 				HealComm.delayGrpHeal(arg4, result[2])
