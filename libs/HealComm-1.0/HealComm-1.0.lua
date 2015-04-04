@@ -863,7 +863,7 @@ HealComm.Resurrections = {
 	[L["Ancestral Spirit"]] = true;
 }
 
-function strsplit(pString, pPattern)
+local function strsplit(pString, pPattern)
 	local Table = {}
 	local fpat = "(.-)" .. pPattern
 	local last_end = 1
