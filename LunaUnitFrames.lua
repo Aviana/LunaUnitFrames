@@ -27,7 +27,13 @@ function LunaUnitFrames:GetHealthString(unit)
 			result = ""
 		end
 	else
-		result = Health.."/"..maxHealth
+		local currH = MobHealth_GetTargetCurHP()
+		local maxH = MobHealth_GetTargetMaxHP()
+		if currH and maxH and (unit == "target" or unit == "targettarget" or unit == "targettargettarget") then
+			result = currH.."/"..maxH
+		else
+			result = Health.."/"..maxHealth
+		end
 	end
 	if LunaOptions.Percentages then
 		result = math.floor(((Health / maxHealth) * 100)+0.5).."%\n"..result
