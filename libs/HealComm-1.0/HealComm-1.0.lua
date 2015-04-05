@@ -1044,8 +1044,10 @@ function HealComm.stopGrpHeal(caster)
 		targets = HealComm.GrpHeals[caster].targets
 	end
 	HealComm.GrpHeals[caster] = nil
-	for i=1,getn(targets) do
-		HealComm.SpecialEventScheduler:TriggerEvent("HealComm_Healupdate", targets[i])
+	if targets then
+		for i=1,getn(targets) do
+			HealComm.SpecialEventScheduler:TriggerEvent("HealComm_Healupdate", targets[i])
+		end
 	end
 end
 
