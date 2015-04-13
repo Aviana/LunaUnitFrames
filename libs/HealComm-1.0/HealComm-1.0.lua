@@ -8,7 +8,7 @@ Dependencies: AceLibrary, AceEvent-2.0, RosterLib-2.0
 ]]
 
 local MAJOR_VERSION = "HealComm-1.0"
-local MINOR_VERSION = "$Revision: 10000 $"
+local MINOR_VERSION = "$Revision: 10100 $"
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
 if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end
@@ -995,8 +995,8 @@ function HealComm.OnHealth()
 end
 			
 function HealComm.stopHeal(caster)
-	if HealComm.SpecialEventScheduler:IsEventScheduled(caster) then
-		HealComm.SpecialEventScheduler:CancelScheduledEvent(caster)
+	if HealComm.SpecialEventScheduler:IsEventScheduled("Healcomm_"..caster) then
+		HealComm.SpecialEventScheduler:CancelScheduledEvent("Healcomm_"..caster)
 	end
 	if HealComm.Lookup[caster] then
 		HealComm.Heals[HealComm.Lookup[caster]][caster] = nil
@@ -1006,7 +1006,7 @@ function HealComm.stopHeal(caster)
 end
 
 function HealComm.startHeal(caster, target, size, casttime)
-	HealComm.SpecialEventScheduler:ScheduleEvent(caster, HealComm.stopHeal, (casttime/1000), caster)
+	HealComm.SpecialEventScheduler:ScheduleEvent("Healcomm_"..caster, HealComm.stopHeal, (casttime/1000), caster)
 	if not HealComm.Heals[target] then
 		HealComm.Heals[target] = {}
 	end
@@ -1020,15 +1020,15 @@ function HealComm.startHeal(caster, target, size, casttime)
 end
 
 function HealComm.delayHeal(caster, delay)
-	HealComm.SpecialEventScheduler:CancelScheduledEvent(caster)
+	HealComm.SpecialEventScheduler:CancelScheduledEvent("Healcomm_"..caster)
 	if HealComm.Heals[HealComm.Lookup[caster]] then
 		HealComm.Heals[HealComm.Lookup[caster]][caster].ctime = HealComm.Heals[HealComm.Lookup[caster]][caster].ctime + (delay/1000)
-		HealComm.SpecialEventScheduler:ScheduleEvent(caster, HealComm.stopHeal, (HealComm.Heals[HealComm.Lookup[caster]][caster].ctime-GetTime()), caster)
+		HealComm.SpecialEventScheduler:ScheduleEvent("Healcomm_"..caster, HealComm.stopHeal, (HealComm.Heals[HealComm.Lookup[caster]][caster].ctime-GetTime()), caster)
 	end
 end
 
 function HealComm.startGrpHeal(caster, size, casttime, party1, party2, party3, party4, party5)
-	HealComm.SpecialEventScheduler:ScheduleEvent(caster, HealComm.stopGrpHeal, (casttime/1000), caster)
+	HealComm.SpecialEventScheduler:ScheduleEvent("Healcomm_"..caster, HealComm.stopGrpHeal, (casttime/1000), caster)
 	HealComm.GrpHeals[caster] = {amount = size, ctime = (casttime/1000)+GetTime(), targets = {party1, party2, party3, party4, party5}}
 	for i=1,getn(HealComm.GrpHeals[caster].targets) do
 		HealComm.SpecialEventScheduler:TriggerEvent("HealComm_Healupdate", HealComm.GrpHeals[caster].targets[i])
@@ -1036,8 +1036,8 @@ function HealComm.startGrpHeal(caster, size, casttime, party1, party2, party3, p
 end
 
 function HealComm.stopGrpHeal(caster)
-	if HealComm.SpecialEventScheduler:IsEventScheduled(caster) then
-		HealComm.SpecialEventScheduler:CancelScheduledEvent(caster)
+	if HealComm.SpecialEventScheduler:IsEventScheduled("Healcomm_"..caster) then
+		HealComm.SpecialEventScheduler:CancelScheduledEvent("Healcomm_"..caster)
 	end
 	local targets
 	if HealComm.GrpHeals[caster] then
@@ -1052,9 +1052,9 @@ function HealComm.stopGrpHeal(caster)
 end
 
 function HealComm.delayGrpHeal(caster, delay)
-	HealComm.SpecialEventScheduler:CancelScheduledEvent(caster)
+	HealComm.SpecialEventScheduler:CancelScheduledEvent("Healcomm_"..caster)
 	HealComm.GrpHeals[caster].ctime = HealComm.GrpHeals[caster].ctime + (delay/1000)
-	HealComm.SpecialEventScheduler:ScheduleEvent(caster, HealComm.stopGrpHeal, (HealComm.GrpHeals[caster].ctime-GetTime()), caster)
+	HealComm.SpecialEventScheduler:ScheduleEvent("Healcomm_"..caster, HealComm.stopGrpHeal, (HealComm.GrpHeals[caster].ctime-GetTime()), caster)
 end
 
 function HealComm.startResurrection(caster, target)
@@ -1062,7 +1062,7 @@ function HealComm.startResurrection(caster, target)
 		HealComm.pendingResurrections[target] = {}
 	end
 	HealComm.pendingResurrections[target][caster] = GetTime()+70
-	HealComm.SpecialEventScheduler:ScheduleEvent(caster..target, HealComm.RessExpire, 70, caster, target)
+	HealComm.SpecialEventScheduler:ScheduleEvent("Healcomm_"..caster..target, HealComm.RessExpire, 70, caster, target)
 	HealComm.SpecialEventScheduler:TriggerEvent("HealComm_Ressupdate", target)
 end
 
