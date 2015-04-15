@@ -1,11 +1,11 @@
 LunaUnitFrames.CasterDB = {}
 LunaUnitFrames.Enemycastbar = CreateFrame("Frame")
 
-EnemyCastBar_Spells = {
+local EnemyCastBar_Spells = {
 
 	-- All Classes
 		-- General
-	["Hearthstone"] = {t=10.0, ni=1};
+	["Hearthstone"] = {t=10.0};
 	["Rough Copper Bomb"] = {t=1, ni=1};
 	["Large Copper Bomb"] = {t=1, ni=1};
 	["Small Bronze Bomb"] = {t=1, ni=1};
@@ -22,17 +22,17 @@ EnemyCastBar_Spells = {
 	["Dark Mending"] = {t=2};
 
 		-- First Aid
-	["First Aid"] = {t=8.0, ni=1};
-	["Linen Bandage"] = {t=3.0, ni=1};
-	["Heavy Linen Bandage"] = {t=3.0, ni=1};
-	["Wool Bandage"] = {t=3.0, ni=1};
-	["Heavy Wool Bandage"] = {t=3.0, ni=1};
-	["Silk Bandage"] = {t=3.0, ni=1};
-	["Heavy Silk Bandage"] = {t=3.0, ni=1};
-	["Mageweave Bandage"] = {t=3.0, ni=1};
-	["Heavy Mageweave Bandage"] = {t=3.0, ni=1};
-	["Runecloth Bandage"] = {t=3.0, ni=1};
-	["Heavy Runecloth Bandage"] = {t=3.0, ni=1};
+	["First Aid"] = {t=8.0};
+	["Linen Bandage"] = {t=3.0};
+	["Heavy Linen Bandage"] = {t=3.0};
+	["Wool Bandage"] = {t=3.0};
+	["Heavy Wool Bandage"] = {t=3.0};
+	["Silk Bandage"] = {t=3.0};
+	["Heavy Silk Bandage"] = {t=3.0};
+	["Mageweave Bandage"] = {t=3.0};
+	["Heavy Mageweave Bandage"] = {t=3.0};
+	["Runecloth Bandage"] = {t=3.0};
+	["Heavy Runecloth Bandage"] = {t=3.0};
 	
 	-- Druid
 	["Healing Touch"] = {t=3.0};
@@ -225,7 +225,7 @@ EnemyCastBar_Spells = {
 	
 }
 
-EnemyCastBar_Raids = {
+local EnemyCastBar_Raids = {
 
 	-- Ahn'Qiraj
 
@@ -242,7 +242,7 @@ EnemyCastBar_Raids = {
 		
 }
 
-EnemyCastBar_NonAfflictions = {
+local EnemyCastBar_NonAfflictions = {
 	["Frostbolt"] = true;
 	["Fireball"] = true;
 	["Pyroblast"] = true;
@@ -256,13 +256,22 @@ EnemyCastBar_NonAfflictions = {
 	["Holy Fire"] = true;
 	["Greater Heal"] = true;
 }
+
+local EnemyCastBar_Interrupts = {
+	["Shield Bash"] = true;
+	["Pummel"] = true;
+	["Kick"] = true;
+	["Earth Shock"] = true;
+}
 	
 
 EnemyCastBar_SPELL_GAINS 				= "(.+) gains (.+)."
 EnemyCastBar_SPELL_CAST 				= "(.+) begins to cast (.+)."
 EnemyCastBar_SPELL_PERFORM				= "(.+) begins to perform (.+)."
-EnemyCastBar_SPELL_AFFLICTED			= "(.+) (.+) afflicted by (.+).";
+EnemyCastBar_SPELL_AFFLICTED			= "(.+) (.+) afflicted by (.+)."
+EnemyCastBar_SPELL_HIT					= "Your (.+) %a%a?its (.+) for %d+\."
 
+LunaUnitFrames.Enemycastbar:RegisterEvent("CHAT_MSG_SPELL_SELF_DAMAGE");
 
 LunaUnitFrames.Enemycastbar:RegisterEvent("CHAT_MSG_SPELL_HOSTILEPLAYER_DAMAGE");
 LunaUnitFrames.Enemycastbar:RegisterEvent("CHAT_MSG_SPELL_HOSTILEPLAYER_BUFF");
@@ -313,9 +322,12 @@ function EnemyCastBar_Gfind(arg1)
 			EnemyCastBar_Control(mob, spell, "gains")
 			return
 		end
-
 		for mob, crap, spell in string.gfind(arg1, EnemyCastBar_SPELL_AFFLICTED) do
 			EnemyCastBar_Control(mob, spell, "afflicted")
+			return
+		end
+		for spell, mob in string.gfind(arg1, EnemyCastBar_SPELL_HIT) do
+			EnemyCastBar_Control(mob, spell, "hit")
 			return
 		end
 	end
@@ -356,6 +368,11 @@ function EnemyCastBar_Control(mob, spell, special)
 				end
 			end
 			EnemyCastBar_Show(mob, spell, castime)
+		elseif EnemyCastBar_Interrupts[spell] and special == "hit" then
+			if LunaUnitFrames.CasterDB[mob] and LunaUnitFrames.CasterDB[mob].ct > 0 then
+				EnemyCastBar_Hide(mob, LunaUnitFrames.CasterDB[mob].sp)
+				return
+			end
 		end
 	end
 end
