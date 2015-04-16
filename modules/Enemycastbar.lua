@@ -164,10 +164,11 @@ local EnemyCastBar_Spells = {
 	["Deadly Poison V"] = {t=3.0};
 	["Crippling Poison"] = {t=3.0};
 	["Pick Lock"] = {t=5.0};
-	["Blind"] = {t=0.0};
-	["Gouge"] = {t=0.0};
-	["Kidney Shot"] = {t=0.0};
-	["Kick - Silenced"] = {t=0.0};
+	["Blind"] = {t=0};
+	["Gouge"] = {t=0};
+	["Kidney Shot"] = {t=0};
+	["Kick - Silenced"] = {t=0, ni=1};
+	["Kick"] = {t=0, ni=1};
 	
 	-- Shaman
 	["Lesser Healing Wave"] = {t=1.5};
@@ -179,6 +180,7 @@ local EnemyCastBar_Spells = {
 	["Chain Heal"] = {t=2.5};
 	["Lightning Bolt"] = {t=2.0};
 	["Far Sight"] = {t=2.0};
+	["Earth Shock"] = {t=0, ni=1};
 	
 	-- Warlock
 	["Shadow Bolt"] = {t=2.5};
@@ -222,6 +224,8 @@ local EnemyCastBar_Spells = {
 	["Mace Stun Effect"] = {t=0};
 	["Intimidating Shout"] = {t=0};
 	["Shield Bash - Silenced"] = {t=0};
+	["Shield Bash"] = {t=0, ni=1};
+	["Pummel"] = {t=0, ni=1};
 	
 }
 
@@ -263,13 +267,13 @@ local EnemyCastBar_Interrupts = {
 	["Kick"] = true;
 	["Earth Shock"] = true;
 }
-	
 
 EnemyCastBar_SPELL_GAINS 				= "(.+) gains (.+)."
 EnemyCastBar_SPELL_CAST 				= "(.+) begins to cast (.+)."
 EnemyCastBar_SPELL_PERFORM				= "(.+) begins to perform (.+)."
 EnemyCastBar_SPELL_AFFLICTED			= "(.+) (.+) afflicted by (.+)."
 EnemyCastBar_SPELL_HIT					= "Your (.+) %a%a?its (.+) for %d+\."
+EnemyCastBar_OTHER_SPELL_HIT			= "%a+'s (.+) %a%a?its (.+) for %d+\."
 
 LunaUnitFrames.Enemycastbar:RegisterEvent("CHAT_MSG_SPELL_SELF_DAMAGE");
 
@@ -310,7 +314,7 @@ LunaUnitFrames.Enemycastbar:SetScript("OnEvent", LunaUnitFrames.Enemycastbar.OnE
 
 function EnemyCastBar_Gfind(arg1)
 	if (arg1 ~= nil) then
-		for mob, spell in string.gfind(arg1, EnemyCastBar_SPELL_CAST) do	
+		for mob, spell in string.gfind(arg1, EnemyCastBar_SPELL_CAST) do
 			EnemyCastBar_Control(mob, spell, "casts")
 			return
 		end	
@@ -327,6 +331,10 @@ function EnemyCastBar_Gfind(arg1)
 			return
 		end
 		for spell, mob in string.gfind(arg1, EnemyCastBar_SPELL_HIT) do
+			EnemyCastBar_Control(mob, spell, "hit")
+			return
+		end
+		for spell, mob in string.gfind(arg1, EnemyCastBar_OTHER_SPELL_HIT) do
 			EnemyCastBar_Control(mob, spell, "hit")
 			return
 		end
@@ -347,7 +355,7 @@ function EnemyCastBar_Control(mob, spell, special)
 		end
 		EnemyCastBar_Show(mob, spell, castime)
 	else
-		if EnemyCastBar_Spells[spell] ~= nil then
+		if EnemyCastBar_Spells[spell] ~= nil and special ~= "hit" then
 			if special == "afflicted" then
 				if not EnemyCastBar_NonAfflictions[spell] then
 					EnemyCastBar_Hide(mob, spell)
@@ -368,9 +376,9 @@ function EnemyCastBar_Control(mob, spell, special)
 				end
 			end
 			EnemyCastBar_Show(mob, spell, castime)
-		elseif EnemyCastBar_Interrupts[spell] and special == "hit" then
+		elseif EnemyCastBar_Interrupts[spell] then
 			if LunaUnitFrames.CasterDB[mob] and LunaUnitFrames.CasterDB[mob].ct > 0 then
-				EnemyCastBar_Hide(mob, LunaUnitFrames.CasterDB[mob].sp)
+				EnemyCastBar_Hide(mob, spell)
 				return
 			end
 		end
