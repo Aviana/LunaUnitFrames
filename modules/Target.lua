@@ -411,7 +411,14 @@ function LunaUnitFrames:CreateTargetFrame()
 		local anchor
 		local totalWeight = 0
 		local gaps = -1
-		if LunaTargetFrame.bars["Castbar"].casting or LunaTargetFrame.bars["Castbar"].channeling then
+		local CastBarHeightWeight
+		for k,v in pairs(LunaOptions.frames["LunaTargetFrame"].bars) do
+			if v[1] == "Castbar" then
+				CastBarHeightWeight = v[2]
+				break
+			end
+		end
+		if (LunaTargetFrame.bars["Castbar"].casting or LunaTargetFrame.bars["Castbar"].channeling) and CastBarHeightWeight > 0 then
 			LunaTargetFrame.bars["Castbar"]:Show()
 		else
 			LunaTargetFrame.bars["Castbar"]:Hide()
@@ -505,7 +512,12 @@ function LunaUnitFrames:CreateTargetFrame()
 			LunaTargetFrame.lvl:Show()
 			LunaTargetFrame.class:Show()
 		end
-		local castheight = (LunaTargetFrame.bars["Castbar"]:GetHeight()/11.7)*11
+		local castheight
+		if LunaTargetFrame.bars["Castbar"]:IsShown() then
+			castheight = (LunaTargetFrame.bars["Castbar"]:GetHeight()/11.7)*11
+		else
+			castheight = 6
+		end
 		LunaTargetFrame.bars["Castbar"].Text:SetFont(LunaOptions.font, castheight)
 		LunaTargetFrame.bars["Castbar"].Time:SetFont(LunaOptions.font, castheight)
 		if LunaTargetFrame.bars["Castbar"]:GetHeight() < 6 then
