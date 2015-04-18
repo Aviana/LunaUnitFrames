@@ -535,16 +535,19 @@ function LunaUnitFrames:CreatePlayerFrame()
 		Luna_HideBlizz(PlayerFrame)
 	end
 	
-	if LunaOptions.hideCastbar == 0 then
-		LunaPlayerFrame:RegisterEvent("SPELLCAST_CHANNEL_START")
-		LunaPlayerFrame:RegisterEvent("SPELLCAST_CHANNEL_STOP")
-		LunaPlayerFrame:RegisterEvent("SPELLCAST_CHANNEL_UPDATE")
-		LunaPlayerFrame:RegisterEvent("SPELLCAST_DELAYED")
-		LunaPlayerFrame:RegisterEvent("SPELLCAST_FAILED")
-		LunaPlayerFrame:RegisterEvent("SPELLCAST_INTERRUPTED")
-		LunaPlayerFrame:RegisterEvent("SPELLCAST_START")
-		LunaPlayerFrame:RegisterEvent("SPELLCAST_STOP")
+	for k,v in pairs(LunaOptions.frames["LunaPlayerFrame"].bars) do
+		if v[1] == "Castbar" and v[2] > 0 then
+			LunaPlayerFrame:RegisterEvent("SPELLCAST_CHANNEL_START")
+			LunaPlayerFrame:RegisterEvent("SPELLCAST_CHANNEL_STOP")
+			LunaPlayerFrame:RegisterEvent("SPELLCAST_CHANNEL_UPDATE")
+			LunaPlayerFrame:RegisterEvent("SPELLCAST_DELAYED")
+			LunaPlayerFrame:RegisterEvent("SPELLCAST_FAILED")
+			LunaPlayerFrame:RegisterEvent("SPELLCAST_INTERRUPTED")
+			LunaPlayerFrame:RegisterEvent("SPELLCAST_START")
+			LunaPlayerFrame:RegisterEvent("SPELLCAST_STOP")
+		end
 	end
+	
 	LunaPlayerFrame:SetScript("OnClick", Luna_OnClick)
 	LunaPlayerFrame:SetScript("OnEvent", Luna_Player_OnEvent)
 	LunaPlayerFrame.bars["Castbar"]:SetScript("OnUpdate", Luna_Player_OnUpdate)
@@ -572,8 +575,14 @@ function LunaUnitFrames:CreatePlayerFrame()
 		local totalWeight = 0
 		local gaps = -1
 		local _, class = UnitClass("player")
-		
-		if LunaPlayerFrame.bars["Castbar"].casting or LunaPlayerFrame.bars["Castbar"].channeling then
+		local CastBarHeightWeight
+		for k,v in pairs(LunaOptions.frames["LunaPlayerFrame"].bars) do
+			if v[1] == "Castbar" then
+				CastBarHeightWeight = v[2]
+				break
+			end
+		end
+		if (LunaPlayerFrame.bars["Castbar"].casting or LunaPlayerFrame.bars["Castbar"].channeling) and CastBarHeightWeight > 0 then
 			LunaPlayerFrame.bars["Castbar"]:Show()
 		else
 			LunaPlayerFrame.bars["Castbar"]:Hide()
@@ -656,8 +665,10 @@ function LunaUnitFrames:CreatePlayerFrame()
 			LunaPlayerFrame.Class:Show()
 		end
 		local castheight = (LunaPlayerFrame.bars["Castbar"]:GetHeight())
-		LunaPlayerFrame.bars["Castbar"].Text:SetFont(LunaOptions.font, castheight)
-		LunaPlayerFrame.bars["Castbar"].Time:SetFont(LunaOptions.font, castheight)
+		if castheight > 5 then
+			LunaPlayerFrame.bars["Castbar"].Text:SetFont(LunaOptions.font, castheight)
+			LunaPlayerFrame.bars["Castbar"].Time:SetFont(LunaOptions.font, castheight)
+		end
 		if LunaPlayerFrame.bars["Castbar"]:GetHeight() < 6 then
 			LunaPlayerFrame.bars["Castbar"].Text:Hide()
 			LunaPlayerFrame.bars["Castbar"].Time:Hide()

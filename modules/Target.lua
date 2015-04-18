@@ -512,14 +512,11 @@ function LunaUnitFrames:CreateTargetFrame()
 			LunaTargetFrame.lvl:Show()
 			LunaTargetFrame.class:Show()
 		end
-		local castheight
-		if LunaTargetFrame.bars["Castbar"]:IsShown() then
-			castheight = (LunaTargetFrame.bars["Castbar"]:GetHeight()/11.7)*11
-		else
-			castheight = 6
+		local castheight = LunaTargetFrame.bars["Castbar"]:GetHeight()
+		if castheight > 5 then
+			LunaTargetFrame.bars["Castbar"].Text:SetFont(LunaOptions.font, castheight)
+			LunaTargetFrame.bars["Castbar"].Time:SetFont(LunaOptions.font, castheight)
 		end
-		LunaTargetFrame.bars["Castbar"].Text:SetFont(LunaOptions.font, castheight)
-		LunaTargetFrame.bars["Castbar"].Time:SetFont(LunaOptions.font, castheight)
 		if LunaTargetFrame.bars["Castbar"]:GetHeight() < 6 then
 			LunaTargetFrame.bars["Castbar"].Text:Hide()
 			LunaTargetFrame.bars["Castbar"].Time:Hide()

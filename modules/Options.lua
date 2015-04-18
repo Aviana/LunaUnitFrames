@@ -111,7 +111,6 @@ local function ResetSettings()
 	LunaOptions.Rangefreq = 0.2
 	LunaOptions.Raidlayout = "GRID"
 	LunaOptions.EnergyTicker = 1
-	LunaOptions.hideCastbar = 0
 	LunaOptions.hideBlizzCastbar = 1
 	LunaOptions.PartyRange = 1
 	LunaOptions.RaidRange = 1
@@ -338,20 +337,6 @@ function OptionFunctions.UnRegisterCastbar(frame)
 	getglobal(frame):UnregisterEvent("SPELLCAST_CHANNEL_START")
 	getglobal(frame):UnregisterEvent("SPELLCAST_CHANNEL_UPDATE")
 	getglobal(frame):UnregisterEvent("SPELLCAST_CHANNEL_STOP")
-end
-
-function OptionFunctions.HideCastBarToggle()
-	if LunaOptionsFrame.pages[1].HideCastbar:GetChecked() == 1 then
-		OptionFunctions.UnRegisterCastbar("LunaPlayerFrame")
-		LunaPlayerFrame.bars["Castbar"]:Hide()
-		LunaPlayerFrame.bars["Castbar"].casting = nil
-		LunaPlayerFrame.bars["Castbar"].channeling = nil
-		LunaOptions.hideCastbar = 1
-		LunaPlayerFrame.AdjustBars()
-	else
-		OptionFunctions.RegisterCastbar("LunaPlayerFrame")
-		LunaOptions.hideCastbar = 0
-	end
 end
 
 function OptionFunctions.HideBlizzardCastbarToggle()
@@ -607,9 +592,17 @@ function OnBarHeight()
 		if weight == 0 then
 			getglobal(this.frame).bars[UIDropDownMenu_GetText(this:GetParent().BarSelect)]:Hide()
 			getglobal(this:GetName().."Text"):SetText("Bar height weight: BAR OFF")
+			if UIDropDownMenu_GetText(this:GetParent().BarSelect) == "Castbar" then
+				OptionFunctions.UnRegisterCastbar("LunaPlayerFrame")
+				LunaPlayerFrame.bars["Castbar"].casting = nil
+				LunaPlayerFrame.bars["Castbar"].channeling = nil
+			end
 		else
 			getglobal(this.frame).bars[UIDropDownMenu_GetText(this:GetParent().BarSelect)]:Show()
 			getglobal(this:GetName().."Text"):SetText("Bar height weight: "..weight)
+			if UIDropDownMenu_GetText(this:GetParent().BarSelect) == "Castbar" then
+				OptionFunctions.RegisterCastbar("LunaPlayerFrame")
+			end
 		end
 		for k,v in pairs(LunaOptions.frames[this.frame].bars) do
 			if v[1] == UIDropDownMenu_GetText(this:GetParent().BarSelect) then
@@ -1205,19 +1198,11 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.Button9:SetText("Click casting...")
 	LunaOptionsFrame.Button9:SetScript("OnClick", OptionFunctions.OpenCCC)
 	LunaOptionsFrame.Button9.id = 9
-		
-	LunaOptionsFrame.pages[1].HideCastbar = CreateFrame("CheckButton", "HideCastbar", LunaOptionsFrame.pages[1], "UICheckButtonTemplate")
-	LunaOptionsFrame.pages[1].HideCastbar:SetHeight(20)
-	LunaOptionsFrame.pages[1].HideCastbar:SetWidth(20)
-	LunaOptionsFrame.pages[1].HideCastbar:SetPoint("TOPLEFT", LunaOptionsFrame.pages[1].scaleslider, "TOPLEFT", 0, -40)
-	LunaOptionsFrame.pages[1].HideCastbar:SetScript("OnClick", OptionFunctions.HideCastBarToggle)
-	LunaOptionsFrame.pages[1].HideCastbar:SetChecked(LunaOptions.hideCastbar)
-	getglobal("HideCastbarText"):SetText("Turn off the built-in Castbar")
 
 	LunaOptionsFrame.pages[1].HideBlizzCast = CreateFrame("CheckButton", "HideBlizzCast", LunaOptionsFrame.pages[1], "UICheckButtonTemplate")
 	LunaOptionsFrame.pages[1].HideBlizzCast:SetHeight(20)
 	LunaOptionsFrame.pages[1].HideBlizzCast:SetWidth(20)
-	LunaOptionsFrame.pages[1].HideBlizzCast:SetPoint("TOPLEFT", LunaOptionsFrame.pages[1].HideCastbar, "TOPLEFT", 0, -30)
+	LunaOptionsFrame.pages[1].HideBlizzCast:SetPoint("TOPLEFT", LunaOptionsFrame.pages[1].scaleslider, "TOPLEFT", 0, -40)
 	LunaOptionsFrame.pages[1].HideBlizzCast:SetScript("OnClick", OptionFunctions.HideBlizzardCastbarToggle)
 	LunaOptionsFrame.pages[1].HideBlizzCast:SetChecked(LunaOptions.hideBlizzCastbar)
 	getglobal("HideBlizzCastText"):SetText("Hide original Blizzard Castbar")
