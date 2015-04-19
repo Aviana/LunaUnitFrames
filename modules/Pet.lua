@@ -277,7 +277,7 @@ function LunaUnitFrames:CreatePetFrame()
 				anchor = {"TOPLEFT", LunaPetFrame.bars[bar], "BOTTOMLEFT"}
 			end			
 		end
-		local healthheight = (LunaPetFrame.bars["Healthbar"]:GetHeight()/23.4)*11
+		local healthheight = (LunaPetFrame.bars["Healthbar"]:GetHeight()*0.45)
 		if healthheight > 0 then
 			LunaPetFrame.bars["Healthbar"].hpp:SetFont(LunaOptions.font, healthheight)
 			LunaPetFrame.bars["Healthbar"].hpp:SetHeight(LunaPetFrame.bars["Healthbar"]:GetHeight())
@@ -292,7 +292,7 @@ function LunaUnitFrames:CreatePetFrame()
 			LunaPetFrame.bars["Healthbar"].hpp:Show()
 			LunaPetFrame.name:Show()
 		end
-		local powerheight = (LunaPetFrame.bars["Powerbar"]:GetHeight()/23.4)*11
+		local powerheight = (LunaPetFrame.bars["Powerbar"]:GetHeight()*0.45)
 		if powerheight > 0 then
 			LunaPetFrame.bars["Powerbar"].ppp:SetFont(LunaOptions.font, powerheight)
 			LunaPetFrame.lvl:SetFont(LunaOptions.font, powerheight)
