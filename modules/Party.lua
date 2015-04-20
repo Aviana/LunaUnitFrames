@@ -173,7 +173,7 @@ function LunaUnitFrames:CreatePartyFrames()
 		
 		LunaPartyFrames[i].Buffs = {}
 
-		LunaPartyFrames[i].Buffs[1] = CreateFrame("Button", nil, LunaPartyFrames[i])
+		LunaPartyFrames[i].Buffs[1] = CreateFrame("Button", "Party"..i.."FrameBuff1", LunaPartyFrames[i])
 		LunaPartyFrames[i].Buffs[1].texturepath = UnitBuff(LunaPartyFrames[i].unit,1)
 		LunaPartyFrames[i].Buffs[1].id = 1
 		LunaPartyFrames[i].Buffs[1]:SetNormalTexture(LunaPartyFrames[i].Buffs[1].texturepath)
@@ -190,7 +190,7 @@ function LunaUnitFrames:CreatePartyFrames()
 		LunaPartyFrames[i].Buffs[1].stacks:SetTextColor(1,1,1)
 
 		for z=2, 16 do
-			LunaPartyFrames[i].Buffs[z] = CreateFrame("Button", nil, LunaPartyFrames[i])
+			LunaPartyFrames[i].Buffs[z] = CreateFrame("Button", "Party"..i.."FrameBuff"..z, LunaPartyFrames[i])
 			LunaPartyFrames[i].Buffs[z].texturepath = UnitBuff(LunaPartyFrames[i].unit,z)
 			LunaPartyFrames[i].Buffs[z].id = z
 			LunaPartyFrames[i].Buffs[z]:SetNormalTexture(LunaPartyFrames[i].Buffs[z].texturepath)
@@ -209,7 +209,7 @@ function LunaUnitFrames:CreatePartyFrames()
 
 		LunaPartyFrames[i].Debuffs = {}
 
-		LunaPartyFrames[i].Debuffs[1] = CreateFrame("Button", nil, LunaPartyFrames[i])
+		LunaPartyFrames[i].Debuffs[1] = CreateFrame("Button", "Party"..i.."FrameDebuff1", LunaPartyFrames[i])
 		LunaPartyFrames[i].Debuffs[1].texturepath = UnitDebuff(LunaPartyFrames[i].unit,1)
 		LunaPartyFrames[i].Debuffs[1].id = 17
 		LunaPartyFrames[i].Debuffs[1]:SetNormalTexture(LunaPartyFrames[i].Debuffs[1].texturepath)
@@ -226,7 +226,7 @@ function LunaUnitFrames:CreatePartyFrames()
 		LunaPartyFrames[i].Debuffs[1].stacks:SetTextColor(1,1,1)
 
 		for z=2, 16 do
-			LunaPartyFrames[i].Debuffs[z] = CreateFrame("Button", nil, LunaPartyFrames[i])
+			LunaPartyFrames[i].Debuffs[z] = CreateFrame("Button", "Party"..i.."FrameDebuff"..z, LunaPartyFrames[i])
 			LunaPartyFrames[i].Debuffs[z].texturepath = UnitDebuff(LunaPartyFrames[i].unit,z)
 			LunaPartyFrames[i].Debuffs[z].id = z+16
 			LunaPartyFrames[i].Debuffs[z]:SetNormalTexture(LunaPartyFrames[i].Debuffs[z].texturepath)

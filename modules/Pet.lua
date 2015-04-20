@@ -68,7 +68,7 @@ function LunaUnitFrames:CreatePetFrame()
 	
 	LunaPetFrame.Buffs = {}
 
-	LunaPetFrame.Buffs[1] = CreateFrame("Button", nil, LunaPetFrame.AuraAnchor)
+	LunaPetFrame.Buffs[1] = CreateFrame("Button", "PetFrameBuff1", LunaPetFrame.AuraAnchor)
 	LunaPetFrame.Buffs[1].texturepath = UnitBuff(LunaPetFrame.unit,1)
 	LunaPetFrame.Buffs[1].id = 1
 	LunaPetFrame.Buffs[1]:SetNormalTexture(LunaPetFrame.Buffs[1].texturepath)
@@ -85,7 +85,7 @@ function LunaUnitFrames:CreatePetFrame()
 	LunaPetFrame.Buffs[1].stacks:SetText("8")
 
 	for z=2, 16 do
-		LunaPetFrame.Buffs[z] = CreateFrame("Button", nil, LunaPetFrame.AuraAnchor)
+		LunaPetFrame.Buffs[z] = CreateFrame("Button", "PetFrameBuff"..z, LunaPetFrame.AuraAnchor)
 		LunaPetFrame.Buffs[z].texturepath = UnitBuff(LunaPetFrame.unit,z)
 		LunaPetFrame.Buffs[z].id = z
 		LunaPetFrame.Buffs[z]:SetNormalTexture(LunaPetFrame.Buffs[z].texturepath)
@@ -104,7 +104,7 @@ function LunaUnitFrames:CreatePetFrame()
 
 	LunaPetFrame.Debuffs = {}
 
-	LunaPetFrame.Debuffs[1] = CreateFrame("Button", nil, LunaPetFrame.AuraAnchor)
+	LunaPetFrame.Debuffs[1] = CreateFrame("Button", "PetFrameDebuff1", LunaPetFrame.AuraAnchor)
 	LunaPetFrame.Debuffs[1].texturepath = UnitDebuff(LunaPetFrame.unit,1)
 	LunaPetFrame.Debuffs[1].id = 17
 	LunaPetFrame.Debuffs[1]:SetNormalTexture(LunaPetFrame.Debuffs[1].texturepath)
@@ -121,7 +121,7 @@ function LunaUnitFrames:CreatePetFrame()
 	LunaPetFrame.Debuffs[1].stacks:SetText("8")
 
 	for z=2, 16 do
-		LunaPetFrame.Debuffs[z] = CreateFrame("Button", nil, LunaPetFrame.AuraAnchor)
+		LunaPetFrame.Debuffs[z] = CreateFrame("Button", "PetFrameDebuff"..z, LunaPetFrame.AuraAnchor)
 		LunaPetFrame.Debuffs[z].texturepath = UnitDebuff(LunaPetFrame.unit,z)
 		LunaPetFrame.Debuffs[z].id = z+16
 		LunaPetFrame.Debuffs[z]:SetNormalTexture(LunaPetFrame.Debuffs[z].texturepath)
