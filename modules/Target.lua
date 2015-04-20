@@ -169,7 +169,7 @@ function LunaUnitFrames:CreateTargetFrame()
 	
 	LunaTargetFrame.Buffs = {}
 
-	LunaTargetFrame.Buffs[1] = CreateFrame("Button", "TargetFrameBuff1", LunaTargetFrame.AuraAnchor)
+	LunaTargetFrame.Buffs[1] = CreateFrame("Button", "LunaTargetFrameBuff1", LunaTargetFrame.AuraAnchor)
 	LunaTargetFrame.Buffs[1].texturepath = UnitBuff("target",1)
 	LunaTargetFrame.Buffs[1].id = 1
 	LunaTargetFrame.Buffs[1]:SetNormalTexture(LunaTargetFrame.Buffs[1].texturepath)
@@ -184,7 +184,7 @@ function LunaUnitFrames:CreateTargetFrame()
 	LunaTargetFrame.Buffs[1].stacks:SetTextColor(1,1,1)
 	
 	for i=2, 16 do
-		LunaTargetFrame.Buffs[i] = CreateFrame("Button", "TargetFrameBuff"..i, LunaTargetFrame.AuraAnchor)
+		LunaTargetFrame.Buffs[i] = CreateFrame("Button", "LunaTargetFrameBuff"..i, LunaTargetFrame.AuraAnchor)
 		LunaTargetFrame.Buffs[i].texturepath = UnitBuff("target",i)
 		LunaTargetFrame.Buffs[i].id = i
 		LunaTargetFrame.Buffs[i]:SetNormalTexture(LunaTargetFrame.Buffs[i].texturepath)
@@ -201,7 +201,7 @@ function LunaUnitFrames:CreateTargetFrame()
 
 	LunaTargetFrame.Debuffs = {}
 
-	LunaTargetFrame.Debuffs[1] = CreateFrame("Button", "TargetFrameDebuff1", LunaTargetFrame.AuraAnchor)
+	LunaTargetFrame.Debuffs[1] = CreateFrame("Button", "LunaTargetFrameDebuff1", LunaTargetFrame.AuraAnchor)
 	LunaTargetFrame.Debuffs[1].texturepath = UnitDebuff("target",1)
 	LunaTargetFrame.Debuffs[1].id = 17
 	LunaTargetFrame.Debuffs[1]:SetNormalTexture(LunaTargetFrame.Debuffs[1].texturepath)
@@ -216,7 +216,7 @@ function LunaUnitFrames:CreateTargetFrame()
 	LunaTargetFrame.Debuffs[1].stacks:SetTextColor(1,1,1)
 
 	for i=2, 16 do
-		LunaTargetFrame.Debuffs[i] = CreateFrame("Button", "TargetFrameDebuff"..i, LunaTargetFrame.AuraAnchor)
+		LunaTargetFrame.Debuffs[i] = CreateFrame("Button", "LunaTargetFrameDebuff"..i, LunaTargetFrame.AuraAnchor)
 		LunaTargetFrame.Debuffs[i].texturepath = UnitDebuff("target",i)
 		LunaTargetFrame.Debuffs[i].id = i+16
 		LunaTargetFrame.Debuffs[i]:SetNormalTexture(LunaTargetFrame.Debuffs[i].texturepath)
