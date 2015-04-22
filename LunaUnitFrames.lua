@@ -121,8 +121,9 @@ function LunaUnitFrames:OnEvent()
 		if table.getn(LunaOptions.frames["LunaPlayerFrame"].bars) < 5 then
 			LunaOptions.frames["LunaPlayerFrame"].bars[5] = {"Totembar", 0}
 		end
-		if not LunaOptions.clickcast[4][5] then
-			LunaOptions.clickcast = {
+		local playerName = UnitName("player")
+		if not LunaOptions.clickcast[playerName] then
+			LunaOptions.clickcast[playerName] = {
 									{"target","menu","","",""},
 									{"","","","",""},
 									{"","","","",""},
