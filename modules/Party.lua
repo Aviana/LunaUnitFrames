@@ -887,7 +887,7 @@ function Luna_Party_Events:UNIT_HEALTH()
 		end
 		
 		local color
-		local _,class = UnitClass(LunaPartyFrames[i].unit)
+		local _,class = UnitClass(this.unit)
 		if UnitIsConnected(LunaPartyFrames[i].unit) and UnitHealth(this.unit) > 1 then
 			if LunaOptions.hbarcolor then
 				color = LunaOptions.ClassColors[class]
