@@ -738,7 +738,7 @@ function LunaUnitFrames:UpdatePartyFrames()
 
 			local color
 			local _,class = UnitClass(LunaPartyFrames[i].unit)
-			if UnitIsConnected(LunaPartyFrames[i].unit) and UnitHealth(this.unit) > 1 then
+			if UnitIsConnected(LunaPartyFrames[i].unit) and UnitHealth(LunaPartyFrames[i].unit) > 1 then
 				if LunaOptions.hbarcolor then
 					color = LunaOptions.ClassColors[class]
 				else
