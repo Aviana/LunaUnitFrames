@@ -844,7 +844,7 @@ function Luna_Target_Events:UNIT_HEALTH()
 	if not UnitIsConnected("target") then
 		LunaTargetFrame.bars["Healthbar"].hpp:SetText("OFFLINE")
 		LunaTargetFrame.bars["Healthbar"]:SetValue(0)
-	elseif Health < 1 then			-- This prevents negative health
+	elseif Health < 1 or (Health == 1 and (UnitInParty("target") or UnitInRaid("target"))) then			-- This prevents negative health
 		LunaTargetFrame.bars["Healthbar"].hpp:SetText("DEAD")
 		LunaTargetFrame.bars["Healthbar"]:SetValue(0)
 	else
