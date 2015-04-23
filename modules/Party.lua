@@ -738,7 +738,7 @@ function LunaUnitFrames:UpdatePartyFrames()
 
 			local color
 			local _,class = UnitClass(LunaPartyFrames[i].unit)
-			if UnitIsConnected(LunaPartyFrames[i].unit) then
+			if UnitIsConnected(LunaPartyFrames[i].unit) and UnitHealth(this.unit) > 1 then
 				if LunaOptions.hbarcolor then
 					color = LunaOptions.ClassColors[class]
 				else
@@ -885,20 +885,28 @@ function Luna_Party_Events:UNIT_HEALTH()
 		if (UnitIsDead(this.unit) or UnitIsGhost(this.unit)) then			-- This prevents negative health
 			this.bars["Healthbar"]:SetValue(0)
 		end
+		
 		local color
-		local _,class = UnitClass(this.unit)
-		if not UnitIsConnected(this.unit) then
+		local _,class = UnitClass(LunaPartyFrames[i].unit)
+		if UnitIsConnected(LunaPartyFrames[i].unit) and UnitHealth(this.unit) > 1 then
+			if LunaOptions.hbarcolor then
+				color = LunaOptions.ClassColors[class]
+			else
+				color = LunaOptions.MiscColors["friendly"]
+			end
+		else
 			color = LunaOptions.MiscColors["offline"]
+		end
+		if color == nil then
+			color = LunaOptions.MiscColors["offline"]
+		end
+		LunaPartyFrames[i].bars["Healthbar"]:SetStatusBarColor(color[1],color[2],color[3])
+		LunaPartyFrames[i].bars["Healthbar"].hpbg:SetVertexColor(color[1],color[2],color[3], 0.25)
+		
+		if not UnitIsConnected(this.unit) then
 			this.bars["Healthbar"].hpp:SetText("OFFLINE")
 		elseif UnitHealth(this.unit) < 2 then
-			color = LunaOptions.MiscColors["offline"]
 			this.bars["Healthbar"].hpp:SetText("DEAD")
-		else
-			color = LunaOptions.ClassColors[class]
-		end
-		if color then
-			this.bars["Healthbar"]:SetStatusBarColor(color[1],color[2],color[3])
-			this.bars["Healthbar"].hpbg:SetVertexColor(color[1],color[2],color[3], 0.25)
 		end
 		Luna_Party_Events.UNIT_LEVEL()
 	end
