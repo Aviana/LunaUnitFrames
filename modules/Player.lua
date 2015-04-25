@@ -349,13 +349,30 @@ function LunaUnitFrames:CreatePlayerFrame()
 	
 	LunaPlayerFrame.bars["Powerbar"].EnergyUpdate = function()
 		local time = GetTime()
+		local fsPosition, energyPosition
 		if (time - LunaPlayerFrame.bars["Powerbar"].Ticker.startTime) >= 2 then 		--Ticks happen every 2 sec
 			LunaPlayerFrame.bars["Powerbar"].Ticker.startTime = GetTime()
 		end
-		local sparkPosition = (((time - LunaPlayerFrame.bars["Powerbar"].Ticker.startTime) / 2)* LunaPlayerFrame.bars["Powerbar"]:GetWidth())
-		LunaPlayerFrame.bars["Powerbar"].Ticker:SetPoint("CENTER", LunaPlayerFrame.bars["Powerbar"], "LEFT", sparkPosition, 0)
+		if LunaPlayerFrame.bars["Powerbar"].Ticker.fsstart then
+			if (time - LunaPlayerFrame.bars["Powerbar"].Ticker.fsstart) >= 5 then
+				LunaPlayerFrame.bars["Powerbar"].Ticker.fsstart = nil
+				if UnitPowerType("player") == 0 then
+					LunaPlayerFrame.bars["Powerbar"].Ticker:Hide()
+				end
+			else
+				fsPosition = (((time - LunaPlayerFrame.bars["Powerbar"].Ticker.fsstart) / 5)* LunaPlayerFrame.bars["Powerbar"]:GetWidth())
+			end
+		end
+		energyPosition = (((time - LunaPlayerFrame.bars["Powerbar"].Ticker.startTime) / 2)* LunaPlayerFrame.bars["Powerbar"]:GetWidth())
+		if UnitPowerType("player") == 0 and fsPosition then
+			LunaPlayerFrame.bars["Powerbar"].Ticker:SetPoint("CENTER", LunaPlayerFrame.bars["Powerbar"], "LEFT", fsPosition, 0)
+		else
+			LunaPlayerFrame.bars["Powerbar"].Ticker:SetPoint("CENTER", LunaPlayerFrame.bars["Powerbar"], "LEFT", energyPosition, 0)
+		end
 	end
 
+	LunaPlayerFrame.bars["Powerbar"].form = UnitPowerType("player")
+	
 	-- Manabar background
 	local ppbg = pp:CreateTexture(nil, "BORDER")
 	ppbg:SetAllPoints(pp)
@@ -373,10 +390,11 @@ function LunaUnitFrames:CreatePlayerFrame()
 
 	LunaPlayerFrame.bars["Powerbar"].Ticker = LunaPlayerFrame.bars["Powerbar"]:CreateTexture(nil, "OVERLAY")
 	LunaPlayerFrame.bars["Powerbar"].Ticker:SetTexture("Interface\\CastingBar\\UI-CastingBar-Spark")
-	LunaPlayerFrame.bars["Powerbar"].Ticker:SetVertexColor(1, 1, 1, 0.5)
+	LunaPlayerFrame.bars["Powerbar"].Ticker:SetVertexColor(1, 1, 1, 1)
 	LunaPlayerFrame.bars["Powerbar"].Ticker:SetBlendMode("ADD")
 	LunaPlayerFrame.bars["Powerbar"].Ticker:SetWidth(3)
-	LunaPlayerFrame.bars["Powerbar"].oldMana = 100
+	LunaPlayerFrame.bars["Powerbar"].oldMana = UnitMana("player")
+	LunaPlayerFrame.bars["Powerbar"].oldManaMax = UnitManaMax("player")
 	LunaPlayerFrame.bars["Powerbar"].Ticker.startTime = GetTime()
 	
 	local lvl
@@ -530,6 +548,7 @@ function LunaUnitFrames:CreatePlayerFrame()
 	LunaPlayerFrame:RegisterEvent("UNIT_COMBAT")
 	LunaPlayerFrame:RegisterEvent("PLAYER_ALIVE")
 	LunaPlayerFrame:RegisterEvent("PLAYER_AURAS_CHANGED")
+	LunaPlayerFrame:RegisterEvent("CHAT_MSG_SPELL_SELF_BUFF")
 	
 	if not LunaOptions.BlizzPlayer then
 		Luna_HideBlizz(PlayerFrame)
@@ -552,9 +571,8 @@ function LunaUnitFrames:CreatePlayerFrame()
 	LunaPlayerFrame:SetScript("OnEvent", Luna_Player_OnEvent)
 	LunaPlayerFrame.bars["Castbar"]:SetScript("OnUpdate", Luna_Player_OnUpdate)
 	LunaPlayerFrame.bars["Totembar"]:SetScript("OnUpdate", Luna_Player_TotemOnUpdate)
-	if LunaOptions.EnergyTicker == 1 then
-		LunaPlayerFrame.bars["Powerbar"]:SetScript("OnUpdate", LunaPlayerFrame.bars["Powerbar"].EnergyUpdate)
-	end
+	LunaPlayerFrame.bars["Powerbar"]:SetScript("OnUpdate", LunaPlayerFrame.bars["Powerbar"].EnergyUpdate)
+	
 	if LunaOptions.hideBlizzCastbar == 1 then
 		Luna_HideBlizz(CastingBarFrame)
 	end
@@ -1141,7 +1159,14 @@ function Luna_Player_Events:UNIT_MANA()
 	if not LunaPlayerFrame.bars["Powerbar"].Ticker.startTime or UnitMana("player") > LunaPlayerFrame.bars["Powerbar"].oldMana then
 		LunaPlayerFrame.bars["Powerbar"].Ticker.startTime = GetTime()
 	end
+	if UnitMana("player") < LunaPlayerFrame.bars["Powerbar"].oldMana and UnitPowerType("player") == 0 and LunaPlayerFrame.bars["Powerbar"].oldManaMax == UnitManaMax("player") then
+		LunaPlayerFrame.bars["Powerbar"].Ticker.fsstart = GetTime()
+		if LunaOptions.fsTicker then
+			LunaPlayerFrame.bars["Powerbar"].Ticker:Show()
+		end
+	end
 	LunaPlayerFrame.bars["Powerbar"].oldMana = UnitMana("player")
+	LunaPlayerFrame.bars["Powerbar"].oldManaMax = UnitManaMax("player")
 	LunaPlayerFrame.bars["Powerbar"]:SetMinMaxValues(0, UnitManaMax("player"))
 	if (UnitIsDead("player") or UnitIsGhost("player")) then
 		LunaPlayerFrame.bars["Powerbar"]:SetValue(0)
@@ -1159,6 +1184,11 @@ Luna_Player_Events.UNIT_MAXRAGE = Luna_Player_Events.UNIT_MANA;
 function Luna_Player_Events:UNIT_DISPLAYPOWER()
 	local playerpower = UnitPowerType("player")
 	
+	if LunaPlayerFrame.bars["Powerbar"].form ~= UnitPowerType("player") and UnitPowerType("player") ~= 0 then
+		LunaPlayerFrame.bars["Powerbar"].Ticker.fsstart = GetTime()
+	end
+	LunaPlayerFrame.bars["Powerbar"].form = UnitPowerType("player")
+	
 	if playerpower == 1 then
 		LunaPlayerFrame.bars["Powerbar"]:SetStatusBarColor(LunaOptions.PowerColors["Rage"][1], LunaOptions.PowerColors["Rage"][2], LunaOptions.PowerColors["Rage"][3])
 		LunaPlayerFrame.bars["Powerbar"].ppbg:SetVertexColor(LunaOptions.PowerColors["Rage"][1], LunaOptions.PowerColors["Rage"][2], LunaOptions.PowerColors["Rage"][3], .25)
@@ -1174,7 +1204,11 @@ function Luna_Player_Events:UNIT_DISPLAYPOWER()
 	else
 		LunaPlayerFrame.bars["Powerbar"]:SetStatusBarColor(LunaOptions.PowerColors["Mana"][1], LunaOptions.PowerColors["Mana"][2], LunaOptions.PowerColors["Mana"][3])
 		LunaPlayerFrame.bars["Powerbar"].ppbg:SetVertexColor(LunaOptions.PowerColors["Mana"][1], LunaOptions.PowerColors["Mana"][2], LunaOptions.PowerColors["Mana"][3], .25)
-		LunaPlayerFrame.bars["Powerbar"].Ticker:Hide()
+		if LunaPlayerFrame.bars["Powerbar"].Ticker.fsstart and LunaOptions.fsTicker then
+			LunaPlayerFrame.bars["Powerbar"].Ticker:Show()
+		else
+			LunaPlayerFrame.bars["Powerbar"].Ticker:Hide()
+		end
 	end
 	LunaPlayerFrame.AdjustBars()
 	Luna_Player_Events.UNIT_MANA()
@@ -1212,5 +1246,14 @@ end
 function Luna_Player_Events:UNIT_SPELLMISS()
 	if arg1 == "player" then
 		CombatFeedback_OnSpellMissEvent(arg2)
+	end
+end
+
+function Luna_Player_Events:CHAT_MSG_SPELL_SELF_BUFF()
+	if string.find(arg1, "You gain %d+ Mana from Illumination.") then
+		LunaPlayerFrame.bars["Powerbar"].Ticker.fsstart = GetTime()
+		if LunaOptions.fsTicker then
+			LunaPlayerFrame.bars["Powerbar"].Ticker:Show()
+		end
 	end
 end

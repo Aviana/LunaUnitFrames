@@ -712,13 +712,20 @@ function OptionFunctions.PartyBuffPosSelect()
 	end
 end
 
+function OptionFunctions.fsTickerToggle()
+	if LunaOptions.fsTicker == 1 then
+		LunaOptions.fsTicker = nil
+	else
+		LunaOptions.fsTicker = 1
+	end
+	LunaUnitFrames:UpdatePlayerFrame()
+end
+
 function OptionFunctions.EnergyTickerToggle()
 	if LunaOptions.EnergyTicker == 1 then
 		LunaOptions.EnergyTicker = 0
-		LunaPlayerFrame.bars["Powerbar"]:SetScript("OnUpdate", nil)
 	else
 		LunaOptions.EnergyTicker = 1
-		LunaPlayerFrame.bars["Powerbar"]:SetScript("OnUpdate", LunaPlayerFrame.bars["Powerbar"].EnergyUpdate)
 	end
 	LunaUnitFrames:UpdatePlayerFrame()
 end
@@ -1224,10 +1231,18 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[1].EnergyTicker:SetChecked(LunaOptions.EnergyTicker)
 	getglobal("EnergyTickerText"):SetText("Enable Energy Ticker")
 	
+	LunaOptionsFrame.pages[1].fsTicker = CreateFrame("CheckButton", "fsTicker", LunaOptionsFrame.pages[1], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[1].fsTicker:SetHeight(20)
+	LunaOptionsFrame.pages[1].fsTicker:SetWidth(20)
+	LunaOptionsFrame.pages[1].fsTicker:SetPoint("TOPLEFT", LunaOptionsFrame.pages[1].EnergyTicker, "TOPLEFT", 0, -30)
+	LunaOptionsFrame.pages[1].fsTicker:SetScript("OnClick", OptionFunctions.fsTickerToggle)
+	LunaOptionsFrame.pages[1].fsTicker:SetChecked(LunaOptions.fsTicker)
+	getglobal("fsTickerText"):SetText("Enable 5sec Rule")
+	
 	LunaOptionsFrame.pages[1].XPBar = CreateFrame("CheckButton", "XPBarSwitch", LunaOptionsFrame.pages[1], "UICheckButtonTemplate")
 	LunaOptionsFrame.pages[1].XPBar:SetHeight(20)
 	LunaOptionsFrame.pages[1].XPBar:SetWidth(20)
-	LunaOptionsFrame.pages[1].XPBar:SetPoint("TOPRIGHT", LunaOptionsFrame.pages[1].EnergyTicker, "TOPRIGHT", 0, -30)
+	LunaOptionsFrame.pages[1].XPBar:SetPoint("TOPRIGHT", LunaOptionsFrame.pages[1].fsTicker, "TOPRIGHT", 0, -30)
 	LunaOptionsFrame.pages[1].XPBar:SetScript("OnClick", OptionFunctions.XPBarToggle)
 	LunaOptionsFrame.pages[1].XPBar:SetChecked(LunaOptions.XPBar)
 	getglobal("XPBarSwitchText"):SetText("Enable XP Bar")
