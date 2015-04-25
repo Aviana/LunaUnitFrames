@@ -370,8 +370,6 @@ function LunaUnitFrames:CreatePlayerFrame()
 			LunaPlayerFrame.bars["Powerbar"].Ticker:SetPoint("CENTER", LunaPlayerFrame.bars["Powerbar"], "LEFT", energyPosition, 0)
 		end
 	end
-
-	LunaPlayerFrame.bars["Powerbar"].form = UnitPowerType("player")
 	
 	-- Manabar background
 	local ppbg = pp:CreateTexture(nil, "BORDER")
@@ -393,9 +391,8 @@ function LunaUnitFrames:CreatePlayerFrame()
 	LunaPlayerFrame.bars["Powerbar"].Ticker:SetVertexColor(1, 1, 1, 1)
 	LunaPlayerFrame.bars["Powerbar"].Ticker:SetBlendMode("ADD")
 	LunaPlayerFrame.bars["Powerbar"].Ticker:SetWidth(3)
-	LunaPlayerFrame.bars["Powerbar"].oldMana = UnitMana("player")
-	LunaPlayerFrame.bars["Powerbar"].oldManaMax = UnitManaMax("player")
-	LunaPlayerFrame.bars["Powerbar"].Ticker.startTime = GetTime()
+	LunaPlayerFrame.bars["Powerbar"].oldMana = 0
+	LunaPlayerFrame.bars["Powerbar"].Ticker.startTime = nil
 	
 	local lvl
 	lvl = pp:CreateFontString(nil, "OVERLAY")
@@ -851,8 +848,9 @@ function LunaUnitFrames:CreatePlayerFrame()
 	LunaPlayerFrame.AdjustBars()
 	LunaPlayerFrame.UpdateBuffSize()
 	LunaUnitFrames:UpdatePlayerFrame()
-	AceEvent:RegisterEvent("HealComm_Healupdate" , LunaUnitFrames.PlayerUpdateHeal)
-	AceEvent:RegisterEvent("DruidManaLib_Manaupdate" , LunaUnitFrames.DruidBarUpdate)
+	AceEvent:RegisterEvent("HealComm_Healupdate", LunaUnitFrames.PlayerUpdateHeal)
+	AceEvent:RegisterEvent("DruidManaLib_Manaupdate", LunaUnitFrames.DruidBarUpdate)
+	AceEvent:RegisterEvent("fiveSec", LunaUnitFrames.fiveSec)
 end
 
 function LunaUnitFrames.PlayerUpdateHeal(target)
@@ -890,6 +888,13 @@ function LunaUnitFrames.SetTotemTimer(totemtype, timeleft)
 	LunaPlayerFrame.totems[totemtype]:SetValue(0)
 	LunaPlayerFrame.totems[totemtype].active = 1
 	LunaPlayerFrame.AdjustBars()
+end
+
+function LunaUnitFrames.fiveSec()
+	LunaPlayerFrame.bars["Powerbar"].Ticker.fsstart = GetTime()
+	if LunaOptions.fsTicker then
+		LunaPlayerFrame.bars["Powerbar"].Ticker:Show()
+	end
 end
 
 function LunaUnitFrames:ConvertPlayerPortrait()
@@ -1159,14 +1164,7 @@ function Luna_Player_Events:UNIT_MANA()
 	if not LunaPlayerFrame.bars["Powerbar"].Ticker.startTime or UnitMana("player") > LunaPlayerFrame.bars["Powerbar"].oldMana then
 		LunaPlayerFrame.bars["Powerbar"].Ticker.startTime = GetTime()
 	end
-	if UnitMana("player") < LunaPlayerFrame.bars["Powerbar"].oldMana and UnitPowerType("player") == 0 and LunaPlayerFrame.bars["Powerbar"].oldManaMax == UnitManaMax("player") then
-		LunaPlayerFrame.bars["Powerbar"].Ticker.fsstart = GetTime()
-		if LunaOptions.fsTicker then
-			LunaPlayerFrame.bars["Powerbar"].Ticker:Show()
-		end
-	end
 	LunaPlayerFrame.bars["Powerbar"].oldMana = UnitMana("player")
-	LunaPlayerFrame.bars["Powerbar"].oldManaMax = UnitManaMax("player")
 	LunaPlayerFrame.bars["Powerbar"]:SetMinMaxValues(0, UnitManaMax("player"))
 	if (UnitIsDead("player") or UnitIsGhost("player")) then
 		LunaPlayerFrame.bars["Powerbar"]:SetValue(0)
@@ -1183,11 +1181,6 @@ Luna_Player_Events.UNIT_MAXRAGE = Luna_Player_Events.UNIT_MANA;
 
 function Luna_Player_Events:UNIT_DISPLAYPOWER()
 	local playerpower = UnitPowerType("player")
-	
-	if LunaPlayerFrame.bars["Powerbar"].form ~= UnitPowerType("player") and UnitPowerType("player") ~= 0 then
-		LunaPlayerFrame.bars["Powerbar"].Ticker.fsstart = GetTime()
-	end
-	LunaPlayerFrame.bars["Powerbar"].form = UnitPowerType("player")
 	
 	if playerpower == 1 then
 		LunaPlayerFrame.bars["Powerbar"]:SetStatusBarColor(LunaOptions.PowerColors["Rage"][1], LunaOptions.PowerColors["Rage"][2], LunaOptions.PowerColors["Rage"][3])

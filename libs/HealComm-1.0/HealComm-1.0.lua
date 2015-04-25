@@ -8,7 +8,7 @@ Dependencies: AceLibrary, AceEvent-2.0, RosterLib-2.0
 ]]
 
 local MAJOR_VERSION = "HealComm-1.0"
-local MINOR_VERSION = "$Revision: 10100 $"
+local MINOR_VERSION = "$Revision: 10200 $"
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
 if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end
@@ -1214,7 +1214,7 @@ function healcomm_newCastSpell(spellId, spellbookTabNum)
        -- Spell is waiting for a target
        healcomm_SpellSpell = spellName
 	   healcomm_RankRank = rank
-	elseif ( UnitIsVisible("target") and UnitIsConnected("target") and UnitReaction("target", "player") > 4 ) then
+	elseif ( UnitIsVisible("target") and UnitIsConnected("target") and UnitCanAssist("player", "target") ) then
        -- Spell is being cast on the current target.  
        -- If ClearTarget() had been called, we'd be waiting target
 	   healcomm_ProcessSpellCast(spellName, rank, UnitName("target"))
@@ -1248,7 +1248,7 @@ function healcomm_newCastSpellByName(spellName, onSelf)
 			healcomm_SpellSpell = spellName
 			healcomm_RankRank = rank
 		else
-			if UnitIsVisible("target") and UnitIsConnected("target") and UnitReaction("target", "player") > 4 and not onSelf then
+			if UnitIsVisible("target") and UnitIsConnected("target") and UnitCanAssist("player", "target") and onSelf ~= 1 then
 				healcomm_ProcessSpellCast(spellName, rank, UnitName("target"))
 			else
 				healcomm_ProcessSpellCast(spellName, rank, UnitName("player"))
@@ -1280,17 +1280,17 @@ WorldFrame:SetScript("OnMouseDown", function()
 end)
 
 healcomm_oldUseAction = UseAction
-function healcomm_newUseAction(a1, a2, a3)
+function healcomm_newUseAction(slot, checkCursor, onSelf)
 	
-	healcommTip:SetAction(a1)
+	healcommTip:SetAction(slot)
 	local spellName = healcommTipTextLeft1:GetText()
 	healcomm_SpellSpell = spellName
 	
 	-- Call the original function
-	healcomm_oldUseAction(a1, a2, a3)
+	healcomm_oldUseAction(slot, checkCursor, onSelf)
 	
 	-- Test to see if this is a macro
-	if ( GetActionText(a1) or not healcomm_SpellSpell ) then
+	if ( GetActionText(slot) or not healcomm_SpellSpell ) then
 		return
 	end
 	local rank = healcommTipTextRight1:GetText()
@@ -1302,7 +1302,7 @@ function healcomm_newUseAction(a1, a2, a3)
 	if ( SpellIsTargeting() ) then
 		-- Spell is waiting for a target
 		return
-	elseif ( UnitIsVisible("target") and UnitIsConnected("target") and UnitReaction("target", "player") > 4 ) then
+	elseif ( UnitIsVisible("target") and UnitIsConnected("target") and UnitCanAssist("player", "target") and onSelf ~= 1) then
 		-- Spell is being cast on the current target
 		healcomm_ProcessSpellCast(spellName, rank, UnitName("target"))
 	else
