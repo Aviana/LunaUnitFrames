@@ -5,6 +5,16 @@ local roster = AceLibrary("RosterLib-2.0")
 local ScanTip = CreateFrame("GameTooltip", "ScanTip", nil, "GameTooltipTemplate")
 ScanTip:SetOwner(WorldFrame, "ANCHOR_NONE")
 LunaUnitFrames.frames.RaidFrames = {}
+local RaidRoster = {
+					[1] = {};
+					[2] = {};
+					[3] = {};
+					[4] = {};
+					[5] = {};
+					[6] = {};
+					[7] = {};
+					[8] = {}
+				}
 
 local function Luna_Raid_OnClick()
 	local button, modifier
@@ -203,6 +213,7 @@ function LunaUnitFrames:CreateRaidFrames()
 		LunaUnitFrames.frames.RaidFrames[i].GrpName = LunaUnitFrames.frames.RaidFrames[i]:CreateFontString(nil, "OVERLAY", LunaUnitFrames.frames.RaidFrames[i])
 		LunaUnitFrames.frames.RaidFrames[i].GrpName:SetPoint("CENTER", LunaUnitFrames.frames.RaidFrames[i])
 		LunaUnitFrames.frames.RaidFrames[i].GrpName:SetJustifyH("CENTER")
+		LunaUnitFrames.frames.RaidFrames[i].GrpName:SetJustifyV("MIDDLE")
 		LunaUnitFrames.frames.RaidFrames[i].GrpName:SetShadowColor(0, 0, 0)
 		LunaUnitFrames.frames.RaidFrames[i].GrpName:SetShadowOffset(0.8, -0.8)
 		LunaUnitFrames.frames.RaidFrames[i].GrpName:SetTextColor(1,1,1)
@@ -289,7 +300,6 @@ function LunaUnitFrames:CreateRaidFrames()
 	end																	
 	LunaUnitFrames.frames.RaidFrames[9] = CreateFrame("Frame", "RaidUpdateFrame")
 	LunaUnitFrames:UpdateRaidLayout()
-	LunaUnitFrames:UpdateRaidRoster()
 	LunaUnitFrames.frames.RaidFrames[9]:SetScript("OnUpdate", UpdateRaidMember)
 	AceEvent:RegisterEvent("Banzai_UnitGainedAggro", LunaUnitFrames.Raid_Aggro)
 	AceEvent:RegisterEvent("Banzai_UnitLostAggro", LunaUnitFrames.Raid_Aggro)
@@ -297,6 +307,7 @@ function LunaUnitFrames:CreateRaidFrames()
 end
 
 function LunaUnitFrames:UpdateRaidRoster()
+	roster:ScanFullRoster()
 	if ((GetNumRaidMembers() == 0 or not RAID_SUBGROUP_LISTS) and ((GetNumPartyMembers() == 0 or not LunaOptions.partyraidframe) and not LunaOptions.AlwaysRaid)) or LunaOptions.enableRaid == 0 then
 		for i=1,8 do
 			LunaUnitFrames.frames.RaidFrames[i]:Hide()
@@ -308,113 +319,78 @@ function LunaUnitFrames:UpdateRaidRoster()
 		return
 	end
 	if GetNumRaidMembers() == 0 then
-		if (LunaOptions.frames["LunaRaidFrames"].ShowRaidGroupTitles or 1) == 1 then
-			LunaUnitFrames.frames.RaidFrames[1]:Show()
-		else
-			LunaUnitFrames.frames.RaidFrames[1]:Hide()
+		RaidRoster[1][1] = UnitName("player")
+		for i=1,4 do
+			RaidRoster[1][i+1] = UnitName("party"..i)
 		end
-		local z=1
-		while z < 6 do
-			if z == 1 then
-				LunaUnitFrames.frames.RaidFrames[1].member[1].unit = "player"
-			else
-				LunaUnitFrames.frames.RaidFrames[1].member[z].unit = "party"..(z-1)
+		for i=2,8 do
+			for z=1,5 do
+				RaidRoster[i][z] = nil
 			end
-			frame = LunaUnitFrames.frames.RaidFrames[1].member[z]
-			if not UnitExists(frame.unit) then
-				frame:Hide()
-			else
-				frame:Show()
-				local _,class = UnitClass(frame.unit)
-				local color = LunaOptions.ClassColors[class]
-				if not color then
-					frame:Hide()
-				else
-					if LunaOptions.frames["LunaRaidFrames"].inverthealth then
-						frame.HealthBar:SetStatusBarColor(0,0,0,0)
-						frame.bg:SetVertexColor(color[1],color[2],color[3])
-						frame.bg:Show()
-					else
-						frame.HealthBar:SetStatusBarColor(color[1],color[2],color[3],1)
-						frame.bg:Hide()
-					end
-				end
-				local power = UnitPowerType(frame.unit)
-				if power == 1 then
-					frame.PowerBar:SetStatusBarColor(LunaOptions.PowerColors["Rage"][1], LunaOptions.PowerColors["Rage"][2], LunaOptions.PowerColors["Rage"][3])
-				elseif power == 3 then
-					frame.PowerBar:SetStatusBarColor(LunaOptions.PowerColors["Energy"][1], LunaOptions.PowerColors["Energy"][2], LunaOptions.PowerColors["Energy"][3])
-				else
-					frame.PowerBar:SetStatusBarColor(LunaOptions.PowerColors["Mana"][1], LunaOptions.PowerColors["Mana"][2], LunaOptions.PowerColors["Mana"][3])
-				end
-				LunaUnitFrames.Raid_Aura(frame.unit)
-				frame.Name:SetText(UnitName(frame.unit))
-				if HealComm:UnitisResurrecting(UnitName(frame.unit)) then
-					frame.RezIcon:Show()
-				else
-					frame.RezIcon:Hide()
-				end
-				if banzai:GetUnitAggroByUnitId(frame.unit) and LunaOptions.aggro then
-					frame.aggro:Show()
-				else
-					frame.aggro:Hide()
-				end
-			end
-			z = z+1
 		end
+		table.sort(RaidRoster[1], function(a,b) return a<b end)		
 	elseif RAID_SUBGROUP_LISTS then
 		for i=1,8 do
-			if (LunaOptions.frames["LunaRaidFrames"].ShowRaidGroupTitles or 1) == 1 and getn(RAID_SUBGROUP_LISTS[i]) > 0 then
-				LunaUnitFrames.frames.RaidFrames[i]:Show()
-			else
-				LunaUnitFrames.frames.RaidFrames[i]:Hide()
-			end
 			for z=1,5 do
-				local num = RAID_SUBGROUP_LISTS[i][z]
-				if num then
-					LunaUnitFrames.frames.RaidFrames[i].member[z].unit = "raid"..num
-					local _,class = UnitClass(LunaUnitFrames.frames.RaidFrames[i].member[z].unit)
-					local color = LunaOptions.ClassColors[class]
-					if not color then
-						LunaUnitFrames.frames.RaidFrames[i].member[z]:Hide()
-					else
-						if LunaOptions.frames["LunaRaidFrames"].inverthealth then
-							LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetStatusBarColor(0,0,0,0)
-							LunaUnitFrames.frames.RaidFrames[i].member[z].bg:SetVertexColor(color[1],color[2],color[3])
-							LunaUnitFrames.frames.RaidFrames[i].member[z].bg:Show()
-						else
-							LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetStatusBarColor(color[1],color[2],color[3],1)
-							LunaUnitFrames.frames.RaidFrames[i].member[z].bg:Hide()
-						end
-					end
-					local power = UnitPowerType(LunaUnitFrames.frames.RaidFrames[i].member[z].unit)
-					if power == 1 then
-						LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetStatusBarColor(LunaOptions.PowerColors["Rage"][1], LunaOptions.PowerColors["Rage"][2], LunaOptions.PowerColors["Rage"][3])
-					elseif power == 3 then
-						LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetStatusBarColor(LunaOptions.PowerColors["Energy"][1], LunaOptions.PowerColors["Energy"][2], LunaOptions.PowerColors["Energy"][3])
-					else
-						LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetStatusBarColor(LunaOptions.PowerColors["Mana"][1], LunaOptions.PowerColors["Mana"][2], LunaOptions.PowerColors["Mana"][3])
-					end
-					LunaUnitFrames.Raid_Aura(LunaUnitFrames.frames.RaidFrames[i].member[z].unit)
-					LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetText(UnitName(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
-					LunaUnitFrames.frames.RaidFrames[i].member[z]:Show()
-					if HealComm:UnitisResurrecting(UnitName(LunaUnitFrames.frames.RaidFrames[i].member[z].unit)) then
-						LunaUnitFrames.frames.RaidFrames[i].member[z].RezIcon:Show()
-					else
-						LunaUnitFrames.frames.RaidFrames[i].member[z].RezIcon:Hide()
-					end
-					if banzai:GetUnitAggroByUnitId(LunaUnitFrames.frames.RaidFrames[i].member[z].unit) and LunaOptions.aggro then
-						LunaUnitFrames.frames.RaidFrames[i].member[z].aggro:Show()
-					else
-						LunaUnitFrames.frames.RaidFrames[i].member[z].aggro:Hide()
-					end
+				if RAID_SUBGROUP_LISTS[i][z] then
+					RaidRoster[i][z] = UnitName("raid"..RAID_SUBGROUP_LISTS[i][z])
 				else
-					LunaUnitFrames.frames.RaidFrames[i].member[z]:Hide()
+					RaidRoster[i][z] = nil
 				end
 			end
+			table.sort(RaidRoster[i], function(a,b) return a<b end)
 		end
 	else
 		return
+	end
+	for i=1,8 do
+		if (LunaOptions.frames["LunaRaidFrames"].ShowRaidGroupTitles or 1) == 1 and getn(RaidRoster[i]) > 0 then
+			LunaUnitFrames.frames.RaidFrames[i]:Show()
+		else
+			LunaUnitFrames.frames.RaidFrames[i]:Hide()
+		end
+		for z=1,5 do
+			if RaidRoster[i][z] then
+				LunaUnitFrames.frames.RaidFrames[i].member[z].unit = roster:GetUnitIDFromName(RaidRoster[i][z]) or "player"
+				local _,class = UnitClass(LunaUnitFrames.frames.RaidFrames[i].member[z].unit)
+				local color = LunaOptions.ClassColors[class]
+				if not color then
+					LunaUnitFrames.frames.RaidFrames[i].member[z]:Hide()
+				else
+					if LunaOptions.frames["LunaRaidFrames"].inverthealth then
+						LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetStatusBarColor(0,0,0,0)
+						LunaUnitFrames.frames.RaidFrames[i].member[z].bg:SetVertexColor(color[1],color[2],color[3])
+						LunaUnitFrames.frames.RaidFrames[i].member[z].bg:Show()
+					else
+						LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetStatusBarColor(color[1],color[2],color[3],1)
+						LunaUnitFrames.frames.RaidFrames[i].member[z].bg:Hide()
+					end
+				end
+				local power = UnitPowerType(LunaUnitFrames.frames.RaidFrames[i].member[z].unit)
+				if power == 1 then
+					LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetStatusBarColor(LunaOptions.PowerColors["Rage"][1], LunaOptions.PowerColors["Rage"][2], LunaOptions.PowerColors["Rage"][3])
+				elseif power == 3 then
+					LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetStatusBarColor(LunaOptions.PowerColors["Energy"][1], LunaOptions.PowerColors["Energy"][2], LunaOptions.PowerColors["Energy"][3])
+				else
+					LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetStatusBarColor(LunaOptions.PowerColors["Mana"][1], LunaOptions.PowerColors["Mana"][2], LunaOptions.PowerColors["Mana"][3])
+				end
+				LunaUnitFrames.Raid_Aura(LunaUnitFrames.frames.RaidFrames[i].member[z].unit)
+				LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetText(UnitName(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
+				LunaUnitFrames.frames.RaidFrames[i].member[z]:Show()
+				if HealComm:UnitisResurrecting(UnitName(LunaUnitFrames.frames.RaidFrames[i].member[z].unit)) then
+					LunaUnitFrames.frames.RaidFrames[i].member[z].RezIcon:Show()
+				else
+					LunaUnitFrames.frames.RaidFrames[i].member[z].RezIcon:Hide()
+				end
+				if banzai:GetUnitAggroByUnitId(LunaUnitFrames.frames.RaidFrames[i].member[z].unit) and LunaOptions.aggro then
+					LunaUnitFrames.frames.RaidFrames[i].member[z].aggro:Show()
+				else
+					LunaUnitFrames.frames.RaidFrames[i].member[z].aggro:Hide()
+				end
+			else
+				LunaUnitFrames.frames.RaidFrames[i].member[z]:Hide()
+			end
+		end
 	end
 	LunaUnitFrames.Raid_Update()
 end
@@ -426,7 +402,7 @@ function LunaUnitFrames:SetRaidFrameSize()
 	local scale = LunaOptions.frames["LunaRaidFrames"].scale or 1
 	
 	for i=1,8 do
-		LunaUnitFrames.frames.RaidFrames[i]:SetHeight(10)
+		LunaUnitFrames.frames.RaidFrames[i]:SetHeight(height*0.5)
 		LunaUnitFrames.frames.RaidFrames[i]:SetWidth(width)
 		LunaUnitFrames.frames.RaidFrames[i]:SetScale(scale)
 		LunaUnitFrames.frames.RaidFrames[i].GrpName:SetFont(LunaOptions.font, height*0.4)
@@ -481,6 +457,15 @@ function LunaUnitFrames:UpdateRaidLayout()
 	local Padding = LunaOptions.frames["LunaRaidFrames"].padding or 4
 	local pBars = LunaOptions.frames["LunaRaidFrames"].pBars
 	local verticalHealth = LunaOptions.frames["LunaRaidFrames"].verticalHealth
+	local sAnchor, tAnchor
+	if LunaOptions.frames["LunaRaidFrames"].invertgrowth then
+		sAnchor = "TOP"
+		tAnchor = "BOTTOM"
+		Padding = Padding*(-1)
+	else
+		sAnchor = "BOTTOM"
+		tAnchor = "TOP"
+	end
 	for i=1, 8 do
 		if LunaOptions.raidinterlock then
 			if i == 1 then
@@ -490,7 +475,7 @@ function LunaUnitFrames:UpdateRaidLayout()
 				LunaUnitFrames.frames.RaidFrames[i]:SetScript("OnDragStart", nil)
 				LunaUnitFrames.frames.RaidFrames[i]:SetMovable(0)
 				LunaUnitFrames.frames.RaidFrames[i]:ClearAllPoints()
-				LunaUnitFrames.frames.RaidFrames[i]:SetPoint("TOPLEFT", LunaUnitFrames.frames.RaidFrames[i-1], "TOPRIGHT", Padding, 0)
+				LunaUnitFrames.frames.RaidFrames[i]:SetPoint("TOPLEFT", LunaUnitFrames.frames.RaidFrames[i-1], "TOPRIGHT", LunaOptions.frames["LunaRaidFrames"].invertgrowth and (Padding *(-1)) or Padding, 0)
 			end
 		else
 			LunaUnitFrames.frames.RaidFrames[i]:ClearAllPoints()
@@ -499,10 +484,10 @@ function LunaUnitFrames:UpdateRaidLayout()
 		for z=1,5 do
 			if z == 1 then
 				LunaUnitFrames.frames.RaidFrames[i].member[z]:ClearAllPoints()
-				LunaUnitFrames.frames.RaidFrames[i].member[z]:SetPoint("BOTTOM", LunaUnitFrames.frames.RaidFrames[i], "TOP", 0, 2)
+				LunaUnitFrames.frames.RaidFrames[i].member[z]:SetPoint(sAnchor, LunaUnitFrames.frames.RaidFrames[i], tAnchor, 0, 2)
 			else
 				LunaUnitFrames.frames.RaidFrames[i].member[z]:ClearAllPoints()
-				LunaUnitFrames.frames.RaidFrames[i].member[z]:SetPoint("BOTTOM", LunaUnitFrames.frames.RaidFrames[i].member[z-1], "TOP", 0, Padding)
+				LunaUnitFrames.frames.RaidFrames[i].member[z]:SetPoint(sAnchor, LunaUnitFrames.frames.RaidFrames[i].member[z-1], tAnchor, 0, Padding)
 			end
 			LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:ClearAllPoints()
 			LunaUnitFrames.frames.RaidFrames[i].member[z].bg:ClearAllPoints()
