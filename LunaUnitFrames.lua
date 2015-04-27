@@ -5,6 +5,7 @@ LunaUnitFrames:RegisterEvent("ADDON_LOADED")
 LunaUnitFrames:RegisterEvent("PARTY_MEMBERS_CHANGED")
 LunaUnitFrames:RegisterEvent("RAID_ROSTER_UPDATE")
 LunaUnitFrames:RegisterEvent("PLAYER_ENTERING_WORLD")
+local playername = UnitName("player")
 
 local validUnits = {
 					["target"] = true,
@@ -73,8 +74,9 @@ function Luna_OnClick()
 	else
 		modifier = 1
 	end
-	local func = loadstring(LunaOptions.clickcast[modifier][button])
-	if LunaOptions.clickcast[modifier][button] == "target" then
+	ChatFrame1:AddMessage("Using Button"..button.." with Modifier "..modifier)
+	local func = loadstring(LunaOptions.clickcast[playername][modifier][button])
+	if LunaOptions.clickcast[playername][modifier][button] == "target" then
 		if (SpellIsTargeting()) then
 			SpellTargetUnit(this.unit)
 		elseif (CursorHasItem()) then
@@ -83,7 +85,7 @@ function Luna_OnClick()
 			TargetUnit(this.unit)
 		end
 		return
-	elseif LunaOptions.clickcast[modifier][button] == "menu" then
+	elseif LunaOptions.clickcast[playername][modifier][button] == "menu" then
 		if (SpellIsTargeting()) then
 			SpellStopTargeting()
 			return;
@@ -99,14 +101,14 @@ function Luna_OnClick()
 		if func then
 			func()
 		else
-			CastSpellByName(LunaOptions.clickcast[modifier][button])
+			CastSpellByName(LunaOptions.clickcast[playername][modifier][button])
 		end
 	else
 		TargetUnit(this.unit)
 		if func then
 			func()
 		else
-			CastSpellByName(LunaOptions.clickcast[modifier][button])
+			CastSpellByName(LunaOptions.clickcast[playername][modifier][button])
 		end
 		TargetLastTarget()
 	end
