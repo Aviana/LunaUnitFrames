@@ -74,7 +74,6 @@ function Luna_OnClick()
 	else
 		modifier = 1
 	end
-	ChatFrame1:AddMessage("Using Button"..button.." with Modifier "..modifier)
 	local func = loadstring(LunaOptions.clickcast[playername][modifier][button])
 	if LunaOptions.clickcast[playername][modifier][button] == "target" then
 		if (SpellIsTargeting()) then
