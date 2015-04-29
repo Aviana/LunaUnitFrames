@@ -15,6 +15,7 @@ local RaidRoster = {
 					[7] = {};
 					[8] = {}
 				}
+local playername = UnitName("player")
 
 local function Luna_Raid_OnClick()
 	local button, modifier
@@ -38,8 +39,8 @@ local function Luna_Raid_OnClick()
 	else
 		modifier = 1
 	end
-	local func = loadstring(LunaOptions.clickcast[modifier][button])
-	if LunaOptions.clickcast[modifier][button] == "target" then
+	local func = loadstring(LunaOptions.clickcast[playername][modifier][button])
+	if LunaOptions.clickcast[playername][modifier][button] == "target" then
 		if (SpellIsTargeting()) then
 			SpellTargetUnit(this.unit)
 		elseif (CursorHasItem()) then
@@ -48,7 +49,7 @@ local function Luna_Raid_OnClick()
 			TargetUnit(this.unit)
 		end
 		return
-	elseif LunaOptions.clickcast[modifier][button] == "menu" then
+	elseif LunaOptions.clickcast[playername][modifier][button] == "menu" then
 		if (SpellIsTargeting()) then
 			SpellStopTargeting()
 			return;
@@ -57,14 +58,14 @@ local function Luna_Raid_OnClick()
 		if func then
 			func()
 		else
-			CastSpellByName(LunaOptions.clickcast[modifier][button])
+			CastSpellByName(LunaOptions.clickcast[playername][modifier][button])
 		end
 	else
 		TargetUnit(this.unit)
 		if func then
 			func()
 		else
-			CastSpellByName(LunaOptions.clickcast[modifier][button])
+			CastSpellByName(LunaOptions.clickcast[playername][modifier][button])
 		end
 		TargetLastTarget()
 	end
