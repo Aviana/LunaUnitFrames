@@ -354,7 +354,12 @@ function LunaUnitFrames:UpdateRaidRoster()
 			if RaidRoster[i][z] then
 				LunaUnitFrames.frames.RaidFrames[i].member[z].unit = roster:GetUnitIDFromName(RaidRoster[i][z]) or "player"
 				local _,class = UnitClass(LunaUnitFrames.frames.RaidFrames[i].member[z].unit)
-				local color = LunaOptions.ClassColors[class]
+				local color
+				if LunaOptions.hbarcolor then
+					color = LunaOptions.ClassColors[class]
+				else
+					color = LunaOptions.MiscColors["friendly"]
+				end
 				if not color then
 					LunaUnitFrames.frames.RaidFrames[i].member[z]:Hide()
 				else
