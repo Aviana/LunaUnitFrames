@@ -121,7 +121,7 @@ function LunaUnitFrames:CreateTargetTargetFrame()
 	LunaTargetTargetFrame:SetBackdrop(LunaOptions.backdrop)
 	LunaTargetTargetFrame:SetBackdropColor(0,0,0,1)
 	LunaTargetTargetFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", LunaOptions.frames["LunaTargetTargetFrame"].position.x, LunaOptions.frames["LunaTargetTargetFrame"].position.y)
-	LunaTargetTargetFrame:RegisterForClicks('LeftButtonUp', 'RightButtonUp')
+	LunaTargetTargetFrame:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up')
 	LunaTargetTargetFrame.unit = "targettarget"
 	LunaTargetTargetFrame:SetScript("OnEnter", UnitFrame_OnEnter)
 	LunaTargetTargetFrame:SetScript("OnLeave", UnitFrame_OnLeave)
