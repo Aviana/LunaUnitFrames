@@ -51,6 +51,11 @@ function LunaUnitFrames:GetPowerString(unit)
 	end
 	return result
 end
+
+function LunaUnitFrames:GetHealthColor(unit)
+	local percHp = UnitHealth(unit)/UnitHealthMax(unit)
+	return {0.9*(1-percHp),0.9*percHp,0}
+end
 	
 function Luna_OnClick()
 	local button, modifier

@@ -942,11 +942,17 @@ function LunaUnitFrames:UpdatePlayerFrame()
 		LunaPlayerFrame.PVPRank:Show();
 	end
 	
+	if LunaOptions.colornames then
+		LunaPlayerFrame.name:SetTextColor(unpack(LunaOptions.ClassColors[class]))
+	else
+		LunaPlayerFrame.name:SetTextColor(1,1,1)
+	end
+	
 	local color
 	if LunaOptions.hbarcolor then
 		color = LunaOptions.ClassColors[class]
 	else
-		color = LunaOptions.MiscColors["friendly"]
+		color = LunaUnitFrames:GetHealthColor("player")
 	end
 	LunaPlayerFrame.bars["Healthbar"]:SetStatusBarColor(color[1],color[2],color[3])
 	LunaPlayerFrame.bars["Healthbar"].hpbg:SetVertexColor(color[1],color[2],color[3], 0.25)
@@ -1156,6 +1162,11 @@ function Luna_Player_Events:UNIT_HEALTH()
 	else
 		LunaPlayerFrame.bars["Healthbar"].hpp:SetText(LunaUnitFrames:GetHealthString("player"))
 		LunaPlayerFrame.bars["Healthbar"]:SetValue(UnitHealth("player"))
+		if not LunaOptions.hbarcolor then
+			local color = LunaUnitFrames:GetHealthColor("player")
+			LunaPlayerFrame.bars["Healthbar"]:SetStatusBarColor(color[1],color[2],color[3])
+			LunaPlayerFrame.bars["Healthbar"].hpbg:SetVertexColor(color[1],color[2],color[3], 0.25)
+		end
 	end
 end
 Luna_Player_Events.UNIT_MAXHEALTH = Luna_Player_Events.UNIT_HEALTH;

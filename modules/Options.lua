@@ -1024,6 +1024,15 @@ function OptionFunctions.OverhealAdjust()
 	LunaUnitFrames:UpdatePartyFrames()
 end
 
+function OptionFunctions.ToggleColorNames()
+	if not LunaOptions.colornames then
+		LunaOptions.colornames = 1
+	else
+		LunaOptions.colornames = nil
+	end
+	OptionFunctions.UpdateAll()
+end
+
 function OptionFunctions.ToggleInvertHealthBars()
 	if not LunaOptions.frames["LunaRaidFrames"].inverthealth then
 		LunaOptions.frames["LunaRaidFrames"].inverthealth = 1
@@ -1985,7 +1994,15 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[8].overhealslider:SetValue(LunaOptions.overheal or 20)
 	LunaOptionsFrame.pages[8].overhealslider:SetWidth(215)
 	getglobal("OverhealSliderText"):SetText("Overlap percent of healbar: "..(LunaOptions.overheal or 20))
-																	
+	
+	LunaOptionsFrame.pages[8].colornames = CreateFrame("CheckButton", "ColorNamesSwitch", LunaOptionsFrame.pages[8], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[8].colornames:SetHeight(20)
+	LunaOptionsFrame.pages[8].colornames:SetWidth(20)
+	LunaOptionsFrame.pages[8].colornames:SetPoint("TOPLEFT", LunaOptionsFrame.pages[8], "TOPLEFT", 280, -60)
+	LunaOptionsFrame.pages[8].colornames:SetScript("OnClick", OptionFunctions.ToggleColorNames)
+	LunaOptionsFrame.pages[8].colornames:SetChecked(LunaOptions.colornames or 0)
+	getglobal("ColorNamesSwitchText"):SetText("Color Names in Class Colors")
+	
 	LunaOptionsFrame:SetScale(1.3)
 	
 	-- CCC pop-up

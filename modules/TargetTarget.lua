@@ -496,8 +496,15 @@ function LunaUnitFrames:UpdateTargetTargetFrame()
 		return
 	end
 	local _,class = UnitClass("targettarget")
-	if UnitIsPlayer("targettarget") and LunaOptions.hbarcolor then
-		local color = LunaOptions.ClassColors[class]
+	if UnitIsPlayer("targettarget") then
+		local color
+		if LunaOptions.hbarcolor then
+			color = LunaOptions.ClassColors[class]
+		elseif UnitIsEnemy("player","targettarget") then
+			color = LunaOptions.MiscColors["hostile"]
+		else
+			color = LunaUnitFrames:GetHealthColor("targettarget")
+		end
 		LunaTargetTargetFrame.bars["Healthbar"]:SetStatusBarColor(color[1],color[2],color[3])
 		LunaTargetTargetFrame.bars["Healthbar"].hpbg:SetVertexColor(color[1],color[2],color[3], 0.25)
 	elseif UnitIsTapped("targettarget") and not UnitIsTappedByPlayer("targettarget") then
@@ -515,6 +522,11 @@ function LunaUnitFrames:UpdateTargetTargetFrame()
 			LunaTargetTargetFrame.bars["Healthbar"]:SetStatusBarColor(unpack(LunaOptions.MiscColors["neutral"]))
 			LunaTargetTargetFrame.bars["Healthbar"].hpbg:SetVertexColor(unpack(LunaOptions.MiscColors["neutral"]), 0.25)
 		end
+	end
+	if LunaOptions.colornames then
+		LunaTargetTargetFrame.name:SetTextColor(unpack(LunaOptions.ClassColors[class]))
+	else
+		LunaTargetTargetFrame.name:SetTextColor(1,1,1)
 	end
 	if not UnitIsConnected(LunaTargetTargetFrame.unit) then
 		LunaTargetTargetFrame.bars["Healthbar"]:SetMinMaxValues(0, maxHealth)
@@ -1021,8 +1033,15 @@ function LunaUnitFrames:UpdateTargetTargetTargetFrame()
 		maxHealth = UnitHealthMax(LunaTargetTargetTargetFrame.unit)
 	end
 	local _,class = UnitClass("targettargettarget")
-	if UnitIsPlayer("targettargettarget") and LunaOptions.hbarcolor then
-		local color = LunaOptions.ClassColors[class]
+	if UnitIsPlayer("targettargettarget") then
+		local color
+		if LunaOptions.hbarcolor then
+			color = LunaOptions.ClassColors[class]
+		elseif UnitIsEnemy("player","targettargettarget") then
+			color = LunaOptions.MiscColors["hostile"]
+		else
+			color = LunaUnitFrames:GetHealthColor("targettargettarget")
+		end
 		LunaTargetTargetTargetFrame.bars["Healthbar"]:SetStatusBarColor(color[1],color[2],color[3])
 		LunaTargetTargetTargetFrame.bars["Healthbar"].hpbg:SetVertexColor(color[1],color[2],color[3], 0.25)
 	elseif UnitIsTapped("targettargettarget") and not UnitIsTappedByPlayer("targettargettarget") then
@@ -1040,6 +1059,11 @@ function LunaUnitFrames:UpdateTargetTargetTargetFrame()
 			LunaTargetTargetTargetFrame.bars["Healthbar"]:SetStatusBarColor(unpack(LunaOptions.MiscColors["neutral"]))
 			LunaTargetTargetTargetFrame.bars["Healthbar"].hpbg:SetVertexColor(unpack(LunaOptions.MiscColors["neutral"]), 0.25)
 		end
+	end
+	if LunaOptions.colornames then
+		LunaTargetTargetTargetFrame.name:SetTextColor(unpack(LunaOptions.ClassColors[class]))
+	else
+		LunaTargetTargetTargetFrame.name:SetTextColor(1,1,1)
 	end
 	if not UnitIsConnected(LunaTargetTargetTargetFrame.unit) then
 		LunaTargetTargetTargetFrame.bars["Healthbar"]:SetMinMaxValues(0, maxHealth)

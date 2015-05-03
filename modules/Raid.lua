@@ -177,13 +177,21 @@ local function UpdateRaidMember()
 						LunaUnitFrames.frames.RaidFrames[i].member[z].HealBar:Hide()
 						LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:SetText("DEAD")
 					else
+						if not LunaOptions.hbarcolor then
+							local color = LunaUnitFrames:GetHealthColor(LunaUnitFrames.frames.RaidFrames[i].member[z].unit)
+							LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetStatusBarColor(color[1],color[2],color[3])
+						end
 						AdjustBars(LunaUnitFrames.frames.RaidFrames[i].member[z])
 						LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetValue(UnitHealth(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
 						LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetValue(UnitMana(LunaUnitFrames.frames.RaidFrames[i].member[z].unit))
 						if missinghp == 0 and healamount == 0 then
 							LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:SetText("")
 						elseif healamount > 0 then
-							LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:SetText(missinghp.." |cFF00FF00+"..healamount)
+							if (healamount+missinghp) > 0 then
+								LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:SetText("|cFF00FF00+"..healamount+missinghp)
+							else
+								LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:SetText("|cFF00FF00"..healamount+missinghp)
+							end
 						else
 							LunaUnitFrames.frames.RaidFrames[i].member[z].Healthtext:SetText(missinghp)
 						end
@@ -363,6 +371,11 @@ function LunaUnitFrames:UpdateRaidRoster()
 				if not color then
 					LunaUnitFrames.frames.RaidFrames[i].member[z]:Hide()
 				else
+					if LunaOptions.colornames then
+						LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetTextColor(unpack(LunaOptions.ClassColors[class]))
+					else
+						LunaUnitFrames.frames.RaidFrames[i].member[z].Name:SetTextColor(1,1,1)
+					end
 					if LunaOptions.frames["LunaRaidFrames"].inverthealth then
 						LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar:SetStatusBarColor(0,0,0,0)
 						LunaUnitFrames.frames.RaidFrames[i].member[z].bg:SetVertexColor(color[1],color[2],color[3])

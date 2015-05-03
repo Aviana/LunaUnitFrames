@@ -742,7 +742,7 @@ function LunaUnitFrames:UpdatePartyFrames()
 				if LunaOptions.hbarcolor then
 					color = LunaOptions.ClassColors[class]
 				else
-					color = LunaOptions.MiscColors["friendly"]
+					color = LunaUnitFrames:GetHealthColor(LunaPartyFrames[i].unit)
 				end
 			else
 				color = LunaOptions.MiscColors["offline"]
@@ -750,6 +750,13 @@ function LunaUnitFrames:UpdatePartyFrames()
 			if color == nil then
 				color = LunaOptions.MiscColors["offline"]
 			end
+			
+			if LunaOptions.colornames then
+				LunaPartyFrames[i].name:SetTextColor(unpack(LunaOptions.ClassColors[class]))
+			else
+				LunaPartyFrames[i].name:SetTextColor(1,1,1)
+			end
+			
 			LunaPartyFrames[i].bars["Healthbar"]:SetStatusBarColor(color[1],color[2],color[3])
 			LunaPartyFrames[i].bars["Healthbar"].hpbg:SetVertexColor(color[1],color[2],color[3], 0.25)
 			
@@ -892,7 +899,7 @@ function Luna_Party_Events:UNIT_HEALTH()
 			if LunaOptions.hbarcolor then
 				color = LunaOptions.ClassColors[class]
 			else
-				color = LunaOptions.MiscColors["friendly"]
+				color = LunaUnitFrames:GetHealthColor(this.unit)
 			end
 		else
 			color = LunaOptions.MiscColors["offline"]
