@@ -8,7 +8,7 @@ Dependencies: AceLibrary, AceEvent-2.0, RosterLib-2.0
 ]]
 
 local MAJOR_VERSION = "HealComm-1.0"
-local MINOR_VERSION = "$Revision: 10200 $"
+local MINOR_VERSION = "$Revision: 11000 $"
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
 if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end
@@ -24,6 +24,8 @@ local HealComm = CreateFrame("Frame")
 
 local L = {}
 if( GetLocale() == "deDE" ) then
+	L["Renew"] = "Erneuerung"
+	L["Rejuvenation"] = "Verj\195\188ngung"
 	L["Holy Light"] = "Heiliges Licht"
 	L["Flash of Light"] = "Lichtblitz"
 	L["Healing Wave"] = "Welle der Heilung"
@@ -34,31 +36,31 @@ if( GetLocale() == "deDE" ) then
 	L["Flash Heal"] = "Blitzheilung"
 	L["Greater Heal"] = "Große Heilung"
 	L["Prayer of Healing"] = "Gebet der Heilung"
-	L["Healing Touch"] = "Heilende Berührung"
+	L["Healing Touch"] = "Heilende Ber\195\188hrung"
 	L["Regrowth"] = "Nachwachsen"
 	L["Resurrection"] = "Wiederbelebung"
 	L["Rebirth"] = "Wiedergeburt"
-	L["Redemption"] = "Erlösung"
+	L["Redemption"] = "Erl\195\182sung"
 	L["Ancestral Spirit"] = "Geist der Ahnen"
 	L["Libram of Divinity"] = "Buchband der Offenbarung"
 	L["Libram of Light"] = "Buchband des Lichts"
 	L["Totem of Sustaining"] = "Totem der Erhaltung"
 	L["Totem of Life"] = "Totem des Lebens"
 	L["Power Infusion"] = "Seele der Macht"
-	L["Divine Favor"] = "Göttliche Gunst"
+	L["Divine Favor"] = "G\195\182ttliche Gunst"
 	L["Nature Aligned"] = "Naturverbundenheit"
 	L["Crusader's Wrath"] = "Zorn des Kreuzfahrers"
 	L["The Furious Storm"] = "Der wilde Sturm"
 	L["Holy Power"] = "Heilige Kraft"
 	L["Prayer Beads Blessing"] = "Segen der Gebetsperlen"
-	L["Chromatic Infusion"] = "Erfüllt mit chromatischer Macht"
-	L["Ascendance"] = "Überlegenheit"
+	L["Chromatic Infusion"] = "Erf\195\188llt mit chromatischer Macht"
+	L["Ascendance"] = "\154berlegenheit"
 	L["Ephemeral Power"] = "Ephemere Macht"
 	L["Unstable Power"] = "Instabile Macht"
 	L["Healing of the Ages"] = "Heilung der Urzeiten"
 	L["Essence of Sapphiron"] = "Essenz Saphirons"
 	L["The Eye of the Dead"] = "Das Auge des Todes"
-	L["Mortal Strike"] = "Tödlicher Stoß"
+	L["Mortal Strike"] = "T\195\182dlicher Stoß"
 	L["Wound Poison"] = "Wundgift"
 	L["Curse of the Deadwood"] = "Fluch der Totenwaldfelle"
 	L["Veil of Shadow"] = "Schattenschleier"
@@ -70,56 +72,64 @@ if( GetLocale() == "deDE" ) then
 	L["Warsong Gulch"] = "Kriegshymnenschlucht"
 	L["Arathi Basin"] = "Arathibecken"
 	L["Alterac Valley"] = "Alteractal"
-	L["Blessing of Light"] = "Erhält bis zu (%d+) extra Heilung durch %'Heiliges Licht%' und bis zu (%d+) extra Heilung durch den Zauber %'Lichtblitz%'%."
+	L["Blessing of Light"] = "Erh\195\164lt bis zu (%d+) extra Heilung durch %'Heiliges Licht%' und bis zu (%d+) extra Heilung durch den Zauber %'Lichtblitz%'%."
+	L["Set: Increases the duration of your Rejuvenation spell by 3 sec."] = "Set: Erh\195\182ht die Dauer Eures Zaubers 'Verj\195\188ngung' um 3 Sek."
+	L["Set: Increases the duration of your Renew spell by 3 sec."] = "Set: Erh\195\182ht die Dauer Eures Zaubers 'Erneuerung' um 3 Sek."
 elseif ( GetLocale() == "frFR" ) then
-	L["Holy Light"] = "Lumière sacrée"
+	L["Renew"] = "R\195\169novation"
+	L["Rejuvenation"] = "R\195\169cup\195\169ration"
+	L["Holy Light"] = "Lumi\195\168re sacr\195\169e"
 	L["Flash of Light"] = "Eclair lumineux"
 	L["Healing Wave"] = "Vague de soins"
-	L["Lesser Healing Wave"] = "Vague de soins inférieurs"
-	L["Chain Heal"] = "Salve de guérison"
-	L["Lesser Heal"] = "Soins inférieurs"
+	L["Lesser Healing Wave"] = "Vague de soins inf\195\169rieurs"
+	L["Chain Heal"] = "Salve de gu\195\169rison"
+	L["Lesser Heal"] = "Soins inf\195\169rieurs"
 	L["Heal"] = "Soins"
 	L["Flash Heal"] = "Soins rapides"
-	L["Greater Heal"] = "Soins supérieurs"
-	L["Prayer of Healing"] = "Prière de soins"
-	L["Healing Touch"] = "Toucher guérisseur"
-	L["Regrowth"] = "Rétablissement"
-	L["Resurrection"] = "Résurrection"
+	L["Greater Heal"] = "Soins sup\195\169rieurs"
+	L["Prayer of Healing"] = "Pri\195\168re de soins"
+	L["Healing Touch"] = "Toucher gu\195\169risseur"
+	L["Regrowth"] = "R\195\169tablissement"
+	L["Resurrection"] = "R\195\169surrection"
 	L["Rebirth"] = "Renaissance"
-	L["Redemption"] = "Rédemption"
+	L["Redemption"] = "R\195\169demption"
 	L["Ancestral Spirit"] = "Esprit ancestral"
-	L["Libram of Divinity"] = "Libram de divinité"
-	L["Libram of Light"] = "Libram de lumière"
+	L["Libram of Divinity"] = "Libram de divinit\195\169"
+	L["Libram of Light"] = "Libram de lumi\195\168re"
 	L["Totem of Sustaining"] = "Totem de soutien"
 	L["Totem of Life"] = "Totem de vie"
 	L["Power Infusion"] = "Infusion de puissance"
 	L["Divine Favor"] = "Faveur divine"
 	L["Nature Aligned"] = "Alignement sur la nature"
-	L["Crusader's Wrath"] = "Colère du croisé"
-	L["The Furious Storm"] = "La tempête furieuse"
-	L["Holy Power"] = "Puissance sacrée"
-	L["Prayer Beads Blessing"] = "Bénédiction du chapelet"
+	L["Crusader's Wrath"] = "Col\195\168re du crois\195\169"
+	L["The Furious Storm"] = "La temp\195\170te furieuse"
+	L["Holy Power"] = "Puissance sacr\195\169e"
+	L["Prayer Beads Blessing"] = "B\195\169n\195\169diction du chapelet"
 	L["Chromatic Infusion"] = "Infusion chromatique"
 	L["Ascendance"] = "Ascendance"
-	L["Ephemeral Power"] = "Puissance éphémère"
+	L["Ephemeral Power"] = "Puissance \195\169ph\195\169m\195\168re"
 	L["Unstable Power"] = "Puissance instable"
-	L["Healing of the Ages"] = "Soins des âges"
+	L["Healing of the Ages"] = "Soins des \195\162ges"
 	L["Essence of Sapphiron"] = "Essence de Saphiron"
 	L["The Eye of the Dead"] = "L'Oeil du mort"
 	L["Mortal Strike"] = "Frappe mortelle"
 	L["Wound Poison"] = "Poison douloureux"
-	L["Curse of the Deadwood"] = "Malédiction des Mort-bois"
+	L["Curse of the Deadwood"] = "Mal\195\169diction des Mort-bois"
 	L["Veil of Shadow"] = "Voile de l'ombre"
-	L["Gehennas' Curse"] = "Malédiction de Gehennas"
+	L["Gehennas' Curse"] = "Mal\195\169diction de Gehennas"
 	L["Mortal Wound"] = "Blessures mortelles"
-	L["Necrotic Poison"] = "Poison nécrotique"
-	L["Necrotic Aura"] = "Aura nécrotique"
+	L["Necrotic Poison"] = "Poison n\195\169crotique"
+	L["Necrotic Aura"] = "Aura n\195\169crotique"
 	L["Healing Way"] = "Flots de soins"
-	L["Warsong Gulch"] = "Goulet des Chanteguerres"
-	L["Arathi Basin"] = "Bassin Arathi"
-	L["Alterac Valley"] = "Vallée d’Alterac"
-	L["Blessing of Light"] = "Les sorts de Lumière sacrée rendent jusqu%'à (%d+) points de vie supplémentaires%, les sorts d%'Eclair lumineux jusqu%'à (%d+)%."
+	L["Warsong Gulch"] = "Goulet des Warsong"
+	L["Arathi Basin"] = "Bassin d'Arathi"
+	L["Alterac Valley"] = "Vall\195\169e d'Alterac"
+	L["Blessing of Light"] = "Les sorts de Lumi\195\168re sacr\195\169e rendent jusqu%'\195\160 (%d+) points de vie suppl\195\169mentaires%, les sorts d%'Eclair lumineux jusqu%'\195\160 (%d+)%."
+	L["Set: Increases the duration of your Rejuvenation spell by 3 sec."] = "Set: Augmente la dur\195\169e de votre sort R\195\169cup\195\169ration de 3 s."
+	L["Set: Increases the duration of your Renew spell by 3 sec."] = "Set: Augmente la dur\195\169e de votre sort R\195\169novation de 3 s."
 else
+	L["Renew"] = "Renew"
+	L["Rejuvenation"] = "Rejuvenation"
 	L["Holy Light"] = "Holy Light"
 	L["Flash of Light"] = "Flash of Light"
 	L["Healing Wave"] = "Healing Wave"
@@ -167,6 +177,8 @@ else
 	L["Arathi Basin"] = "Arathi Basin"
 	L["Alterac Valley"] = "Alterac Valley"
 	L["Blessing of Light"] = "Receives up to (%d+) extra healing from Holy Light spells%, and up to (%d+) extra healing from Flash of Light spells%."
+	L["Set: Increases the duration of your Rejuvenation spell by 3 sec."] = "Set: Increases the duration of your Rejuvenation spell by 3 sec."
+	L["Set: Increases the duration of your Renew spell by 3 sec."] = "Set: Increases the duration of your Renew spell by 3 sec."
 end
 	
 ------------------------------------------------
@@ -178,7 +190,8 @@ local function activate(self, oldLib, oldDeactivate)
 	if oldLib then
 		self.Heals = oldLib.Heals
 		self.GrpHeals = oldLib.GrpHeals
-		self.Lookup = oldlib.Lookup
+		self.Lookup = oldLib.Lookup
+		self.Hots = oldLib.Hots
 		self.pendingResurrections = oldlib.pendingResurrections
 		oldLib:UnregisterAllEvents()
 		oldLib:CancelAllScheduledEvents()
@@ -194,6 +207,9 @@ local function activate(self, oldLib, oldDeactivate)
 	end
 	if not self.pendingResurrections then
 		self.pendingResurrections = {}
+	end
+	if not self.Hots then
+		self.Hots = {}
 	end
 	if oldDeactivate then oldDeactivate(oldLib) end
 end
@@ -232,6 +248,7 @@ function HealComm:AceEvent_FullyInitialized()
 	self:RegisterEvent("SPELLCAST_INTERRUPTED", HealComm.OnEvent)
 	self:RegisterEvent("SPELLCAST_FAILED", HealComm.OnEvent)
 	self:RegisterEvent("SPELLCAST_DELAYED", HealComm.OnEvent)
+	self:RegisterEvent("SPELLCAST_STOP", HealComm.OnEvent)
 	self:RegisterEvent("CHAT_MSG_ADDON", HealComm.OnEvent)
 	self:RegisterEvent("UNIT_HEALTH" , HealComm.OnHealth)
 end
@@ -917,6 +934,16 @@ HealComm.Debuffs = {
 	[L["Necrotic Aura"]] = {amount = 0, mod = 1, icon = "Interface\\Icons\\Ability_CriticalStrike"}
 }
 	
+local function getSetBonus()
+	healcommTip:SetInventoryItem("player", 1)
+	local text = getglobal("healcommTipTextLeft"..healcommTip:NumLines()):GetText()
+	if text == L["Set: Increases the duration of your Rejuvenation spell by 3 sec."] or text == L["Set: Increases the duration of your Renew spell by 3 sec."] then
+		return true
+	else
+		return nil
+	end
+end
+	
 local function GetBuffSpellPower()
 	local Spellpower = 0
 	local healmod = 1
@@ -1148,6 +1175,42 @@ HealComm.OnEvent = function()
 			HealComm.SendAddonMessage("Healdelay/"..arg1.."/")
 			HealComm.delayHeal(UnitName("player"), arg1)
 		end
+	elseif event == "SPELLCAST_STOP" then
+		if healcomm_SpellCast and healcomm_SpellCast[1] == L["Renew"] then
+			local dur = getSetBonus() and 18 or 15
+			HealComm.SendAddonMessage("Renew/"..healcomm_SpellCast[3].."/"..dur.."/")
+			if not HealComm.Hots[healcomm_SpellCast[3]] then
+				HealComm.Hots[healcomm_SpellCast[3]] = {}
+				if not HealComm.Hots[healcomm_SpellCast[3]]["Renew"] then
+					HealComm.Hots[healcomm_SpellCast[3]]["Renew"]= {}
+				end
+			end
+			HealComm.Hots[healcomm_SpellCast[3]]["Renew"].start = GetTime()
+			HealComm.Hots[healcomm_SpellCast[3]]["Renew"].dur = dur
+			local targetUnit = roster:GetUnitIDFromName(healcomm_SpellCast[3])
+			HealComm.SpecialEventScheduler:TriggerEvent("HealComm_Hotupdate", targetUnit)
+			healcomm_spellIsCasting = nil
+			healcomm_SpellCast =  nil
+			healcomm_RankRank = nil
+			healcomm_SpellSpell =  nil
+		elseif healcomm_SpellCast and healcomm_SpellCast[1] == L["Rejuvenation"] then
+			local dur = getSetBonus() and 15 or 12
+			HealComm.SendAddonMessage("Reju/"..healcomm_SpellCast[3].."/"..dur.."/")
+			if not HealComm.Hots[healcomm_SpellCast[3]] then
+				HealComm.Hots[healcomm_SpellCast[3]] = {}
+				if not HealComm.Hots[healcomm_SpellCast[3]]["Reju"] then
+					HealComm.Hots[healcomm_SpellCast[3]]["Reju"]= {}
+				end
+			end
+			HealComm.Hots[healcomm_SpellCast[3]]["Reju"].start = GetTime()
+			HealComm.Hots[healcomm_SpellCast[3]]["Reju"].dur = dur
+			local targetUnit = roster:GetUnitIDFromName(healcomm_SpellCast[3])
+			HealComm.SpecialEventScheduler:TriggerEvent("HealComm_Hotupdate", targetUnit)
+			healcomm_spellIsCasting = nil
+			healcomm_SpellCast =  nil
+			healcomm_RankRank = nil
+			healcomm_SpellSpell =  nil
+		end
 	elseif event == "CHAT_MSG_ADDON" then
 		if arg1 == "HealComm" and arg4 ~= UnitName("player") then
 			local result = strsplit(arg2,"/")
@@ -1167,8 +1230,48 @@ HealComm.OnEvent = function()
 				HealComm.stopGrpHeal(arg4)
 			elseif result[1] == "GrpHealdelay" then
 				HealComm.delayGrpHeal(arg4, result[2])
+			elseif result[1] == "Renew" then
+				if not HealComm.Hots[result[2]] then
+					HealComm.Hots[result[2]] = {}
+					if not HealComm.Hots[result[2]]["Renew"] then
+						HealComm.Hots[result[2]]["Renew"]= {}
+					end
+				end
+				HealComm.Hots[result[2]]["Renew"].dur = result[3]
+				HealComm.Hots[result[2]]["Renew"].start = GetTime()
+				local targetUnit = roster:GetUnitIDFromName(result[2])
+				HealComm.SpecialEventScheduler:TriggerEvent("HealComm_Hotupdate", targetUnit)
+			elseif result[1] == "Reju" then
+				if not HealComm.Hots[result[2]] then
+					HealComm.Hots[result[2]] = {}
+					if not HealComm.Hots[result[2]]["Reju"] then
+						HealComm.Hots[result[2]]["Reju"]= {}
+					end
+				end
+				HealComm.Hots[result[2]]["Reju"].dur = result[3]
+				HealComm.Hots[result[2]]["Reju"].start = GetTime()
+				local targetUnit = roster:GetUnitIDFromName(result[2])
+				HealComm.SpecialEventScheduler:TriggerEvent("HealComm_Hotupdate", targetUnit)
 			end
 		end
+	end
+end
+
+function HealComm:getRejuTime(unit)
+	local dbUnit = HealComm.Hots[UnitName(unit)]
+	if dbUnit and dbUnit["Reju"] and (dbUnit["Reju"].start + dbUnit["Reju"].dur) > GetTime() then
+		return dbUnit["Reju"].start, dbUnit["Reju"].dur
+	else
+		return
+	end
+end
+
+function HealComm:getRenewTime(unit)
+	local dbUnit = HealComm.Hots[UnitName(unit)]
+	if dbUnit and dbUnit["Renew"] and (dbUnit["Renew"].start + dbUnit["Renew"].dur) > GetTime() then
+		return dbUnit["Renew"].start, dbUnit["Renew"].dur
+	else
+		return
 	end
 end
 
@@ -1207,7 +1310,6 @@ healcomm_oldCastSpell = CastSpell
 function healcomm_newCastSpell(spellId, spellbookTabNum)
 	-- Call the original function so there's no delay while we process
 	healcomm_oldCastSpell(spellId, spellbookTabNum)
-	
 	local spellName, rank = GetSpellName(spellId, spellbookTabNum)
 	_,_,rank = string.find(rank,"(%d+)")
 	if ( SpellIsTargeting() ) then 
@@ -1281,14 +1383,13 @@ end)
 
 healcomm_oldUseAction = UseAction
 function healcomm_newUseAction(slot, checkCursor, onSelf)
-	
+	healcommTip:ClearLines()
 	healcommTip:SetAction(slot)
 	local spellName = healcommTipTextLeft1:GetText()
 	healcomm_SpellSpell = spellName
 	
 	-- Call the original function
 	healcomm_oldUseAction(slot, checkCursor, onSelf)
-	
 	-- Test to see if this is a macro
 	if ( GetActionText(slot) or not healcomm_SpellSpell ) then
 		return
@@ -1296,9 +1397,11 @@ function healcomm_newUseAction(slot, checkCursor, onSelf)
 	local rank = healcommTipTextRight1:GetText()
 	if rank then
 		_,_,rank = string.find(rank,"(%d+)")
-		healcomm_RankRank = rank
 	end
-	
+	if not rank then
+		rank = 1
+	end
+	healcomm_RankRank = rank
 	if ( SpellIsTargeting() ) then
 		-- Spell is waiting for a target
 		return

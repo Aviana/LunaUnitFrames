@@ -985,6 +985,15 @@ function OptionFunctions.ToggleAlwaysRaid()
 	end
 	LunaUnitFrames:UpdateRaidRoster()
 end
+
+function OptionFunctions.ToggleHotTracker()
+	if not LunaOptions.frames["LunaRaidFrames"].hottracker then
+		LunaOptions.frames["LunaRaidFrames"].hottracker = 1
+	else
+		LunaOptions.frames["LunaRaidFrames"].hottracker = nil
+	end
+	LunaUnitFrames:UpdateRaidLayout()
+end
 	
 function OptionFunctions.ToggleHealerMode()
 	if not LunaOptions.HealerModeHealth then
@@ -1921,6 +1930,14 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[7].alwaysraid:SetScript("OnClick", OptionFunctions.ToggleAlwaysRaid)
 	LunaOptionsFrame.pages[7].alwaysraid:SetChecked(LunaOptions.AlwaysRaid)
 	getglobal("AlwaysRaidSwitchText"):SetText("Always display the Raid Frame")
+	
+	LunaOptionsFrame.pages[7].hottracker = CreateFrame("CheckButton", "HotTrackerSwitch", LunaOptionsFrame.pages[7], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[7].hottracker:SetHeight(20)
+	LunaOptionsFrame.pages[7].hottracker:SetWidth(20)
+	LunaOptionsFrame.pages[7].hottracker:SetPoint("TOPLEFT", LunaOptionsFrame.pages[7].alwaysraid, "TOPLEFT", 0, -20)
+	LunaOptionsFrame.pages[7].hottracker:SetScript("OnClick", OptionFunctions.ToggleHotTracker)
+	LunaOptionsFrame.pages[7].hottracker:SetChecked(LunaOptions.frames["LunaRaidFrames"].hottracker)
+	getglobal("HotTrackerSwitchText"):SetText("Enable Hottracker (Priest/Druid only)")
 	
 	LunaOptionsFrame.pages[8].hmodeswitch = CreateFrame("CheckButton", "HealerModeSwitch", LunaOptionsFrame.pages[8], "UICheckButtonTemplate")
 	LunaOptionsFrame.pages[8].hmodeswitch:SetHeight(20)

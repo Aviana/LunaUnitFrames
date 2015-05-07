@@ -3,6 +3,8 @@ local AceEvent = AceLibrary("AceEvent-2.0")
 local banzai = AceLibrary("Banzai-1.0")
 local roster = AceLibrary("RosterLib-2.0")
 local ScanTip = CreateFrame("GameTooltip", "ScanTip", nil, "GameTooltipTemplate")
+local _, PlayerClass = UnitClass("player")
+local HotTexture = (PlayerClass == "PRIEST" and "Interface\\Icons\\Spell_Holy_Renew" or PlayerClass == "DRUID" and "Interface\\Icons\\Spell_Nature_Rejuvenation" or "")
 ScanTip:SetOwner(WorldFrame, "ANCHOR_NONE")
 LunaUnitFrames.frames.RaidFrames = {}
 local RaidRoster = {
@@ -292,6 +294,19 @@ function LunaUnitFrames:CreateRaidFrames()
 			LunaUnitFrames.frames.RaidFrames[i].member[z].buff.texture:SetTexture(0, 1, 0)
 			LunaUnitFrames.frames.RaidFrames[i].member[z].buff.texture:SetAllPoints(LunaUnitFrames.frames.RaidFrames[i].member[z].buff)
 			LunaUnitFrames.frames.RaidFrames[i].member[z].buff:Hide()
+			
+			LunaUnitFrames.frames.RaidFrames[i].member[z].Hot = CreateFrame("Frame", "HotFrame"..i..z, LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar)
+			LunaUnitFrames.frames.RaidFrames[i].member[z].Hot:SetPoint("CENTER", LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar, "CENTER")
+			LunaUnitFrames.frames.RaidFrames[i].member[z].Hot.texture = LunaUnitFrames.frames.RaidFrames[i].member[z].Hot:CreateTexture(nil, "OVERLAY", LunaUnitFrames.frames.RaidFrames[i].member[z].Hot)
+			LunaUnitFrames.frames.RaidFrames[i].member[z].Hot.texture:SetTexture(HotTexture)
+			LunaUnitFrames.frames.RaidFrames[i].member[z].Hot.texture:SetAllPoints(LunaUnitFrames.frames.RaidFrames[i].member[z].Hot)
+			LunaUnitFrames.frames.RaidFrames[i].member[z].Hot:Hide()
+			
+			LunaUnitFrames.frames.RaidFrames[i].member[z].Hot.cd = CreateFrame("Model", nil, LunaUnitFrames.frames.RaidFrames[i].member[z].Hot, "CooldownFrameTemplate")
+			LunaUnitFrames.frames.RaidFrames[i].member[z].Hot.cd:ClearAllPoints()
+			LunaUnitFrames.frames.RaidFrames[i].member[z].Hot.cd:SetPoint("TOPLEFT", LunaUnitFrames.frames.RaidFrames[i].member[z].Hot, "TOPLEFT")
+			LunaUnitFrames.frames.RaidFrames[i].member[z].Hot.cd:SetHeight(36)
+			LunaUnitFrames.frames.RaidFrames[i].member[z].Hot.cd:SetWidth(36)
 	
 			LunaUnitFrames.frames.RaidFrames[i].member[z].debuff = CreateFrame("Frame", nil, LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar)
 			LunaUnitFrames.frames.RaidFrames[i].member[z].debuff:SetBackdrop(LunaOptions.backdrop)
@@ -313,6 +328,7 @@ function LunaUnitFrames:CreateRaidFrames()
 	AceEvent:RegisterEvent("Banzai_UnitGainedAggro", LunaUnitFrames.Raid_Aggro)
 	AceEvent:RegisterEvent("Banzai_UnitLostAggro", LunaUnitFrames.Raid_Aggro)
 	AceEvent:RegisterEvent("HealComm_Ressupdate", LunaUnitFrames.Raid_Res)
+	AceEvent:RegisterEvent("HealComm_Hotupdate", LunaUnitFrames.Raid_Hot)
 end
 
 function LunaUnitFrames:UpdateRaidRoster()
@@ -454,6 +470,9 @@ function LunaUnitFrames:SetRaidFrameSize()
 			LunaUnitFrames.frames.RaidFrames[i].member[z].aggro:SetWidth(height*0.25)
 			LunaUnitFrames.frames.RaidFrames[i].member[z].buff:SetHeight(height*0.25)
 			LunaUnitFrames.frames.RaidFrames[i].member[z].buff:SetWidth(height*0.25)
+			LunaUnitFrames.frames.RaidFrames[i].member[z].Hot:SetWidth(height*0.6)
+			LunaUnitFrames.frames.RaidFrames[i].member[z].Hot:SetHeight(height*0.6)
+			LunaUnitFrames.frames.RaidFrames[i].member[z].Hot.cd:SetScale(height*0.6/36)
 			LunaUnitFrames.frames.RaidFrames[i].member[z].RezIcon:SetHeight(height/1.5)
 			LunaUnitFrames.frames.RaidFrames[i].member[z].RezIcon:SetWidth(height/1.5)
 			if LunaOptions.frames["LunaRaidFrames"].centerIcon then
@@ -531,11 +550,20 @@ function LunaUnitFrames:UpdateRaidLayout()
 			end
 			LunaUnitFrames.frames.RaidFrames[i].member[z].PowerBar:SetPoint("BOTTOMRIGHT", LunaUnitFrames.frames.RaidFrames[i].member[z], "BOTTOMRIGHT")
 			if LunaOptions.frames["LunaRaidFrames"].centerIcon then
-				LunaUnitFrames.frames.RaidFrames[i].member[z].debuff:ClearAllPoints()
-				LunaUnitFrames.frames.RaidFrames[i].member[z].debuff:SetPoint("CENTER", LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar, "CENTER")
+				if PlayerClass == "PRIEST" or PlayerClass == "DRUID" then
+					LunaUnitFrames.frames.RaidFrames[i].member[z].debuff:ClearAllPoints()
+					LunaUnitFrames.frames.RaidFrames[i].member[z].debuff:SetPoint("LEFT", LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar, "CENTER")
+					LunaUnitFrames.frames.RaidFrames[i].member[z].Hot:ClearAllPoints()
+					LunaUnitFrames.frames.RaidFrames[i].member[z].Hot:SetPoint("RIGHT", LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar, "CENTER")
+				else
+					LunaUnitFrames.frames.RaidFrames[i].member[z].debuff:ClearAllPoints()
+					LunaUnitFrames.frames.RaidFrames[i].member[z].debuff:SetPoint("CENTER", LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar, "CENTER")
+				end
 			else
 				LunaUnitFrames.frames.RaidFrames[i].member[z].debuff:ClearAllPoints()
 				LunaUnitFrames.frames.RaidFrames[i].member[z].debuff:SetPoint("TOPRIGHT", LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar, "TOPRIGHT")
+				LunaUnitFrames.frames.RaidFrames[i].member[z].Hot:ClearAllPoints()
+				LunaUnitFrames.frames.RaidFrames[i].member[z].Hot:SetPoint("CENTER", LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar, "CENTER")
 			end
 			LunaUnitFrames.Raid_Update()
 		end
@@ -563,12 +591,7 @@ function LunaUnitFrames.Raid_Aura(unitid)
 	end
 	local texture,_,dispeltype = UnitDebuff(this.unit,1,1)
 	if not dispeltype and not LunaOptions.showdispelable then
-		for i=1,16 do
-			texture,_,dispeltype = UnitDebuff(this.unit,i)
-			if dispeltype then
-				break
-			end
-		end
+		texture = UnitDebuff(this.unit,1)
 	end
 	if LunaOptions.frames["LunaRaidFrames"].centerIcon and texture then
 		this.debuff.texture:SetTexture(texture)
@@ -579,6 +602,15 @@ function LunaUnitFrames.Raid_Aura(unitid)
 		this.debuff:Show()
 	else
 		this.debuff:Hide()
+	end
+	this.Hot:Hide()
+	if LunaOptions.frames["LunaRaidFrames"].hottracker then
+		for i=1,24 do
+			texture = UnitBuff(this.unit,i)
+			if texture == HotTexture then
+				this.Hot:Show()
+			end
+		end
 	end
 	if LunaOptions.Raidbuff ~= "" then
 		for i=1,16 do
@@ -591,6 +623,7 @@ function LunaUnitFrames.Raid_Aura(unitid)
 			ScanTipTextLeft1:SetText("")
 		end
 	end
+	
 	this.buff:Hide()
 end
 
@@ -648,6 +681,31 @@ function LunaUnitFrames.Raid_Res(unitName)
 	else
 		frame.RezIcon:Hide()
 	end
+end
+
+function LunaUnitFrames.Raid_Hot(unit)
+	if not LunaOptions.frames["LunaRaidFrames"].hottracker then
+		return
+	end
+	local unitObj = roster:GetUnitObjectFromUnit(unit)
+	if not unitObj then
+		return
+	end
+	local frame
+	for i=1, 5 do
+		if LunaUnitFrames.frames.RaidFrames[unitObj.subgroup].member[i].unit == unitObj.unitid then
+			frame = LunaUnitFrames.frames.RaidFrames[unitObj.subgroup].member[i]
+		end
+	end
+	local start, dur
+	if PlayerClass == "PRIEST" then
+		start, dur = HealComm:getRenewTime(unit)
+	elseif PlayerClass == "DRUID" then
+		start, dur = HealComm:getRejuTime(unit)
+	else
+		return
+	end
+	CooldownFrame_SetTimer(frame.Hot.cd,tonumber(start),tonumber(dur),1)
 end
 
 function LunaUnitFrames.Raid_Update()
