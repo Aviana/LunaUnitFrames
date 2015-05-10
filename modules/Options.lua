@@ -1060,6 +1060,15 @@ function OptionFunctions.ToggleInvertGrowth()
 	LunaUnitFrames:UpdateRaidLayout()
 end
 
+function OptionFunctions.TogglePetGroup()
+	if not LunaOptions.frames["LunaRaidFrames"].petgroup then
+		LunaOptions.frames["LunaRaidFrames"].petgroup = 1
+	else
+		LunaOptions.frames["LunaRaidFrames"].petgroup = nil
+	end
+	LunaUnitFrames:UpdatePetRoster()
+end
+
 function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame = CreateFrame("Frame", "LunaOptionsMenu", UIParent)
 	LunaOptionsFrame:SetHeight(400)
@@ -1873,6 +1882,14 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[7].invertgrowth:SetChecked(LunaOptions.frames["LunaRaidFrames"].invertgrowth)
 	getglobal("RaidGroupInvertGrowthSwitchText"):SetText("Invert Group Growth Direction")
 	
+	LunaOptionsFrame.pages[7].petgroup = CreateFrame("CheckButton", "PetGroupSwitch", LunaOptionsFrame.pages[7], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[7].petgroup:SetHeight(20)
+	LunaOptionsFrame.pages[7].petgroup:SetWidth(20)
+	LunaOptionsFrame.pages[7].petgroup:SetPoint("TOPLEFT", LunaOptionsFrame.pages[7].invertgrowth, "TOPLEFT", 0, -20)
+	LunaOptionsFrame.pages[7].petgroup:SetScript("OnClick", OptionFunctions.TogglePetGroup)
+	LunaOptionsFrame.pages[7].petgroup:SetChecked(LunaOptions.frames["LunaRaidFrames"].petgroup)
+	getglobal("PetGroupSwitchText"):SetText("Show the Pet Group")
+	
 	LunaOptionsFrame.pages[7].BuffwatchDesc = LunaOptionsFrame.pages[7]:CreateFontString(nil, "OVERLAY", LunaOptionsFrame.pages[7])
 	LunaOptionsFrame.pages[7].BuffwatchDesc:SetPoint("TOPLEFT", LunaOptionsFrame.pages[7].paddingslider, "TOPLEFT", 230, 10)
 	LunaOptionsFrame.pages[7].BuffwatchDesc:SetFont("Fonts\\FRIZQT__.TTF", 10)
@@ -1897,7 +1914,7 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[7].dispdebuffs:SetPoint("TOPLEFT", LunaOptionsFrame.pages[7].Buffwatch, "TOPLEFT", 0, -38)
 	LunaOptionsFrame.pages[7].dispdebuffs:SetScript("OnClick", OptionFunctions.ToggleDispelableDebuffs)
 	LunaOptionsFrame.pages[7].dispdebuffs:SetChecked(LunaOptions.showdispelable)
-	getglobal("DispDebuffSwitchText"):SetText("Show only your dispelable Debuffs")
+	getglobal("DispDebuffSwitchText"):SetText("Only dispelable Debuffs on Center Icon")
 
 	LunaOptionsFrame.pages[7].aggro = CreateFrame("CheckButton", "AggroSwitch", LunaOptionsFrame.pages[7], "UICheckButtonTemplate")
 	LunaOptionsFrame.pages[7].aggro:SetHeight(20)

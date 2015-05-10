@@ -139,6 +139,11 @@ function LunaUnitFrames:OnEvent()
 		if not LunaOptions.frames["LunaPartyTargetFrames"] then
 			LunaOptions.frames["LunaPartyTargetFrames"] = {position = {x = 0, y = 0}, size = {x = 110, y = 20}, scale = 1, enabled = 1, bars = {{"Healthbar", 6}, {"Powerbar", 4}}}
 		end
+		if not LunaOptions.frames["LunaRaidFrames"]["positions"][9] then
+			LunaOptions.frames["LunaRaidFrames"]["positions"][9] = {}
+			LunaOptions.frames["LunaRaidFrames"]["positions"][9].x = 400
+			LunaOptions.frames["LunaRaidFrames"]["positions"][9].y = -400
+		end
 		LunaOptions.ClassColors = {	WARRIOR = {0.78, 0.61, 0.43},
 						MAGE = {0.41, 0.8, 0.94},
 						ROGUE = {1, 0.96, 0.41},
