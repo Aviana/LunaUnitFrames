@@ -8,7 +8,7 @@ Dependencies: AceLibrary, AceEvent-2.0, RosterLib-2.0
 ]]
 
 local MAJOR_VERSION = "HealComm-1.0"
-local MINOR_VERSION = "$Revision: 11010 $"
+local MINOR_VERSION = "$Revision: 11020 $"
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
 if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end
@@ -1175,7 +1175,7 @@ HealComm.OnEvent = function()
 			HealComm.SendAddonMessage("Healdelay/"..arg1.."/")
 			HealComm.delayHeal(UnitName("player"), arg1)
 		end
-	elseif event == "SPELLCAST_STOP" then
+	elseif event == "SPELLCAST_STOP" and healcomm_SpellCast then
 		local targetUnit = roster:GetUnitIDFromName(healcomm_SpellCast[3])
 		if not targetUnit then
 			healcomm_spellIsCasting = nil
