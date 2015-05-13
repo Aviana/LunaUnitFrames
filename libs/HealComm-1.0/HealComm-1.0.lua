@@ -8,7 +8,7 @@ Dependencies: AceLibrary, AceEvent-2.0, RosterLib-2.0
 ]]
 
 local MAJOR_VERSION = "HealComm-1.0"
-local MINOR_VERSION = "$Revision: 11000 $"
+local MINOR_VERSION = "$Revision: 11010 $"
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
 if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end
@@ -1176,6 +1176,14 @@ HealComm.OnEvent = function()
 			HealComm.delayHeal(UnitName("player"), arg1)
 		end
 	elseif event == "SPELLCAST_STOP" then
+		local targetUnit = roster:GetUnitIDFromName(healcomm_SpellCast[3])
+		if not targetUnit then
+			healcomm_spellIsCasting = nil
+			healcomm_SpellCast =  nil
+			healcomm_RankRank = nil
+			healcomm_SpellSpell =  nil
+			return
+		end
 		if healcomm_SpellCast and healcomm_SpellCast[1] == L["Renew"] then
 			local dur = getSetBonus() and 18 or 15
 			HealComm.SendAddonMessage("Renew/"..healcomm_SpellCast[3].."/"..dur.."/")
@@ -1187,7 +1195,6 @@ HealComm.OnEvent = function()
 			end
 			HealComm.Hots[healcomm_SpellCast[3]]["Renew"].start = GetTime()
 			HealComm.Hots[healcomm_SpellCast[3]]["Renew"].dur = dur
-			local targetUnit = roster:GetUnitIDFromName(healcomm_SpellCast[3])
 			HealComm.SpecialEventScheduler:TriggerEvent("HealComm_Hotupdate", targetUnit)
 			healcomm_spellIsCasting = nil
 			healcomm_SpellCast =  nil
@@ -1204,7 +1211,6 @@ HealComm.OnEvent = function()
 			end
 			HealComm.Hots[healcomm_SpellCast[3]]["Reju"].start = GetTime()
 			HealComm.Hots[healcomm_SpellCast[3]]["Reju"].dur = dur
-			local targetUnit = roster:GetUnitIDFromName(healcomm_SpellCast[3])
 			HealComm.SpecialEventScheduler:TriggerEvent("HealComm_Hotupdate", targetUnit)
 			healcomm_spellIsCasting = nil
 			healcomm_SpellCast =  nil
