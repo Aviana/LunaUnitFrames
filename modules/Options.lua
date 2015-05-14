@@ -1042,6 +1042,14 @@ function OptionFunctions.ToggleColorNames()
 	OptionFunctions.UpdateAll()
 end
 
+function OptionFunctions.TextScaleAdjust()
+	LunaOptions.textscale = this:GetValue()
+	getglobal(this:GetName().."Text"):SetText("Textscale: "..LunaOptions.textscale)
+	OptionFunctions.UpdateAll()
+	LunaTargetTargetFrame.AdjustBars()
+	LunaTargetTargetTargetFrame.AdjustBars()
+end
+
 function OptionFunctions.ToggleInvertHealthBars()
 	if not LunaOptions.frames["LunaRaidFrames"].inverthealth then
 		LunaOptions.frames["LunaRaidFrames"].inverthealth = 1
@@ -2036,6 +2044,15 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[8].colornames:SetScript("OnClick", OptionFunctions.ToggleColorNames)
 	LunaOptionsFrame.pages[8].colornames:SetChecked(LunaOptions.colornames or 0)
 	getglobal("ColorNamesSwitchText"):SetText("Color Names in Class Colors")
+	
+	LunaOptionsFrame.pages[8].textscale = CreateFrame("Slider", "TextScaleSlider", LunaOptionsFrame.pages[8], "OptionsSliderTemplate")
+	LunaOptionsFrame.pages[8].textscale:SetMinMaxValues(0,1)
+	LunaOptionsFrame.pages[8].textscale:SetValueStep(0.01)
+	LunaOptionsFrame.pages[8].textscale:SetScript("OnValueChanged", OptionFunctions.TextScaleAdjust)
+	LunaOptionsFrame.pages[8].textscale:SetPoint("TOPLEFT", LunaOptionsFrame.pages[8].colornames, "BOTTOMLEFT", 0, -20)
+	LunaOptionsFrame.pages[8].textscale:SetValue(LunaOptions.textscale or 0.45)
+	LunaOptionsFrame.pages[8].textscale:SetWidth(215)
+	getglobal("TextScaleSliderText"):SetText("Textscale: "..(LunaOptions.textscale or 0.45))
 	
 	LunaOptionsFrame:SetScale(1.3)
 	

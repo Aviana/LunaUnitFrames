@@ -144,6 +144,9 @@ function LunaUnitFrames:OnEvent()
 			LunaOptions.frames["LunaRaidFrames"]["positions"][9].x = 400
 			LunaOptions.frames["LunaRaidFrames"]["positions"][9].y = -400
 		end
+		if not LunaOptions.textscale then
+			LunaOptions.textscale = 0.45
+		end
 		LunaOptions.ClassColors = {	WARRIOR = {0.78, 0.61, 0.43},
 						MAGE = {0.41, 0.8, 0.94},
 						ROGUE = {1, 0.96, 0.41},

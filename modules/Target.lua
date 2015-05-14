@@ -482,7 +482,7 @@ function LunaUnitFrames:CreateTargetFrame()
 		if UnitExists("target") then
 			LunaUnitFrames.TargetUpdateHeal(UnitName("target"))
 		end
-		local healthheight = (LunaTargetFrame.bars["Healthbar"]:GetHeight()*0.45)
+		local healthheight = (LunaTargetFrame.bars["Healthbar"]:GetHeight()*LunaOptions.textscale)
 		if healthheight > 0 then
 			LunaTargetFrame.bars["Healthbar"].hpp:SetFont(LunaOptions.font, healthheight)
 			LunaTargetFrame.bars["Healthbar"].hpp:SetHeight(LunaTargetFrame.bars["Healthbar"]:GetHeight())
@@ -497,7 +497,7 @@ function LunaUnitFrames:CreateTargetFrame()
 			LunaTargetFrame.bars["Healthbar"].hpp:Show()
 			LunaTargetFrame.name:Show()
 		end
-		local powerheight = (LunaTargetFrame.bars["Powerbar"]:GetHeight()*0.45)
+		local powerheight = (LunaTargetFrame.bars["Powerbar"]:GetHeight()*LunaOptions.textscale)
 		if powerheight > 0 then
 			LunaTargetFrame.bars["Powerbar"].ppp:SetFont(LunaOptions.font, powerheight)
 			LunaTargetFrame.lvl:SetFont(LunaOptions.font, powerheight)
