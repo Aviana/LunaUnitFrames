@@ -523,7 +523,7 @@ function LunaUnitFrames:UpdateTargetTargetFrame()
 			LunaTargetTargetFrame.bars["Healthbar"].hpbg:SetVertexColor(unpack(LunaOptions.MiscColors["neutral"]), 0.25)
 		end
 	end
-	if LunaOptions.colornames then
+	if LunaOptions.colornames and UnitIsPlayer("targettarget") then
 		LunaTargetTargetFrame.name:SetTextColor(unpack(LunaOptions.ClassColors[class]))
 	else
 		LunaTargetTargetFrame.name:SetTextColor(1,1,1)
@@ -1060,7 +1060,7 @@ function LunaUnitFrames:UpdateTargetTargetTargetFrame()
 			LunaTargetTargetTargetFrame.bars["Healthbar"].hpbg:SetVertexColor(unpack(LunaOptions.MiscColors["neutral"]), 0.25)
 		end
 	end
-	if LunaOptions.colornames then
+	if LunaOptions.colornames and UnitIsPlayer("targettargettarget") then
 		LunaTargetTargetTargetFrame.name:SetTextColor(unpack(LunaOptions.ClassColors[class]))
 	else
 		LunaTargetTargetTargetFrame.name:SetTextColor(1,1,1)
