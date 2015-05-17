@@ -994,7 +994,16 @@ function OptionFunctions.ToggleHotTracker()
 	end
 	LunaUnitFrames:UpdateRaidLayout()
 end
-	
+
+function OptionFunctions.ToggleWSoul()
+	if not LunaOptions.frames["LunaRaidFrames"].wsoul then
+		LunaOptions.frames["LunaRaidFrames"].wsoul = 1
+	else
+		LunaOptions.frames["LunaRaidFrames"].wsoul = nil
+	end
+	LunaUnitFrames.Raid_Update()
+end
+
 function OptionFunctions.ToggleHealerMode()
 	if not LunaOptions.HealerModeHealth then
 		LunaOptions.HealerModeHealth = 1
@@ -1963,6 +1972,14 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[7].hottracker:SetScript("OnClick", OptionFunctions.ToggleHotTracker)
 	LunaOptionsFrame.pages[7].hottracker:SetChecked(LunaOptions.frames["LunaRaidFrames"].hottracker)
 	getglobal("HotTrackerSwitchText"):SetText("Enable Hottracker (Priest/Druid only)")
+	
+	LunaOptionsFrame.pages[7].wsoul = CreateFrame("CheckButton", "WSoulSwitch", LunaOptionsFrame.pages[7], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[7].wsoul:SetHeight(20)
+	LunaOptionsFrame.pages[7].wsoul:SetWidth(20)
+	LunaOptionsFrame.pages[7].wsoul:SetPoint("TOPLEFT", LunaOptionsFrame.pages[7].hottracker, "TOPLEFT", 0, -20)
+	LunaOptionsFrame.pages[7].wsoul:SetScript("OnClick", OptionFunctions.ToggleWSoul)
+	LunaOptionsFrame.pages[7].wsoul:SetChecked(LunaOptions.frames["LunaRaidFrames"].wsoul)
+	getglobal("WSoulSwitchText"):SetText("Track Weakened Soul (Priest only)")
 	
 	LunaOptionsFrame.pages[8].hmodeswitch = CreateFrame("CheckButton", "HealerModeSwitch", LunaOptionsFrame.pages[8], "UICheckButtonTemplate")
 	LunaOptionsFrame.pages[8].hmodeswitch:SetHeight(20)

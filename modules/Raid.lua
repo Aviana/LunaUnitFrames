@@ -349,6 +349,15 @@ function LunaUnitFrames:CreateRaidFrames()
 			LunaUnitFrames.frames.RaidFrames[i].member[z].debuff.texture:SetAllPoints(LunaUnitFrames.frames.RaidFrames[i].member[z].debuff)
 			LunaUnitFrames.frames.RaidFrames[i].member[z].debuff:Hide()
 			
+			LunaUnitFrames.frames.RaidFrames[i].member[z].wsoul = CreateFrame("Frame", nil, LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar)
+			LunaUnitFrames.frames.RaidFrames[i].member[z].wsoul:SetBackdrop(LunaOptions.backdrop)
+			LunaUnitFrames.frames.RaidFrames[i].member[z].wsoul:SetBackdropColor(0,0,0,1)
+			LunaUnitFrames.frames.RaidFrames[i].member[z].wsoul:SetPoint("BOTTOMRIGHT", LunaUnitFrames.frames.RaidFrames[i].member[z].HealthBar, "BOTTOMRIGHT")
+			LunaUnitFrames.frames.RaidFrames[i].member[z].wsoul.texture = LunaUnitFrames.frames.RaidFrames[i].member[z].wsoul:CreateTexture(nil, "OVERLAY", LunaUnitFrames.frames.RaidFrames[i].member[z].wsoul)
+			LunaUnitFrames.frames.RaidFrames[i].member[z].wsoul.texture:SetAllPoints(LunaUnitFrames.frames.RaidFrames[i].member[z].wsoul)
+			LunaUnitFrames.frames.RaidFrames[i].member[z].wsoul.texture:SetTexture("Interface\\Icons\\Spell_Holy_AshesToAshes")
+			LunaUnitFrames.frames.RaidFrames[i].member[z].wsoul:Hide()
+			
 			LunaUnitFrames.frames.RaidFrames[i].member[z]:RegisterEvent("UNIT_AURA")
 			LunaUnitFrames.frames.RaidFrames[i].member[z]:RegisterEvent("UNIT_DISPLAYPOWER")
 			LunaUnitFrames.frames.RaidFrames[i].member[z]:SetScript("OnEvent", RaidEventhandler)
@@ -448,6 +457,15 @@ function LunaUnitFrames:CreateRaidFrames()
 		LunaUnitFrames.frames.RaidFrames[9].member[i].debuff.texture:SetTexture(LunaOptions.indicator)
 		LunaUnitFrames.frames.RaidFrames[9].member[i].debuff.texture:SetAllPoints(LunaUnitFrames.frames.RaidFrames[9].member[i].debuff)
 		LunaUnitFrames.frames.RaidFrames[9].member[i].debuff:Hide()
+
+		LunaUnitFrames.frames.RaidFrames[9].member[i].wsoul = CreateFrame("Frame", nil, LunaUnitFrames.frames.RaidFrames[9].member[i].HealthBar)
+		LunaUnitFrames.frames.RaidFrames[9].member[i].wsoul:SetBackdrop(LunaOptions.backdrop)
+		LunaUnitFrames.frames.RaidFrames[9].member[i].wsoul:SetBackdropColor(0,0,0,1)
+		LunaUnitFrames.frames.RaidFrames[9].member[i].wsoul:SetPoint("BOTTOMRIGHT", LunaUnitFrames.frames.RaidFrames[9].member[i].HealthBar, "BOTTOMRIGHT")
+		LunaUnitFrames.frames.RaidFrames[9].member[i].wsoul.texture = LunaUnitFrames.frames.RaidFrames[9].member[i].wsoul:CreateTexture(nil, "OVERLAY", LunaUnitFrames.frames.RaidFrames[9].member[i].wsoul)
+		LunaUnitFrames.frames.RaidFrames[9].member[i].wsoul.texture:SetAllPoints(LunaUnitFrames.frames.RaidFrames[9].member[i].wsoul)
+		LunaUnitFrames.frames.RaidFrames[9].member[i].wsoul.texture:SetTexture("Interface\\Icons\\Spell_Holy_AshesToAshes")
+		LunaUnitFrames.frames.RaidFrames[9].member[i].wsoul:Hide()
 		
 		LunaUnitFrames.frames.RaidFrames[9].member[i]:RegisterEvent("UNIT_AURA")
 		LunaUnitFrames.frames.RaidFrames[9].member[i]:SetScript("OnEvent", RaidEventhandler)
@@ -649,6 +667,8 @@ function LunaUnitFrames:SetRaidFrameSize()
 			LunaUnitFrames.frames.RaidFrames[i].member[z].aggro:SetWidth(height*0.25)
 			LunaUnitFrames.frames.RaidFrames[i].member[z].buff:SetHeight(height*0.25)
 			LunaUnitFrames.frames.RaidFrames[i].member[z].buff:SetWidth(height*0.25)
+			LunaUnitFrames.frames.RaidFrames[i].member[z].wsoul:SetHeight(height*0.25)
+			LunaUnitFrames.frames.RaidFrames[i].member[z].wsoul:SetWidth(height*0.25)
 			LunaUnitFrames.frames.RaidFrames[i].member[z].Hot:SetWidth(height*0.6)
 			LunaUnitFrames.frames.RaidFrames[i].member[z].Hot:SetHeight(height*0.6)
 			LunaUnitFrames.frames.RaidFrames[i].member[z].Hot.cd:SetScale(height*0.6/36)
@@ -707,6 +727,8 @@ function LunaUnitFrames:SetRaidFrameSize()
 		LunaUnitFrames.frames.RaidFrames[9].member[i].aggro:SetWidth(height*0.25)
 		LunaUnitFrames.frames.RaidFrames[9].member[i].buff:SetHeight(height*0.25)
 		LunaUnitFrames.frames.RaidFrames[9].member[i].buff:SetWidth(height*0.25)
+		LunaUnitFrames.frames.RaidFrames[9].member[i].wsoul:SetHeight(height*0.25)
+		LunaUnitFrames.frames.RaidFrames[9].member[i].wsoul:SetWidth(height*0.25)		
 		LunaUnitFrames.frames.RaidFrames[9].member[i].Hot:SetWidth(height*0.6)
 		LunaUnitFrames.frames.RaidFrames[9].member[i].Hot:SetHeight(height*0.6)
 		LunaUnitFrames.frames.RaidFrames[9].member[i].Hot.cd:SetScale(height*0.6/36)
@@ -908,6 +930,12 @@ function LunaUnitFrames.Raid_Aura(unitid)
 			end
 		end
 	end
+	this.wsoul:Hide()
+	for i=1,16 do
+		if UnitDebuff(this.unit,i) == "Interface\\Icons\\Spell_Holy_AshesToAshes" and PlayerClass == "PRIEST" and LunaOptions.frames["LunaRaidFrames"].wsoul then
+			this.wsoul:Show()
+		end
+	end
 	if LunaOptions.Raidbuff ~= "" then
 		for i=1,16 do
 			ScanTip:SetUnitBuff(this.unit, i)
@@ -919,7 +947,6 @@ function LunaUnitFrames.Raid_Aura(unitid)
 			ScanTipTextLeft1:SetText("")
 		end
 	end
-	
 	this.buff:Hide()
 end
 
@@ -1047,6 +1074,12 @@ function LunaUnitFrames.Raid_Update()
 				else
 					LunaUnitFrames.frames.RaidFrames[i].member[z].debuff:Hide()
 				end
+				LunaUnitFrames.frames.RaidFrames[i].member[z].wsoul:Hide()
+				for h=1,16 do
+					if UnitDebuff(LunaUnitFrames.frames.RaidFrames[i].member[z].unit,h) == "Interface\\Icons\\Spell_Holy_AshesToAshes" and PlayerClass == "PRIEST" and LunaOptions.frames["LunaRaidFrames"].wsoul then
+						LunaUnitFrames.frames.RaidFrames[i].member[z].wsoul:Show()
+					end
+				end
 				if LunaOptions.Raidbuff ~= "" then
 					for h=1,16 do
 						ScanTip:SetUnitBuff(LunaUnitFrames.frames.RaidFrames[i].member[z].unit, h)
@@ -1081,6 +1114,12 @@ function LunaUnitFrames.Raid_Update()
 				LunaUnitFrames.frames.RaidFrames[9].member[i].debuff:Show()
 			else
 				LunaUnitFrames.frames.RaidFrames[9].member[i].debuff:Hide()
+			end
+			LunaUnitFrames.frames.RaidFrames[9].member[i].wsoul:Hide()
+			for i=1,16 do
+				if UnitDebuff(LunaUnitFrames.frames.RaidFrames[9].member[i].unit,i) == "Interface\\Icons\\Spell_Holy_AshesToAshes" and PlayerClass == "PRIEST" and LunaOptions.frames["LunaRaidFrames"].wsoul then
+					LunaUnitFrames.frames.RaidFrames[9].member[i].wsoul:Show()
+				end
 			end
 			if LunaOptions.Raidbuff ~= "" then
 				for h=1,16 do
