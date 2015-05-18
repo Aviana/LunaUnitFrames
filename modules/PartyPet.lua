@@ -22,6 +22,7 @@ function LunaUnitFrames:CreatePartyPetFrames()
 		LunaPartyPetFrames[i]:SetPoint("BOTTOMLEFT", LunaPartyFrames[i], "BOTTOMRIGHT", 5, 0)
 		LunaPartyPetFrames[i]:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up')
 		LunaPartyPetFrames[i].unit = "partypet"..i
+		LunaPartyPetFrames[i]:SetFrameStrata("BACKGROUND")
 		LunaPartyPetFrames[i]:SetScript("OnEnter", UnitFrame_OnEnter)
 		LunaPartyPetFrames[i]:SetScript("OnLeave", UnitFrame_OnLeave)
 		LunaPartyPetFrames[i]:SetScript("OnClick", Luna_OnClick)

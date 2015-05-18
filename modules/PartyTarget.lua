@@ -34,6 +34,7 @@ function LunaUnitFrames:CreatePartyTargetFrames()
 		LunaPartyTargetFrames[i]:SetPoint("TOPLEFT", LunaPartyFrames[i], "TOPRIGHT", 5, 0)
 		LunaPartyTargetFrames[i]:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up')
 		LunaPartyTargetFrames[i].unit = "party"..i.."target"
+		LunaPartyTargetFrames[i]:SetFrameStrata("BACKGROUND")
 		LunaPartyTargetFrames[i]:SetScript("OnEnter", UnitFrame_OnEnter)
 		LunaPartyTargetFrames[i]:SetScript("OnLeave", UnitFrame_OnLeave)
 		LunaPartyTargetFrames[i]:SetScript("OnClick", Luna_OnClick)

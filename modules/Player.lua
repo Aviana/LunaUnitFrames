@@ -305,7 +305,6 @@ function LunaUnitFrames:CreatePlayerFrame()
 	-- Healthbar
 	local hp = CreateFrame("StatusBar", nil, LunaPlayerFrame)
 	hp:SetStatusBarTexture(LunaOptions.statusbartexture)
-	hp:SetFrameStrata("MEDIUM")
 	LunaPlayerFrame.bars["Healthbar"] = hp
 	
 	local incHeal = CreateFrame("StatusBar", nil, LunaPlayerFrame)
@@ -450,7 +449,6 @@ function LunaUnitFrames:CreatePlayerFrame()
 	LunaPlayerFrame.bars["Castbar"].Text = Text
 
 	LunaPlayerFrame.iconholder = CreateFrame("Frame", nil, LunaPlayerFrame)
-	LunaPlayerFrame.iconholder:SetFrameStrata("MEDIUM")
 	
 	LunaPlayerFrame.feedbackText = LunaPlayerFrame.iconholder:CreateFontString(nil, "OVERLAY", "NumberFontNormalHuge")
 	LunaPlayerFrame.feedbackText:SetTextColor(1,1,1)

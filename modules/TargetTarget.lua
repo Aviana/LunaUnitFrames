@@ -129,6 +129,7 @@ function LunaUnitFrames:CreateTargetTargetFrame()
 	LunaTargetTargetFrame:RegisterForDrag("LeftButton")
 	LunaTargetTargetFrame:SetScript("OnDragStop", StopMovingOrSizing)
 	LunaTargetTargetFrame:SetClampedToScreen(1)
+	LunaTargetTargetFrame:SetFrameStrata("BACKGROUND")
 
 	LunaTargetTargetFrame.bars = {}
 	
@@ -673,6 +674,7 @@ function LunaUnitFrames:CreateTargetTargetTargetFrame()
 	LunaTargetTargetTargetFrame:RegisterForDrag("LeftButton")
 	LunaTargetTargetTargetFrame:SetScript("OnDragStop", StopMovingOrSizing)
 	LunaTargetTargetTargetFrame:SetClampedToScreen(1)
+	LunaTargetTargetTargetFrame:SetFrameStrata("BACKGROUND")
 
 	LunaTargetTargetTargetFrame.bars = {}
 	

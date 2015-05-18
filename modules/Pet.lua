@@ -58,6 +58,7 @@ function LunaUnitFrames:CreatePetFrame()
 	LunaPetFrame:RegisterForDrag("LeftButton")
 	LunaPetFrame:SetScript("OnDragStop", StopMovingOrSizing)
 	LunaPetFrame:SetClampedToScreen(1)
+	LunaPetFrame:SetFrameStrata("BACKGROUND")
 
 	LunaPetFrame.AuraAnchor = CreateFrame("Frame", nil, LunaPetFrame)	
 	

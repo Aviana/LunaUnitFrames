@@ -234,7 +234,6 @@ function LunaUnitFrames:CreateTargetFrame()
 	-- Healthbar
 	LunaTargetFrame.bars["Healthbar"] = CreateFrame("StatusBar", nil, LunaTargetFrame)
 	LunaTargetFrame.bars["Healthbar"]:SetStatusBarTexture(LunaOptions.statusbartexture)
-	LunaTargetFrame.bars["Healthbar"]:SetFrameStrata("MEDIUM")
 	
 	local incHeal = CreateFrame("StatusBar", nil, LunaTargetFrame)
 	incHeal:SetStatusBarTexture(LunaOptions.statusbartexture)
@@ -343,7 +342,6 @@ function LunaUnitFrames:CreateTargetFrame()
 	end
 
 	LunaTargetFrame.iconholder = CreateFrame("Frame", nil, LunaTargetFrame)
-	LunaTargetFrame.iconholder:SetFrameStrata("MEDIUM")
 	
 	LunaTargetFrame.feedbackText = LunaTargetFrame.iconholder:CreateFontString(nil, "OVERLAY", "NumberFontNormalHuge")
 	LunaTargetFrame.feedbackText:SetTextColor(1,1,1)

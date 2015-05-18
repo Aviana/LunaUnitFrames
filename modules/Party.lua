@@ -254,7 +254,6 @@ function LunaUnitFrames:CreatePartyFrames()
 	-- Healthbar
 		LunaPartyFrames[i].bars["Healthbar"] = CreateFrame("StatusBar", nil, LunaPartyFrames[i])
 		LunaPartyFrames[i].bars["Healthbar"]:SetStatusBarTexture(LunaOptions.statusbartexture)
-		LunaPartyFrames[i].bars["Healthbar"]:SetFrameStrata("MEDIUM")
 		
 		LunaPartyFrames[i].incHeal = CreateFrame("StatusBar", nil, LunaPartyFrames[i])
 		LunaPartyFrames[i].incHeal:SetStatusBarTexture(LunaOptions.statusbartexture)
@@ -320,7 +319,6 @@ function LunaUnitFrames:CreatePartyFrames()
 		LunaPartyFrames[i].class:SetText(UnitClass("party"..i))
 
 		LunaPartyFrames[i].iconholder = CreateFrame("Frame", nil, LunaPartyFrames[i])
-		LunaPartyFrames[i].iconholder:SetFrameStrata("MEDIUM")
 		
 		LunaPartyFrames[i].icon = LunaPartyFrames[i].iconholder:CreateTexture(nil, "OVERLAY")
 		LunaPartyFrames[i].icon:SetHeight(20)
