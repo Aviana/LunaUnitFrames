@@ -8,7 +8,7 @@ Dependencies: AceLibrary, AceEvent-2.0, RosterLib-2.0
 ]]
 
 local MAJOR_VERSION = "HealComm-1.0"
-local MINOR_VERSION = "$Revision: 11020 $"
+local MINOR_VERSION = "$Revision: 11030 $"
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
 if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end
@@ -1189,9 +1189,9 @@ HealComm.OnEvent = function()
 			HealComm.SendAddonMessage("Renew/"..healcomm_SpellCast[3].."/"..dur.."/")
 			if not HealComm.Hots[healcomm_SpellCast[3]] then
 				HealComm.Hots[healcomm_SpellCast[3]] = {}
-				if not HealComm.Hots[healcomm_SpellCast[3]]["Renew"] then
-					HealComm.Hots[healcomm_SpellCast[3]]["Renew"]= {}
-				end
+			end
+			if not HealComm.Hots[healcomm_SpellCast[3]]["Renew"] then
+				HealComm.Hots[healcomm_SpellCast[3]]["Renew"]= {}
 			end
 			HealComm.Hots[healcomm_SpellCast[3]]["Renew"].start = GetTime()
 			HealComm.Hots[healcomm_SpellCast[3]]["Renew"].dur = dur
@@ -1205,9 +1205,9 @@ HealComm.OnEvent = function()
 			HealComm.SendAddonMessage("Reju/"..healcomm_SpellCast[3].."/"..dur.."/")
 			if not HealComm.Hots[healcomm_SpellCast[3]] then
 				HealComm.Hots[healcomm_SpellCast[3]] = {}
-				if not HealComm.Hots[healcomm_SpellCast[3]]["Reju"] then
-					HealComm.Hots[healcomm_SpellCast[3]]["Reju"]= {}
-				end
+			end
+			if not HealComm.Hots[healcomm_SpellCast[3]]["Reju"] then
+				HealComm.Hots[healcomm_SpellCast[3]]["Reju"]= {}
 			end
 			HealComm.Hots[healcomm_SpellCast[3]]["Reju"].start = GetTime()
 			HealComm.Hots[healcomm_SpellCast[3]]["Reju"].dur = dur
@@ -1239,9 +1239,9 @@ HealComm.OnEvent = function()
 			elseif result[1] == "Renew" then
 				if not HealComm.Hots[result[2]] then
 					HealComm.Hots[result[2]] = {}
-					if not HealComm.Hots[result[2]]["Renew"] then
-						HealComm.Hots[result[2]]["Renew"]= {}
-					end
+				end
+				if not HealComm.Hots[result[2]]["Renew"] then
+					HealComm.Hots[result[2]]["Renew"]= {}
 				end
 				HealComm.Hots[result[2]]["Renew"].dur = result[3]
 				HealComm.Hots[result[2]]["Renew"].start = GetTime()
@@ -1250,9 +1250,9 @@ HealComm.OnEvent = function()
 			elseif result[1] == "Reju" then
 				if not HealComm.Hots[result[2]] then
 					HealComm.Hots[result[2]] = {}
-					if not HealComm.Hots[result[2]]["Reju"] then
-						HealComm.Hots[result[2]]["Reju"]= {}
-					end
+				end
+				if not HealComm.Hots[result[2]]["Reju"] then
+					HealComm.Hots[result[2]]["Reju"]= {}
 				end
 				HealComm.Hots[result[2]]["Reju"].dur = result[3]
 				HealComm.Hots[result[2]]["Reju"].start = GetTime()

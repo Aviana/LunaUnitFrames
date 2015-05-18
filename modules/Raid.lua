@@ -1048,6 +1048,9 @@ function LunaUnitFrames.Raid_Hot(unit)
 	else
 		return
 	end
+	if not start then
+		return
+	end
 	CooldownFrame_SetTimer(frame.Hot.cd,tonumber(start),tonumber(dur),1)
 end
 
