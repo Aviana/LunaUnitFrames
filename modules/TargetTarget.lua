@@ -789,6 +789,7 @@ function LunaUnitFrames:CreateTargetTargetTargetFrame()
 		local anchor
 		local totalWeight = 0
 		local gaps = -1
+		local textheights = {}
 		anchor = {"TOPLEFT", LunaTargetTargetTargetFrame, "TOPLEFT"}
 		for k,v in pairs(LunaOptions.frames["LunaTargetTargetTargetFrame"].bars) do
 			if LunaTargetTargetTargetFrame.bars[v[1]]:IsShown() then
@@ -801,6 +802,7 @@ function LunaUnitFrames:CreateTargetTargetTargetFrame()
 			local bar = v[1]
 			local weight = v[2]/totalWeight
 			local height = (frameHeight-gaps)*weight
+			textheights[v[1]] = v[3] or 0.45
 			LunaTargetTargetTargetFrame.bars[bar]:ClearAllPoints()
 			LunaTargetTargetTargetFrame.bars[bar]:SetHeight(height)
 			LunaTargetTargetTargetFrame.bars[bar]:SetWidth(frameWidth)
@@ -815,7 +817,7 @@ function LunaUnitFrames:CreateTargetTargetTargetFrame()
 				anchor = {"TOPLEFT", LunaTargetTargetTargetFrame.bars[bar], "BOTTOMLEFT"}
 			end			
 		end
-		local healthheight = (LunaTargetTargetTargetFrame.bars["Healthbar"]:GetHeight()*LunaOptions.textscale)
+		local healthheight = (LunaTargetTargetTargetFrame.bars["Healthbar"]:GetHeight()*textheights["Healthbar"])
 		LunaTargetTargetTargetFrame.bars["Healthbar"].righttext:SetFont(LunaOptions.font, healthheight)
 		LunaTargetTargetTargetFrame.bars["Healthbar"].righttext:SetHeight(LunaTargetTargetTargetFrame.bars["Healthbar"]:GetHeight())
 		LunaTargetTargetTargetFrame.bars["Healthbar"].righttext:SetWidth(LunaTargetTargetTargetFrame.bars["Healthbar"]:GetWidth()*0.35)
@@ -823,7 +825,7 @@ function LunaUnitFrames:CreateTargetTargetTargetFrame()
 		LunaTargetTargetTargetFrame.bars["Healthbar"].lefttext:SetHeight(LunaTargetTargetTargetFrame.bars["Healthbar"]:GetHeight())
 		LunaTargetTargetTargetFrame.bars["Healthbar"].lefttext:SetWidth(LunaTargetTargetTargetFrame.bars["Healthbar"]:GetWidth()*0.65)
 
-		local powerheight = (LunaTargetTargetTargetFrame.bars["Powerbar"]:GetHeight()*LunaOptions.textscale)
+		local powerheight = (LunaTargetTargetTargetFrame.bars["Powerbar"]:GetHeight()*textheights["Powerbar"])
 		LunaTargetTargetTargetFrame.bars["Powerbar"].righttext:SetFont(LunaOptions.font, powerheight)
 		LunaTargetTargetTargetFrame.bars["Powerbar"].righttext:SetHeight(LunaTargetTargetTargetFrame.bars["Powerbar"]:GetHeight())
 		LunaTargetTargetTargetFrame.bars["Powerbar"].righttext:SetWidth(LunaTargetTargetTargetFrame.bars["Powerbar"]:GetWidth()*0.5)

@@ -57,9 +57,13 @@ Tags.defaultEvents = {
 	["rare"]                = "UNIT_CLASSIFICATION_CHANGED",
 	["classification"]      = "UNIT_CLASSIFICATION_CHANGED",
 	["shortclassification"] = "UNIT_CLASSIFICATION_CHANGED",
-	["group"]				= "RAID_ROSTER_UPDATE",
+	["group"]				= "RAID_ROSTER_UPDATE PARTY_MEMBERS_CHANGED",
 	["color:aggro"]			= "Banzai_UnitGainedAggro Banzai_UnitLostAggro",
-	["ignore"]				= "IGNORELIST_UPDATE"
+	["ignore"]				= "IGNORELIST_UPDATE",
+	["smart:healmishp"]		= "UNIT_HEALTH UNIT_MAXHEALTH HealComm_Healupdate",
+	["pvpcolor"]			= "PLAYER_FLAGS_CHANGED",
+	["reactcolor"]			= "UNIT_FACTION",
+	["healerhealth"]		= "UNIT_HEALTH UNIT_MAXHEALTH HealComm_Healupdate"
 }
 
 local function Hex(r, g, b)
@@ -264,7 +268,13 @@ Tags.defaultTags = {
 									return mana-manamax
 								end
 							end;
-	["perpp"]               = function(unit) return math.floor(((UnitMana(unit) / UnitManaMax(unit)) * 100)+0.5) end;
+	["perpp"]               = function(unit)
+								if UnitManaMax(unit) == 0 then
+									return 0
+								else
+									return math.floor(((UnitMana(unit) / UnitManaMax(unit)) * 100)+0.5)
+								end
+							end;
 	["druid:pp"]			= function(unit)
 								if unit ~= "player" then
 									return ""
@@ -295,7 +305,11 @@ Tags.defaultTags = {
 									return ""
 								end
 								local mana,manamax = DruidManaLib:GetMana()
-								return math.floor(((mana / manamax) * 100)+0.5)
+								if manamax == 0 then
+									return 0
+								else
+									return math.floor(((mana / manamax) * 100)+0.5)
+								end
 							end;
 	["level"]               = function(unit)
 								if UnitLevel(unit) == -1 then
@@ -436,7 +450,110 @@ Tags.defaultTags = {
 									return UnitCreatureType(unit) or ""
 								end
 							end;
+	["reactcolor"]			= function(unit)
+								local reaction = UnitReaction("player",unit)
+								if reaction == 4 then
+									return Hex(LunaOptions.MiscColors["neutral"])
+								elseif reaction < 4 then
+									return Hex(LunaOptions.MiscColors["hostile"])
+								else
+									return Hex(LunaOptions.MiscColors["friendly"])
+								end
+							end;
+	["pvpcolor"]			= function(unit)
+								if UnitIsPlayer(unit) then
+									if UnitIsPVP(unit) then
+										if UnitIsEnemy("player",unit) then
+											return Hex(1,0,0)
+										else
+											return Hex(0,1,0)
+										end
+									end
+								end
+								return Hex(1,1,1)
+							end;
+	["smart:healmishp"]		= function(unit)
+								if UnitIsGhost(unit) then
+									return "Ghost"
+								elseif not UnitIsConnected(unit) then
+									return "Offline"
+								end
+								local hp,maxhp
+								if MobHealth3 then
+									hp,maxhp = MobHealth3:GetUnitHealth(unit)
+								else
+									hp = UnitHealth(unit)
+									maxhp = UnitHealthMax(unit)
+								end
+								if hp < 1 or (hp == 1 and (UnitInParty(unit) or UnitInRaid(unit))) then
+									return "Dead"
+								end
+								local heal = HealComm:getHeal(UnitName(unit))
+								local result = hp-maxhp+heal
+								if result == 0 then
+									return ""
+								else
+									if heal > 0 then
+										return Hex(0,1,0)..result..Hex(1,1,1)
+									else
+										return result
+									end
+								end
+							end;
+	["smartrace"]			= function(unit)
+								local race = UnitRace(unit)
+								local ctype = UnitCreatureType(unit)
+								if UnitIsPlayer(unit) then
+									return race or ""
+								else
+									return ctype or ""
+								end
+							end;
+	["civilian"]			= function(unit)
+								if UnitIsCivilian(unit) then
+									return "(c)"
+								else
+									return ""
+								end
+							end;
+	["healerhealth"]		= function(unit)
+								if UnitIsGhost(unit) then
+									return "Ghost"
+								elseif not UnitIsConnected(unit) then
+									return "Offline"
+								end
+								local hp,maxhp
+								if MobHealth3 then
+									hp,maxhp = MobHealth3:GetUnitHealth(unit)
+								else
+									hp = UnitHealth(unit)
+									maxhp = UnitHealthMax(unit)
+								end
+								if hp < 1 or (hp == 1 and (UnitInParty(unit) or UnitInRaid(unit))) then
+									return "Dead"
+								end
+								local heal = HealComm:getHeal(UnitName(unit))
+								if UnitIsEnemy("player", unit) then
+									if heal == 0 then
+										return hp.."/"..maxhp
+									else
+										return Hex(0,1,0)..hp..Hex(1,1,1).."/"..maxhp
+									end
+								end
+								local result = hp-maxhp+heal
+								if result == 0 then
+									return ""
+								else
+									if heal > 0 then
+										return Hex(0,1,0)..result..Hex(1,1,1)
+									else
+										return result
+									end
+								end
+							end;
 }
+--To-Do:
+-- Custom color tag
 
 local function strsplit(pString, pPattern)
 	local Table = {}
@@ -552,18 +669,17 @@ local function onEvent(arg1)
 	elseif event == "DruidManaLib_Manaupdate" then
 		LunaUnitFrames:UpdateTags("player", nil, event)
 	elseif event == "PARTY_MEMBERS_CHANGED" or event == "RAID_ROSTER_UPDATE" then
+		LunaUnitFrames:UpdateTags("player", nil, "PARTY_MEMBERS_CHANGED")
 		for i=1, 4 do
 			local unit = "party"..i
 			if UnitExists(unit) and Tags.fontStrings[unit] then
-				LunaUnitFrames:UpdateTags(unit)
+				LunaUnitFrames:UpdateTags(unit, nil, "PARTY_MEMBERS_CHANGED")
 			end
 		end
-		if event == "RAID_ROSTER_UPDATE" then
-			for i=1, 40 do
-			local unit = "raid"..i
-				if UnitExists(unit) and Tags.fontStrings[unit] then
-					LunaUnitFrames:UpdateTags(unit)
-				end
+		for i=1, 40 do
+		local unit = "raid"..i
+			if UnitExists(unit) and Tags.fontStrings[unit] then
+				LunaUnitFrames:UpdateTags(unit, nil, "PARTY_MEMBERS_CHANGED")
 			end
 		end
 	elseif event == "UNIT_COMBO_POINTS" then
@@ -607,3 +723,4 @@ AceEvent:RegisterEvent("PLAYER_TARGET_CHANGED", onEvent)
 AceEvent:RegisterEvent("PLAYER_ENTERING_WORLD", onEvent)
 AceEvent:RegisterEvent("UNIT_PET", onEvent)
 AceEvent:RegisterEvent("IGNORELIST_UPDATE", onEvent)
+AceEvent:RegisterEvent("UNIT_FACTION", onEvent)
