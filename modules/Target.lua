@@ -158,6 +158,13 @@ function LunaUnitFrames:CreateTargetFrame()
 	LunaTargetFrame:SetClampedToScreen(1)
 	LunaTargetFrame:SetFrameStrata("BACKGROUND")
 
+	local barsettings = {}
+	for k,v in pairs(LunaOptions.frames["LunaTargetFrame"].bars) do
+		barsettings[v[1]] = {}
+		barsettings[v[1]][1] = v[4]
+		barsettings[v[1]][2] = v[5]
+	end
+	
 	LunaTargetFrame.bars = {}
 	
 	LunaTargetFrame.bars["Portrait"] = CreateFrame("PlayerModel", nil, LunaTargetFrame)
@@ -248,22 +255,23 @@ function LunaUnitFrames:CreateTargetFrame()
 	LunaTargetFrame.bars["Healthbar"].hpbg:SetTexture(.25,.25,.25,.25)
 
 	-- Healthbar text
-	LunaTargetFrame.bars["Healthbar"].hpp = LunaTargetFrame.bars["Healthbar"]:CreateFontString(nil, "OVERLAY", LunaTargetFrame.bars["Healthbar"])
-	LunaTargetFrame.bars["Healthbar"].hpp:SetPoint("RIGHT", -2, 0)
-	LunaTargetFrame.bars["Healthbar"].hpp:SetFont(LunaOptions.font, LunaOptions.fontHeight)
-	LunaTargetFrame.bars["Healthbar"].hpp:SetShadowColor(0, 0, 0)
-	LunaTargetFrame.bars["Healthbar"].hpp:SetShadowOffset(0.8, -0.8)
-	LunaTargetFrame.bars["Healthbar"].hpp:SetTextColor(1,1,1)
-	LunaTargetFrame.bars["Healthbar"].hpp:SetJustifyH("RIGHT")
-	LunaTargetFrame.bars["Healthbar"].hpp:SetJustifyV("MIDDLE")
+	LunaTargetFrame.bars["Healthbar"].righttext = LunaTargetFrame.bars["Healthbar"]:CreateFontString(nil, "OVERLAY", LunaTargetFrame.bars["Healthbar"])
+	LunaTargetFrame.bars["Healthbar"].righttext:SetPoint("RIGHT", -2, 0)
+	LunaTargetFrame.bars["Healthbar"].righttext:SetFont(LunaOptions.font, LunaOptions.fontHeight)
+	LunaTargetFrame.bars["Healthbar"].righttext:SetShadowColor(0, 0, 0)
+	LunaTargetFrame.bars["Healthbar"].righttext:SetShadowOffset(0.8, -0.8)
+	LunaTargetFrame.bars["Healthbar"].righttext:SetJustifyH("RIGHT")
+	LunaTargetFrame.bars["Healthbar"].righttext:SetJustifyV("MIDDLE")
+	LunaUnitFrames:RegisterFontstring(LunaTargetFrame.bars["Healthbar"].righttext, "target", barsettings["Healthbar"][2] or LunaOptions.defaultTags["Healthbar"][2])
 
-	LunaTargetFrame.name = LunaTargetFrame.bars["Healthbar"]:CreateFontString(nil, "OVERLAY", LunaTargetFrame.bars["Healthbar"])
-	LunaTargetFrame.name:SetPoint("LEFT", 2, 0)
-	LunaTargetFrame.name:SetJustifyH("LEFT")
-	LunaTargetFrame.name:SetFont(LunaOptions.font, LunaOptions.fontHeight)
-	LunaTargetFrame.name:SetShadowColor(0, 0, 0)
-	LunaTargetFrame.name:SetShadowOffset(0.8, -0.8)
-	LunaTargetFrame.name:SetTextColor(1,1,1)
+	LunaTargetFrame.bars["Healthbar"].lefttext = LunaTargetFrame.bars["Healthbar"]:CreateFontString(nil, "OVERLAY", LunaTargetFrame.bars["Healthbar"])
+	LunaTargetFrame.bars["Healthbar"].lefttext:SetPoint("LEFT", 2, 0)
+	LunaTargetFrame.bars["Healthbar"].lefttext:SetFont(LunaOptions.font, LunaOptions.fontHeight)
+	LunaTargetFrame.bars["Healthbar"].lefttext:SetShadowColor(0, 0, 0)
+	LunaTargetFrame.bars["Healthbar"].lefttext:SetShadowOffset(0.8, -0.8)
+	LunaTargetFrame.bars["Healthbar"].lefttext:SetJustifyH("LEFT")
+	LunaTargetFrame.bars["Healthbar"].lefttext:SetJustifyV("MIDDLE")
+	LunaUnitFrames:RegisterFontstring(LunaTargetFrame.bars["Healthbar"].lefttext, "target", barsettings["Healthbar"][1] or LunaOptions.defaultTags["Healthbar"][1])
 
 	-- Manabar
 	LunaTargetFrame.bars["Powerbar"] = CreateFrame("StatusBar", nil, LunaTargetFrame)
@@ -274,25 +282,23 @@ function LunaUnitFrames:CreateTargetFrame()
 	LunaTargetFrame.bars["Powerbar"].ppbg:SetAllPoints(LunaTargetFrame.bars["Powerbar"])
 	LunaTargetFrame.bars["Powerbar"].ppbg:SetTexture(.25,.25,.25,.25)
 
-	LunaTargetFrame.bars["Powerbar"].ppp = LunaTargetFrame.bars["Powerbar"]:CreateFontString(nil, "OVERLAY", LunaTargetFrame.bars["Powerbar"])
-	LunaTargetFrame.bars["Powerbar"].ppp:SetPoint("RIGHT", -2, 0)
-	LunaTargetFrame.bars["Powerbar"].ppp:SetFont(LunaOptions.font, LunaOptions.fontHeight)
-	LunaTargetFrame.bars["Powerbar"].ppp:SetShadowColor(0, 0, 0)
-	LunaTargetFrame.bars["Powerbar"].ppp:SetShadowOffset(0.8, -0.8)
-	LunaTargetFrame.bars["Powerbar"].ppp:SetTextColor(1,1,1)
-	LunaTargetFrame.bars["Powerbar"].ppp:SetJustifyH("RIGHT")
+	LunaTargetFrame.bars["Powerbar"].righttext = LunaTargetFrame.bars["Powerbar"]:CreateFontString(nil, "OVERLAY", LunaTargetFrame.bars["Powerbar"])
+	LunaTargetFrame.bars["Powerbar"].righttext:SetPoint("RIGHT", -2, 0)
+	LunaTargetFrame.bars["Powerbar"].righttext:SetFont(LunaOptions.font, LunaOptions.fontHeight)
+	LunaTargetFrame.bars["Powerbar"].righttext:SetShadowColor(0, 0, 0)
+	LunaTargetFrame.bars["Powerbar"].righttext:SetShadowOffset(0.8, -0.8)
+	LunaTargetFrame.bars["Powerbar"].righttext:SetJustifyH("RIGHT")
+	LunaTargetFrame.bars["Powerbar"].righttext:SetJustifyV("MIDDLE")
+	LunaUnitFrames:RegisterFontstring(LunaTargetFrame.bars["Powerbar"].righttext, "target", barsettings["Powerbar"][2] or LunaOptions.defaultTags["Powerbar"][2])
 
-	LunaTargetFrame.lvl = LunaTargetFrame.bars["Powerbar"]:CreateFontString(nil, "OVERLAY")
-	LunaTargetFrame.lvl:SetPoint("LEFT", LunaTargetFrame.bars["Powerbar"], "LEFT", 2, 0)
-	LunaTargetFrame.lvl:SetFont(LunaOptions.font, LunaOptions.fontHeight)
-	LunaTargetFrame.lvl:SetShadowColor(0, 0, 0)
-	LunaTargetFrame.lvl:SetShadowOffset(0.8, -0.8)
-
-	LunaTargetFrame.class = LunaTargetFrame.bars["Powerbar"]:CreateFontString(nil, "OVERLAY")
-	LunaTargetFrame.class:SetPoint("LEFT", LunaTargetFrame.lvl, "RIGHT",  1, 0)
-	LunaTargetFrame.class:SetFont(LunaOptions.font, LunaOptions.fontHeight)
-	LunaTargetFrame.class:SetShadowColor(0, 0, 0)
-	LunaTargetFrame.class:SetShadowOffset(0.8, -0.8)
+	LunaTargetFrame.bars["Powerbar"].lefttext = LunaTargetFrame.bars["Powerbar"]:CreateFontString(nil, "OVERLAY", LunaTargetFrame.bars["Powerbar"])
+	LunaTargetFrame.bars["Powerbar"].lefttext:SetPoint("LEFT", 2, 0)
+	LunaTargetFrame.bars["Powerbar"].lefttext:SetFont(LunaOptions.font, LunaOptions.fontHeight)
+	LunaTargetFrame.bars["Powerbar"].lefttext:SetShadowColor(0, 0, 0)
+	LunaTargetFrame.bars["Powerbar"].lefttext:SetShadowOffset(0.8, -0.8)
+	LunaTargetFrame.bars["Powerbar"].lefttext:SetJustifyH("LEFT")
+	LunaTargetFrame.bars["Powerbar"].lefttext:SetJustifyV("MIDDLE")
+	LunaUnitFrames:RegisterFontstring(LunaTargetFrame.bars["Powerbar"].lefttext, "target", barsettings["Powerbar"][1] or LunaOptions.defaultTags["Powerbar"][1])
 
 	-- Castbar
 	local Castbar = CreateFrame("StatusBar", nil, LunaTargetFrame)
@@ -317,6 +323,8 @@ function LunaUnitFrames:CreateTargetFrame()
 	Time:SetShadowColor(0, 0, 0)
 	Time:SetShadowOffset(0.8, -0.8)
 	Time:SetPoint("RIGHT", Castbar)
+	Time:SetJustifyH("RIGHT")
+	Time:SetJustifyV("MIDDLE")
 	LunaTargetFrame.bars["Castbar"].Time = Time
 
 	-- Add spell text
@@ -326,6 +334,8 @@ function LunaUnitFrames:CreateTargetFrame()
 	Text:SetShadowColor(0, 0, 0)
 	Text:SetShadowOffset(0.8, -0.8)
 	Text:SetPoint("LEFT", Castbar)
+	Text:SetJustifyH("LEFT")
+	Text:SetJustifyV("MIDDLE")
 	LunaTargetFrame.bars["Castbar"].Text = Text
 	
 	LunaTargetFrame.cp = {}
@@ -378,7 +388,6 @@ function LunaUnitFrames:CreateTargetFrame()
 	LunaTargetFrame:RegisterEvent("UNIT_MAXENERGY")
 	LunaTargetFrame:RegisterEvent("UNIT_DISPLAYPOWER")
 	LunaTargetFrame:RegisterEvent("UNIT_PORTRAIT_UPDATE")
-	LunaTargetFrame:RegisterEvent("UNIT_LEVEL")
 	LunaTargetFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
 	LunaTargetFrame:RegisterEvent("PLAYER_COMBO_POINTS")
 	LunaTargetFrame:RegisterEvent("RAID_TARGET_UPDATE")
@@ -410,11 +419,12 @@ function LunaUnitFrames:CreateTargetFrame()
 		local totalWeight = 0
 		local gaps = -1
 		local CastBarHeightWeight
+		local textheights = {}
 		for k,v in pairs(LunaOptions.frames["LunaTargetFrame"].bars) do
 			if v[1] == "Castbar" then
 				CastBarHeightWeight = v[2]
-				break
 			end
+			textheights[v[1]] = v[3] or 0.45
 		end
 		if (LunaTargetFrame.bars["Castbar"].casting or LunaTargetFrame.bars["Castbar"].channeling) and CastBarHeightWeight > 0 then
 			LunaTargetFrame.bars["Castbar"]:Show()
@@ -480,48 +490,29 @@ function LunaUnitFrames:CreateTargetFrame()
 		if UnitExists("target") then
 			LunaUnitFrames.TargetUpdateHeal(UnitName("target"))
 		end
-		local healthheight = (LunaTargetFrame.bars["Healthbar"]:GetHeight()*LunaOptions.textscale)
-		if healthheight > 0 then
-			LunaTargetFrame.bars["Healthbar"].hpp:SetFont(LunaOptions.font, healthheight)
-			LunaTargetFrame.bars["Healthbar"].hpp:SetHeight(LunaTargetFrame.bars["Healthbar"]:GetHeight())
-			LunaTargetFrame.bars["Healthbar"].hpp:SetWidth(LunaTargetFrame.bars["Healthbar"]:GetWidth()*0.35)
-			LunaTargetFrame.name:SetFont(LunaOptions.font, healthheight)
-			LunaTargetFrame.name:SetWidth(LunaTargetFrame.bars["Healthbar"]:GetWidth()*0.65)
-		end
-		if LunaTargetFrame.bars["Healthbar"]:GetHeight() < 6 then
-			LunaTargetFrame.bars["Healthbar"].hpp:Hide()
-			LunaTargetFrame.name:Hide()
-		else
-			LunaTargetFrame.bars["Healthbar"].hpp:Show()
-			LunaTargetFrame.name:Show()
-		end
-		local powerheight = (LunaTargetFrame.bars["Powerbar"]:GetHeight()*LunaOptions.textscale)
-		if powerheight > 0 then
-			LunaTargetFrame.bars["Powerbar"].ppp:SetFont(LunaOptions.font, powerheight)
-			LunaTargetFrame.lvl:SetFont(LunaOptions.font, powerheight)
-			LunaTargetFrame.class:SetFont(LunaOptions.font, powerheight)
-		end
-		if LunaTargetFrame.bars["Powerbar"]:GetHeight() < 6 then
-			LunaTargetFrame.bars["Powerbar"].ppp:Hide()
-			LunaTargetFrame.lvl:Hide()
-			LunaTargetFrame.class:Hide()
-		else
-			LunaTargetFrame.bars["Powerbar"].ppp:Show()
-			LunaTargetFrame.lvl:Show()
-			LunaTargetFrame.class:Show()
-		end
-		local castheight = LunaTargetFrame.bars["Castbar"]:GetHeight()
-		if castheight > 5 then
-			LunaTargetFrame.bars["Castbar"].Text:SetFont(LunaOptions.font, castheight)
-			LunaTargetFrame.bars["Castbar"].Time:SetFont(LunaOptions.font, castheight)
-		end
-		if LunaTargetFrame.bars["Castbar"]:GetHeight() < 6 then
-			LunaTargetFrame.bars["Castbar"].Text:Hide()
-			LunaTargetFrame.bars["Castbar"].Time:Hide()
-		else
-			LunaTargetFrame.bars["Castbar"].Text:Show()
-			LunaTargetFrame.bars["Castbar"].Time:Show()
-		end
+		local healthheight = (LunaTargetFrame.bars["Healthbar"]:GetHeight()*textheights["Healthbar"])
+		LunaTargetFrame.bars["Healthbar"].righttext:SetFont(LunaOptions.font, healthheight)
+		LunaTargetFrame.bars["Healthbar"].righttext:SetHeight(LunaTargetFrame.bars["Healthbar"]:GetHeight())
+		LunaTargetFrame.bars["Healthbar"].righttext:SetWidth(LunaTargetFrame.bars["Healthbar"]:GetWidth()*0.35)
+		LunaTargetFrame.bars["Healthbar"].lefttext:SetFont(LunaOptions.font, healthheight)
+		LunaTargetFrame.bars["Healthbar"].lefttext:SetHeight(LunaTargetFrame.bars["Healthbar"]:GetHeight())
+		LunaTargetFrame.bars["Healthbar"].lefttext:SetWidth(LunaTargetFrame.bars["Healthbar"]:GetWidth()*0.65)
+
+		local powerheight = (LunaTargetFrame.bars["Powerbar"]:GetHeight()*textheights["Powerbar"])
+		LunaTargetFrame.bars["Powerbar"].righttext:SetFont(LunaOptions.font, powerheight)
+		LunaTargetFrame.bars["Powerbar"].righttext:SetHeight(LunaTargetFrame.bars["Powerbar"]:GetHeight())
+		LunaTargetFrame.bars["Powerbar"].righttext:SetWidth(LunaTargetFrame.bars["Powerbar"]:GetWidth()*0.5)
+		LunaTargetFrame.bars["Powerbar"].lefttext:SetHeight(LunaTargetFrame.bars["Powerbar"]:GetHeight())
+		LunaTargetFrame.bars["Powerbar"].lefttext:SetWidth(LunaTargetFrame.bars["Powerbar"]:GetWidth()*0.5)
+		LunaTargetFrame.bars["Powerbar"].lefttext:SetFont(LunaOptions.font, powerheight)
+			
+		local castheight = (LunaTargetFrame.bars["Castbar"]:GetHeight()*textheights["Castbar"])
+		LunaTargetFrame.bars["Castbar"].Text:SetFont(LunaOptions.font, castheight)
+		LunaTargetFrame.bars["Castbar"].Text:SetHeight(LunaTargetFrame.bars["Castbar"]:GetHeight())
+		LunaTargetFrame.bars["Castbar"].Text:SetWidth(LunaTargetFrame.bars["Castbar"]:GetWidth()*0.5)
+		LunaTargetFrame.bars["Castbar"].Time:SetFont(LunaOptions.font, castheight)
+		LunaTargetFrame.bars["Castbar"].Time:SetHeight(LunaTargetFrame.bars["Castbar"]:GetHeight())
+		LunaTargetFrame.bars["Castbar"].Time:SetWidth(LunaTargetFrame.bars["Castbar"]:GetWidth()*0.5)
 		SetIconPositions()
 	end
 	LunaTargetFrame.UpdateBuffSize = function ()
@@ -840,14 +831,11 @@ function Luna_Target_Events:UNIT_HEALTH()
 	end
 	LunaTargetFrame.bars["Healthbar"]:SetMinMaxValues(0, maxHealth)
 	if not UnitIsConnected("target") then
-		LunaTargetFrame.bars["Healthbar"].hpp:SetText("OFFLINE")
 		LunaTargetFrame.bars["Healthbar"]:SetValue(0)
 	elseif Health < 1 or (Health == 1 and (UnitInParty("target") or UnitInRaid("target"))) then			-- This prevents negative health
-		LunaTargetFrame.bars["Healthbar"].hpp:SetText("DEAD")
 		LunaTargetFrame.bars["Healthbar"]:SetValue(0)
 	else
 		LunaTargetFrame.bars["Healthbar"]:SetValue(Health)
-		LunaTargetFrame.bars["Healthbar"].hpp:SetText(LunaUnitFrames:GetHealthString("target"))
 		if not LunaOptions.hbarcolor and UnitIsPlayer("target") then
 			local color = LunaUnitFrames:GetHealthColor("target")
 			LunaTargetFrame.bars["Healthbar"]:SetStatusBarColor(color[1],color[2],color[3])
@@ -861,11 +849,9 @@ function Luna_Target_Events:UNIT_MANA()
 	if UnitHealth("target") < 1 or not UnitIsConnected("target") then
 		LunaTargetFrame.bars["Powerbar"]:SetMinMaxValues(0, UnitManaMax("target"))
 		LunaTargetFrame.bars["Powerbar"]:SetValue(0)
-		LunaTargetFrame.bars["Powerbar"].ppp:SetText(LunaUnitFrames:GetPowerString("target"))
 	else
 		LunaTargetFrame.bars["Powerbar"]:SetMinMaxValues(0, UnitManaMax("target"))
 		LunaTargetFrame.bars["Powerbar"]:SetValue(UnitMana("target"))
-		LunaTargetFrame.bars["Powerbar"].ppp:SetText(LunaUnitFrames:GetPowerString("target"))
 	end
 end
 Luna_Target_Events.UNIT_MAXMANA = Luna_Target_Events.UNIT_MANA;
@@ -882,12 +868,6 @@ function LunaUnitFrames:UpdateTargetFrame()
 		return
 	end
 	local _,class = UnitClass("target")
-	
-	if LunaOptions.colornames and UnitIsPlayer("target") then
-		LunaTargetFrame.name:SetTextColor(unpack(LunaOptions.ClassColors[class]))
-	else
-		LunaTargetFrame.name:SetTextColor(1,1,1)
-	end
 	
 	if UnitIsPlayer("target") then
 		local color
@@ -923,15 +903,11 @@ function LunaUnitFrames:UpdateTargetFrame()
 	Luna_Target_Events.PARTY_LEADER_CHANGED()
 	Luna_Target_Events.UNIT_PORTRAIT_UPDATE()
 	Luna_Target_Events.UNIT_DISPLAYPOWER()
-	Luna_Target_Events.UNIT_LEVEL()
 	Luna_Target_Events.RAID_TARGET_UPDATE()
 	Luna_Target_Events.UNIT_AURA()
-	LunaTargetFrame.name:SetText(UnitName("target"))
 	Luna_Target_Events:PARTY_LOOT_METHOD_CHANGED()
 	
 	if UnitIsPlayer("target") then
-		LunaTargetFrame.class:SetText(UnitClass("target"))
-		LunaTargetFrame.class:SetVertexColor(unpack(LunaOptions.ClassColors[class]))
 		local rankNumber = UnitPVPRank("target");
 		if (rankNumber == 0) then
 			LunaTargetFrame.PVPRank:Hide();
@@ -945,12 +921,8 @@ function LunaUnitFrames:UpdateTargetFrame()
 			LunaTargetFrame.PVPRank:Show();
 		end
 	elseif UnitClassification("target") == "normal" then
-		LunaTargetFrame.class:SetText(UnitCreatureType("target"))
-		LunaTargetFrame.class:SetVertexColor(1,1,1)
 		LunaTargetFrame.PVPRank:Hide()
 	else
-		LunaTargetFrame.class:SetText(UnitClassification("target").." "..UnitCreatureType("target"))
-		LunaTargetFrame.class:SetVertexColor(1,1,1)
 		LunaTargetFrame.PVPRank:Hide()
 	end
 end
@@ -1001,17 +973,6 @@ function Luna_Target_Events:UNIT_PORTRAIT_UPDATE()
 	else
 		SetPortraitTexture(portrait, "target")
 	end
-end
-
-function Luna_Target_Events:UNIT_LEVEL()
-	local lvl = UnitLevel("target")
-	if lvl < 1 then
-		LunaTargetFrame.lvl:SetText("??")
-	else
-		LunaTargetFrame.lvl:SetText(lvl)
-	end
-	local color = GetDifficultyColor(lvl)
-	LunaTargetFrame.lvl:SetVertexColor(color.r, color.g, color.b)
 end
 
 function Luna_Target_Events:UNIT_COMBAT()

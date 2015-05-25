@@ -8,7 +8,7 @@ Dependencies: AceLibrary, AceEvent-2.0
 ]]
 
 local MAJOR_VERSION = "DruidManaLib-1.0"
-local MINOR_VERSION = "$Revision: 10000 $"
+local MINOR_VERSION = "$Revision: 10100 $"
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
 if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end
@@ -144,6 +144,7 @@ local function DruidManaLib_MaxManaScript()
 			DruidManaLib.maxmana = UnitManaMax("player");
 			DruidManaLib.keepthemana = UnitMana("player");
 			DruidManaLib.int = int;
+			DruidManaLib.SpecialEventScheduler:TriggerEvent("DruidManaLib_Manaupdate")
 		end
 	elseif UnitPowerType("player") ~= 0 then
 		if DruidManaLib.int ~= int then
@@ -229,6 +230,7 @@ DruidManaLib.OnEvent = function()
 		elseif event == "UNIT_MANA" and arg1 == "player" then
 			if UnitPowerType(arg1) == 0 then
 				DruidManaLib.keepthemana = UnitMana(arg1);
+				DruidManaLib.SpecialEventScheduler:TriggerEvent("DruidManaLib_Manaupdate")
 			elseif DruidManaLib.keepthemana < DruidManaLib.maxmana then
 				local add = DruidManaLib_ReflectionCheck();
 				DruidManaLib.keepthemana = DruidManaLib.keepthemana + add + DruidManaLib.extra;

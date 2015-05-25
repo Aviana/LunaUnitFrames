@@ -4,7 +4,7 @@
 ## Author: Avi
 ## Dependencies:
 ## SavedVariables: LunaOptions
-## OptionalDeps: Ace2, ProximityLib, RosterLib, BanzaiLib, HealComm, DruidManaLib
+## OptionalDeps: Ace2, ProximityLib, RosterLib, BanzaiLib, HealComm, DruidManaLib, MobHealth
 
 libs\AceLibrary\AceLibrary.lua
 libs\AceOO-2.0\AceOO-2.0.lua
@@ -20,6 +20,7 @@ libs\DruidManaLib-1.0\DruidManaLib-1.0.lua
 
 LunaUnitFrames.lua
 
+modules\Tags.lua
 modules\Player.lua
 modules\Target.lua
 modules\TargetTarget.lua
