@@ -673,13 +673,13 @@ local function onEvent(arg1)
 		for i=1, 4 do
 			local unit = "party"..i
 			if UnitExists(unit) and Tags.fontStrings[unit] then
-				LunaUnitFrames:UpdateTags(unit, nil, "PARTY_MEMBERS_CHANGED")
+				LunaUnitFrames:UpdateTags(unit)
 			end
 		end
 		for i=1, 40 do
 		local unit = "raid"..i
 			if UnitExists(unit) and Tags.fontStrings[unit] then
-				LunaUnitFrames:UpdateTags(unit, nil, "PARTY_MEMBERS_CHANGED")
+				LunaUnitFrames:UpdateTags(unit)
 			end
 		end
 	elseif event == "UNIT_COMBO_POINTS" then
