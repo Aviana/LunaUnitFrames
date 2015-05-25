@@ -1076,11 +1076,11 @@ end
 function OptionFunctions.ToggleRaidPowerBars()
 	if not LunaOptions.frames["LunaRaidFrames"].pBars then
 		LunaOptions.frames["LunaRaidFrames"].pBars = 1
-		LunaOptionsFrame.pages[7].pBarvertswitch:Enable()
-		LunaOptionsFrame.pages[7].pBarvertswitch:SetChecked(nil)
+		LunaOptionsFrame.pages[9].pBarvertswitch:Enable()
+		LunaOptionsFrame.pages[9].pBarvertswitch:SetChecked(nil)
 	else
 		LunaOptions.frames["LunaRaidFrames"].pBars = nil
-		LunaOptionsFrame.pages[7].pBarvertswitch:Disable()
+		LunaOptionsFrame.pages[9].pBarvertswitch:Disable()
 	end
 	LunaUnitFrames:UpdateRaidLayout()
 end

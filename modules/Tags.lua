@@ -139,7 +139,7 @@ Tags.defaultTags = {
 									return "female"
 								end
 							end;
-	["nocolor"]				= function(unit) return Hex(0,0,0) end;
+	["nocolor"]				= function(unit) return Hex(1,1,1) end;
 	["druidform"]			= function(unit)
 								local form
 								for i=1,24 do
