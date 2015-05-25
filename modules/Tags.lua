@@ -456,8 +456,10 @@ Tags.defaultTags = {
 									return Hex(LunaOptions.MiscColors["neutral"])
 								elseif reaction < 4 then
 									return Hex(LunaOptions.MiscColors["hostile"])
-								else
+								elseif reaction then
 									return Hex(LunaOptions.MiscColors["friendly"])
+								else
+									return ""
 								end
 							end;
 	["pvpcolor"]			= function(unit)
