@@ -1111,18 +1111,21 @@ function LunaUnitFrames.Raid_Update()
 	for i=1, getn(PetRoster) do
 		if LunaUnitFrames.frames.RaidFrames[9].member[i]:IsVisible() then
 			local texture,_,dispeltype = UnitDebuff(LunaUnitFrames.frames.RaidFrames[9].member[i].unit,1,1)
-			if not dispeltype and LunaOptions.frames["LunaRaidFrames"].centerIcon and not LunaOptions.showdispelable then
+			if not dispeltype and not LunaOptions.showdispelable then
 				for h=1,16 do
 					texture,_,dispeltype = UnitDebuff(LunaUnitFrames.frames.RaidFrames[9].member[i].unit,h)
 					if dispeltype then
 						break
 					end
 				end
+				if not dispeltype then
+					texture = UnitDebuff(LunaUnitFrames.frames.RaidFrames[9].member[i].unit,1)
+				end
 			end
 			if LunaOptions.frames["LunaRaidFrames"].centerIcon and texture then
 				LunaUnitFrames.frames.RaidFrames[9].member[i].debuff.texture:SetTexture(texture)
 				LunaUnitFrames.frames.RaidFrames[9].member[i].debuff:Show()
-			elseif texture then
+			elseif not LunaOptions.frames["LunaRaidFrames"].centerIcon and texture and dispeltype then
 				local r,g,b = unpack(LunaOptions.DebuffTypeColor[dispeltype])
 				LunaUnitFrames.frames.RaidFrames[9].member[i].debuff.texture:SetTexture(r,g,b)
 				LunaUnitFrames.frames.RaidFrames[9].member[i].debuff:Show()
