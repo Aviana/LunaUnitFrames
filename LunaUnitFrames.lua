@@ -171,6 +171,12 @@ function LunaUnitFrames:OnEvent()
 				}
 			}
 		end
+		if not LunaOptions.defaultTags["Portrait"] then
+			LunaOptions.defaultTags["Portrait"] = {
+												[1] = "",
+												[2] = ""
+											}
+		end
 		if not LunaOptions.ClassColors then
 			LunaOptions.ClassColors = {	WARRIOR = {0.78, 0.61, 0.43},
 							MAGE = {0.41, 0.8, 0.94},

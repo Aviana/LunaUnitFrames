@@ -717,9 +717,12 @@ function LunaUnitFrames:ConvertTargetPortrait()
 	UIDropDownMenu_SetText("Healthbar", LunaOptionsFrame.pages[3].BarSelect)
 	LunaOptionsFrame.pages[3].barorder:SetMinMaxValues(1,table.getn(LunaOptions.frames["LunaTargetFrame"].bars))
 	for k,v in pairs(LunaOptions.frames["LunaTargetFrame"].bars) do
-		if v[1] == UIDropDownMenu_GetText(LunaOptionsFrame.pages[3].BarSelect) then
+		if v[1] == "Healthbar" then
 			LunaOptionsFrame.pages[3].barheight:SetValue(v[2])
 			LunaOptionsFrame.pages[3].barorder:SetValue(k)
+			LunaOptionsFrame.pages[3].lefttext:SetText(v[4] or LunaOptions.defaultTags["Healthbar"][1])
+			LunaOptionsFrame.pages[3].righttext:SetText(v[5] or LunaOptions.defaultTags["Healthbar"][2])
+			LunaOptionsFrame.pages[3].textsize:SetValue(v[3] or 0.45)
 			break
 		end
 	end

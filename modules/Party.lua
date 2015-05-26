@@ -573,12 +573,15 @@ function LunaUnitFrames:ConvertPartyPortraits()
 			end
 		end
 	end
-	UIDropDownMenu_SetText("Healthbar", LunaOptionsFrame.pages[5].BarSelect)
-	LunaOptionsFrame.pages[5].barorder:SetMinMaxValues(1,table.getn(LunaOptions.frames["LunaPartyFrames"].bars))
+	UIDropDownMenu_SetText("Healthbar", LunaOptionsFrame.pages[6].BarSelect)
+	LunaOptionsFrame.pages[6].barorder:SetMinMaxValues(1,table.getn(LunaOptions.frames["LunaPartyFrames"].bars))
 	for k,v in pairs(LunaOptions.frames["LunaPartyFrames"].bars) do
-		if v[1] == UIDropDownMenu_GetText(LunaOptionsFrame.pages[5].BarSelect) then
-			LunaOptionsFrame.pages[5].barheight:SetValue(v[2])
-			LunaOptionsFrame.pages[5].barorder:SetValue(k)
+		if v[1] == "Healthbar" then
+			LunaOptionsFrame.pages[6].barheight:SetValue(v[2])
+			LunaOptionsFrame.pages[6].barorder:SetValue(k)
+			LunaOptionsFrame.pages[6].lefttext:SetText(v[4] or LunaOptions.defaultTags["Healthbar"][1])
+			LunaOptionsFrame.pages[6].righttext:SetText(v[5] or LunaOptions.defaultTags["Healthbar"][2])
+			LunaOptionsFrame.pages[6].textsize:SetValue(v[3] or 0.45)
 			break
 		end
 	end

@@ -891,9 +891,12 @@ function LunaUnitFrames:ConvertPlayerPortrait()
 	UIDropDownMenu_SetText("Healthbar", LunaOptionsFrame.pages[1].BarSelect)
 	LunaOptionsFrame.pages[1].barorder:SetMinMaxValues(1,table.getn(LunaOptions.frames["LunaPlayerFrame"].bars))
 	for k,v in pairs(LunaOptions.frames["LunaPlayerFrame"].bars) do
-		if v[1] == UIDropDownMenu_GetText(LunaOptionsFrame.pages[1].BarSelect) then
+		if v[1] == "Healthbar" then
 			LunaOptionsFrame.pages[1].barheight:SetValue(v[2])
 			LunaOptionsFrame.pages[1].barorder:SetValue(k)
+			LunaOptionsFrame.pages[1].lefttext:SetText(v[4] or LunaOptions.defaultTags["Healthbar"][1])
+			LunaOptionsFrame.pages[1].righttext:SetText(v[5] or LunaOptions.defaultTags["Healthbar"][2])
+			LunaOptionsFrame.pages[1].textsize:SetValue(v[3] or 0.45)
 			break
 		end
 	end

@@ -908,13 +908,21 @@ function LunaUnitFrames.Raid_Aura(unitid)
 		return
 	end
 	local texture,_,dispeltype = UnitDebuff(this.unit,1,1)
-	if not dispeltype and LunaOptions.frames["LunaRaidFrames"].centerIcon and not LunaOptions.showdispelable then
-		texture = UnitDebuff(this.unit,1)
+	if not dispeltype and not LunaOptions.showdispelable then
+		for i=1, 16 do
+			texture,_,dispeltype = UnitDebuff(this.unit,i)
+			if dispeltype then
+				break
+			end
+		end
+		if not dispeltype then
+			texture = UnitDebuff(this.unit,1)
+		end
 	end
 	if LunaOptions.frames["LunaRaidFrames"].centerIcon and texture then
 		this.debuff.texture:SetTexture(texture)
 		this.debuff:Show()
-	elseif texture then
+	elseif not LunaOptions.frames["LunaRaidFrames"].centerIcon and texture and dispeltype then
 		local r,g,b = unpack(LunaOptions.DebuffTypeColor[dispeltype])
 		this.debuff.texture:SetTexture(r,g,b)
 		this.debuff:Show()
@@ -1059,18 +1067,21 @@ function LunaUnitFrames.Raid_Update()
 		for z=1,5 do
 			if LunaUnitFrames.frames.RaidFrames[i].member[z]:IsVisible() then
 				local texture,_,dispeltype = UnitDebuff(LunaUnitFrames.frames.RaidFrames[i].member[z].unit,1,1)
-				if not dispeltype and LunaOptions.frames["LunaRaidFrames"].centerIcon and not LunaOptions.showdispelable then
+				if not dispeltype and not LunaOptions.showdispelable then
 					for h=1,16 do
 						texture,_,dispeltype = UnitDebuff(LunaUnitFrames.frames.RaidFrames[i].member[z].unit,h)
 						if dispeltype then
 							break
 						end
 					end
+					if not dispeltype then
+						texture = UnitDebuff(LunaUnitFrames.frames.RaidFrames[i].member[z].unit,1)
+					end
 				end
 				if LunaOptions.frames["LunaRaidFrames"].centerIcon and texture then
 					LunaUnitFrames.frames.RaidFrames[i].member[z].debuff.texture:SetTexture(texture)
 					LunaUnitFrames.frames.RaidFrames[i].member[z].debuff:Show()
-				elseif texture then
+				elseif not LunaOptions.frames["LunaRaidFrames"].centerIcon and texture and dispeltype then
 					local r,g,b = unpack(LunaOptions.DebuffTypeColor[dispeltype])
 					LunaUnitFrames.frames.RaidFrames[i].member[z].debuff.texture:SetTexture(r,g,b)
 					LunaUnitFrames.frames.RaidFrames[i].member[z].debuff:Show()

@@ -255,7 +255,11 @@ Tags.defaultTags = {
 									hp = UnitHealth(unit)
 									maxhp = UnitHealthMax(unit)
 								end
-								return math.floor(((hp / maxhp) * 100)+0.5)
+								if maxhp < 1 then
+									return 0
+								else
+									return math.floor(((hp / maxhp) * 100)+0.5)
+								end
 							end;
 	["pp"]            	    = function(unit) return UnitMana(unit) end;
 	["maxpp"]				= function(unit) return UnitManaMax(unit) end;
@@ -269,7 +273,7 @@ Tags.defaultTags = {
 								end
 							end;
 	["perpp"]               = function(unit)
-								if UnitManaMax(unit) == 0 then
+								if UnitManaMax(unit) < 1 then
 									return 0
 								else
 									return math.floor(((UnitMana(unit) / UnitManaMax(unit)) * 100)+0.5)

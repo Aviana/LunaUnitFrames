@@ -440,9 +440,12 @@ function LunaUnitFrames:ConvertPetPortrait()
 	UIDropDownMenu_SetText("Healthbar", LunaOptionsFrame.pages[2].BarSelect)
 	LunaOptionsFrame.pages[2].barorder:SetMinMaxValues(1,table.getn(LunaOptions.frames["LunaPetFrame"].bars))
 	for k,v in pairs(LunaOptions.frames["LunaPetFrame"].bars) do
-		if v[1] == UIDropDownMenu_GetText(LunaOptionsFrame.pages[2].BarSelect) then
+		if v[1] == "Healthbar" then
 			LunaOptionsFrame.pages[2].barheight:SetValue(v[2])
 			LunaOptionsFrame.pages[2].barorder:SetValue(k)
+			LunaOptionsFrame.pages[2].lefttext:SetText(v[4] or LunaOptions.defaultTags["Healthbar"][1])
+			LunaOptionsFrame.pages[2].righttext:SetText(v[5] or LunaOptions.defaultTags["Healthbar"][2])
+			LunaOptionsFrame.pages[2].textsize:SetValue(v[3] or 0.45)
 			break
 		end
 	end
