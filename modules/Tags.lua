@@ -548,7 +548,11 @@ Tags.defaultTags = {
 								end
 								local result = hp-maxhp+heal
 								if result == 0 then
-									return ""
+									if heal == 0 then
+										return ""
+									else
+										return Hex(0,1,0).."0"..Hex(1,1,1)
+									end
 								else
 									if heal > 0 then
 										return Hex(0,1,0)..result..Hex(1,1,1)
@@ -645,7 +649,7 @@ function LunaUnitFrames:UpdateTags(unit, fontString, event)
 		if Tags.fontStrings[unit] then
 			for k,v in pairs(Tags.fontStrings[unit]) do
 				local text = updateTagString(unit, k)
-				if text then
+				if text and k:GetFont() then
 					k:SetText(text)
 				end
 			end
@@ -654,14 +658,14 @@ function LunaUnitFrames:UpdateTags(unit, fontString, event)
 		if Tags.fontStrings[unit] then
 			for k,v in pairs(Tags.fontStrings[unit]) do
 				local text = updateTagString(unit, k, event)
-				if text then
+				if text and k:GetFont() then
 					k:SetText(text)
 				end
 			end
 		end
 	elseif fontString then
 		local text = updateTagString(unit, fontString)
-		if text then
+		if text and fontString:GetFont() then
 			fontString:SetText(text)
 		end
 	end
@@ -694,6 +698,9 @@ local function onEvent(arg1)
 		LunaUnitFrames:UpdateTags("target")
 	elseif event == "HealComm_Healupdate" then
 		local unit = roster:GetUnitIDFromName(arg1)
+		if UnitIsUnit(unit, "target") then
+			LunaUnitFrames:UpdateTags("target", nil, event)
+		end
 		LunaUnitFrames:UpdateTags(unit, nil, event)
 	elseif event == "IGNORELIST_UPDATE" then
 		LunaUnitFrames:UpdateTags("target")

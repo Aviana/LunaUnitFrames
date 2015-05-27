@@ -693,7 +693,9 @@ function LunaUnitFrames:StartTargetCast(start, spell, dur, isChannel)
 			LunaTargetFrame.bars["Castbar"]:SetValue(start)
 		end
 		LunaTargetFrame.bars["Castbar"].startTime = start
-		LunaTargetFrame.bars["Castbar"].Text:SetText(spell)
+		if LunaTargetFrame.bars["Castbar"].Text:GetFont() then
+			LunaTargetFrame.bars["Castbar"].Text:SetText(spell)
+		end
 		LunaTargetFrame.AdjustBars()
 	end
 end
