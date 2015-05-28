@@ -1026,7 +1026,7 @@ function LunaUnitFrames.Raid_Res(unitName)
 end
 
 function LunaUnitFrames.Raid_Hot(unit)
-	if not LunaOptions.frames["LunaRaidFrames"].hottracker then
+	if not LunaOptions.frames["LunaRaidFrames"].hottracker or (GetNumPartyMembers() > 0 and not LunaOptions.AlwaysRaid) or (not LunaOptions.enableRaid and GetNumRaidMembers() > 0) then
 		return
 	end
 	local unitObj = roster:GetUnitObjectFromUnit(unit)

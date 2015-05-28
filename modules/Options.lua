@@ -15,6 +15,62 @@ local OptionsPageNames = {{title = "Player Frame", frame = "LunaPlayerFrame"},
 local barselectorfunc = {}
 local buffposselectfunc = {}
 
+local TagDesc = {
+	["race"]				= "Race if available",
+	["rank"]				= "PvP title",
+	["numrank"]				= "Numeric PvP rank",
+	["creature"]			= "Creature type (Bat, Wolf , etc..)",
+	["faction"]				= "Horde or Alliance",
+	["sex"]					= "Gender",
+	["nocolor"]				= "Resets the color to white",
+	["druidform"]			= "Current druid form of friendly unit",
+	["guild"]				= "Guildname",
+	["incheal"]				= "Value of incoming heal",
+	["pvp"]					= "Displays \"PvP\" if flagged for it",
+	["smarthealth"]			= "The classic hp display (hp/maxhp and \"Dead\" if dead etc)",
+	["healhp"]				= "Current hp and heal in one number (green when heal is incoming)",
+	["hp"]            	    = "Current hp",
+	["maxhp"]				= "Current maximum hp",
+	["missinghp"]           = "Current missing hp",
+	["healmishp"]			= "Missing hp after incoming heal (green when heal is incoming)",
+	["perhp"]               = "HP percent",
+	["pp"]            	    = "Current mana/rage/energy etc",
+	["maxpp"]				= "Maximum mana/rage/energy etc",
+	["missingpp"]           = "Missing mana/rage/energy",
+	["perpp"]               = "Mana/rage/energy percent",
+	["druid:pp"]			= "Returns current mana even in druid form",
+	["druid:maxpp"]			= "Returns current maximum mana even in druid form",
+	["druid:missingpp"]		= "Returns missing mana even in druid form",
+	["druid:perpp"]			= "Returns mana percentage even in druid form",
+	["level"]               = "Current level, returns ?? for bosses and players too high",
+	["smartlevel"]          = "Returns \"Boss\" for bosses and Level+10+ for players too high",
+	["levelcolor"]			= "Colors based on your level vs the level of the unit. (grey,green,yellow and red)",
+	["name"]                = "Returns plain name of the unit",
+	["ignore"]				= "Returns (i) if the player is on your ignore list",
+	["abbrev:name"]			= "Returns shortened names (Marshall Williams = M. Williams)",
+	["server"]				= "Server name",
+	["status"]              = "\"Dead\", \"Ghost\" or \"Offline\"",
+	["cpoints"]             = "Combo Points",
+	["rare"]                = "\"rare\" if the creature is rare or rareelite",
+	["elite"]     			= "\"elite\" if the creature is elite or rareelite",
+	["shortclassification"] = "\"E\", \"R\", \"RE\" for the respective classification",
+	["group"]				= "Current subgroup of the raid",
+	["color:aggro"]			= "Red if the unit is targeted by an enemy",
+	["classcolor"]			= "Classcolor of the unit",
+	["class"]				= "Class of the unit",
+	["smartclass"]			= "Returns Class for players and Creaturetype for NPCs",
+	["reactcolor"]			= "Red for enemies, yellow for neutrals, and green for friendlies",
+	["pvpcolor"]			= "White for unflagged units, green for flagged friendlies and red for flagged enemies",
+	["smart:healmishp"]		= "Returns missing hp with healing factored in. Shows status when needed (\"Dead\", \"Offline\", \"Ghost\")",
+	["smartrace"]			= "Shows race when if player, creaturetype when npc",
+	["civilian"]			= "Returns (c) when civilian",
+	["healerhealth"]		= "Returns the same as \"smart:healmishp\" on friendly units and hp/maxhp on enemies",
+}
+
+local function LunaScrollBar_Update()
+	FauxScrollFrame_Update(this,50,5,16)
+end
+
 local function ResetSettings()
 	LunaOptions = {}
 	LunaOptions.PowerColors = {
@@ -1213,6 +1269,20 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.name:SetShadowOffset(0.8, -0.8)
 	LunaOptionsFrame.name:SetTextColor(1,1,1)
 	LunaOptionsFrame.name:SetText("LUNA UNIT FRAMES")
+	
+	LunaOptionsFrame.help = CreateFrame("Button", nil, LunaOptionsFrame)
+	LunaOptionsFrame.help:SetHeight(14)
+	LunaOptionsFrame.help:SetWidth(14)
+	LunaOptionsFrame.help:SetPoint("RIGHT", LunaOptionsFrame.CloseButton, "LEFT", -5, 0)
+	LunaOptionsFrame.help:SetScript("OnEnter", function() LunaOptionsFrame.helpframe:Show() end)
+	LunaOptionsFrame.help:SetScript("OnLeave", function() LunaOptionsFrame.helpframe:Hide() end)
+	
+	LunaOptionsFrame.help.text = LunaOptionsFrame.help:CreateFontString(nil, "OVERLAY", "NumberFontNormal")
+	LunaOptionsFrame.help.text:SetPoint("CENTER", LunaOptionsFrame.help, "CENTER")
+	LunaOptionsFrame.help.text:SetTextColor(1,1,1)
+	LunaOptionsFrame.help.text:SetText("[?]")
+	LunaOptionsFrame.help.text:SetJustifyH("CENTER")
+	LunaOptionsFrame.help.text:SetJustifyV("MIDDLE")
 
 	LunaOptionsFrame.pages = {}
 
@@ -2238,4 +2308,44 @@ function LunaOptionsModule:CreateMenu()
 		end
 	end
 	
+	LunaOptionsFrame.helpframe = CreateFrame("Frame", nil, LunaOptionsFrame)
+	LunaOptionsFrame.helpframe:SetHeight(655)
+	LunaOptionsFrame.helpframe:SetWidth(300)
+	LunaOptionsFrame.helpframe:SetBackdrop(LunaOptions.backdrop)
+	LunaOptionsFrame.helpframe:SetBackdropColor(0.18,0.27,0.5)
+	LunaOptionsFrame.helpframe:SetPoint("TOPLEFT", LunaOptionsFrame, "TOPRIGHT", 5, 0)
+	
+	LunaOptionsFrame.helpframe.title = LunaOptionsFrame.helpframe:CreateFontString(nil, "OVERLAY", LunaOptionsFrame.helpframe)
+	LunaOptionsFrame.helpframe.title:SetFont(LunaOptions.font, 20)
+	LunaOptionsFrame.helpframe.title:SetText("Tags")
+	LunaOptionsFrame.helpframe.title:SetJustifyH("CENTER")
+	LunaOptionsFrame.helpframe.title:SetJustifyV("TOP")
+	LunaOptionsFrame.helpframe.title:SetPoint("TOP", LunaOptionsFrame.helpframe, "TOP")
+	LunaOptionsFrame.helpframe.title:SetHeight(20)
+	LunaOptionsFrame.helpframe.title:SetWidth(300)
+	
+	LunaOptionsFrame.helpframe.texts = {}
+	local dist
+	local prevframe = LunaOptionsFrame.helpframe.title
+	for k,v in pairs(TagDesc) do
+		LunaOptionsFrame.helpframe.texts[k] = LunaOptionsFrame.helpframe:CreateFontString(nil, "OVERLAY", LunaOptionsFrame.helpframe)
+		LunaOptionsFrame.helpframe.texts[k]:SetFont(LunaOptions.font, 10)
+		LunaOptionsFrame.helpframe.texts[k]:SetText("["..k.."]: "..v)
+		LunaOptionsFrame.helpframe.texts[k]:SetJustifyH("LEFT")
+		LunaOptionsFrame.helpframe.texts[k]:SetJustifyV("TOP")
+		if LunaOptionsFrame.helpframe.texts[k]:GetStringWidth() > 280 then
+			LunaOptionsFrame.helpframe.texts[k]:SetHeight(22)
+		else
+			LunaOptionsFrame.helpframe.texts[k]:SetHeight(11)
+		end
+		LunaOptionsFrame.helpframe.texts[k]:SetWidth(300)
+		if not dist then
+			LunaOptionsFrame.helpframe.texts[k]:SetPoint("TOP", prevframe, "BOTTOM")
+		else
+			LunaOptionsFrame.helpframe.texts[k]:SetPoint("TOPLEFT", prevframe, "BOTTOMLEFT")
+		end
+		prevframe = LunaOptionsFrame.helpframe.texts[k]
+		dist = 1
+	end
+	LunaOptionsFrame.helpframe:Hide()
 end

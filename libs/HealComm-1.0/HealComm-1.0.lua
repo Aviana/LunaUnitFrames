@@ -8,7 +8,7 @@ Dependencies: AceLibrary, AceEvent-2.0, RosterLib-2.0
 ]]
 
 local MAJOR_VERSION = "HealComm-1.0"
-local MINOR_VERSION = "$Revision: 11030 $"
+local MINOR_VERSION = "$Revision: 11100 $"
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
 if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end
@@ -1325,7 +1325,9 @@ function healcomm_newCastSpell(spellId, spellbookTabNum)
 	elseif ( UnitIsVisible("target") and UnitIsConnected("target") and UnitCanAssist("player", "target") ) then
        -- Spell is being cast on the current target.  
        -- If ClearTarget() had been called, we'd be waiting target
-	   healcomm_ProcessSpellCast(spellName, rank, UnitName("target"))
+		if UnitIsPlayer("target") then
+			healcomm_ProcessSpellCast(spellName, rank, UnitName("target"))
+		end
 	else
 		healcomm_ProcessSpellCast(spellName, rank, UnitName("player"))
 	end
@@ -1357,7 +1359,9 @@ function healcomm_newCastSpellByName(spellName, onSelf)
 			healcomm_RankRank = rank
 		else
 			if UnitIsVisible("target") and UnitIsConnected("target") and UnitCanAssist("player", "target") and onSelf ~= 1 then
-				healcomm_ProcessSpellCast(spellName, rank, UnitName("target"))
+				if UnitIsPlayer("target") then
+					healcomm_ProcessSpellCast(spellName, rank, UnitName("target"))
+				end
 			else
 				healcomm_ProcessSpellCast(spellName, rank, UnitName("player"))
 			end
@@ -1413,7 +1417,9 @@ function healcomm_newUseAction(slot, checkCursor, onSelf)
 		return
 	elseif ( UnitIsVisible("target") and UnitIsConnected("target") and UnitCanAssist("player", "target") and onSelf ~= 1) then
 		-- Spell is being cast on the current target
-		healcomm_ProcessSpellCast(spellName, rank, UnitName("target"))
+		if UnitIsPlayer("target") then
+			healcomm_ProcessSpellCast(spellName, rank, UnitName("target"))
+		end
 	else
 		-- Spell is being cast on the player
 		healcomm_ProcessSpellCast(spellName, rank, UnitName("player"))
@@ -1430,7 +1436,9 @@ function healcomm_newSpellTargetUnit(unit)
 	end
 	healcomm_oldSpellTargetUnit(unit)
 	if ( shallTargetUnit and healcomm_SpellSpell and not SpellIsTargeting() ) then
-		healcomm_ProcessSpellCast(healcomm_SpellSpell, healcomm_RankRank, UnitName(unit))
+		if UnitIsPlayer(unit) then
+			healcomm_ProcessSpellCast(healcomm_SpellSpell, healcomm_RankRank, UnitName(unit))
+		end
 		healcomm_SpellSpell = nil
 		healcomm_RankRank = nil
 	end
@@ -1449,7 +1457,7 @@ healcomm_oldTargetUnit = TargetUnit
 function healcomm_newTargetUnit(unit)
 	-- Look to see if we're currently waiting for a target internally
 	-- If we are, then well glean the target info here.
-	if ( healcomm_SpellSpell and UnitExists(unit) ) then
+	if ( healcomm_SpellSpell and UnitExists(unit) ) and UnitIsPlayer(unit) then
 		healcomm_ProcessSpellCast(healcomm_SpellSpell, healcomm_RankRank, UnitName(unit))
 	end
 	-- Call the original function
@@ -1458,7 +1466,8 @@ end
 TargetUnit = healcomm_newTargetUnit
 
 function healcomm_ProcessSpellCast(spellName, rank, targetName)
-	if ( spellName and rank and targetName ) then
+	local unit = roster:GetUnitIDFromName(targetName)
+	if ( spellName and rank and targetName and unit ) then
 		local power, mod = GetTargetSpellPower(spellName)
 		healcomm_SpellCast = { spellName, rank, targetName, power, mod }
 	end

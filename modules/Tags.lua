@@ -693,12 +693,12 @@ local function onEvent(arg1)
 			end
 		end
 	elseif event == "UNIT_COMBO_POINTS" then
-		LunaUnitFrames:UpdateTags("target", nil, event)
+		LunaUnitFrames:UpdateTags("target", nil, "UNIT_COMBO_POINTS")
 	elseif event == "PLAYER_TARGET_CHANGED" then
 		LunaUnitFrames:UpdateTags("target")
 	elseif event == "HealComm_Healupdate" then
 		local unit = roster:GetUnitIDFromName(arg1)
-		if UnitIsUnit(unit, "target") then
+		if unit and UnitIsUnit(unit, "target") then
 			LunaUnitFrames:UpdateTags("target", nil, event)
 		end
 		LunaUnitFrames:UpdateTags(unit, nil, event)
