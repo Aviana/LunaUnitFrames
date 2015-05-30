@@ -220,6 +220,25 @@ end
 SLASH_LUFMO1, SLASH_LUFMO2 = "/lunamo", "/lunamouseover"
 function SlashCmdList.LUFMO(msg, editbox)
 	local func = loadstring(msg)
+	if LunaOptions.mouseover and UnitExists("mouseover") then
+		if UnitIsUnit("target", "mouseover") then
+			if func then
+				func()
+			else
+				CastSpellByName(msg)
+			end
+			return
+		else
+			TargetUnit("mouseover")
+			if func then
+				func()
+			else
+				CastSpellByName(msg)
+			end
+			TargetLastTarget()
+			return
+		end
+	end
 	if GetMouseFocus().unit then
 		if UnitIsUnit("target", GetMouseFocus().unit) then
 			if func then

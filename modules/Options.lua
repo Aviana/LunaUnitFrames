@@ -1102,6 +1102,14 @@ function OptionFunctions.ToggleHighlightBuffs()
 	end
 end
 
+function OptionFunctions.Mouseover()
+	if not LunaOptions.mouseover then
+		LunaOptions.mouseover = 1
+	else
+		LunaOptions.mouseover = nil
+	end
+end
+
 function OptionFunctions.enableFrame()
 	if LunaOptions.frames[this:GetParent().frame].enabled == 1 then
 		LunaOptions.frames[this:GetParent().frame].enabled = 0
@@ -1950,11 +1958,19 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[10].hbuffs:SetChecked(LunaOptions.HighlightDebuffs)
 	getglobal("HighlightDebuffsSwitchText"):SetText("Highlight debuffed units you can dispel")
 	
+	LunaOptionsFrame.pages[10].mouseover = CreateFrame("CheckButton", "MouseoverSwitch", LunaOptionsFrame.pages[10], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[10].mouseover:SetHeight(20)
+	LunaOptionsFrame.pages[10].mouseover:SetWidth(20)
+	LunaOptionsFrame.pages[10].mouseover:SetPoint("TOPLEFT", LunaOptionsFrame.pages[10].hbuffs, "TOPLEFT", 0, -30)
+	LunaOptionsFrame.pages[10].mouseover:SetScript("OnClick", OptionFunctions.Mouseover)
+	LunaOptionsFrame.pages[10].mouseover:SetChecked(LunaOptions.mouseover)
+	getglobal("MouseoverSwitchText"):SetText("Allow mouseover in the 3D world.")	
+	
 	LunaOptionsFrame.pages[10].overhealslider = CreateFrame("Slider", "OverhealSlider", LunaOptionsFrame.pages[10], "OptionsSliderTemplate")
 	LunaOptionsFrame.pages[10].overhealslider:SetMinMaxValues(0,20)
 	LunaOptionsFrame.pages[10].overhealslider:SetValueStep(1)
 	LunaOptionsFrame.pages[10].overhealslider:SetScript("OnValueChanged", OptionFunctions.OverhealAdjust)
-	LunaOptionsFrame.pages[10].overhealslider:SetPoint("TOPLEFT", LunaOptionsFrame.pages[10].hbuffs, "BOTTOMLEFT", 0, -20)
+	LunaOptionsFrame.pages[10].overhealslider:SetPoint("TOPLEFT", LunaOptionsFrame.pages[10].mouseover, "BOTTOMLEFT", 0, -20)
 	LunaOptionsFrame.pages[10].overhealslider:SetValue(LunaOptions.overheal or 20)
 	LunaOptionsFrame.pages[10].overhealslider:SetWidth(215)
 	getglobal("OverhealSliderText"):SetText("Overlap percent of healbar: "..(LunaOptions.overheal or 20))
