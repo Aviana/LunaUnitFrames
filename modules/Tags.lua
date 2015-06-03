@@ -412,19 +412,23 @@ Tags.defaultTags = {
 								end
 							end;
 	["group"]				= function(unit)
-								if(GetNumRaidMembers() == 0) then
-									if GetNumPartyMembers() == 0 then
-										return ""
-									else
-										return 1
+								if UnitInParty(unit) or UnitIsUnit("player",unit) then
+									if(GetNumRaidMembers() == 0) then
+										if GetNumPartyMembers() == 0 then
+											return ""
+										else
+											return 1
+										end
 									end
-								end
-								local name = UnitName(unit)
-								for i=1, GetNumRaidMembers() do
-									local raidName, _, group = GetRaidRosterInfo(i)
-									if( raidName == name ) then
-										return group
+									local name = UnitName(unit)
+									for i=1, GetNumRaidMembers() do
+										local raidName, _, group = GetRaidRosterInfo(i)
+										if( raidName == name ) then
+											return group
+										end
 									end
+								else
+									return ""
 								end
 							end;
 	["color:aggro"]			= function(unit)

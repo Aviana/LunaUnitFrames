@@ -81,7 +81,8 @@ local function triggerFSR(spellName)
 		if s == spellName then
 			FiveSecLibTip:ClearLines()
 			FiveSecLibTip:SetSpell(i, BOOKTYPE_SPELL)
-			if string.find(FiveSecLibTipTextLeft2:GetText(),"(%d+) Mana") then
+			local mana = FiveSecLibTipTextLeft2:GetText()
+			if string.find(mana,"(%d+) Mana") then
 				FiveSecLib.EventScheduler:TriggerEvent("fiveSec")
 			end
 			return
@@ -97,6 +98,7 @@ FiveSecLib.OnEvent = function()
 			FiveSecLib_Spell = nil
 		end
 	elseif event == "SPELLCAST_STOP" and FiveSecLib_Spell then
+	--	triggerFSR(FiveSecLib_Spell)
 		FiveSecLib.EventScheduler:ScheduleEvent("Trigger_fiveSec", triggerFSR, 0.2, FiveSecLib_Spell)
 	end
 end
