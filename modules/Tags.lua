@@ -1,6 +1,7 @@
 local HealComm = AceLibrary("HealComm-1.0")
 local AceEvent = AceLibrary("AceEvent-2.0")
 local roster = AceLibrary("RosterLib-2.0")
+local banzai = AceLibrary("Banzai-1.0")
 local Tags = {}
 
 local function abbreviateName(text)
