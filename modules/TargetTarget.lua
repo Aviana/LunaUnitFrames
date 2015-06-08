@@ -554,15 +554,10 @@ function LunaUnitFrames:UpdateTargetTargetFrame()
 	else
 		LunaTargetTargetFrame.RaidIcon:Hide()
 	end
-	local found, dtype
-	for i=1, 16 do
-		_,_,dtype = UnitDebuff("targettarget", i, 1)
-		if dtype and LunaOptions.HighlightDebuffs and not UnitIsEnemy("targettarget","player") then
-			LunaTargetTargetFrame:SetBackdropColor(unpack(LunaOptions.DebuffTypeColor[dtype],1))
-			found = true
-		end
-	end
-	if not found then
+	local _,_,dtype = UnitDebuff("targettarget", 1, 1)
+	if dtype and LunaOptions.HighlightDebuffs and UnitCanAssist("player", "targettarget") then
+		LunaTargetTargetFrame:SetBackdropColor(unpack(LunaOptions.DebuffTypeColor[dtype],1))
+	else
 		LunaTargetTargetFrame:SetBackdropColor(0,0,0,1)
 	end
 	if LunaOptions.frames["LunaTargetTargetFrame"].ShowBuffs ~= 1 then
@@ -1049,15 +1044,10 @@ function LunaUnitFrames:UpdateTargetTargetTargetFrame()
 	else
 		LunaTargetTargetTargetFrame.RaidIcon:Hide()
 	end
-	local found, dtype
-	for i=1, 16 do
-		_,_,dtype = UnitDebuff("targettargettarget", i, 1)
-		if dtype and LunaOptions.HighlightDebuffs and not UnitIsEnemy("targettargettarget","player") then
-			LunaTargetTargetTargetFrame:SetBackdropColor(unpack(LunaOptions.DebuffTypeColor[dtype],1))
-			found = true
-		end
-	end
-	if not found then
+	local _,_,dtype = UnitDebuff("targettargettarget", 1, 1)
+	if dtype and LunaOptions.HighlightDebuffs and UnitCanAssist("player", "targettargettarget") then
+		LunaTargetTargetTargetFrame:SetBackdropColor(unpack(LunaOptions.DebuffTypeColor[dtype],1))
+	else
 		LunaTargetTargetTargetFrame:SetBackdropColor(0,0,0,1)
 	end
 	if LunaOptions.frames["LunaTargetTargetTargetFrame"].ShowBuffs ~= 1 then

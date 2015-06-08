@@ -755,16 +755,11 @@ function Luna_Target_Events:RAID_TARGET_UPDATE()
 end
 
 function Luna_Target_Events:UNIT_AURA()
-	local found, dtype
 	local pos
-	for i=1,16 do
-		_,_,dtype = UnitDebuff("target", i, 1)
-		if dtype and LunaOptions.HighlightDebuffs and not UnitIsEnemy("target","player") then
-			LunaTargetFrame:SetBackdropColor(unpack(LunaOptions.DebuffTypeColor[dtype],1))
-			found = true
-		end
-	end
-	if not found then
+	local _,_,dtype = UnitDebuff("target", 1, 1)
+	if dtype and LunaOptions.HighlightDebuffs and UnitCanAssist("player", "target") then
+		LunaTargetFrame:SetBackdropColor(unpack(LunaOptions.DebuffTypeColor[dtype],1))
+	else
 		LunaTargetFrame:SetBackdropColor(0,0,0,1)
 	end
 	if LunaOptions.frames["LunaTargetFrame"].ShowBuffs == 1 then

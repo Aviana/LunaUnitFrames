@@ -780,16 +780,11 @@ end
 
 function Luna_Party_Events:UNIT_AURA()
 	if this.unit == arg1 then
-		local found, dtype
 		local pos
-		for i=1,16 do
-			_,_,dtype = UnitDebuff(this.unit, i, 1)
-			if dtype and LunaOptions.HighlightDebuffs then
-				this:SetBackdropColor(unpack(LunaOptions.DebuffTypeColor[dtype],1))
-				found = true
-			end
-		end
-		if not found then
+		local _,_,dtype = UnitDebuff(this.unit, 1, 1)
+		if dtype and LunaOptions.HighlightDebuffs then
+			this:SetBackdropColor(unpack(LunaOptions.DebuffTypeColor[dtype],1))
+		else
 			this:SetBackdropColor(0,0,0,1)
 		end
 		if LunaOptions.frames["LunaPartyFrames"].ShowBuffs == 1 then
@@ -835,11 +830,6 @@ function Luna_Party_Events:UNIT_AURA()
 			else
 				this.Debuffs[i]:EnableMouse(0)
 				this.Debuffs[i]:Hide()
-			end
-			_,_,dtype = UnitDebuff(this.unit, i, 1)
-			if dtype and LunaOptions.HighlightDebuffs then
-				this:SetBackdropColor(unpack(LunaOptions.DebuffTypeColor[dtype],1))
-				found = true
 			end
 			this.Debuffs[i]:SetNormalTexture(this.Debuffs[i].texturepath)
 		end

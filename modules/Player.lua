@@ -1013,16 +1013,11 @@ function Luna_Player_Events:PLAYER_ALIVE()
 end
 
 function Luna_Player_Events:PLAYER_AURAS_CHANGED()
-	local found, dtype
 	local pos
-	for i=1, 16 do
-		_,_,dtype = UnitDebuff("player", i, 1)
-		if dtype and LunaOptions.HighlightDebuffs then
-			LunaPlayerFrame:SetBackdropColor(unpack(LunaOptions.DebuffTypeColor[dtype],1))
-			found = true
-		end
-	end
-	if not found then
+	local _,_,dtype = UnitDebuff("player", 1, 1)
+	if dtype and LunaOptions.HighlightDebuffs then
+		LunaPlayerFrame:SetBackdropColor(unpack(LunaOptions.DebuffTypeColor[dtype],1))
+	else
 		LunaPlayerFrame:SetBackdropColor(0,0,0,1)
 	end
 	if LunaOptions.frames["LunaPlayerFrame"].ShowBuffs == 1 then
