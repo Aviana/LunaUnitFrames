@@ -206,10 +206,14 @@ function LunaUnitFrames:CreatePlayerFrame()
 	end
 	LunaPlayerFrame.bars = {}
 	
-	LunaPlayerFrame.bars["Portrait"] = CreateFrame("PlayerModel", nil, LunaPlayerFrame)
-	LunaPlayerFrame.bars["Portrait"]:SetScript("OnShow",function() this:SetCamera(0) end)
-	LunaPlayerFrame.bars["Portrait"].type = "3D"
-	LunaPlayerFrame.bars["Portrait"].side = "left"
+	LunaPlayerFrame.bars["Portrait"] = CreateFrame("Frame", nil, LunaPlayerFrame)
+	
+	LunaPlayerFrame.bars["Portrait"].texture = LunaPlayerFrame.bars["Portrait"]:CreateTexture("PlayerPortrait", "ARTWORK")
+	LunaPlayerFrame.bars["Portrait"].texture:SetAllPoints(LunaPlayerFrame.bars["Portrait"])
+	
+	LunaPlayerFrame.bars["Portrait"].model = CreateFrame("PlayerModel", nil, LunaPlayerFrame)
+	LunaPlayerFrame.bars["Portrait"].model:SetPoint("TOPLEFT", LunaPlayerFrame.bars["Portrait"], "TOPLEFT")
+	LunaPlayerFrame.bars["Portrait"].model:SetScript("OnShow",function() this:SetCamera(0) end)
 
 	LunaPlayerFrame.AuraAnchor = CreateFrame("Frame", nil, LunaPlayerFrame)
 	LunaPlayerFrame.AuraAnchor:SetScript("OnUpdate", Luna_Player_BuffTimer)
@@ -612,7 +616,7 @@ function LunaUnitFrames:CreatePlayerFrame()
 		if LunaOptions.frames["LunaPlayerFrame"].portrait > 1 then    -- We have a square portrait
 			frameWidth = (LunaPlayerFrame:GetWidth()-frameHeight)
 			LunaPlayerFrame.bars["Portrait"]:SetPoint("TOPLEFT", LunaPlayerFrame, "TOPLEFT")
-			LunaPlayerFrame.bars["Portrait"]:SetHeight(frameHeight+1)
+			LunaPlayerFrame.bars["Portrait"]:SetHeight(frameHeight)
 			LunaPlayerFrame.bars["Portrait"]:SetWidth(frameHeight)
 			anchor = {"TOPLEFT", LunaPlayerFrame.bars["Portrait"], "TOPRIGHT"}
 		else
@@ -645,6 +649,8 @@ function LunaUnitFrames:CreatePlayerFrame()
 				anchor = {"TOPLEFT", LunaPlayerFrame.bars[bar], "BOTTOMLEFT"}
 			end			
 		end
+		LunaPlayerFrame.bars["Portrait"].model:SetHeight(LunaPlayerFrame.bars["Portrait"]:GetHeight()+1)
+		LunaPlayerFrame.bars["Portrait"].model:SetWidth(LunaPlayerFrame.bars["Portrait"]:GetWidth())
 		LunaUnitFrames.PlayerUpdateHeal(UnitName("player"))
 		
 		local healthheight = (LunaPlayerFrame.bars["Healthbar"]:GetHeight()*textheights["Healthbar"])
@@ -940,7 +946,7 @@ function LunaUnitFrames:UpdatePlayerFrame()
 	Luna_Player_Events.PARTY_LEADER_CHANGED()
 	Luna_Player_Events.RAID_TARGET_UPDATE()
 	Luna_Player_Events.UNIT_DISPLAYPOWER()
-	Luna_Player_Events.UNIT_PORTRAIT_UPDATE()
+	Luna_Player_Events.UNIT_PORTRAIT_UPDATE("player")
 	Luna_Player_Events.PARTY_LOOT_METHOD_CHANGED()
 	Luna_Player_Events.PLAYER_UPDATE_RESTING()
 end
@@ -1187,19 +1193,48 @@ function Luna_Player_Events:UNIT_DISPLAYPOWER()
 	Luna_Player_Events.UNIT_MANA()
 end
 
-function Luna_Player_Events:UNIT_PORTRAIT_UPDATE()
+function Luna_Player_Events.UNIT_PORTRAIT_UPDATE(unit)
+	if arg1 ~= "player" and not unit then
+		return
+	end
 	local portrait = LunaPlayerFrame.bars["Portrait"]
-	if(portrait.type == "3D") then
-		if(not UnitExists("player") or not UnitIsConnected("player") or not UnitIsVisible("player")) then
-			portrait:SetModelScale(4.25)
-			portrait:SetPosition(0, 0, -1)
-			portrait:SetModel("Interface\\Buttons\\talktomequestionmark.mdx")
-		else
-			portrait:SetUnit("player")
-			portrait:SetCamera(0)
-		end
+	if(LunaOptions.PortraitMode == 3) then
+		local _,class = UnitClass("player")
+		portrait.model:Hide()
+		portrait.texture:Show()
+		portrait.texture:SetTexture("Interface\\Glues\\CharacterCreate\\UI-CharacterCreate-Classes")
+		portrait.texture:SetTexCoord(CLASS_ICON_TCOORDS[class][1], CLASS_ICON_TCOORDS[class][2], CLASS_ICON_TCOORDS[class][3], CLASS_ICON_TCOORDS[class][4])
+	elseif(LunaOptions.PortraitMode == 2) then
+		portrait.model:Hide()
+		portrait.texture:Show()
+		SetPortraitTexture(portrait.texture, "player")
+		portrait.texture:SetTexCoord(.1, .90, .1, .90)
 	else
-		SetPortraitTexture(portrait, "player")
+		if(not UnitExists("player") or not UnitIsConnected("player") or not UnitIsVisible("player")) then
+			if LunaOptions.PortraitFallback == 3 then
+				portrait.model:Hide()
+				portrait.texture:Show()
+				local _,class = UnitClass("player")
+				portrait.texture:SetTexture("Interface\\Glues\\CharacterCreate\\UI-CharacterCreate-Classes")
+				portrait.texture:SetTexCoord(CLASS_ICON_TCOORDS[class][1], CLASS_ICON_TCOORDS[class][2], CLASS_ICON_TCOORDS[class][3], CLASS_ICON_TCOORDS[class][4])
+			elseif LunaOptions.PortraitFallback == 2 then
+				portrait.model:Hide()
+				portrait.texture:Show()
+				SetPortraitTexture(portrait.texture, "player")
+				portrait.texture:SetTexCoord(.1, .90, .1, .90)
+			else
+				portrait.model:Show()
+				portrait.texture:Hide()
+				portrait.model:SetModelScale(4.25)
+				portrait.model:SetPosition(0, 0, -1)
+				portrait.model:SetModel("Interface\\Buttons\\talktomequestionmark.mdx")
+			end
+		else
+			portrait.model:Show()
+			portrait.texture:Hide()
+			portrait.model:SetUnit("player")
+			portrait.model:SetCamera(0)
+		end
 	end
 end
 Luna_Player_Events.UNIT_MODEL_CHANGED = Luna_Player_Events.UNIT_PORTRAIT_UPDATE

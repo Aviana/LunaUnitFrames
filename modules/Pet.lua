@@ -143,10 +143,14 @@ function LunaUnitFrames:CreatePetFrame()
 
 	LunaPetFrame.bars = {}
 	
-	LunaPetFrame.bars["Portrait"] = CreateFrame("PlayerModel", nil, LunaPetFrame)
-	LunaPetFrame.bars["Portrait"]:SetScript("OnShow",function() this:SetCamera(0) end)
-	LunaPetFrame.bars["Portrait"].type = "3D"
-	LunaPetFrame.bars["Portrait"].side = "left"
+	LunaPetFrame.bars["Portrait"] = CreateFrame("Frame", nil, LunaPetFrame)
+	
+	LunaPetFrame.bars["Portrait"].texture = LunaPetFrame.bars["Portrait"]:CreateTexture("PetPortrait", "ARTWORK")
+	LunaPetFrame.bars["Portrait"].texture:SetAllPoints(LunaPetFrame.bars["Portrait"])
+	
+	LunaPetFrame.bars["Portrait"].model = CreateFrame("PlayerModel", nil, LunaPetFrame)
+	LunaPetFrame.bars["Portrait"].model:SetPoint("TOPLEFT", LunaPetFrame.bars["Portrait"], "TOPLEFT")
+	LunaPetFrame.bars["Portrait"].model:SetScript("OnShow",function() this:SetCamera(0) end)
 
 	-- Healthbar
 	LunaPetFrame.bars["Healthbar"] = CreateFrame("StatusBar", nil, LunaPetFrame)
@@ -238,7 +242,7 @@ function LunaUnitFrames:CreatePetFrame()
 		if LunaOptions.frames["LunaPetFrame"].portrait > 1 then    -- We have a square portrait
 			frameWidth = (LunaPetFrame:GetWidth()-frameHeight)
 			LunaPetFrame.bars["Portrait"]:SetPoint("TOPLEFT", LunaPetFrame, "TOPLEFT")
-			LunaPetFrame.bars["Portrait"]:SetHeight(frameHeight+1)
+			LunaPetFrame.bars["Portrait"]:SetHeight(frameHeight)
 			LunaPetFrame.bars["Portrait"]:SetWidth(frameHeight)
 			anchor = {"TOPLEFT", LunaPetFrame.bars["Portrait"], "TOPRIGHT"}
 		else
@@ -272,6 +276,10 @@ function LunaUnitFrames:CreatePetFrame()
 				anchor = {"TOPLEFT", LunaPetFrame.bars[bar], "BOTTOMLEFT"}
 			end			
 		end
+		
+		LunaPetFrame.bars["Portrait"].model:SetHeight(LunaPetFrame.bars["Portrait"]:GetHeight()+1)
+		LunaPetFrame.bars["Portrait"].model:SetWidth(LunaPetFrame.bars["Portrait"]:GetWidth())
+		
 		local healthheight = (LunaPetFrame.bars["Healthbar"]:GetHeight()*textheights["Healthbar"])
 		LunaPetFrame.bars["Healthbar"].righttext:SetFont(LunaOptions.font, healthheight)
 		LunaPetFrame.bars["Healthbar"].righttext:SetHeight(LunaPetFrame.bars["Healthbar"]:GetHeight())
@@ -459,19 +467,6 @@ function LunaUnitFrames:UpdatePetFrame()
 	else
 		LunaPetFrame:Show()
 	end
-	if(LunaPetFrame.bars["Portrait"].type == "3D") then
-		if(not UnitExists(LunaPetFrame.unit) or not UnitIsConnected(LunaPetFrame.unit) or not UnitIsVisible(LunaPetFrame.unit)) then
-			LunaPetFrame.bars["Portrait"]:SetModelScale(4.25)
-			LunaPetFrame.bars["Portrait"]:SetPosition(0, 0, -1)
-			LunaPetFrame.bars["Portrait"]:SetModel("Interface\\Buttons\\talktomequestionmark.mdx")
-		else
-			LunaPetFrame.bars["Portrait"]:SetUnit(LunaPetFrame.unit)
-			LunaPetFrame.bars["Portrait"]:SetCamera(0)
-			LunaPetFrame.bars["Portrait"]:Show()
-		end
-	else
-		SetPortraitTexture(LunaPetFrame.bars["Portrait"], LunaPetFrame.unit)
-	end
 	Luna_Pet_Events.UNIT_HAPPINESS()
 
 	local petpower = UnitPowerType("pet")
@@ -529,6 +524,7 @@ function LunaUnitFrames:UpdatePetFrame()
 		end
 		LunaPetFrame.Debuffs[z]:SetNormalTexture(LunaPetFrame.Debuffs[z].texturepath)
 	end
+	Luna_Pet_Events.UNIT_PORTRAIT_UPDATE("pet")
 	Luna_Pet_Events.UNIT_HEALTH()
 	Luna_Pet_Events.UNIT_MANA()
 end
@@ -617,20 +613,29 @@ function Luna_Pet_Events:UNIT_HAPPINESS()
 	end
 end
 
-function Luna_Pet_Events:UNIT_PORTRAIT_UPDATE()
-	if arg1 == this.unit then
-		local portrait = this.bars["Portrait"]
-		if(portrait.type == "3D") then
-			if(not UnitExists(arg1) or not UnitIsConnected(arg1) or not UnitIsVisible(arg1)) then
-				portrait:SetModelScale(4.25)
-				portrait:SetPosition(0, 0, -1)
-				portrait:SetModel("Interface\\Buttons\\talktomequestionmark.mdx")
-			else
-				portrait:SetUnit(arg1)
-				portrait:SetCamera(0)
-			end
+function Luna_Pet_Events.UNIT_PORTRAIT_UPDATE(unit)
+	if arg1 ~= "pet" and not unit then
+		return
+	end
+	local portrait = LunaPetFrame.bars["Portrait"]
+	if (LunaOptions.PortraitMode == 3 and (LunaOptions.PortraitFallback == 2 or LunaOptions.PortraitFallback == 3)) or LunaOptions.PortraitMode == 2 then
+		portrait.model:Hide()
+		portrait.texture:Show()
+		SetPortraitTexture(portrait.texture, "pet")
+		portrait.texture:SetTexCoord(.1, .90, .1, .90)
+	else
+		if(not UnitExists("pet") or not UnitIsConnected("pet") or not UnitIsVisible("pet")) then
+			portrait.model:Show()
+			portrait.texture:Hide()
+			portrait.model:SetModelScale(4.25)
+			portrait.model:SetPosition(0, 0, -1)
 		else
-			SetPortraitTexture(portrait, arg1)
+			portrait:SetUnit("pet")
+			portrait:SetCamera(0)
+			portrait.model:Show()
+			portrait.texture:Hide()
+			portrait.model:SetUnit("pet")
+			portrait.model:SetCamera(0)
 		end
 	end
 end

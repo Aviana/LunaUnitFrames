@@ -67,10 +67,6 @@ local TagDesc = {
 	["healerhealth"]		= "Returns the same as \"smart:healmishp\" on friendly units and hp/maxhp on enemies",
 }
 
-local function LunaScrollBar_Update()
-	FauxScrollFrame_Update(this,50,5,16)
-end
-
 local function ResetSettings()
 	LunaOptions = {}
 	LunaOptions.PowerColors = {
@@ -1974,6 +1970,66 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[10].overhealslider:SetValue(LunaOptions.overheal or 20)
 	LunaOptionsFrame.pages[10].overhealslider:SetWidth(215)
 	getglobal("OverhealSliderText"):SetText("Overlap percent of healbar: "..(LunaOptions.overheal or 20))
+	
+	LunaOptionsFrame.pages[10].PortraitMode = CreateFrame("Button", "PortraitMode", LunaOptionsFrame.pages[10], "UIDropDownMenuTemplate")
+	LunaOptionsFrame.pages[10].PortraitMode:SetPoint("TOPRIGHT", LunaOptionsFrame.pages[10], "TOPRIGHT", -110, -60)
+	UIDropDownMenu_SetWidth(80, LunaOptionsFrame.pages[10].PortraitMode)
+	UIDropDownMenu_JustifyText("LEFT", LunaOptionsFrame.pages[10].PortraitMode)
+		
+	UIDropDownMenu_Initialize(LunaOptionsFrame.pages[10].PortraitMode, function()
+																			local info={}
+																			for k,v in ipairs({"3D","2D","Classicon"}) do
+																				info.text=v
+																				info.value=k
+																				info.func= function()
+																						UIDropDownMenu_SetSelectedID(LunaOptionsFrame.pages[10].PortraitMode, this:GetID())
+																						LunaOptions.PortraitMode = this:GetID()
+																						LunaUnitFrames:UpdatePartyFrames()
+																						LunaUnitFrames:UpdatePlayerFrame()
+																						LunaUnitFrames:UpdatePetFrame()
+																						LunaUnitFrames:UpdateTargetFrame()
+																						end
+																				info.checked = nil
+																				UIDropDownMenu_AddButton(info, 1)
+																			end
+																		end)
+	UIDropDownMenu_SetSelectedID(LunaOptionsFrame.pages[10].PortraitMode, LunaOptions.PortraitMode or 1)
+	
+	LunaOptionsFrame.pages[10].PortraitModeDesc = LunaOptionsFrame.pages[10]:CreateFontString(nil, "OVERLAY", LunaOptionsFrame.pages[10])
+	LunaOptionsFrame.pages[10].PortraitModeDesc:SetPoint("LEFT", LunaOptionsFrame.pages[10].PortraitMode, "RIGHT", -5, 0)
+	LunaOptionsFrame.pages[10].PortraitModeDesc:SetFont("Fonts\\FRIZQT__.TTF", 10)
+	LunaOptionsFrame.pages[10].PortraitModeDesc:SetTextColor(1,0.82,0)
+	LunaOptionsFrame.pages[10].PortraitModeDesc:SetText("Portrait Mode")
+	
+	LunaOptionsFrame.pages[10].PortraitFallback = CreateFrame("Button", "PortraitFallback", LunaOptionsFrame.pages[10], "UIDropDownMenuTemplate")
+	LunaOptionsFrame.pages[10].PortraitFallback:SetPoint("TOPLEFT", LunaOptionsFrame.pages[10].PortraitMode, "BOTTOMLEFT", 0, -10)
+	UIDropDownMenu_SetWidth(80, LunaOptionsFrame.pages[10].PortraitFallback)
+	UIDropDownMenu_JustifyText("LEFT", LunaOptionsFrame.pages[10].PortraitFallback)
+		
+	UIDropDownMenu_Initialize(LunaOptionsFrame.pages[10].PortraitFallback, function()
+																			local info={}
+																			for k,v in ipairs({"3D","2D","Classicon"}) do
+																				info.text=v
+																				info.value=k
+																				info.func= function()
+																						UIDropDownMenu_SetSelectedID(LunaOptionsFrame.pages[10].PortraitFallback, this:GetID())
+																						LunaOptions.PortraitFallback = this:GetID()
+																						LunaUnitFrames:UpdatePartyFrames()
+																						LunaUnitFrames:UpdatePlayerFrame()
+																						LunaUnitFrames:UpdatePetFrame()
+																						LunaUnitFrames:UpdateTargetFrame()
+																						end
+																				info.checked = nil
+																				UIDropDownMenu_AddButton(info, 1)
+																			end
+																		end)
+	UIDropDownMenu_SetSelectedID(LunaOptionsFrame.pages[10].PortraitFallback, LunaOptions.PortraitFallback or 1)
+	
+	LunaOptionsFrame.pages[10].PortraitFallbackDesc = LunaOptionsFrame.pages[10]:CreateFontString(nil, "OVERLAY", LunaOptionsFrame.pages[10])
+	LunaOptionsFrame.pages[10].PortraitFallbackDesc:SetPoint("LEFT", LunaOptionsFrame.pages[10].PortraitFallback, "RIGHT", -5, 0)
+	LunaOptionsFrame.pages[10].PortraitFallbackDesc:SetFont("Fonts\\FRIZQT__.TTF", 10)
+	LunaOptionsFrame.pages[10].PortraitFallbackDesc:SetTextColor(1,0.82,0)
+	LunaOptionsFrame.pages[10].PortraitFallbackDesc:SetText("Portrait Fallback")
 	
 	LunaOptionsFrame:SetScale(1.3)
 	

@@ -251,11 +251,15 @@ function LunaUnitFrames:CreatePartyFrames()
 
 		LunaPartyFrames[i].bars = {}
 		
-		LunaPartyFrames[i].bars["Portrait"] = CreateFrame("PlayerModel", nil, LunaPartyFrames[i])
-		LunaPartyFrames[i].bars["Portrait"]:SetScript("OnShow",function() this:SetCamera(0) end)
-		LunaPartyFrames[i].bars["Portrait"].type = "3D"
-		LunaPartyFrames[i].bars["Portrait"]:SetPoint("TOPLEFT", LunaPartyFrames[i], "TOPLEFT")
-		LunaPartyFrames[i].bars["Portrait"].side = "left"
+		LunaPartyFrames[i].bars["Portrait"] = CreateFrame("Frame", nil, LunaPartyFrames[i])
+		
+		LunaPartyFrames[i].bars["Portrait"].texture = LunaPartyFrames[i].bars["Portrait"]:CreateTexture("PartyPortrait"..i, "ARTWORK")
+		LunaPartyFrames[i].bars["Portrait"].texture:SetAllPoints(LunaPartyFrames[i].bars["Portrait"])
+		
+		LunaPartyFrames[i].bars["Portrait"].model = CreateFrame("PlayerModel", nil, LunaPartyFrames[i])
+		LunaPartyFrames[i].bars["Portrait"].model:SetPoint("TOPLEFT", LunaPartyFrames[i].bars["Portrait"], "TOPLEFT")
+		LunaPartyFrames[i].bars["Portrait"].model:SetScript("OnShow",function() this:SetCamera(0) end)
+		
 		
 	-- Healthbar
 		LunaPartyFrames[i].bars["Healthbar"] = CreateFrame("StatusBar", nil, LunaPartyFrames[i])
@@ -603,7 +607,7 @@ function LunaUnitFrames:UpdatePartyUnitFrameSize()
 		if LunaOptions.frames["LunaPartyFrames"].portrait > 1 then    -- We have a square portrait
 			frameWidth = (LunaPartyFrames[i]:GetWidth()-frameHeight)
 			LunaPartyFrames[i].bars["Portrait"]:SetPoint("TOPLEFT", LunaPartyFrames[i], "TOPLEFT")
-			LunaPartyFrames[i].bars["Portrait"]:SetHeight(frameHeight+1)
+			LunaPartyFrames[i].bars["Portrait"]:SetHeight(frameHeight)
 			LunaPartyFrames[i].bars["Portrait"]:SetWidth(frameHeight)
 			anchor = {"TOPLEFT", LunaPartyFrames[i].bars["Portrait"], "TOPRIGHT"}
 		else
@@ -637,6 +641,8 @@ function LunaUnitFrames:UpdatePartyUnitFrameSize()
 				anchor = {"TOPLEFT", LunaPartyFrames[i].bars[bar], "BOTTOMLEFT"}
 			end			
 		end
+		LunaPartyFrames[i].bars["Portrait"].model:SetHeight(LunaPartyFrames[i].bars["Portrait"]:GetHeight()+1)
+		LunaPartyFrames[i].bars["Portrait"].model:SetWidth(LunaPartyFrames[i].bars["Portrait"]:GetWidth())	
 		LunaUnitFrames.PartyUpdateHeal(UnitName(LunaPartyFrames[i].unit))
 		local healthheight = (LunaPartyFrames[i].bars["Healthbar"]:GetHeight()*textheights["Healthbar"])
 		LunaPartyFrames[i].bars["Healthbar"].righttext:SetFont(LunaOptions.font, healthheight)
@@ -680,22 +686,7 @@ function LunaUnitFrames:UpdatePartyFrames()
 				LunaPartyFrames[i].Leader:Show()
 			else
 				LunaPartyFrames[i].Leader:Hide()
-			end
-			
-			if(LunaPartyFrames[i].bars["Portrait"].type == "3D") then
-				if(not UnitExists(LunaPartyFrames[i].unit) or not UnitIsConnected(LunaPartyFrames[i].unit) or not UnitIsVisible(LunaPartyFrames[i].unit)) then
-					LunaPartyFrames[i].bars["Portrait"]:SetModelScale(4.25)
-					LunaPartyFrames[i].bars["Portrait"]:SetPosition(0, 0, -1)
-					LunaPartyFrames[i].bars["Portrait"]:SetModel("Interface\\Buttons\\talktomequestionmark.mdx")
-				else
-					LunaPartyFrames[i].bars["Portrait"]:SetUnit(LunaPartyFrames[i].unit)
-					LunaPartyFrames[i].bars["Portrait"]:SetCamera(0)
-					LunaPartyFrames[i].bars["Portrait"]:Show()
-				end
-			else
-				SetPortraitTexture(LunaPartyFrames[i].bars["Portrait"], LunaPartyFrames[i].unit)
-			end
-			
+			end			
 
 			if not UnitIsConnected(LunaPartyFrames[i].unit) then
 				LunaPartyFrames[i].bars["Healthbar"]:SetMinMaxValues(0, UnitHealthMax(LunaPartyFrames[i].unit))
@@ -761,6 +752,7 @@ function LunaUnitFrames:UpdatePartyFrames()
 				LunaPartyFrames[i].PVPRank:Show();
 			end
 			LunaUnitFrames.PartyUpdateHeal(UnitName("party"..i))
+			Luna_Party_Events.UNIT_PORTRAIT_UPDATE(i)
 		else
 			LunaPartyFrames[i]:Hide()
 		end
@@ -923,20 +915,53 @@ function Luna_Party_Events:PARTY_LOOT_METHOD_CHANGED()
 	end
 end
 
-function Luna_Party_Events:UNIT_PORTRAIT_UPDATE()
-	if arg1 == this.unit then
-		local portrait = this.bars["Portrait"]
-		if(portrait.type == "3D") then
-			if(not UnitExists(arg1) or not UnitIsConnected(arg1) or not UnitIsVisible(arg1)) then
-				portrait:SetModelScale(4.25)
-				portrait:SetPosition(0, 0, -1)
-				portrait:SetModel("Interface\\Buttons\\talktomequestionmark.mdx")
+function Luna_Party_Events.UNIT_PORTRAIT_UPDATE(unitnbr)
+	if arg1 ~= this.unit and not unitnbr then
+		return
+	end
+	local portrait
+	if this.unit then
+		portrait = this.bars["Portrait"]
+	else	
+		portrait = LunaPartyFrames[unitnbr].bars["Portrait"]
+	end
+	local unit = this.unit or LunaPartyFrames[unitnbr].unit
+	if(LunaOptions.PortraitMode == 3) then
+		local _,class = UnitClass(unit)
+		portrait.model:Hide()
+		portrait.texture:Show()
+		portrait.texture:SetTexture("Interface\\Glues\\CharacterCreate\\UI-CharacterCreate-Classes")
+		portrait.texture:SetTexCoord(CLASS_ICON_TCOORDS[class][1], CLASS_ICON_TCOORDS[class][2], CLASS_ICON_TCOORDS[class][3], CLASS_ICON_TCOORDS[class][4])
+	elseif(LunaOptions.PortraitMode == 2) then
+		portrait.model:Hide()
+		portrait.texture:Show()
+		SetPortraitTexture(portrait.texture, unit)
+		portrait.texture:SetTexCoord(.1, .90, .1, .90)
+	else
+		if(not UnitExists(unit) or not UnitIsConnected(unit) or not UnitIsVisible(unit)) then
+			if LunaOptions.PortraitFallback == 3 then
+				portrait.model:Hide()
+				portrait.texture:Show()
+				local _,class = UnitClass(unit)
+				portrait.texture:SetTexture("Interface\\Glues\\CharacterCreate\\UI-CharacterCreate-Classes")
+				portrait.texture:SetTexCoord(CLASS_ICON_TCOORDS[class][1], CLASS_ICON_TCOORDS[class][2], CLASS_ICON_TCOORDS[class][3], CLASS_ICON_TCOORDS[class][4])
+			elseif LunaOptions.PortraitFallback == 2 then
+				portrait.model:Hide()
+				portrait.texture:Show()
+				SetPortraitTexture(portrait.texture, unit)
+				portrait.texture:SetTexCoord(.1, .90, .1, .90)
 			else
-				portrait:SetUnit(arg1)
-				portrait:SetCamera(0)
+				portrait.model:Show()
+				portrait.texture:Hide()
+				portrait.model:SetModelScale(4.25)
+				portrait.model:SetPosition(0, 0, -1)
+				portrait.model:SetModel("Interface\\Buttons\\talktomequestionmark.mdx")
 			end
 		else
-			SetPortraitTexture(portrait, arg1)
+			portrait.model:Show()
+			portrait.texture:Hide()
+			portrait.model:SetUnit(unit)
+			portrait.model:SetCamera(0)
 		end
 	end
 end
