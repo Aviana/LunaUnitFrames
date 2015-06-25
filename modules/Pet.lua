@@ -630,8 +630,6 @@ function Luna_Pet_Events.UNIT_PORTRAIT_UPDATE(unit)
 			portrait.model:SetModelScale(4.25)
 			portrait.model:SetPosition(0, 0, -1)
 		else
-			portrait:SetUnit("pet")
-			portrait:SetCamera(0)
 			portrait.model:Show()
 			portrait.texture:Hide()
 			portrait.model:SetUnit("pet")
