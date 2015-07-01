@@ -943,6 +943,9 @@ function Luna_Party_Events.UNIT_PORTRAIT_UPDATE(unitnbr)
 				portrait.model:Hide()
 				portrait.texture:Show()
 				local _,class = UnitClass(unit)
+				if not class then
+					class = "WARRIOR"
+				end
 				portrait.texture:SetTexture("Interface\\Glues\\CharacterCreate\\UI-CharacterCreate-Classes")
 				portrait.texture:SetTexCoord(CLASS_ICON_TCOORDS[class][1], CLASS_ICON_TCOORDS[class][2], CLASS_ICON_TCOORDS[class][3], CLASS_ICON_TCOORDS[class][4])
 			elseif LunaOptions.PortraitFallback == 2 then

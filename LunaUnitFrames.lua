@@ -166,12 +166,16 @@ function LunaUnitFrames:OnEvent()
 					[2] = "[smarthealth]"
 				},
 				["Powerbar"] = {
-					[1] = "[levelcolor][level] [classcolor][smartclass]",
+					[1] = "[levelcolor][level][shortclassification] [classcolor][smartclass]",
 					[2] = "[pp]/[maxpp]"
 				},
 				["Castbar"] = {
 					[1] = "[spellname]",
 					[2] = "[casttime]"
+				},
+				["Combo Bar"] = {
+					[1] = "",
+					[2] = ""
 				},
 				["Druidbar"] = {
 					[1] = "[druidform]",
@@ -182,6 +186,12 @@ function LunaUnitFrames:OnEvent()
 					[2] = ""
 				}
 			}
+		end
+		if not LunaOptions.defaultTags["Combo Bar"] then
+			LunaOptions.defaultTags["Combo Bar"] = {
+											[1] = "",
+											[2] = ""
+											}
 		end
 		if not LunaOptions.defaultTags["Portrait"] then
 			LunaOptions.defaultTags["Portrait"] = {

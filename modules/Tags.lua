@@ -327,7 +327,7 @@ Tags.defaultTags = {
 								local level = UnitLevel(unit)
 								if level == -1 then
 									if UnitClassification(unit) == "worldboss" then
-										return "Boss"
+										return "??"
 									else
 										return (UnitLevel("player")+10).."+"
 									end
@@ -400,6 +400,14 @@ Tags.defaultTags = {
 									return ""
 								end
 							end;
+	["classification"]    	= function(unit)
+								local classif = UnitClassification(unit)
+								if classif == "normal" then
+									return ""
+								else
+									return classif
+								end
+							end;						
 	["shortclassification"] = function(unit)
 								local classif = UnitClassification(unit)
 								if classif == "rare" then
@@ -408,6 +416,8 @@ Tags.defaultTags = {
 									return "E"
 								elseif classif == "rareelite" then
 									return "RE"
+								elseif classif == "worldboss" then
+									return "BOSS"
 								else
 									return ""
 								end
