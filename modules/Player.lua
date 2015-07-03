@@ -996,7 +996,8 @@ function Luna_Player_Events:SPELLCAST_START()
 	LunaPlayerFrame.bars["Castbar"].maxValue = LunaPlayerFrame.bars["Castbar"].startTime + (arg2 / 1000)
 	LunaPlayerFrame.bars["Castbar"].holdTime = 0
 	LunaPlayerFrame.bars["Castbar"].casting = 1
-	LunaPlayerFrame.bars["Castbar"].delaySum = 0	
+	LunaPlayerFrame.bars["Castbar"].delaySum = 0
+	LunaPlayerFrame.bars["Castbar"].Text:SetFont(LunaOptions.font, LunaOptions.fontHeight)
 	LunaPlayerFrame.bars["Castbar"].Text:SetText(arg1)
 	LunaPlayerFrame.bars["Castbar"]:SetMinMaxValues(LunaPlayerFrame.bars["Castbar"].startTime, LunaPlayerFrame.bars["Castbar"].maxValue)
 	LunaPlayerFrame.bars["Castbar"]:SetValue(LunaPlayerFrame.bars["Castbar"].startTime)
