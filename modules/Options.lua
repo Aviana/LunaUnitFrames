@@ -760,7 +760,7 @@ function OnBarHeight()
 		if weight == 0 then
 			getglobal(this:GetParent().frame).bars[UIDropDownMenu_GetText(this:GetParent().BarSelect)]:Hide()
 			getglobal(this:GetName().."Text"):SetText("Bar height weight: BAR OFF")
-			if UIDropDownMenu_GetText(this:GetParent().BarSelect) == "Castbar" then
+			if UIDropDownMenu_GetText(this:GetParent().BarSelect) == "Castbar" and this:GetParent().frame == "LunaPlayerFrame" then
 				OptionFunctions.UnRegisterCastbar("LunaPlayerFrame")
 				LunaPlayerFrame.bars["Castbar"].casting = nil
 				LunaPlayerFrame.bars["Castbar"].channeling = nil
@@ -768,7 +768,7 @@ function OnBarHeight()
 		else
 			getglobal(this:GetParent().frame).bars[UIDropDownMenu_GetText(this:GetParent().BarSelect)]:Show()
 			getglobal(this:GetName().."Text"):SetText("Bar height weight: "..weight)
-			if UIDropDownMenu_GetText(this:GetParent().BarSelect) == "Castbar" then
+			if UIDropDownMenu_GetText(this:GetParent().BarSelect) == "Castbar" and this:GetParent().frame == "LunaPlayerFrame" then
 				OptionFunctions.RegisterCastbar("LunaPlayerFrame")
 			end
 		end
