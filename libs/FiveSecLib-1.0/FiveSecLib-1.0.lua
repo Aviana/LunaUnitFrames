@@ -82,7 +82,7 @@ local function triggerFSR(spellName)
 			FiveSecLibTip:ClearLines()
 			FiveSecLibTip:SetSpell(i, BOOKTYPE_SPELL)
 			local mana = FiveSecLibTipTextLeft2:GetText()
-			if string.find(mana,"(%d+) Mana") then
+			if mana and string.find(mana,"(%d+) Mana") then
 				FiveSecLib.EventScheduler:TriggerEvent("fiveSec")
 			end
 			return

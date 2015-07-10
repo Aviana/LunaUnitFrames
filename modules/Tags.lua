@@ -146,10 +146,19 @@ Tags.defaultTags = {
 							end;
 	["nocolor"]				= function(unit) return Hex(1,1,1) end;
 	["druidform"]			= function(unit)
+								local _,class = UnitClass(unit)
+								if class == "DRUID" then
+									if UnitPowerType(unit) == 1 then
+										return "Bear "
+									elseif UnitPowerType(unit) == 3 then
+										return "Cat "
+									end
+								end
 								local form
 								for i=1,24 do
 									if DruidForms[UnitBuff(unit,i)] then
 										form = DruidForms[UnitBuff(unit,i)]
+										break
 									end
 								end
 								return form or ""

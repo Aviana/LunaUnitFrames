@@ -470,9 +470,9 @@ function LunaUnitFrames:UpdatePetFrame()
 	Luna_Pet_Events.UNIT_HAPPINESS()
 
 	local petpower = UnitPowerType("pet")
-	if UnitManaMax("pet") == 0 then
-		LunaPetFrame.bars["Powerbar"]:SetStatusBarColor(0, 0, 0, .25)
-		LunaPetFrame.bars["Powerbar"].ppbg:SetVertexColor(0, 0, 0, .25)
+	if GetPetHappiness() then
+		LunaPetFrame.bars["Powerbar"]:SetStatusBarColor(LunaOptions.PowerColors["Focus"][1],LunaOptions.PowerColors["Focus"][2],LunaOptions.PowerColors["Focus"][3])
+		LunaPetFrame.bars["Powerbar"].ppbg:SetVertexColor(LunaOptions.PowerColors["Focus"][1],LunaOptions.PowerColors["Focus"][2],LunaOptions.PowerColors["Focus"][3], 0.25)	
 	elseif petpower == 1 then
 		LunaPetFrame.bars["Powerbar"]:SetStatusBarColor(LunaOptions.PowerColors["Rage"][1], LunaOptions.PowerColors["Rage"][2], LunaOptions.PowerColors["Rage"][3])
 		LunaPetFrame.bars["Powerbar"].ppbg:SetVertexColor(LunaOptions.PowerColors["Rage"][1], LunaOptions.PowerColors["Rage"][2], LunaOptions.PowerColors["Rage"][3], .25)
@@ -482,9 +482,12 @@ function LunaUnitFrames:UpdatePetFrame()
 	elseif petpower == 3 then
 		LunaPetFrame.bars["Powerbar"]:SetStatusBarColor(LunaOptions.PowerColors["Energy"][1], LunaOptions.PowerColors["Energy"][2], LunaOptions.PowerColors["Energy"][3])
 		LunaPetFrame.bars["Powerbar"].ppbg:SetVertexColor(LunaOptions.PowerColors["Energy"][1], LunaOptions.PowerColors["Energy"][2], LunaOptions.PowerColors["Energy"][3], .25)
-	else
+	elseif petpower == 0 then
 		LunaPetFrame.bars["Powerbar"]:SetStatusBarColor(LunaOptions.PowerColors["Mana"][1], LunaOptions.PowerColors["Mana"][2], LunaOptions.PowerColors["Mana"][3])
 		LunaPetFrame.bars["Powerbar"].ppbg:SetVertexColor(LunaOptions.PowerColors["Mana"][1], LunaOptions.PowerColors["Mana"][2], LunaOptions.PowerColors["Mana"][3], .25)
+	else
+		LunaPetFrame.bars["Powerbar"]:SetStatusBarColor(0, 0, 0, .25)
+		LunaPetFrame.bars["Powerbar"].ppbg:SetVertexColor(0, 0, 0, .25)
 	end
 	
 	for z=1, 16 do

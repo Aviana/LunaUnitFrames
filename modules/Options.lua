@@ -54,6 +54,7 @@ local TagDesc = {
 	["rare"]                = "\"rare\" if the creature is rare or rareelite",
 	["elite"]     			= "\"elite\" if the creature is elite or rareelite",
 	["shortclassification"] = "\"E\", \"R\", \"RE\" for the respective classification",
+	["classification"]		= "Shows elite, rare, boss, etc...",
 	["group"]				= "Current subgroup of the raid",
 	["color:aggro"]			= "Red if the unit is targeted by an enemy",
 	["classcolor"]			= "Classcolor of the unit",
@@ -2381,7 +2382,7 @@ function LunaOptionsModule:CreateMenu()
 	end
 	
 	LunaOptionsFrame.helpframe = CreateFrame("Frame", nil, LunaOptionsFrame)
-	LunaOptionsFrame.helpframe:SetHeight(655)
+	LunaOptionsFrame.helpframe:SetHeight(665)
 	LunaOptionsFrame.helpframe:SetWidth(300)
 	LunaOptionsFrame.helpframe:SetBackdrop(LunaOptions.backdrop)
 	LunaOptionsFrame.helpframe:SetBackdropColor(0.18,0.27,0.5)
