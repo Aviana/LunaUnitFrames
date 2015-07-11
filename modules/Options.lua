@@ -16,6 +16,8 @@ local barselectorfunc = {}
 local buffposselectfunc = {}
 
 local TagDesc = {
+	["combat"]				= "(c) when in combat",
+	["color:combat"]		= "Red when in combat",
 	["race"]				= "Race if available",
 	["rank"]				= "PvP title",
 	["numrank"]				= "Numeric PvP rank",
@@ -64,7 +66,7 @@ local TagDesc = {
 	["pvpcolor"]			= "White for unflagged units, green for flagged friendlies and red for flagged enemies",
 	["smart:healmishp"]		= "Returns missing hp with healing factored in. Shows status when needed (\"Dead\", \"Offline\", \"Ghost\")",
 	["smartrace"]			= "Shows race when if player, creaturetype when npc",
-	["civilian"]			= "Returns (c) when civilian",
+	["civilian"]			= "Returns (civ) when civilian",
 	["healerhealth"]		= "Returns the same as \"smart:healmishp\" on friendly units and hp/maxhp on enemies",
 }
 
@@ -2382,7 +2384,7 @@ function LunaOptionsModule:CreateMenu()
 	end
 	
 	LunaOptionsFrame.helpframe = CreateFrame("Frame", nil, LunaOptionsFrame)
-	LunaOptionsFrame.helpframe:SetHeight(665)
+	LunaOptionsFrame.helpframe:SetHeight(690)
 	LunaOptionsFrame.helpframe:SetWidth(300)
 	LunaOptionsFrame.helpframe:SetBackdrop(LunaOptions.backdrop)
 	LunaOptionsFrame.helpframe:SetBackdropColor(0.18,0.27,0.5)

@@ -3,6 +3,7 @@ local AceEvent = AceLibrary("AceEvent-2.0")
 local roster = AceLibrary("RosterLib-2.0")
 local banzai = AceLibrary("Banzai-1.0")
 local Tags = {}
+local hbRefresh = {}
 
 local function abbreviateName(text)
 	return string.sub(text, 1, 1) .. "."
@@ -26,6 +27,8 @@ local DruidForms = {
 Tags.fontStrings = {}
 
 Tags.defaultEvents = {
+	["combat"]				= "PLAYER_REGEN_ENABLED PLAYER_REGEN_DISABLED",
+	["color:combat"]		= "PLAYER_REGEN_ENABLED PLAYER_REGEN_ENABLED",
 	["druidform"]			= "UNIT_AURA",
 	["guild"]				= "UNIT_NAME_UPDATE", -- Not sure when this data is available, guessing
 	["incheal"]				= "HealComm_Healupdate",
@@ -93,6 +96,20 @@ local function tagsplit(pString)
 end
 
 Tags.defaultTags = {
+	["combat"]				= function(unit)
+								if UnitAffectingCombat(unit) then
+									return "(c)"
+								else
+									return ""
+								end
+							end;
+	["color:combat"]		= function(unit)
+								if UnitAffectingCombat(unit) then
+									return Hex(1,0,0)
+								else
+									return ""
+								end
+							end;
 	["race"]				= function(unit)
 								local race = UnitRace(unit)
 								if race then
@@ -541,7 +558,7 @@ Tags.defaultTags = {
 							end;
 	["civilian"]			= function(unit)
 								if UnitIsCivilian(unit) then
-									return "(c)"
+									return "(civ)"
 								else
 									return ""
 								end
@@ -645,6 +662,9 @@ local function updateTagString(unit, fontString, event)
 --				ChatFrame1:AddMessage(tag)
 				text = text..Tags.defaultTags[tag](unit)
 			end
+			if tag == "combat" or tag == "color:combat" then
+				hbRefresh[unit] = true
+			end
 			start, ending, tag = strfind(tagstring, fpat, e)
 			if start then
 				text = text..string.sub(tagstring,(e+1),(start-1))
@@ -733,6 +753,18 @@ local function onEvent(arg1)
 	end
 end
 
+local function refreshTags()
+	for k,v in pairs(hbRefresh) do
+		if v then
+			LunaUnitFrames:UpdateTags(k, nil, "PLAYER_REGEN_ENABLED")
+		end
+	end
+end
+
+AceEvent:ScheduleRepeatingEvent(refreshTags, 1)
+
+AceEvent:RegisterEvent("PLAYER_REGEN_ENABLED", onEvent)
+AceEvent:RegisterEvent("PLAYER_REGEN_DISABLED", onEvent)
 AceEvent:RegisterEvent("UNIT_ENERGY", onEvent)
 AceEvent:RegisterEvent("UNIT_FOCUS", onEvent)
 AceEvent:RegisterEvent("UNIT_MANA", onEvent)
