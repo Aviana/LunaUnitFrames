@@ -600,6 +600,7 @@ function LunaUnitFrames:UpdatePartyUnitFrameSize()
 	local totalWeight
 	local gaps
 	local textheights ={}
+	local textbalance = {}
 	for i=1, 4 do
 		frameHeight = LunaPartyFrames[i]:GetHeight()
 		totalWeight = 0
@@ -626,6 +627,7 @@ function LunaUnitFrames:UpdatePartyUnitFrameSize()
 			local weight = v[2]/totalWeight
 			local height = (frameHeight-gaps)*weight
 			textheights[v[1]] = v[3] or 0.45
+			textbalance[v[1]] = v[6] or 0.5
 			LunaPartyFrames[i].bars[bar]:ClearAllPoints()
 			LunaPartyFrames[i].bars[bar]:SetHeight(height)
 			LunaPartyFrames[i].bars[bar]:SetWidth(frameWidth)
@@ -647,18 +649,18 @@ function LunaUnitFrames:UpdatePartyUnitFrameSize()
 		local healthheight = (LunaPartyFrames[i].bars["Healthbar"]:GetHeight()*textheights["Healthbar"])
 		LunaPartyFrames[i].bars["Healthbar"].righttext:SetFont(LunaOptions.font, healthheight)
 		LunaPartyFrames[i].bars["Healthbar"].righttext:SetHeight(LunaPartyFrames[i].bars["Healthbar"]:GetHeight())
-		LunaPartyFrames[i].bars["Healthbar"].righttext:SetWidth(LunaPartyFrames[i].bars["Healthbar"]:GetWidth()*0.45)
+		LunaPartyFrames[i].bars["Healthbar"].righttext:SetWidth(LunaPartyFrames[i].bars["Healthbar"]:GetWidth()*(1-textbalance["Healthbar"]))
 		LunaPartyFrames[i].bars["Healthbar"].lefttext:SetFont(LunaOptions.font, healthheight)
 		LunaPartyFrames[i].bars["Healthbar"].lefttext:SetHeight(LunaPartyFrames[i].bars["Healthbar"]:GetHeight())
-		LunaPartyFrames[i].bars["Healthbar"].lefttext:SetWidth(LunaPartyFrames[i].bars["Healthbar"]:GetWidth()*0.55)
+		LunaPartyFrames[i].bars["Healthbar"].lefttext:SetWidth(LunaPartyFrames[i].bars["Healthbar"]:GetWidth()*textbalance["Healthbar"])
 
 		local powerheight = (LunaPartyFrames[i].bars["Powerbar"]:GetHeight()*textheights["Powerbar"])
 		LunaPartyFrames[i].bars["Powerbar"].righttext:SetFont(LunaOptions.font, powerheight)
 		LunaPartyFrames[i].bars["Powerbar"].righttext:SetHeight(LunaPartyFrames[i].bars["Powerbar"]:GetHeight())
-		LunaPartyFrames[i].bars["Powerbar"].righttext:SetWidth(LunaPartyFrames[i].bars["Powerbar"]:GetWidth()*0.5)
+		LunaPartyFrames[i].bars["Powerbar"].righttext:SetWidth(LunaPartyFrames[i].bars["Powerbar"]:GetWidth()*(1-textbalance["Powerbar"]))
 		LunaPartyFrames[i].bars["Powerbar"].lefttext:SetFont(LunaOptions.font, powerheight)
 		LunaPartyFrames[i].bars["Powerbar"].lefttext:SetHeight(LunaPartyFrames[i].bars["Powerbar"]:GetHeight())
-		LunaPartyFrames[i].bars["Powerbar"].lefttext:SetWidth(LunaPartyFrames[i].bars["Powerbar"]:GetWidth()*0.5)
+		LunaPartyFrames[i].bars["Powerbar"].lefttext:SetWidth(LunaPartyFrames[i].bars["Powerbar"]:GetWidth()*textbalance["Powerbar"])
 	end
 end
 

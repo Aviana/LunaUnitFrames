@@ -424,11 +424,13 @@ function LunaUnitFrames:CreateTargetFrame()
 		local gaps = -1
 		local CastBarHeightWeight
 		local textheights = {}
+		local textbalance = {}
 		for k,v in pairs(LunaOptions.frames["LunaTargetFrame"].bars) do
 			if v[1] == "Castbar" then
 				CastBarHeightWeight = v[2]
 			end
 			textheights[v[1]] = v[3] or 0.45
+			textbalance[v[1]] = v[6] or 0.5
 		end
 		if (LunaTargetFrame.bars["Castbar"].casting or LunaTargetFrame.bars["Castbar"].channeling) and CastBarHeightWeight > 0 then
 			LunaTargetFrame.bars["Castbar"]:Show()
@@ -499,26 +501,26 @@ function LunaUnitFrames:CreateTargetFrame()
 		local healthheight = (LunaTargetFrame.bars["Healthbar"]:GetHeight()*textheights["Healthbar"])
 		LunaTargetFrame.bars["Healthbar"].righttext:SetFont(LunaOptions.font, healthheight)
 		LunaTargetFrame.bars["Healthbar"].righttext:SetHeight(LunaTargetFrame.bars["Healthbar"]:GetHeight())
-		LunaTargetFrame.bars["Healthbar"].righttext:SetWidth(LunaTargetFrame.bars["Healthbar"]:GetWidth()*0.35)
+		LunaTargetFrame.bars["Healthbar"].righttext:SetWidth(LunaTargetFrame.bars["Healthbar"]:GetWidth()*(1-textbalance["Healthbar"]))
 		LunaTargetFrame.bars["Healthbar"].lefttext:SetFont(LunaOptions.font, healthheight)
 		LunaTargetFrame.bars["Healthbar"].lefttext:SetHeight(LunaTargetFrame.bars["Healthbar"]:GetHeight())
-		LunaTargetFrame.bars["Healthbar"].lefttext:SetWidth(LunaTargetFrame.bars["Healthbar"]:GetWidth()*0.65)
+		LunaTargetFrame.bars["Healthbar"].lefttext:SetWidth(LunaTargetFrame.bars["Healthbar"]:GetWidth()*textbalance["Healthbar"])
 
 		local powerheight = (LunaTargetFrame.bars["Powerbar"]:GetHeight()*textheights["Powerbar"])
 		LunaTargetFrame.bars["Powerbar"].righttext:SetFont(LunaOptions.font, powerheight)
 		LunaTargetFrame.bars["Powerbar"].righttext:SetHeight(LunaTargetFrame.bars["Powerbar"]:GetHeight())
-		LunaTargetFrame.bars["Powerbar"].righttext:SetWidth(LunaTargetFrame.bars["Powerbar"]:GetWidth()*0.5)
+		LunaTargetFrame.bars["Powerbar"].righttext:SetWidth(LunaTargetFrame.bars["Powerbar"]:GetWidth()*(1-textbalance["Powerbar"]))
 		LunaTargetFrame.bars["Powerbar"].lefttext:SetHeight(LunaTargetFrame.bars["Powerbar"]:GetHeight())
-		LunaTargetFrame.bars["Powerbar"].lefttext:SetWidth(LunaTargetFrame.bars["Powerbar"]:GetWidth()*0.5)
+		LunaTargetFrame.bars["Powerbar"].lefttext:SetWidth(LunaTargetFrame.bars["Powerbar"]:GetWidth()*textbalance["Powerbar"])
 		LunaTargetFrame.bars["Powerbar"].lefttext:SetFont(LunaOptions.font, powerheight)
 			
 		local castheight = (LunaTargetFrame.bars["Castbar"]:GetHeight()*textheights["Castbar"])
 		LunaTargetFrame.bars["Castbar"].Text:SetFont(LunaOptions.font, castheight)
 		LunaTargetFrame.bars["Castbar"].Text:SetHeight(LunaTargetFrame.bars["Castbar"]:GetHeight())
-		LunaTargetFrame.bars["Castbar"].Text:SetWidth(LunaTargetFrame.bars["Castbar"]:GetWidth()*0.5)
+		LunaTargetFrame.bars["Castbar"].Text:SetWidth(LunaTargetFrame.bars["Castbar"]:GetWidth()*(1-textbalance["Castbar"]))
 		LunaTargetFrame.bars["Castbar"].Time:SetFont(LunaOptions.font, castheight)
 		LunaTargetFrame.bars["Castbar"].Time:SetHeight(LunaTargetFrame.bars["Castbar"]:GetHeight())
-		LunaTargetFrame.bars["Castbar"].Time:SetWidth(LunaTargetFrame.bars["Castbar"]:GetWidth()*0.5)
+		LunaTargetFrame.bars["Castbar"].Time:SetWidth(LunaTargetFrame.bars["Castbar"]:GetWidth()*textbalance["Castbar"])
 		SetIconPositions()
 	end
 	LunaTargetFrame.UpdateBuffSize = function ()

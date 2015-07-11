@@ -502,6 +502,7 @@ function OptionFunctions.PlayerBarSelectorInit()
 							LunaOptionsFrame.pages[1].lefttext:SetText(v[4] or LunaOptions.defaultTags[selection][1])
 							LunaOptionsFrame.pages[1].righttext:SetText(v[5] or LunaOptions.defaultTags[selection][2])
 							LunaOptionsFrame.pages[1].textsize:SetValue(v[3] or 0.45)
+							LunaOptionsFrame.pages[1].textbalance:SetValue(v[6] or 0.5)
 							break
 						end
 					end
@@ -551,6 +552,7 @@ function OptionFunctions.PetBarSelectorInit()
 							LunaOptionsFrame.pages[2].lefttext:SetText(v[4] or LunaOptions.defaultTags[selection][1])
 							LunaOptionsFrame.pages[2].righttext:SetText(v[5] or LunaOptions.defaultTags[selection][2])
 							LunaOptionsFrame.pages[2].textsize:SetValue(v[3] or 0.45)
+							LunaOptionsFrame.pages[2].textbalance:SetValue(v[6] or 0.5)
 							break
 						end
 					end
@@ -586,6 +588,7 @@ function OptionFunctions.TargetBarSelectorInit()
 							LunaOptionsFrame.pages[3].lefttext:SetText(v[4] or LunaOptions.defaultTags[selection][1])
 							LunaOptionsFrame.pages[3].righttext:SetText(v[5] or LunaOptions.defaultTags[selection][2])
 							LunaOptionsFrame.pages[3].textsize:SetValue(v[3] or 0.45)
+							LunaOptionsFrame.pages[3].textbalance:SetValue(v[6] or 0.5)
 							break
 						end
 					end
@@ -621,6 +624,7 @@ function OptionFunctions.TargetTargetBarSelectorInit()
 							LunaOptionsFrame.pages[4].lefttext:SetText(v[4] or LunaOptions.defaultTags[selection][1])
 							LunaOptionsFrame.pages[4].righttext:SetText(v[5] or LunaOptions.defaultTags[selection][2])
 							LunaOptionsFrame.pages[4].textsize:SetValue(v[3] or 0.45)
+							LunaOptionsFrame.pages[4].textbalance:SetValue(v[6] or 0.5)
 							break
 						end
 					end
@@ -656,6 +660,7 @@ function OptionFunctions.TargetTargetTargetBarSelectorInit()
 							LunaOptionsFrame.pages[5].lefttext:SetText(v[4] or LunaOptions.defaultTags[selection][1])
 							LunaOptionsFrame.pages[5].righttext:SetText(v[5] or LunaOptions.defaultTags[selection][2])
 							LunaOptionsFrame.pages[5].textsize:SetValue(v[3] or 0.45)
+							LunaOptionsFrame.pages[5].textbalance:SetValue(v[6] or 0.5)
 							break
 						end
 					end
@@ -691,6 +696,7 @@ function OptionFunctions.PartyBarSelectorInit()
 							LunaOptionsFrame.pages[6].lefttext:SetText(v[4] or LunaOptions.defaultTags[selection][1])
 							LunaOptionsFrame.pages[6].righttext:SetText(v[5] or LunaOptions.defaultTags[selection][2])
 							LunaOptionsFrame.pages[6].textsize:SetValue(v[3] or 0.45)
+							LunaOptionsFrame.pages[6].textbalance:SetValue(v[6] or 0.5)
 							break
 						end
 					end
@@ -733,6 +739,23 @@ function OptionFunctions.OnTextSlider()
 		end
 	end
 	getglobal(this:GetName().."Text"):SetText("Text Size: "..value)
+	if this:GetParent().frame == "LunaPartyFrames" then
+		LunaUnitFrames:UpdatePartyUnitFrameSize()
+	else
+		getglobal(this:GetParent().frame).AdjustBars()
+	end
+end
+
+function OptionFunctions.OnTextBalanceSlider()
+	local value = this:GetValue()
+	value = math.floor((value+0.0005)*1000)/1000
+	local bar = UIDropDownMenu_GetText(this:GetParent().BarSelect)
+	for k,v in pairs(LunaOptions.frames[this:GetParent().frame].bars) do
+		if v[1] == bar then
+			v[6] = value
+			break
+		end
+	end
 	if this:GetParent().frame == "LunaPartyFrames" then
 		LunaUnitFrames:UpdatePartyUnitFrameSize()
 	else
@@ -1499,7 +1522,7 @@ function LunaOptionsModule:CreateMenu()
 		LunaOptionsFrame.pages[i].lefttext:SetHeight(20)
 		LunaOptionsFrame.pages[i].lefttext:SetWidth(125)
 		LunaOptionsFrame.pages[i].lefttext:SetAutoFocus(nil)
-		LunaOptionsFrame.pages[i].lefttext:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].barorder, "BOTTOMLEFT", 5, -40)
+		LunaOptionsFrame.pages[i].lefttext:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].barorder, "BOTTOMLEFT", 5, -30)
 		LunaOptionsFrame.pages[i].lefttext:SetScript("OnEnterPressed", function()
 																			this:ClearFocus()
 																			local fontstring = this:GetText()
@@ -1536,7 +1559,7 @@ function LunaOptionsModule:CreateMenu()
 		LunaOptionsFrame.pages[i].righttext:SetHeight(20)
 		LunaOptionsFrame.pages[i].righttext:SetWidth(125)
 		LunaOptionsFrame.pages[i].righttext:SetAutoFocus(nil)
-		LunaOptionsFrame.pages[i].righttext:SetPoint("TOPRIGHT", LunaOptionsFrame.pages[i].barorder, "BOTTOMRIGHT", 0, -40)
+		LunaOptionsFrame.pages[i].righttext:SetPoint("TOPRIGHT", LunaOptionsFrame.pages[i].barorder, "BOTTOMRIGHT", 0, -30)
 		LunaOptionsFrame.pages[i].righttext:SetScript("OnEnterPressed", function()
 																			this:ClearFocus()
 																			local fontstring = this:GetText()
@@ -1574,9 +1597,17 @@ function LunaOptionsModule:CreateMenu()
 		LunaOptionsFrame.pages[i].textsize:SetMinMaxValues(0.05,1)
 		LunaOptionsFrame.pages[i].textsize:SetValueStep(0.01)
 		LunaOptionsFrame.pages[i].textsize:SetScript("OnValueChanged", OptionFunctions.OnTextSlider)
-		LunaOptionsFrame.pages[i].textsize:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].lefttext, "BOTTOMLEFT", -5, -20)
+		LunaOptionsFrame.pages[i].textsize:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].lefttext, "BOTTOMLEFT", -5, -10)
 		LunaOptionsFrame.pages[i].textsize:SetWidth(270)
 		getglobal("TextSizeSlider"..i.."Text"):SetText("Text Size: "..LunaOptionsFrame.pages[i].textsize:GetValue())
+		
+		LunaOptionsFrame.pages[i].textbalance = CreateFrame("Slider", "TextBalanceSlider"..i, LunaOptionsFrame.pages[i], "OptionsSliderTemplate")
+		LunaOptionsFrame.pages[i].textbalance:SetMinMaxValues(0.1,0.9)
+		LunaOptionsFrame.pages[i].textbalance:SetValueStep(0.01)
+		LunaOptionsFrame.pages[i].textbalance:SetScript("OnValueChanged", OptionFunctions.OnTextBalanceSlider)
+		LunaOptionsFrame.pages[i].textbalance:SetPoint("TOP", LunaOptionsFrame.pages[i].textsize, "BOTTOM", 0, -10)
+		LunaOptionsFrame.pages[i].textbalance:SetWidth(270)
+		getglobal("TextBalanceSlider"..i.."Text"):SetText("Text Balance")
 		
 		local selection = UIDropDownMenu_GetText(LunaOptionsFrame.pages[i].BarSelect)
 		for k,v in pairs(LunaOptions.frames[OptionsPageNames[i].frame].bars) do
@@ -1593,6 +1624,7 @@ function LunaOptionsModule:CreateMenu()
 				LunaOptionsFrame.pages[i].lefttext:SetText(v[4] or LunaOptions.defaultTags[selection][1])
 				LunaOptionsFrame.pages[i].righttext:SetText(v[5] or LunaOptions.defaultTags[selection][2])
 				LunaOptionsFrame.pages[i].textsize:SetValue(v[3] or 0.45)
+				LunaOptionsFrame.pages[i].textbalance:SetValue(v[6] or 0.5)
 				break
 			end
 		end

@@ -592,12 +592,15 @@ function LunaUnitFrames:CreatePlayerFrame()
 		local _, class = UnitClass("player")
 		local CastBarHeightWeight
 		local textheights = {}
+		local textbalance = {}
 		for k,v in pairs(LunaOptions.frames["LunaPlayerFrame"].bars) do
 			if v[1] == "Castbar" then
 				CastBarHeightWeight = v[2]
 			end
 			textheights[v[1]] = v[3] or 0.45
+			textbalance[v[1]] = v[6] or 0.5
 		end
+		
 		if (LunaPlayerFrame.bars["Castbar"].casting or LunaPlayerFrame.bars["Castbar"].channeling) and CastBarHeightWeight > 0 then
 			LunaPlayerFrame.bars["Castbar"]:Show()
 		else
@@ -655,26 +658,26 @@ function LunaUnitFrames:CreatePlayerFrame()
 		
 		local healthheight = (LunaPlayerFrame.bars["Healthbar"]:GetHeight()*textheights["Healthbar"])
 		LunaPlayerFrame.bars["Healthbar"].righttext:SetHeight(LunaPlayerFrame.bars["Healthbar"]:GetHeight())
-		LunaPlayerFrame.bars["Healthbar"].righttext:SetWidth(LunaPlayerFrame.bars["Healthbar"]:GetWidth()*0.35)
+		LunaPlayerFrame.bars["Healthbar"].righttext:SetWidth(LunaPlayerFrame.bars["Healthbar"]:GetWidth()*(1-textbalance["Healthbar"]))
 		LunaPlayerFrame.bars["Healthbar"].righttext:SetFont(LunaOptions.font, healthheight)
 		LunaPlayerFrame.bars["Healthbar"].lefttext:SetHeight(LunaPlayerFrame.bars["Healthbar"]:GetHeight())
-		LunaPlayerFrame.bars["Healthbar"].lefttext:SetWidth(LunaPlayerFrame.bars["Healthbar"]:GetWidth()*0.65)
+		LunaPlayerFrame.bars["Healthbar"].lefttext:SetWidth(LunaPlayerFrame.bars["Healthbar"]:GetWidth()*textbalance["Healthbar"])
 		LunaPlayerFrame.bars["Healthbar"].lefttext:SetFont(LunaOptions.font, healthheight)
 		
 		local powerheight = (LunaPlayerFrame.bars["Powerbar"]:GetHeight()*textheights["Powerbar"])
 		LunaPlayerFrame.bars["Powerbar"].righttext:SetHeight(LunaPlayerFrame.bars["Powerbar"]:GetHeight())
-		LunaPlayerFrame.bars["Powerbar"].righttext:SetWidth(LunaPlayerFrame.bars["Powerbar"]:GetWidth()*0.5)
+		LunaPlayerFrame.bars["Powerbar"].righttext:SetWidth(LunaPlayerFrame.bars["Powerbar"]:GetWidth()*(1-textbalance["Powerbar"]))
 		LunaPlayerFrame.bars["Powerbar"].righttext:SetFont(LunaOptions.font, powerheight)
 		LunaPlayerFrame.bars["Powerbar"].lefttext:SetHeight(LunaPlayerFrame.bars["Powerbar"]:GetHeight())
-		LunaPlayerFrame.bars["Powerbar"].lefttext:SetWidth(LunaPlayerFrame.bars["Powerbar"]:GetWidth()*0.5)
+		LunaPlayerFrame.bars["Powerbar"].lefttext:SetWidth(LunaPlayerFrame.bars["Powerbar"]:GetWidth()*textbalance["Powerbar"])
 		LunaPlayerFrame.bars["Powerbar"].lefttext:SetFont(LunaOptions.font, powerheight)
 		
 		local castheight = (LunaPlayerFrame.bars["Castbar"]:GetHeight()*textheights["Castbar"])
 		LunaPlayerFrame.bars["Castbar"].Text:SetHeight(LunaPlayerFrame.bars["Castbar"]:GetHeight())
-		LunaPlayerFrame.bars["Castbar"].Text:SetWidth(LunaPlayerFrame.bars["Castbar"]:GetWidth()*0.5)
+		LunaPlayerFrame.bars["Castbar"].Text:SetWidth(LunaPlayerFrame.bars["Castbar"]:GetWidth()*(1-textbalance["Castbar"]))
 		LunaPlayerFrame.bars["Castbar"].Text:SetFont(LunaOptions.font, castheight)
 		LunaPlayerFrame.bars["Castbar"].Time:SetHeight(LunaPlayerFrame.bars["Castbar"]:GetHeight())
-		LunaPlayerFrame.bars["Castbar"].Time:SetWidth(LunaPlayerFrame.bars["Castbar"]:GetWidth()*0.5)
+		LunaPlayerFrame.bars["Castbar"].Time:SetWidth(LunaPlayerFrame.bars["Castbar"]:GetWidth()*textbalance["Castbar"])
 		LunaPlayerFrame.bars["Castbar"].Time:SetFont(LunaOptions.font, castheight)
 		
 		local dbheight = (LunaPlayerFrame.bars["Druidbar"]:GetHeight()*textheights["Druidbar"])

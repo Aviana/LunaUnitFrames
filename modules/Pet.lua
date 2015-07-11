@@ -239,6 +239,7 @@ function LunaUnitFrames:CreatePetFrame()
 		local totalWeight = 0
 		local gaps = -1
 		local textheights = {}
+		local textbalance = {}
 		if LunaOptions.frames["LunaPetFrame"].portrait > 1 then    -- We have a square portrait
 			frameWidth = (LunaPetFrame:GetWidth()-frameHeight)
 			LunaPetFrame.bars["Portrait"]:SetPoint("TOPLEFT", LunaPetFrame, "TOPLEFT")
@@ -261,6 +262,7 @@ function LunaUnitFrames:CreatePetFrame()
 			local weight = v[2]/totalWeight
 			local height = (frameHeight-gaps)*weight
 			textheights[v[1]] = v[3] or 0.45
+			textbalance[v[1]] = v[6] or 0.5
 			LunaPetFrame.bars[bar]:ClearAllPoints()
 			LunaPetFrame.bars[bar]:SetHeight(height)
 			LunaPetFrame.bars[bar]:SetWidth(frameWidth)
@@ -283,18 +285,18 @@ function LunaUnitFrames:CreatePetFrame()
 		local healthheight = (LunaPetFrame.bars["Healthbar"]:GetHeight()*textheights["Healthbar"])
 		LunaPetFrame.bars["Healthbar"].righttext:SetFont(LunaOptions.font, healthheight)
 		LunaPetFrame.bars["Healthbar"].righttext:SetHeight(LunaPetFrame.bars["Healthbar"]:GetHeight())
-		LunaPetFrame.bars["Healthbar"].righttext:SetWidth(LunaPetFrame.bars["Healthbar"]:GetWidth()*0.45)
+		LunaPetFrame.bars["Healthbar"].righttext:SetWidth(LunaPetFrame.bars["Healthbar"]:GetWidth()*(1-textbalance["Healthbar"]))
 		LunaPetFrame.bars["Healthbar"].lefttext:SetFont(LunaOptions.font, healthheight)
 		LunaPetFrame.bars["Healthbar"].lefttext:SetHeight(LunaPetFrame.bars["Healthbar"]:GetHeight())
-		LunaPetFrame.bars["Healthbar"].lefttext:SetWidth(LunaPetFrame.bars["Healthbar"]:GetWidth()*0.55)
+		LunaPetFrame.bars["Healthbar"].lefttext:SetWidth(LunaPetFrame.bars["Healthbar"]:GetWidth()*textbalance["Healthbar"])
 
 		local powerheight = (LunaPetFrame.bars["Powerbar"]:GetHeight()*textheights["Powerbar"])
 		LunaPetFrame.bars["Powerbar"].righttext:SetFont(LunaOptions.font, powerheight)
 		LunaPetFrame.bars["Powerbar"].righttext:SetHeight(LunaPetFrame.bars["Powerbar"]:GetHeight())
-		LunaPetFrame.bars["Powerbar"].righttext:SetWidth(LunaPetFrame.bars["Powerbar"]:GetWidth()*0.5)
+		LunaPetFrame.bars["Powerbar"].righttext:SetWidth(LunaPetFrame.bars["Powerbar"]:GetWidth()*(1-textbalance["Powerbar"]))
 		LunaPetFrame.bars["Powerbar"].lefttext:SetFont(LunaOptions.font, powerheight)
 		LunaPetFrame.bars["Powerbar"].lefttext:SetHeight(LunaPetFrame.bars["Powerbar"]:GetHeight())
-		LunaPetFrame.bars["Powerbar"].lefttext:SetWidth(LunaPetFrame.bars["Powerbar"]:GetWidth()*0.5)
+		LunaPetFrame.bars["Powerbar"].lefttext:SetWidth(LunaPetFrame.bars["Powerbar"]:GetWidth()*textbalance["Powerbar"])
 	end
 	LunaPetFrame.UpdateBuffSize = function ()
 		local buffcount = LunaOptions.frames["LunaPetFrame"].BuffInRow or 16
