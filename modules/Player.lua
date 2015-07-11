@@ -699,6 +699,9 @@ function LunaUnitFrames:CreatePlayerFrame()
 			LunaPlayerFrame.totems[i]:SetWidth((frameWidth-3)/4)
 		end
 		LunaPlayerFrame.bars["Powerbar"].Ticker:SetHeight(LunaPlayerFrame.bars["Powerbar"]:GetHeight())
+		if not (LunaOptions.frames["LunaPlayerFrame"].portrait > 1) and not LunaPlayerFrame.bars["Portrait"].model:IsShown() then
+			Luna_Player_Events.UNIT_PORTRAIT_UPDATE("player")
+		end
 	end
 	LunaPlayerFrame.UpdateBuffSize = function ()
 		local buffcount = LunaOptions.frames["LunaPlayerFrame"].BuffInRow or 16
@@ -911,6 +914,7 @@ function LunaUnitFrames:ConvertPlayerPortrait()
 	end
 	SetIconPositions()
 	LunaPlayerFrame.AdjustBars()
+	Luna_Player_Events.UNIT_PORTRAIT_UPDATE("player")
 end
 
 function LunaUnitFrames:UpdatePlayerFrame()
@@ -1208,10 +1212,18 @@ function Luna_Player_Events.UNIT_PORTRAIT_UPDATE(unit)
 		portrait.texture:SetTexture("Interface\\Glues\\CharacterCreate\\UI-CharacterCreate-Classes")
 		portrait.texture:SetTexCoord(CLASS_ICON_TCOORDS[class][1], CLASS_ICON_TCOORDS[class][2], CLASS_ICON_TCOORDS[class][3], CLASS_ICON_TCOORDS[class][4])
 	elseif(LunaOptions.PortraitMode == 2) then
-		portrait.model:Hide()
-		portrait.texture:Show()
-		SetPortraitTexture(portrait.texture, "player")
-		portrait.texture:SetTexCoord(.1, .90, .1, .90)
+		if LunaOptions.frames["LunaPlayerFrame"].portrait > 1 then
+			portrait.model:Hide()
+			portrait.texture:Show()
+			SetPortraitTexture(portrait.texture, "player")
+			portrait.texture:SetTexCoord(.1, .90, .1, .90)
+		else
+			portrait.model:Hide()
+			portrait.texture:Show()
+			SetPortraitTexture(portrait.texture, "player")
+			local aspect = portrait:GetHeight()/portrait:GetWidth()
+			portrait.texture:SetTexCoord(0, 1, (0.5-0.5*aspect), 1-(0.5-0.5*aspect))
+		end
 	else
 		if(not UnitExists("player") or not UnitIsConnected("player") or not UnitIsVisible("player")) then
 			if LunaOptions.PortraitFallback == 3 then
@@ -1221,10 +1233,18 @@ function Luna_Player_Events.UNIT_PORTRAIT_UPDATE(unit)
 				portrait.texture:SetTexture("Interface\\Glues\\CharacterCreate\\UI-CharacterCreate-Classes")
 				portrait.texture:SetTexCoord(CLASS_ICON_TCOORDS[class][1], CLASS_ICON_TCOORDS[class][2], CLASS_ICON_TCOORDS[class][3], CLASS_ICON_TCOORDS[class][4])
 			elseif LunaOptions.PortraitFallback == 2 then
-				portrait.model:Hide()
-				portrait.texture:Show()
-				SetPortraitTexture(portrait.texture, "player")
-				portrait.texture:SetTexCoord(.1, .90, .1, .90)
+				if LunaOptions.frames["LunaPlayerFrame"].portrait > 1 then
+					portrait.model:Hide()
+					portrait.texture:Show()
+					SetPortraitTexture(portrait.texture, "player")
+					portrait.texture:SetTexCoord(.1, .90, .1, .90)
+				else
+					portrait.model:Hide()
+					portrait.texture:Show()
+					SetPortraitTexture(portrait.texture, "player")
+					local aspect = portrait:GetHeight()/portrait:GetWidth()
+					portrait.texture:SetTexCoord(0, 1, .1+(0.4-0.4*aspect), .90-(0.4-0.4*aspect))
+				end
 			else
 				portrait.model:Show()
 				portrait.texture:Hide()

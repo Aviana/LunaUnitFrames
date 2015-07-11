@@ -297,6 +297,10 @@ function LunaUnitFrames:CreatePetFrame()
 		LunaPetFrame.bars["Powerbar"].lefttext:SetFont(LunaOptions.font, powerheight)
 		LunaPetFrame.bars["Powerbar"].lefttext:SetHeight(LunaPetFrame.bars["Powerbar"]:GetHeight())
 		LunaPetFrame.bars["Powerbar"].lefttext:SetWidth(LunaPetFrame.bars["Powerbar"]:GetWidth()*textbalance["Powerbar"])
+		
+		if not (LunaOptions.frames["LunaPetFrame"].portrait > 1) and not LunaPetFrame.bars["Portrait"].model:IsShown() then
+			Luna_Pet_Events.UNIT_PORTRAIT_UPDATE("pet")
+		end
 	end
 	LunaPetFrame.UpdateBuffSize = function ()
 		local buffcount = LunaOptions.frames["LunaPetFrame"].BuffInRow or 16
@@ -460,6 +464,7 @@ function LunaUnitFrames:ConvertPetPortrait()
 		end
 	end
 	LunaPetFrame.AdjustBars()
+	Luna_Pet_Events.UNIT_PORTRAIT_UPDATE("pet")
 end
 
 function LunaUnitFrames:UpdatePetFrame()
@@ -624,10 +629,18 @@ function Luna_Pet_Events.UNIT_PORTRAIT_UPDATE(unit)
 	end
 	local portrait = LunaPetFrame.bars["Portrait"]
 	if (LunaOptions.PortraitMode == 3 and (LunaOptions.PortraitFallback == 2 or LunaOptions.PortraitFallback == 3)) or LunaOptions.PortraitMode == 2 then
-		portrait.model:Hide()
-		portrait.texture:Show()
-		SetPortraitTexture(portrait.texture, "pet")
-		portrait.texture:SetTexCoord(.1, .90, .1, .90)
+		if LunaOptions.frames["LunaPetFrame"].portrait > 1 then
+			portrait.model:Hide()
+			portrait.texture:Show()
+			SetPortraitTexture(portrait.texture, "pet")
+			portrait.texture:SetTexCoord(.1, .90, .1, .90)
+		else
+			portrait.model:Hide()
+			portrait.texture:Show()
+			SetPortraitTexture(portrait.texture, "pet")
+			local aspect = portrait:GetHeight()/portrait:GetWidth()
+			portrait.texture:SetTexCoord(0, 1, (0.5-0.5*aspect), 1-(0.5-0.5*aspect))
+		end
 	else
 		if(not UnitExists("pet") or not UnitIsConnected("pet") or not UnitIsVisible("pet")) then
 			portrait.model:Show()
