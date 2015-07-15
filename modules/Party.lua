@@ -936,6 +936,9 @@ function Luna_Party_Events.UNIT_PORTRAIT_UPDATE(unitnbr)
 	local unit = this.unit or LunaPartyFrames[unitnbr].unit
 	if(LunaOptions.PortraitMode == 3) then
 		local _,class = UnitClass(unit)
+		if not class then
+			class = "WARRIOR"
+		end
 		portrait.model:Hide()
 		portrait.texture:Show()
 		portrait.texture:SetTexture("Interface\\Glues\\CharacterCreate\\UI-CharacterCreate-Classes")
