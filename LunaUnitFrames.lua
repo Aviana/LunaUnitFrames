@@ -66,7 +66,7 @@ end
 
 function LunaUnitFrames:GetHealthColor(unit)
 	local percHp = UnitHealth(unit)/UnitHealthMax(unit)
-	return {0.9*(1-percHp),0.9*percHp,0}
+	return {0.2+((0.7)*(1-percHp)),0.9*percHp,0.2*percHp}
 end
 	
 function Luna_OnClick()
