@@ -848,7 +848,7 @@ function Luna_Target_Events:UNIT_HEALTH()
 		LunaTargetFrame.bars["Healthbar"]:SetValue(0)
 	else
 		LunaTargetFrame.bars["Healthbar"]:SetValue(Health)
-		if not LunaOptions.hbarcolor and UnitIsPlayer("target") then
+		if not LunaOptions.hbarcolor and UnitIsPlayer("target") and not UnitIsEnemy("player","target") then
 			local color = LunaUnitFrames:GetHealthColor("target")
 			LunaTargetFrame.bars["Healthbar"]:SetStatusBarColor(color[1],color[2],color[3])
 			LunaTargetFrame.bars["Healthbar"].hpbg:SetVertexColor(color[1],color[2],color[3], 0.25)
