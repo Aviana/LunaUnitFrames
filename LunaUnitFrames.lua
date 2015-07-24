@@ -82,14 +82,15 @@ function Luna_OnClick()
 	else
 		button = 5
 	end
+	modifier = 1
 	if IsShiftKeyDown() then
-		modifier = 2
-	elseif IsAltKeyDown() then
-		modifier = 3
-	elseif IsControlKeyDown() then
-		modifier = 4
-	else
-		modifier = 1
+		modifier = modifier + 1
+	end
+	if IsAltKeyDown() then
+		modifier = modifier + 2
+	end
+	if IsControlKeyDown() then
+		modifier = modifier + 4
 	end
 	local func = loadstring(LunaOptions.clickcast[playername][modifier][button])
 	if LunaOptions.clickcast[playername][modifier][button] == "target" then
@@ -143,6 +144,21 @@ function LunaUnitFrames:OnEvent()
 		if not LunaOptions.clickcast[playerName] then
 			LunaOptions.clickcast[playerName] = {
 									{"target","menu","","",""},
+									{"","","","",""},
+									{"","","","",""},
+									{"","","","",""},
+									{"","","","",""},
+									{"","","","",""},
+									{"","","","",""},
+									{"","","","",""}
+									}
+		elseif getn(LunaOptions.clickcast[playerName]) == 4 then
+			LunaOptions.clickcast[playerName] = {
+									LunaOptions.clickcast[playerName][1],
+									LunaOptions.clickcast[playerName][2],
+									LunaOptions.clickcast[playerName][3],
+									{"","","","",""},
+									LunaOptions.clickcast[playerName][4],
 									{"","","","",""},
 									{"","","","",""},
 									{"","","","",""}
