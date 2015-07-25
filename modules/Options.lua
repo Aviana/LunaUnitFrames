@@ -1941,6 +1941,13 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[9].wsoul:SetChecked(LunaOptions.frames["LunaRaidFrames"].wsoul)
 	getglobal("WSoulSwitchText"):SetText("Track Weakened Soul (Priest only)")
 	
+	LunaOptionsFrame.pages[9].ResetButton = CreateFrame("Button", "RaidPosReset", LunaOptionsFrame.pages[9], "UIPanelButtonTemplate")
+	LunaOptionsFrame.pages[9].ResetButton:SetPoint("TOPRIGHT", LunaOptionsFrame.pages[9], "TOPRIGHT")
+	LunaOptionsFrame.pages[9].ResetButton:SetHeight(20)
+	LunaOptionsFrame.pages[9].ResetButton:SetWidth(140)
+	LunaOptionsFrame.pages[9].ResetButton:SetText("Reset Positions")
+	LunaOptionsFrame.pages[9].ResetButton:SetScript("OnClick", LunaUnitFrames.Raid_Pos_Reset)
+	
 	LunaOptionsFrame.pages[10].hbarcolor = CreateFrame("CheckButton", "HBarColorSwitch", LunaOptionsFrame.pages[10], "UICheckButtonTemplate")
 	LunaOptionsFrame.pages[10].hbarcolor:SetHeight(20)
 	LunaOptionsFrame.pages[10].hbarcolor:SetWidth(20)

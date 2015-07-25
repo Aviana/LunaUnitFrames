@@ -1152,3 +1152,11 @@ function LunaUnitFrames.Raid_Update()
 		end
 	end
 end
+
+function LunaUnitFrames.Raid_Pos_Reset()
+	for i = 1, 9 do
+		LunaOptions.frames["LunaRaidFrames"]["positions"][i].x = 400
+		LunaOptions.frames["LunaRaidFrames"]["positions"][i].y = -400
+		LunaUnitFrames.frames.RaidFrames[i]:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 400, -400)
+	end
+end
