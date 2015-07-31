@@ -113,7 +113,11 @@ local function Castbar_OnUpdate()
 		current_time = LunaTargetFrame.bars["Castbar"].endTime - GetTime()
 	end
 	local text = string.sub(math.max(current_time,0)+0.001,1,4)
-	LunaTargetFrame.bars["Castbar"].Time:SetText(text)
+	if LunaTargetFrame.bars["Castbar"].casting or LunaTargetFrame.bars["Castbar"].channeling then
+		LunaTargetFrame.bars["Castbar"].Time:SetText(text)
+	else
+		LunaTargetFrame.bars["Castbar"].Time:SetText("")
+	end
 	
 	if (LunaTargetFrame.bars["Castbar"].casting) then
 		local status = GetTime()
@@ -121,6 +125,7 @@ local function Castbar_OnUpdate()
 			status = LunaTargetFrame.bars["Castbar"].maxValue
 			LunaTargetFrame.bars["Castbar"].casting = nil
 			LunaTargetFrame.AdjustBars()
+			return
 		end
 		LunaTargetFrame.bars["Castbar"]:SetValue(status)
 	elseif (LunaTargetFrame.bars["Castbar"].channeling) then
@@ -312,7 +317,8 @@ function LunaUnitFrames:CreateTargetFrame()
 	LunaTargetFrame.bars["Castbar"].maxValue = 0
 	LunaTargetFrame.bars["Castbar"].casting = nil
 	LunaTargetFrame.bars["Castbar"].channeling = nil
-	LunaTargetFrame.bars["Castbar"]:Hide()
+	LunaTargetFrame.bars["Castbar"]:SetMinMaxValues(0,1)
+	LunaTargetFrame.bars["Castbar"]:SetValue(0)
 
 	-- Add a background
 	local Background = Castbar:CreateTexture(nil, 'BACKGROUND')
@@ -432,8 +438,14 @@ function LunaUnitFrames:CreateTargetFrame()
 			textheights[v[1]] = v[3] or 0.45
 			textbalance[v[1]] = v[6] or 0.5
 		end
-		if (LunaTargetFrame.bars["Castbar"].casting or LunaTargetFrame.bars["Castbar"].channeling) and CastBarHeightWeight > 0 then
+		if ((LunaTargetFrame.bars["Castbar"].casting or LunaTargetFrame.bars["Castbar"].channeling) and CastBarHeightWeight > 0) then
 			LunaTargetFrame.bars["Castbar"]:Show()
+		elseif LunaOptions.statictargetcastbar then
+			LunaTargetFrame.bars["Castbar"]:Show()
+			LunaTargetFrame.bars["Castbar"].Time:SetText("")
+			LunaTargetFrame.bars["Castbar"].Text:SetText("")
+			LunaTargetFrame.bars["Castbar"]:SetMinMaxValues(0,1)
+			LunaTargetFrame.bars["Castbar"]:SetValue(0)
 		else
 			LunaTargetFrame.bars["Castbar"]:Hide()
 		end

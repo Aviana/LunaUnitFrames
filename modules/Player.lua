@@ -78,7 +78,11 @@ local function Luna_Player_OnUpdate()
 		end
 		text = "|cffcc0000"..sign..delay.."|r "..text
 	end
-	LunaPlayerFrame.bars["Castbar"].Time:SetText(text)
+	if LunaPlayerFrame.bars["Castbar"].casting or LunaPlayerFrame.bars["Castbar"].channeling then
+		LunaPlayerFrame.bars["Castbar"].Time:SetText(text)
+	else
+		LunaPlayerFrame.bars["Castbar"].Time:SetText("")
+	end
 	
 	if (LunaPlayerFrame.bars["Castbar"].casting) then
 		local status = GetTime()
@@ -421,7 +425,8 @@ function LunaUnitFrames:CreatePlayerFrame()
 	LunaPlayerFrame.bars["Castbar"].maxValue = 0
 	LunaPlayerFrame.bars["Castbar"].delaySum = 0
 	LunaPlayerFrame.bars["Castbar"].holdTime = 0
-	LunaPlayerFrame.bars["Castbar"]:Hide()
+	LunaPlayerFrame.bars["Castbar"]:SetMinMaxValues(0,1)
+	LunaPlayerFrame.bars["Castbar"]:SetValue(0)
 
 	-- Add a background
 	local Background = Castbar:CreateTexture(nil, 'BACKGROUND')
@@ -601,8 +606,13 @@ function LunaUnitFrames:CreatePlayerFrame()
 			textbalance[v[1]] = v[6] or 0.5
 		end
 		
-		if (LunaPlayerFrame.bars["Castbar"].casting or LunaPlayerFrame.bars["Castbar"].channeling) and CastBarHeightWeight > 0 then
+		if ((LunaPlayerFrame.bars["Castbar"].casting or LunaPlayerFrame.bars["Castbar"].channeling) and CastBarHeightWeight > 0) then
 			LunaPlayerFrame.bars["Castbar"]:Show()
+		elseif LunaOptions.staticplayercastbar then
+			LunaPlayerFrame.bars["Castbar"]:Show()
+			LunaPlayerFrame.bars["Castbar"].Time:SetText("")
+			LunaPlayerFrame.bars["Castbar"].Text:SetText("")
+			LunaPlayerFrame.bars["Castbar"]:SetValue(0)
 		else
 			LunaPlayerFrame.bars["Castbar"]:Hide()
 		end

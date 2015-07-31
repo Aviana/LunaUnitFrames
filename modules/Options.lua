@@ -202,11 +202,11 @@ function OptionFunctions.StopMovingOrSizing()
 end
 
 function OptionFunctions.ToggleFrame()
-	for i, page in pairs(LunaOptionsFrame.pages) do
+	for i, frame in pairs(LunaOptionsFrame.ScrollFrames) do
 		if (i-1) == this.id then
-			page:Show()
+			frame:Show()
 		else
-			page:Hide()
+			frame:Hide()
 		end
 	end
 end
@@ -1269,6 +1269,24 @@ function OptionFunctions.TogglePetGroup()
 	LunaUnitFrames:UpdatePetRoster()
 end
 
+function OptionFunctions.StaticPlayerCastbar()
+	if not LunaOptions.staticplayercastbar then
+		LunaOptions.staticplayercastbar = 1
+	else
+		LunaOptions.staticplayercastbar = nil
+	end
+	LunaPlayerFrame.AdjustBars()
+end
+
+function OptionFunctions.StaticTargetCastbar()
+	if not LunaOptions.statictargetcastbar then
+		LunaOptions.statictargetcastbar = 1
+	else
+		LunaOptions.statictargetcastbar = nil
+	end
+	LunaTargetFrame.AdjustBars()
+end
+
 function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame = CreateFrame("Frame", "LunaOptionsMenu", UIParent)
 	LunaOptionsFrame:SetHeight(400)
@@ -1315,15 +1333,38 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.help.text:SetJustifyV("MIDDLE")
 
 	LunaOptionsFrame.pages = {}
+	LunaOptionsFrame.ScrollFrames = {}
+	LunaOptionsFrame.Sliders = {}
 
 	for i, v in pairs(OptionsPageNames) do
-		LunaOptionsFrame.pages[i] = CreateFrame("Frame", v.title.." Page", LunaOptionsFrame)
-		LunaOptionsFrame.pages[i]:SetHeight(350)
+		LunaOptionsFrame.ScrollFrames[i] = CreateFrame("ScrollFrame", nil, LunaOptionsFrame)
+		LunaOptionsFrame.ScrollFrames[i]:SetHeight(350)
+		LunaOptionsFrame.ScrollFrames[i]:SetWidth(500)
+		LunaOptionsFrame.ScrollFrames[i]:SetPoint("BOTTOMRIGHT", LunaOptionsFrame, "BOTTOMRIGHT", -30, 10)
+		LunaOptionsFrame.ScrollFrames[i]:Hide()
+		
+		LunaOptionsFrame.Sliders[i] = CreateFrame("Slider", nil, LunaOptionsFrame.ScrollFrames[i])
+		LunaOptionsFrame.Sliders[i]:SetOrientation("VERTICAL")
+		LunaOptionsFrame.Sliders[i]:SetPoint("TOPLEFT", LunaOptionsFrame.ScrollFrames[i], "TOPRIGHT", 5, 0)
+		LunaOptionsFrame.Sliders[i]:SetBackdrop(LunaOptions.backdrop)
+		LunaOptionsFrame.Sliders[i]:SetBackdropColor(0,0,0,0.5)
+		LunaOptionsFrame.Sliders[i].thumbtexture = LunaOptionsFrame.Sliders[i]:CreateTexture()
+		LunaOptionsFrame.Sliders[i].thumbtexture:SetTexture(0.18,0.27,0.5,1)
+		LunaOptionsFrame.Sliders[i]:SetThumbTexture(LunaOptionsFrame.Sliders[i].thumbtexture)
+		LunaOptionsFrame.Sliders[i]:SetMinMaxValues(0,1)
+		LunaOptionsFrame.Sliders[i]:SetHeight(348)
+		LunaOptionsFrame.Sliders[i]:SetWidth(15)
+		LunaOptionsFrame.Sliders[i]:SetValue(0)
+		LunaOptionsFrame.Sliders[i].ScrollFrame = LunaOptionsFrame.ScrollFrames[i]
+		LunaOptionsFrame.Sliders[i]:SetScript("OnValueChanged", function() this.ScrollFrame:SetVerticalScroll(this.ScrollFrame:GetVerticalScrollRange()*this:GetValue()) end  )
+	
+		LunaOptionsFrame.pages[i] = CreateFrame("Frame", v.title.." Page", LunaOptionsFrame.ScrollFrames[i])
+		LunaOptionsFrame.pages[i]:SetHeight(500)
 		LunaOptionsFrame.pages[i]:SetWidth(500)
 		LunaOptionsFrame.pages[i]:SetBackdrop(LunaOptions.backdrop)
 		LunaOptionsFrame.pages[i]:SetBackdropColor(0,0,0,1)
-		LunaOptionsFrame.pages[i]:SetPoint("BOTTOMRIGHT", LunaOptionsFrame, "BOTTOMRIGHT", -10, 10)
-		LunaOptionsFrame.pages[i]:Hide()
+--		LunaOptionsFrame.pages[i]:SetPoint("BOTTOMRIGHT", LunaOptionsFrame, "BOTTOMRIGHT", -10, 10)
+--		LunaOptionsFrame.pages[i]:Hide()
 		
 		LunaOptionsFrame.pages[i].name = LunaOptionsFrame.pages[i]:CreateFontString(nil, "OVERLAY", LunaOptionsFrame.pages[i])
 		LunaOptionsFrame.pages[i].name:SetPoint("TOP", LunaOptionsFrame.pages[i], "TOP", 0, -10)
@@ -1334,6 +1375,7 @@ function LunaOptionsModule:CreateMenu()
 		LunaOptionsFrame.pages[i].name:SetText(v.title.." Configuration")
 		
 		LunaOptionsFrame.pages[i].frame = v.frame
+		LunaOptionsFrame.ScrollFrames[i]:SetScrollChild(LunaOptionsFrame.pages[i])
 				
 		if i < 9 then
 			LunaOptionsFrame.pages[i].enablebutton = CreateFrame("CheckButton", v.title.."EnableButton", LunaOptionsFrame.pages[i], "UICheckButtonTemplate")
@@ -1372,7 +1414,7 @@ function LunaOptionsModule:CreateMenu()
 			getglobal(v.frame.."ScaleSliderText"):SetText("Scale: "..LunaOptions.frames[v.frame].scale)
 		end
 	end	
-	LunaOptionsFrame.pages[1]:Show()
+	LunaOptionsFrame.ScrollFrames[1]:Show()
 		
 	LunaOptionsFrame.Button0 = CreateFrame("Button", "LunaPlayerFrameButton", LunaOptionsFrame, "UIPanelButtonTemplate")
 	LunaOptionsFrame.Button0:SetPoint("TOPLEFT", LunaOptionsFrame, "TOPLEFT", 30, -70)
@@ -1630,18 +1672,18 @@ function LunaOptionsModule:CreateMenu()
 		end
 	end
 	
-	LunaOptionsFrame.pages[1].HideBlizzCast = CreateFrame("CheckButton", "HideBlizzCast", LunaOptionsFrame.pages[1], "UICheckButtonTemplate")
-	LunaOptionsFrame.pages[1].HideBlizzCast:SetHeight(20)
-	LunaOptionsFrame.pages[1].HideBlizzCast:SetWidth(20)
-	LunaOptionsFrame.pages[1].HideBlizzCast:SetPoint("TOPLEFT", LunaOptionsFrame.pages[1].BuffInRowslider, "BOTTOMLEFT", 0, -20)
-	LunaOptionsFrame.pages[1].HideBlizzCast:SetScript("OnClick", OptionFunctions.HideBlizzardCastbarToggle)
-	LunaOptionsFrame.pages[1].HideBlizzCast:SetChecked(LunaOptions.hideBlizzCastbar)
-	getglobal("HideBlizzCastText"):SetText("Hide original Blizzard Castbar")
+	LunaOptionsFrame.pages[1].staticcbar = CreateFrame("CheckButton", "StaticCBarSwitch", LunaOptionsFrame.pages[1], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[1].staticcbar:SetHeight(20)
+	LunaOptionsFrame.pages[1].staticcbar:SetWidth(20)
+	LunaOptionsFrame.pages[1].staticcbar:SetPoint("TOPLEFT", LunaOptionsFrame.pages[1].BuffInRowslider, "TOPLEFT", 0, -30)
+	LunaOptionsFrame.pages[1].staticcbar:SetScript("OnClick", OptionFunctions.StaticPlayerCastbar)
+	LunaOptionsFrame.pages[1].staticcbar:SetChecked(LunaOptions.staticplayercastbar)
+	getglobal("StaticCBarSwitchText"):SetText("No collapsing of the castbar.")
 
 	LunaOptionsFrame.pages[1].Portraitmode = CreateFrame("CheckButton", "PortraitmodePlayer", LunaOptionsFrame.pages[1], "UICheckButtonTemplate")
 	LunaOptionsFrame.pages[1].Portraitmode:SetHeight(20)
 	LunaOptionsFrame.pages[1].Portraitmode:SetWidth(20)
-	LunaOptionsFrame.pages[1].Portraitmode:SetPoint("TOPLEFT", LunaOptionsFrame.pages[1].HideBlizzCast, "TOPLEFT", 0, -20)
+	LunaOptionsFrame.pages[1].Portraitmode:SetPoint("TOPLEFT", LunaOptionsFrame.pages[1].staticcbar, "TOPLEFT", 0, -20)
 	LunaOptionsFrame.pages[1].Portraitmode:SetScript("OnClick", OptionFunctions.PortraitmodeToggle)
 	LunaOptionsFrame.pages[1].Portraitmode:SetChecked((LunaOptions.frames["LunaPlayerFrame"].portrait == 1))
 	getglobal("PortraitmodePlayerText"):SetText("Display Portrait as Bar")
@@ -1686,10 +1728,18 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[2].Portraitmode:SetChecked((LunaOptions.frames["LunaPetFrame"].portrait == 1))
 	getglobal("PortraitmodePetText"):SetText("Display Portrait as Bar")
 
+	LunaOptionsFrame.pages[3].staticcbar = CreateFrame("CheckButton", "StaticCBar2Switch", LunaOptionsFrame.pages[3], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[3].staticcbar:SetHeight(20)
+	LunaOptionsFrame.pages[3].staticcbar:SetWidth(20)
+	LunaOptionsFrame.pages[3].staticcbar:SetPoint("TOPLEFT", LunaOptionsFrame.pages[3].BuffInRowslider, "TOPLEFT", 0, -30)
+	LunaOptionsFrame.pages[3].staticcbar:SetScript("OnClick", OptionFunctions.StaticTargetCastbar)
+	LunaOptionsFrame.pages[3].staticcbar:SetChecked(LunaOptions.statictargetcastbar)
+	getglobal("StaticCBar2SwitchText"):SetText("No collapsing of the castbar.")
+	
 	LunaOptionsFrame.pages[3].Portraitmode = CreateFrame("CheckButton", "PortraitmodeTarget", LunaOptionsFrame.pages[3], "UICheckButtonTemplate")
 	LunaOptionsFrame.pages[3].Portraitmode:SetHeight(20)
 	LunaOptionsFrame.pages[3].Portraitmode:SetWidth(20)
-	LunaOptionsFrame.pages[3].Portraitmode:SetPoint("TOPLEFT", LunaOptionsFrame.pages[3].BuffInRowslider, "TOPLEFT", 0, -30)
+	LunaOptionsFrame.pages[3].Portraitmode:SetPoint("TOPLEFT", LunaOptionsFrame.pages[3].staticcbar, "TOPLEFT", 0, -20)
 	LunaOptionsFrame.pages[3].Portraitmode:SetScript("OnClick", OptionFunctions.PortraitmodeToggle)
 	LunaOptionsFrame.pages[3].Portraitmode:SetChecked((LunaOptions.frames["LunaTargetFrame"].portrait == 1))
 	getglobal("PortraitmodeTargetText"):SetText("Display Portrait as Bar")
@@ -2072,6 +2122,14 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[10].PortraitFallbackDesc:SetFont("Fonts\\FRIZQT__.TTF", 10)
 	LunaOptionsFrame.pages[10].PortraitFallbackDesc:SetTextColor(1,0.82,0)
 	LunaOptionsFrame.pages[10].PortraitFallbackDesc:SetText("Portrait Fallback")
+	
+	LunaOptionsFrame.pages[10].HideBlizzCast = CreateFrame("CheckButton", "HideBlizzCast", LunaOptionsFrame.pages[10], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[10].HideBlizzCast:SetHeight(20)
+	LunaOptionsFrame.pages[10].HideBlizzCast:SetWidth(20)
+	LunaOptionsFrame.pages[10].HideBlizzCast:SetPoint("TOPLEFT", LunaOptionsFrame.pages[10].PortraitFallback, "BOTTOMLEFT", 0, -20)
+	LunaOptionsFrame.pages[10].HideBlizzCast:SetScript("OnClick", OptionFunctions.HideBlizzardCastbarToggle)
+	LunaOptionsFrame.pages[10].HideBlizzCast:SetChecked(LunaOptions.hideBlizzCastbar)
+	getglobal("HideBlizzCastText"):SetText("Hide original Blizzard Castbar")
 	
 	LunaOptionsFrame:SetScale(1.3)
 	
