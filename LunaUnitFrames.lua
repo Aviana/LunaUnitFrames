@@ -92,16 +92,7 @@ function Luna_OnClick()
 		modifier = 1
 	end
 	local func = loadstring(LunaOptions.clickcast[playername][modifier][button])
-	if LunaOptions.clickcast[playername][modifier][button] == "target" then
-		if (SpellIsTargeting()) then
-			SpellTargetUnit(this.unit)
-		elseif (CursorHasItem()) then
-			DropItemOnUnit(this.unit)
-		else
-			TargetUnit(this.unit)
-		end
-		return
-	elseif LunaOptions.clickcast[playername][modifier][button] == "menu" then
+	if LunaOptions.clickcast[playername][modifier][button] == "menu" then
 		if (SpellIsTargeting()) then
 			SpellStopTargeting()
 			return;
@@ -113,6 +104,15 @@ function Luna_OnClick()
 				end
 			end
 		end
+	elseif LunaOptions.clickcast[playername][modifier][button] == "target" or SpellIsTargeting() then
+		if (SpellIsTargeting()) then
+			SpellTargetUnit(this.unit)
+		elseif (CursorHasItem()) then
+			DropItemOnUnit(this.unit)
+		else
+			TargetUnit(this.unit)
+		end
+		return
 	elseif UnitIsUnit("target", this.unit) then
 		if func then
 			func()

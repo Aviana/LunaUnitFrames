@@ -1,6 +1,7 @@
 local HealComm = AceLibrary("HealComm-1.0")
 local AceEvent = AceLibrary("AceEvent-2.0")
 local Luna_Player_Events = {}
+local berserkValue = 0.3
 
 local totemcolors = {
 					{1,0,0},
@@ -851,9 +852,40 @@ function LunaUnitFrames:CreatePlayerFrame()
 	LunaPlayerFrame.AdjustBars()
 	LunaPlayerFrame.UpdateBuffSize()
 	LunaUnitFrames:UpdatePlayerFrame()
+	AceEvent:RegisterEvent("CASTLIB_STARTCAST", LunaUnitFrames.CastAimedShot)
 	AceEvent:RegisterEvent("HealComm_Healupdate", LunaUnitFrames.PlayerUpdateHeal)
 	AceEvent:RegisterEvent("DruidManaLib_Manaupdate", LunaUnitFrames.DruidBarUpdate)
 	AceEvent:RegisterEvent("fiveSec", LunaUnitFrames.fiveSec)
+end
+
+function LunaUnitFrames.CastAimedShot(Spell)
+	if Spell == "Aimed Shot" then
+		local _,_, latency = GetNetStats()
+		local casttime = 3
+		for i=1,32 do
+			if UnitBuff("player",i) == "Interface\\Icons\\Ability_Warrior_InnerRage" then
+				casttime = casttime/1.3
+			end
+			if UnitBuff("player",i) == "Interface\\Icons\\Ability_Hunter_RunningShot" then
+				casttime = casttime/1.4
+			end
+			if UnitBuff("player",i) == "Interface\\Icons\\Racial_Troll_Berserk" then
+				casttime = casttime/ (1 + berserkValue)
+			end
+			if UnitBuff("player",i) == "Interface\\Icons\\Inv_Trinket_Naxxramas04" then
+				casttime = casttime/1.2
+			end
+		end
+		LunaPlayerFrame.bars["Castbar"].startTime = GetTime()
+		LunaPlayerFrame.bars["Castbar"].maxValue = LunaPlayerFrame.bars["Castbar"].startTime + casttime + (latency/1000)
+		LunaPlayerFrame.bars["Castbar"].holdTime = 0
+		LunaPlayerFrame.bars["Castbar"].casting = 1
+		LunaPlayerFrame.bars["Castbar"].delaySum = 0	
+		LunaPlayerFrame.bars["Castbar"].Text:SetText("Aimed Shot")
+		LunaPlayerFrame.bars["Castbar"]:SetMinMaxValues(LunaPlayerFrame.bars["Castbar"].startTime, LunaPlayerFrame.bars["Castbar"].maxValue)
+		LunaPlayerFrame.bars["Castbar"]:SetValue(LunaPlayerFrame.bars["Castbar"].startTime)
+		LunaPlayerFrame.AdjustBars()
+	end
 end
 
 function LunaUnitFrames.PlayerUpdateHeal(target)
@@ -1051,6 +1083,13 @@ function Luna_Player_Events:PLAYER_AURAS_CHANGED()
 		local stacks = GetPlayerBuffApplications(GetPlayerBuff(i-1,"HELPFUL"))
 		LunaPlayerFrame.Buffs[i].texturepath = path
 		if LunaPlayerFrame.Buffs[i].texturepath then
+				if LunaPlayerFrame.Buffs[i].texturepath == "Interface\\Icons\\Racial_Troll_Berserk" then
+					if((UnitHealth("player")/UnitHealthMax("player")) >= 0.40) then
+						berserkValue = (1.30 - (UnitHealth("player")/UnitHealthMax("player")))/3
+					else
+						berserkValue = 0.30
+					end
+				end
 			LunaPlayerFrame.Buffs[i]:EnableMouse(1)
 			LunaPlayerFrame.Buffs[i]:Show()
 			if stacks > 1 then

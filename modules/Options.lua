@@ -400,7 +400,7 @@ function OptionFunctions.UnRegisterCastbar(frame)
 end
 
 function OptionFunctions.HideBlizzardCastbarToggle()
-	if LunaOptionsFrame.pages[1].HideBlizzCast:GetChecked() == 1 then
+	if LunaOptionsFrame.pages[10].HideBlizzCast:GetChecked() == 1 then
 		OptionFunctions.UnRegisterCastbar("CastingBarFrame")
 		CastingBarFrame:Hide()
 		LunaOptions.hideBlizzCastbar = 1
