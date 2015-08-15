@@ -622,7 +622,7 @@ function LunaUnitFrames:CreatePlayerFrame()
 		else
 			LunaPlayerFrame.bars["Druidbar"]:Hide()
 		end
-		if class == "SHAMAN" and LunaOptions.TotemBar == 1 and (LunaPlayerFrame.totems[1].active or LunaPlayerFrame.totems[2].active or LunaPlayerFrame.totems[3].active or LunaPlayerFrame.totems[4].active) then
+		if class == "SHAMAN" and LunaOptions.TotemBar == 1 and (LunaPlayerFrame.totems[1].active or LunaPlayerFrame.totems[2].active or LunaPlayerFrame.totems[3].active or LunaPlayerFrame.totems[4].active) or LunaOptions.statictotembar then
 			LunaPlayerFrame.bars["Totembar"]:Show()
 		else
 			LunaPlayerFrame.bars["Totembar"]:Hide()
@@ -777,11 +777,14 @@ function LunaUnitFrames:CreatePlayerFrame()
 				end
 				row = row + 1
 			end
+			local offset = -3
 			if LunaUnitFrames.frames.ExperienceBar and LunaUnitFrames.frames.ExperienceBar:IsShown() then
-				LunaPlayerFrame.AuraAnchor:SetPoint("TOPLEFT", LunaPlayerFrame, "BOTTOMLEFT", -1, -15)
-			else
-				LunaPlayerFrame.AuraAnchor:SetPoint("TOPLEFT", LunaPlayerFrame, "BOTTOMLEFT", -1, -3)
+				offset = offset + (-12)
 			end
+			if LunaUnitFrames.frames.ReputationBar and LunaUnitFrames.frames.ReputationBar:IsShown() then
+				offset = offset + (-12)
+			end
+			LunaPlayerFrame.AuraAnchor:SetPoint("TOPLEFT", LunaPlayerFrame, "BOTTOMLEFT", -1, offset)
 			Luna_Player_Events:PLAYER_AURAS_CHANGED()
 		elseif LunaOptions.frames["LunaPlayerFrame"].ShowBuffs == 4 then
 			local buffsize = (((LunaPlayerFrame:GetHeight()/2)-(math.ceil(16/buffcount)-1))/math.ceil(16/buffcount))
@@ -1169,7 +1172,7 @@ function Luna_Player_Events:PARTY_LOOT_METHOD_CHANGED()
 end
 
 function Luna_Player_Events:PARTY_LEADER_CHANGED()
-	if UnitIsPartyLeader("player") then
+	if UnitIsPartyLeader("player") and (GetNumPartyMembers() > 0 or GetNumRaidMembers() > 0) then
 		LunaPlayerFrame.Leader:Show()
 	else
 		LunaPlayerFrame.Leader:Hide()

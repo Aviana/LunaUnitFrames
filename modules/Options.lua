@@ -115,8 +115,8 @@ local function ResetSettings()
 							["LunaTargetTargetFrame"] = {position = {x = 550, y = -20}, size = {x = 150, y = 40}, scale = 1, enabled = 1, ShowBuffs = 1, bars = {{"Healthbar", 6}, {"Powerbar", 4}}},
 							["LunaTargetTargetTargetFrame"] = {position = {x = 730, y = -20}, size = {x = 150, y = 40}, scale = 1, enabled = 1, ShowBuffs = 1, bars = {{"Healthbar", 6}, {"Powerbar", 4}}},
 							["LunaPartyFrames"] = {position = {x = 10, y = -140}, size = {x = 200, y = 40}, scale = 1, enabled = 1, ShowBuffs = 3, portrait = 2, bars = {{"Healthbar", 6}, {"Powerbar", 4}}},
-							["LunaPartyPetFrames"] = {position = {x = 0, y = 0}, size = {x = 110, y = 19}, scale = 1, enabled = 1, bars = {{"Healthbar", 6}, {"Powerbar", 4}}},
-							["LunaPartyTargetFrames"] = {position = {x = 0, y = 0}, size = {x = 110, y = 19}, scale = 1, enabled = 1, bars = {{"Healthbar", 6}, {"Powerbar", 4}}},
+							["LunaPartyPetFrames"] = {position = "RIGHT", size = {x = 110, y = 19}, scale = 1, enabled = 1, bars = {{"Healthbar", 6}, {"Powerbar", 4}}},
+							["LunaPartyTargetFrames"] = {position = "RIGHT", size = {x = 110, y = 19}, scale = 1, enabled = 1, bars = {{"Healthbar", 6}, {"Powerbar", 4}}},
 							["LunaPetFrame"] = {position = {x = 10, y = -70}, size = {x = 240, y = 30}, scale = 1, enabled = 1, ShowBuffs = 3, portrait = 2, bars = {{"Healthbar", 6}, {"Powerbar", 4}}},
 							["LunaRaidFrames"] = {
 								["pBars"] = 1,
@@ -306,6 +306,7 @@ function OptionFunctions.ScaleAdjust()
 		else
 			frame:SetScale(amount)
 			LunaUnitFrames:ResizeXPBar()
+			LunaUnitFrames:ResizeRepBar()
 		end
 		LunaOptions.frames[this:GetParent().frame].scale = amount
 		getglobal(this:GetParent().frame.."ScaleSliderText"):SetText("Scale: "..amount)
@@ -365,6 +366,7 @@ function OptionFunctions.WidthAdjust()
 			frame:AdjustBars()
 			frame:UpdateBuffSize()
 			LunaUnitFrames:ResizeXPBar()
+			LunaUnitFrames:ResizeRepBar()
 		else
 			frame:SetWidth(amount)
 			frame:AdjustBars()
@@ -441,6 +443,15 @@ function OptionFunctions.XPBarToggle()
 		LunaOptions.XPBar = 0
 	end
 	LunaUnitFrames:UpdateXPBar()
+end
+
+function OptionFunctions.RepBarToggle()
+	if LunaOptionsFrame.pages[1].RepBar:GetChecked() == 1 then
+		LunaOptions.RepBar = 1
+	else
+		LunaOptions.RepBar = nil
+	end
+	LunaUnitFrames:UpdateRepBar()
 end
 
 function OptionFunctions.BTimerToggle()
@@ -1278,6 +1289,15 @@ function OptionFunctions.StaticPlayerCastbar()
 	LunaPlayerFrame.AdjustBars()
 end
 
+function OptionFunctions.StaticTotembar()
+	if not LunaOptions.statictotembar then
+		LunaOptions.statictotembar = 1
+	else
+		LunaOptions.statictotembar = nil
+	end
+	LunaPlayerFrame.AdjustBars()
+end
+
 function OptionFunctions.StaticTargetCastbar()
 	if not LunaOptions.statictargetcastbar then
 		LunaOptions.statictargetcastbar = 1
@@ -1396,7 +1416,7 @@ function LunaOptionsModule:CreateMenu()
 			getglobal(v.frame.."HeightSliderText"):SetText("Height: "..LunaOptions.frames[v.frame].size.y)
 
 			LunaOptionsFrame.pages[i].widthslider = CreateFrame("Slider", v.frame.."WidthSlider", LunaOptionsFrame.pages[i], "OptionsSliderTemplate")
-			LunaOptionsFrame.pages[i].widthslider:SetMinMaxValues(100,400)
+			LunaOptionsFrame.pages[i].widthslider:SetMinMaxValues(50,400)
 			LunaOptionsFrame.pages[i].widthslider:SetValueStep(1)
 			LunaOptionsFrame.pages[i].widthslider:SetScript("OnValueChanged", OptionFunctions.WidthAdjust)
 			LunaOptionsFrame.pages[i].widthslider:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].heightslider, "TOPLEFT", 0, -40)
@@ -1679,11 +1699,19 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[1].staticcbar:SetScript("OnClick", OptionFunctions.StaticPlayerCastbar)
 	LunaOptionsFrame.pages[1].staticcbar:SetChecked(LunaOptions.staticplayercastbar)
 	getglobal("StaticCBarSwitchText"):SetText("No collapsing of the castbar.")
+	
+	LunaOptionsFrame.pages[1].statictbar = CreateFrame("CheckButton", "StaticTBarSwitch", LunaOptionsFrame.pages[1], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[1].statictbar:SetHeight(20)
+	LunaOptionsFrame.pages[1].statictbar:SetWidth(20)
+	LunaOptionsFrame.pages[1].statictbar:SetPoint("TOPLEFT", LunaOptionsFrame.pages[1].staticcbar, "TOPLEFT", 0, -20)
+	LunaOptionsFrame.pages[1].statictbar:SetScript("OnClick", OptionFunctions.StaticTotembar)
+	LunaOptionsFrame.pages[1].statictbar:SetChecked(LunaOptions.statictotembar)
+	getglobal("StaticTBarSwitchText"):SetText("No collapsing of the totembar.")
 
 	LunaOptionsFrame.pages[1].Portraitmode = CreateFrame("CheckButton", "PortraitmodePlayer", LunaOptionsFrame.pages[1], "UICheckButtonTemplate")
 	LunaOptionsFrame.pages[1].Portraitmode:SetHeight(20)
 	LunaOptionsFrame.pages[1].Portraitmode:SetWidth(20)
-	LunaOptionsFrame.pages[1].Portraitmode:SetPoint("TOPLEFT", LunaOptionsFrame.pages[1].staticcbar, "TOPLEFT", 0, -20)
+	LunaOptionsFrame.pages[1].Portraitmode:SetPoint("TOPLEFT", LunaOptionsFrame.pages[1].statictbar, "TOPLEFT", 0, -20)
 	LunaOptionsFrame.pages[1].Portraitmode:SetScript("OnClick", OptionFunctions.PortraitmodeToggle)
 	LunaOptionsFrame.pages[1].Portraitmode:SetChecked((LunaOptions.frames["LunaPlayerFrame"].portrait == 1))
 	getglobal("PortraitmodePlayerText"):SetText("Display Portrait as Bar")
@@ -1712,10 +1740,18 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[1].XPBar:SetChecked(LunaOptions.XPBar)
 	getglobal("XPBarSwitchText"):SetText("Enable XP Bar")
 	
+	LunaOptionsFrame.pages[1].RepBar = CreateFrame("CheckButton", "RepBarSwitch", LunaOptionsFrame.pages[1], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[1].RepBar:SetHeight(20)
+	LunaOptionsFrame.pages[1].RepBar:SetWidth(20)
+	LunaOptionsFrame.pages[1].RepBar:SetPoint("TOPRIGHT", LunaOptionsFrame.pages[1].XPBar, "TOPRIGHT", 0, -20)
+	LunaOptionsFrame.pages[1].RepBar:SetScript("OnClick", OptionFunctions.RepBarToggle)
+	LunaOptionsFrame.pages[1].RepBar:SetChecked(LunaOptions.RepBar)
+	getglobal("RepBarSwitchText"):SetText("Enable Reputation Bar")
+	
 	LunaOptionsFrame.pages[1].bufftimer = CreateFrame("CheckButton", "BTimerSwitch", LunaOptionsFrame.pages[1], "UICheckButtonTemplate")
 	LunaOptionsFrame.pages[1].bufftimer:SetHeight(20)
 	LunaOptionsFrame.pages[1].bufftimer:SetWidth(20)
-	LunaOptionsFrame.pages[1].bufftimer:SetPoint("TOPRIGHT", LunaOptionsFrame.pages[1].XPBar, "TOPRIGHT", 0, -20)
+	LunaOptionsFrame.pages[1].bufftimer:SetPoint("TOPRIGHT", LunaOptionsFrame.pages[1].RepBar, "TOPRIGHT", 0, -20)
 	LunaOptionsFrame.pages[1].bufftimer:SetScript("OnClick", OptionFunctions.BTimerToggle)
 	LunaOptionsFrame.pages[1].bufftimer:SetChecked(LunaOptions.BTimers or 0)
 	getglobal("BTimerSwitchText"):SetText("Enable radial buff timers")
@@ -1808,6 +1844,74 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[6].inraidframe:SetScript("OnClick", OptionFunctions.PartyInRaidFrame)
 	LunaOptionsFrame.pages[6].inraidframe:SetChecked(LunaOptions.partyraidframe)
 	getglobal("PartyInRaidFrameText"):SetText("Display Party in Raidframe")
+	
+	LunaOptionsFrame.pages[7].PosSelect = CreateFrame("Button", "PartyPetPosSelector", LunaOptionsFrame.pages[7], "UIDropDownMenuTemplate")
+	LunaOptionsFrame.pages[7].PosSelect:SetPoint("TOPLEFT", LunaOptionsFrame.pages[7].scaleslider, "BOTTOMLEFT", -20 , -10)
+	UIDropDownMenu_SetWidth(80, LunaOptionsFrame.pages[7].PosSelect)
+	UIDropDownMenu_JustifyText("LEFT", LunaOptionsFrame.pages[7].PosSelect)
+
+	local positions = {"TOP", "BOTTOM", "RIGHT", "LEFT"}
+	
+	UIDropDownMenu_Initialize(LunaOptionsFrame.pages[7].PosSelect, function()
+	local info={}
+		for k,v in ipairs(positions) do
+			info.text=v
+			info.value=k
+			info.func= function ()
+				UIDropDownMenu_SetSelectedID(LunaOptionsFrame.pages[7].PosSelect, this:GetID())
+				LunaOptions.frames["LunaPartyPetFrames"].position = UIDropDownMenu_GetText(LunaOptionsFrame.pages[7].PosSelect)
+				LunaUnitFrames:PartyPetFramesPosition()
+			end
+			info.checked = nil
+			info.checkable = nil
+			UIDropDownMenu_AddButton(info, 1)
+		end	
+	end)
+	
+	for k,v in ipairs(positions) do
+		if v == LunaOptions.frames["LunaPartyPetFrames"].position then
+			UIDropDownMenu_SetSelectedID(LunaOptionsFrame.pages[7].PosSelect, k)
+		end
+	end
+	
+	LunaOptionsFrame.pages[7].Desc = LunaOptionsFrame.pages[7]:CreateFontString(nil, "OVERLAY", LunaOptionsFrame.pages[7])
+	LunaOptionsFrame.pages[7].Desc:SetPoint("LEFT", LunaOptionsFrame.pages[7].PosSelect, "RIGHT", -10, 0)
+	LunaOptionsFrame.pages[7].Desc:SetFont("Fonts\\FRIZQT__.TTF", 10)
+	LunaOptionsFrame.pages[7].Desc:SetTextColor(1,0.82,0)
+	LunaOptionsFrame.pages[7].Desc:SetText("Position")
+	
+	LunaOptionsFrame.pages[8].PosSelect = CreateFrame("Button", "PartyTargetPosSelector", LunaOptionsFrame.pages[8], "UIDropDownMenuTemplate")
+	LunaOptionsFrame.pages[8].PosSelect:SetPoint("TOPLEFT", LunaOptionsFrame.pages[8].scaleslider, "BOTTOMLEFT", -20 , -10)
+	UIDropDownMenu_SetWidth(80, LunaOptionsFrame.pages[8].PosSelect)
+	UIDropDownMenu_JustifyText("LEFT", LunaOptionsFrame.pages[8].PosSelect)
+	
+	UIDropDownMenu_Initialize(LunaOptionsFrame.pages[8].PosSelect, function()
+	local info={}
+		for k,v in ipairs(positions) do
+			info.text=v
+			info.value=k
+			info.func= function ()
+				UIDropDownMenu_SetSelectedID(LunaOptionsFrame.pages[8].PosSelect, this:GetID())
+				LunaOptions.frames["LunaPartyTargetFrames"].position = UIDropDownMenu_GetText(LunaOptionsFrame.pages[8].PosSelect)
+				LunaUnitFrames:PartyTargetFramesPosition()
+			end
+			info.checked = nil
+			info.checkable = nil
+			UIDropDownMenu_AddButton(info, 1)
+		end	
+	end)
+	
+	for k,v in ipairs(positions) do
+		if v == LunaOptions.frames["LunaPartyTargetFrames"].position then
+			UIDropDownMenu_SetSelectedID(LunaOptionsFrame.pages[8].PosSelect, k)
+		end
+	end
+	
+	LunaOptionsFrame.pages[8].Desc = LunaOptionsFrame.pages[8]:CreateFontString(nil, "OVERLAY", LunaOptionsFrame.pages[8])
+	LunaOptionsFrame.pages[8].Desc:SetPoint("LEFT", LunaOptionsFrame.pages[8].PosSelect, "RIGHT", -10, 0)
+	LunaOptionsFrame.pages[8].Desc:SetFont("Fonts\\FRIZQT__.TTF", 10)
+	LunaOptionsFrame.pages[8].Desc:SetTextColor(1,0.82,0)
+	LunaOptionsFrame.pages[8].Desc:SetText("Position")
 	
 	LunaOptionsFrame.pages[9].enable = CreateFrame("CheckButton", "LunaRaidEnableButton", LunaOptionsFrame.pages[9], "UICheckButtonTemplate")
 	LunaOptionsFrame.pages[9].enable:SetPoint("TOPLEFT", LunaOptionsFrame.pages[9], "TOPLEFT", 10, -10)

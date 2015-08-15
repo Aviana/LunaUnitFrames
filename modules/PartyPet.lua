@@ -19,7 +19,6 @@ function LunaUnitFrames:CreatePartyPetFrames()
 		LunaPartyPetFrames[i]:SetScale(LunaOptions.frames["LunaPartyPetFrames"].scale)
 		LunaPartyPetFrames[i]:SetBackdrop(LunaOptions.backdrop)
 		LunaPartyPetFrames[i]:SetBackdropColor(0,0,0,1)
-		LunaPartyPetFrames[i]:SetPoint("BOTTOMLEFT", LunaPartyFrames[i], "BOTTOMRIGHT", 5, 0)
 		LunaPartyPetFrames[i]:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up')
 		LunaPartyPetFrames[i].unit = "partypet"..i
 		LunaPartyPetFrames[i]:SetFrameStrata("BACKGROUND")
@@ -71,6 +70,7 @@ function LunaUnitFrames:CreatePartyPetFrames()
 		LunaPartyPetFrames[i].name:SetWidth(LunaPartyPetFrames[i]:GetWidth()/2)
 	end
 	LunaUnitFrames:UpdatePartyPetFrames()
+	LunaUnitFrames:PartyPetFramesPosition()
 end
 
 function LunaUnitFrames:UpdatePartyPetFrames()
@@ -88,6 +88,22 @@ function LunaUnitFrames:UpdatePartyPetFrames()
 			LunaPartyPetFrames[i]:Show()
 		else
 			LunaPartyPetFrames[i]:Hide()
+		end
+	end
+end
+
+function LunaUnitFrames:PartyPetFramesPosition()
+	local position = LunaOptions.frames["LunaPartyPetFrames"].position
+	for i=1, 4 do
+		LunaPartyPetFrames[i]:ClearAllPoints()
+		if position == "TOP" then
+			LunaPartyPetFrames[i]:SetPoint("BOTTOMLEFT", LunaPartyFrames[i], "TOPLEFT", 0, 5)
+		elseif position == "BOTTOM" then
+			LunaPartyPetFrames[i]:SetPoint("TOPLEFT", LunaPartyFrames[i], "BOTTOMLEFT", 0, -5)
+		elseif position == "RIGHT" then
+			LunaPartyPetFrames[i]:SetPoint("BOTTOMLEFT", LunaPartyFrames[i], "BOTTOMRIGHT", 5, 0)
+		else
+			LunaPartyPetFrames[i]:SetPoint("BOTTOMRIGHT", LunaPartyFrames[i], "BOTTOMLEFT", -5, 0)
 		end
 	end
 end

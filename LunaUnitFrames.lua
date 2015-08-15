@@ -211,6 +211,10 @@ function LunaUnitFrames:OnEvent()
 							PALADIN = {0.96, 0.55, 0.73}
 							}
 		end
+		if type(LunaOptions.frames["LunaPartyPetFrames"].position) == "table" then
+			LunaOptions.frames["LunaPartyPetFrames"].position = "RIGHT"
+			LunaOptions.frames["LunaPartyTargetFrames"].position = "RIGHT"
+		end
 		-----------------------------------------------------------
 		--Load the Addon here
 		ChatFrame1:AddMessage("Luna Unit Frames loaded. Enjoy the ride!")
@@ -223,6 +227,7 @@ function LunaUnitFrames:OnEvent()
 		LunaUnitFrames:CreatePartyTargetFrames()
 		LunaUnitFrames:CreatePartyPetFrames()
 		LunaUnitFrames:CreateRaidFrames()
+		LunaUnitFrames:CreateRepBar()
 		LunaUnitFrames:CreateXPBar()
 		LunaOptionsModule:CreateMenu()
 		if LunaOptions.BlizzBuffs then

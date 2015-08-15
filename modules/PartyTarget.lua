@@ -31,7 +31,6 @@ function LunaUnitFrames:CreatePartyTargetFrames()
 		LunaPartyTargetFrames[i]:SetScale(LunaOptions.frames["LunaPartyTargetFrames"].scale)
 		LunaPartyTargetFrames[i]:SetBackdrop(LunaOptions.backdrop)
 		LunaPartyTargetFrames[i]:SetBackdropColor(0,0,0,1)
-		LunaPartyTargetFrames[i]:SetPoint("TOPLEFT", LunaPartyFrames[i], "TOPRIGHT", 5, 0)
 		LunaPartyTargetFrames[i]:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up')
 		LunaPartyTargetFrames[i].unit = "party"..i.."target"
 		LunaPartyTargetFrames[i]:SetFrameStrata("BACKGROUND")
@@ -88,6 +87,7 @@ function LunaUnitFrames:CreatePartyTargetFrames()
 		
 	end
 	pt:SetScript("OnUpdate", Luna_PartyTarget_OnUpdate)
+	LunaUnitFrames:PartyTargetFramesPosition()
 end
 
 function LunaUnitFrames:UpdatePartyTargetFrames()
@@ -138,6 +138,22 @@ function LunaUnitFrames:UpdatePartyTargetFrames()
 			LunaPartyTargetFrames[i]:Show()
 		else
 			LunaPartyTargetFrames[i]:Hide()
+		end
+	end
+end
+
+function LunaUnitFrames:PartyTargetFramesPosition()
+	local position = LunaOptions.frames["LunaPartyTargetFrames"].position
+	for i=1, 4 do
+		LunaPartyTargetFrames[i]:ClearAllPoints()
+		if position == "TOP" then
+			LunaPartyTargetFrames[i]:SetPoint("BOTTOMRIGHT", LunaPartyFrames[i], "TOPRIGHT", 0, 5)
+		elseif position == "BOTTOM" then
+			LunaPartyTargetFrames[i]:SetPoint("TOPRIGHT", LunaPartyFrames[i], "BOTTOMRIGHT", 0, -5)
+		elseif position == "RIGHT" then
+			LunaPartyTargetFrames[i]:SetPoint("TOPLEFT", LunaPartyFrames[i], "TOPRIGHT", 5, 0)
+		else
+			LunaPartyTargetFrames[i]:SetPoint("TOPRIGHT", LunaPartyFrames[i], "TOPLEFT", -5, 0)
 		end
 	end
 end
