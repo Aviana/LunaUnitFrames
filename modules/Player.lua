@@ -2,6 +2,7 @@ local HealComm = AceLibrary("HealComm-1.0")
 local AceEvent = AceLibrary("AceEvent-2.0")
 local Luna_Player_Events = {}
 local berserkValue = 0.3
+local enableCastbar
 
 local totemcolors = {
 					{1,0,0},
@@ -602,6 +603,11 @@ function LunaUnitFrames:CreatePlayerFrame()
 		for k,v in pairs(LunaOptions.frames["LunaPlayerFrame"].bars) do
 			if v[1] == "Castbar" then
 				CastBarHeightWeight = v[2]
+				if CastBarHeightWeight == 0 then
+					enableCastbar = nil
+				else
+					enableCastbar = true
+				end
 			end
 			textheights[v[1]] = v[3] or 0.45
 			textbalance[v[1]] = v[6] or 0.5
@@ -862,7 +868,7 @@ function LunaUnitFrames:CreatePlayerFrame()
 end
 
 function LunaUnitFrames.CastAimedShot(Spell)
-	if Spell == "Aimed Shot" then
+	if Spell == "Aimed Shot" and enableCastbar then
 		local _,_, latency = GetNetStats()
 		local casttime = 3
 		for i=1,32 do
@@ -883,7 +889,7 @@ function LunaUnitFrames.CastAimedShot(Spell)
 		LunaPlayerFrame.bars["Castbar"].maxValue = LunaPlayerFrame.bars["Castbar"].startTime + casttime + (latency/1000)
 		LunaPlayerFrame.bars["Castbar"].holdTime = 0
 		LunaPlayerFrame.bars["Castbar"].casting = 1
-		LunaPlayerFrame.bars["Castbar"].delaySum = 0	
+		LunaPlayerFrame.bars["Castbar"].delaySum = 0
 		LunaPlayerFrame.bars["Castbar"].Text:SetText("Aimed Shot")
 		LunaPlayerFrame.bars["Castbar"]:SetMinMaxValues(LunaPlayerFrame.bars["Castbar"].startTime, LunaPlayerFrame.bars["Castbar"].maxValue)
 		LunaPlayerFrame.bars["Castbar"]:SetValue(LunaPlayerFrame.bars["Castbar"].startTime)
