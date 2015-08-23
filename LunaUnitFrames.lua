@@ -1,10 +1,12 @@
 LunaUnitFrames = CreateFrame("Frame")
+LunaUnitFrames.version = 1000
 LunaUnitFrames.frames = {}
 LunaUnitFrames.proximity = ProximityLib:GetInstance("1")
 LunaUnitFrames:RegisterEvent("ADDON_LOADED")
 LunaUnitFrames:RegisterEvent("PARTY_MEMBERS_CHANGED")
 LunaUnitFrames:RegisterEvent("RAID_ROSTER_UPDATE")
 LunaUnitFrames:RegisterEvent("PLAYER_ENTERING_WORLD")
+LunaUnitFrames:RegisterEvent("CHAT_MSG_ADDON")
 local playername = UnitName("player")
 
 local validUnits = {
@@ -133,6 +135,10 @@ end
 function LunaUnitFrames:OnEvent()
 	if event == "ADDON_LOADED" and arg1 == "LunaUnitFrames" then
 		-- Compatibility Code (to be removed several versions later)
+		if not LunaOptions.version or LunaOptions.version < LunaUnitFrames.version then
+			LunaOptions.version = LunaUnitFrames.version
+		end
+		
 		if table.getn(LunaOptions.frames["LunaPlayerFrame"].bars) < 4 then
 			LunaOptions.frames["LunaPlayerFrame"].bars[4] = {"Druidbar", 0}
 		end
@@ -215,6 +221,16 @@ function LunaUnitFrames:OnEvent()
 			LunaOptions.frames["LunaPartyPetFrames"].position = "RIGHT"
 			LunaOptions.frames["LunaPartyTargetFrames"].position = "RIGHT"
 		end
+		if not LunaOptions.frames["LunaRaidFrames"].grpmode then
+			LunaOptions.frames["LunaRaidFrames"].grpmode = "GROUP"
+		end
+		if not LunaOptions.frames["LunaRaidFrames"].growthdir then
+			LunaOptions.frames["LunaRaidFrames"].growthdir = "UP"
+		end
+		if not LunaOptions.frames["LunaRaidFrames"].toptext then
+			LunaOptions.frames["LunaRaidFrames"].toptext = "[name]"
+			LunaOptions.frames["LunaRaidFrames"].bottomtext = "[healerhealth]"
+		end
 		-----------------------------------------------------------
 		--Load the Addon here
 		ChatFrame1:AddMessage("Luna Unit Frames loaded. Enjoy the ride!")
@@ -235,6 +251,17 @@ function LunaUnitFrames:OnEvent()
 		end
 	elseif event == "RAID_ROSTER_UPDATE" or event == "PLAYER_ENTERING_WORLD" or event == "PARTY_MEMBERS_CHANGED" then
 		LunaUnitFrames:UpdateRaidRoster()
+		if event == "PLAYER_ENTERING_WORLD" then
+			SendAddonMessage("LUF", LunaUnitFrames.version, "GUILD")
+		else
+			SendAddonMessage("LUF", LunaUnitFrames.version, "RAID")
+		end
+	elseif event == "CHAT_MSG_ADDON" and arg1 == "LUF" and arg4 ~= UnitName("player") then
+		if arg2 > LunaOptions.version then
+			LunaOptions.version = arg2
+		end
+		LunaOptionsFrame.version:SetTextColor(1,0,0)
+		LunaOptionsFrame.version:SetText("V."..LunaUnitFrames.version.."(Outdated)")
 	end
 end
 LunaUnitFrames:SetScript("OnEvent", LunaUnitFrames.OnEvent)

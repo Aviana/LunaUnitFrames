@@ -28,7 +28,7 @@ Tags.fontStrings = {}
 
 Tags.defaultEvents = {
 	["combat"]				= "PLAYER_REGEN_ENABLED PLAYER_REGEN_DISABLED",
-	["color:combat"]		= "PLAYER_REGEN_ENABLED PLAYER_REGEN_ENABLED",
+	["color:combat"]		= "PLAYER_REGEN_ENABLED PLAYER_REGEN_DISABLED",
 	["druidform"]			= "UNIT_AURA",
 	["guild"]				= "UNIT_NAME_UPDATE", -- Not sure when this data is available, guessing
 	["incheal"]				= "HealComm_Healupdate",
@@ -660,7 +660,6 @@ local function updateTagString(unit, fontString, event)
 		end
 		while tag do
 			if Tags.defaultTags[tag] then
---				ChatFrame1:AddMessage(tag)
 				text = text..Tags.defaultTags[tag](unit)
 			end
 			if tag == "combat" or tag == "color:combat" then
@@ -716,6 +715,28 @@ function LunaUnitFrames:UpdateTags(unit, fontString, event)
 	end
 end
 
+function LunaUnitFrames:WipeRaidTags()
+	local unit
+	for i=1, 40 do
+		unit = "raid"..i
+		if Tags.fontStrings[unit] then
+			Tags.fontStrings[unit] = nil
+		end
+	end
+end
+
+function LunaUnitFrames:WipeRaidPetTags()
+	local pet
+	for i=1, 40 do
+		pet = "raidpet"..i
+		if Tags.fontStrings[pet] then
+			Tags.fontStrings[pet] = nil
+		end
+	end
+end
+
+
+
 local function onEvent(arg1)
 	if event == "UNIT_PET" and arg1 == "player" then
 		LunaUnitFrames:UpdateTags("pet")
@@ -727,12 +748,6 @@ local function onEvent(arg1)
 		LunaUnitFrames:UpdateTags("player", nil, "PARTY_MEMBERS_CHANGED")
 		for i=1, 4 do
 			local unit = "party"..i
-			if UnitExists(unit) and Tags.fontStrings[unit] then
-				LunaUnitFrames:UpdateTags(unit)
-			end
-		end
-		for i=1, 40 do
-		local unit = "raid"..i
 			if UnitExists(unit) and Tags.fontStrings[unit] then
 				LunaUnitFrames:UpdateTags(unit)
 			end
@@ -761,6 +776,23 @@ local function refreshTags()
 		end
 	end
 end
+
+local function onUpdate()
+	local unit, pet
+	for i=1, 40 do
+		unit = "raid"..i
+		pet = "raidpet"..i
+		if UnitExists(unit) and Tags.fontStrings[unit] then
+			LunaUnitFrames:UpdateTags(unit)
+			if UnitExists(pet) and Tags.fontStrings[pet] then
+				LunaUnitFrames:UpdateTags(pet)
+			end
+		end
+	end
+end
+
+local updateFrame = CreateFrame("Frame")
+updateFrame:SetScript("OnUpdate", onUpdate)
 
 AceEvent:ScheduleRepeatingEvent(refreshTags, 1)
 

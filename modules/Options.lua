@@ -8,7 +8,7 @@ local OptionsPageNames = {{title = "Player Frame", frame = "LunaPlayerFrame"},
 						{title = "Party Frames", frame = "LunaPartyFrames"},
 						{title = "Party Pets Frame", frame = "LunaPartyPetFrames"},
 						{title = "Party Targets Frame", frame = "LunaPartyTargetFrames"},
-						{title = "Raid Frames", frame = "LunaUnitFrames.frames.RaidFrames"},
+						{title = "Raid Frames", frame = "LunaUnitFrames.frames.headers"},
 						{title = "General", frame = "LunaUnitFrames"}
 						}
 						
@@ -220,7 +220,7 @@ function OptionFunctions.OpenCCC()
 end
 
 function OptionFunctions.RaidHeightAdjust()
-	if LunaUnitFrames.frames.RaidFrames[1] then
+	if LunaUnitFrames.frames.headers[1] then
 		LunaOptions.frames["LunaRaidFrames"].height = this:GetValue()
 		getglobal("RaidHeightSliderText"):SetText("Height: "..LunaOptions.frames["LunaRaidFrames"].height)
 		LunaUnitFrames:SetRaidFrameSize()
@@ -228,7 +228,7 @@ function OptionFunctions.RaidHeightAdjust()
 end
 
 function OptionFunctions.RaidWidthAdjust()
-	if LunaUnitFrames.frames.RaidFrames[1] then
+	if LunaUnitFrames.frames.headers[1] then
 		LunaOptions.frames["LunaRaidFrames"].width = this:GetValue()
 		getglobal("RaidWidthSliderText"):SetText("Width: "..LunaOptions.frames["LunaRaidFrames"].width)
 		LunaUnitFrames:SetRaidFrameSize()
@@ -236,7 +236,7 @@ function OptionFunctions.RaidWidthAdjust()
 end
 
 function OptionFunctions.RaidScaleAdjust()
-	if LunaUnitFrames.frames.RaidFrames[1] then
+	if LunaUnitFrames.frames.headers[1] then
 		LunaOptions.frames["LunaRaidFrames"].scale = math.floor((this:GetValue()+0.05)*10)/10
 		getglobal("RaidScaleSliderText"):SetText("Scale: "..LunaOptions.frames["LunaRaidFrames"].scale)
 		LunaUnitFrames:SetRaidFrameSize()
@@ -244,7 +244,7 @@ function OptionFunctions.RaidScaleAdjust()
 end
 
 function OptionFunctions.RaidPaddingAdjust()
-	if LunaUnitFrames.frames.RaidFrames[1] then
+	if LunaUnitFrames.frames.headers[1] then
 		LunaOptions.frames["LunaRaidFrames"].padding = this:GetValue()
 		getglobal("RaidPaddingSliderText"):SetText("Padding: "..LunaOptions.frames["LunaRaidFrames"].padding)
 		LunaUnitFrames:UpdateRaidLayout()
@@ -1338,6 +1338,18 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.name:SetTextColor(1,1,1)
 	LunaOptionsFrame.name:SetText("LUNA UNIT FRAMES")
 	
+	LunaOptionsFrame.version = LunaOptionsFrame:CreateFontString(nil, "OVERLAY", "NumberFontNormal")
+	LunaOptionsFrame.version:SetPoint("BOTTOMLEFT", LunaOptionsFrame.name, "BOTTOMRIGHT", 10, 5)
+	LunaOptionsFrame.version:SetShadowColor(0, 0, 0)
+	LunaOptionsFrame.version:SetShadowOffset(0.8, -0.8)
+	if LunaOptions.version > LunaUnitFrames.version then
+		LunaOptionsFrame.version:SetTextColor(1,0,0)
+		LunaOptionsFrame.version:SetText("V."..LunaUnitFrames.version.."(Outdated)")
+	else
+		LunaOptionsFrame.version:SetTextColor(0,1,1)
+		LunaOptionsFrame.version:SetText("V."..LunaUnitFrames.version)
+	end
+	
 	LunaOptionsFrame.help = CreateFrame("Button", nil, LunaOptionsFrame)
 	LunaOptionsFrame.help:SetHeight(14)
 	LunaOptionsFrame.help:SetWidth(14)
@@ -1957,10 +1969,28 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[9].paddingslider:SetWidth(215)
 	getglobal("RaidPaddingSliderText"):SetText("Padding: "..(LunaOptions.frames["LunaRaidFrames"].padding or 4))
 	
+	LunaOptionsFrame.pages[9].BuffwatchDesc = LunaOptionsFrame.pages[9]:CreateFontString(nil, "OVERLAY", LunaOptionsFrame.pages[9])
+	LunaOptionsFrame.pages[9].BuffwatchDesc:SetPoint("TOPLEFT", LunaOptionsFrame.pages[9].paddingslider, "BOTTOMLEFT", 0, -10)
+	LunaOptionsFrame.pages[9].BuffwatchDesc:SetFont("Fonts\\FRIZQT__.TTF", 10)
+	LunaOptionsFrame.pages[9].BuffwatchDesc:SetTextColor(1,0.82,0)
+	LunaOptionsFrame.pages[9].BuffwatchDesc:SetText("Track Buff (Can be part of name):")
+	
+	LunaOptionsFrame.pages[9].Buffwatch = CreateFrame("Editbox", "BuffwatchInput", LunaOptionsFrame.pages[9], "InputBoxTemplate")
+	LunaOptionsFrame.pages[9].Buffwatch:SetHeight(20)
+	LunaOptionsFrame.pages[9].Buffwatch:SetWidth(205)
+	LunaOptionsFrame.pages[9].Buffwatch:SetAutoFocus(nil)
+	LunaOptionsFrame.pages[9].Buffwatch:SetPoint("TOPLEFT", LunaOptionsFrame.pages[9].BuffwatchDesc, "TOPLEFT", 8, -12)
+	LunaOptionsFrame.pages[9].Buffwatch:SetText(LunaOptions.Raidbuff or "")
+	LunaOptionsFrame.pages[9].Buffwatch:SetScript("OnEnterPressed", function()
+																		this:ClearFocus();
+																		LunaOptions.Raidbuff = this:GetText()
+																		LunaUnitFrames.Raid_Update()
+																	end)
+	
 	LunaOptionsFrame.pages[9].RaidGrpNameswitch = CreateFrame("CheckButton", "RaidGroupNamesSwitch", LunaOptionsFrame.pages[9], "UICheckButtonTemplate")
 	LunaOptionsFrame.pages[9].RaidGrpNameswitch:SetHeight(20)
 	LunaOptionsFrame.pages[9].RaidGrpNameswitch:SetWidth(20)
-	LunaOptionsFrame.pages[9].RaidGrpNameswitch:SetPoint("TOPLEFT", LunaOptionsFrame.pages[9].paddingslider, "TOPLEFT", 0, -25)
+	LunaOptionsFrame.pages[9].RaidGrpNameswitch:SetPoint("TOPLEFT", LunaOptionsFrame.pages[9].Buffwatch, "BOTTOMLEFT", 0, 0)
 	LunaOptionsFrame.pages[9].RaidGrpNameswitch:SetScript("OnClick", OptionFunctions.ToggleRaidGroupNames)
 	LunaOptionsFrame.pages[9].RaidGrpNameswitch:SetChecked(LunaOptions.frames["LunaRaidFrames"].ShowRaidGroupTitles)
 	getglobal("RaidGroupNamesSwitchText"):SetText("Show Group Names")
@@ -1997,52 +2027,18 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[9].inverthealth:SetChecked(LunaOptions.frames["LunaRaidFrames"].inverthealth)
 	getglobal("RaidGroupInvertHealthSwitchText"):SetText("Invert Health Bars")
 	
-	LunaOptionsFrame.pages[9].invertgrowth = CreateFrame("CheckButton", "RaidGroupInvertGrowthSwitch", LunaOptionsFrame.pages[9], "UICheckButtonTemplate")
-	LunaOptionsFrame.pages[9].invertgrowth:SetHeight(20)
-	LunaOptionsFrame.pages[9].invertgrowth:SetWidth(20)
-	LunaOptionsFrame.pages[9].invertgrowth:SetPoint("TOPLEFT", LunaOptionsFrame.pages[9].inverthealth, "TOPLEFT", 0, -20)
-	LunaOptionsFrame.pages[9].invertgrowth:SetScript("OnClick", OptionFunctions.ToggleInvertGrowth)
-	LunaOptionsFrame.pages[9].invertgrowth:SetChecked(LunaOptions.frames["LunaRaidFrames"].invertgrowth)
-	getglobal("RaidGroupInvertGrowthSwitchText"):SetText("Invert Group Growth Direction")
-	
 	LunaOptionsFrame.pages[9].petgroup = CreateFrame("CheckButton", "PetGroupSwitch", LunaOptionsFrame.pages[9], "UICheckButtonTemplate")
 	LunaOptionsFrame.pages[9].petgroup:SetHeight(20)
 	LunaOptionsFrame.pages[9].petgroup:SetWidth(20)
-	LunaOptionsFrame.pages[9].petgroup:SetPoint("TOPLEFT", LunaOptionsFrame.pages[9].invertgrowth, "TOPLEFT", 0, -20)
+	LunaOptionsFrame.pages[9].petgroup:SetPoint("TOPLEFT", LunaOptionsFrame.pages[9].inverthealth, "TOPLEFT", 0, -20)
 	LunaOptionsFrame.pages[9].petgroup:SetScript("OnClick", OptionFunctions.TogglePetGroup)
 	LunaOptionsFrame.pages[9].petgroup:SetChecked(LunaOptions.frames["LunaRaidFrames"].petgroup)
 	getglobal("PetGroupSwitchText"):SetText("Show the Pet Group")
 	
-	LunaOptionsFrame.pages[9].colornames = CreateFrame("CheckButton", "ColorNamesSwitch", LunaOptionsFrame.pages[9], "UICheckButtonTemplate")
-	LunaOptionsFrame.pages[9].colornames:SetHeight(20)
-	LunaOptionsFrame.pages[9].colornames:SetWidth(20)
-	LunaOptionsFrame.pages[9].colornames:SetPoint("TOPLEFT", LunaOptionsFrame.pages[9].petgroup, "TOPLEFT", 0, -20)
-	LunaOptionsFrame.pages[9].colornames:SetScript("OnClick", OptionFunctions.ToggleColorNames)
-	LunaOptionsFrame.pages[9].colornames:SetChecked(LunaOptions.colornames or 0)
-	getglobal("ColorNamesSwitchText"):SetText("Color Raid Names in Class Colors")
-	
-	LunaOptionsFrame.pages[9].BuffwatchDesc = LunaOptionsFrame.pages[9]:CreateFontString(nil, "OVERLAY", LunaOptionsFrame.pages[9])
-	LunaOptionsFrame.pages[9].BuffwatchDesc:SetPoint("TOPLEFT", LunaOptionsFrame.pages[9].paddingslider, "TOPLEFT", 230, 10)
-	LunaOptionsFrame.pages[9].BuffwatchDesc:SetFont("Fonts\\FRIZQT__.TTF", 10)
-	LunaOptionsFrame.pages[9].BuffwatchDesc:SetTextColor(1,0.82,0)
-	LunaOptionsFrame.pages[9].BuffwatchDesc:SetText("Track Buff (Can be part of name):")
-	
-	LunaOptionsFrame.pages[9].Buffwatch = CreateFrame("Editbox", "BuffwatchInput", LunaOptionsFrame.pages[9], "InputBoxTemplate")
-	LunaOptionsFrame.pages[9].Buffwatch:SetHeight(20)
-	LunaOptionsFrame.pages[9].Buffwatch:SetWidth(215)
-	LunaOptionsFrame.pages[9].Buffwatch:SetAutoFocus(nil)
-	LunaOptionsFrame.pages[9].Buffwatch:SetPoint("TOPLEFT", LunaOptionsFrame.pages[9].BuffwatchDesc, "TOPLEFT", 8, -12)
-	LunaOptionsFrame.pages[9].Buffwatch:SetText(LunaOptions.Raidbuff or "")
-	LunaOptionsFrame.pages[9].Buffwatch:SetScript("OnEnterPressed", function()
-																		this:ClearFocus();
-																		LunaOptions.Raidbuff = this:GetText()
-																		LunaUnitFrames.Raid_Update()
-																	end)
-																	
 	LunaOptionsFrame.pages[9].dispdebuffs = CreateFrame("CheckButton", "DispDebuffSwitch", LunaOptionsFrame.pages[9], "UICheckButtonTemplate")
 	LunaOptionsFrame.pages[9].dispdebuffs:SetHeight(20)
 	LunaOptionsFrame.pages[9].dispdebuffs:SetWidth(20)
-	LunaOptionsFrame.pages[9].dispdebuffs:SetPoint("TOPLEFT", LunaOptionsFrame.pages[9].Buffwatch, "TOPLEFT", 0, -38)
+	LunaOptionsFrame.pages[9].dispdebuffs:SetPoint("TOPLEFT", LunaOptionsFrame.pages[9].petgroup, "TOPLEFT", 0, -20)
 	LunaOptionsFrame.pages[9].dispdebuffs:SetScript("OnClick", OptionFunctions.ToggleDispelableDebuffs)
 	LunaOptionsFrame.pages[9].dispdebuffs:SetChecked(LunaOptions.showdispelable)
 	getglobal("DispDebuffSwitchText"):SetText("Show only dispelable Debuffs")
@@ -2102,6 +2098,112 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[9].ResetButton:SetText("Reset Positions")
 	LunaOptionsFrame.pages[9].ResetButton:SetScript("OnClick", LunaUnitFrames.Raid_Pos_Reset)
 	
+	LunaOptionsFrame.pages[9].GroupModeSelect = CreateFrame("Button", "RaidGroupModeSelector", LunaOptionsFrame.pages[9], "UIDropDownMenuTemplate")
+	LunaOptionsFrame.pages[9].GroupModeSelect:SetPoint("TOPLEFT", LunaOptionsFrame.pages[9].paddingslider, "TOPRIGHT", 10 , 0)
+	UIDropDownMenu_SetWidth(100, LunaOptionsFrame.pages[9].GroupModeSelect)
+	UIDropDownMenu_JustifyText("LEFT", LunaOptionsFrame.pages[9].GroupModeSelect)
+
+	local modes = {"GROUP", "CLASS"}
+	
+	UIDropDownMenu_Initialize(LunaOptionsFrame.pages[9].GroupModeSelect, function()
+	local info={}
+		for k,v in ipairs(modes) do
+			info.text=v
+			info.value=k
+			info.func= function ()
+				UIDropDownMenu_SetSelectedID(LunaOptionsFrame.pages[9].GroupModeSelect, this:GetID())
+				LunaOptions.frames["LunaRaidFrames"].grpmode = UIDropDownMenu_GetText(LunaOptionsFrame.pages[9].GroupModeSelect)
+				LunaUnitFrames:UpdateRaidRoster()
+			end
+			info.checked = nil
+			info.checkable = nil
+			UIDropDownMenu_AddButton(info, 1)
+		end
+	end)
+	
+	for k,v in ipairs(modes) do
+		if v == LunaOptions.frames["LunaRaidFrames"].grpmode then
+			UIDropDownMenu_SetSelectedID(LunaOptionsFrame.pages[9].GroupModeSelect, k)
+		end
+	end
+	
+	LunaOptionsFrame.pages[9].ModeDesc = LunaOptionsFrame.pages[9]:CreateFontString(nil, "OVERLAY", LunaOptionsFrame.pages[9])
+	LunaOptionsFrame.pages[9].ModeDesc:SetPoint("LEFT", LunaOptionsFrame.pages[9].GroupModeSelect, "RIGHT", -10, 0)
+	LunaOptionsFrame.pages[9].ModeDesc:SetFont("Fonts\\FRIZQT__.TTF", 10)
+	LunaOptionsFrame.pages[9].ModeDesc:SetTextColor(1,0.82,0)
+	LunaOptionsFrame.pages[9].ModeDesc:SetText("Group Mode")
+	
+	LunaOptionsFrame.pages[9].GrowthSelect = CreateFrame("Button", "RaidGroupGrowthSelector", LunaOptionsFrame.pages[9], "UIDropDownMenuTemplate")
+	LunaOptionsFrame.pages[9].GrowthSelect:SetPoint("TOPLEFT", LunaOptionsFrame.pages[9].GroupModeSelect, "BOTTOMLEFT", 0 , 0)
+	UIDropDownMenu_SetWidth(100, LunaOptionsFrame.pages[9].GrowthSelect)
+	UIDropDownMenu_JustifyText("LEFT", LunaOptionsFrame.pages[9].GrowthSelect)
+
+	local directions = {"UP", "DOWN", "RIGHT", "LEFT"}
+	
+	UIDropDownMenu_Initialize(LunaOptionsFrame.pages[9].GrowthSelect, function()
+	local info={}
+		for k,v in ipairs(directions) do
+			info.text=v
+			info.value=k
+			info.func= function ()
+				UIDropDownMenu_SetSelectedID(LunaOptionsFrame.pages[9].GrowthSelect, this:GetID())
+				LunaOptions.frames["LunaRaidFrames"].growthdir = UIDropDownMenu_GetText(LunaOptionsFrame.pages[9].GrowthSelect)
+				LunaUnitFrames:UpdateRaidLayout()
+			end
+			info.checked = nil
+			info.checkable = nil
+			UIDropDownMenu_AddButton(info, 1)
+		end
+	end)
+	
+	for k,v in ipairs(directions) do
+		if v == LunaOptions.frames["LunaRaidFrames"].growthdir then
+			UIDropDownMenu_SetSelectedID(LunaOptionsFrame.pages[9].GrowthSelect, k)
+		end
+	end
+	
+	LunaOptionsFrame.pages[9].GrowthDesc = LunaOptionsFrame.pages[9]:CreateFontString(nil, "OVERLAY", LunaOptionsFrame.pages[9])
+	LunaOptionsFrame.pages[9].GrowthDesc:SetPoint("LEFT", LunaOptionsFrame.pages[9].GrowthSelect, "RIGHT", -10, 0)
+	LunaOptionsFrame.pages[9].GrowthDesc:SetFont("Fonts\\FRIZQT__.TTF", 10)
+	LunaOptionsFrame.pages[9].GrowthDesc:SetTextColor(1,0.82,0)
+	LunaOptionsFrame.pages[9].GrowthDesc:SetText("Growth direction")
+	
+	LunaOptionsFrame.pages[9].toptext = CreateFrame("Editbox", "TopTextInput", LunaOptionsFrame.pages[9], "InputBoxTemplate")
+	LunaOptionsFrame.pages[9].toptext:SetHeight(20)
+	LunaOptionsFrame.pages[9].toptext:SetWidth(205)
+	LunaOptionsFrame.pages[9].toptext:SetAutoFocus(nil)
+	LunaOptionsFrame.pages[9].toptext:SetPoint("TOPLEFT", LunaOptionsFrame.pages[9].GrowthSelect, "BOTTOMLEFT", 0, -10)
+	LunaOptionsFrame.pages[9].toptext:SetText(LunaOptions.frames["LunaRaidFrames"].toptext or "")
+	LunaOptionsFrame.pages[9].toptext:SetScript("OnEnterPressed", function()
+																		this:ClearFocus();
+																		LunaOptions.frames["LunaRaidFrames"].toptext = this:GetText()
+																		LunaUnitFrames:UpdateRaidRoster()
+																	end)
+																	
+	LunaOptionsFrame.pages[9].toptextDesc = LunaOptionsFrame.pages[9]:CreateFontString(nil, "OVERLAY", LunaOptionsFrame.pages[9])
+	LunaOptionsFrame.pages[9].toptextDesc:SetPoint("BOTTOMLEFT", LunaOptionsFrame.pages[9].toptext, "TOPLEFT", 0, 0)
+	LunaOptionsFrame.pages[9].toptextDesc:SetFont("Fonts\\FRIZQT__.TTF", 10)
+	LunaOptionsFrame.pages[9].toptextDesc:SetTextColor(1,0.82,0)
+	LunaOptionsFrame.pages[9].toptextDesc:SetText("Top Text")
+																	
+	LunaOptionsFrame.pages[9].bottomtext = CreateFrame("Editbox", "BottomTextInput", LunaOptionsFrame.pages[9], "InputBoxTemplate")
+	LunaOptionsFrame.pages[9].bottomtext:SetHeight(20)
+	LunaOptionsFrame.pages[9].bottomtext:SetWidth(205)
+	LunaOptionsFrame.pages[9].bottomtext:SetAutoFocus(nil)
+	LunaOptionsFrame.pages[9].bottomtext:SetPoint("TOPLEFT", LunaOptionsFrame.pages[9].toptext, "BOTTOMLEFT", 0, -10)
+	LunaOptionsFrame.pages[9].bottomtext:SetText(LunaOptions.frames["LunaRaidFrames"].bottomtext or "")
+	LunaOptionsFrame.pages[9].bottomtext:SetScript("OnEnterPressed", function()
+																		this:ClearFocus();
+																		LunaOptions.frames["LunaRaidFrames"].bottomtext = this:GetText()
+																		LunaUnitFrames:UpdateRaidRoster()
+																	end)
+																	
+	LunaOptionsFrame.pages[9].bottomtextDesc = LunaOptionsFrame.pages[9]:CreateFontString(nil, "OVERLAY", LunaOptionsFrame.pages[9])
+	LunaOptionsFrame.pages[9].bottomtextDesc:SetPoint("BOTTOMLEFT", LunaOptionsFrame.pages[9].bottomtext, "TOPLEFT", 0, 0)
+	LunaOptionsFrame.pages[9].bottomtextDesc:SetFont("Fonts\\FRIZQT__.TTF", 10)
+	LunaOptionsFrame.pages[9].bottomtextDesc:SetTextColor(1,0.82,0)
+	LunaOptionsFrame.pages[9].bottomtextDesc:SetText("Bottom Text")
+																	
 	LunaOptionsFrame.pages[10].hbarcolor = CreateFrame("CheckButton", "HBarColorSwitch", LunaOptionsFrame.pages[10], "UICheckButtonTemplate")
 	LunaOptionsFrame.pages[10].hbarcolor:SetHeight(20)
 	LunaOptionsFrame.pages[10].hbarcolor:SetWidth(20)
