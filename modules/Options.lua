@@ -1342,7 +1342,7 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.version:SetPoint("BOTTOMLEFT", LunaOptionsFrame.name, "BOTTOMRIGHT", 10, 5)
 	LunaOptionsFrame.version:SetShadowColor(0, 0, 0)
 	LunaOptionsFrame.version:SetShadowOffset(0.8, -0.8)
-	if LunaOptions.version > LunaUnitFrames.version then
+	if tonumber(LunaOptions.version) > tonumber(LunaUnitFrames.version) then
 		LunaOptionsFrame.version:SetTextColor(1,0,0)
 		LunaOptionsFrame.version:SetText("V."..LunaUnitFrames.version.."(Outdated)")
 	else

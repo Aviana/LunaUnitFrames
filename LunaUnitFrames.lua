@@ -1,5 +1,5 @@
 LunaUnitFrames = CreateFrame("Frame")
-LunaUnitFrames.version = 1000
+LunaUnitFrames.version = 1010
 LunaUnitFrames.frames = {}
 LunaUnitFrames.proximity = ProximityLib:GetInstance("1")
 LunaUnitFrames:RegisterEvent("ADDON_LOADED")
@@ -257,8 +257,8 @@ function LunaUnitFrames:OnEvent()
 			SendAddonMessage("LUF", LunaUnitFrames.version, "RAID")
 		end
 	elseif event == "CHAT_MSG_ADDON" and arg1 == "LUF" and arg4 ~= UnitName("player") then
-		if arg2 > LunaOptions.version then
-			LunaOptions.version = arg2
+		if tonumber(arg2) > tonumber(LunaOptions.version) then
+			LunaOptions.version = tonumber(arg2)
 		end
 		LunaOptionsFrame.version:SetTextColor(1,0,0)
 		LunaOptionsFrame.version:SetText("V."..LunaUnitFrames.version.."(Outdated)")
