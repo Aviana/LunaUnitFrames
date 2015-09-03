@@ -260,8 +260,10 @@ function LunaUnitFrames:OnEvent()
 		if tonumber(arg2) > tonumber(LunaOptions.version) then
 			LunaOptions.version = tonumber(arg2)
 		end
-		LunaOptionsFrame.version:SetTextColor(1,0,0)
-		LunaOptionsFrame.version:SetText("V."..LunaUnitFrames.version.."(Outdated)")
+		if LunaOptions.version > LunaUnitFrames.version then
+			LunaOptionsFrame.version:SetTextColor(1,0,0)
+			LunaOptionsFrame.version:SetText("V."..LunaUnitFrames.version.."(Outdated)")
+		end
 	end
 end
 LunaUnitFrames:SetScript("OnEvent", LunaUnitFrames.OnEvent)
