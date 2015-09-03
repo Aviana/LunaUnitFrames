@@ -69,6 +69,7 @@ end
 -- Addon Code
 ------------------------------------------------
 
+local CastLib_Slot
 local CastLib_Spell
 local CastLib_Rank
 local CastLib_Castname
@@ -211,6 +212,7 @@ function CastLib_newUseAction(slot, checkCursor, onSelf)
 	CastLibTip:SetAction(slot)
 	local spellName = CastLibTipTextLeft1:GetText()
 	CastLib_Spell = spellName
+	CastLib_Slot = slot
 	
 	-- Call the original function
 	CastLib_oldUseAction(slot, checkCursor, onSelf)
@@ -280,7 +282,7 @@ end
 TargetUnit = CastLib_newTargetUnit
 
 function CastLib_ProcessSpellCast(spellName, rank, targetName)
-	if spellName == "Aimed Shot" then
+	if spellName == "Aimed Shot" and IsCurrentAction(CastLib_Slot) then
 		CastLib.EventScheduler:TriggerEvent("CASTLIB_STARTCAST", "Aimed Shot")
 	end
 	CastLib_SpellCast = { spellName, rank, targetName }

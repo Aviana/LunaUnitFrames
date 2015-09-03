@@ -584,8 +584,12 @@ function LunaUnitFrames:CreatePlayerFrame()
 	LunaPlayerFrame:SetScript("OnUpdate", CombatFeedback_OnUpdate)
 	
 	LunaPlayerFrame.dropdown = CreateFrame("Frame", "LunaUnitDropDownMenu", UIParent, "UIDropDownMenuTemplate")
-	LunaPlayerFrame.initialize = function() if LunaPlayerFrame.dropdown then 
-												UnitPopup_ShowMenu(LunaPlayerFrame.dropdown, "SELF", LunaPlayerFrame.unit)
+	LunaPlayerFrame.initialize = function() if LunaPlayerFrame.dropdown then
+												if UnitInRaid("player") or GetNumPartyMembers() > 0 then
+													UnitPopup_ShowMenu(LunaPlayerFrame.dropdown, "SELF", LunaPlayerFrame.unit)
+												else
+													UIDropDownMenu_AddButton({text = "Reset Instances", func = ResetInstances, notCheckable = 1}, 1)
+												end
 											end
 								end
 	UIDropDownMenu_Initialize(LunaPlayerFrame.dropdown, LunaPlayerFrame.initialize, "MENU")
@@ -868,7 +872,7 @@ function LunaUnitFrames:CreatePlayerFrame()
 end
 
 function LunaUnitFrames.CastAimedShot(Spell)
-	if Spell == "Aimed Shot" and enableCastbar then
+	if Spell == "Aimed Shot" and enableCastbar and not LunaPlayerFrame.bars["Castbar"].casting then
 		local _,_, latency = GetNetStats()
 		local casttime = 3
 		for i=1,32 do
@@ -883,6 +887,9 @@ function LunaUnitFrames.CastAimedShot(Spell)
 			end
 			if UnitBuff("player",i) == "Interface\\Icons\\Inv_Trinket_Naxxramas04" then
 				casttime = casttime/1.2
+			end
+			if UnitDebuff("player",i) == "Interface\\Icons\\Spell_Shadow_CurseOfTounges" then
+				casttime = casttime/0.5
 			end
 		end
 		LunaPlayerFrame.bars["Castbar"].startTime = GetTime()

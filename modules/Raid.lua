@@ -122,7 +122,7 @@ local function AdjustHealBar(frame)
 	local frameHeight, frameWidth = frame.HealthBar:GetHeight(), frame.HealthBar:GetWidth()
 	local healthHeight = frameHeight * (health / maxHealth)
 	local healthWidth = frameWidth * (health / maxHealth)
-	if( healed > 0 and health < maxHealth) then
+	if( healed > 0 and health < maxHealth and not UnitIsDeadOrGhost(frame.unit)) then
 		frame.HealBar:Show()
 		if LunaOptions.frames["LunaRaidFrames"].verticalHealth then
 			local incHeight = frameHeight * (healed / maxHealth)
@@ -177,6 +177,7 @@ local function UpdateRaidMember()
 					this.bg:Show()
 					this.HealthBar:SetValue(0)
 					this.PowerBar:SetValue(0)
+					this.HealBar:Hide()
 				else
 					this.bg:Show()
 					this.bg:SetVertexColor(unpack(color))
@@ -190,6 +191,7 @@ local function UpdateRaidMember()
 				this.bg:Show()
 				this.HealthBar:SetValue(0)
 				this.PowerBar:SetValue(0)
+				this.HealBar:Hide()
 			end
 		else
 			this.bg:Hide()
@@ -197,6 +199,7 @@ local function UpdateRaidMember()
 				if UnitHealth(this.unit) < 2 then
 					this.HealthBar:SetValue(0)
 					this.PowerBar:SetValue(0)
+					this.HealBar:Hide()
 				else
 					this.HealthBar:SetValue(UnitHealth(this.unit))
 					this.PowerBar:SetValue(UnitMana(this.unit))
@@ -206,6 +209,7 @@ local function UpdateRaidMember()
 			else
 				this.HealthBar:SetValue(0)
 				this.PowerBar:SetValue(0)
+				this.HealBar:Hide()
 			end
 		end
 	end
@@ -881,6 +885,9 @@ function LunaUnitFrames.Raid_Hot(unit)
 				frame = LunaUnitFrames.frames.members[i]
 			end
 		end
+	end
+	if not frame then
+		return
 	end
 	local start, dur
 	if PlayerClass == "PRIEST" then

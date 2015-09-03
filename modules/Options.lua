@@ -1374,6 +1374,24 @@ function LunaOptionsModule:CreateMenu()
 		LunaOptionsFrame.ScrollFrames[i]:SetWidth(500)
 		LunaOptionsFrame.ScrollFrames[i]:SetPoint("BOTTOMRIGHT", LunaOptionsFrame, "BOTTOMRIGHT", -30, 10)
 		LunaOptionsFrame.ScrollFrames[i]:Hide()
+		LunaOptionsFrame.ScrollFrames[i]:EnableMouseWheel(true)
+		LunaOptionsFrame.ScrollFrames[i].id = i
+		LunaOptionsFrame.ScrollFrames[i]:SetScript("OnMouseWheel", function()
+																		local maxScroll = this:GetVerticalScrollRange()
+																		local Scroll = this:GetVerticalScroll()
+																		local toScroll = (Scroll - (20*arg1))
+																		if toScroll < 0 then
+																			this:SetVerticalScroll(0)
+																		elseif toScroll > maxScroll then
+																			this:SetVerticalScroll(maxScroll)
+																		else
+																			this:SetVerticalScroll(toScroll)
+																		end
+																		local script = LunaOptionsFrame.Sliders[this.id]:GetScript("OnValueChanged")
+																		LunaOptionsFrame.Sliders[this.id]:SetScript("OnValueChanged", nil)
+																		LunaOptionsFrame.Sliders[this.id]:SetValue(toScroll/maxScroll)
+																		LunaOptionsFrame.Sliders[this.id]:SetScript("OnValueChanged", script)
+																	end)
 		
 		LunaOptionsFrame.Sliders[i] = CreateFrame("Slider", nil, LunaOptionsFrame.ScrollFrames[i])
 		LunaOptionsFrame.Sliders[i]:SetOrientation("VERTICAL")
