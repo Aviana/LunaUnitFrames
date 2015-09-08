@@ -682,6 +682,11 @@ function LunaUnitFrames:RegisterFontstring(fontString, unit, tagString)
 	if not Tags.fontStrings[unit] then
 		Tags.fontStrings[unit] = {}
 	end
+	for k,v in pairs(Tags.fontStrings) do
+		if v[fontString] then
+			Tags.fontStrings[k][fontString] = nil
+		end
+	end
 	Tags.fontStrings[unit][fontString] = {}
 	Tags.fontStrings[unit][fontString].events = getEventList(tagString)
 	Tags.fontStrings[unit][fontString].tagString = tagString

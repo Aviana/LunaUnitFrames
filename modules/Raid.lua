@@ -503,6 +503,7 @@ function LunaUnitFrames:UpdatePetRoster()
 	else
 		LunaUnitFrames.frames.headers[9]:Hide()
 	end
+	enable = getn(PetRoster) > 0 and LunaOptions.frames["LunaRaidFrames"].petgroup and (GetNumRaidMembers() > 1 or LunaOptions.AlwaysRaid) and LunaOptions.enableRaid == 1
 	for i=1, 40 do
 		local frame = LunaUnitFrames.frames.members[i+40]
 		if PetRoster[i] and enable then
