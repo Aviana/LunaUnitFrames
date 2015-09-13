@@ -471,6 +471,14 @@ function OptionFunctions.BTimerToggle()
 	end
 end
 
+function OptionFunctions.PlayerCombatTextToggle()
+	if LunaOptions.frames["LunaPlayerFrame"].combattext then
+		LunaOptions.frames["LunaPlayerFrame"].combattext = nil
+	else
+		LunaOptions.frames["LunaPlayerFrame"].combattext = 1
+	end
+end
+
 function OptionFunctions.PlayerCombatIconToggle()
 	if LunaOptions.frames["LunaPlayerFrame"].combaticon then
 		LunaOptions.frames["LunaPlayerFrame"].combaticon = nil
@@ -505,6 +513,14 @@ function OptionFunctions.PlayerPvPRankIconToggle()
 		LunaOptions.frames["LunaPlayerFrame"].pvprankicon = 1
 	end
 	LunaUnitFrames:UpdatePlayerFrame()
+end
+
+function OptionFunctions.TargetCombatTextToggle()
+	if LunaOptions.frames["LunaTargetFrame"].combattext then
+		LunaOptions.frames["LunaTargetFrame"].combattext = nil
+	else
+		LunaOptions.frames["LunaTargetFrame"].combattext = 1
+	end
 end
 
 function OptionFunctions.TargetLeaderIconToggle()
@@ -1517,7 +1533,7 @@ function LunaOptionsModule:CreateMenu()
 		LunaOptionsFrame.Sliders[i]:SetScript("OnValueChanged", function() this.ScrollFrame:SetVerticalScroll(this.ScrollFrame:GetVerticalScrollRange()*this:GetValue()) end  )
 	
 		LunaOptionsFrame.pages[i] = CreateFrame("Frame", v.title.." Page", LunaOptionsFrame.ScrollFrames[i])
-		LunaOptionsFrame.pages[i]:SetHeight(500)
+		LunaOptionsFrame.pages[i]:SetHeight(510)
 		LunaOptionsFrame.pages[i]:SetWidth(500)
 		LunaOptionsFrame.pages[i]:SetBackdrop(LunaOptions.backdrop)
 		LunaOptionsFrame.pages[i]:SetBackdropColor(0,0,0,1)
@@ -1894,10 +1910,18 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[1].bufftimer:SetChecked(LunaOptions.BTimers or 0)
 	getglobal("BTimerSwitchText"):SetText("Enable radial buff timers")
 	
+	LunaOptionsFrame.pages[1].combattext = CreateFrame("CheckButton", "PlayerCombatTextSwitch", LunaOptionsFrame.pages[1], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[1].combattext:SetHeight(20)
+	LunaOptionsFrame.pages[1].combattext:SetWidth(20)
+	LunaOptionsFrame.pages[1].combattext:SetPoint("TOPRIGHT", LunaOptionsFrame.pages[1].bufftimer, "TOPRIGHT", 0, -20)
+	LunaOptionsFrame.pages[1].combattext:SetScript("OnClick", OptionFunctions.PlayerCombatTextToggle)
+	LunaOptionsFrame.pages[1].combattext:SetChecked(LunaOptions.frames["LunaPlayerFrame"].combattext or 0)
+	getglobal("PlayerCombatTextSwitchText"):SetText("Enable Combat Text on Portrait")
+	
 	LunaOptionsFrame.pages[1].combaticon = CreateFrame("CheckButton", "CombatIconSwitch", LunaOptionsFrame.pages[1], "UICheckButtonTemplate")
 	LunaOptionsFrame.pages[1].combaticon:SetHeight(20)
 	LunaOptionsFrame.pages[1].combaticon:SetWidth(20)
-	LunaOptionsFrame.pages[1].combaticon:SetPoint("TOPRIGHT", LunaOptionsFrame.pages[1].bufftimer, "TOPRIGHT", 0, -20)
+	LunaOptionsFrame.pages[1].combaticon:SetPoint("TOPRIGHT", LunaOptionsFrame.pages[1].combattext, "TOPRIGHT", 0, -20)
 	LunaOptionsFrame.pages[1].combaticon:SetScript("OnClick", OptionFunctions.PlayerCombatIconToggle)
 	LunaOptionsFrame.pages[1].combaticon:SetChecked(LunaOptions.frames["LunaPlayerFrame"].combaticon or 0)
 	getglobal("CombatIconSwitchText"):SetText("Enable Combat/Resting Icon")
@@ -1930,7 +1954,7 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[1].iconsize:SetMinMaxValues(0,2)
 	LunaOptionsFrame.pages[1].iconsize:SetValueStep(0.01)
 	LunaOptionsFrame.pages[1].iconsize:SetScript("OnValueChanged", OptionFunctions.PlayerIconSizeAdjust)
-	LunaOptionsFrame.pages[1].iconsize:SetPoint("TOPLEFT", LunaOptionsFrame.pages[1].looticon, "BOTTOMLEFT", 0, -20)
+	LunaOptionsFrame.pages[1].iconsize:SetPoint("TOPLEFT", LunaOptionsFrame.pages[1].looticon, "BOTTOMLEFT", 0, -10)
 	LunaOptionsFrame.pages[1].iconsize:SetValue(LunaOptions.frames["LunaPlayerFrame"].iconscale or 1)
 	LunaOptionsFrame.pages[1].iconsize:SetWidth(180)
 	getglobal("PlayerIconSizeSliderText"):SetText("Status Icon Size: "..(LunaOptions.frames["LunaPlayerFrame"].iconscale or 1))
@@ -1975,10 +1999,18 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[3].HideHealing:SetChecked(LunaOptions.HideHealing or 0)
 	getglobal("HideHealingText"):SetText("Hide Incoming Heals")
 	
+	LunaOptionsFrame.pages[3].combattext = CreateFrame("CheckButton", "TargetCombatTextSwitch", LunaOptionsFrame.pages[3], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[3].combattext:SetHeight(20)
+	LunaOptionsFrame.pages[3].combattext:SetWidth(20)
+	LunaOptionsFrame.pages[3].combattext:SetPoint("TOPRIGHT", LunaOptionsFrame.pages[3].HideHealing, "TOPRIGHT", 0, -20)
+	LunaOptionsFrame.pages[3].combattext:SetScript("OnClick", OptionFunctions.TargetCombatTextToggle)
+	LunaOptionsFrame.pages[3].combattext:SetChecked(LunaOptions.frames["LunaTargetFrame"].combattext or 0)
+	getglobal("TargetCombatTextSwitchText"):SetText("Enable Combat Text on Portrait")
+	
 	LunaOptionsFrame.pages[3].pvprankicon = CreateFrame("CheckButton", "PvPRankTargetIconSwitch", LunaOptionsFrame.pages[3], "UICheckButtonTemplate")
 	LunaOptionsFrame.pages[3].pvprankicon:SetHeight(20)
 	LunaOptionsFrame.pages[3].pvprankicon:SetWidth(20)
-	LunaOptionsFrame.pages[3].pvprankicon:SetPoint("TOPRIGHT", LunaOptionsFrame.pages[3].HideHealing, "TOPRIGHT", 0, -20)
+	LunaOptionsFrame.pages[3].pvprankicon:SetPoint("TOPRIGHT", LunaOptionsFrame.pages[3].combattext, "TOPRIGHT", 0, -20)
 	LunaOptionsFrame.pages[3].pvprankicon:SetScript("OnClick", OptionFunctions.TargetPvPRankIconToggle)
 	LunaOptionsFrame.pages[3].pvprankicon:SetChecked(LunaOptions.frames["LunaTargetFrame"].pvprankicon or 0)
 	getglobal("PvPRankTargetIconSwitchText"):SetText("Enable PvP Rank Icon")
