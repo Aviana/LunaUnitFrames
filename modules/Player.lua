@@ -155,6 +155,14 @@ local function Luna_Player_TotemOnUpdate()
 end
 
 local function SetIconPositions()
+	LunaPlayerFrame.PVPRank:SetHeight(10 * (LunaOptions.frames["LunaPlayerFrame"].iconscale or 1))
+	LunaPlayerFrame.PVPRank:SetWidth(10 * (LunaOptions.frames["LunaPlayerFrame"].iconscale or 1))
+	LunaPlayerFrame.Leader:SetHeight(8 * (LunaOptions.frames["LunaPlayerFrame"].iconscale or 1))
+	LunaPlayerFrame.Leader:SetWidth(8 * (LunaOptions.frames["LunaPlayerFrame"].iconscale or 1))
+	LunaPlayerFrame.Loot:SetHeight(8 * (LunaOptions.frames["LunaPlayerFrame"].iconscale or 1))
+	LunaPlayerFrame.Loot:SetWidth(8 * (LunaOptions.frames["LunaPlayerFrame"].iconscale or 1))
+	LunaPlayerFrame.Combat:SetHeight(10 * (LunaOptions.frames["LunaPlayerFrame"].iconscale or 1))
+	LunaPlayerFrame.Combat:SetWidth(10 * (LunaOptions.frames["LunaPlayerFrame"].iconscale or 1))
 	if LunaOptions.frames["LunaPlayerFrame"].portrait == 1 then
 		LunaPlayerFrame.RaidIcon:ClearAllPoints()
 		LunaPlayerFrame.RaidIcon:SetPoint("CENTER", LunaPlayerFrame, "TOP")
@@ -475,13 +483,13 @@ function LunaUnitFrames:CreatePlayerFrame()
 	LunaPlayerFrame.PVPRank:SetWidth(10)
 
 	LunaPlayerFrame.Leader = LunaPlayerFrame.iconholder:CreateTexture(nil, "OVERLAY")
-	LunaPlayerFrame.Leader:SetHeight(10)
-	LunaPlayerFrame.Leader:SetWidth(10)
+	LunaPlayerFrame.Leader:SetHeight(8)
+	LunaPlayerFrame.Leader:SetWidth(8)
 	LunaPlayerFrame.Leader:SetTexture("Interface\\GroupFrame\\UI-Group-LeaderIcon")
 
 	LunaPlayerFrame.Loot = LunaPlayerFrame.iconholder:CreateTexture(nil, "OVERLAY")
-	LunaPlayerFrame.Loot:SetHeight(10)
-	LunaPlayerFrame.Loot:SetWidth(10)
+	LunaPlayerFrame.Loot:SetHeight(8)
+	LunaPlayerFrame.Loot:SetWidth(8)
 	LunaPlayerFrame.Loot:SetTexture("Interface\\GroupFrame\\UI-Group-MasterLooter")
 
 	LunaPlayerFrame.Combat = LunaPlayerFrame.iconholder:CreateTexture(nil, "OVERLAY")
@@ -709,7 +717,6 @@ function LunaUnitFrames:CreatePlayerFrame()
 			LunaPlayerFrame.bars["Druidbar"].dbp:Show()
 		end
 		
---		LunaPlayerFrame.bars["Totembar"]:SetHeight(LunaPlayerFrame.bars["Totembar"]:GetHeight()+1)
 		for i=1, 4 do
 			if 1 then
 				LunaPlayerFrame.totems[i]:Show()
@@ -984,17 +991,17 @@ function LunaUnitFrames:UpdatePlayerFrame()
 	end
 	local _,class = UnitClass("player")
 	
-	local rankNumber = UnitPVPRank("player");
-	if (rankNumber == 0) then
-		LunaPlayerFrame.PVPRank:Hide();
+	local rankNumber = UnitPVPRank("player")
+	if (rankNumber == 0) or not LunaOptions.frames["LunaPlayerFrame"].pvprankicon then
+		LunaPlayerFrame.PVPRank:Hide()
 	elseif (rankNumber < 14) then
-		rankNumber = rankNumber - 4;
-		LunaPlayerFrame.PVPRank:SetTexture("Interface\\PvPRankBadges\\PvPRank0"..rankNumber);
-		LunaPlayerFrame.PVPRank:Show();
+		rankNumber = rankNumber - 4
+		LunaPlayerFrame.PVPRank:SetTexture("Interface\\PvPRankBadges\\PvPRank0"..rankNumber)
+		LunaPlayerFrame.PVPRank:Show()
 	else
-		rankNumber = rankNumber - 4;
-		LunaPlayerFrame.PVPRank:SetTexture("Interface\\PvPRankBadges\\PvPRank"..rankNumber);
-		LunaPlayerFrame.PVPRank:Show();
+		rankNumber = rankNumber - 4
+		LunaPlayerFrame.PVPRank:SetTexture("Interface\\PvPRankBadges\\PvPRank"..rankNumber)
+		LunaPlayerFrame.PVPRank:Show()
 	end
 	
 	local color
@@ -1014,6 +1021,7 @@ function LunaUnitFrames:UpdatePlayerFrame()
 	Luna_Player_Events.UNIT_PORTRAIT_UPDATE("player")
 	Luna_Player_Events.PARTY_LOOT_METHOD_CHANGED()
 	Luna_Player_Events.PLAYER_UPDATE_RESTING()
+	SetIconPositions()
 end
 
 function Luna_Player_Events:SPELLCAST_CHANNEL_START()
@@ -1149,26 +1157,17 @@ function Luna_Player_Events:PLAYER_AURAS_CHANGED()
 end
 
 function Luna_Player_Events:PLAYER_UPDATE_RESTING()
-	if (event == "PLAYER_REGEN_DISABLED") then
-		InCombat = 1;
-		LunaPlayerFrame.Combat:SetTexCoord(0.5, 1.0, 0.0, 0.48);
-		LunaPlayerFrame.Combat:Show();
-	elseif (event == "PLAYER_REGEN_ENABLED") then
-		InCombat = 0;
-		LunaPlayerFrame.Combat:Hide();
-	elseif (IsResting()) then
-		if (InCombat == 1) then
-			return;
-		else
-			LunaPlayerFrame.Combat:SetTexCoord(0, 0.5, 0.0, 0.48);
-			LunaPlayerFrame.Combat:Show();
-		end
+	local InCombat = UnitAffectingCombat("player")
+	if not LunaOptions.frames["LunaPlayerFrame"].combaticon or (not InCombat and not IsResting()) then
+		LunaPlayerFrame.Combat:Hide()
+		return
+	end
+	if InCombat then
+		LunaPlayerFrame.Combat:SetTexCoord(0.5, 1.0, 0.0, 0.48)
+		LunaPlayerFrame.Combat:Show()
 	else
-		if (InCombat == 1) then
-			return;
-		else
-			LunaPlayerFrame.Combat:Hide();
-		end
+		LunaPlayerFrame.Combat:SetTexCoord(0, 0.5, 0.0, 0.48)
+		LunaPlayerFrame.Combat:Show()
 	end
 end
 Luna_Player_Events.PLAYER_REGEN_DISABLED = Luna_Player_Events.PLAYER_UPDATE_RESTING;
@@ -1177,7 +1176,7 @@ Luna_Player_Events.PLAYER_REGEN_ENABLED = Luna_Player_Events.PLAYER_UPDATE_RESTI
 function Luna_Player_Events:PARTY_LOOT_METHOD_CHANGED()
 	local lootmaster;
 	_, lootmaster = GetLootMethod()
-	if lootmaster == 0 then
+	if lootmaster == 0 and LunaOptions.frames["LunaPlayerFrame"].looticon then
 		LunaPlayerFrame.Loot:Show()
 	else
 		LunaPlayerFrame.Loot:Hide()
@@ -1185,7 +1184,7 @@ function Luna_Player_Events:PARTY_LOOT_METHOD_CHANGED()
 end
 
 function Luna_Player_Events:PARTY_LEADER_CHANGED()
-	if UnitIsPartyLeader("player") and (GetNumPartyMembers() > 0 or GetNumRaidMembers() > 0) then
+	if UnitIsPartyLeader("player") and (GetNumPartyMembers() > 0 or GetNumRaidMembers() > 0) and LunaOptions.frames["LunaPlayerFrame"].leadericon then
 		LunaPlayerFrame.Leader:Show()
 	else
 		LunaPlayerFrame.Leader:Hide()
@@ -1195,7 +1194,7 @@ Luna_Player_Events.PARTY_MEMBERS_CHANGED = Luna_Player_Events.PARTY_LEADER_CHANG
 
 function Luna_Player_Events:RAID_TARGET_UPDATE()
 	local index = GetRaidTargetIndex("player")
-	if (index) then
+	if index and LunaOptions.raidmarks then
 		SetRaidTargetIconTexture(LunaPlayerFrame.RaidIcon, index)
 		LunaPlayerFrame.RaidIcon:Show()
 	else
@@ -1275,7 +1274,7 @@ function Luna_Player_Events.UNIT_PORTRAIT_UPDATE(unit)
 		portrait.model:Hide()
 		portrait.texture:Show()
 		portrait.texture:SetTexture("Interface\\Glues\\CharacterCreate\\UI-CharacterCreate-Classes")
-		portrait.texture:SetTexCoord(CLASS_ICON_TCOORDS[class][1], CLASS_ICON_TCOORDS[class][2], CLASS_ICON_TCOORDS[class][3], CLASS_ICON_TCOORDS[class][4])
+		portrait.texture:SetTexCoord(unpack(CLASS_ICON_TCOORDS[class]))
 	elseif(LunaOptions.PortraitMode == 2) then
 		if LunaOptions.frames["LunaPlayerFrame"].portrait > 1 then
 			portrait.model:Hide()
@@ -1296,7 +1295,7 @@ function Luna_Player_Events.UNIT_PORTRAIT_UPDATE(unit)
 				portrait.texture:Show()
 				local _,class = UnitClass("player")
 				portrait.texture:SetTexture("Interface\\Glues\\CharacterCreate\\UI-CharacterCreate-Classes")
-				portrait.texture:SetTexCoord(CLASS_ICON_TCOORDS[class][1], CLASS_ICON_TCOORDS[class][2], CLASS_ICON_TCOORDS[class][3], CLASS_ICON_TCOORDS[class][4])
+				portrait.texture:SetTexCoord(unpack(CLASS_ICON_TCOORDS[class]))
 			elseif LunaOptions.PortraitFallback == 2 then
 				if LunaOptions.frames["LunaPlayerFrame"].portrait > 1 then
 					portrait.model:Hide()
@@ -1328,13 +1327,13 @@ end
 Luna_Player_Events.UNIT_MODEL_CHANGED = Luna_Player_Events.UNIT_PORTRAIT_UPDATE
 
 function Luna_Player_Events:UNIT_COMBAT()
-	if arg1 == "player" then
+	if arg1 == "player" and LunaOptions.frames["LunaPlayerFrame"].combattext then
 		CombatFeedback_OnCombatEvent(arg2, arg3, arg4, arg5)
 	end
 end
 
 function Luna_Player_Events:UNIT_SPELLMISS()
-	if arg1 == "player" then
+	if arg1 == "player" and LunaOptions.frames["LunaPlayerFrame"].combattext then
 		CombatFeedback_OnSpellMissEvent(arg2)
 	end
 end

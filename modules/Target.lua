@@ -70,6 +70,12 @@ function LunaUnitFrames:ToggleTargetLock()
 end
 
 local function SetIconPositions()
+	LunaTargetFrame.PVPRank:SetHeight(10 * (LunaOptions.frames["LunaTargetFrame"].iconscale or 1))
+	LunaTargetFrame.PVPRank:SetWidth(10 * (LunaOptions.frames["LunaTargetFrame"].iconscale or 1))
+	LunaTargetFrame.Leader:SetHeight(8 * (LunaOptions.frames["LunaTargetFrame"].iconscale or 1))
+	LunaTargetFrame.Leader:SetWidth(8 * (LunaOptions.frames["LunaTargetFrame"].iconscale or 1))
+	LunaTargetFrame.Loot:SetHeight(8 * (LunaOptions.frames["LunaTargetFrame"].iconscale or 1))
+	LunaTargetFrame.Loot:SetWidth(8 * (LunaOptions.frames["LunaTargetFrame"].iconscale or 1))
 	if LunaOptions.frames["LunaTargetFrame"].portrait == 1 then
 		LunaTargetFrame.RaidIcon:ClearAllPoints()
 		LunaTargetFrame.RaidIcon:SetPoint("CENTER", LunaTargetFrame, "TOP")
@@ -378,13 +384,13 @@ function LunaUnitFrames:CreateTargetFrame()
 	LunaTargetFrame.PVPRank:SetWidth(10)
 
 	LunaTargetFrame.Leader = LunaTargetFrame.iconholder:CreateTexture(nil, "OVERLAY")
-	LunaTargetFrame.Leader:SetHeight(10)
-	LunaTargetFrame.Leader:SetWidth(10)
+	LunaTargetFrame.Leader:SetHeight(8)
+	LunaTargetFrame.Leader:SetWidth(8)
 	LunaTargetFrame.Leader:SetTexture("Interface\\GroupFrame\\UI-Group-LeaderIcon")
 
 	LunaTargetFrame.Loot = LunaTargetFrame.iconholder:CreateTexture(nil, "OVERLAY")
-	LunaTargetFrame.Loot:SetHeight(10)
-	LunaTargetFrame.Loot:SetWidth(10)
+	LunaTargetFrame.Loot:SetHeight(8)
+	LunaTargetFrame.Loot:SetWidth(8)
 	LunaTargetFrame.Loot:SetTexture("Interface\\GroupFrame\\UI-Group-MasterLooter")
 	
 	LunaTargetFrame:Hide()
@@ -759,9 +765,9 @@ end
 function Luna_Target_Events:PARTY_LOOT_METHOD_CHANGED()
 	local Lootmaster;
 	_, Lootmaster = GetLootMethod()
-	if Lootmaster == 0 and UnitIsUnit("player", "target") then
+	if Lootmaster == 0 and UnitIsUnit("player", "target") and LunaOptions.frames["LunaTargetFrame"].looticon then
 		LunaTargetFrame.Loot:Show()
-	elseif Lootmaster and UnitIsUnit("party"..Lootmaster, "target") then
+	elseif Lootmaster and UnitIsUnit("party"..Lootmaster, "target") and LunaOptions.frames["LunaTargetFrame"].looticon then
 		LunaTargetFrame.Loot:Show()
 	else
 		LunaTargetFrame.Loot:Hide()
@@ -931,7 +937,7 @@ function LunaUnitFrames:UpdateTargetFrame()
 	Luna_Target_Events.UNIT_AURA()
 	Luna_Target_Events:PARTY_LOOT_METHOD_CHANGED()
 	
-	if UnitIsPlayer("target") then
+	if UnitIsPlayer("target") and LunaOptions.frames["LunaTargetFrame"].pvprankicon then
 		local rankNumber = UnitPVPRank("target");
 		if (rankNumber == 0) then
 			LunaTargetFrame.PVPRank:Hide();
@@ -949,10 +955,11 @@ function LunaUnitFrames:UpdateTargetFrame()
 	else
 		LunaTargetFrame.PVPRank:Hide()
 	end
+	SetIconPositions()
 end
 
 function Luna_Target_Events:PARTY_LEADER_CHANGED()
-	if UnitIsPartyLeader("target") then
+	if UnitIsPartyLeader("target") and LunaOptions.frames["LunaTargetFrame"].leadericon then
 		LunaTargetFrame.Leader:Show()
 	else
 		LunaTargetFrame.Leader:Hide()
@@ -993,7 +1000,7 @@ function Luna_Target_Events.UNIT_PORTRAIT_UPDATE(unit)
 		portrait.model:Hide()
 		portrait.texture:Show()
 		portrait.texture:SetTexture("Interface\\Glues\\CharacterCreate\\UI-CharacterCreate-Classes")
-		portrait.texture:SetTexCoord(CLASS_ICON_TCOORDS[class][1], CLASS_ICON_TCOORDS[class][2], CLASS_ICON_TCOORDS[class][3], CLASS_ICON_TCOORDS[class][4])
+		portrait.texture:SetTexCoord(unpack(CLASS_ICON_TCOORDS[class]))
 	elseif LunaOptions.PortraitMode == 2 or (LunaOptions.PortraitMode == 3 and (LunaOptions.PortraitFallback == 3 or LunaOptions.PortraitFallback == 2)) then
 		if LunaOptions.frames["LunaTargetFrame"].portrait > 1 then
 			portrait.model:Hide()
@@ -1016,7 +1023,7 @@ function Luna_Target_Events.UNIT_PORTRAIT_UPDATE(unit)
 				portrait.texture:Show()
 				local _,class = UnitClass("target")
 				portrait.texture:SetTexture("Interface\\Glues\\CharacterCreate\\UI-CharacterCreate-Classes")
-				portrait.texture:SetTexCoord(CLASS_ICON_TCOORDS[class][1], CLASS_ICON_TCOORDS[class][2], CLASS_ICON_TCOORDS[class][3], CLASS_ICON_TCOORDS[class][4])
+				portrait.texture:SetTexCoord(unpack(CLASS_ICON_TCOORDS[class]))
 			elseif LunaOptions.PortraitFallback == 2 or LunaOptions.PortraitFallback == 3 then
 				if LunaOptions.frames["LunaTargetFrame"].portrait > 1 then
 					portrait.model:Hide()
@@ -1047,13 +1054,13 @@ function Luna_Target_Events.UNIT_PORTRAIT_UPDATE(unit)
 end
 
 function Luna_Target_Events:UNIT_COMBAT()
-	if arg1 == this.unit then
+	if arg1 == this.unit and LunaOptions.frames["LunaTargetFrame"].combattext then
 		CombatFeedback_OnCombatEvent(arg2, arg3, arg4, arg5)
 	end
 end
 
 function Luna_Target_Events:UNIT_SPELLMISS()
-	if arg1 == this.unit then
+	if arg1 == this.unit and LunaOptions.frames["LunaTargetFrame"].combattext then
 		CombatFeedback_OnSpellMissEvent(arg2)
 	end
 end

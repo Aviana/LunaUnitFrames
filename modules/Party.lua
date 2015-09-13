@@ -95,6 +95,14 @@ function LunaUnitFrames:UpdatePartyPosition()
 end
 
 local function SetIconPositions()
+	for i=1,4 do
+		LunaPartyFrames[i].PVPRank:SetHeight(10 * (LunaOptions.frames["LunaPartyFrames"].iconscale or 1))
+		LunaPartyFrames[i].PVPRank:SetWidth(10 * (LunaOptions.frames["LunaPartyFrames"].iconscale or 1))
+		LunaPartyFrames[i].Leader:SetHeight(8 * (LunaOptions.frames["LunaPartyFrames"].iconscale or 1))
+		LunaPartyFrames[i].Leader:SetWidth(8 * (LunaOptions.frames["LunaPartyFrames"].iconscale or 1))
+		LunaPartyFrames[i].Loot:SetHeight(8 * (LunaOptions.frames["LunaPartyFrames"].iconscale or 1))
+		LunaPartyFrames[i].Loot:SetWidth(8 * (LunaOptions.frames["LunaPartyFrames"].iconscale or 1))
+	end
 	if LunaOptions.frames["LunaPartyFrames"].portrait == 1 then
 		for i=1,4 do
 			LunaPartyFrames[i].icon:ClearAllPoints()
@@ -334,13 +342,13 @@ function LunaUnitFrames:CreatePartyFrames()
 		LunaPartyFrames[i].PVPRank:SetWidth(10)
 
 		LunaPartyFrames[i].Leader = LunaPartyFrames[i].iconholder:CreateTexture(nil, "OVERLAY")
-		LunaPartyFrames[i].Leader:SetHeight(10)
-		LunaPartyFrames[i].Leader:SetWidth(10)
+		LunaPartyFrames[i].Leader:SetHeight(8)
+		LunaPartyFrames[i].Leader:SetWidth(8)
 		LunaPartyFrames[i].Leader:SetTexture("Interface\\GroupFrame\\UI-Group-LeaderIcon")
 
 		LunaPartyFrames[i].Loot = LunaPartyFrames[i].iconholder:CreateTexture(nil, "OVERLAY")
-		LunaPartyFrames[i].Loot:SetHeight(10)
-		LunaPartyFrames[i].Loot:SetWidth(10)
+		LunaPartyFrames[i].Loot:SetHeight(8)
+		LunaPartyFrames[i].Loot:SetWidth(8)
 		LunaPartyFrames[i].Loot:SetTexture("Interface\\GroupFrame\\UI-Group-MasterLooter")
 		
 		for k,v in pairs(LunaOptions.frames["LunaPartyFrames"].bars) do
@@ -748,7 +756,7 @@ function LunaUnitFrames:UpdatePartyFrames()
 			end
 			
 			local rankNumber = UnitPVPRank(LunaPartyFrames[i].unit);
-			if (rankNumber == 0) then
+			if (rankNumber == 0) or not LunaOptions.frames["LunaPartyFrames"].pvprankicon then
 				LunaPartyFrames[i].PVPRank:Hide();
 			elseif (rankNumber < 14) then
 				rankNumber = rankNumber - 4;
@@ -765,6 +773,7 @@ function LunaUnitFrames:UpdatePartyFrames()
 			LunaPartyFrames[i]:Hide()
 		end
 	end
+	SetIconPositions()
 	updateBuffs()
 end
 
@@ -883,7 +892,7 @@ Luna_Party_Events.UNIT_RAGE = Luna_Party_Events.UNIT_MANA;
 Luna_Party_Events.UNIT_MAXRAGE = Luna_Party_Events.UNIT_MANA;
 
 function Luna_Party_Events:PARTY_LEADER_CHANGED()
-	if UnitIsPartyLeader(this.unit) then
+	if UnitIsPartyLeader(this.unit) and LunaOptions.frames["LunaPartyFrames"].leadericon then
 		this.Leader:Show()
 	else
 		this.Leader:Hide()
@@ -916,7 +925,7 @@ end
 function Luna_Party_Events:PARTY_LOOT_METHOD_CHANGED()
 	local lootmaster;
 	_, lootmaster = GetLootMethod()
-	if lootmaster and ("party"..lootmaster) == this.unit then
+	if lootmaster and ("party"..lootmaster) == this.unit and LunaOptions.frames["LunaPartyFrames"].looticon then
 		this.Loot:Show()
 	else
 		this.Loot:Hide()
@@ -942,7 +951,7 @@ function Luna_Party_Events.UNIT_PORTRAIT_UPDATE(unitnbr)
 		portrait.model:Hide()
 		portrait.texture:Show()
 		portrait.texture:SetTexture("Interface\\Glues\\CharacterCreate\\UI-CharacterCreate-Classes")
-		portrait.texture:SetTexCoord(CLASS_ICON_TCOORDS[class][1], CLASS_ICON_TCOORDS[class][2], CLASS_ICON_TCOORDS[class][3], CLASS_ICON_TCOORDS[class][4])
+		portrait.texture:SetTexCoord(unpack(CLASS_ICON_TCOORDS[class]))
 	elseif(LunaOptions.PortraitMode == 2) then
 		if LunaOptions.frames["LunaPartyFrames"].portrait > 1 then
 			portrait.model:Hide()
@@ -966,7 +975,7 @@ function Luna_Party_Events.UNIT_PORTRAIT_UPDATE(unitnbr)
 					class = "WARRIOR"
 				end
 				portrait.texture:SetTexture("Interface\\Glues\\CharacterCreate\\UI-CharacterCreate-Classes")
-				portrait.texture:SetTexCoord(CLASS_ICON_TCOORDS[class][1], CLASS_ICON_TCOORDS[class][2], CLASS_ICON_TCOORDS[class][3], CLASS_ICON_TCOORDS[class][4])
+				portrait.texture:SetTexCoord(unpack(CLASS_ICON_TCOORDS[class]))
 			elseif LunaOptions.PortraitFallback == 2 then
 				if LunaOptions.frames["LunaPartyFrames"].portrait > 1 then
 					portrait.model:Hide()

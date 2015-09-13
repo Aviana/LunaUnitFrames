@@ -471,6 +471,114 @@ function OptionFunctions.BTimerToggle()
 	end
 end
 
+function OptionFunctions.PlayerCombatIconToggle()
+	if LunaOptions.frames["LunaPlayerFrame"].combaticon then
+		LunaOptions.frames["LunaPlayerFrame"].combaticon = nil
+	else
+		LunaOptions.frames["LunaPlayerFrame"].combaticon = 1
+	end
+	LunaUnitFrames:UpdatePlayerFrame()
+end
+
+function OptionFunctions.PlayerLeaderIconToggle()
+	if LunaOptions.frames["LunaPlayerFrame"].leadericon then
+		LunaOptions.frames["LunaPlayerFrame"].leadericon = nil
+	else
+		LunaOptions.frames["LunaPlayerFrame"].leadericon = 1
+	end
+	LunaUnitFrames:UpdatePlayerFrame()
+end
+
+function OptionFunctions.PlayerLootIconToggle()
+	if LunaOptions.frames["LunaPlayerFrame"].looticon then
+		LunaOptions.frames["LunaPlayerFrame"].looticon = nil
+	else
+		LunaOptions.frames["LunaPlayerFrame"].looticon = 1
+	end
+	LunaUnitFrames:UpdatePlayerFrame()
+end
+
+function OptionFunctions.PlayerPvPRankIconToggle()
+	if LunaOptions.frames["LunaPlayerFrame"].pvprankicon then
+		LunaOptions.frames["LunaPlayerFrame"].pvprankicon = nil
+	else
+		LunaOptions.frames["LunaPlayerFrame"].pvprankicon = 1
+	end
+	LunaUnitFrames:UpdatePlayerFrame()
+end
+
+function OptionFunctions.TargetLeaderIconToggle()
+	if LunaOptions.frames["LunaTargetFrame"].leadericon then
+		LunaOptions.frames["LunaTargetFrame"].leadericon = nil
+	else
+		LunaOptions.frames["LunaTargetFrame"].leadericon = 1
+	end
+	LunaUnitFrames:UpdateTargetFrame()
+end
+
+function OptionFunctions.TargetLootIconToggle()
+	if LunaOptions.frames["LunaTargetFrame"].looticon then
+		LunaOptions.frames["LunaTargetFrame"].looticon = nil
+	else
+		LunaOptions.frames["LunaTargetFrame"].looticon = 1
+	end
+	LunaUnitFrames:UpdateTargetFrame()
+end
+
+function OptionFunctions.TargetPvPRankIconToggle()
+	if LunaOptions.frames["LunaTargetFrame"].pvprankicon then
+		LunaOptions.frames["LunaTargetFrame"].pvprankicon = nil
+	else
+		LunaOptions.frames["LunaTargetFrame"].pvprankicon = 1
+	end
+	LunaUnitFrames:UpdateTargetFrame()
+end
+
+function OptionFunctions.PartyLeaderIconToggle()
+	if LunaOptions.frames["LunaPartyFrames"].leadericon then
+		LunaOptions.frames["LunaPartyFrames"].leadericon = nil
+	else
+		LunaOptions.frames["LunaPartyFrames"].leadericon = 1
+	end
+	LunaUnitFrames:UpdatePartyFrames()
+end
+
+function OptionFunctions.PartyLootIconToggle()
+	if LunaOptions.frames["LunaPartyFrames"].looticon then
+		LunaOptions.frames["LunaPartyFrames"].looticon = nil
+	else
+		LunaOptions.frames["LunaPartyFrames"].looticon = 1
+	end
+	LunaUnitFrames:UpdatePartyFrames()
+end
+
+function OptionFunctions.PartyPvPRankIconToggle()
+	if LunaOptions.frames["LunaPartyFrames"].pvprankicon then
+		LunaOptions.frames["LunaPartyFrames"].pvprankicon = nil
+	else
+		LunaOptions.frames["LunaPartyFrames"].pvprankicon = 1
+	end
+	LunaUnitFrames:UpdatePartyFrames()
+end
+
+function OptionFunctions.PlayerIconSizeAdjust()
+	LunaOptions.frames["LunaPlayerFrame"].iconscale = math.floor(this:GetValue()*100)/100
+	getglobal("PlayerIconSizeSliderText"):SetText("Status Icon Size:"..(LunaOptions.frames["LunaPlayerFrame"].iconscale or 1))
+	LunaUnitFrames:UpdatePlayerFrame()
+end
+
+function OptionFunctions.TargetIconSizeAdjust()
+	LunaOptions.frames["LunaTargetFrame"].iconscale = math.floor(this:GetValue()*100)/100
+	getglobal("TargetIconSizeSliderText"):SetText("Status Icon Size: "..(LunaOptions.frames["LunaTargetFrame"].iconscale or 1))
+	LunaUnitFrames:UpdateTargetFrame()
+end
+
+function OptionFunctions.PartyIconSizeAdjust()
+	LunaOptions.frames["LunaPartyFrames"].iconscale = math.floor(this:GetValue()*100)/100
+	getglobal("PartyIconSizeSliderText"):SetText("Status Icon Size: "..(LunaOptions.frames["LunaPartyFrames"].iconscale or 1))
+	LunaUnitFrames:UpdatePartyFrames()
+end
+
 function OptionFunctions.PlayerBuffPosSelectChoice()
 	UIDropDownMenu_SetSelectedID(LunaOptionsFrame.pages[1].BuffPosition, this:GetID())
 	LunaOptions.frames["LunaPlayerFrame"].ShowBuffs = this:GetID()
@@ -1786,6 +1894,47 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[1].bufftimer:SetChecked(LunaOptions.BTimers or 0)
 	getglobal("BTimerSwitchText"):SetText("Enable radial buff timers")
 	
+	LunaOptionsFrame.pages[1].combaticon = CreateFrame("CheckButton", "CombatIconSwitch", LunaOptionsFrame.pages[1], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[1].combaticon:SetHeight(20)
+	LunaOptionsFrame.pages[1].combaticon:SetWidth(20)
+	LunaOptionsFrame.pages[1].combaticon:SetPoint("TOPRIGHT", LunaOptionsFrame.pages[1].bufftimer, "TOPRIGHT", 0, -20)
+	LunaOptionsFrame.pages[1].combaticon:SetScript("OnClick", OptionFunctions.PlayerCombatIconToggle)
+	LunaOptionsFrame.pages[1].combaticon:SetChecked(LunaOptions.frames["LunaPlayerFrame"].combaticon or 0)
+	getglobal("CombatIconSwitchText"):SetText("Enable Combat/Resting Icon")
+
+	LunaOptionsFrame.pages[1].pvprankicon = CreateFrame("CheckButton", "PvPRankIconSwitch", LunaOptionsFrame.pages[1], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[1].pvprankicon:SetHeight(20)
+	LunaOptionsFrame.pages[1].pvprankicon:SetWidth(20)
+	LunaOptionsFrame.pages[1].pvprankicon:SetPoint("TOPRIGHT", LunaOptionsFrame.pages[1].combaticon, "TOPRIGHT", 0, -20)
+	LunaOptionsFrame.pages[1].pvprankicon:SetScript("OnClick", OptionFunctions.PlayerPvPRankIconToggle)
+	LunaOptionsFrame.pages[1].pvprankicon:SetChecked(LunaOptions.frames["LunaPlayerFrame"].pvprankicon or 0)
+	getglobal("PvPRankIconSwitchText"):SetText("Enable PvP Rank Icon")
+	
+	LunaOptionsFrame.pages[1].leadericon = CreateFrame("CheckButton", "LeaderIconSwitch", LunaOptionsFrame.pages[1], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[1].leadericon:SetHeight(20)
+	LunaOptionsFrame.pages[1].leadericon:SetWidth(20)
+	LunaOptionsFrame.pages[1].leadericon:SetPoint("TOPRIGHT", LunaOptionsFrame.pages[1].pvprankicon, "TOPRIGHT", 0, -20)
+	LunaOptionsFrame.pages[1].leadericon:SetScript("OnClick", OptionFunctions.PlayerLeaderIconToggle)
+	LunaOptionsFrame.pages[1].leadericon:SetChecked(LunaOptions.frames["LunaPlayerFrame"].leadericon or 0)
+	getglobal("LeaderIconSwitchText"):SetText("Enable Leader Icon")
+	
+	LunaOptionsFrame.pages[1].looticon = CreateFrame("CheckButton", "LootIconSwitch", LunaOptionsFrame.pages[1], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[1].looticon:SetHeight(20)
+	LunaOptionsFrame.pages[1].looticon:SetWidth(20)
+	LunaOptionsFrame.pages[1].looticon:SetPoint("TOPRIGHT", LunaOptionsFrame.pages[1].leadericon, "TOPRIGHT", 0, -20)
+	LunaOptionsFrame.pages[1].looticon:SetScript("OnClick", OptionFunctions.PlayerLootIconToggle)
+	LunaOptionsFrame.pages[1].looticon:SetChecked(LunaOptions.frames["LunaPlayerFrame"].looticon or 0)
+	getglobal("LootIconSwitchText"):SetText("Enable Loot Icon")
+	
+	LunaOptionsFrame.pages[1].iconsize = CreateFrame("Slider", "PlayerIconSizeSlider", LunaOptionsFrame.pages[1], "OptionsSliderTemplate")
+	LunaOptionsFrame.pages[1].iconsize:SetMinMaxValues(0,2)
+	LunaOptionsFrame.pages[1].iconsize:SetValueStep(0.01)
+	LunaOptionsFrame.pages[1].iconsize:SetScript("OnValueChanged", OptionFunctions.PlayerIconSizeAdjust)
+	LunaOptionsFrame.pages[1].iconsize:SetPoint("TOPLEFT", LunaOptionsFrame.pages[1].looticon, "BOTTOMLEFT", 0, -20)
+	LunaOptionsFrame.pages[1].iconsize:SetValue(LunaOptions.frames["LunaPlayerFrame"].iconscale or 1)
+	LunaOptionsFrame.pages[1].iconsize:SetWidth(180)
+	getglobal("PlayerIconSizeSliderText"):SetText("Status Icon Size: "..(LunaOptions.frames["LunaPlayerFrame"].iconscale or 1))
+	
 	LunaOptionsFrame.pages[2].Portraitmode = CreateFrame("CheckButton", "PortraitmodePet", LunaOptionsFrame.pages[2], "UICheckButtonTemplate")
 	LunaOptionsFrame.pages[2].Portraitmode:SetHeight(20)
 	LunaOptionsFrame.pages[2].Portraitmode:SetWidth(20)
@@ -1825,6 +1974,39 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[3].HideHealing:SetScript("OnClick", OptionFunctions.ToggleHideHealing)
 	LunaOptionsFrame.pages[3].HideHealing:SetChecked(LunaOptions.HideHealing or 0)
 	getglobal("HideHealingText"):SetText("Hide Incoming Heals")
+	
+	LunaOptionsFrame.pages[3].pvprankicon = CreateFrame("CheckButton", "PvPRankTargetIconSwitch", LunaOptionsFrame.pages[3], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[3].pvprankicon:SetHeight(20)
+	LunaOptionsFrame.pages[3].pvprankicon:SetWidth(20)
+	LunaOptionsFrame.pages[3].pvprankicon:SetPoint("TOPRIGHT", LunaOptionsFrame.pages[3].HideHealing, "TOPRIGHT", 0, -20)
+	LunaOptionsFrame.pages[3].pvprankicon:SetScript("OnClick", OptionFunctions.TargetPvPRankIconToggle)
+	LunaOptionsFrame.pages[3].pvprankicon:SetChecked(LunaOptions.frames["LunaTargetFrame"].pvprankicon or 0)
+	getglobal("PvPRankTargetIconSwitchText"):SetText("Enable PvP Rank Icon")
+	
+	LunaOptionsFrame.pages[3].leadericon = CreateFrame("CheckButton", "LeaderTargetIconSwitch", LunaOptionsFrame.pages[3], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[3].leadericon:SetHeight(20)
+	LunaOptionsFrame.pages[3].leadericon:SetWidth(20)
+	LunaOptionsFrame.pages[3].leadericon:SetPoint("TOPRIGHT", LunaOptionsFrame.pages[3].pvprankicon, "TOPRIGHT", 0, -20)
+	LunaOptionsFrame.pages[3].leadericon:SetScript("OnClick", OptionFunctions.TargetLeaderIconToggle)
+	LunaOptionsFrame.pages[3].leadericon:SetChecked(LunaOptions.frames["LunaTargetFrame"].leadericon or 0)
+	getglobal("LeaderTargetIconSwitchText"):SetText("Enable Leader Icon")
+	
+	LunaOptionsFrame.pages[3].looticon = CreateFrame("CheckButton", "LootTargetIconSwitch", LunaOptionsFrame.pages[3], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[3].looticon:SetHeight(20)
+	LunaOptionsFrame.pages[3].looticon:SetWidth(20)
+	LunaOptionsFrame.pages[3].looticon:SetPoint("TOPRIGHT", LunaOptionsFrame.pages[3].leadericon, "TOPRIGHT", 0, -20)
+	LunaOptionsFrame.pages[3].looticon:SetScript("OnClick", OptionFunctions.TargetLootIconToggle)
+	LunaOptionsFrame.pages[3].looticon:SetChecked(LunaOptions.frames["LunaTargetFrame"].looticon or 0)
+	getglobal("LootTargetIconSwitchText"):SetText("Enable Loot Icon")
+	
+	LunaOptionsFrame.pages[3].iconsize = CreateFrame("Slider", "TargetIconSizeSlider", LunaOptionsFrame.pages[3], "OptionsSliderTemplate")
+	LunaOptionsFrame.pages[3].iconsize:SetMinMaxValues(0,2)
+	LunaOptionsFrame.pages[3].iconsize:SetValueStep(0.01)
+	LunaOptionsFrame.pages[3].iconsize:SetScript("OnValueChanged", OptionFunctions.TargetIconSizeAdjust)
+	LunaOptionsFrame.pages[3].iconsize:SetPoint("TOPLEFT", LunaOptionsFrame.pages[3].looticon, "BOTTOMLEFT", 0, -20)
+	LunaOptionsFrame.pages[3].iconsize:SetValue(LunaOptions.frames["LunaTargetFrame"].iconscale or 1)
+	LunaOptionsFrame.pages[3].iconsize:SetWidth(180)
+	getglobal("TargetIconSizeSliderText"):SetText("Status Icon Size: "..(LunaOptions.frames["LunaTargetFrame"].iconscale or 1))
 	
 	LunaOptionsFrame.pages[6].spaceslider = CreateFrame("Slider", "SpaceSlider", LunaOptionsFrame.pages[6], "OptionsSliderTemplate")
 	LunaOptionsFrame.pages[6].spaceslider:SetMinMaxValues(0,150)
@@ -1874,6 +2056,39 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[6].inraidframe:SetScript("OnClick", OptionFunctions.PartyInRaidFrame)
 	LunaOptionsFrame.pages[6].inraidframe:SetChecked(LunaOptions.partyraidframe)
 	getglobal("PartyInRaidFrameText"):SetText("Display Party in Raidframe")
+	
+	LunaOptionsFrame.pages[6].pvprankicon = CreateFrame("CheckButton", "PvPRankPartyIconSwitch", LunaOptionsFrame.pages[6], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[6].pvprankicon:SetHeight(20)
+	LunaOptionsFrame.pages[6].pvprankicon:SetWidth(20)
+	LunaOptionsFrame.pages[6].pvprankicon:SetPoint("TOPRIGHT", LunaOptionsFrame.pages[6].inraidframe, "TOPRIGHT", 0, -20)
+	LunaOptionsFrame.pages[6].pvprankicon:SetScript("OnClick", OptionFunctions.PartyPvPRankIconToggle)
+	LunaOptionsFrame.pages[6].pvprankicon:SetChecked(LunaOptions.frames["LunaPartyFrames"].pvprankicon or 0)
+	getglobal("PvPRankPartyIconSwitchText"):SetText("Enable PvP Rank Icon")
+	
+	LunaOptionsFrame.pages[6].leadericon = CreateFrame("CheckButton", "LeaderPartyIconSwitch", LunaOptionsFrame.pages[6], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[6].leadericon:SetHeight(20)
+	LunaOptionsFrame.pages[6].leadericon:SetWidth(20)
+	LunaOptionsFrame.pages[6].leadericon:SetPoint("TOPRIGHT", LunaOptionsFrame.pages[6].pvprankicon, "TOPRIGHT", 0, -20)
+	LunaOptionsFrame.pages[6].leadericon:SetScript("OnClick", OptionFunctions.PartyLeaderIconToggle)
+	LunaOptionsFrame.pages[6].leadericon:SetChecked(LunaOptions.frames["LunaPartyFrames"].leadericon or 0)
+	getglobal("LeaderPartyIconSwitchText"):SetText("Enable Leader Icon")
+	
+	LunaOptionsFrame.pages[6].looticon = CreateFrame("CheckButton", "LootPartyIconSwitch", LunaOptionsFrame.pages[6], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[6].looticon:SetHeight(20)
+	LunaOptionsFrame.pages[6].looticon:SetWidth(20)
+	LunaOptionsFrame.pages[6].looticon:SetPoint("TOPRIGHT", LunaOptionsFrame.pages[6].leadericon, "TOPRIGHT", 0, -20)
+	LunaOptionsFrame.pages[6].looticon:SetScript("OnClick", OptionFunctions.PartyLootIconToggle)
+	LunaOptionsFrame.pages[6].looticon:SetChecked(LunaOptions.frames["LunaPartyFrames"].looticon or 0)
+	getglobal("LootPartyIconSwitchText"):SetText("Enable Loot Icon")
+	
+	LunaOptionsFrame.pages[6].iconsize = CreateFrame("Slider", "PartyIconSizeSlider", LunaOptionsFrame.pages[6], "OptionsSliderTemplate")
+	LunaOptionsFrame.pages[6].iconsize:SetMinMaxValues(0,2)
+	LunaOptionsFrame.pages[6].iconsize:SetValueStep(0.01)
+	LunaOptionsFrame.pages[6].iconsize:SetScript("OnValueChanged", OptionFunctions.PartyIconSizeAdjust)
+	LunaOptionsFrame.pages[6].iconsize:SetPoint("TOPLEFT", LunaOptionsFrame.pages[6].looticon, "BOTTOMLEFT", 0, -20)
+	LunaOptionsFrame.pages[6].iconsize:SetValue(LunaOptions.frames["LunaPartyFrames"].iconscale or 1)
+	LunaOptionsFrame.pages[6].iconsize:SetWidth(180)
+	getglobal("PartyIconSizeSliderText"):SetText("Status Icon Size: "..(LunaOptions.frames["LunaPartyFrames"].iconscale or 1))
 	
 	LunaOptionsFrame.pages[7].PosSelect = CreateFrame("Button", "PartyPetPosSelector", LunaOptionsFrame.pages[7], "UIDropDownMenuTemplate")
 	LunaOptionsFrame.pages[7].PosSelect:SetPoint("TOPLEFT", LunaOptionsFrame.pages[7].scaleslider, "BOTTOMLEFT", -20 , -10)
