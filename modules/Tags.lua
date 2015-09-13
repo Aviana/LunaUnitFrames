@@ -603,6 +603,9 @@ Tags.defaultTags = {
 									end
 								end
 							end;
+	["color"]				= function(color)
+								return ("|cff"..color)
+							end;
 }
 --To-Do:
 -- Custom color tag
@@ -661,6 +664,8 @@ local function updateTagString(unit, fontString, event)
 		while tag do
 			if Tags.defaultTags[tag] then
 				text = text..Tags.defaultTags[tag](unit)
+			elseif string.sub(tag, 1, 6) == "color:" then
+				text = text..Tags.defaultTags["color"](string.sub(tag, 7))
 			end
 			if tag == "combat" or tag == "color:combat" then
 				hbRefresh[unit] = true
