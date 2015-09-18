@@ -187,6 +187,10 @@ if LunaOptions == nil then
 	ResetSettings()
 end
 
+if not LunaBuffDB then
+	LunaBuffDB = {}
+end
+
 if not LunaOptions.frames["LunaRaidFrames"] then
 	LunaOptions.frames["LunaRaidFrames"] = {}
 end
@@ -460,15 +464,7 @@ function OptionFunctions.BTimerToggle()
 	else
 		LunaOptions.BTimers = 0
 	end
-	if LunaOptions.BTimers == 0 then
-		for i=1, 16 do
-			CooldownFrame_SetTimer(LunaPlayerFrame.Buffs[i].cd,0,0,0)
-		end
-	else
-		for i=1, 16 do
-			LunaPlayerFrame.Buffs[i].endtime = nil
-		end
-	end
+	LunaPlayerFrame.UpdateBuffSize()
 end
 
 function OptionFunctions.PlayerCombatTextToggle()

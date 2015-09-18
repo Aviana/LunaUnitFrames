@@ -4,6 +4,9 @@ local Luna_Player_Events = {}
 local berserkValue = 0.3
 local enableCastbar
 
+local PlayerScanTip = CreateFrame("GameTooltip", "PlayerScanTip", nil, "GameTooltipTemplate")
+PlayerScanTip:SetOwner(WorldFrame, "ANCHOR_NONE")
+
 local totemcolors = {
 					{1,0,0},
 					{0,0,1},
@@ -108,34 +111,40 @@ local function Luna_Player_OnUpdate()
 end
 
 local function Luna_Player_BuffTimer()
-	if not LunaOptions.BTimers or LunaOptions.BTimers == 0 then
-		return
-	end
-	local curtime = GetTime()
 	for i=1, 16 do
 		local timeleft = GetPlayerBuffTimeLeft(GetPlayerBuff(i-1,"HELPFUL"))
-		if timeleft == 0 then
-			LunaPlayerFrame.Buffs[i].endtime = 0
-			CooldownFrame_SetTimer(LunaPlayerFrame.Buffs[i].cd,curtime,timeleft,1)
-		elseif not LunaPlayerFrame.Buffs[i].endtime or LunaPlayerFrame.Buffs[i].endtime == 0 then
-			LunaPlayerFrame.Buffs[i].endtime = curtime + timeleft
-			CooldownFrame_SetTimer(LunaPlayerFrame.Buffs[i].cd,curtime,timeleft,1)
-		elseif (LunaPlayerFrame.Buffs[i].endtime + 0.1) < (curtime + timeleft) or (LunaPlayerFrame.Buffs[i].endtime - 0.1) > (curtime + timeleft) then
-			LunaPlayerFrame.Buffs[i].endtime = curtime + timeleft
-			CooldownFrame_SetTimer(LunaPlayerFrame.Buffs[i].cd,curtime,timeleft,1)
+		PlayerScanTip:ClearLines()
+		PlayerScanTip:SetPlayerBuff(GetPlayerBuff(i-1,"HELPFUL"))
+		local buffName = PlayerScanTipTextLeft1:GetText()
+		if LunaBuffDB[buffName] then
+			if timeleft > LunaBuffDB[buffName] then
+				LunaBuffDB[buffName] = timeleft
+			end
+		elseif timeleft > 0 and buffName then
+			LunaBuffDB[buffName] = timeleft
+		end
+		if timeleft > 0 and LunaOptions.BTimers == 1 then
+			CooldownFrame_SetTimer(LunaPlayerFrame.Buffs[i].cd,(GetTime()-(LunaBuffDB[buffName]-timeleft)),LunaBuffDB[buffName],1,1)
+		else
+			CooldownFrame_SetTimer(LunaPlayerFrame.Buffs[i].cd,0,timeleft,0,1)
 		end
 	end
 	for i=1, 16 do
 		local timeleft = GetPlayerBuffTimeLeft(GetPlayerBuff(i-1,"HARMFUL"))
-		if timeleft == 0 then
-			LunaPlayerFrame.Debuffs[i].endtime = 0
-			CooldownFrame_SetTimer(LunaPlayerFrame.Debuffs[i].cd,curtime,timeleft,1)
-		elseif not LunaPlayerFrame.Debuffs[i].endtime or LunaPlayerFrame.Debuffs[i].endtime == 0 then
-			LunaPlayerFrame.Debuffs[i].endtime = curtime + timeleft
-			CooldownFrame_SetTimer(LunaPlayerFrame.Debuffs[i].cd,curtime,timeleft,1)
-		elseif (LunaPlayerFrame.Debuffs[i].endtime + 0.1) < (curtime + timeleft) or (LunaPlayerFrame.Debuffs[i].endtime - 0.1) > (curtime + timeleft) then
-			LunaPlayerFrame.Debuffs[i].endtime = curtime + timeleft
-			CooldownFrame_SetTimer(LunaPlayerFrame.Debuffs[i].cd,curtime,timeleft,1)
+		PlayerScanTip:ClearLines()
+		PlayerScanTip:SetPlayerBuff(GetPlayerBuff(i-1,"HARMFUL"))
+		local buffName = PlayerScanTipTextLeft1:GetText()
+		if LunaBuffDB[buffName] then
+			if timeleft > LunaBuffDB[buffName] then
+				LunaBuffDB[buffName] = timeleft
+			end
+		elseif timeleft > 0 and buffName then
+			LunaBuffDB[buffName] = timeleft
+		end
+		if timeleft > 0 and LunaOptions.BTimers == 1 then
+			CooldownFrame_SetTimer(LunaPlayerFrame.Debuffs[i].cd,(GetTime()-(LunaBuffDB[buffName]-timeleft)),LunaBuffDB[buffName],1,1)
+		else
+			CooldownFrame_SetTimer(LunaPlayerFrame.Debuffs[i].cd,0,timeleft,0,1)
 		end
 	end
 end
@@ -230,7 +239,6 @@ function LunaUnitFrames:CreatePlayerFrame()
 	LunaPlayerFrame.bars["Portrait"].model:SetScript("OnShow",function() this:SetCamera(0) end)
 
 	LunaPlayerFrame.AuraAnchor = CreateFrame("Frame", nil, LunaPlayerFrame)
-	LunaPlayerFrame.AuraAnchor:SetScript("OnUpdate", Luna_Player_BuffTimer)
 	
 	
 	LunaPlayerFrame.Buffs = {}
@@ -1154,6 +1162,7 @@ function Luna_Player_Events:PLAYER_AURAS_CHANGED()
 		end
 		LunaPlayerFrame.Debuffs[i]:SetNormalTexture(LunaPlayerFrame.Debuffs[i].texturepath)
 	end
+	Luna_Player_BuffTimer()
 end
 
 function Luna_Player_Events:PLAYER_UPDATE_RESTING()

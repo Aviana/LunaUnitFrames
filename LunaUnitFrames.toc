@@ -3,8 +3,10 @@
 ## Notes: Lightweight Unit Frames in a modern look.
 ## Author: Avi
 ## Dependencies:
-## SavedVariables: LunaOptions
+## SavedVariables: LunaOptions, LunaBuffDB
 ## OptionalDeps: Ace2, ProximityLib, RosterLib, BanzaiLib, HealComm, DruidManaLib, MobHealth
+
+
 
 libs\AceLibrary\AceLibrary.lua
 libs\AceOO-2.0\AceOO-2.0.lua
@@ -21,6 +23,7 @@ libs\CastLib-1.0\CastLib-1.0.lua
 
 LunaUnitFrames.lua
 
+modules\Cooldown.lua
 modules\Tags.lua
 modules\Player.lua
 modules\Target.lua
