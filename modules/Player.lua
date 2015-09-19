@@ -1,6 +1,8 @@
 local HealComm = AceLibrary("HealComm-1.0")
 local AceEvent = AceLibrary("AceEvent-2.0")
 local Luna_Player_Events = {}
+local bufftimers = {}
+local debufftimers = {}
 local berserkValue = 0.3
 local enableCastbar
 
@@ -149,6 +151,25 @@ local function Luna_Player_BuffTimer()
 	end
 end
 
+local function Luna_Player_BuffCheck()
+	local changed
+	for i=1, 16 do
+		local bufftimeleft = GetPlayerBuffTimeLeft(GetPlayerBuff(i-1,"HELPFUL"))
+		if bufftimers[i] and bufftimeleft > bufftimers[i] then
+			changed = 1
+		end
+		bufftimers[i] = bufftimeleft
+		local debufftimeleft = GetPlayerBuffTimeLeft(GetPlayerBuff(i-1,"HARMFUL"))
+		if debufftimers[i] and debufftimeleft > debufftimers[i] then
+			changed = 1
+		end
+		debufftimers[i] = debufftimeleft
+	end
+	if changed then
+		Luna_Player_BuffTimer()
+	end
+end
+
 local function Luna_Player_TotemOnUpdate()
 	for i=1, 4 do
 		if LunaPlayerFrame.totems[i].active then
@@ -239,6 +260,7 @@ function LunaUnitFrames:CreatePlayerFrame()
 	LunaPlayerFrame.bars["Portrait"].model:SetScript("OnShow",function() this:SetCamera(0) end)
 
 	LunaPlayerFrame.AuraAnchor = CreateFrame("Frame", nil, LunaPlayerFrame)
+	LunaPlayerFrame.AuraAnchor:SetScript("OnUpdate", Luna_Player_BuffCheck)
 	
 	
 	LunaPlayerFrame.Buffs = {}
