@@ -40,6 +40,7 @@ Tags.defaultEvents = {
 	["missinghp"]           = "UNIT_HEALTH UNIT_MAXHEALTH",
 	["healmishp"]			= "UNIT_HEALTH UNIT_MAXHEALTH HealComm_Healupdate",
 	["perhp"]               = "UNIT_HEALTH UNIT_MAXHEALTH",
+	["healthcolor"]			= "UNIT_HEALTH UNIT_MAXHEALTH",
 	["pp"]            	    = "UNIT_ENERGY UNIT_FOCUS UNIT_MANA UNIT_RAGE UNIT_DISPLAYPOWER",
 	["maxpp"]				= "UNIT_ENERGY UNIT_FOCUS UNIT_MANA UNIT_RAGE UNIT_DISPLAYPOWER UNIT_MAXENERGY UNIT_MAXFOCUS UNIT_MAXMANA UNIT_MAXRAGE",
 	["missingpp"]           = "UNIT_MAXENERGY UNIT_MAXFOCUS UNIT_MAXMANA UNIT_MAXRAGE UNIT_ENERGY UNIT_FOCUS UNIT_MANA UNIT_RAGE",
@@ -603,12 +604,13 @@ Tags.defaultTags = {
 									end
 								end
 							end;
+	["healthcolor"]			=function(unit)
+								return Hex(unpack(LunaUnitFrames:GetHealthColor(unit)))
+							end;
 	["color"]				= function(color)
 								return ("|cff"..color)
 							end;
 }
---To-Do:
--- Custom color tag
 
 local function strsplit(pString, pPattern)
 	local Table = {}

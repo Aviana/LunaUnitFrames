@@ -1,15 +1,11 @@
-function CooldownFrame_SetTimer(this, start, duration, enable, rev)
+local oldCooldownFrame_SetTimer = CooldownFrame_SetTimer
+local function LunaCooldownFrame_SetTimer(this, start, duration, enable, rev)
+	oldCooldownFrame_SetTimer(this, start, duration, enable)
 	if ( start > 0 and duration > 0 and enable > 0) then
-		this.start = start;
-		this.duration = duration;
-		this.stopping = 0;
 		this.reverse = rev;
-		this:SetSequence(0);
-		this:Show();
-	else
-		this:Hide();
 	end
 end
+CooldownFrame_SetTimer = LunaCooldownFrame_SetTimer
 
 function CooldownFrame_OnUpdateModel()
 	if ( this.stopping == 0 ) then
@@ -27,11 +23,5 @@ function CooldownFrame_OnUpdateModel()
 		this:SetSequenceTime(1, 0);
 	else
 		this:AdvanceTime();
-	end
-end
-
-function CooldownFrame_OnAnimFinished()
-	if ( this.stopping == 1 ) then
-		this:Hide();
 	end
 end
