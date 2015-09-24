@@ -8,7 +8,7 @@ Dependencies: AceLibrary, AceEvent-2.0, RosterLib-2.0
 ]]
 
 local MAJOR_VERSION = "HealComm-1.0"
-local MINOR_VERSION = "$Revision: 11100 $"
+local MINOR_VERSION = "$Revision: 11200 $"
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
 if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end
@@ -72,8 +72,8 @@ if( GetLocale() == "deDE" ) then
 	L["Warsong Gulch"] = "Kriegshymnenschlucht"
 	L["Arathi Basin"] = "Arathibecken"
 	L["Alterac Valley"] = "Alteractal"
-	L["Blessing of Light"] = "Erh\195\164lt bis zu (%d+) extra Heilung durch %'Heiliges Licht%' und bis zu (%d+) extra Heilung durch den Zauber %'Lichtblitz%'%."
-	L["Set: Increases the duration of your Rejuvenation spell by 3 sec."] = "Set: Erh\195\182ht die Dauer Eures Zaubers 'Verj\195\188ngung' um 3 Sek."
+	L["Blessing of Light"] = "Segen des Lichts"
+	L["Set: Increases the duration of your Rejuvenation spell by 3 sec."] = "Set: Erh\195\182ht die Dauer Eures Zaubers \'Verj\195\188ngung\' um 3 Sek."
 	L["Set: Increases the duration of your Renew spell by 3 sec."] = "Set: Erh\195\182ht die Dauer Eures Zaubers 'Erneuerung' um 3 Sek."
 elseif ( GetLocale() == "frFR" ) then
 	L["Renew"] = "R\195\169novation"
@@ -124,7 +124,7 @@ elseif ( GetLocale() == "frFR" ) then
 	L["Warsong Gulch"] = "Goulet des Warsong"
 	L["Arathi Basin"] = "Bassin d'Arathi"
 	L["Alterac Valley"] = "Vall\195\169e d'Alterac"
-	L["Blessing of Light"] = "Les sorts de Lumi\195\168re sacr\195\169e rendent jusqu%'\195\160 (%d+) points de vie suppl\195\169mentaires%, les sorts d%'Eclair lumineux jusqu%'\195\160 (%d+)%."
+	L["Blessing of Light"] = "B\195\169n\195\169diction de lumi\195\168re"
 	L["Set: Increases the duration of your Rejuvenation spell by 3 sec."] = "Set: Augmente la dur\195\169e de votre sort R\195\169cup\195\169ration de 3 s."
 	L["Set: Increases the duration of your Renew spell by 3 sec."] = "Set: Augmente la dur\195\169e de votre sort R\195\169novation de 3 s."
 else
@@ -176,7 +176,7 @@ else
 	L["Warsong Gulch"] = "Warsong Gulch"
 	L["Arathi Basin"] = "Arathi Basin"
 	L["Alterac Valley"] = "Alterac Valley"
-	L["Blessing of Light"] = "Receives up to (%d+) extra healing from Holy Light spells%, and up to (%d+) extra healing from Flash of Light spells%."
+	L["Blessing of Light"] = "Blessing of Light"
 	L["Set: Increases the duration of your Rejuvenation spell by 3 sec."] = "Set: Increases the duration of your Rejuvenation spell by 3 sec."
 	L["Set: Increases the duration of your Renew spell by 3 sec."] = "Set: Increases the duration of your Renew spell by 3 sec."
 end
@@ -256,6 +256,17 @@ end
 ------------------------------------------------
 -- Addon Code
 ------------------------------------------------
+
+function strmatch(str, pat, init)
+	local results = {}
+	local s,e,found = string.find(str, pat, init)
+	while found ~= 0 do
+		ChatFrame1:AddMessage(found)
+		tinsert(results,found)
+		s,e,found = string.find(str, pat, e+1)
+	end
+	return unpack(results)
+end
 
 HealComm.Spells = {
 	[L["Holy Light"]] = {
@@ -979,8 +990,8 @@ local function GetTargetSpellPower(spell)
 			break
 		end
 		local buffName = healcommTipTextLeft1:GetText()
-		if (buffTexture == "Interface\\Icons\\Spell_Holy_PrayerOfHealing02" or buffTexture == "Interface\\Icons\\Spell_Holy_GreaterBlessingofLight") then
-			local _,_, HLBonus, FoLBonus = string.find(healcommTipTextLeft2:GetText(),L["Blessing of Light"])
+		if buffName == L["Blessing of Light"] then
+			local HLBonus, FoLBonus = strmatch(healcommTipTextLeft2:GetText(),"(%d+)")
 			if (spell == L["Flash of Light"]) then
 				targetpower = FoLBonus + targetpower
 			elseif spell == L["Holy Light"] then
