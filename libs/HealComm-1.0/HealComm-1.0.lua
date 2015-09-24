@@ -777,6 +777,14 @@ HealComm.Spells = {
 			local shMod = 2*talentRank2/100 + 1
 			return (965*shMod+((3/3.5/3) * (SpellPower+sgMod)))
 		end;
+		[5] = function (SpellPower)
+			local _,_,_,_,talentRank,_ = GetTalentInfo(2,14)
+			local _,Spirit,_,_ = UnitStat("player",5)
+			local sgMod = Spirit * 5*talentRank/100
+			local _,_,_,_,talentRank2,_ = GetTalentInfo(2,15)
+			local shMod = 2*talentRank2/100 + 1
+			return (1070*shMod+((3/3.5/3) * (SpellPower+sgMod)))
+		end;
 	};
 	[L["Healing Touch"]] = {
 		[1] = function (SpellPower)
