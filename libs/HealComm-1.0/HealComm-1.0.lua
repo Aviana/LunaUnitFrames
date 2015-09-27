@@ -8,7 +8,7 @@ Dependencies: AceLibrary, AceEvent-2.0, RosterLib-2.0
 ]]
 
 local MAJOR_VERSION = "HealComm-1.0"
-local MINOR_VERSION = "$Revision: 11200 $"
+local MINOR_VERSION = "$Revision: 11210 $"
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
 if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end
@@ -260,8 +260,7 @@ end
 function strmatch(str, pat, init)
 	local results = {}
 	local s,e,found = string.find(str, pat, init)
-	while found ~= 0 do
-		ChatFrame1:AddMessage(found)
+	while found do
 		tinsert(results,found)
 		s,e,found = string.find(str, pat, e+1)
 	end
