@@ -273,6 +273,24 @@ function OptionFunctions.ToggleDispelableDebuffs()
 	LunaUnitFrames.Raid_Update()
 end
 
+function OptionFunctions.ToggleTexDebuffs()
+	if not LunaOptions.frames["LunaRaidFrames"].texturedebuff then
+		LunaOptions.frames["LunaRaidFrames"].texturedebuff = 1
+	else
+		LunaOptions.frames["LunaRaidFrames"].texturedebuff = nil
+	end
+	LunaUnitFrames.Raid_Update()
+end
+
+function OptionFunctions.ToggleTexBuffs()
+	if not LunaOptions.frames["LunaRaidFrames"].texturebuff then
+		LunaOptions.frames["LunaRaidFrames"].texturebuff = 1
+	else
+		LunaOptions.frames["LunaRaidFrames"].texturebuff = nil
+	end
+	LunaUnitFrames.Raid_Update()
+end
+
 function OptionFunctions.ToggleAggro()
 	if not LunaOptions.aggro then
 		LunaOptions.aggro = 1
@@ -590,6 +608,19 @@ function OptionFunctions.PartyIconSizeAdjust()
 	getglobal("PartyIconSizeSliderText"):SetText("Status Icon Size: "..(LunaOptions.frames["LunaPartyFrames"].iconscale or 1))
 	LunaUnitFrames:UpdatePartyFrames()
 end
+
+function OptionFunctions.CenterIconSizeAdjust()
+	LunaOptions.frames["LunaRaidFrames"].centericonscale = math.floor(this:GetValue()*100)/100
+	getglobal("CenterIconSizeSliderText"):SetText("Center Icon Size: "..(LunaOptions.frames["LunaRaidFrames"].centericonscale or 1))
+	LunaUnitFrames:SetRaidFrameSize()
+end
+
+function OptionFunctions.CornerIconSizeAdjust()
+	LunaOptions.frames["LunaRaidFrames"].cornericonscale = math.floor(this:GetValue()*100)/100
+	getglobal("CornerIconSizeSliderText"):SetText("Corner Icon Size: "..(LunaOptions.frames["LunaRaidFrames"].cornericonscale or 1))
+	LunaUnitFrames:SetRaidFrameSize()
+end
+
 
 function OptionFunctions.PlayerBuffPosSelectChoice()
 	UIDropDownMenu_SetSelectedID(LunaOptionsFrame.pages[1].BuffPosition, this:GetID())
@@ -1492,10 +1523,13 @@ function LunaOptionsModule:CreateMenu()
 		LunaOptionsFrame.ScrollFrames[i] = CreateFrame("ScrollFrame", nil, LunaOptionsFrame)
 		LunaOptionsFrame.ScrollFrames[i]:SetHeight(350)
 		LunaOptionsFrame.ScrollFrames[i]:SetWidth(500)
+		
 		LunaOptionsFrame.ScrollFrames[i]:SetPoint("BOTTOMRIGHT", LunaOptionsFrame, "BOTTOMRIGHT", -30, 10)
 		LunaOptionsFrame.ScrollFrames[i]:Hide()
 		LunaOptionsFrame.ScrollFrames[i]:EnableMouseWheel(true)
 		LunaOptionsFrame.ScrollFrames[i].id = i
+		LunaOptionsFrame.ScrollFrames[i]:SetBackdrop(LunaOptions.backdrop)
+		LunaOptionsFrame.ScrollFrames[i]:SetBackdropColor(0,0,0,1)
 		LunaOptionsFrame.ScrollFrames[i]:SetScript("OnMouseWheel", function()
 																		local maxScroll = this:GetVerticalScrollRange()
 																		local Scroll = this:GetVerticalScroll()
@@ -1529,12 +1563,8 @@ function LunaOptionsModule:CreateMenu()
 		LunaOptionsFrame.Sliders[i]:SetScript("OnValueChanged", function() this.ScrollFrame:SetVerticalScroll(this.ScrollFrame:GetVerticalScrollRange()*this:GetValue()) end  )
 	
 		LunaOptionsFrame.pages[i] = CreateFrame("Frame", v.title.." Page", LunaOptionsFrame.ScrollFrames[i])
-		LunaOptionsFrame.pages[i]:SetHeight(510)
+		LunaOptionsFrame.pages[i]:SetHeight(1)
 		LunaOptionsFrame.pages[i]:SetWidth(500)
-		LunaOptionsFrame.pages[i]:SetBackdrop(LunaOptions.backdrop)
-		LunaOptionsFrame.pages[i]:SetBackdropColor(0,0,0,1)
---		LunaOptionsFrame.pages[i]:SetPoint("BOTTOMRIGHT", LunaOptionsFrame, "BOTTOMRIGHT", -10, 10)
---		LunaOptionsFrame.pages[i]:Hide()
 		
 		LunaOptionsFrame.pages[i].name = LunaOptionsFrame.pages[i]:CreateFontString(nil, "OVERLAY", LunaOptionsFrame.pages[i])
 		LunaOptionsFrame.pages[i].name:SetPoint("TOP", LunaOptionsFrame.pages[i], "TOP", 0, -10)
@@ -1947,7 +1977,7 @@ function LunaOptionsModule:CreateMenu()
 	getglobal("LootIconSwitchText"):SetText("Enable Loot Icon")
 	
 	LunaOptionsFrame.pages[1].iconsize = CreateFrame("Slider", "PlayerIconSizeSlider", LunaOptionsFrame.pages[1], "OptionsSliderTemplate")
-	LunaOptionsFrame.pages[1].iconsize:SetMinMaxValues(0,2)
+	LunaOptionsFrame.pages[1].iconsize:SetMinMaxValues(0.01,2)
 	LunaOptionsFrame.pages[1].iconsize:SetValueStep(0.01)
 	LunaOptionsFrame.pages[1].iconsize:SetScript("OnValueChanged", OptionFunctions.PlayerIconSizeAdjust)
 	LunaOptionsFrame.pages[1].iconsize:SetPoint("TOPLEFT", LunaOptionsFrame.pages[1].looticon, "BOTTOMLEFT", 0, -10)
@@ -2028,7 +2058,7 @@ function LunaOptionsModule:CreateMenu()
 	getglobal("LootTargetIconSwitchText"):SetText("Enable Loot Icon")
 	
 	LunaOptionsFrame.pages[3].iconsize = CreateFrame("Slider", "TargetIconSizeSlider", LunaOptionsFrame.pages[3], "OptionsSliderTemplate")
-	LunaOptionsFrame.pages[3].iconsize:SetMinMaxValues(0,2)
+	LunaOptionsFrame.pages[3].iconsize:SetMinMaxValues(0.01,2)
 	LunaOptionsFrame.pages[3].iconsize:SetValueStep(0.01)
 	LunaOptionsFrame.pages[3].iconsize:SetScript("OnValueChanged", OptionFunctions.TargetIconSizeAdjust)
 	LunaOptionsFrame.pages[3].iconsize:SetPoint("TOPLEFT", LunaOptionsFrame.pages[3].looticon, "BOTTOMLEFT", 0, -20)
@@ -2110,7 +2140,7 @@ function LunaOptionsModule:CreateMenu()
 	getglobal("LootPartyIconSwitchText"):SetText("Enable Loot Icon")
 	
 	LunaOptionsFrame.pages[6].iconsize = CreateFrame("Slider", "PartyIconSizeSlider", LunaOptionsFrame.pages[6], "OptionsSliderTemplate")
-	LunaOptionsFrame.pages[6].iconsize:SetMinMaxValues(0,2)
+	LunaOptionsFrame.pages[6].iconsize:SetMinMaxValues(0.01,2)
 	LunaOptionsFrame.pages[6].iconsize:SetValueStep(0.01)
 	LunaOptionsFrame.pages[6].iconsize:SetScript("OnValueChanged", OptionFunctions.PartyIconSizeAdjust)
 	LunaOptionsFrame.pages[6].iconsize:SetPoint("TOPLEFT", LunaOptionsFrame.pages[6].looticon, "BOTTOMLEFT", 0, -20)
@@ -2234,7 +2264,7 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[9].BuffwatchDesc:SetPoint("TOPLEFT", LunaOptionsFrame.pages[9].paddingslider, "BOTTOMLEFT", 0, -10)
 	LunaOptionsFrame.pages[9].BuffwatchDesc:SetFont("Fonts\\FRIZQT__.TTF", 10)
 	LunaOptionsFrame.pages[9].BuffwatchDesc:SetTextColor(1,0.82,0)
-	LunaOptionsFrame.pages[9].BuffwatchDesc:SetText("Track Buff (Can be part of name):")
+	LunaOptionsFrame.pages[9].BuffwatchDesc:SetText("Track Buffs (Can be part of name):")
 	
 	LunaOptionsFrame.pages[9].Buffwatch = CreateFrame("Editbox", "BuffwatchInput", LunaOptionsFrame.pages[9], "InputBoxTemplate")
 	LunaOptionsFrame.pages[9].Buffwatch:SetHeight(20)
@@ -2247,11 +2277,35 @@ function LunaOptionsModule:CreateMenu()
 																		LunaOptions.Raidbuff = this:GetText()
 																		LunaUnitFrames.Raid_Update()
 																	end)
+																	
+	LunaOptionsFrame.pages[9].Buffwatch2 = CreateFrame("Editbox", "BuffwatchInput2", LunaOptionsFrame.pages[9], "InputBoxTemplate")
+	LunaOptionsFrame.pages[9].Buffwatch2:SetHeight(20)
+	LunaOptionsFrame.pages[9].Buffwatch2:SetWidth(205)
+	LunaOptionsFrame.pages[9].Buffwatch2:SetAutoFocus(nil)
+	LunaOptionsFrame.pages[9].Buffwatch2:SetPoint("TOPLEFT", LunaOptionsFrame.pages[9].Buffwatch, "BOTTOMLEFT", 0, 0)
+	LunaOptionsFrame.pages[9].Buffwatch2:SetText(LunaOptions.Raidbuff2 or "")
+	LunaOptionsFrame.pages[9].Buffwatch2:SetScript("OnEnterPressed", function()
+																		this:ClearFocus();
+																		LunaOptions.Raidbuff2 = this:GetText()
+																		LunaUnitFrames.Raid_Update()
+																	end)
+
+	LunaOptionsFrame.pages[9].Buffwatch3 = CreateFrame("Editbox", "BuffwatchInput3", LunaOptionsFrame.pages[9], "InputBoxTemplate")
+	LunaOptionsFrame.pages[9].Buffwatch3:SetHeight(20)
+	LunaOptionsFrame.pages[9].Buffwatch3:SetWidth(205)
+	LunaOptionsFrame.pages[9].Buffwatch3:SetAutoFocus(nil)
+	LunaOptionsFrame.pages[9].Buffwatch3:SetPoint("TOPLEFT", LunaOptionsFrame.pages[9].Buffwatch2, "BOTTOMLEFT", 0, 0)
+	LunaOptionsFrame.pages[9].Buffwatch3:SetText(LunaOptions.Raidbuff3 or "")
+	LunaOptionsFrame.pages[9].Buffwatch3:SetScript("OnEnterPressed", function()
+																		this:ClearFocus();
+																		LunaOptions.Raidbuff3 = this:GetText()
+																		LunaUnitFrames.Raid_Update()
+																	end)
 	
 	LunaOptionsFrame.pages[9].RaidGrpNameswitch = CreateFrame("CheckButton", "RaidGroupNamesSwitch", LunaOptionsFrame.pages[9], "UICheckButtonTemplate")
 	LunaOptionsFrame.pages[9].RaidGrpNameswitch:SetHeight(20)
 	LunaOptionsFrame.pages[9].RaidGrpNameswitch:SetWidth(20)
-	LunaOptionsFrame.pages[9].RaidGrpNameswitch:SetPoint("TOPLEFT", LunaOptionsFrame.pages[9].Buffwatch, "BOTTOMLEFT", 0, 0)
+	LunaOptionsFrame.pages[9].RaidGrpNameswitch:SetPoint("TOPLEFT", LunaOptionsFrame.pages[9].Buffwatch3, "BOTTOMLEFT", 0, 0)
 	LunaOptionsFrame.pages[9].RaidGrpNameswitch:SetScript("OnClick", OptionFunctions.ToggleRaidGroupNames)
 	LunaOptionsFrame.pages[9].RaidGrpNameswitch:SetChecked(LunaOptions.frames["LunaRaidFrames"].ShowRaidGroupTitles)
 	getglobal("RaidGroupNamesSwitchText"):SetText("Show Group Names")
@@ -2303,11 +2357,53 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[9].dispdebuffs:SetScript("OnClick", OptionFunctions.ToggleDispelableDebuffs)
 	LunaOptionsFrame.pages[9].dispdebuffs:SetChecked(LunaOptions.showdispelable)
 	getglobal("DispDebuffSwitchText"):SetText("Show only dispelable Debuffs")
+	
+	LunaOptionsFrame.pages[9].textdebuff = CreateFrame("CheckButton", "TextDebuffSwitch", LunaOptionsFrame.pages[9], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[9].textdebuff:SetHeight(20)
+	LunaOptionsFrame.pages[9].textdebuff:SetWidth(20)
+	LunaOptionsFrame.pages[9].textdebuff:SetPoint("TOPLEFT", LunaOptionsFrame.pages[9].dispdebuffs, "TOPLEFT", 0, -20)
+	LunaOptionsFrame.pages[9].textdebuff:SetScript("OnClick", OptionFunctions.ToggleTexDebuffs)
+	LunaOptionsFrame.pages[9].textdebuff:SetChecked(LunaOptions.frames["LunaRaidFrames"].texturedebuff)
+	getglobal("TextDebuffSwitchText"):SetText("Show pictures on Debuffs")
+	
+	LunaOptionsFrame.pages[9].textbuff = CreateFrame("CheckButton", "TextBuffSwitch", LunaOptionsFrame.pages[9], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[9].textbuff:SetHeight(20)
+	LunaOptionsFrame.pages[9].textbuff:SetWidth(20)
+	LunaOptionsFrame.pages[9].textbuff:SetPoint("TOPLEFT", LunaOptionsFrame.pages[9].textdebuff, "TOPLEFT", 0, -20)
+	LunaOptionsFrame.pages[9].textbuff:SetScript("OnClick", OptionFunctions.ToggleTexBuffs)
+	LunaOptionsFrame.pages[9].textbuff:SetChecked(LunaOptions.frames["LunaRaidFrames"].texturebuff)
+	getglobal("TextBuffSwitchText"):SetText("Show pictures on Buffs")
+	
+	LunaOptionsFrame.pages[9].cornericonsize = CreateFrame("Slider", "CornerIconSizeSlider", LunaOptionsFrame.pages[9], "OptionsSliderTemplate")
+	LunaOptionsFrame.pages[9].cornericonsize:SetMinMaxValues(0.01,2)
+	LunaOptionsFrame.pages[9].cornericonsize:SetValueStep(0.01)
+	LunaOptionsFrame.pages[9].cornericonsize:SetScript("OnValueChanged", OptionFunctions.CornerIconSizeAdjust)
+	LunaOptionsFrame.pages[9].cornericonsize:SetPoint("TOPLEFT", LunaOptionsFrame.pages[9].textbuff, "BOTTOMLEFT", 0, -10)
+	LunaOptionsFrame.pages[9].cornericonsize:SetValue(LunaOptions.frames["LunaRaidFrames"].cornericonscale or 1)
+	LunaOptionsFrame.pages[9].cornericonsize:SetWidth(180)
+	getglobal("CornerIconSizeSliderText"):SetText("Corner Icon Size")	
+	
+	LunaOptionsFrame.pages[9].centericon = CreateFrame("CheckButton", "CenterIconSwitch", LunaOptionsFrame.pages[9], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[9].centericon:SetHeight(20)
+	LunaOptionsFrame.pages[9].centericon:SetWidth(20)
+	LunaOptionsFrame.pages[9].centericon:SetPoint("TOPLEFT", LunaOptionsFrame.pages[9].cornericonsize, "TOPLEFT", 0, -25)
+	LunaOptionsFrame.pages[9].centericon:SetScript("OnClick", OptionFunctions.ToggleCenterIcon)
+	LunaOptionsFrame.pages[9].centericon:SetChecked(LunaOptions.frames["LunaRaidFrames"].centerIcon)
+	getglobal("CenterIconSwitchText"):SetText("Display Debuffs as a Center Icon")
+	
+	LunaOptionsFrame.pages[9].centericonsize = CreateFrame("Slider", "CenterIconSizeSlider", LunaOptionsFrame.pages[9], "OptionsSliderTemplate")
+	LunaOptionsFrame.pages[9].centericonsize:SetMinMaxValues(0.01,2)
+	LunaOptionsFrame.pages[9].centericonsize:SetValueStep(0.01)
+	LunaOptionsFrame.pages[9].centericonsize:SetScript("OnValueChanged", OptionFunctions.CenterIconSizeAdjust)
+	LunaOptionsFrame.pages[9].centericonsize:SetPoint("TOPLEFT", LunaOptionsFrame.pages[9].centericon, "BOTTOMLEFT", 0, -10)
+	LunaOptionsFrame.pages[9].centericonsize:SetValue(LunaOptions.frames["LunaRaidFrames"].centericonscale or 1)
+	LunaOptionsFrame.pages[9].centericonsize:SetWidth(180)
+	getglobal("CenterIconSizeSliderText"):SetText("Center Icon Size")
 
 	LunaOptionsFrame.pages[9].aggro = CreateFrame("CheckButton", "AggroSwitch", LunaOptionsFrame.pages[9], "UICheckButtonTemplate")
 	LunaOptionsFrame.pages[9].aggro:SetHeight(20)
 	LunaOptionsFrame.pages[9].aggro:SetWidth(20)
-	LunaOptionsFrame.pages[9].aggro:SetPoint("TOPLEFT", LunaOptionsFrame.pages[9].dispdebuffs, "TOPLEFT", 0, -20)
+	LunaOptionsFrame.pages[9].aggro:SetPoint("TOPLEFT", LunaOptionsFrame.pages[9].centericonsize, "TOPLEFT", 0, -25)
 	LunaOptionsFrame.pages[9].aggro:SetScript("OnClick", OptionFunctions.ToggleAggro)
 	LunaOptionsFrame.pages[9].aggro:SetChecked(LunaOptions.aggro)
 	getglobal("AggroSwitchText"):SetText("Show aggro warning")
@@ -2320,18 +2416,10 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[9].interlock:SetChecked(LunaOptions.raidinterlock)
 	getglobal("InterlockSwitchText"):SetText("Interlock Raid Frames")
 	
-	LunaOptionsFrame.pages[9].centericon = CreateFrame("CheckButton", "CenterIconSwitch", LunaOptionsFrame.pages[9], "UICheckButtonTemplate")
-	LunaOptionsFrame.pages[9].centericon:SetHeight(20)
-	LunaOptionsFrame.pages[9].centericon:SetWidth(20)
-	LunaOptionsFrame.pages[9].centericon:SetPoint("TOPLEFT", LunaOptionsFrame.pages[9].interlock, "TOPLEFT", 0, -20)
-	LunaOptionsFrame.pages[9].centericon:SetScript("OnClick", OptionFunctions.ToggleCenterIcon)
-	LunaOptionsFrame.pages[9].centericon:SetChecked(LunaOptions.frames["LunaRaidFrames"].centerIcon)
-	getglobal("CenterIconSwitchText"):SetText("Display Debuffs as a Center Icon")
-	
 	LunaOptionsFrame.pages[9].alwaysraid = CreateFrame("CheckButton", "AlwaysRaidSwitch", LunaOptionsFrame.pages[9], "UICheckButtonTemplate")
 	LunaOptionsFrame.pages[9].alwaysraid:SetHeight(20)
 	LunaOptionsFrame.pages[9].alwaysraid:SetWidth(20)
-	LunaOptionsFrame.pages[9].alwaysraid:SetPoint("TOPLEFT", LunaOptionsFrame.pages[9].centericon, "TOPLEFT", 0, -20)
+	LunaOptionsFrame.pages[9].alwaysraid:SetPoint("TOPLEFT", LunaOptionsFrame.pages[9].interlock, "TOPLEFT", 0, -20)
 	LunaOptionsFrame.pages[9].alwaysraid:SetScript("OnClick", OptionFunctions.ToggleAlwaysRaid)
 	LunaOptionsFrame.pages[9].alwaysraid:SetChecked(LunaOptions.AlwaysRaid)
 	getglobal("AlwaysRaidSwitchText"):SetText("Always display the Raid Frame")

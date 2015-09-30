@@ -240,6 +240,7 @@ local EnemyCastBar_Raids = {
 			
 		-- Firemaw/Flamegor/Ebonroc
 		["Shadow Flame"] = {t=2.0, c="hostile"};
+		["Wing Buffet"] = {t=1.0, c="hostile"};
 		
 		-- Neferian/Onyxia
 		["Bellowing Roar"] = {t=2.0, c="hostile", r="Onyxia", a=1.5};

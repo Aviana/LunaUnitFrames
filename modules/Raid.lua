@@ -289,37 +289,66 @@ function LunaUnitFrames:CreateRaidFrames()
 		LunaUnitFrames.frames.members[i].aggro.texture:SetTexture(1, 0, 0)
 		LunaUnitFrames.frames.members[i].aggro:Hide()
 		
-		LunaUnitFrames.frames.members[i].buff = CreateFrame("Frame", nil, LunaUnitFrames.frames.members[i].HealthBar)
-		LunaUnitFrames.frames.members[i].buff:SetBackdrop(LunaOptions.backdrop)
-		LunaUnitFrames.frames.members[i].buff:SetBackdropColor(0,0,0,1)
-		LunaUnitFrames.frames.members[i].buff:SetPoint("TOPLEFT", LunaUnitFrames.frames.members[i].HealthBar, "TOPLEFT")
-		LunaUnitFrames.frames.members[i].buff.texture = LunaUnitFrames.frames.members[i].buff:CreateTexture(nil, "OVERLAY", LunaUnitFrames.frames.members[i].buff)
-		LunaUnitFrames.frames.members[i].buff.texture:SetTexture(LunaOptions.indicator)
-		LunaUnitFrames.frames.members[i].buff.texture:SetTexture(0, 1, 0)
-		LunaUnitFrames.frames.members[i].buff.texture:SetAllPoints(LunaUnitFrames.frames.members[i].buff)
-		LunaUnitFrames.frames.members[i].buff:Hide()
+		LunaUnitFrames.frames.members[i].buffs = {}
 		
-		LunaUnitFrames.frames.members[i].Hot = CreateFrame("Frame", "HotFrame"..i, LunaUnitFrames.frames.members[i].HealthBar)
-		LunaUnitFrames.frames.members[i].Hot:SetPoint("CENTER", LunaUnitFrames.frames.members[i].HealthBar, "CENTER")
-		LunaUnitFrames.frames.members[i].Hot.texture = LunaUnitFrames.frames.members[i].Hot:CreateTexture(nil, "OVERLAY", LunaUnitFrames.frames.members[i].Hot)
-		LunaUnitFrames.frames.members[i].Hot.texture:SetTexture(HotTexture)
-		LunaUnitFrames.frames.members[i].Hot.texture:SetAllPoints(LunaUnitFrames.frames.members[i].Hot)
-		LunaUnitFrames.frames.members[i].Hot:Hide()
+		LunaUnitFrames.frames.members[i].buffs[1] = CreateFrame("Frame", nil, LunaUnitFrames.frames.members[i].HealthBar)
+		LunaUnitFrames.frames.members[i].buffs[1]:SetBackdrop(LunaOptions.backdrop)
+		LunaUnitFrames.frames.members[i].buffs[1]:SetBackdropColor(0,0,0,1)
+		LunaUnitFrames.frames.members[i].buffs[1]:SetPoint("TOPLEFT", LunaUnitFrames.frames.members[i].HealthBar, "TOPLEFT")
+		LunaUnitFrames.frames.members[i].buffs[1].texture = LunaUnitFrames.frames.members[i].buffs[1]:CreateTexture(nil, "OVERLAY", LunaUnitFrames.frames.members[i].buffs[1])
+		LunaUnitFrames.frames.members[i].buffs[1].texture:SetTexture(LunaOptions.indicator)
+		LunaUnitFrames.frames.members[i].buffs[1].texture:SetTexture(0, 1, 0)
+		LunaUnitFrames.frames.members[i].buffs[1].texture:SetAllPoints(LunaUnitFrames.frames.members[i].buffs[1])
+		LunaUnitFrames.frames.members[i].buffs[1]:Hide()
 		
-		LunaUnitFrames.frames.members[i].Hot.cd = CreateFrame("Model", nil, LunaUnitFrames.frames.members[i].Hot, "CooldownFrameTemplate")
-		LunaUnitFrames.frames.members[i].Hot.cd:ClearAllPoints()
-		LunaUnitFrames.frames.members[i].Hot.cd:SetPoint("TOPLEFT", LunaUnitFrames.frames.members[i].Hot, "TOPLEFT")
-		LunaUnitFrames.frames.members[i].Hot.cd:SetHeight(36)
-		LunaUnitFrames.frames.members[i].Hot.cd:SetWidth(36)
+		LunaUnitFrames.frames.members[i].buffs[2] = CreateFrame("Frame", nil, LunaUnitFrames.frames.members[i].HealthBar)
+		LunaUnitFrames.frames.members[i].buffs[2]:SetBackdrop(LunaOptions.backdrop)
+		LunaUnitFrames.frames.members[i].buffs[2]:SetBackdropColor(0,0,0,1)
+		LunaUnitFrames.frames.members[i].buffs[2]:SetPoint("TOPLEFT", LunaUnitFrames.frames.members[i].buffs[1], "TOPRIGHT")
+		LunaUnitFrames.frames.members[i].buffs[2].texture = LunaUnitFrames.frames.members[i].buffs[2]:CreateTexture(nil, "OVERLAY", LunaUnitFrames.frames.members[i].buffs[2])
+		LunaUnitFrames.frames.members[i].buffs[2].texture:SetTexture(LunaOptions.indicator)
+		LunaUnitFrames.frames.members[i].buffs[2].texture:SetTexture(0, 1, 0)
+		LunaUnitFrames.frames.members[i].buffs[2].texture:SetAllPoints(LunaUnitFrames.frames.members[i].buffs[2])
+		LunaUnitFrames.frames.members[i].buffs[2]:Hide()
 
-		LunaUnitFrames.frames.members[i].debuff = CreateFrame("Frame", nil, LunaUnitFrames.frames.members[i].HealthBar)
-		LunaUnitFrames.frames.members[i].debuff:SetBackdrop(LunaOptions.backdrop)
-		LunaUnitFrames.frames.members[i].debuff:SetBackdropColor(0,0,0,1)
-		LunaUnitFrames.frames.members[i].debuff:SetPoint("TOPRIGHT", LunaUnitFrames.frames.members[i].HealthBar, "TOPRIGHT")
-		LunaUnitFrames.frames.members[i].debuff.texture = LunaUnitFrames.frames.members[i].debuff:CreateTexture(nil, "OVERLAY", LunaUnitFrames.frames.members[i].debuff)
-		LunaUnitFrames.frames.members[i].debuff.texture:SetTexture(LunaOptions.indicator)
-		LunaUnitFrames.frames.members[i].debuff.texture:SetAllPoints(LunaUnitFrames.frames.members[i].debuff)
-		LunaUnitFrames.frames.members[i].debuff:Hide()
+		LunaUnitFrames.frames.members[i].buffs[3] = CreateFrame("Frame", nil, LunaUnitFrames.frames.members[i].HealthBar)
+		LunaUnitFrames.frames.members[i].buffs[3]:SetBackdrop(LunaOptions.backdrop)
+		LunaUnitFrames.frames.members[i].buffs[3]:SetBackdropColor(0,0,0,1)
+		LunaUnitFrames.frames.members[i].buffs[3]:SetPoint("TOPLEFT", LunaUnitFrames.frames.members[i].buffs[1], "BOTTOMLEFT")
+		LunaUnitFrames.frames.members[i].buffs[3].texture = LunaUnitFrames.frames.members[i].buffs[3]:CreateTexture(nil, "OVERLAY", LunaUnitFrames.frames.members[i].buffs[3])
+		LunaUnitFrames.frames.members[i].buffs[3].texture:SetTexture(LunaOptions.indicator)
+		LunaUnitFrames.frames.members[i].buffs[3].texture:SetTexture(0, 1, 0)
+		LunaUnitFrames.frames.members[i].buffs[3].texture:SetAllPoints(LunaUnitFrames.frames.members[i].buffs[3])
+		LunaUnitFrames.frames.members[i].buffs[3]:Hide()
+
+		LunaUnitFrames.frames.members[i].debuffs = {}
+		
+		LunaUnitFrames.frames.members[i].debuffs[1] = CreateFrame("Frame", nil, LunaUnitFrames.frames.members[i].HealthBar)
+		LunaUnitFrames.frames.members[i].debuffs[1]:SetBackdrop(LunaOptions.backdrop)
+		LunaUnitFrames.frames.members[i].debuffs[1]:SetBackdropColor(0,0,0,1)
+		LunaUnitFrames.frames.members[i].debuffs[1]:SetPoint("TOPRIGHT", LunaUnitFrames.frames.members[i].HealthBar, "TOPRIGHT")
+		LunaUnitFrames.frames.members[i].debuffs[1].texture = LunaUnitFrames.frames.members[i].debuffs[1]:CreateTexture(nil, "OVERLAY", LunaUnitFrames.frames.members[i].debuffs[1])
+		LunaUnitFrames.frames.members[i].debuffs[1].texture:SetTexture(LunaOptions.indicator)
+		LunaUnitFrames.frames.members[i].debuffs[1].texture:SetAllPoints(LunaUnitFrames.frames.members[i].debuffs[1])
+		LunaUnitFrames.frames.members[i].debuffs[1]:Hide()
+		
+		LunaUnitFrames.frames.members[i].debuffs[2] = CreateFrame("Frame", nil, LunaUnitFrames.frames.members[i].HealthBar)
+		LunaUnitFrames.frames.members[i].debuffs[2]:SetBackdrop(LunaOptions.backdrop)
+		LunaUnitFrames.frames.members[i].debuffs[2]:SetBackdropColor(0,0,0,1)
+		LunaUnitFrames.frames.members[i].debuffs[2]:SetPoint("TOPRIGHT", LunaUnitFrames.frames.members[i].debuffs[1], "TOPLEFT")
+		LunaUnitFrames.frames.members[i].debuffs[2].texture = LunaUnitFrames.frames.members[i].debuffs[2]:CreateTexture(nil, "OVERLAY", LunaUnitFrames.frames.members[i].debuffs[2])
+		LunaUnitFrames.frames.members[i].debuffs[2].texture:SetTexture(LunaOptions.indicator)
+		LunaUnitFrames.frames.members[i].debuffs[2].texture:SetAllPoints(LunaUnitFrames.frames.members[i].debuffs[2])
+		LunaUnitFrames.frames.members[i].debuffs[2]:Hide()
+
+		LunaUnitFrames.frames.members[i].debuffs[3] = CreateFrame("Frame", nil, LunaUnitFrames.frames.members[i].HealthBar)
+		LunaUnitFrames.frames.members[i].debuffs[3]:SetBackdrop(LunaOptions.backdrop)
+		LunaUnitFrames.frames.members[i].debuffs[3]:SetBackdropColor(0,0,0,1)
+		LunaUnitFrames.frames.members[i].debuffs[3]:SetPoint("TOPRIGHT", LunaUnitFrames.frames.members[i].debuffs[1], "BOTTOMRIGHT")
+		LunaUnitFrames.frames.members[i].debuffs[3].texture = LunaUnitFrames.frames.members[i].debuffs[3]:CreateTexture(nil, "OVERLAY", LunaUnitFrames.frames.members[i].debuffs[3])
+		LunaUnitFrames.frames.members[i].debuffs[3].texture:SetTexture(LunaOptions.indicator)
+		LunaUnitFrames.frames.members[i].debuffs[3].texture:SetAllPoints(LunaUnitFrames.frames.members[i].debuffs[3])
+		LunaUnitFrames.frames.members[i].debuffs[3]:Hide()
 		
 		LunaUnitFrames.frames.members[i].wsoul = CreateFrame("Frame", nil, LunaUnitFrames.frames.members[i].HealthBar)
 		LunaUnitFrames.frames.members[i].wsoul:SetBackdrop(LunaOptions.backdrop)
@@ -329,6 +358,53 @@ function LunaUnitFrames:CreateRaidFrames()
 		LunaUnitFrames.frames.members[i].wsoul.texture:SetAllPoints(LunaUnitFrames.frames.members[i].wsoul)
 		LunaUnitFrames.frames.members[i].wsoul.texture:SetTexture("Interface\\Icons\\Spell_Holy_AshesToAshes")
 		LunaUnitFrames.frames.members[i].wsoul:Hide()
+		
+		LunaUnitFrames.frames.members[i].centericons = {}
+		
+		LunaUnitFrames.frames.members[i].centericons[1] = CreateFrame("Frame", "CenterIcon1", LunaUnitFrames.frames.members[i].HealthBar)
+		LunaUnitFrames.frames.members[i].centericons[1]:SetBackdrop(LunaOptions.backdrop)
+		LunaUnitFrames.frames.members[i].centericons[1]:SetBackdropColor(0,0,0,1)
+		LunaUnitFrames.frames.members[i].centericons[1]:SetPoint("CENTER", LunaUnitFrames.frames.members[i].HealthBar, "CENTER")
+		LunaUnitFrames.frames.members[i].centericons[1].texture = LunaUnitFrames.frames.members[i].centericons[1]:CreateTexture(nil, "OVERLAY", LunaUnitFrames.frames.members[i].centericons[1])
+		LunaUnitFrames.frames.members[i].centericons[1].texture:SetTexture(LunaOptions.indicator)
+		LunaUnitFrames.frames.members[i].centericons[1].texture:SetAllPoints(LunaUnitFrames.frames.members[i].centericons[1])
+		LunaUnitFrames.frames.members[i].centericons[1]:Hide()
+		
+		LunaUnitFrames.frames.members[i].centericons[1].cd = CreateFrame("Model", "CenterIcon1CD", LunaUnitFrames.frames.members[i].centericons[1], "CooldownFrameTemplate")
+		LunaUnitFrames.frames.members[i].centericons[1].cd:ClearAllPoints()
+		LunaUnitFrames.frames.members[i].centericons[1].cd:SetPoint("TOPLEFT", LunaUnitFrames.frames.members[i].centericons[1], "TOPLEFT")
+		LunaUnitFrames.frames.members[i].centericons[1].cd:SetHeight(36)
+		LunaUnitFrames.frames.members[i].centericons[1].cd:SetWidth(36)
+		
+		LunaUnitFrames.frames.members[i].centericons[2] = CreateFrame("Frame", "CenterIcon2", LunaUnitFrames.frames.members[i].HealthBar)
+		LunaUnitFrames.frames.members[i].centericons[2]:SetBackdrop(LunaOptions.backdrop)
+		LunaUnitFrames.frames.members[i].centericons[2]:SetBackdropColor(0,0,0,1)
+		LunaUnitFrames.frames.members[i].centericons[2]:SetPoint("TOPRIGHT", LunaUnitFrames.frames.members[i].centericons[1], "TOPLEFT")
+		LunaUnitFrames.frames.members[i].centericons[2].texture = LunaUnitFrames.frames.members[i].centericons[2]:CreateTexture(nil, "OVERLAY", LunaUnitFrames.frames.members[i].centericons[2])
+		LunaUnitFrames.frames.members[i].centericons[2].texture:SetTexture(LunaOptions.indicator)
+		LunaUnitFrames.frames.members[i].centericons[2].texture:SetAllPoints(LunaUnitFrames.frames.members[i].centericons[2])
+		LunaUnitFrames.frames.members[i].centericons[2]:Hide()
+		
+		LunaUnitFrames.frames.members[i].centericons[2].cd = CreateFrame("Model", "CenterIcon2CD", LunaUnitFrames.frames.members[i].centericons[2], "CooldownFrameTemplate")
+		LunaUnitFrames.frames.members[i].centericons[2].cd:ClearAllPoints()
+		LunaUnitFrames.frames.members[i].centericons[2].cd:SetPoint("TOPLEFT", LunaUnitFrames.frames.members[i].centericons[2], "TOPLEFT")
+		LunaUnitFrames.frames.members[i].centericons[2].cd:SetHeight(36)
+		LunaUnitFrames.frames.members[i].centericons[2].cd:SetWidth(36)
+		
+		LunaUnitFrames.frames.members[i].centericons[3] = CreateFrame("Frame", "CenterIcon3", LunaUnitFrames.frames.members[i].HealthBar)
+		LunaUnitFrames.frames.members[i].centericons[3]:SetBackdrop(LunaOptions.backdrop)
+		LunaUnitFrames.frames.members[i].centericons[3]:SetBackdropColor(0,0,0,1)
+		LunaUnitFrames.frames.members[i].centericons[3]:SetPoint("TOPLEFT", LunaUnitFrames.frames.members[i].centericons[1], "TOPRIGHT")
+		LunaUnitFrames.frames.members[i].centericons[3].texture = LunaUnitFrames.frames.members[i].centericons[3]:CreateTexture(nil, "OVERLAY", LunaUnitFrames.frames.members[i].centericons[3])
+		LunaUnitFrames.frames.members[i].centericons[3].texture:SetTexture(LunaOptions.indicator)
+		LunaUnitFrames.frames.members[i].centericons[3].texture:SetAllPoints(LunaUnitFrames.frames.members[i].centericons[3])
+		LunaUnitFrames.frames.members[i].centericons[3]:Hide()
+		
+		LunaUnitFrames.frames.members[i].centericons[3].cd = CreateFrame("Model", "CenterIcon3CD", LunaUnitFrames.frames.members[i].centericons[3], "CooldownFrameTemplate")
+		LunaUnitFrames.frames.members[i].centericons[3].cd:ClearAllPoints()
+		LunaUnitFrames.frames.members[i].centericons[3].cd:SetPoint("TOPLEFT", LunaUnitFrames.frames.members[i].centericons[3], "TOPLEFT")
+		LunaUnitFrames.frames.members[i].centericons[3].cd:SetHeight(36)
+		LunaUnitFrames.frames.members[i].centericons[3].cd:SetWidth(36)
 		
 		LunaUnitFrames.frames.members[i]:RegisterEvent("UNIT_AURA")
 		LunaUnitFrames.frames.members[i]:RegisterEvent("UNIT_DISPLAYPOWER")
@@ -574,29 +650,22 @@ function LunaUnitFrames:SetRaidFrameSize()
 		LunaUnitFrames.frames.members[i].Healthtext:SetWidth(LunaUnitFrames.frames.members[i].HealthBar:GetWidth())
 		LunaUnitFrames.frames.members[i].Healthtext:SetHeight(LunaUnitFrames.frames.members[i].HealthBar:GetHeight()/2)
 		LunaUnitFrames.frames.members[i].Healthtext:SetFont(LunaOptions.font, 0.14*(width+height))
-		LunaUnitFrames.frames.members[i].aggro:SetHeight(height*0.25)
-		LunaUnitFrames.frames.members[i].aggro:SetWidth(height*0.25)
-		LunaUnitFrames.frames.members[i].buff:SetHeight(height*0.25)
-		LunaUnitFrames.frames.members[i].buff:SetWidth(height*0.25)
-		LunaUnitFrames.frames.members[i].wsoul:SetHeight(height*0.25)
-		LunaUnitFrames.frames.members[i].wsoul:SetWidth(height*0.25)
-		LunaUnitFrames.frames.members[i].Hot:SetWidth(height*0.6)
-		LunaUnitFrames.frames.members[i].Hot:SetHeight(height*0.6)
-		LunaUnitFrames.frames.members[i].Hot.cd:SetScale(height*0.6/36)
+		LunaUnitFrames.frames.members[i].aggro:SetHeight(height*0.25*(LunaOptions.frames["LunaRaidFrames"].cornericonscale or 1))
+		LunaUnitFrames.frames.members[i].aggro:SetWidth(height*0.25*(LunaOptions.frames["LunaRaidFrames"].cornericonscale or 1))
+		LunaUnitFrames.frames.members[i].wsoul:SetHeight(height*0.25*(LunaOptions.frames["LunaRaidFrames"].cornericonscale or 1))
+		LunaUnitFrames.frames.members[i].wsoul:SetWidth(height*0.25*(LunaOptions.frames["LunaRaidFrames"].cornericonscale or 1))
+		
+		for z=1, 3 do
+			LunaUnitFrames.frames.members[i].buffs[z]:SetHeight(height*0.25*(LunaOptions.frames["LunaRaidFrames"].cornericonscale or 1))
+			LunaUnitFrames.frames.members[i].buffs[z]:SetWidth(height*0.25*(LunaOptions.frames["LunaRaidFrames"].cornericonscale or 1))
+			LunaUnitFrames.frames.members[i].debuffs[z]:SetHeight(height*0.25*(LunaOptions.frames["LunaRaidFrames"].cornericonscale or 1))
+			LunaUnitFrames.frames.members[i].debuffs[z]:SetWidth(height*0.25*(LunaOptions.frames["LunaRaidFrames"].cornericonscale or 1))
+			LunaUnitFrames.frames.members[i].centericons[z]:SetHeight(height*0.6*(LunaOptions.frames["LunaRaidFrames"].centericonscale or 1))
+			LunaUnitFrames.frames.members[i].centericons[z]:SetWidth(height*0.6*(LunaOptions.frames["LunaRaidFrames"].centericonscale or 1))
+			LunaUnitFrames.frames.members[i].centericons[z].cd:SetScale(height*0.6*(LunaOptions.frames["LunaRaidFrames"].centericonscale or 1)/36)
+		end
 		LunaUnitFrames.frames.members[i].RezIcon:SetHeight(height/1.5)
 		LunaUnitFrames.frames.members[i].RezIcon:SetWidth(height/1.5)
-		if LunaOptions.frames["LunaRaidFrames"].centerIcon then
-			if height > width then
-				LunaUnitFrames.frames.members[i].debuff:SetHeight(width*0.6)
-				LunaUnitFrames.frames.members[i].debuff:SetWidth(width*0.6)
-			else
-				LunaUnitFrames.frames.members[i].debuff:SetHeight(height*0.6)
-				LunaUnitFrames.frames.members[i].debuff:SetWidth(height*0.6)
-			end
-		else
-			LunaUnitFrames.frames.members[i].debuff:SetHeight(height*0.25)
-			LunaUnitFrames.frames.members[i].debuff:SetWidth(height*0.25)
-		end
 	end
 end
 
@@ -680,22 +749,6 @@ function LunaUnitFrames:UpdateRaidLayout()
 				frame.PowerBar:Hide()
 			end
 			frame.PowerBar:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT")
-			if LunaOptions.frames["LunaRaidFrames"].centerIcon then
-				if PlayerClass == "PRIEST" or PlayerClass == "DRUID" then
-					frame.debuff:ClearAllPoints()
-					frame.debuff:SetPoint("LEFT", frame.HealthBar, "CENTER", 1, 0)
-					frame.Hot:ClearAllPoints()
-					frame.Hot:SetPoint("RIGHT", frame.HealthBar, "CENTER", -1, 0)
-				else
-					frame.debuff:ClearAllPoints()
-					frame.debuff:SetPoint("CENTER", frame.HealthBar, "CENTER")
-				end
-			else
-				frame.debuff:ClearAllPoints()
-				frame.debuff:SetPoint("TOPRIGHT", frame.HealthBar, "TOPRIGHT")
-				frame.Hot:ClearAllPoints()
-				frame.Hot:SetPoint("CENTER", frame.HealthBar, "CENTER")
-			end
 		end
 	end
 	if LunaOptions.raidinterlock then
@@ -737,22 +790,6 @@ function LunaUnitFrames:UpdateRaidLayout()
 			LunaUnitFrames.frames.members[i].PowerBar:Hide()
 		end
 		LunaUnitFrames.frames.members[i].PowerBar:SetPoint("BOTTOMRIGHT", LunaUnitFrames.frames.members[i], "BOTTOMRIGHT")
-		if LunaOptions.frames["LunaRaidFrames"].centerIcon then
-			if PlayerClass == "PRIEST" or PlayerClass == "DRUID" then
-				LunaUnitFrames.frames.members[i].debuff:ClearAllPoints()
-				LunaUnitFrames.frames.members[i].debuff:SetPoint("LEFT", LunaUnitFrames.frames.members[i].HealthBar, "CENTER", 1, 0)
-				LunaUnitFrames.frames.members[i].Hot:ClearAllPoints()
-				LunaUnitFrames.frames.members[i].Hot:SetPoint("RIGHT", LunaUnitFrames.frames.members[i].HealthBar, "CENTER", -1, 0)
-			else
-				LunaUnitFrames.frames.members[i].debuff:ClearAllPoints()
-				LunaUnitFrames.frames.members[i].debuff:SetPoint("CENTER", LunaUnitFrames.frames.members[i].HealthBar, "CENTER")
-			end
-		else
-			LunaUnitFrames.frames.members[i].debuff:ClearAllPoints()
-			LunaUnitFrames.frames.members[i].debuff:SetPoint("TOPRIGHT", LunaUnitFrames.frames.members[i].HealthBar, "TOPRIGHT")
-			LunaUnitFrames.frames.members[i].Hot:ClearAllPoints()
-			LunaUnitFrames.frames.members[i].Hot:SetPoint("CENTER", LunaUnitFrames.frames.members[i].HealthBar, "CENTER")
-		end
 	end
 	LunaUnitFrames:SetRaidFrameSize()
 	LunaUnitFrames.Raid_Update()
@@ -776,55 +813,99 @@ function LunaUnitFrames.Raid_Aura(unitid)
 	if this.unit ~= unitid or not this.unit then
 		return
 	end
-	local texture,_,dispeltype = UnitDebuff(this.unit,1,1)
-	if not dispeltype and not LunaOptions.showdispelable then
-		for i=1, 16 do
-			texture,_,dispeltype = UnitDebuff(this.unit,i)
-			if dispeltype then
-				break
+	local maxDebuffs = (((LunaOptions.frames["LunaRaidFrames"].centerIcon and (PlayerClass == "DRUID" or PlayerClass == "DRUID")) and 2) or 3)
+	local texture,_,dispeltype
+	local lastfound = 1
+	for i=1, maxDebuffs do
+		texture,_,dispeltype = UnitDebuff(this.unit,i,1)
+		if not dispeltype and not LunaOptions.showdispelable then
+			for z=lastfound, 16 do
+				texture,_,dispeltype = UnitDebuff(this.unit,z)
+				if not dispeltype and texture then
+					lastfound = z + 1
+					break
+				end
 			end
 		end
-		if not dispeltype then
-			texture = UnitDebuff(this.unit,1)
+		if texture and i <= maxDebuffs then
+			if LunaOptions.frames["LunaRaidFrames"].centerIcon then
+				this.centericons[i].texture:SetTexture(texture)
+				this.centericons[i]:Show()
+				this.debuffs[i]:Hide()
+			elseif LunaOptions.frames["LunaRaidFrames"].texturedebuff then
+				this.centericons[i]:Hide()
+				this.debuffs[i]:Show()
+				this.debuffs[i].texture:SetTexture(texture)
+			elseif dispeltype then
+				this.centericons[i]:Hide()
+				this.debuffs[i]:Show()
+				this.debuffs[i].texture:SetTexture(unpack(LunaOptions.DebuffTypeColor[dispeltype]))
+			else
+				this.centericons[i]:Hide()
+				this.debuffs[i]:Show()
+				this.debuffs[i].texture:SetTexture(0,0,0)
+			end
+		else
+			this.debuffs[i]:Hide()
+			this.centericons[i]:Hide()
 		end
 	end
-	if LunaOptions.frames["LunaRaidFrames"].centerIcon and texture then
-		this.debuff.texture:SetTexture(texture)
-		this.debuff:Show()
-	elseif not LunaOptions.frames["LunaRaidFrames"].centerIcon and texture and dispeltype then
-		local r,g,b = unpack(LunaOptions.DebuffTypeColor[dispeltype])
-		this.debuff.texture:SetTexture(r,g,b)
-		this.debuff:Show()
-	else
-		this.debuff:Hide()
-	end
-	this.Hot:Hide()
-	if LunaOptions.frames["LunaRaidFrames"].hottracker then
-		for i=1,24 do
+	
+
+	if LunaOptions.frames["LunaRaidFrames"].hottracker and (PlayerClass == "PRIEST" or PlayerClass == "DRUID") then
+		for i=1,32 do
 			texture = UnitBuff(this.unit,i)
 			if texture == HotTexture then
-				this.Hot:Show()
+				if LunaOptions.frames["LunaRaidFrames"].centerIcon then
+					this.centericons[3]:Show()
+					this.centericons[3].texture:SetTexture(texture)
+				else
+					this.centericons[1]:Show()
+					this.centericons[1].texture:SetTexture(texture)
+				end
 			end
 		end
 	end
+
 	this.wsoul:Hide()
 	for i=1,16 do
 		if UnitDebuff(this.unit,i) == "Interface\\Icons\\Spell_Holy_AshesToAshes" and PlayerClass == "PRIEST" and LunaOptions.frames["LunaRaidFrames"].wsoul then
 			this.wsoul:Show()
 		end
 	end
-	if LunaOptions.Raidbuff ~= "" then
-		for i=1,16 do
-			ScanTip:SetUnitBuff(this.unit, i)
-			if ScanTipTextLeft1:GetText() and LunaOptions.Raidbuff and string.find(ScanTipTextLeft1:GetText(), LunaOptions.Raidbuff) then
-				this.buff:Show()
-				ScanTipTextLeft1:SetText("")
-				return
+	local leftover = 1
+	for h=1,32 do
+		ScanTip:ClearLines()
+		ScanTip:SetUnitBuff(this.unit, h)
+		if ScanTipTextLeft1:GetText() then
+			local buffname = ScanTipTextLeft1:GetText()
+			buffname = string.lower(buffname)
+			local a = (string.find(buffname, string.lower(LunaOptions.Raidbuff)) and LunaOptions.Raidbuff ~= "")
+			local b = (string.find(buffname, string.lower(LunaOptions.Raidbuff2)) and LunaOptions.Raidbuff2 ~= "")
+			local c = (string.find(buffname, string.lower(LunaOptions.Raidbuff3)) and LunaOptions.Raidbuff3 ~= "")
+			if a or b or c then
+				if LunaOptions.frames["LunaRaidFrames"].texturebuff then
+					texture = UnitBuff(this.unit,h)
+					this.buffs[leftover].texture:SetTexture(texture)
+					this.buffs[leftover]:Show()
+				else
+					this.buffs[leftover].texture:SetTexture(a and 1 or 0, b and 1 or 0, c and 1 or 0)
+					this.buffs[leftover]:Show()
+				end
+				leftover = leftover + 1
 			end
-			ScanTipTextLeft1:SetText("")
 		end
 	end
-	this.buff:Hide()
+	if leftover == 1 then
+		this.buffs[3]:Hide()
+		this.buffs[2]:Hide()
+		this.buffs[1]:Hide()
+	elseif leftover == 2 then
+		this.buffs[3]:Hide()
+		this.buffs[2]:Hide()
+	elseif leftover == 3 then
+		this.buffs[3]:Hide()
+	end
 end
 
 function LunaUnitFrames.Raid_Aggro(unit)
@@ -901,33 +982,52 @@ function LunaUnitFrames.Raid_Hot(unit)
 	if not start then
 		return
 	end
-	CooldownFrame_SetTimer(frame.Hot.cd,tonumber(start),tonumber(dur),1)
+	if LunaOptions.frames["LunaRaidFrames"].centerIcon then
+		CooldownFrame_SetTimer(frame.centericons[3].cd,tonumber(start),tonumber(dur),1,1)
+	else
+		CooldownFrame_SetTimer(frame.centericons[1].cd,tonumber(start),tonumber(dur),1,1)
+	end
 end
 
 function LunaUnitFrames.Raid_Update()
+	local maxDebuffs = (((LunaOptions.frames["LunaRaidFrames"].centerIcon and (PlayerClass == "DRUID" or PlayerClass == "DRUID")) and 2) or 3)
+	local texture,_,dispeltype
 	for i=1,80 do
 		if LunaUnitFrames.frames.members[i].unit then
-			local texture,_,dispeltype = UnitDebuff(LunaUnitFrames.frames.members[i].unit,1,1)
-			if not dispeltype and not LunaOptions.showdispelable then
-				for h=1,16 do
-					texture,_,dispeltype = UnitDebuff(LunaUnitFrames.frames.members[i].unit,h)
-					if dispeltype then
-						break
+			local lastfound = 1
+			for z=1, maxDebuffs do
+				texture,_,dispeltype = UnitDebuff(LunaUnitFrames.frames.members[i].unit,z,1)
+				if not dispeltype and not LunaOptions.showdispelable then
+					for z=lastfound, 16 do
+						texture,_,dispeltype = UnitDebuff(LunaUnitFrames.frames.members[i].unit,z)
+						if not dispeltype and texture then
+							lastfound = z + 1
+							break
+						end
 					end
 				end
-				if not dispeltype then
-					texture = UnitDebuff(LunaUnitFrames.frames.members[i].unit,1)
+				if texture and z <= maxDebuffs then
+					if LunaOptions.frames["LunaRaidFrames"].centerIcon then
+						LunaUnitFrames.frames.members[i].centericons[z].texture:SetTexture(texture)
+						LunaUnitFrames.frames.members[i].centericons[z]:Show()
+						LunaUnitFrames.frames.members[i].debuffs[z]:Hide()
+					elseif LunaOptions.frames["LunaRaidFrames"].texturedebuff then
+						LunaUnitFrames.frames.members[i].centericons[z]:Hide()
+						LunaUnitFrames.frames.members[i].debuffs[z]:Show()
+						LunaUnitFrames.frames.members[i].debuffs[z].texture:SetTexture(texture)
+					elseif dispeltype then
+						LunaUnitFrames.frames.members[i].centericons[z]:Hide()
+						LunaUnitFrames.frames.members[i].debuffs[z]:Show()
+						LunaUnitFrames.frames.members[i].debuffs[z].texture:SetTexture(unpack(LunaOptions.DebuffTypeColor[dispeltype]))
+					else
+						LunaUnitFrames.frames.members[i].centericons[z]:Hide()
+						LunaUnitFrames.frames.members[i].debuffs[z]:Show()
+						LunaUnitFrames.frames.members[i].debuffs[z].texture:SetTexture(0,0,0)
+					end
+				else
+					LunaUnitFrames.frames.members[i].debuffs[z]:Hide()
+					LunaUnitFrames.frames.members[i].centericons[z]:Hide()
 				end
-			end
-			if LunaOptions.frames["LunaRaidFrames"].centerIcon and texture then
-				LunaUnitFrames.frames.members[i].debuff.texture:SetTexture(texture)
-				LunaUnitFrames.frames.members[i].debuff:Show()
-			elseif not LunaOptions.frames["LunaRaidFrames"].centerIcon and texture and dispeltype then
-				local r,g,b = unpack(LunaOptions.DebuffTypeColor[dispeltype])
-				LunaUnitFrames.frames.members[i].debuff.texture:SetTexture(r,g,b)
-				LunaUnitFrames.frames.members[i].debuff:Show()
-			else
-				LunaUnitFrames.frames.members[i].debuff:Hide()
 			end
 			LunaUnitFrames.frames.members[i].wsoul:Hide()
 			for h=1,16 do
@@ -935,16 +1035,54 @@ function LunaUnitFrames.Raid_Update()
 					LunaUnitFrames.frames.members[i].wsoul:Show()
 				end
 			end
-			if LunaOptions.Raidbuff ~= "" then
-				for h=1,16 do
-					ScanTip:SetUnitBuff(LunaUnitFrames.frames.members[i].unit, h)
-					if ScanTipTextLeft1:GetText() and string.find(ScanTipTextLeft1:GetText(), LunaOptions.Raidbuff) then
-						LunaUnitFrames.frames.members[i].buff:Show()
+			
+			if LunaOptions.frames["LunaRaidFrames"].hottracker and (PlayerClass == "PRIEST" or PlayerClass == "DRUID") then
+				for h=1,32 do
+					texture = UnitBuff(LunaUnitFrames.frames.members[i].unit,h)
+					if texture == HotTexture then
+						if LunaOptions.frames["LunaRaidFrames"].centerIcon then
+							LunaUnitFrames.frames.members[i].centericons[3]:Show()
+							LunaUnitFrames.frames.members[i].centericons[3].texture:SetTexture(texture)
+						else
+							LunaUnitFrames.frames.members[i].centericons[1]:Show()
+							LunaUnitFrames.frames.members[i].centericons[1].texture:SetTexture(texture)
+						end
 					end
-					ScanTipTextLeft1:SetText("")
 				end
-			else
-				LunaUnitFrames.frames.members[i].buff:Hide()
+			end
+			
+			local leftover = 1
+			for h=1,32 do
+				ScanTip:ClearLines()
+				ScanTip:SetUnitBuff(LunaUnitFrames.frames.members[i].unit, h)
+				if ScanTipTextLeft1:GetText() then
+					local buffname = ScanTipTextLeft1:GetText()
+					buffname = string.lower(buffname)
+					local a = (string.find(buffname, string.lower(LunaOptions.Raidbuff)) and LunaOptions.Raidbuff ~= "")
+					local b = (string.find(buffname, string.lower(LunaOptions.Raidbuff2)) and LunaOptions.Raidbuff2 ~= "")
+					local c = (string.find(buffname, string.lower(LunaOptions.Raidbuff3)) and LunaOptions.Raidbuff3 ~= "")
+					if a or b or c then
+						if LunaOptions.frames["LunaRaidFrames"].texturebuff then
+							texture = UnitBuff(LunaUnitFrames.frames.members[i].unit,h)
+							LunaUnitFrames.frames.members[i].buffs[leftover].texture:SetTexture(texture)
+							LunaUnitFrames.frames.members[i].buffs[leftover]:Show()
+						else
+							LunaUnitFrames.frames.members[i].buffs[leftover].texture:SetTexture(a and 1 or 0, b and 1 or 0, c and 1 or 0)
+							LunaUnitFrames.frames.members[i].buffs[leftover]:Show()
+						end
+						leftover = leftover + 1
+					end
+				end
+			end
+			if leftover == 1 then
+				LunaUnitFrames.frames.members[i].buffs[3]:Hide()
+				LunaUnitFrames.frames.members[i].buffs[2]:Hide()
+				LunaUnitFrames.frames.members[i].buffs[1]:Hide()
+			elseif leftover == 2 then
+				LunaUnitFrames.frames.members[i].buffs[3]:Hide()
+				LunaUnitFrames.frames.members[i].buffs[2]:Hide()
+			elseif leftover == 3 then
+				LunaUnitFrames.frames.members[i].buffs[3]:Hide()
 			end
 		end
 	end

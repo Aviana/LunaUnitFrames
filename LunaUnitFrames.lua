@@ -231,6 +231,23 @@ function LunaUnitFrames:OnEvent()
 			LunaOptions.frames["LunaRaidFrames"].toptext = "[name]"
 			LunaOptions.frames["LunaRaidFrames"].bottomtext = "[healerhealth]"
 		end
+		
+		if not LunaOptions.frames["LunaRaidFrames"].maxDebuffs then
+			LunaOptions.frames["LunaRaidFrames"].maxDebuffs = 3
+		end
+		
+		if not LunaOptions.Raidbuff then
+			LunaOptions.Raidbuff = ""
+		end
+		
+		if not LunaOptions.Raidbuff2 then
+			LunaOptions.Raidbuff2 = ""
+		end
+		
+		if not LunaOptions.Raidbuff3 then
+			LunaOptions.Raidbuff3 = ""
+		end
+		
 		-----------------------------------------------------------
 		--Load the Addon here
 		ChatFrame1:AddMessage("Luna Unit Frames loaded. Enjoy the ride!")
