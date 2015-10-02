@@ -275,7 +275,6 @@ function LunaUnitFrames:CreatePartyFrames()
 		LunaPartyFrames[i].incHeal = CreateFrame("StatusBar", nil, LunaPartyFrames[i])
 		LunaPartyFrames[i].incHeal:SetMinMaxValues(0, 1)
 		LunaPartyFrames[i].incHeal:SetValue(1)
-		LunaPartyFrames[i].incHeal:SetStatusBarColor(0, 1, 0, 0.6)
 
 	-- Healthbar background
 		LunaPartyFrames[i].bars["Healthbar"].hpbg = LunaPartyFrames[i]:CreateTexture(nil, "BACKGROUND")

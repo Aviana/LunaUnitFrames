@@ -246,7 +246,6 @@ function LunaUnitFrames:CreateRaidFrames()
 		LunaUnitFrames.frames.members[i].HealthBar = CreateFrame("StatusBar", nil, LunaUnitFrames.frames.members[i])
 
 		LunaUnitFrames.frames.members[i].HealBar = CreateFrame("StatusBar", nil, LunaUnitFrames.frames.members[i])
-		LunaUnitFrames.frames.members[i].HealBar:SetStatusBarColor(0, 1, 0, 0.6)
 		LunaUnitFrames.frames.members[i].HealBar:SetMinMaxValues(0, 1)
 		LunaUnitFrames.frames.members[i].HealBar:SetValue(1)
 		

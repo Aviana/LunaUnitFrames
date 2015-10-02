@@ -9,12 +9,6 @@ local enableCastbar
 local PlayerScanTip = CreateFrame("GameTooltip", "PlayerScanTip", nil, "GameTooltipTemplate")
 PlayerScanTip:SetOwner(WorldFrame, "ANCHOR_NONE")
 
-local totemcolors = {
-					{1,0,0},
-					{0,0,1},
-					{0.78,0.61,0.43},
-					{0.41,0.80,0.94}
-				}
 
 local function buffcancel()
 	CancelPlayerBuff(GetPlayerBuff(this.id-1,"HELPFUL"))
@@ -364,7 +358,6 @@ function LunaUnitFrames:CreatePlayerFrame()
 	local incHeal = CreateFrame("StatusBar", nil, LunaPlayerFrame)
 	incHeal:SetMinMaxValues(0, 1)
 	incHeal:SetValue(1)
-	incHeal:SetStatusBarColor(0, 1, 0, 0.6)
 	LunaPlayerFrame.incHeal = incHeal
 
 	-- Healthbar background
@@ -456,7 +449,6 @@ function LunaUnitFrames:CreatePlayerFrame()
 
 	-- Castbar
 	local Castbar = CreateFrame("StatusBar", nil, LunaPlayerFrame)
-	Castbar:SetStatusBarColor(1, 0.7, 0.3)
 	LunaPlayerFrame.bars["Castbar"] = Castbar
 	LunaPlayerFrame.bars["Castbar"].maxValue = 0
 	LunaPlayerFrame.bars["Castbar"].delaySum = 0
@@ -527,7 +519,7 @@ function LunaUnitFrames:CreatePlayerFrame()
 	-- Druidbar
 	local db = CreateFrame("StatusBar", nil, LunaPlayerFrame)
 	LunaPlayerFrame.bars["Druidbar"] = db
-	LunaPlayerFrame.bars["Druidbar"]:SetStatusBarColor(LunaOptions.PowerColors["Mana"][1], LunaOptions.PowerColors["Mana"][2], LunaOptions.PowerColors["Mana"][3])
+	
 	
 	-- Druidbar background
 	local dbbg = db:CreateTexture(nil, "BORDER")
@@ -552,7 +544,6 @@ function LunaUnitFrames:CreatePlayerFrame()
 	for i=1,4 do
 		LunaPlayerFrame.totems[i] = CreateFrame("StatusBar", nil, LunaPlayerFrame.bars["Totembar"])
 		LunaPlayerFrame.totems[i]:Hide()
-		LunaPlayerFrame.totems[i]:SetStatusBarColor(unpack(totemcolors[i]))
 		LunaPlayerFrame.totems[i]:SetMinMaxValues(0,1)
 		LunaPlayerFrame.totems[i]:SetValue(0)
 	end

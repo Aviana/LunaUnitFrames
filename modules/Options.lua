@@ -72,15 +72,36 @@ local TagDesc = {
 
 local BarTextures = {
 	"Luna",
-	"Perl_1",
-	"Perl_2",
-	"Perl_3",
-	"Perl_4",
-	"Perl_5",
-	"Perl_6",
-	"XPerl_1",
-	"XPerl_2",
-	"XPerl_3"
+	"Aluminium",
+	"Armory",
+	"BantoBar",
+	"Bars",
+	"Button",
+	"Charcoal",
+	"Cilo",
+	"Dabs",
+	"Diagonal",
+	"Empty",
+	"Fifths",
+	"Fourths",
+	"Glamour",
+	"Glamour2",
+	"Glamour3",
+	"Glamour4",
+	"Glamour5",
+	"Glamour6",
+	"Glamour7",
+	"Glaze",
+	"Gloss",
+	"Healbot",
+	"Lyfe",
+	"Otravi",
+	"Perl2",
+	"Ruben",
+	"Skewed",
+	"Smooth",
+	"Striped",
+	"Wisps"
 }
 local BarTexturesPath = "Interface\\AddOns\\LunaUnitFrames\\media\\statusbar\\"
 
@@ -3119,32 +3140,53 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.helpframe:Hide()
 end
 
+local totemcolors = {
+					{1,0,0},
+					{0,0,1},
+					{0.78,0.61,0.43},
+					{0.41,0.80,0.94}
+				}
+
 function LunaUnitFrames:UpdateBarTextures()
 	local texture = BarTexturesPath .. BarTextures[LunaOptions.BarTexture]
+	
+	-- ExperienceBar
+	LunaUnitFrames.frames.ReputationBar.RepBar:SetStatusBarTexture(texture)
+	LunaUnitFrames.frames.ReputationBar.RepBar:SetStatusBarColor(0,1,0)
+	LunaUnitFrames.frames.ExperienceBar.RestedBar:SetStatusBarTexture(texture)
+	LunaUnitFrames.frames.ExperienceBar.RestedBar:SetStatusBarColor(0,0,1)
+	LunaUnitFrames.frames.ExperienceBar.XPBar:SetStatusBarTexture(texture)
+	LunaUnitFrames.frames.ExperienceBar.XPBar:SetStatusBarColor(0,1,0)
 
 	-- Player
 	LunaPlayerFrame.bars["Healthbar"]:SetStatusBarTexture(texture)
 	LunaPlayerFrame.incHeal:SetStatusBarTexture(texture)
+	LunaPlayerFrame.incHeal:SetStatusBarColor(0, 1, 0, 0.6)
 	LunaPlayerFrame.bars["Powerbar"]:SetStatusBarTexture(texture)
 	LunaPlayerFrame.bars["Castbar"]:SetStatusBarTexture(texture)
+	LunaPlayerFrame.bars["Castbar"]:SetStatusBarColor(1, 0.7, 0.3)
 	LunaPlayerFrame.bars["Druidbar"]:SetStatusBarTexture(texture)
+	LunaPlayerFrame.bars["Druidbar"]:SetStatusBarColor(LunaOptions.PowerColors["Mana"][1], LunaOptions.PowerColors["Mana"][2], LunaOptions.PowerColors["Mana"][3])
 
 	for i=1, 4 do
 		LunaPlayerFrame.totems[i]:SetStatusBarTexture(texture)
+		LunaPlayerFrame.totems[i]:SetStatusBarColor(unpack(totemcolors[i]))
 	end
-
-	-- ExperienceBar
-	LunaUnitFrames.frames.ReputationBar.RepBar:SetStatusBarTexture(texture)
-	LunaUnitFrames.frames.ExperienceBar.RestedBar:SetStatusBarTexture(texture)
-	LunaUnitFrames.frames.ExperienceBar.XPBar:SetStatusBarTexture(texture)
 
 	-- Pet
 	LunaPetFrame.bars["Healthbar"]:SetStatusBarTexture(texture)
 	LunaPetFrame.bars["Powerbar"]:SetStatusBarTexture(texture)
 
 	-- Target
+	LunaTargetFrame.bars["Healthbar"]:SetStatusBarTexture(texture)
+	LunaTargetFrame.incHeal:SetStatusBarTexture(texture)
+	LunaTargetFrame.incHeal:SetStatusBarColor(0, 1, 0, 0.6)
+	LunaTargetFrame.bars["Powerbar"]:SetStatusBarTexture(texture)
+	LunaTargetFrame.bars["Castbar"]:SetStatusBarTexture(texture)
+	LunaTargetFrame.bars["Castbar"]:SetStatusBarColor(1, 0.7, 0.3)
 	for i=1, 5 do
 		LunaTargetFrame.cp[i]:SetStatusBarTexture(texture)
+		LunaTargetFrame.cp[i]:SetStatusBarColor(1, 0.80, 0)
 	end
 
 	-- TargetTarget
@@ -3152,18 +3194,16 @@ function LunaUnitFrames:UpdateBarTextures()
 	LunaTargetTargetFrame.bars["Powerbar"]:SetStatusBarTexture(texture)
 	LunaTargetTargetTargetFrame.bars["Healthbar"]:SetStatusBarTexture(texture)
 	LunaTargetTargetTargetFrame.bars["Powerbar"]:SetStatusBarTexture(texture)
-	LunaTargetFrame.bars["Healthbar"]:SetStatusBarTexture(texture)
-	LunaTargetFrame.incHeal:SetStatusBarTexture(texture)
-	LunaTargetFrame.bars["Powerbar"]:SetStatusBarTexture(texture)
-	LunaTargetFrame.bars["Castbar"]:SetStatusBarTexture(texture)
 
 	for i=1, 4 do
 		-- Party
 		LunaPartyFrames[i].bars["Healthbar"]:SetStatusBarTexture(texture)
 		LunaPartyFrames[i].incHeal:SetStatusBarTexture(texture)
+		LunaPartyFrames[i].incHeal:SetStatusBarColor(0, 1, 0, 0.6)
 		LunaPartyFrames[i].bars["Powerbar"]:SetStatusBarTexture(texture)
 		-- PartyPet
 		LunaPartyPetFrames[i].HealthBar:SetStatusBarTexture(texture)
+		LunaPartyPetFrames[i].HealthBar:SetStatusBarColor(LunaOptions.MiscColors["friendly"][1],LunaOptions.MiscColors["friendly"][2],LunaOptions.MiscColors["friendly"][3])
 		-- PartyTarget
 		LunaPartyTargetFrames[i].HealthBar:SetStatusBarTexture(texture)
 	end
@@ -3172,6 +3212,7 @@ function LunaUnitFrames:UpdateBarTextures()
 	for i=1, 80 do
 		LunaUnitFrames.frames.members[i].HealthBar:SetStatusBarTexture(texture)
 		LunaUnitFrames.frames.members[i].HealBar:SetStatusBarTexture(texture)
+		LunaUnitFrames.frames.members[i].HealBar:SetStatusBarColor(0, 1, 0, 0.6)
 		LunaUnitFrames.frames.members[i].bg:SetTexture(texture)
 		LunaUnitFrames.frames.members[i].PowerBar:SetStatusBarTexture(texture)
 	end
