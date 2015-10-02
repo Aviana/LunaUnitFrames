@@ -70,6 +70,20 @@ local TagDesc = {
 	["healerhealth"]		= "Returns the same as \"smart:healmishp\" on friendly units and hp/maxhp on enemies",
 }
 
+local BarTextures = {
+	"Luna",
+	"Perl_1",
+	"Perl_2",
+	"Perl_3",
+	"Perl_4",
+	"Perl_5",
+	"Perl_6",
+	"XPerl_1",
+	"XPerl_2",
+	"XPerl_3"
+}
+local BarTexturesPath = "Interface\\AddOns\\LunaUnitFrames\\media\\statusbar\\"
+
 local function ResetSettings()
 	LunaOptions = {}
 	LunaOptions.PowerColors = {
@@ -104,11 +118,12 @@ local function ResetSettings()
 	}
 	LunaOptions.fontHeight = 11
 	LunaOptions.font = "Interface\\AddOns\\LunaUnitFrames\\media\\barframes.ttf"
-	LunaOptions.statusbartexture = "Interface\\AddOns\\LunaUnitFrames\\media\\statusbar"
 	LunaOptions.bordertexture = "Interface\\AddOns\\LunaUnitFrames\\media\\border"
 	LunaOptions.icontexture = "Interface\\AddOns\\LunaUnitFrames\\media\\icon"
 	LunaOptions.resIcon = "Interface\\AddOns\\LunaUnitFrames\\media\\Raid-Icon-Rez"
 	LunaOptions.indicator = "Interface\\AddOns\\LunaUnitFrames\\media\\indicator"
+	
+	LunaOptions.BarTexture = 1
 		
 	LunaOptions.frames = {	["LunaPlayerFrame"] = {position = {x = 10, y = -20}, size = {x = 240, y = 40}, scale = 1, enabled = 1, ShowBuffs = 1, portrait = 2, bars = {{"Healthbar", 6}, {"Powerbar", 4}, {"Castbar", 3}, {"Druidbar", 0}, {"Totembar", 0}}},
 							["LunaTargetFrame"] = {position = {x = 280, y = -20}, size = {x = 240, y = 40}, scale = 1, enabled = 1, ShowBuffs = 3, portrait = 2, bars = {{"Healthbar", 6}, {"Powerbar", 4}, {"Castbar", 3}, {"Combo Bar", 2}}},
@@ -2678,10 +2693,37 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[10].PortraitFallbackDesc:SetTextColor(1,0.82,0)
 	LunaOptionsFrame.pages[10].PortraitFallbackDesc:SetText("Portrait Fallback")
 	
+	LunaOptionsFrame.pages[10].BarTexture = CreateFrame("Button", "BarTexture", LunaOptionsFrame.pages[10], "UIDropDownMenuTemplate")
+	LunaOptionsFrame.pages[10].BarTexture:SetPoint("TOPLEFT", LunaOptionsFrame.pages[10].PortraitFallback, "BOTTOMLEFT", 0, -10)
+	UIDropDownMenu_SetWidth(80, LunaOptionsFrame.pages[10].BarTexture)
+	UIDropDownMenu_JustifyText("LEFT", LunaOptionsFrame.pages[10].BarTexture)
+		
+	UIDropDownMenu_Initialize(LunaOptionsFrame.pages[10].BarTexture, function()
+																			local info={}
+																			for k,v in BarTextures do
+																				info.text=v
+																				info.value=k
+																				info.func= function()
+																						UIDropDownMenu_SetSelectedID(LunaOptionsFrame.pages[10].BarTexture, this:GetID())
+																						LunaOptions.BarTexture = this:GetID()
+																						LunaUnitFrames:UpdateBarTextures()
+																						end
+																				info.checked = nil
+																				UIDropDownMenu_AddButton(info, 1)
+																			end
+																		end)
+	UIDropDownMenu_SetSelectedID(LunaOptionsFrame.pages[10].BarTexture, LunaOptions.BarTexture or 1)
+	
+	LunaOptionsFrame.pages[10].BarTextureDesc = LunaOptionsFrame.pages[10]:CreateFontString(nil, "OVERLAY", LunaOptionsFrame.pages[10])
+	LunaOptionsFrame.pages[10].BarTextureDesc:SetPoint("LEFT", LunaOptionsFrame.pages[10].BarTexture, "RIGHT", -5, 0)
+	LunaOptionsFrame.pages[10].BarTextureDesc:SetFont("Fonts\\FRIZQT__.TTF", 10)
+	LunaOptionsFrame.pages[10].BarTextureDesc:SetTextColor(1,0.82,0)
+	LunaOptionsFrame.pages[10].BarTextureDesc:SetText("Bar Texture")
+	
 	LunaOptionsFrame.pages[10].HideBlizzCast = CreateFrame("CheckButton", "HideBlizzCast", LunaOptionsFrame.pages[10], "UICheckButtonTemplate")
 	LunaOptionsFrame.pages[10].HideBlizzCast:SetHeight(20)
 	LunaOptionsFrame.pages[10].HideBlizzCast:SetWidth(20)
-	LunaOptionsFrame.pages[10].HideBlizzCast:SetPoint("TOPLEFT", LunaOptionsFrame.pages[10].PortraitFallback, "BOTTOMLEFT", 0, -20)
+	LunaOptionsFrame.pages[10].HideBlizzCast:SetPoint("TOPLEFT", LunaOptionsFrame.pages[10].BarTexture, "BOTTOMLEFT", 0, -20)
 	LunaOptionsFrame.pages[10].HideBlizzCast:SetScript("OnClick", OptionFunctions.HideBlizzardCastbarToggle)
 	LunaOptionsFrame.pages[10].HideBlizzCast:SetChecked(LunaOptions.hideBlizzCastbar)
 	getglobal("HideBlizzCastText"):SetText("Hide original Blizzard Castbar")
@@ -3075,4 +3117,62 @@ function LunaOptionsModule:CreateMenu()
 		dist = 1
 	end
 	LunaOptionsFrame.helpframe:Hide()
+end
+
+function LunaUnitFrames:UpdateBarTextures()
+	local texture = BarTexturesPath .. BarTextures[LunaOptions.BarTexture]
+
+	-- Player
+	LunaPlayerFrame.bars["Healthbar"]:SetStatusBarTexture(texture)
+	LunaPlayerFrame.incHeal:SetStatusBarTexture(texture)
+	LunaPlayerFrame.bars["Powerbar"]:SetStatusBarTexture(texture)
+	LunaPlayerFrame.bars["Castbar"]:SetStatusBarTexture(texture)
+	LunaPlayerFrame.bars["Druidbar"]:SetStatusBarTexture(texture)
+
+	for i=1, 4 do
+		LunaPlayerFrame.totems[i]:SetStatusBarTexture(texture)
+	end
+
+	-- ExperienceBar
+	LunaUnitFrames.frames.ReputationBar.RepBar:SetStatusBarTexture(texture)
+	LunaUnitFrames.frames.ExperienceBar.RestedBar:SetStatusBarTexture(texture)
+	LunaUnitFrames.frames.ExperienceBar.XPBar:SetStatusBarTexture(texture)
+
+	-- Pet
+	LunaPetFrame.bars["Healthbar"]:SetStatusBarTexture(texture)
+	LunaPetFrame.bars["Powerbar"]:SetStatusBarTexture(texture)
+
+	-- Target
+	for i=1, 5 do
+		LunaTargetFrame.cp[i]:SetStatusBarTexture(texture)
+	end
+
+	-- TargetTarget
+	LunaTargetTargetFrame.bars["Healthbar"]:SetStatusBarTexture(texture)
+	LunaTargetTargetFrame.bars["Powerbar"]:SetStatusBarTexture(texture)
+	LunaTargetTargetTargetFrame.bars["Healthbar"]:SetStatusBarTexture(texture)
+	LunaTargetTargetTargetFrame.bars["Powerbar"]:SetStatusBarTexture(texture)
+	LunaTargetFrame.bars["Healthbar"]:SetStatusBarTexture(texture)
+	LunaTargetFrame.incHeal:SetStatusBarTexture(texture)
+	LunaTargetFrame.bars["Powerbar"]:SetStatusBarTexture(texture)
+	LunaTargetFrame.bars["Castbar"]:SetStatusBarTexture(texture)
+
+	for i=1, 4 do
+		-- Party
+		LunaPartyFrames[i].bars["Healthbar"]:SetStatusBarTexture(texture)
+		LunaPartyFrames[i].incHeal:SetStatusBarTexture(texture)
+		LunaPartyFrames[i].bars["Powerbar"]:SetStatusBarTexture(texture)
+		-- PartyPet
+		LunaPartyPetFrames[i].HealthBar:SetStatusBarTexture(texture)
+		-- PartyTarget
+		LunaPartyTargetFrames[i].HealthBar:SetStatusBarTexture(texture)
+	end
+
+	-- Raid
+	for i=1, 80 do
+		LunaUnitFrames.frames.members[i].HealthBar:SetStatusBarTexture(texture)
+		LunaUnitFrames.frames.members[i].HealBar:SetStatusBarTexture(texture)
+		LunaUnitFrames.frames.members[i].bg:SetTexture(texture)
+		LunaUnitFrames.frames.members[i].PowerBar:SetStatusBarTexture(texture)
+	end
 end

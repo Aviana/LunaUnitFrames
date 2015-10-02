@@ -8,7 +8,6 @@ function LunaUnitFrames:CreateRepBar()
 	
 	LunaUnitFrames.frames.ReputationBar.RepBar = CreateFrame("StatusBar", nil, LunaUnitFrames.frames.ReputationBar)
 	LunaUnitFrames.frames.ReputationBar.RepBar:SetAllPoints(LunaUnitFrames.frames.ReputationBar)
-	LunaUnitFrames.frames.ReputationBar.RepBar:SetStatusBarTexture(LunaOptions.statusbartexture)
 	LunaUnitFrames.frames.ReputationBar.RepBar:SetStatusBarColor(0,1,0)
 	
 	LunaUnitFrames.frames.ReputationBar.RepBar.xptext = LunaUnitFrames.frames.ReputationBar.RepBar:CreateFontString(nil, "OVERLAY")
@@ -60,12 +59,10 @@ function LunaUnitFrames:CreateXPBar()
 	
 	LunaUnitFrames.frames.ExperienceBar.RestedBar = CreateFrame("StatusBar", nil, LunaUnitFrames.frames.ExperienceBar)
 	LunaUnitFrames.frames.ExperienceBar.RestedBar:SetAllPoints(LunaUnitFrames.frames.ExperienceBar)
-	LunaUnitFrames.frames.ExperienceBar.RestedBar:SetStatusBarTexture(LunaOptions.statusbartexture)
 	LunaUnitFrames.frames.ExperienceBar.RestedBar:SetStatusBarColor(0,0,1)
 	
 	LunaUnitFrames.frames.ExperienceBar.XPBar = CreateFrame("StatusBar", nil, LunaUnitFrames.frames.ExperienceBar.RestedBar)
 	LunaUnitFrames.frames.ExperienceBar.XPBar:SetAllPoints(LunaUnitFrames.frames.ExperienceBar)
-	LunaUnitFrames.frames.ExperienceBar.XPBar:SetStatusBarTexture(LunaOptions.statusbartexture)
 	LunaUnitFrames.frames.ExperienceBar.XPBar:SetStatusBarColor(0,1,0)
 	
 	LunaUnitFrames.frames.ExperienceBar.XPBar.xptext = LunaUnitFrames.frames.ExperienceBar.XPBar:CreateFontString(nil, "OVERLAY")
