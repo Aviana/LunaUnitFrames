@@ -154,7 +154,6 @@ function LunaUnitFrames:CreatePetFrame()
 
 	-- Healthbar
 	LunaPetFrame.bars["Healthbar"] = CreateFrame("StatusBar", nil, LunaPetFrame)
-	LunaPetFrame.bars["Healthbar"]:SetStatusBarTexture(LunaOptions.statusbartexture)
 
 
 	-- Healthbar background
@@ -183,7 +182,6 @@ function LunaUnitFrames:CreatePetFrame()
 
 	-- Manabar
 	LunaPetFrame.bars["Powerbar"] = CreateFrame("StatusBar", nil, LunaPetFrame)
-	LunaPetFrame.bars["Powerbar"]:SetStatusBarTexture(LunaOptions.statusbartexture)
 
 	-- Manabar background
 	LunaPetFrame.bars["Powerbar"].ppbg = LunaPetFrame.bars["Powerbar"]:CreateTexture(nil, "BORDER")

@@ -271,10 +271,8 @@ function LunaUnitFrames:CreatePartyFrames()
 		
 	-- Healthbar
 		LunaPartyFrames[i].bars["Healthbar"] = CreateFrame("StatusBar", nil, LunaPartyFrames[i])
-		LunaPartyFrames[i].bars["Healthbar"]:SetStatusBarTexture(LunaOptions.statusbartexture)
 		
 		LunaPartyFrames[i].incHeal = CreateFrame("StatusBar", nil, LunaPartyFrames[i])
-		LunaPartyFrames[i].incHeal:SetStatusBarTexture(LunaOptions.statusbartexture)
 		LunaPartyFrames[i].incHeal:SetMinMaxValues(0, 1)
 		LunaPartyFrames[i].incHeal:SetValue(1)
 		LunaPartyFrames[i].incHeal:SetStatusBarColor(0, 1, 0, 0.6)
@@ -305,7 +303,6 @@ function LunaUnitFrames:CreatePartyFrames()
 
 	-- Manabar
 		LunaPartyFrames[i].bars["Powerbar"] = CreateFrame("StatusBar", nil, LunaPartyFrames[i])
-		LunaPartyFrames[i].bars["Powerbar"]:SetStatusBarTexture(LunaOptions.statusbartexture)
 
 	-- Manabar background
 		LunaPartyFrames[i].bars["Powerbar"].ppbg = LunaPartyFrames[i].bars["Powerbar"]:CreateTexture(nil, "BORDER")
