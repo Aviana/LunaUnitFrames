@@ -36,9 +36,7 @@ function LunaUnitFrames:CreatePartyPetFrames()
 		-- Healthbar
 		LunaPartyPetFrames[i].HealthBar = CreateFrame("StatusBar", nil, LunaPartyPetFrames[i])
 		LunaPartyPetFrames[i].HealthBar:SetAllPoints(LunaPartyPetFrames[i])
-		LunaPartyPetFrames[i].HealthBar:SetStatusBarTexture(LunaOptions.statusbartexture)
 		LunaPartyPetFrames[i].HealthBar:SetPoint("TOPLEFT", LunaPartyPetFrames[i], "TOPLEFT", 0, 0)
-		LunaPartyPetFrames[i].HealthBar:SetStatusBarColor(LunaOptions.MiscColors["friendly"][1],LunaOptions.MiscColors["friendly"][2],LunaOptions.MiscColors["friendly"][3])
 		
 
 		-- Healthbar background

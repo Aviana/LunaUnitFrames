@@ -255,13 +255,10 @@ function LunaUnitFrames:CreateTargetFrame()
 
 	-- Healthbar
 	LunaTargetFrame.bars["Healthbar"] = CreateFrame("StatusBar", nil, LunaTargetFrame)
-	LunaTargetFrame.bars["Healthbar"]:SetStatusBarTexture(LunaOptions.statusbartexture)
 	
 	local incHeal = CreateFrame("StatusBar", nil, LunaTargetFrame)
-	incHeal:SetStatusBarTexture(LunaOptions.statusbartexture)
 	incHeal:SetMinMaxValues(0, 1)
 	incHeal:SetValue(1)
-	incHeal:SetStatusBarColor(0, 1, 0, 0.6)
 	LunaTargetFrame.incHeal = incHeal
 
 	-- Healthbar background
@@ -290,7 +287,6 @@ function LunaUnitFrames:CreateTargetFrame()
 
 	-- Manabar
 	LunaTargetFrame.bars["Powerbar"] = CreateFrame("StatusBar", nil, LunaTargetFrame)
-	LunaTargetFrame.bars["Powerbar"]:SetStatusBarTexture(LunaOptions.statusbartexture)
 
 	-- Manabar background
 	LunaTargetFrame.bars["Powerbar"].ppbg = LunaTargetFrame.bars["Powerbar"]:CreateTexture(nil, "BORDER")
@@ -317,8 +313,6 @@ function LunaUnitFrames:CreateTargetFrame()
 
 	-- Castbar
 	local Castbar = CreateFrame("StatusBar", nil, LunaTargetFrame)
-	Castbar:SetStatusBarTexture(LunaOptions.statusbartexture)
-	Castbar:SetStatusBarColor(1, 0.7, 0.3)
 	LunaTargetFrame.bars["Castbar"] = Castbar
 	LunaTargetFrame.bars["Castbar"].maxValue = 0
 	LunaTargetFrame.bars["Castbar"].casting = nil
@@ -358,9 +352,7 @@ function LunaUnitFrames:CreateTargetFrame()
 	LunaTargetFrame.bars["Combo Bar"] = CreateFrame("Frame", nil, LunaTargetFrame)
 	for i=1,5 do
 		LunaTargetFrame.cp[i] = CreateFrame("StatusBar", nil, LunaTargetFrame.bars["Combo Bar"])
-		LunaTargetFrame.cp[i]:SetStatusBarTexture(LunaOptions.statusbartexture)
 		LunaTargetFrame.cp[i]:Hide()
-		LunaTargetFrame.cp[i]:SetStatusBarColor(1, 0.80, 0)
 	end
 	LunaTargetFrame.cp[1]:SetPoint("TOPRIGHT", LunaTargetFrame.bars["Combo Bar"], "TOPRIGHT")
 	for i=2,5 do

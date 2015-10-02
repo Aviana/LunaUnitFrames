@@ -1,5 +1,5 @@
 LunaUnitFrames = CreateFrame("Frame")
-LunaUnitFrames.version = 1070
+LunaUnitFrames.version = 1080
 LunaUnitFrames.frames = {}
 LunaUnitFrames.proximity = ProximityLib:GetInstance("1")
 LunaUnitFrames:RegisterEvent("ADDON_LOADED")
@@ -248,6 +248,10 @@ function LunaUnitFrames:OnEvent()
 			LunaOptions.Raidbuff3 = ""
 		end
 		
+		if not LunaOptions.BarTexture then
+			LunaOptions.BarTexture = 1
+		end
+		
 		-----------------------------------------------------------
 		--Load the Addon here
 		ChatFrame1:AddMessage("Luna Unit Frames loaded. Enjoy the ride!")
@@ -262,6 +266,7 @@ function LunaUnitFrames:OnEvent()
 		LunaUnitFrames:CreateRaidFrames()
 		LunaUnitFrames:CreateRepBar()
 		LunaUnitFrames:CreateXPBar()
+		LunaUnitFrames:UpdateBarTextures()
 		LunaOptionsModule:CreateMenu()
 		if LunaOptions.BlizzBuffs then
 			BuffFrame:Hide()

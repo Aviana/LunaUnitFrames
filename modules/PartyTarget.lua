@@ -48,7 +48,6 @@ function LunaUnitFrames:CreatePartyTargetFrames()
 		-- Healthbar
 		LunaPartyTargetFrames[i].HealthBar = CreateFrame("StatusBar", nil, LunaPartyTargetFrames[i])
 		LunaPartyTargetFrames[i].HealthBar:SetAllPoints(LunaPartyTargetFrames[i])
-		LunaPartyTargetFrames[i].HealthBar:SetStatusBarTexture(LunaOptions.statusbartexture)
 		LunaPartyTargetFrames[i].HealthBar:SetPoint("TOPLEFT", LunaPartyTargetFrames[i], "TOPLEFT", 0, 0)
 		
 

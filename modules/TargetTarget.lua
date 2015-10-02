@@ -142,7 +142,6 @@ function LunaUnitFrames:CreateTargetTargetFrame()
 	
 	-- Healthbar
 	local hp = CreateFrame("StatusBar", nil, LunaTargetTargetFrame)
-	hp:SetStatusBarTexture(LunaOptions.statusbartexture)
 	LunaTargetTargetFrame.bars["Healthbar"] = hp
 
 	-- Healthbar background
@@ -179,7 +178,6 @@ function LunaUnitFrames:CreateTargetTargetFrame()
 	
 		-- Manabar
 	local pp = CreateFrame("StatusBar", nil, LunaTargetTargetFrame)
-	pp:SetStatusBarTexture(LunaOptions.statusbartexture)
 	LunaTargetTargetFrame.bars["Powerbar"] = pp
 	
 	-- Manabar background
@@ -641,7 +639,6 @@ function LunaUnitFrames:CreateTargetTargetTargetFrame()
 	
 	-- Healthbar
 	local hp = CreateFrame("StatusBar", nil, LunaTargetTargetTargetFrame)
-	hp:SetStatusBarTexture(LunaOptions.statusbartexture)
 	LunaTargetTargetTargetFrame.bars["Healthbar"] = hp
 
 	-- Healthbar background
@@ -678,7 +675,6 @@ function LunaUnitFrames:CreateTargetTargetTargetFrame()
 	
 		-- Manabar
 	local pp = CreateFrame("StatusBar", nil, LunaTargetTargetTargetFrame)
-	pp:SetStatusBarTexture(LunaOptions.statusbartexture)
 	LunaTargetTargetTargetFrame.bars["Powerbar"] = pp
 	
 	-- Manabar background
