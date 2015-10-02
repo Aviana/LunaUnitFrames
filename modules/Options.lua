@@ -105,7 +105,7 @@ local BarTextures = {
 }
 local BarTexturesPath = "Interface\\AddOns\\LunaUnitFrames\\media\\statusbar\\"
 
-local function ResetSettings()
+function LunaOptionsModule:ResetSettings()
 	LunaOptions = {}
 	LunaOptions.PowerColors = {
 		["Mana"] = { 48/255, 113/255, 191/255}, -- Mana
@@ -217,18 +217,6 @@ local function ResetSettings()
 	LunaOptions.DruidBar = nil
 	LunaOptions.TotemBar = nil
 	LunaOptions.BTimers = 0
-end
-
-if LunaOptions == nil then
-	ResetSettings()
-end
-
-if not LunaBuffDB then
-	LunaBuffDB = {}
-end
-
-if not LunaOptions.frames["LunaRaidFrames"] then
-	LunaOptions.frames["LunaRaidFrames"] = {}
 end
 
 local OptionFunctions = {}

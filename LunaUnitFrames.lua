@@ -1,5 +1,5 @@
 LunaUnitFrames = CreateFrame("Frame")
-LunaUnitFrames.version = 1080
+LunaUnitFrames.version = 1081
 LunaUnitFrames.frames = {}
 LunaUnitFrames.proximity = ProximityLib:GetInstance("1")
 LunaUnitFrames:RegisterEvent("ADDON_LOADED")
@@ -25,6 +25,17 @@ CLASS_ICON_TCOORDS = {
     ["PRIEST"]      = {0.5234375, 0.7265625, 0.2734375, 0.4765625},
     ["WARLOCK"]     = {0.7734375, 0.97265625, 0.2734375, 0.4765625},
     ["PALADIN"]     = {0.0234375, 0.2265625, 0.5234375, 0.7265625}
+}
+
+StaticPopupDialogs["LunaUnitFrames_Install"] = {
+	text = TEXT("Thank you for installing LunaUnitFrames! You can use the chat command /luna to access the addon settings."),
+	button1 = "Open Settings",
+	button2 = "Close",
+	OnAccept = function()
+		LunaOptionsFrame:Show()
+	end,
+	timeout = 0,
+	hideOnEscape = 1,
 }
 
 function LunaUnitFrames:GetHealthString(unit)
@@ -134,6 +145,18 @@ end
 
 function LunaUnitFrames:OnEvent()
 	if event == "ADDON_LOADED" and arg1 == "LunaUnitFrames" then
+		
+		if LunaOptions == nil then
+			LunaOptionsModule:ResetSettings()
+			StaticPopup_Show("LunaUnitFrames_Install")
+		end
+		if not LunaBuffDB then
+			LunaBuffDB = {}
+		end
+		if not LunaOptions.frames["LunaRaidFrames"] then
+			LunaOptions.frames["LunaRaidFrames"] = {}
+		end
+		
 		-- Compatibility Code (to be removed several versions later)
 		if not LunaOptions.version or LunaOptions.version < LunaUnitFrames.version then
 			LunaOptions.version = LunaUnitFrames.version
@@ -254,7 +277,7 @@ function LunaUnitFrames:OnEvent()
 		
 		-----------------------------------------------------------
 		--Load the Addon here
-		ChatFrame1:AddMessage("Luna Unit Frames loaded. Enjoy the ride!")
+		ChatFrame1:AddMessage("Luna Unit Frames loaded. Enjoy the ride! Settings: /luna")
 		LunaUnitFrames:CreatePlayerFrame()
 		LunaUnitFrames:CreatePetFrame()
 		LunaUnitFrames:CreateTargetFrame()
