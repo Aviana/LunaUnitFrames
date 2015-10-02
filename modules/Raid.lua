@@ -5,6 +5,7 @@ local roster = AceLibrary("RosterLib-2.0")
 local ScanTip = CreateFrame("GameTooltip", "ScanTip", nil, "GameTooltipTemplate")
 local _, PlayerClass = UnitClass("player")
 local HotTexture = (PlayerClass == "PRIEST" and "Interface\\Icons\\Spell_Holy_Renew" or PlayerClass == "DRUID" and "Interface\\Icons\\Spell_Nature_Rejuvenation" or "")
+local RegrTexture = "Interface\\Icons\\Spell_Nature_ResistNature"
 local classes = {["PRIEST"] = 1, ["PALADIN"] = 2, ["SHAMAN"] = 2, ["WARRIOR"] = 3, ["HUNTER"] = 4, ["WARLOCK"] = 5, ["MAGE"] = 6, ["DRUID"] = 7, ["ROGUE"] = 8}
 ScanTip:SetOwner(WorldFrame, "ANCHOR_NONE")
 LunaUnitFrames.frames.headers = {}
@@ -813,7 +814,7 @@ function LunaUnitFrames.Raid_Aura(unitid)
 	if this.unit ~= unitid or not this.unit then
 		return
 	end
-	local maxDebuffs = (((LunaOptions.frames["LunaRaidFrames"].centerIcon and (PlayerClass == "DRUID" or PlayerClass == "DRUID")) and 2) or 3)
+	local maxDebuffs = ((LunaOptions.frames["LunaRaidFrames"].centerIcon and PlayerClass == "PRIEST") and 2) or ((LunaOptions.frames["LunaRaidFrames"].centerIcon and PlayerClass == "DRUID") and 1) or 3
 	local texture,_,dispeltype
 	local lastfound = 1
 	for i=1, maxDebuffs do
@@ -852,9 +853,14 @@ function LunaUnitFrames.Raid_Aura(unitid)
 	end
 	
 
-	if LunaOptions.frames["LunaRaidFrames"].hottracker and (PlayerClass == "PRIEST" or PlayerClass == "DRUID") then
+	if LunaOptions.frames["LunaRaidFrames"].hottracker and PlayerClass == "PRIEST" then
+		if LunaOptions.frames["LunaRaidFrames"].centerIcon then
+			this.centericons[3]:Hide()
+		else
+			this.centericons[1]:Hide()
+		end
 		for i=1,32 do
-			texture = UnitBuff(this.unit,i)
+			local texture = UnitBuff(this.unit,i)
 			if texture == HotTexture then
 				if LunaOptions.frames["LunaRaidFrames"].centerIcon then
 					this.centericons[3]:Show()
@@ -865,7 +871,36 @@ function LunaUnitFrames.Raid_Aura(unitid)
 				end
 			end
 		end
+	elseif LunaOptions.frames["LunaRaidFrames"].hottracker and PlayerClass == "DRUID" then
+		if LunaOptions.frames["LunaRaidFrames"].centerIcon then
+			this.centericons[3]:Hide()
+			this.centericons[2]:Hide()
+		else
+			this.centericons[1]:Hide()
+			this.centericons[2]:Hide()
+		end
+		for i=1,32 do
+			local texture = UnitBuff(this.unit,i)
+			if texture == HotTexture then
+				if LunaOptions.frames["LunaRaidFrames"].centerIcon then
+					this.centericons[3]:Show()
+					this.centericons[3].texture:SetTexture(texture)
+				else
+					this.centericons[1]:Show()
+					this.centericons[1].texture:SetTexture(texture)
+				end
+			elseif texture == RegrTexture then
+				if LunaOptions.frames["LunaRaidFrames"].centerIcon then
+					this.centericons[2]:Show()
+					this.centericons[2].texture:SetTexture(texture)
+				else
+					this.centericons[2]:Show()
+					this.centericons[2].texture:SetTexture(texture)
+				end
+			end
+		end
 	end
+
 
 	this.wsoul:Hide()
 	for i=1,16 do
@@ -949,7 +984,7 @@ function LunaUnitFrames.Raid_Res(unitName)
 	end
 end
 
-function LunaUnitFrames.Raid_Hot(unit)
+function LunaUnitFrames.Raid_Hot(unit, hot)
 	if not LunaOptions.frames["LunaRaidFrames"].hottracker or (GetNumPartyMembers() > 0 and not LunaOptions.AlwaysRaid) or (not LunaOptions.enableRaid and GetNumRaidMembers() > 0) then
 		return
 	end
@@ -972,25 +1007,29 @@ function LunaUnitFrames.Raid_Hot(unit)
 		return
 	end
 	local start, dur
-	if PlayerClass == "PRIEST" then
+	if PlayerClass == "PRIEST" and hot == "Renew" then
 		start, dur = HealComm:getRenewTime(unit)
-	elseif PlayerClass == "DRUID" then
+	elseif PlayerClass == "DRUID" and hot == "Rejuvenation" then
 		start, dur = HealComm:getRejuTime(unit)
+	elseif PlayerClass == "DRUID" and hot == "Regrowth" then
+		start, dur = HealComm:getRegrTime(unit)
 	else
 		return
 	end
 	if not start then
 		return
 	end
-	if LunaOptions.frames["LunaRaidFrames"].centerIcon then
+	if LunaOptions.frames["LunaRaidFrames"].centerIcon and hot ~= "Regrowth" then
 		CooldownFrame_SetTimer(frame.centericons[3].cd,tonumber(start),tonumber(dur),1,1)
-	else
+	elseif hot ~= "Regrowth" then
 		CooldownFrame_SetTimer(frame.centericons[1].cd,tonumber(start),tonumber(dur),1,1)
+	else
+		CooldownFrame_SetTimer(frame.centericons[2].cd,tonumber(start),tonumber(dur),1,1)
 	end
 end
 
 function LunaUnitFrames.Raid_Update()
-	local maxDebuffs = (((LunaOptions.frames["LunaRaidFrames"].centerIcon and (PlayerClass == "DRUID" or PlayerClass == "DRUID")) and 2) or 3)
+	local maxDebuffs = ((LunaOptions.frames["LunaRaidFrames"].centerIcon and PlayerClass == "PRIEST") and 2) or ((LunaOptions.frames["LunaRaidFrames"].centerIcon and PlayerClass == "DRUID") and 1) or 3
 	local texture,_,dispeltype
 	for i=1,80 do
 		if LunaUnitFrames.frames.members[i].unit then
@@ -1036,9 +1075,14 @@ function LunaUnitFrames.Raid_Update()
 				end
 			end
 			
-			if LunaOptions.frames["LunaRaidFrames"].hottracker and (PlayerClass == "PRIEST" or PlayerClass == "DRUID") then
-				for h=1,32 do
-					texture = UnitBuff(LunaUnitFrames.frames.members[i].unit,h)
+			if LunaOptions.frames["LunaRaidFrames"].hottracker and PlayerClass == "PRIEST" then
+				if LunaOptions.frames["LunaRaidFrames"].centerIcon then
+					LunaUnitFrames.frames.members[i].centericons[3]:Hide()
+				else
+					LunaUnitFrames.frames.members[i].centericons[1]:Hide()
+				end
+				for z=1,32 do
+					local texture = UnitBuff(LunaUnitFrames.frames.members[i].unit,z)
 					if texture == HotTexture then
 						if LunaOptions.frames["LunaRaidFrames"].centerIcon then
 							LunaUnitFrames.frames.members[i].centericons[3]:Show()
@@ -1046,6 +1090,34 @@ function LunaUnitFrames.Raid_Update()
 						else
 							LunaUnitFrames.frames.members[i].centericons[1]:Show()
 							LunaUnitFrames.frames.members[i].centericons[1].texture:SetTexture(texture)
+						end
+					end
+				end
+			elseif LunaOptions.frames["LunaRaidFrames"].hottracker and PlayerClass == "DRUID" then
+				if LunaOptions.frames["LunaRaidFrames"].centerIcon then
+					LunaUnitFrames.frames.members[i].centericons[3]:Hide()
+					LunaUnitFrames.frames.members[i].centericons[2]:Hide()
+				else
+					LunaUnitFrames.frames.members[i].centericons[1]:Hide()
+					LunaUnitFrames.frames.members[i].centericons[2]:Hide()
+				end
+				for z=1,32 do
+					local texture = UnitBuff(LunaUnitFrames.frames.members[i].unit,z)
+					if texture == HotTexture then
+						if LunaOptions.frames["LunaRaidFrames"].centerIcon then
+							LunaUnitFrames.frames.members[i].centericons[3]:Show()
+							LunaUnitFrames.frames.members[i].centericons[3].texture:SetTexture(texture)
+						else
+							LunaUnitFrames.frames.members[i].centericons[1]:Show()
+							LunaUnitFrames.frames.members[i].centericons[1].texture:SetTexture(texture)
+						end
+					elseif texture == RegrTexture then
+						if LunaOptions.frames["LunaRaidFrames"].centerIcon then
+							LunaUnitFrames.frames.members[i].centericons[2]:Show()
+							LunaUnitFrames.frames.members[i].centericons[2].texture:SetTexture(texture)
+						else
+							LunaUnitFrames.frames.members[i].centericons[2]:Show()
+							LunaUnitFrames.frames.members[i].centericons[2].texture:SetTexture(texture)
 						end
 					end
 				end

@@ -8,7 +8,7 @@ Dependencies: AceLibrary, AceEvent-2.0, RosterLib-2.0
 ]]
 
 local MAJOR_VERSION = "HealComm-1.0"
-local MINOR_VERSION = "$Revision: 11210 $"
+local MINOR_VERSION = "$Revision: 11220 $"
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
 if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end
@@ -1213,7 +1213,7 @@ HealComm.OnEvent = function()
 			end
 			HealComm.Hots[healcomm_SpellCast[3]]["Renew"].start = GetTime()
 			HealComm.Hots[healcomm_SpellCast[3]]["Renew"].dur = dur
-			HealComm.SpecialEventScheduler:TriggerEvent("HealComm_Hotupdate", targetUnit)
+			HealComm.SpecialEventScheduler:TriggerEvent("HealComm_Hotupdate", targetUnit, "Renew")
 			healcomm_spellIsCasting = nil
 			healcomm_SpellCast =  nil
 			healcomm_RankRank = nil
@@ -1229,7 +1229,23 @@ HealComm.OnEvent = function()
 			end
 			HealComm.Hots[healcomm_SpellCast[3]]["Reju"].start = GetTime()
 			HealComm.Hots[healcomm_SpellCast[3]]["Reju"].dur = dur
-			HealComm.SpecialEventScheduler:TriggerEvent("HealComm_Hotupdate", targetUnit)
+			HealComm.SpecialEventScheduler:TriggerEvent("HealComm_Hotupdate", targetUnit, "Rejuvenation")
+			healcomm_spellIsCasting = nil
+			healcomm_SpellCast =  nil
+			healcomm_RankRank = nil
+			healcomm_SpellSpell =  nil
+		elseif healcomm_SpellCast and healcomm_SpellCast[1] == L["Regrowth"] then
+			local dur = 21
+			HealComm.SendAddonMessage("Regr/"..healcomm_SpellCast[3].."/"..dur.."/")
+			if not HealComm.Hots[healcomm_SpellCast[3]] then
+				HealComm.Hots[healcomm_SpellCast[3]] = {}
+			end
+			if not HealComm.Hots[healcomm_SpellCast[3]]["Regr"] then
+				HealComm.Hots[healcomm_SpellCast[3]]["Regr"]= {}
+			end
+			HealComm.Hots[healcomm_SpellCast[3]]["Regr"].start = GetTime()
+			HealComm.Hots[healcomm_SpellCast[3]]["Regr"].dur = dur
+			HealComm.SpecialEventScheduler:TriggerEvent("HealComm_Hotupdate", targetUnit, "Regrowth")
 			healcomm_spellIsCasting = nil
 			healcomm_SpellCast =  nil
 			healcomm_RankRank = nil
@@ -1264,7 +1280,7 @@ HealComm.OnEvent = function()
 				HealComm.Hots[result[2]]["Renew"].dur = result[3]
 				HealComm.Hots[result[2]]["Renew"].start = GetTime()
 				local targetUnit = roster:GetUnitIDFromName(result[2])
-				HealComm.SpecialEventScheduler:TriggerEvent("HealComm_Hotupdate", targetUnit)
+				HealComm.SpecialEventScheduler:TriggerEvent("HealComm_Hotupdate", targetUnit, "Renew")
 			elseif result[1] == "Reju" then
 				if not HealComm.Hots[result[2]] then
 					HealComm.Hots[result[2]] = {}
@@ -1275,12 +1291,32 @@ HealComm.OnEvent = function()
 				HealComm.Hots[result[2]]["Reju"].dur = result[3]
 				HealComm.Hots[result[2]]["Reju"].start = GetTime()
 				local targetUnit = roster:GetUnitIDFromName(result[2])
-				HealComm.SpecialEventScheduler:TriggerEvent("HealComm_Hotupdate", targetUnit)
+				HealComm.SpecialEventScheduler:TriggerEvent("HealComm_Hotupdate", targetUnit, "Rejuvenation")
+			elseif result[1] == "Regr" then
+				if not HealComm.Hots[result[2]] then
+					HealComm.Hots[result[2]] = {}
+				end
+				if not HealComm.Hots[result[2]]["Regr"] then
+					HealComm.Hots[result[2]]["Regr"]= {}
+				end
+				HealComm.Hots[result[2]]["Regr"].dur = result[3]
+				HealComm.Hots[result[2]]["Regr"].start = GetTime()
+				local targetUnit = roster:GetUnitIDFromName(result[2])
+				HealComm.SpecialEventScheduler:TriggerEvent("HealComm_Hotupdate", targetUnit, "Regrowth")
 			end
 		end
 	end
 end
 
+function HealComm:getRegrTime(unit)
+	local dbUnit = HealComm.Hots[UnitName(unit)]
+	if dbUnit and dbUnit["Regr"] and (dbUnit["Regr"].start + dbUnit["Regr"].dur) > GetTime() then
+		return dbUnit["Regr"].start, dbUnit["Regr"].dur
+	else
+		return
+	end
+end
+	
 function HealComm:getRejuTime(unit)
 	local dbUnit = HealComm.Hots[UnitName(unit)]
 	if dbUnit and dbUnit["Reju"] and (dbUnit["Reju"].start + dbUnit["Reju"].dur) > GetTime() then
@@ -1345,6 +1381,8 @@ function healcomm_newCastSpell(spellId, spellbookTabNum)
        -- If ClearTarget() had been called, we'd be waiting target
 		if UnitIsPlayer("target") then
 			healcomm_ProcessSpellCast(spellName, rank, UnitName("target"))
+		else
+			healcomm_SpellCast = nil
 		end
 	else
 		healcomm_ProcessSpellCast(spellName, rank, UnitName("player"))
@@ -1379,6 +1417,8 @@ function healcomm_newCastSpellByName(spellName, onSelf)
 			if UnitIsVisible("target") and UnitIsConnected("target") and UnitCanAssist("player", "target") and onSelf ~= 1 then
 				if UnitIsPlayer("target") then
 					healcomm_ProcessSpellCast(spellName, rank, UnitName("target"))
+				else
+					healcomm_SpellCast = nil
 				end
 			else
 				healcomm_ProcessSpellCast(spellName, rank, UnitName("player"))
@@ -1437,6 +1477,8 @@ function healcomm_newUseAction(slot, checkCursor, onSelf)
 		-- Spell is being cast on the current target
 		if UnitIsPlayer("target") then
 			healcomm_ProcessSpellCast(spellName, rank, UnitName("target"))
+		else
+			healcomm_SpellCast = nil
 		end
 	else
 		-- Spell is being cast on the player
@@ -1456,6 +1498,8 @@ function healcomm_newSpellTargetUnit(unit)
 	if ( shallTargetUnit and healcomm_SpellSpell and not SpellIsTargeting() ) then
 		if UnitIsPlayer(unit) then
 			healcomm_ProcessSpellCast(healcomm_SpellSpell, healcomm_RankRank, UnitName(unit))
+		else
+			healcomm_SpellCast = nil
 		end
 		healcomm_SpellSpell = nil
 		healcomm_RankRank = nil
@@ -1477,6 +1521,8 @@ function healcomm_newTargetUnit(unit)
 	-- If we are, then well glean the target info here.
 	if ( healcomm_SpellSpell and UnitExists(unit) ) and UnitIsPlayer(unit) then
 		healcomm_ProcessSpellCast(healcomm_SpellSpell, healcomm_RankRank, UnitName(unit))
+	else
+		healcomm_SpellCast = nil
 	end
 	-- Call the original function
 	healcomm_oldTargetUnit(unit)

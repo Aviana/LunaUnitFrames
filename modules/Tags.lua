@@ -206,7 +206,11 @@ Tags.defaultTags = {
 								elseif not UnitIsConnected(unit) then
 									return "Offline"
 								elseif hp < 1 or (hp == 1 and (UnitInParty(unit) or UnitInRaid(unit))) then
-									return "Dead"
+									if UnitBuff(unit,1) then
+										return "Feigned"
+									else
+										return "Dead"
+									end
 								end
 								return hp.."/"..maxhp
 							end;
@@ -397,7 +401,11 @@ Tags.defaultTags = {
 							end;
 	["status"]              = function(unit)
 								if UnitIsDead(unit) then
-									return "Dead"
+									if UnitBuff(unit,1) then
+										return "Feigned"
+									else
+										return "Dead"
+									end
 								elseif UnitIsGhost(unit) then
 									return "Ghost"
 								elseif not UnitIsConnected(unit) then
@@ -535,7 +543,11 @@ Tags.defaultTags = {
 									maxhp = UnitHealthMax(unit)
 								end
 								if hp < 1 or (hp == 1 and (UnitInParty(unit) or UnitInRaid(unit))) then
-									return "Dead"
+									if UnitBuff(unit,1) then
+										return "Feigned"
+									else
+										return "Dead"
+									end
 								end
 								local heal = HealComm:getHeal(UnitName(unit))
 								local result = hp-maxhp+heal
@@ -579,7 +591,11 @@ Tags.defaultTags = {
 									maxhp = UnitHealthMax(unit)
 								end
 								if hp < 1 or (hp == 1 and (UnitInParty(unit) or UnitInRaid(unit))) then
-									return "Dead"
+									if UnitBuff(unit, 1) then
+										return "Feigned"
+									else
+										return "Dead"
+									end
 								end
 								local heal = HealComm:getHeal(UnitName(unit))
 								if UnitIsEnemy("player", unit) then
