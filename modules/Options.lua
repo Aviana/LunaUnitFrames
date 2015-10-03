@@ -70,6 +70,7 @@ local TagDesc = {
 	["healerhealth"]		= "Returns the same as \"smart:healmishp\" on friendly units and hp/maxhp on enemies",
 }
 
+local BarTexturesPath = "Interface\\AddOns\\LunaUnitFrames\\media\\statusbar\\"
 local BarTextures = {
 	"Luna",
 	"Aluminium",
@@ -81,7 +82,6 @@ local BarTextures = {
 	"Cilo",
 	"Dabs",
 	"Diagonal",
-	"Empty",
 	"Fifths",
 	"Fourths",
 	"Glamour",
@@ -103,7 +103,6 @@ local BarTextures = {
 	"Striped",
 	"Wisps"
 }
-local BarTexturesPath = "Interface\\AddOns\\LunaUnitFrames\\media\\statusbar\\"
 
 function LunaOptionsModule:ResetSettings()
 	LunaOptions = {}
@@ -143,8 +142,6 @@ function LunaOptionsModule:ResetSettings()
 	LunaOptions.icontexture = "Interface\\AddOns\\LunaUnitFrames\\media\\icon"
 	LunaOptions.resIcon = "Interface\\AddOns\\LunaUnitFrames\\media\\Raid-Icon-Rez"
 	LunaOptions.indicator = "Interface\\AddOns\\LunaUnitFrames\\media\\indicator"
-	
-	LunaOptions.BarTexture = 1
 		
 	LunaOptions.frames = {	["LunaPlayerFrame"] = {position = {x = 10, y = -20}, size = {x = 240, y = 40}, scale = 1, enabled = 1, ShowBuffs = 1, portrait = 2, bars = {{"Healthbar", 6}, {"Powerbar", 4}, {"Castbar", 3}, {"Druidbar", 0}, {"Totembar", 0}}},
 							["LunaTargetFrame"] = {position = {x = 280, y = -20}, size = {x = 240, y = 40}, scale = 1, enabled = 1, ShowBuffs = 3, portrait = 2, bars = {{"Healthbar", 6}, {"Powerbar", 4}, {"Castbar", 3}, {"Combo Bar", 2}}},
