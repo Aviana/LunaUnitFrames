@@ -3270,17 +3270,11 @@ function LunaUnitFrames:UpdateBarFonts()
 	-- TargetTarget
 	LunaTargetTargetFrame:AdjustBars()
 	LunaTargetTargetTargetFrame:AdjustBars()
-
+	
+	-- Party
+	LunaUnitFrames:UpdatePartyUnitFrameSize()
+	
 	for i=1, 4 do
-		-- Party
-		for z=1, 16 do
-			LunaPartyFrames[i].Buffs[z].stacks:SetFont(LunaOptions.font, LunaOptions.fontHeight)
-			LunaPartyFrames[i].Debuffs[z].stacks:SetFont(LunaOptions.font, LunaOptions.fontHeight)
-			LunaPartyFrames[i].bars["Healthbar"].righttext:SetFont(LunaOptions.font, LunaOptions.fontHeight)
-			LunaPartyFrames[i].bars["Healthbar"].lefttext:SetFont(LunaOptions.font, LunaOptions.fontHeight)
-			LunaPartyFrames[i].bars["Powerbar"].righttext:SetFont(LunaOptions.font, LunaOptions.fontHeight)
-			LunaPartyFrames[i].bars["Powerbar"].lefttext:SetFont(LunaOptions.font, LunaOptions.fontHeight)
-		end
 		-- PartyPet
 		LunaPartyPetFrames[i].HealthBar.hpp:SetFont(LunaOptions.font, LunaOptions.fontHeight)
 		LunaPartyPetFrames[i].name:SetFont(LunaOptions.font, LunaOptions.fontHeight)
