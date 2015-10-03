@@ -27,17 +27,6 @@ CLASS_ICON_TCOORDS = {
     ["PALADIN"]     = {0.0234375, 0.2265625, 0.5234375, 0.7265625}
 }
 
-StaticPopupDialogs["LunaUnitFrames_Install"] = {
-	text = TEXT("Thank you for installing LunaUnitFrames! You can use the chat command /luna to access the addon settings."),
-	button1 = "Open Settings",
-	button2 = "Close",
-	OnAccept = function()
-		LunaOptionsFrame:Show()
-	end,
-	timeout = 0,
-	hideOnEscape = 1,
-}
-
 function LunaUnitFrames:GetHealthString(unit)
 	local result
 	local Health, maxHealth
@@ -148,7 +137,6 @@ function LunaUnitFrames:OnEvent()
 		
 		if LunaOptions == nil then
 			LunaOptionsModule:ResetSettings()
-			StaticPopup_Show("LunaUnitFrames_Install")
 		end
 		if not LunaBuffDB then
 			LunaBuffDB = {}
@@ -277,7 +265,8 @@ function LunaUnitFrames:OnEvent()
 		
 		-----------------------------------------------------------
 		--Load the Addon here
-		ChatFrame1:AddMessage("Luna Unit Frames loaded. Enjoy the ride! Settings: /luna")
+		ChatFrame1:AddMessage("|cFF6583DA~ |r|cFFEFDFFFLuna Unit Frames |r|cFF6583DAloaded. Enjoy the ride!|r")
+		ChatFrame1:AddMessage("|cFF6583DA~ Type |cFFEFDFFF/luna |r|cFF6583DAfor options.|r")
 		LunaUnitFrames:CreatePlayerFrame()
 		LunaUnitFrames:CreatePetFrame()
 		LunaUnitFrames:CreateTargetFrame()
