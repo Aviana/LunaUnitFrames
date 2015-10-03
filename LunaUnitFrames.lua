@@ -262,6 +262,9 @@ function LunaUnitFrames:OnEvent()
 		if not LunaOptions.BarTexture then
 			LunaOptions.BarTexture = 1
 		end
+		if not LunaOptions.BarFont then
+			LunaOptions.BarFont = 1
+		end
 		
 		-----------------------------------------------------------
 		--Load the Addon here
