@@ -1,5 +1,5 @@
 LunaUnitFrames = CreateFrame("Frame")
-LunaUnitFrames.version = 1080
+LunaUnitFrames.version = 1081
 LunaUnitFrames.frames = {}
 LunaUnitFrames.proximity = ProximityLib:GetInstance("1")
 LunaUnitFrames:RegisterEvent("ADDON_LOADED")
@@ -134,6 +134,17 @@ end
 
 function LunaUnitFrames:OnEvent()
 	if event == "ADDON_LOADED" and arg1 == "LunaUnitFrames" then
+		
+		if LunaOptions == nil then
+			LunaOptionsModule:ResetSettings()
+		end
+		if not LunaBuffDB then
+			LunaBuffDB = {}
+		end
+		if not LunaOptions.frames["LunaRaidFrames"] then
+			LunaOptions.frames["LunaRaidFrames"] = {}
+		end
+		
 		-- Compatibility Code (to be removed several versions later)
 		if not LunaOptions.version or LunaOptions.version < LunaUnitFrames.version then
 			LunaOptions.version = LunaUnitFrames.version
@@ -251,10 +262,14 @@ function LunaUnitFrames:OnEvent()
 		if not LunaOptions.BarTexture then
 			LunaOptions.BarTexture = 1
 		end
+		if not LunaOptions.BarFont then
+			LunaOptions.BarFont = 1
+		end
 		
 		-----------------------------------------------------------
 		--Load the Addon here
-		ChatFrame1:AddMessage("Luna Unit Frames loaded. Enjoy the ride!")
+		ChatFrame1:AddMessage("|cFF6583DA~ |r|cFFEFDFFFLuna Unit Frames |r|cFF6583DAloaded. Enjoy the ride!|r")
+		ChatFrame1:AddMessage("|cFF6583DA~ Type |cFFEFDFFF/luna |r|cFF6583DAfor options.|r")
 		LunaUnitFrames:CreatePlayerFrame()
 		LunaUnitFrames:CreatePetFrame()
 		LunaUnitFrames:CreateTargetFrame()
