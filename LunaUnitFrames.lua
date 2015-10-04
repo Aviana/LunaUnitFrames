@@ -1,5 +1,5 @@
 LunaUnitFrames = CreateFrame("Frame")
-LunaUnitFrames.version = 1081
+LunaUnitFrames.version = 1082
 LunaUnitFrames.frames = {}
 LunaUnitFrames.proximity = ProximityLib:GetInstance("1")
 LunaUnitFrames:RegisterEvent("ADDON_LOADED")
@@ -265,7 +265,9 @@ function LunaUnitFrames:OnEvent()
 		if not LunaOptions.BarFont then
 			LunaOptions.BarFont = 1
 		end
-		
+
+		LunaUnitFrames:UpdateBarFontString()
+
 		-----------------------------------------------------------
 		--Load the Addon here
 		ChatFrame1:AddMessage("|cFF6583DA~ |r|cFFEFDFFFLuna Unit Frames |r|cFF6583DAloaded. Enjoy the ride!|r")
