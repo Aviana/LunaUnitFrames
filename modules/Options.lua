@@ -107,20 +107,21 @@ local BarTextures = {
 local BarFontsPath = "Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\"
 local BarFonts = {
 	"Luna",
-	"Bazooka",
-	"BlackChancery",
+	"Aldrich",
+	"Bangers",
 	"Celestia",
 	"DorisPP",
-	"Enigma",
+	"Enigmatic",
+	"FasterOne",
 	"Fitzgerald",
 	"Gentium",
+	"Iceland",
+	"Inconsolata",
 	"LiberationSans",
-	"Orbitron Bold",
-	"Orbitron Medium",
-	"SFCovington",
-	"SFMoviePoster-Bold",
-	"SFWonderComic",
-	"VeraSe",
+	"MetalLord",
+	"Optimus",
+	"TradeWinds",
+	"VeraSerif",
 	"Yellowjacket"
 }
 
@@ -157,7 +158,6 @@ function LunaOptionsModule:ResetSettings()
 		insets = {left = -1.5, right = -1.5, top = -1.5, bottom = -1.5},
 	}
 	LunaOptions.fontHeight = 11
-	LunaOptions.font = "Interface\\AddOns\\LunaUnitFrames\\media\\barframes.ttf"
 	LunaOptions.bordertexture = "Interface\\AddOns\\LunaUnitFrames\\media\\border"
 	LunaOptions.icontexture = "Interface\\AddOns\\LunaUnitFrames\\media\\icon"
 	LunaOptions.resIcon = "Interface\\AddOns\\LunaUnitFrames\\media\\Raid-Icon-Rez"
@@ -3250,9 +3250,12 @@ function LunaUnitFrames:UpdateBarTextures()
 	end
 end
 
+function LunaUnitFrames:UpdateBarFontString()
+	LunaOptions.font = BarFontsPath .. BarFonts[LunaOptions.BarFont] .. ".ttf"
+end
 function LunaUnitFrames:UpdateBarFonts()
-	local font = BarFontsPath .. BarFonts[LunaOptions.BarFont] .. ".ttf"
-	LunaOptions.font = font
+
+	LunaUnitFrames:UpdateBarFontString()
 
 	-- ExperienceBar
 	LunaUnitFrames.frames.ReputationBar.RepBar.xptext:SetFont(LunaOptions.font, 10)
