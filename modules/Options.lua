@@ -175,8 +175,8 @@ function LunaOptionsModule:ResetSettings()
 								["pBars"] = 1,
 								["scale"] = 1,
 								["padding"] = 4,
-								["height"] = 35,
-								["width"] = 80,
+								["height"] = 30,
+								["width"] = 60,
 								["positions"] = {
 									[1] = {
 										["x"] = 400,
