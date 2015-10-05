@@ -133,7 +133,7 @@ function Luna_OnClick()
 end
 
 function LunaUnitFrames:OnEvent()
-	if event == "ADDON_LOADED" and arg1 == "LunaUnitFrames" then
+	if event == "ADDON_LOADED" and (arg1 == "LunaUnitFrames" or arg1 == "LunaUnitFrames-master") then
 		
 		if LunaOptions == nil then
 			LunaOptionsModule:ResetSettings()
