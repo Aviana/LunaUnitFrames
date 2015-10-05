@@ -32,7 +32,7 @@ Tags.defaultEvents = {
 	["druidform"]			= "UNIT_AURA",
 	["guild"]				= "UNIT_NAME_UPDATE", -- Not sure when this data is available, guessing
 	["incheal"]				= "HealComm_Healupdate",
-	["pvp"]					= "PLAYER_FLAGS_CHANGED",
+	["pvp"]					= "UNIT_FACTION",
 	["smarthealth"]			= "UNIT_HEALTH UNIT_MAXHEALTH",
 	["healhp"]				= "UNIT_HEALTH HealComm_Healupdate",
 	["hp"]            	    = "UNIT_HEALTH",
@@ -67,7 +67,7 @@ Tags.defaultEvents = {
 	["color:aggro"]			= "Banzai_UnitGainedAggro Banzai_UnitLostAggro",
 	["ignore"]				= "IGNORELIST_UPDATE",
 	["smart:healmishp"]		= "UNIT_HEALTH UNIT_MAXHEALTH HealComm_Healupdate",
-	["pvpcolor"]			= "PLAYER_FLAGS_CHANGED",
+	["pvpcolor"]			= "UNIT_FACTION",
 	["reactcolor"]			= "UNIT_FACTION",
 	["healerhealth"]		= "UNIT_HEALTH UNIT_MAXHEALTH HealComm_Healupdate"
 }
