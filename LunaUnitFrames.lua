@@ -133,8 +133,11 @@ function Luna_OnClick()
 end
 
 function LunaUnitFrames:OnEvent()
-	if event == "ADDON_LOADED" and (arg1 == "LunaUnitFrames" or arg1 == "LunaUnitFrames-master") then
-		
+	if event == "ADDON_LOADED" and (string.lower(arg1) == "lunaunitframes" or string.lower(arg1) == "lunaunitframes-master") then
+
+		LunaUnitFrames.addonName = arg1
+		LunaUnitFrames.addonPath = "Interface\\AddOns\\" .. arg1
+
 		if LunaOptions == nil then
 			LunaOptionsModule:ResetSettings()
 		end
