@@ -1,5 +1,5 @@
 LunaUnitFrames = CreateFrame("Frame")
-LunaUnitFrames.version = 1082
+LunaUnitFrames.version = 1083
 LunaUnitFrames.frames = {}
 LunaUnitFrames.proximity = ProximityLib:GetInstance("1")
 LunaUnitFrames:RegisterEvent("ADDON_LOADED")
@@ -133,8 +133,10 @@ function Luna_OnClick()
 end
 
 function LunaUnitFrames:OnEvent()
-	if event == "ADDON_LOADED" and arg1 == "LunaUnitFrames" then
-		
+	if event == "ADDON_LOADED" and (string.lower(arg1) == "lunaunitframes" or string.lower(arg1) == "lunaunitframes-master") then
+
+		LunaUnitFrames.addonPath = "Interface\\AddOns\\" .. arg1
+
 		if LunaOptions == nil then
 			LunaOptionsModule:ResetSettings()
 		end

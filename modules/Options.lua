@@ -70,7 +70,7 @@ local TagDesc = {
 	["healerhealth"]		= "Returns the same as \"smart:healmishp\" on friendly units and hp/maxhp on enemies",
 }
 
-local BarTexturesPath = "Interface\\AddOns\\LunaUnitFrames\\media\\statusbar\\"
+local BarTexturesPath = "\\media\\statusbar\\"
 local BarTextures = {
 	"Luna",
 	"Aluminium",
@@ -104,7 +104,7 @@ local BarTextures = {
 	"Wisps"
 }
 
-local BarFontsPath = "Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\"
+local BarFontsPath = "\\media\\fonts\\"
 local BarFonts = {
 	"Luna",
 	"Aldrich",
@@ -158,16 +158,16 @@ function LunaOptionsModule:ResetSettings()
 		insets = {left = -1.5, right = -1.5, top = -1.5, bottom = -1.5},
 	}
 	LunaOptions.fontHeight = 11
-	LunaOptions.bordertexture = "Interface\\AddOns\\LunaUnitFrames\\media\\border"
-	LunaOptions.icontexture = "Interface\\AddOns\\LunaUnitFrames\\media\\icon"
-	LunaOptions.resIcon = "Interface\\AddOns\\LunaUnitFrames\\media\\Raid-Icon-Rez"
-	LunaOptions.indicator = "Interface\\AddOns\\LunaUnitFrames\\media\\indicator"
+	LunaOptions.bordertexture = LunaUnitFrames.addonPath .. "\\media\\border"
+	LunaOptions.icontexture = LunaUnitFrames.addonPath .. "\\media\\icon"
+	LunaOptions.resIcon = LunaUnitFrames.addonPath .. "\\media\\Raid-Icon-Rez"
+	LunaOptions.indicator = LunaUnitFrames.addonPath .. "\\media\\indicator"
 		
-	LunaOptions.frames = {	["LunaPlayerFrame"] = {position = {x = 10, y = -20}, size = {x = 240, y = 40}, scale = 1, enabled = 1, ShowBuffs = 1, portrait = 2, bars = {{"Healthbar", 6}, {"Powerbar", 4}, {"Castbar", 3}, {"Druidbar", 0}, {"Totembar", 0}}},
-							["LunaTargetFrame"] = {position = {x = 280, y = -20}, size = {x = 240, y = 40}, scale = 1, enabled = 1, ShowBuffs = 3, portrait = 2, bars = {{"Healthbar", 6}, {"Powerbar", 4}, {"Castbar", 3}, {"Combo Bar", 2}}},
+	LunaOptions.frames = {	["LunaPlayerFrame"] = {position = {x = 10, y = -20}, size = {x = 240, y = 40}, scale = 1, enabled = 1, ShowBuffs = 1, portrait = 2, pvprankicon = 1, leadericon = 1, bars = {{"Healthbar", 6}, {"Powerbar", 4}, {"Castbar", 3}, {"Druidbar", 0}, {"Totembar", 0}}},
+							["LunaTargetFrame"] = {position = {x = 280, y = -20}, size = {x = 240, y = 40}, scale = 1, enabled = 1, ShowBuffs = 3, portrait = 2, pvprankicon = 1, leadericon = 1, bars = {{"Healthbar", 6}, {"Powerbar", 4}, {"Castbar", 3}, {"Combo Bar", 2}}},
 							["LunaTargetTargetFrame"] = {position = {x = 550, y = -20}, size = {x = 150, y = 40}, scale = 1, enabled = 1, ShowBuffs = 1, bars = {{"Healthbar", 6}, {"Powerbar", 4}}},
 							["LunaTargetTargetTargetFrame"] = {position = {x = 730, y = -20}, size = {x = 150, y = 40}, scale = 1, enabled = 1, ShowBuffs = 1, bars = {{"Healthbar", 6}, {"Powerbar", 4}}},
-							["LunaPartyFrames"] = {position = {x = 10, y = -140}, size = {x = 200, y = 40}, scale = 1, enabled = 1, ShowBuffs = 3, portrait = 2, bars = {{"Healthbar", 6}, {"Powerbar", 4}}},
+							["LunaPartyFrames"] = {position = {x = 10, y = -140}, size = {x = 200, y = 40}, scale = 1, enabled = 1, ShowBuffs = 3, portrait = 2, pvprankicon = 1, leadericon = 1, bars = {{"Healthbar", 6}, {"Powerbar", 4}}},
 							["LunaPartyPetFrames"] = {position = "RIGHT", size = {x = 110, y = 19}, scale = 1, enabled = 1, bars = {{"Healthbar", 6}, {"Powerbar", 4}}},
 							["LunaPartyTargetFrames"] = {position = "RIGHT", size = {x = 110, y = 19}, scale = 1, enabled = 1, bars = {{"Healthbar", 6}, {"Powerbar", 4}}},
 							["LunaPetFrame"] = {position = {x = 10, y = -70}, size = {x = 240, y = 30}, scale = 1, enabled = 1, ShowBuffs = 3, portrait = 2, bars = {{"Healthbar", 6}, {"Powerbar", 4}}},
@@ -3180,7 +3180,7 @@ local totemcolors = {
 				}
 
 function LunaUnitFrames:UpdateBarTextures()
-	local texture = BarTexturesPath .. BarTextures[LunaOptions.BarTexture]
+	local texture = LunaUnitFrames.addonPath .. BarTexturesPath .. BarTextures[LunaOptions.BarTexture]
 	
 	-- ExperienceBar
 	LunaUnitFrames.frames.ReputationBar.RepBar:SetStatusBarTexture(texture)
@@ -3251,7 +3251,7 @@ function LunaUnitFrames:UpdateBarTextures()
 end
 
 function LunaUnitFrames:UpdateBarFontString()
-	LunaOptions.font = BarFontsPath .. BarFonts[LunaOptions.BarFont] .. ".ttf"
+	LunaOptions.font = LunaUnitFrames.addonPath .. BarFontsPath .. BarFonts[LunaOptions.BarFont] .. ".ttf"
 end
 function LunaUnitFrames:UpdateBarFonts()
 
