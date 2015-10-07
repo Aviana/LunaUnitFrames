@@ -606,13 +606,9 @@ function LunaUnitFrames:CreatePlayerFrame()
 	
 	LunaPlayerFrame:SetScript("OnUpdate", CombatFeedback_OnUpdate)
 	
-	LunaPlayerFrame.dropdown = CreateFrame("Frame", "LunaUnitDropDownMenu", UIParent, "UIDropDownMenuTemplate")
+	LunaPlayerFrame.dropdown = getglobal("PlayerFrameDropDown")
 	LunaPlayerFrame.initialize = function() if LunaPlayerFrame.dropdown then
-												if UnitInRaid("player") or GetNumPartyMembers() > 0 then
-													UnitPopup_ShowMenu(LunaPlayerFrame.dropdown, "SELF", LunaPlayerFrame.unit)
-												else
-													UIDropDownMenu_AddButton({text = "Reset Instances", func = ResetInstances, notCheckable = 1}, 1)
-												end
+												UnitPopup_ShowMenu(LunaPlayerFrame.dropdown, "SELF", LunaPlayerFrame.unit)
 											end
 								end
 	UIDropDownMenu_Initialize(LunaPlayerFrame.dropdown, LunaPlayerFrame.initialize, "MENU")

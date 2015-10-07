@@ -173,7 +173,7 @@ function LunaUnitFrames:CreatePartyFrames()
 		LunaPartyFrames[i]:SetScript("OnClick", Luna_OnClick)
 		LunaPartyFrames[i]:SetScript("OnEnter", UnitFrame_OnEnter)
 		LunaPartyFrames[i]:SetScript("OnLeave", UnitFrame_OnLeave)
-		LunaPartyFrames[i].dropdown = CreateFrame("Frame", "LunaUnitDropDownMenuParty"..i, LunaPartyFrames[i], "UIDropDownMenuTemplate")
+		LunaPartyFrames[i].dropdown = getglobal("PartyMemberFrame"..i.."DropDown")
 		LunaPartyFrames[i].DropDown_Initialize = function ()
 													if this.dropdown then 
 														UnitPopup_ShowMenu(this.dropdown, "PARTY", this.unit)

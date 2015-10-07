@@ -18,7 +18,7 @@ function Luna_TargetDropDown_Initialize()
 	elseif (UnitIsUnit("target", "pet")) then
 		menu = "PET";
 	elseif (UnitIsPlayer("target")) then
-		if (UnitInParty("target")) then
+		if (UnitInParty("target") or UnitInRaid("target")) then
 			menu = "PARTY";
 		else
 			menu = "PLAYER";
@@ -411,7 +411,7 @@ function LunaUnitFrames:CreateTargetFrame()
 	LunaTargetFrame:SetScript("OnUpdate", CombatFeedback_OnUpdate)
 	LunaTargetFrame.bars["Castbar"]:SetScript("OnUpdate", Castbar_OnUpdate)
 	
-	LunaTargetFrame.dropdown = CreateFrame("Frame", "LunaUnitDropDownMenuTarget", UIParent, "UIDropDownMenuTemplate")
+	LunaTargetFrame.dropdown = getglobal("TargetFrameDropDown")
 	UIDropDownMenu_Initialize(LunaTargetFrame.dropdown, Luna_TargetDropDown_Initialize, "MENU")
 	
 	if not LunaOptions.BlizzTarget then
