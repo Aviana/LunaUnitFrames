@@ -3151,7 +3151,7 @@ function LunaOptionsModule:CreateMenu()
 	local prevframe = LunaOptionsFrame.helpframe.title
 	for k,v in pairs(TagDesc) do
 		LunaOptionsFrame.helpframe.texts[k] = LunaOptionsFrame.helpframe:CreateFontString(nil, "OVERLAY", LunaOptionsFrame.helpframe)
-		LunaOptionsFrame.helpframe.texts[k]:SetFont(LunaOptions.font, 10)
+		LunaOptionsFrame.helpframe.texts[k]:SetFont("Fonts\\FRIZQT__.TTF", 9)
 		LunaOptionsFrame.helpframe.texts[k]:SetText("["..k.."]: "..v)
 		LunaOptionsFrame.helpframe.texts[k]:SetJustifyH("LEFT")
 		LunaOptionsFrame.helpframe.texts[k]:SetJustifyV("TOP")
