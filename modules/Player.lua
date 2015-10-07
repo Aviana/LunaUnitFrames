@@ -608,6 +608,9 @@ function LunaUnitFrames:CreatePlayerFrame()
 	
 	LunaPlayerFrame.dropdown = getglobal("PlayerFrameDropDown")
 	LunaPlayerFrame.initialize = function() if LunaPlayerFrame.dropdown then
+												if not (UnitInRaid("player") or GetNumPartyMembers() > 0) then
+													UIDropDownMenu_AddButton({text = "Reset Instances", func = ResetInstances, notCheckable = 1}, 1)
+												end
 												UnitPopup_ShowMenu(LunaPlayerFrame.dropdown, "SELF", LunaPlayerFrame.unit)
 											end
 								end

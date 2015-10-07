@@ -100,6 +100,11 @@ function Luna_OnClick()
 			return;
 		else
 			ToggleDropDownMenu(1, nil, this.dropdown, "cursor", 0, 0)
+			if UnitIsUnit("player", this.unit) then
+				if UnitIsPartyLeader("player") then
+					UIDropDownMenu_AddButton({text = "Reset Instances", func = ResetInstances, notCheckable = 1}, 1)
+				end
+			end
 		end
 	elseif LunaOptions.clickcast[playername][modifier][button] == "target" or SpellIsTargeting() then
 		if (SpellIsTargeting()) then
