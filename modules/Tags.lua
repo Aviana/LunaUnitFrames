@@ -27,6 +27,7 @@ local DruidForms = {
 Tags.fontStrings = {}
 
 Tags.defaultEvents = {
+	["happiness"]			= "UNIT_HAPPINESS",
 	["combat"]				= "PLAYER_REGEN_ENABLED PLAYER_REGEN_DISABLED",
 	["color:combat"]		= "PLAYER_REGEN_ENABLED PLAYER_REGEN_DISABLED",
 	["druidform"]			= "UNIT_AURA",
@@ -98,6 +99,18 @@ local function tagsplit(pString)
 end
 
 Tags.defaultTags = {
+	["happiness"]			= function(unit)
+								if unit ~= "pet" then
+									return ""
+								end
+								if GetPetHappiness() == 1 then
+									return "unhappy"
+								elseif GetPetHappiness() == 2 then
+									return "content"
+								else
+									return "happy"
+								end
+							end;
 	["combat"]				= function(unit)
 								if UnitAffectingCombat(unit) then
 									return "(c)"
@@ -766,6 +779,9 @@ end
 
 
 local function onEvent(arg1)
+	if strsub(arg1, 1, 4) == "raid" then -- Raid Units are not event driven
+		return
+	end
 	if event == "UNIT_PET" and arg1 == "player" then
 		LunaUnitFrames:UpdateTags("pet")
 	elseif event == "PLAYER_ENTERING_WORLD" then
@@ -824,6 +840,7 @@ updateFrame:SetScript("OnUpdate", onUpdate)
 
 AceEvent:ScheduleRepeatingEvent(refreshTags, 1)
 
+AceEvent:RegisterEvent("UNIT_HAPPINESS", onEvent)
 AceEvent:RegisterEvent("PLAYER_REGEN_ENABLED", onEvent)
 AceEvent:RegisterEvent("PLAYER_REGEN_DISABLED", onEvent)
 AceEvent:RegisterEvent("UNIT_ENERGY", onEvent)
