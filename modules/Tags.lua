@@ -779,7 +779,7 @@ end
 
 
 local function onEvent(arg1)
-	if strsub(arg1, 1, 4) == "raid" then -- Raid Units are not event driven
+	if arg1 and strsub(arg1, 1, 4) == "raid" then -- Raid Units are not event driven
 		return
 	end
 	if event == "UNIT_PET" and arg1 == "player" then
