@@ -1029,6 +1029,7 @@ function LunaUnitFrames:UpdatePlayerFrame()
 
 	Luna_Player_Events.UNIT_HEALTH()
 	Luna_Player_Events.UNIT_MANA()
+	Luna_Player_Events:PLAYER_AURAS_CHANGED()
 	Luna_Player_Events.PARTY_LEADER_CHANGED()
 	Luna_Player_Events.RAID_TARGET_UPDATE()
 	Luna_Player_Events.UNIT_DISPLAYPOWER()

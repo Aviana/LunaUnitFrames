@@ -810,8 +810,13 @@ function LunaUnitFrames.Raid_Aura(unitid)
 		return
 	end
 	local maxDebuffs = ((LunaOptions.frames["LunaRaidFrames"].centerIcon and PlayerClass == "PRIEST") and 2) or ((LunaOptions.frames["LunaRaidFrames"].centerIcon and PlayerClass == "DRUID") and 1) or 3
-	local texture,_,dispeltype
+	local texture,_,dispeltype = UnitDebuff(this.unit,1,1)
 	local lastfound = 1
+	if dispeltype and LunaOptions.HighlightDebuffs then
+		this:SetBackdropColor(unpack(LunaOptions.DebuffTypeColor[dispeltype]),1)
+	else
+		this:SetBackdropColor(0,0,0,1)
+	end
 	for i=1, maxDebuffs do
 		texture,_,dispeltype = UnitDebuff(this.unit,i,1)
 		if not dispeltype and not LunaOptions.showdispelable then
@@ -1029,6 +1034,12 @@ function LunaUnitFrames.Raid_Update()
 	for i=1,80 do
 		if LunaUnitFrames.frames.members[i].unit then
 			local lastfound = 1
+			texture,_,dispeltype = UnitDebuff(LunaUnitFrames.frames.members[i].unit,1,1)
+			if dispeltype and LunaOptions.HighlightDebuffs then
+				LunaUnitFrames.frames.members[i]:SetBackdropColor(unpack(LunaOptions.DebuffTypeColor[dispeltype]))
+			else
+				LunaUnitFrames.frames.members[i]:SetBackdropColor(0,0,0,1)
+			end
 			for z=1, maxDebuffs do
 				texture,_,dispeltype = UnitDebuff(LunaUnitFrames.frames.members[i].unit,z,1)
 				if not dispeltype and not LunaOptions.showdispelable then

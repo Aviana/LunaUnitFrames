@@ -1325,6 +1325,7 @@ function OptionFunctions.ToggleHighlightBuffs()
 	else
 		LunaOptions.HighlightDebuffs = nil
 	end
+	OptionFunctions.UpdateAll()
 end
 
 function OptionFunctions.Mouseover()
