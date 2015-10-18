@@ -751,7 +751,7 @@ function LunaUnitFrames:ConvertTargetPortrait()
 	end
 	SetIconPositions()
 	LunaTargetFrame.AdjustBars()
-	Luna_Player_Events.UNIT_PORTRAIT_UPDATE("target")
+	Luna_Target_Events.UNIT_PORTRAIT_UPDATE("target")
 end
 
 function Luna_Target_Events:PARTY_LOOT_METHOD_CHANGED()

@@ -3,6 +3,25 @@ local Luna_TargetTarget_Events = {}
 local tot = CreateFrame("Frame")
 tot.time = 0
 
+local validunits = {
+					["party1"] = true,
+					["party2"] = true,
+					["party3"] = true,
+					["party4"] = true,
+					["partypet1"] = true,
+					["partypet2"] = true,
+					["partypet3"] = true,
+					["partypet4"] = true,
+					["player"] = true,
+					["pet"] = true,
+					["target"] = true
+				}
+					
+for i=1, 40 do
+	validunits["raid"..i] = true
+	validunits["raidpet"..i] = true
+end
+
 function Luna_TargetTargetDropDown_Initialize()
 	local menu, name;
 	if (UnitIsUnit("targettarget", "player")) then
@@ -139,6 +158,14 @@ function LunaUnitFrames:CreateTargetTargetFrame()
 	end
 	
 	LunaTargetTargetFrame.bars = {}
+
+	-- Portrait
+	LunaTargetTargetFrame.bars["Portrait"] = CreateFrame("Frame", nil, LunaTargetTargetFrame)
+	LunaTargetTargetFrame.bars["Portrait"].texture = LunaTargetTargetFrame.bars["Portrait"]:CreateTexture("TargetTargetPortrait", "ARTWORK")
+	LunaTargetTargetFrame.bars["Portrait"].texture:SetAllPoints(LunaTargetTargetFrame.bars["Portrait"])
+	LunaTargetTargetFrame.bars["Portrait"].model = CreateFrame("PlayerModel", nil, LunaTargetTargetFrame)
+	LunaTargetTargetFrame.bars["Portrait"].model:SetPoint("TOPLEFT", LunaTargetTargetFrame.bars["Portrait"], "TOPLEFT")
+	LunaTargetTargetFrame.bars["Portrait"].model:SetScript("OnShow",function() this:SetCamera(0) end)
 	
 	-- Healthbar
 	local hp = CreateFrame("StatusBar", nil, LunaTargetTargetFrame)
@@ -273,6 +300,7 @@ function LunaUnitFrames:CreateTargetTargetFrame()
 	LunaTargetTargetFrame:Hide()
 	
 	LunaTargetTargetFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
+	LunaTargetTargetFrame:RegisterEvent("UNIT_PORTRAIT_UPDATE")
 	
 	LunaTargetTargetFrame:SetScript("OnClick", Luna_OnClick)
 	LunaTargetTargetFrame:SetScript("OnEvent", Luna_TargetTarget_OnEvent)
@@ -290,6 +318,22 @@ function LunaUnitFrames:CreateTargetTargetFrame()
 		local textheights = {}
 		local textbalance = {}
 		anchor = {"TOPLEFT", LunaTargetTargetFrame, "TOPLEFT"}
+		if LunaOptions.frames["LunaTargetTargetFrame"].portrait > 1 then    -- We have a square portrait
+			frameWidth = (LunaTargetTargetFrame:GetWidth()-frameHeight)
+			LunaTargetTargetFrame.bars["Portrait"]:ClearAllPoints()
+			LunaTargetTargetFrame.bars["Portrait"]:SetHeight(frameHeight)
+			LunaTargetTargetFrame.bars["Portrait"]:SetWidth(frameHeight)
+			if LunaOptions.fliptargettarget then
+				LunaTargetTargetFrame.bars["Portrait"]:SetPoint("TOPRIGHT", LunaTargetTargetFrame, "TOPRIGHT")
+				anchor = {"TOPRIGHT", LunaTargetTargetFrame.bars["Portrait"], "TOPLEFT"}
+			else
+				LunaTargetTargetFrame.bars["Portrait"]:SetPoint("TOPLEFT", LunaTargetTargetFrame, "TOPLEFT")
+				anchor = {"TOPLEFT", LunaTargetTargetFrame.bars["Portrait"], "TOPRIGHT"}
+			end
+		else
+			frameWidth = LunaTargetTargetFrame:GetWidth()  -- We have a Bar-Portrait or no portrait
+			anchor = {"TOPLEFT", LunaTargetTargetFrame, "TOPLEFT"}
+		end
 		for k,v in pairs(LunaOptions.frames["LunaTargetTargetFrame"].bars) do
 			if LunaTargetTargetFrame.bars[v[1]]:IsShown() then
 				totalWeight = totalWeight + v[2]
@@ -317,6 +361,8 @@ function LunaUnitFrames:CreateTargetTargetFrame()
 				anchor = {"TOPLEFT", LunaTargetTargetFrame.bars[bar], "BOTTOMLEFT"}
 			end			
 		end
+		LunaTargetTargetFrame.bars["Portrait"].model:SetHeight(LunaTargetTargetFrame.bars["Portrait"]:GetHeight()+1)
+		LunaTargetTargetFrame.bars["Portrait"].model:SetWidth(LunaTargetTargetFrame.bars["Portrait"]:GetWidth())
 		local healthheight = (LunaTargetTargetFrame.bars["Healthbar"]:GetHeight()*textheights["Healthbar"])
 		LunaTargetTargetFrame.bars["Healthbar"].righttext:SetFont(LunaOptions.font, healthheight)
 		LunaTargetTargetFrame.bars["Healthbar"].righttext:SetHeight(LunaTargetTargetFrame.bars["Healthbar"]:GetHeight())
@@ -463,12 +509,106 @@ function LunaUnitFrames:CreateTargetTargetFrame()
 	LunaTargetTargetFrame.AdjustBars()	
 end
 
+function LunaUnitFrames:ConvertTargetTargetPortrait()
+	if LunaOptions.frames["LunaTargetTargetFrame"].portrait == 1 then
+		table.insert(LunaOptions.frames["LunaTargetTargetFrame"].bars, 1, {"Portrait", 4})
+	else
+		for k,v in pairs(LunaOptions.frames["LunaTargetTargetFrame"].bars) do
+			if v[1] == "Portrait" then
+				table.remove(LunaOptions.frames["LunaTargetTargetFrame"].bars, k)
+			end
+		end
+	end
+	UIDropDownMenu_SetText("Healthbar", LunaOptionsFrame.pages[4].BarSelect)
+	LunaOptionsFrame.pages[4].barorder:SetMinMaxValues(1,table.getn(LunaOptions.frames["LunaTargetTargetFrame"].bars))
+	for k,v in pairs(LunaOptions.frames["LunaTargetTargetFrame"].bars) do
+		if v[1] == "Healthbar" then
+			LunaOptionsFrame.pages[4].barheight:SetValue(v[2])
+			LunaOptionsFrame.pages[4].barorder:SetValue(k)
+			LunaOptionsFrame.pages[4].lefttext:SetText(v[4] or LunaOptions.defaultTags["Healthbar"][1])
+			LunaOptionsFrame.pages[4].righttext:SetText(v[5] or LunaOptions.defaultTags["Healthbar"][2])
+			LunaOptionsFrame.pages[4].textsize:SetValue(v[3] or 0.45)
+			break
+		end
+	end
+	LunaTargetTargetFrame.AdjustBars()
+	LunaUnitFrames:UpdateTargetTargetFrame()
+end
+
+local function TargetTargetPortraitUpdate(unit)
+	if (not validunits[arg1] or not UnitIsUnit(arg1,"targettarget")) and not unit then
+		return
+	end
+	local portrait = LunaTargetTargetFrame.bars["Portrait"]
+	if LunaOptions.PortraitMode == 3 and UnitIsPlayer("targettarget") then
+		local _,class = UnitClass("targettarget")
+		portrait.model:Hide()
+		portrait.texture:Show()
+		portrait.texture:SetTexture("Interface\\Glues\\CharacterCreate\\UI-CharacterCreate-Classes")
+		portrait.texture:SetTexCoord(unpack(CLASS_ICON_TCOORDS[class]))
+	elseif LunaOptions.PortraitMode == 2 or (LunaOptions.PortraitMode == 3 and (LunaOptions.PortraitFallback == 3 or LunaOptions.PortraitFallback == 2)) then
+		if LunaOptions.frames["LunaTargetTargetFrame"].portrait > 1 then
+			portrait.model:Hide()
+			portrait.texture:Show()
+			SetPortraitTexture(portrait.texture, "targettarget")
+			portrait.texture:SetTexCoord(.1, .90, .1, .90)
+		else
+			portrait.model:Hide()
+			portrait.texture:Show()
+			SetPortraitTexture(portrait.texture, "target")
+			local aspect = portrait:GetHeight()/portrait:GetWidth()
+			portrait.texture:SetTexCoord(0, 1, (0.5-0.5*aspect), 1-(0.5-0.5*aspect))
+		end
+	else
+		portrait.model:Show()
+		portrait.texture:Hide()
+		if(not UnitExists("targettarget") or not UnitIsConnected("targettarget") or not UnitIsVisible("targettarget")) then
+			if LunaOptions.PortraitFallback == 3 and UnitIsPlayer("targettarget") then
+				portrait.model:Hide()
+				portrait.texture:Show()
+				local _,class = UnitClass("targettarget")
+				portrait.texture:SetTexture("Interface\\Glues\\CharacterCreate\\UI-CharacterCreate-Classes")
+				portrait.texture:SetTexCoord(unpack(CLASS_ICON_TCOORDS[class]))
+			elseif LunaOptions.PortraitFallback == 2 or LunaOptions.PortraitFallback == 3 then
+				if LunaOptions.frames["LunaTargetTargetFrame"].portrait > 1 then
+					portrait.model:Hide()
+					portrait.texture:Show()
+					SetPortraitTexture(portrait.texture, "targettarget")
+					portrait.texture:SetTexCoord(.1, .90, .1, .90)
+				else
+					portrait.model:Hide()
+					portrait.texture:Show()
+					SetPortraitTexture(portrait.texture, "targettarget")
+					local aspect = portrait:GetHeight()/portrait:GetWidth()
+					portrait.texture:SetTexCoord(0, 1, .1+(0.4-0.4*aspect), .90-(0.4-0.4*aspect))
+				end
+			else
+				portrait.model:Show()
+				portrait.texture:Hide()
+				portrait.model:SetModelScale(4.25)
+				portrait.model:SetPosition(0, 0, -1)
+				portrait.model:SetModel("Interface\\Buttons\\talktomequestionmark.mdx")
+			end
+		else
+			portrait.model:Show()
+			portrait.texture:Hide()
+			portrait.model:SetUnit("targettarget")
+			portrait.model:SetCamera(0)
+		end
+	end
+end
+
 function Luna_TargetTarget_Events:PLAYER_TARGET_CHANGED()
 	LunaUnitFrames:UpdateTargetTargetFrame()
 	LunaUnitFrames:UpdateTargetTargetTargetFrame()
 end
 
 function LunaUnitFrames:UpdateTargetTargetFrame()
+	if UnitName(LunaTargetTargetFrame.unit) ~= LunaTargetTargetFrame.name or LunaTargetTargetFrame.isPlayer ~= UnitIsPlayer(LunaTargetTargetFrame.unit) then
+		LunaTargetTargetFrame.name = UnitName(LunaTargetTargetFrame.unit)
+		LunaTargetTargetFrame.isPlayer = UnitIsPlayer(LunaTargetTargetFrame.unit)
+		TargetTargetPortraitUpdate("targettarget")
+	end
 	local Health, maxHealth
 	if MobHealth3 then
 		Health, maxHealth = MobHealth3:GetUnitHealth(LunaTargetTargetFrame.unit)
@@ -637,6 +777,14 @@ function LunaUnitFrames:CreateTargetTargetTargetFrame()
 	
 	LunaTargetTargetTargetFrame.bars = {}
 	
+	-- Portrait
+	LunaTargetTargetTargetFrame.bars["Portrait"] = CreateFrame("Frame", nil, LunaTargetTargetTargetFrame)
+	LunaTargetTargetTargetFrame.bars["Portrait"].texture = LunaTargetTargetTargetFrame.bars["Portrait"]:CreateTexture("TargetTargetPortrait", "ARTWORK")
+	LunaTargetTargetTargetFrame.bars["Portrait"].texture:SetAllPoints(LunaTargetTargetTargetFrame.bars["Portrait"])
+	LunaTargetTargetTargetFrame.bars["Portrait"].model = CreateFrame("PlayerModel", nil, LunaTargetTargetTargetFrame)
+	LunaTargetTargetTargetFrame.bars["Portrait"].model:SetPoint("TOPLEFT", LunaTargetTargetTargetFrame.bars["Portrait"], "TOPLEFT")
+	LunaTargetTargetTargetFrame.bars["Portrait"].model:SetScript("OnShow",function() this:SetCamera(0) end)
+	
 	-- Healthbar
 	local hp = CreateFrame("StatusBar", nil, LunaTargetTargetTargetFrame)
 	LunaTargetTargetTargetFrame.bars["Healthbar"] = hp
@@ -785,6 +933,22 @@ function LunaUnitFrames:CreateTargetTargetTargetFrame()
 		local textheights = {}
 		local textbalance = {}
 		anchor = {"TOPLEFT", LunaTargetTargetTargetFrame, "TOPLEFT"}
+		if LunaOptions.frames["LunaTargetTargetTargetFrame"].portrait > 1 then    -- We have a square portrait
+			frameWidth = (LunaTargetTargetTargetFrame:GetWidth()-frameHeight)
+			LunaTargetTargetTargetFrame.bars["Portrait"]:ClearAllPoints()
+			LunaTargetTargetTargetFrame.bars["Portrait"]:SetHeight(frameHeight)
+			LunaTargetTargetTargetFrame.bars["Portrait"]:SetWidth(frameHeight)
+			if LunaOptions.fliptargettargettarget then
+				LunaTargetTargetTargetFrame.bars["Portrait"]:SetPoint("TOPRIGHT", LunaTargetTargetTargetFrame, "TOPRIGHT")
+				anchor = {"TOPRIGHT", LunaTargetTargetTargetFrame.bars["Portrait"], "TOPLEFT"}
+			else
+				LunaTargetTargetTargetFrame.bars["Portrait"]:SetPoint("TOPLEFT", LunaTargetTargetTargetFrame, "TOPLEFT")
+				anchor = {"TOPLEFT", LunaTargetTargetTargetFrame.bars["Portrait"], "TOPRIGHT"}
+			end
+		else
+			frameWidth = LunaTargetTargetTargetFrame:GetWidth()  -- We have a Bar-Portrait or no portrait
+			anchor = {"TOPLEFT", LunaTargetTargetTargetFrame, "TOPLEFT"}
+		end
 		for k,v in pairs(LunaOptions.frames["LunaTargetTargetTargetFrame"].bars) do
 			if LunaTargetTargetTargetFrame.bars[v[1]]:IsShown() then
 				totalWeight = totalWeight + v[2]
@@ -812,6 +976,8 @@ function LunaUnitFrames:CreateTargetTargetTargetFrame()
 				anchor = {"TOPLEFT", LunaTargetTargetTargetFrame.bars[bar], "BOTTOMLEFT"}
 			end			
 		end
+		LunaTargetTargetTargetFrame.bars["Portrait"].model:SetHeight(LunaTargetTargetTargetFrame.bars["Portrait"]:GetHeight()+1)
+		LunaTargetTargetTargetFrame.bars["Portrait"].model:SetWidth(LunaTargetTargetTargetFrame.bars["Portrait"]:GetWidth())
 		local healthheight = (LunaTargetTargetTargetFrame.bars["Healthbar"]:GetHeight()*textheights["Healthbar"])
 		LunaTargetTargetTargetFrame.bars["Healthbar"].righttext:SetFont(LunaOptions.font, healthheight)
 		LunaTargetTargetTargetFrame.bars["Healthbar"].righttext:SetHeight(LunaTargetTargetTargetFrame.bars["Healthbar"]:GetHeight())
@@ -958,7 +1124,75 @@ function LunaUnitFrames:CreateTargetTargetTargetFrame()
 	LunaTargetTargetTargetFrame.UpdateBuffSize()
 end
 
+local function TargetTargetTargetPortraitUpdate(unit)
+	if (not validunits[arg1] or not UnitIsUnit(arg1,"targettargettarget")) and not unit then
+		return
+	end
+	local portrait = LunaTargetTargetTargetFrame.bars["Portrait"]
+	if LunaOptions.PortraitMode == 3 and UnitIsPlayer("targettargettarget") then
+		local _,class = UnitClass("targettargettarget")
+		portrait.model:Hide()
+		portrait.texture:Show()
+		portrait.texture:SetTexture("Interface\\Glues\\CharacterCreate\\UI-CharacterCreate-Classes")
+		portrait.texture:SetTexCoord(unpack(CLASS_ICON_TCOORDS[class]))
+	elseif LunaOptions.PortraitMode == 2 or (LunaOptions.PortraitMode == 3 and (LunaOptions.PortraitFallback == 3 or LunaOptions.PortraitFallback == 2)) then
+		if LunaOptions.frames["LunatargettargettargetFrame"].portrait > 1 then
+			portrait.model:Hide()
+			portrait.texture:Show()
+			SetPortraitTexture(portrait.texture, "targettargettarget")
+			portrait.texture:SetTexCoord(.1, .90, .1, .90)
+		else
+			portrait.model:Hide()
+			portrait.texture:Show()
+			SetPortraitTexture(portrait.texture, "target")
+			local aspect = portrait:GetHeight()/portrait:GetWidth()
+			portrait.texture:SetTexCoord(0, 1, (0.5-0.5*aspect), 1-(0.5-0.5*aspect))
+		end
+	else
+		portrait.model:Show()
+		portrait.texture:Hide()
+		if(not UnitExists("targettargettarget") or not UnitIsConnected("targettargettarget") or not UnitIsVisible("targettargettarget")) then
+			if LunaOptions.PortraitFallback == 3 and UnitIsPlayer("targettargettarget") then
+				portrait.model:Hide()
+				portrait.texture:Show()
+				local _,class = UnitClass("targettargettarget")
+				portrait.texture:SetTexture("Interface\\Glues\\CharacterCreate\\UI-CharacterCreate-Classes")
+				portrait.texture:SetTexCoord(unpack(CLASS_ICON_TCOORDS[class]))
+			elseif LunaOptions.PortraitFallback == 2 or LunaOptions.PortraitFallback == 3 then
+				if LunaOptions.frames["LunaTargetTargetTargetFrame"].portrait > 1 then
+					portrait.model:Hide()
+					portrait.texture:Show()
+					SetPortraitTexture(portrait.texture, "targettargettarget")
+					portrait.texture:SetTexCoord(.1, .90, .1, .90)
+				else
+					portrait.model:Hide()
+					portrait.texture:Show()
+					SetPortraitTexture(portrait.texture, "targettargettarget")
+					local aspect = portrait:GetHeight()/portrait:GetWidth()
+					portrait.texture:SetTexCoord(0, 1, .1+(0.4-0.4*aspect), .90-(0.4-0.4*aspect))
+				end
+			else
+				portrait.model:Show()
+				portrait.texture:Hide()
+				portrait.model:SetModelScale(4.25)
+				portrait.model:SetPosition(0, 0, -1)
+				portrait.model:SetModel("Interface\\Buttons\\talktomequestionmark.mdx")
+			end
+		else
+			portrait.model:Show()
+			portrait.texture:Hide()
+			portrait.model:SetUnit("targettargettarget")
+			portrait.model:SetCamera(0)
+		end
+	end
+end
+
 function LunaUnitFrames:UpdateTargetTargetTargetFrame()
+	if UnitName(LunaTargetTargetTargetFrame.unit) ~= LunaTargetTargetTargetFrame.name or LunaTargetTargetTargetFrame.isPlayer ~= UnitIsPlayer(LunaTargetTargetTargetFrame.unit) then
+		LunaTargetTargetTargetFrame.name = UnitName(LunaTargetTargetTargetFrame.unit)
+		LunaTargetTargetTargetFrame.isPlayer = UnitIsPlayer(LunaTargetTargetTargetFrame.unit)
+		TargetTargetTargetPortraitUpdate("targettargettarget")
+	end
 	if LunaOptions.frames["LunaTargetTargetTargetFrame"].enabled == 1 and UnitExists("targettargettarget") then
 		LunaTargetTargetTargetFrame:Show()
 	else
@@ -1097,4 +1331,35 @@ function LunaUnitFrames:UpdateTargetTargetTargetFrame()
 		end
 	end
 	LunaUnitFrames:UpdateTags("targettargettarget")
+end
+
+function LunaUnitFrames:ConvertTargetTargetTargetPortrait()
+	if LunaOptions.frames["LunaTargetTargetTargetFrame"].portrait == 1 then
+		table.insert(LunaOptions.frames["LunaTargetTargetTargetFrame"].bars, 1, {"Portrait", 4})
+	else
+		for k,v in pairs(LunaOptions.frames["LunaTargetTargetTargetFrame"].bars) do
+			if v[1] == "Portrait" then
+				table.remove(LunaOptions.frames["LunaTargetTargetTargetFrame"].bars, k)
+			end
+		end
+	end
+	UIDropDownMenu_SetText("Healthbar", LunaOptionsFrame.pages[5].BarSelect)
+	LunaOptionsFrame.pages[5].barorder:SetMinMaxValues(1,table.getn(LunaOptions.frames["LunaTargetTargetTargetFrame"].bars))
+	for k,v in pairs(LunaOptions.frames["LunaTargetTargetTargetFrame"].bars) do
+		if v[1] == "Healthbar" then
+			LunaOptionsFrame.pages[5].barheight:SetValue(v[2])
+			LunaOptionsFrame.pages[5].barorder:SetValue(k)
+			LunaOptionsFrame.pages[5].lefttext:SetText(v[4] or LunaOptions.defaultTags["Healthbar"][1])
+			LunaOptionsFrame.pages[5].righttext:SetText(v[5] or LunaOptions.defaultTags["Healthbar"][2])
+			LunaOptionsFrame.pages[5].textsize:SetValue(v[3] or 0.45)
+			break
+		end
+	end
+	LunaTargetTargetTargetFrame.AdjustBars()
+	LunaUnitFrames:UpdateTargetTargetTargetFrame()
+end
+
+function Luna_TargetTarget_Events.UNIT_PORTRAIT_UPDATE()
+	TargetTargetPortraitUpdate()
+	TargetTargetTargetPortraitUpdate()
 end

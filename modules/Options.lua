@@ -14,60 +14,68 @@ local OptionsPageNames = {{title = "Player Frame", frame = "LunaPlayerFrame"},
 						
 local barselectorfunc = {}
 local buffposselectfunc = {}
+local TagsDescs = {}
 
-local TagDesc = {
-	["combat"]				= "(c) when in combat",
-	["color:combat"]		= "Red when in combat",
-	["race"]				= "Race if available",
-	["rank"]				= "PvP title",
-	["numrank"]				= "Numeric PvP rank",
-	["creature"]			= "Creature type (Bat, Wolf , etc..)",
-	["faction"]				= "Horde or Alliance",
-	["sex"]					= "Gender",
-	["nocolor"]				= "Resets the color to white",
-	["druidform"]			= "Current druid form of friendly unit",
-	["guild"]				= "Guildname",
-	["incheal"]				= "Value of incoming heal",
-	["pvp"]					= "Displays \"PvP\" if flagged for it",
-	["smarthealth"]			= "The classic hp display (hp/maxhp and \"Dead\" if dead etc)",
-	["healhp"]				= "Current hp and heal in one number (green when heal is incoming)",
-	["hp"]            	    = "Current hp",
-	["maxhp"]				= "Current maximum hp",
-	["missinghp"]           = "Current missing hp",
-	["healmishp"]			= "Missing hp after incoming heal (green when heal is incoming)",
-	["perhp"]               = "HP percent",
-	["pp"]            	    = "Current mana/rage/energy etc",
-	["maxpp"]				= "Maximum mana/rage/energy etc",
-	["missingpp"]           = "Missing mana/rage/energy",
-	["perpp"]               = "Mana/rage/energy percent",
-	["druid:pp"]			= "Returns current mana even in druid form",
-	["druid:maxpp"]			= "Returns current maximum mana even in druid form",
-	["druid:missingpp"]		= "Returns missing mana even in druid form",
-	["druid:perpp"]			= "Returns mana percentage even in druid form",
-	["level"]               = "Current level, returns ?? for bosses and players too high",
-	["smartlevel"]          = "Returns \"Boss\" for bosses and Level+10+ for players too high",
-	["levelcolor"]			= "Colors based on your level vs the level of the unit. (grey,green,yellow and red)",
-	["name"]                = "Returns plain name of the unit",
-	["ignore"]				= "Returns (i) if the player is on your ignore list",
-	["abbrev:name"]			= "Returns shortened names (Marshall Williams = M. Williams)",
-	["server"]				= "Server name",
-	["status"]              = "\"Dead\", \"Ghost\" or \"Offline\"",
-	["cpoints"]             = "Combo Points",
-	["rare"]                = "\"rare\" if the creature is rare or rareelite",
-	["elite"]     			= "\"elite\" if the creature is elite or rareelite",
+TagsDescs["INFO TAGS"] = {
+	["name"] = "Returns plain name of the unit",
+	["abbrev:name"] = "Returns shortened names (Marshall Williams = M. Williams)",
+	["guild"] = "Guildname",
+	["level"] = "Current level, returns ?? for bosses and players too high",
+	["smartlevel"] = "Returns \"Boss\" for bosses and Level+10+ for players too high",
+	["class"] = "Class of the unit",
+	["smartclass"] = "Returns Class for players and Creaturetype for NPCs",
+	["rare"] = "\"rare\" if the creature is rare or rareelite",
+	["elite"] = "\"elite\" if the creature is elite or rareelite",
+	["classification"] = "Shows elite, rare, boss, etc...",
 	["shortclassification"] = "\"E\", \"R\", \"RE\" for the respective classification",
-	["classification"]		= "Shows elite, rare, boss, etc...",
-	["group"]				= "Current subgroup of the raid",
-	["color:aggro"]			= "Red if the unit is targeted by an enemy",
-	["classcolor"]			= "Classcolor of the unit",
-	["class"]				= "Class of the unit",
-	["smartclass"]			= "Returns Class for players and Creaturetype for NPCs",
-	["reactcolor"]			= "Red for enemies, yellow for neutrals, and green for friendlies",
-	["pvpcolor"]			= "White for unflagged units, green for flagged friendlies and red for flagged enemies",
-	["smart:healmishp"]		= "Returns missing hp with healing factored in. Shows status when needed (\"Dead\", \"Offline\", \"Ghost\")",
-	["smartrace"]			= "Shows race when if player, creaturetype when npc",
-	["civilian"]			= "Returns (civ) when civilian",
-	["healerhealth"]		= "Returns the same as \"smart:healmishp\" on friendly units and hp/maxhp on enemies",
+	["race"] = "Race if available",
+	["smartrace"] = "Shows race when if player, creaturetype when npc",
+	["creature"] = "Creature type (Bat, Wolf , etc..)",
+	["sex"] = "Gender",
+	["druidform"] = "Current druid form of friendly unit",
+	["civilian"] = "Returns (civ) when civilian",
+	["pvp"] = "Displays \"PvP\" if flagged for it",
+	["rank"] = "PvP title",
+	["numrank"] = "Numeric PvP rank",
+	["faction"] = "Horde or Alliance",
+	["ignore"] = "Returns (i) if the player is on your ignore list",
+	["server"] = "Server name",
+	["status"] = "\"Dead\", \"Ghost\" or \"Offline\"",
+	["happiness"] = "Pet happiness as 'unhappy','content' or 'happy'",
+	["group"] = "Current subgroup of the raid",
+	["combat"] = "(c) when in combat",
+}
+TagsDescs["HEALTH AND POWER TAGS"] = {
+	["healerhealth"] = "Returns the same as \"smart:healmishp\" on friendly units and hp/maxhp on enemies",
+	["smart:healmishp"] = "Returns missing hp with healing factored in. Shows status when needed (\"Dead\", \"Offline\", \"Ghost\")",
+	["cpoints"] = "Combo Points",
+	["smarthealth"] = "The classic hp display (hp/maxhp and \"Dead\" if dead etc)",
+	["healhp"] = "Current hp and heal in one number (green when heal is incoming)",
+	["hp"] = "Current hp",
+	["maxhp"] = "Current maximum hp",
+	["missinghp"] = "Current missing hp",
+	["healmishp"] = "Missing hp after incoming heal (green when heal is incoming)",
+	["perhp"] = "HP percent",
+	["pp"] = "Current mana/rage/energy etc",
+	["maxpp"] = "Maximum mana/rage/energy etc",
+	["missingpp"] = "Missing mana/rage/energy",
+	["perpp"] = "Mana/rage/energy percent",
+	["druid:pp"] = "Returns current mana even in druid form",
+	["druid:maxpp"] = "Returns current maximum mana even in druid form",
+	["druid:missingpp"] = "Returns missing mana even in druid form",
+	["druid:perpp"] = "Returns mana percentage even in druid form",
+	["incheal"] = "Value of incoming heal",
+}
+TagsDescs["COLOR TAGS"] = {
+	["color:combat"] = "Red when in combat",
+	["pvpcolor"] = "White for unflagged units, green for flagged friendlies and red for flagged enemies",
+	["reactcolor"] = "Red for enemies, yellow for neutrals, and green for friendlies",
+	["levelcolor"] = "Colors based on your level vs the level of the unit. (grey,green,yellow and red)",
+	["color:aggro"] = "Red if the unit is targeted by an enemy",
+	["classcolor"] = "Classcolor of the unit",
+	["healthcolor"] = "Color based on health (red = dead)",
+	["color:xxxxxx"] = "Custom color in hexadecimal (rrggbb)",
+	["nocolor"] = "Resets the color to white",
 }
 
 local BarTexturesPath = "\\media\\statusbar\\"
@@ -496,6 +504,10 @@ function OptionFunctions.PortraitmodeToggle()
 		LunaUnitFrames:ConvertTargetPortrait()
 	elseif this:GetParent().frame == "LunaPartyFrames" then
 		LunaUnitFrames:ConvertPartyPortraits()
+	elseif this:GetParent().frame == "LunaTargetTargetFrame" then
+		LunaUnitFrames:ConvertTargetTargetPortrait()
+	elseif this:GetParent().frame == "LunaTargetTargetTargetFrame" then
+		LunaUnitFrames:ConvertTargetTargetTargetPortrait()
 	end
 end
 
@@ -1146,6 +1158,24 @@ function OptionFunctions.ToggleFlipTarget()
 	LunaTargetFrame.AdjustBars()
 end
 
+function OptionFunctions.ToggleFlipTargetTarget()
+	if LunaOptions.fliptargettarget then
+		LunaOptions.fliptargettarget = nil
+	else
+		LunaOptions.fliptargettarget = 1
+	end
+	LunaTargetTargetFrame.AdjustBars()
+end
+
+function OptionFunctions.ToggleFlipTargetTargetTarget()
+	if LunaOptions.fliptargettargettarget then
+		LunaOptions.fliptargettargettarget = nil
+	else
+		LunaOptions.fliptargettargettarget = 1
+	end
+	LunaTargetTargetTargetFrame.AdjustBars()
+end
+
 function OptionFunctions.ToggleHideHealing()
 	if LunaOptions.HideHealing then
 		LunaOptions.HideHealing = nil
@@ -1547,8 +1577,7 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.help:SetHeight(14)
 	LunaOptionsFrame.help:SetWidth(14)
 	LunaOptionsFrame.help:SetPoint("RIGHT", LunaOptionsFrame.CloseButton, "LEFT", -5, 0)
-	LunaOptionsFrame.help:SetScript("OnEnter", function() LunaOptionsFrame.helpframe:Show() end)
-	LunaOptionsFrame.help:SetScript("OnLeave", function() LunaOptionsFrame.helpframe:Hide() end)
+	LunaOptionsFrame.help:SetScript("OnClick", function() if LunaOptionsFrame.Helpframe:IsShown() then LunaOptionsFrame.Helpframe:Hide() else LunaOptionsFrame.Helpframe:Show() end end)
 	
 	LunaOptionsFrame.help.text = LunaOptionsFrame.help:CreateFontString(nil, "OVERLAY", "NumberFontNormal")
 	LunaOptionsFrame.help.text:SetPoint("CENTER", LunaOptionsFrame.help, "CENTER")
@@ -2107,6 +2136,38 @@ function LunaOptionsModule:CreateMenu()
 	LunaOptionsFrame.pages[3].iconsize:SetValue(LunaOptions.frames["LunaTargetFrame"].iconscale or 1)
 	LunaOptionsFrame.pages[3].iconsize:SetWidth(180)
 	getglobal("TargetIconSizeSliderText"):SetText("Status Icon Size: "..(LunaOptions.frames["LunaTargetFrame"].iconscale or 1))
+	
+	LunaOptionsFrame.pages[4].Portraitmode = CreateFrame("CheckButton", "PortraitmodeToT", LunaOptionsFrame.pages[4], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[4].Portraitmode:SetHeight(20)
+	LunaOptionsFrame.pages[4].Portraitmode:SetWidth(20)
+	LunaOptionsFrame.pages[4].Portraitmode:SetPoint("TOPLEFT", LunaOptionsFrame.pages[4].BuffInRowslider, "TOPLEFT", 0, -30)
+	LunaOptionsFrame.pages[4].Portraitmode:SetScript("OnClick", OptionFunctions.PortraitmodeToggle)
+	LunaOptionsFrame.pages[4].Portraitmode:SetChecked((LunaOptions.frames["LunaTargetTargetFrame"].portrait == 1))
+	getglobal("PortraitmodeToTText"):SetText("Display Portrait as Bar")
+	
+	LunaOptionsFrame.pages[4].FlipToT = CreateFrame("CheckButton", "FlipToT", LunaOptionsFrame.pages[4], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[4].FlipToT:SetHeight(20)
+	LunaOptionsFrame.pages[4].FlipToT:SetWidth(20)
+	LunaOptionsFrame.pages[4].FlipToT:SetPoint("TOPLEFT", LunaOptionsFrame.pages[4].Portraitmode, "TOPLEFT", 0, -20)
+	LunaOptionsFrame.pages[4].FlipToT:SetScript("OnClick", OptionFunctions.ToggleFlipTargetTarget)
+	LunaOptionsFrame.pages[4].FlipToT:SetChecked(LunaOptions.fliptargettarget)
+	getglobal("FlipToTText"):SetText("Flip Target Target")
+	
+	LunaOptionsFrame.pages[5].Portraitmode = CreateFrame("CheckButton", "PortraitmodeToToT", LunaOptionsFrame.pages[5], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[5].Portraitmode:SetHeight(20)
+	LunaOptionsFrame.pages[5].Portraitmode:SetWidth(20)
+	LunaOptionsFrame.pages[5].Portraitmode:SetPoint("TOPLEFT", LunaOptionsFrame.pages[5].BuffInRowslider, "TOPLEFT", 0, -30)
+	LunaOptionsFrame.pages[5].Portraitmode:SetScript("OnClick", OptionFunctions.PortraitmodeToggle)
+	LunaOptionsFrame.pages[5].Portraitmode:SetChecked((LunaOptions.frames["LunaTargetTargetTargetFrame"].portrait == 1))
+	getglobal("PortraitmodeToToTText"):SetText("Display Portrait as Bar")
+	
+	LunaOptionsFrame.pages[5].FlipToToT = CreateFrame("CheckButton", "FlipToToT", LunaOptionsFrame.pages[5], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[5].FlipToToT:SetHeight(20)
+	LunaOptionsFrame.pages[5].FlipToToT:SetWidth(20)
+	LunaOptionsFrame.pages[5].FlipToToT:SetPoint("TOPLEFT", LunaOptionsFrame.pages[5].Portraitmode, "TOPLEFT", 0, -20)
+	LunaOptionsFrame.pages[5].FlipToToT:SetScript("OnClick", OptionFunctions.ToggleFlipTargetTargetTarget)
+	LunaOptionsFrame.pages[5].FlipToToT:SetChecked(LunaOptions.fliptargettarget)
+	getglobal("FlipToToTText"):SetText("Flip Target Target Target")
 	
 	LunaOptionsFrame.pages[6].spaceslider = CreateFrame("Slider", "SpaceSlider", LunaOptionsFrame.pages[6], "OptionsSliderTemplate")
 	LunaOptionsFrame.pages[6].spaceslider:SetMinMaxValues(0,150)
@@ -3131,46 +3192,114 @@ function LunaOptionsModule:CreateMenu()
 		end
 	end
 	
-	LunaOptionsFrame.helpframe = CreateFrame("Frame", nil, LunaOptionsFrame)
-	LunaOptionsFrame.helpframe:SetHeight(690)
-	LunaOptionsFrame.helpframe:SetWidth(300)
-	LunaOptionsFrame.helpframe:SetBackdrop(LunaOptions.backdrop)
-	LunaOptionsFrame.helpframe:SetBackdropColor(0.18,0.27,0.5)
-	LunaOptionsFrame.helpframe:SetPoint("TOPLEFT", LunaOptionsFrame, "TOPRIGHT", 5, 0)
+	LunaOptionsFrame.Helpframe = CreateFrame("ScrollFrame", nil, LunaOptionsFrame)
+	LunaOptionsFrame.Helpframe:SetHeight(400)
+	LunaOptionsFrame.Helpframe:SetWidth(320)
+	LunaOptionsFrame.Helpframe:SetPoint("TOPLEFT", LunaOptionsFrame, "TOPRIGHT", 5, 0)
+	LunaOptionsFrame.Helpframe:SetBackdrop(LunaOptions.backdrop)
+	LunaOptionsFrame.Helpframe:SetBackdropColor(0.18,0.27,0.5,1)
 	
-	LunaOptionsFrame.helpframe.title = LunaOptionsFrame.helpframe:CreateFontString(nil, "OVERLAY", LunaOptionsFrame.helpframe)
-	LunaOptionsFrame.helpframe.title:SetFont(LunaOptions.font, 20)
-	LunaOptionsFrame.helpframe.title:SetText("Tags")
-	LunaOptionsFrame.helpframe.title:SetJustifyH("CENTER")
-	LunaOptionsFrame.helpframe.title:SetJustifyV("TOP")
-	LunaOptionsFrame.helpframe.title:SetPoint("TOP", LunaOptionsFrame.helpframe, "TOP")
-	LunaOptionsFrame.helpframe.title:SetHeight(20)
-	LunaOptionsFrame.helpframe.title:SetWidth(300)
+	LunaOptionsFrame.HelpScrollFrame = CreateFrame("ScrollFrame", nil, LunaOptionsFrame.Helpframe)
+	LunaOptionsFrame.HelpScrollFrame:SetHeight(380)
+	LunaOptionsFrame.HelpScrollFrame:SetWidth(280)
+	LunaOptionsFrame.HelpScrollFrame:SetPoint("TOPLEFT", LunaOptionsFrame.Helpframe, "TOPLEFT", 10, -10)
+	LunaOptionsFrame.HelpScrollFrame:EnableMouseWheel(true)
+	LunaOptionsFrame.HelpScrollFrame:SetBackdrop(LunaOptions.backdrop)
+	LunaOptionsFrame.HelpScrollFrame:SetBackdropColor(0,0,0,1)
+	LunaOptionsFrame.HelpScrollFrame:SetScript("OnMouseWheel", function()
+																	local maxScroll = this:GetVerticalScrollRange()
+																	local Scroll = this:GetVerticalScroll()
+																	local toScroll = (Scroll - (20*arg1))
+																	if toScroll < 0 then
+																		this:SetVerticalScroll(0)
+																	elseif toScroll > maxScroll then
+																		this:SetVerticalScroll(maxScroll)
+																	else
+																		this:SetVerticalScroll(toScroll)
+																	end
+																	local script = LunaOptionsFrame.HelpFrameSlider:GetScript("OnValueChanged")
+																	LunaOptionsFrame.HelpFrameSlider:SetScript("OnValueChanged", nil)
+																	LunaOptionsFrame.HelpFrameSlider:SetValue(toScroll/maxScroll)
+																	LunaOptionsFrame.HelpFrameSlider:SetScript("OnValueChanged", script)
+																end)
 	
-	LunaOptionsFrame.helpframe.texts = {}
-	local dist
-	local prevframe = LunaOptionsFrame.helpframe.title
-	for k,v in pairs(TagDesc) do
-		LunaOptionsFrame.helpframe.texts[k] = LunaOptionsFrame.helpframe:CreateFontString(nil, "OVERLAY", LunaOptionsFrame.helpframe)
-		LunaOptionsFrame.helpframe.texts[k]:SetFont("Fonts\\FRIZQT__.TTF", 9)
-		LunaOptionsFrame.helpframe.texts[k]:SetText("["..k.."]: "..v)
-		LunaOptionsFrame.helpframe.texts[k]:SetJustifyH("LEFT")
-		LunaOptionsFrame.helpframe.texts[k]:SetJustifyV("TOP")
-		if LunaOptionsFrame.helpframe.texts[k]:GetStringWidth() > 280 then
-			LunaOptionsFrame.helpframe.texts[k]:SetHeight(22)
+	LunaOptionsFrame.HelpFrameSlider = CreateFrame("Slider", nil, LunaOptionsFrame.HelpScrollFrame)
+	LunaOptionsFrame.HelpFrameSlider:SetOrientation("VERTICAL")
+	LunaOptionsFrame.HelpFrameSlider:SetPoint("TOPLEFT", LunaOptionsFrame.HelpScrollFrame, "TOPRIGHT", 5, 0)
+	LunaOptionsFrame.HelpFrameSlider:SetBackdrop(LunaOptions.backdrop)
+	LunaOptionsFrame.HelpFrameSlider:SetBackdropColor(0,0,0,0.5)
+	LunaOptionsFrame.HelpFrameSlider.thumbtexture = LunaOptionsFrame.HelpFrameSlider:CreateTexture()
+	LunaOptionsFrame.HelpFrameSlider.thumbtexture:SetTexture(0.18,0.27,0.5,1)
+	LunaOptionsFrame.HelpFrameSlider:SetThumbTexture(LunaOptionsFrame.HelpFrameSlider.thumbtexture)
+	LunaOptionsFrame.HelpFrameSlider:SetMinMaxValues(0,1)
+	LunaOptionsFrame.HelpFrameSlider:SetHeight(380)
+	LunaOptionsFrame.HelpFrameSlider:SetWidth(15)
+	LunaOptionsFrame.HelpFrameSlider:SetValue(0)
+	LunaOptionsFrame.HelpFrameSlider.ScrollFrame = LunaOptionsFrame.HelpScrollFrame
+	LunaOptionsFrame.HelpFrameSlider:SetScript("OnValueChanged", function() this.ScrollFrame:SetVerticalScroll(this.ScrollFrame:GetVerticalScrollRange()*this:GetValue()) end  )
+
+	LunaOptionsFrame.helpframescrollchild = CreateFrame("Frame", "helpframescrollchild", LunaOptionsFrame.HelpScrollFrame)
+	LunaOptionsFrame.helpframescrollchild:SetHeight(1)
+	LunaOptionsFrame.helpframescrollchild:SetWidth(300)
+	
+	LunaOptionsFrame.helpframescrollchild.title = LunaOptionsFrame.helpframescrollchild:CreateFontString(nil, "OVERLAY", LunaOptionsFrame.helpframescrollchild)
+	LunaOptionsFrame.helpframescrollchild.title:SetFont(LunaOptions.font, 20)
+	LunaOptionsFrame.helpframescrollchild.title:SetText("Tags")
+	LunaOptionsFrame.helpframescrollchild.title:SetJustifyH("CENTER")
+	LunaOptionsFrame.helpframescrollchild.title:SetJustifyV("TOP")
+	LunaOptionsFrame.helpframescrollchild.title:SetPoint("TOP", LunaOptionsFrame.helpframescrollchild, "TOP")
+	LunaOptionsFrame.helpframescrollchild.title:SetHeight(20)
+	LunaOptionsFrame.helpframescrollchild.title:SetWidth(300)
+	
+	LunaOptionsFrame.helpframescrollchild.texts = {}
+	local first
+	local count = 1
+	local prevframe = LunaOptionsFrame.helpframescrollchild.title
+	for _,l in pairs({"INFO TAGS","HEALTH AND POWER TAGS","COLOR TAGS"}) do
+		LunaOptionsFrame.helpframescrollchild.texts[count] = LunaOptionsFrame.helpframescrollchild:CreateFontString(nil, "OVERLAY", LunaOptionsFrame.helpframescrollchild)
+		LunaOptionsFrame.helpframescrollchild.texts[count]:SetFont("Fonts\\FRIZQT__.TTF", 12)
+		LunaOptionsFrame.helpframescrollchild.texts[count]:SetText("\n"..l)
+		LunaOptionsFrame.helpframescrollchild.texts[count]:SetJustifyH("LEFT")
+		LunaOptionsFrame.helpframescrollchild.texts[count]:SetJustifyV("TOP")
+		if LunaOptionsFrame.helpframescrollchild.texts[count]:GetStringWidth() > 280 then
+			LunaOptionsFrame.helpframescrollchild.texts[count]:SetHeight(22)
 		else
-			LunaOptionsFrame.helpframe.texts[k]:SetHeight(11)
+			LunaOptionsFrame.helpframescrollchild.texts[count]:SetHeight(30)
 		end
-		LunaOptionsFrame.helpframe.texts[k]:SetWidth(300)
-		if not dist then
-			LunaOptionsFrame.helpframe.texts[k]:SetPoint("TOP", prevframe, "BOTTOM")
+		LunaOptionsFrame.helpframescrollchild.texts[count]:SetWidth(300)
+		if not first then
+			LunaOptionsFrame.helpframescrollchild.texts[count]:SetPoint("TOP", prevframe, "BOTTOM")
 		else
-			LunaOptionsFrame.helpframe.texts[k]:SetPoint("TOPLEFT", prevframe, "BOTTOMLEFT")
+			LunaOptionsFrame.helpframescrollchild.texts[count]:SetPoint("TOPLEFT", prevframe, "BOTTOMLEFT")
 		end
-		prevframe = LunaOptionsFrame.helpframe.texts[k]
-		dist = 1
+		prevframe = LunaOptionsFrame.helpframescrollchild.texts[count]
+		first = true
+		count = count + 1
+		
+		for k,v in pairs(TagsDescs[l]) do
+			LunaOptionsFrame.helpframescrollchild.texts[count] = LunaOptionsFrame.helpframescrollchild:CreateFontString(nil, "OVERLAY", LunaOptionsFrame.helpframescrollchild)
+			LunaOptionsFrame.helpframescrollchild.texts[count]:SetFont("Fonts\\FRIZQT__.TTF", 9)
+			LunaOptionsFrame.helpframescrollchild.texts[count]:SetText("["..k.."]: "..v)
+			LunaOptionsFrame.helpframescrollchild.texts[count]:SetJustifyH("LEFT")
+			LunaOptionsFrame.helpframescrollchild.texts[count]:SetJustifyV("TOP")
+			if LunaOptionsFrame.helpframescrollchild.texts[count]:GetStringWidth() > 281 then
+				LunaOptionsFrame.helpframescrollchild.texts[count]:SetHeight(22)
+			else
+				LunaOptionsFrame.helpframescrollchild.texts[count]:SetHeight(11)
+			end
+			LunaOptionsFrame.helpframescrollchild.texts[count]:SetWidth(280)
+			if not first then
+				LunaOptionsFrame.helpframescrollchild.texts[count]:SetPoint("TOP", prevframe, "BOTTOM")
+			else
+				LunaOptionsFrame.helpframescrollchild.texts[count]:SetPoint("TOPLEFT", prevframe, "BOTTOMLEFT")
+			end
+			prevframe = LunaOptionsFrame.helpframescrollchild.texts[count]
+			first = true
+			count = count + 1
+		end
 	end
-	LunaOptionsFrame.helpframe:Hide()
+	LunaOptionsFrame.HelpScrollFrame:SetScrollChild(LunaOptionsFrame.helpframescrollchild)
+	LunaOptionsFrame.Helpframe:Hide()
 end
 
 local totemcolors = {

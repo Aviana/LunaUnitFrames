@@ -267,6 +267,14 @@ function LunaUnitFrames:OnEvent()
 		if not LunaOptions.BarFont then
 			LunaOptions.BarFont = 1
 		end
+		
+		if not LunaOptions.frames["LunaTargetTargetFrame"].portrait then
+			LunaOptions.frames["LunaTargetTargetFrame"].portrait = 2
+		end
+		
+		if not LunaOptions.frames["LunaTargetTargetTargetFrame"].portrait then
+			LunaOptions.frames["LunaTargetTargetTargetFrame"].portrait = 2
+		end
 
 		LunaUnitFrames:UpdateBarFontString()
 
