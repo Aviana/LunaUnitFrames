@@ -1136,7 +1136,7 @@ local function TargetTargetTargetPortraitUpdate(unit)
 		portrait.texture:SetTexture("Interface\\Glues\\CharacterCreate\\UI-CharacterCreate-Classes")
 		portrait.texture:SetTexCoord(unpack(CLASS_ICON_TCOORDS[class]))
 	elseif LunaOptions.PortraitMode == 2 or (LunaOptions.PortraitMode == 3 and (LunaOptions.PortraitFallback == 3 or LunaOptions.PortraitFallback == 2)) then
-		if LunaOptions.frames["LunatargettargettargetFrame"].portrait > 1 then
+		if LunaOptions.frames["LunaTargetTargetTargetFrame"].portrait > 1 then
 			portrait.model:Hide()
 			portrait.texture:Show()
 			SetPortraitTexture(portrait.texture, "targettargettarget")
