@@ -136,11 +136,11 @@ Tags.defaultTags = {
 	["rank"]				= function(unit)
 								local pvpname = UnitPVPName(unit)
 								local name = UnitName(unit)
-								if name == pvpname then
-									return ""
-								else
+								if name and name ~= pvpname then
 									pvpname = string.gsub(pvpname, " "..name, "")
 									return pvpname
+								else
+									return ""
 								end
 							end;
 	["numrank"]				= function(unit)

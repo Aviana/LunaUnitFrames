@@ -1,6 +1,6 @@
 
 
-local vmajor, vminor = "1", tonumber(string.sub("$Revision: 14736 $", 12, -3))
+local vmajor, vminor = "1", tonumber(string.sub("$Revision: 14746 $", 12, -3))
 local stubvarname = "TekLibStub"
 local libvarname = "ProximityLib"
 
@@ -111,6 +111,9 @@ local events = {
 	CHAT_MSG_SPELL_CREATURE_VS_SELF_DAMAGE = {".+'s .+ c?[rh]its (%a+) for .+", ".+'s .+ was resisted by (%a+)%."},
 	CHAT_MSG_SPELL_CREATURE_VS_PARTY_DAMAGE = {".+'s .+ c?[rh]its (%a+) for .+", ".+'s .+ was resisted by (%a+)%."},
 	CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE = {".+'s .+ c?[rh]its (%a+) for .+", ".+'s .+ was resisted by (%a+)%."},
+	
+	CHAT_MSG_COMBAT_CREATURE_VS_PARTY_MISSES = {".+ attacks. (%a+) parries.", ".+ attacks. (%a+) dodges.", ".+ attacks. (%a+) blocks.", ".+ misses (%a+)."},
+
 	CHAT_MSG_SPELL_FRIENDLYPLAYER_BUFF = "(%a+)'s .+",
 	CHAT_MSG_SPELL_FRIENDLYPLAYER_DAMAGE = "(%a+)'s .+ c?[rh]its .+",
 	CHAT_MSG_SPELL_HOSTILEPLAYER_DAMAGE = ".+'s .+ c?[rh]its (%a+) for .+",
@@ -118,10 +121,11 @@ local events = {
 	CHAT_MSG_SPELL_PARTY_DAMAGE = "(%a+)'s .+ c?[rh]its .+",
 	CHAT_MSG_SPELL_PERIODIC_CREATURE_DAMAGE = "%a+ suffers %d+ %a+ damage from (%a+)'s .+",
 	CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_BUFFS = ".+ gains %d+ health from (.+)'s .+",
-	CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE = "(%a+) suffers %d+ .+",
-	CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_DAMAGE = "(%a+) suffers %d+ .+",
+	CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE = {"(%a+) suffers %d+ .+", "(%a+) is afflicted by .+"},
+	CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_DAMAGE = {"(%a+) suffers %d+ .+", "(%a+) is afflicted by .+"},
+	CHAT_MSG_SPELL_HOSTILEPLAYER_BUFF = {[1] = ".+ heals (%a+) for .+", [2] = "(%a+)'s .+"},
 	CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE = "(%a+) suffers %d+ .+",
-	CHAT_MSG_SPELL_PERIODIC_PARTY_BUFFS = ".+ gains %d+ health from (.+)'s .+",
+	CHAT_MSG_SPELL_PERIODIC_PARTY_BUFFS = {".+ gains %d+ health from (.+)'s .+", "(%a+) gains .+"}
 }
 
 if ( GetLocale() == "koKR" ) then
@@ -183,7 +187,8 @@ end
 
 function lib:OnEvent()
 	local self = lib
-	if events[event] then self:ParseCombatMessage(events[event])
+	if events[event] then
+		self:ParseCombatMessage(events[event])
 	elseif rosterevents[event] then
 		-- Times are wiped clean on a roster update, so recent log-range entries will be lost
 		for i in pairs(self.vars.roster) do self.vars.roster[i] = nil end
@@ -230,25 +235,20 @@ end
 
 function lib:ParseCombatMessage(eventstr)
 	if type(eventstr) == "string" then
-		local startstring, endstring = string.find(arg1, eventstr)
-		if startstring then
-			_, _, unit = string.find(arg1, eventstr)
+		local _, _, unit = string.find(arg1, eventstr)
+		if unit then
 			if unit then
 				self:UpdateUnit(unit, true) 
 			else
-				self:UpdateUnit(UnitName("player"), ture)
+				self:UpdateUnit(UnitName("player"), true)
 			end
 		end
 	elseif type(eventstr) == "table" then
 		for _,val in pairs(eventstr) do
-			local startstring, endstring = string.find(arg1, val)
-			if startstring then
-				_, _, unit = string.find(arg1, val)
-				if unit then
+			local _, _, unit = string.find(arg1, val)
+			if unit then
+				if unit and unit ~= "you" then
 					self:UpdateUnit(unit, true)
-					return
-				else
-					self:UpdateUnit(UnitName("player"), ture)
 					return
 				end
 			end
