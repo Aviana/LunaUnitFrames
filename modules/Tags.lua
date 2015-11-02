@@ -136,7 +136,7 @@ Tags.defaultTags = {
 	["rank"]				= function(unit)
 								local pvpname = UnitPVPName(unit)
 								local name = UnitName(unit)
-								if name and name ~= pvpname then
+								if pvpname and name and name ~= pvpname then
 									pvpname = string.gsub(pvpname, " "..name, "")
 									return pvpname
 								else
