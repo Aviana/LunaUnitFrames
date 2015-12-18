@@ -5,7 +5,7 @@
 ## Dependencies:
 ## SavedVariables: LunaOptions, LunaBuffDB
 ## OptionalDeps: Ace2, ProximityLib, RosterLib, BanzaiLib, HealComm, DruidManaLib, MobHealth
-
+## X-Category: UnitFrame
 
 
 libs\AceLibrary\AceLibrary.lua

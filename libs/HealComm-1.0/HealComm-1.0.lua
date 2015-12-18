@@ -8,7 +8,7 @@ Dependencies: AceLibrary, AceEvent-2.0, RosterLib-2.0
 ]]
 
 local MAJOR_VERSION = "HealComm-1.0"
-local MINOR_VERSION = "$Revision: 11220 $"
+local MINOR_VERSION = "$Revision: 11230 $"
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
 if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end
@@ -259,6 +259,7 @@ end
 
 function strmatch(str, pat, init)
 	local results = {}
+	pat = "("..pat..")"
 	local s,e,found = string.find(str, pat, init)
 	while found do
 		tinsert(results,found)
@@ -1166,6 +1167,7 @@ HealComm.OnEvent = function()
 			healcomm_spellIsCasting = arg1
 			HealComm.startResurrection(UnitName("player"), healcomm_SpellCast[3])
 		end
+		healcomm_SpellCast =  nil
 	elseif (event == "SPELLCAST_INTERRUPTED" or event == "SPELLCAST_FAILED") and HealComm.Spells[healcomm_spellIsCasting] then
 		if healcomm_spellIsCasting == L["Prayer of Healing"] then
 			HealComm.SendAddonMessage("GrpHealstop")

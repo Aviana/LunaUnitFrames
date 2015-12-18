@@ -93,14 +93,17 @@ function LunaUnitFrames:ToggleRaidFrameLock()
 	if not LunaUnitFrames.frames.headers[1]:IsMovable() and not LunaOptions.raidinterlock then
 		for i=1,9 do
 			LunaUnitFrames.frames.headers[i]:SetScript("OnDragStart", StartMoving)
+			LunaUnitFrames.frames.headers[i]:SetScript("OnDragStop", StopMovingOrSizing)
 			LunaUnitFrames.frames.headers[i]:SetMovable(1)
 		end
 	elseif LunaOptions.raidinterlock and not LunaUnitFrames.frames.headers[1]:IsMovable() then
 		LunaUnitFrames.frames.headers[1]:SetScript("OnDragStart", StartMoving)
+		LunaUnitFrames.frames.headers[i]:SetScript("OnDragStop", StopMovingOrSizing)
 		LunaUnitFrames.frames.headers[1]:SetMovable(1)
 	else
 		for i=1,9 do
 			LunaUnitFrames.frames.headers[i]:SetScript("OnDragStart", nil)
+			LunaUnitFrames.frames.headers[i]:SetScript("OnDragStop", nil)
 			LunaUnitFrames.frames.headers[i]:SetMovable(0)
 		end
 	end
@@ -222,7 +225,6 @@ function LunaUnitFrames:CreateRaidFrames()
 		LunaUnitFrames.frames.headers[i]:Hide()
 		LunaUnitFrames.frames.headers[i]:SetMovable(0)
 		LunaUnitFrames.frames.headers[i]:RegisterForDrag("LeftButton")
-		LunaUnitFrames.frames.headers[i]:SetScript("OnDragStop", StopMovingOrSizing)
 		LunaUnitFrames.frames.headers[i].id = i
 		
 		LunaUnitFrames.frames.headers[i].GrpName = LunaUnitFrames.frames.headers[i]:CreateFontString(nil, "OVERLAY", LunaUnitFrames.frames.headers[i])

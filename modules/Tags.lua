@@ -27,6 +27,7 @@ local DruidForms = {
 Tags.fontStrings = {}
 
 Tags.defaultEvents = {
+	["numtargeting"]		= "targetingupdate",
 	["happiness"]			= "UNIT_HAPPINESS",
 	["combat"]				= "PLAYER_REGEN_ENABLED PLAYER_REGEN_DISABLED",
 	["color:combat"]		= "PLAYER_REGEN_ENABLED PLAYER_REGEN_DISABLED",
@@ -99,6 +100,30 @@ local function tagsplit(pString)
 end
 
 Tags.defaultTags = {
+	["numtargeting"]		= function(unit)
+								if UnitInRaid("player") then
+									local count = 0
+									for i = 1, GetNumRaidMembers() do
+										if UnitIsUnit(unit, ("raid"..i.."target")) then
+											count = count + 1
+										end
+									end
+									return tostring(count)
+								else
+									local count
+									if UnitIsUnit(unit, "target") then
+										count = 1
+									else
+										count = 0
+									end
+									for i=1, GetNumPartyMembers() do
+										if UnitIsUnit(unit, ("party"..i.."target")) then
+											count = count + 1
+										end
+									end
+									return tostring(count)
+								end
+							end;
 	["happiness"]			= function(unit)
 								if unit ~= "pet" then
 									return ""
@@ -136,7 +161,7 @@ Tags.defaultTags = {
 	["rank"]				= function(unit)
 								local pvpname = UnitPVPName(unit)
 								local name = UnitName(unit)
-								if name and name ~= pvpname then
+								if name and pvpname and name ~= pvpname then
 									pvpname = string.gsub(pvpname, " "..name, "")
 									return pvpname
 								else
@@ -698,7 +723,7 @@ local function updateTagString(unit, fontString, event)
 			elseif string.sub(tag, 1, 6) == "color:" then
 				text = text..Tags.defaultTags["color"](string.sub(tag, 7))
 			end
-			if tag == "combat" or tag == "color:combat" then
+			if tag == "combat" or tag == "color:combat" or tag == "numtargeting" then
 				hbRefresh[unit] = true
 			end
 			start, ending, tag = strfind(tagstring, fpat, e)
@@ -816,7 +841,9 @@ end
 local function refreshTags()
 	for k,v in pairs(hbRefresh) do
 		if v then
+			LunaUnitFrames:UpdateTags(k, nil, "targetingupdate")
 			LunaUnitFrames:UpdateTags(k, nil, "PLAYER_REGEN_ENABLED")
+			
 		end
 	end
 end
