@@ -169,6 +169,38 @@ function LunaUnitFrames:CreateTargetFrame()
 	LunaTargetFrame:SetClampedToScreen(1)
 	LunaTargetFrame:SetFrameStrata("BACKGROUND")
 
+	LunaTargetFrame.borders = {}
+	
+	LunaTargetFrame.borders["TOP"] = LunaTargetFrame:CreateTexture("PlayerTopBorder", "ARTWORK")
+	LunaTargetFrame.borders["TOP"]:SetPoint("BOTTOMLEFT", LunaTargetFrame, "TOPLEFT")
+	LunaTargetFrame.borders["TOP"]:SetHeight(1)
+	
+	LunaTargetFrame.borders["BOTTOM"] = LunaTargetFrame:CreateTexture("PlayerBottomBorder", "ARTWORK")
+	LunaTargetFrame.borders["BOTTOM"]:SetPoint("TOPLEFT", LunaTargetFrame, "BOTTOMLEFT")
+	LunaTargetFrame.borders["BOTTOM"]:SetHeight(1)
+	
+	LunaTargetFrame.borders["LEFT"] = LunaTargetFrame:CreateTexture("PlayerLeftBorder", "ARTWORK")
+	LunaTargetFrame.borders["LEFT"]:SetPoint("TOPRIGHT", LunaTargetFrame, "TOPLEFT", 0, 1)
+	LunaTargetFrame.borders["LEFT"]:SetWidth(1)
+	
+	LunaTargetFrame.borders["RIGHT"] = LunaTargetFrame:CreateTexture("PlayerBottomBorder", "ARTWORK")
+	LunaTargetFrame.borders["RIGHT"]:SetPoint("TOPLEFT", LunaTargetFrame, "TOPRIGHT", 0, 1)
+	LunaTargetFrame.borders["RIGHT"]:SetWidth(1)
+	
+	LunaTargetFrame.SetBorder = function(r,g,b,a)
+									if not r or not g or not b then
+										LunaTargetFrame.borders["TOP"]:SetTexture(0,0,0,0)
+										LunaTargetFrame.borders["BOTTOM"]:SetTexture(0,0,0,0)
+										LunaTargetFrame.borders["LEFT"]:SetTexture(0,0,0,0)
+										LunaTargetFrame.borders["RIGHT"]:SetTexture(0,0,0,0)
+									else
+										LunaTargetFrame.borders["TOP"]:SetTexture(r,g,b,a)
+										LunaTargetFrame.borders["BOTTOM"]:SetTexture(r,g,b,a)
+										LunaTargetFrame.borders["LEFT"]:SetTexture(r,g,b,a)
+										LunaTargetFrame.borders["RIGHT"]:SetTexture(r,g,b,a)
+									end
+								end
+	
 	local barsettings = {}
 	for k,v in pairs(LunaOptions.frames["LunaTargetFrame"].bars) do
 		barsettings[v[1]] = {}

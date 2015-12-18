@@ -183,6 +183,38 @@ function LunaUnitFrames:CreatePartyFrames()
 												end
 		UIDropDownMenu_Initialize(LunaPartyFrames[i].dropdown, LunaPartyFrames[i].DropDown_Initialize, "MENU")
 
+		LunaPartyFrames[i].borders = {}
+		
+		LunaPartyFrames[i].borders["TOP"] = LunaPartyFrames[i]:CreateTexture("PlayerTopBorder", "ARTWORK")
+		LunaPartyFrames[i].borders["TOP"]:SetPoint("BOTTOMLEFT", LunaPartyFrames[i], "TOPLEFT")
+		LunaPartyFrames[i].borders["TOP"]:SetHeight(1)
+		
+		LunaPartyFrames[i].borders["BOTTOM"] = LunaPartyFrames[i]:CreateTexture("PlayerBottomBorder", "ARTWORK")
+		LunaPartyFrames[i].borders["BOTTOM"]:SetPoint("TOPLEFT", LunaPartyFrames[i], "BOTTOMLEFT")
+		LunaPartyFrames[i].borders["BOTTOM"]:SetHeight(1)
+		
+		LunaPartyFrames[i].borders["LEFT"] = LunaPartyFrames[i]:CreateTexture("PlayerLeftBorder", "ARTWORK")
+		LunaPartyFrames[i].borders["LEFT"]:SetPoint("TOPRIGHT", LunaPartyFrames[i], "TOPLEFT", 0, 1)
+		LunaPartyFrames[i].borders["LEFT"]:SetWidth(1)
+		
+		LunaPartyFrames[i].borders["RIGHT"] = LunaPartyFrames[i]:CreateTexture("PlayerBottomBorder", "ARTWORK")
+		LunaPartyFrames[i].borders["RIGHT"]:SetPoint("TOPLEFT", LunaPartyFrames[i], "TOPRIGHT", 0, 1)
+		LunaPartyFrames[i].borders["RIGHT"]:SetWidth(1)
+		
+		LunaPartyFrames[i].SetBorder = function(r,g,b,a)
+									if not r or not g or not b then
+										this.borders["TOP"]:SetTexture(0,0,0,0)
+										this.borders["BOTTOM"]:SetTexture(0,0,0,0)
+										this.borders["LEFT"]:SetTexture(0,0,0,0)
+										this.borders["RIGHT"]:SetTexture(0,0,0,0)
+									else
+										this.borders["TOP"]:SetTexture(r,g,b,a)
+										this.borders["BOTTOM"]:SetTexture(r,g,b,a)
+										this.borders["LEFT"]:SetTexture(r,g,b,a)
+										this.borders["RIGHT"]:SetTexture(r,g,b,a)
+									end
+								end
+		
 		LunaPartyFrames[i].AuraAnchor = CreateFrame("Frame", nil, LunaPartyFrames[i])
 		
 		LunaPartyFrames[i].Buffs = {}

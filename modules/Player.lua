@@ -235,6 +235,45 @@ function LunaUnitFrames:CreatePlayerFrame()
 	LunaPlayerFrame:SetClampedToScreen(1)
 	LunaPlayerFrame:SetFrameStrata("BACKGROUND")
 
+--	LunaPlayerFrame.highlightframe = CreateFrame("Frame")
+--	LunaPlayerFrame.highlightframe:SetAllPoints(LunaPlayerFrame)
+--	LunaPlayerFrame.highlightframe.texture = LunaPlayerFrame.highlightframe:CreateTexture("LunaPlayerFrameHighlight", "ARTWORK")
+--	LunaPlayerFrame.highlightframe.texture:SetBlendMode("ADD")
+--	LunaPlayerFrame.highlightframe.texture:SetAllPoints(LunaPlayerFrame.highlightframe)
+--	LunaPlayerFrame.highlightframe.texture:SetTexture(LunaOptions.highlight)
+--	LunaPlayerFrame.highlightframe.texture:SetVertexColor(1,1,1,0.4)
+	
+	LunaPlayerFrame.borders = {}
+	
+	LunaPlayerFrame.borders["TOP"] = LunaPlayerFrame:CreateTexture("PlayerTopBorder", "ARTWORK")
+	LunaPlayerFrame.borders["TOP"]:SetPoint("BOTTOMLEFT", LunaPlayerFrame, "TOPLEFT")
+	LunaPlayerFrame.borders["TOP"]:SetHeight(1)
+	
+	LunaPlayerFrame.borders["BOTTOM"] = LunaPlayerFrame:CreateTexture("PlayerBottomBorder", "ARTWORK")
+	LunaPlayerFrame.borders["BOTTOM"]:SetPoint("TOPLEFT", LunaPlayerFrame, "BOTTOMLEFT")
+	LunaPlayerFrame.borders["BOTTOM"]:SetHeight(1)
+	
+	LunaPlayerFrame.borders["LEFT"] = LunaPlayerFrame:CreateTexture("PlayerLeftBorder", "ARTWORK")
+	LunaPlayerFrame.borders["LEFT"]:SetPoint("TOPRIGHT", LunaPlayerFrame, "TOPLEFT", 0, 1)
+	LunaPlayerFrame.borders["LEFT"]:SetWidth(1)
+	
+	LunaPlayerFrame.borders["RIGHT"] = LunaPlayerFrame:CreateTexture("PlayerBottomBorder", "ARTWORK")
+	LunaPlayerFrame.borders["RIGHT"]:SetPoint("TOPLEFT", LunaPlayerFrame, "TOPRIGHT", 0, 1)
+	LunaPlayerFrame.borders["RIGHT"]:SetWidth(1)
+	
+	LunaPlayerFrame.SetBorder = function(r,g,b,a)
+									if not r or not g or not b then
+										LunaPlayerFrame.borders["TOP"]:SetTexture(0,0,0,0)
+										LunaPlayerFrame.borders["BOTTOM"]:SetTexture(0,0,0,0)
+										LunaPlayerFrame.borders["LEFT"]:SetTexture(0,0,0,0)
+										LunaPlayerFrame.borders["RIGHT"]:SetTexture(0,0,0,0)
+									else
+										LunaPlayerFrame.borders["TOP"]:SetTexture(r,g,b,a)
+										LunaPlayerFrame.borders["BOTTOM"]:SetTexture(r,g,b,a)
+										LunaPlayerFrame.borders["LEFT"]:SetTexture(r,g,b,a)
+										LunaPlayerFrame.borders["RIGHT"]:SetTexture(r,g,b,a)
+									end
+								end
 	
 	local barsettings = {}
 	for k,v in pairs(LunaOptions.frames["LunaPlayerFrame"].bars) do
