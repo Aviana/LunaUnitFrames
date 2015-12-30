@@ -1,5 +1,5 @@
 LunaUnitFrames = CreateFrame("Frame")
-LunaUnitFrames.version = 1096
+LunaUnitFrames.version = 1097
 LunaUnitFrames.frames = {}
 LunaUnitFrames.proximity = ProximityLib:GetInstance("1")
 LunaUnitFrames:RegisterEvent("ADDON_LOADED")

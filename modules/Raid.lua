@@ -98,7 +98,7 @@ function LunaUnitFrames:ToggleRaidFrameLock()
 		end
 	elseif LunaOptions.raidinterlock and not LunaUnitFrames.frames.headers[1]:IsMovable() then
 		LunaUnitFrames.frames.headers[1]:SetScript("OnDragStart", StartMoving)
-		LunaUnitFrames.frames.headers[i]:SetScript("OnDragStop", StopMovingOrSizing)
+		LunaUnitFrames.frames.headers[1]:SetScript("OnDragStop", StopMovingOrSizing)
 		LunaUnitFrames.frames.headers[1]:SetMovable(1)
 	else
 		for i=1,9 do
