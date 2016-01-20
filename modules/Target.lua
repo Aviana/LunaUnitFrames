@@ -710,11 +710,13 @@ function LunaUnitFrames.TargetUpdateHeal(target)
 	local healed = HealComm:getHeal(target)
 	local health, maxHealth = UnitHealth(LunaTargetFrame.unit), UnitHealthMax(LunaTargetFrame.unit)
 	if MobHealthDB then
-		local unitInfo = "target"
-		local ppp_name = UnitName(unitInfo)
-		if (ppp_name ~= nil) then
-			local ppp = MobHealth_PPP(UnitName(unitInfo)..":"..UnitLevel(unitInfo))
-			local ppp_curHP = math.floor(UnitHealth(unitInfo) * ppp + 0.5)
+		local healthUnit = "target"
+		local unitName = UnitName(healthUnit)
+		local unitLevel = UnitLevel(healthUnit)
+		local unitHealth = UnitHealth(healthUnit)
+		if (unitName ~= nil) then
+			local ppp = MobHealth_PPP(unitName..":"..unitLevel)
+			local ppp_curHP = math.floor(unitHealth * ppp + 0.5)
 			local ppp_maxHP = math.floor(100 * ppp + 0.5)
 			if (ppp_curHP and ppp_maxHP and ppp_maxHP ~= 0) then
 				health = ppp_curHP
@@ -890,22 +892,25 @@ function Luna_Target_Events:UNIT_HEALTH()
 	LunaUnitFrames.TargetUpdateHeal(UnitName("target"))
 	local Health, maxHealth
 	if MobHealthDB then
-		local unitInfo = "target"
-		local ppp_name = UnitName(unitInfo)
-		if (ppp_name ~= nil) then
-			local ppp = MobHealth_PPP(UnitName(unitInfo)..":"..UnitLevel(unitInfo))
-			local ppp_curHP = math.floor(UnitHealth(unitInfo) * ppp + 0.5)
+		local healthUnit = "target"
+		local unitName = UnitName(healthUnit)
+		local unitLevel = UnitLevel(healthUnit)
+		local unitHealth = UnitHealth(healthUnit)
+		local unitMaxHealth = UnitHealthMax(healthUnit)
+		if (unitName ~= nil) then
+			local ppp = MobHealth_PPP(unitName..":"..unitLevel)
+			local ppp_curHP = math.floor(unitHealth * ppp + 0.5)
 			local ppp_maxHP = math.floor(100 * ppp + 0.5)
 			if (ppp_curHP and ppp_maxHP and ppp_maxHP ~= 0) then
 				Health = ppp_curHP
 				maxHealth = ppp_maxHP
 			else
-				Health = UnitHealth(unitInfo)
-				maxHealth = UnitHealthMax(unitInfo)
+				Health = unitHealth
+				maxHealth = unitMaxHealth
 			end
 		else
-			Health = UnitHealth(unitInfo)
-			maxHealth = UnitHealthMax(unitInfo)
+			Health = unitHealth
+			maxHealth = unitMaxHealth
 		end
 	elseif MobHealth3 then
 		Health, maxHealth = MobHealth3:GetUnitHealth("target")
