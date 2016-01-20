@@ -4,7 +4,7 @@
 ## Author: Avi
 ## Dependencies:
 ## SavedVariables: LunaOptions, LunaBuffDB
-## OptionalDeps: Ace2, ProximityLib, RosterLib, BanzaiLib, HealComm, DruidManaLib, MobHealth
+## OptionalDeps: Ace2, ProximityLib, RosterLib, BanzaiLib, HealComm, DruidManaLib, MobHealth, MobInfo2
 ## X-Category: UnitFrame
 
 

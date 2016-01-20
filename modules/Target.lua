@@ -709,7 +709,19 @@ function LunaUnitFrames.TargetUpdateHeal(target)
 	end
 	local healed = HealComm:getHeal(target)
 	local health, maxHealth = UnitHealth(LunaTargetFrame.unit), UnitHealthMax(LunaTargetFrame.unit)
-	if MobHealth3 then
+	if MobHealthDB then
+		local unitInfo = "target"
+		local ppp_name = UnitName(unitInfo)
+		if (ppp_name ~= nil) then
+			local ppp = MobHealth_PPP(UnitName(unitInfo)..":"..UnitLevel(unitInfo))
+			local ppp_curHP = math.floor(UnitHealth(unitInfo) * ppp + 0.5)
+			local ppp_maxHP = math.floor(100 * ppp + 0.5)
+			if (ppp_curHP and ppp_maxHP and ppp_maxHP ~= 0) then
+				health = ppp_curHP
+				maxHealth = ppp_maxHP
+			end
+		end
+	elseif MobHealth3 then
 		health, maxHealth = MobHealth3:GetUnitHealth("target")
 	end
 	if( LunaOptions.HideHealing == nil and healed > 0 and (health < maxHealth or (LunaOptions.overheal or 20) > 0 )) then
@@ -877,7 +889,25 @@ Luna_Target_Events.UNIT_FACTION = Luna_Target_Events.PLAYER_TARGET_CHANGED
 function Luna_Target_Events:UNIT_HEALTH()
 	LunaUnitFrames.TargetUpdateHeal(UnitName("target"))
 	local Health, maxHealth
-	if MobHealth3 then
+	if MobHealthDB then
+		local unitInfo = "target"
+		local ppp_name = UnitName(unitInfo)
+		if (ppp_name ~= nil) then
+			local ppp = MobHealth_PPP(UnitName(unitInfo)..":"..UnitLevel(unitInfo))
+			local ppp_curHP = math.floor(UnitHealth(unitInfo) * ppp + 0.5)
+			local ppp_maxHP = math.floor(100 * ppp + 0.5)
+			if (ppp_curHP and ppp_maxHP and ppp_maxHP ~= 0) then
+				Health = ppp_curHP
+				maxHealth = ppp_maxHP
+			else
+				Health = UnitHealth(unitInfo)
+				maxHealth = UnitHealthMax(unitInfo)
+			end
+		else
+			Health = UnitHealth(unitInfo)
+			maxHealth = UnitHealthMax(unitInfo)
+		end
+	elseif MobHealth3 then
 		Health, maxHealth = MobHealth3:GetUnitHealth("target")
 	else
 		Health = UnitHealth("target")
