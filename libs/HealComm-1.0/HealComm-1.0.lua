@@ -8,7 +8,7 @@ Dependencies: AceLibrary, AceEvent-2.0, RosterLib-2.0
 ]]
 
 local MAJOR_VERSION = "HealComm-1.0"
-local MINOR_VERSION = "$Revision: 11230 $"
+local MINOR_VERSION = "$Revision: 11240 $"
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
 if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end
@@ -258,14 +258,8 @@ end
 ------------------------------------------------
 
 function strmatch(str, pat, init)
-	local results = {}
-	pat = "("..pat..")"
-	local s,e,found = string.find(str, pat, init)
-	while found do
-		tinsert(results,found)
-		s,e,found = string.find(str, pat, e+1)
-	end
-	return unpack(results)
+	local a1,a2,a3,a4,a5,a6,a7,a8,a9,a10,a11,a12,a13,a13,a14,a15,a16,a17,a18,a19,a20 = string.find(str, pat, init)
+	return a3,a4,a5,a6,a7,a8,a9,a10,a11,a12,a13,a13,a14,a15,a16,a17,a18,a19,a20
 end
 
 HealComm.Spells = {
@@ -1067,7 +1061,7 @@ end
 
 function HealComm.delayHeal(caster, delay)
 	HealComm.SpecialEventScheduler:CancelScheduledEvent("Healcomm_"..caster)
-	if HealComm.Heals[HealComm.Lookup[caster]] then
+	if HealComm.Lookup[caster] and HealComm.Heals[HealComm.Lookup[caster]] then
 		HealComm.Heals[HealComm.Lookup[caster]][caster].ctime = HealComm.Heals[HealComm.Lookup[caster]][caster].ctime + (delay/1000)
 		HealComm.SpecialEventScheduler:ScheduleEvent("Healcomm_"..caster, HealComm.stopHeal, (HealComm.Heals[HealComm.Lookup[caster]][caster].ctime-GetTime()), caster)
 	end
@@ -1099,8 +1093,10 @@ end
 
 function HealComm.delayGrpHeal(caster, delay)
 	HealComm.SpecialEventScheduler:CancelScheduledEvent("Healcomm_"..caster)
-	HealComm.GrpHeals[caster].ctime = HealComm.GrpHeals[caster].ctime + (delay/1000)
-	HealComm.SpecialEventScheduler:ScheduleEvent("Healcomm_"..caster, HealComm.stopGrpHeal, (HealComm.GrpHeals[caster].ctime-GetTime()), caster)
+	if HealComm.GrpHeals[caster] then
+		HealComm.GrpHeals[caster].ctime = HealComm.GrpHeals[caster].ctime + (delay/1000)
+		HealComm.SpecialEventScheduler:ScheduleEvent("Healcomm_"..caster, HealComm.stopGrpHeal, (HealComm.GrpHeals[caster].ctime-GetTime()), caster)
+	end
 end
 
 function HealComm.startResurrection(caster, target)
