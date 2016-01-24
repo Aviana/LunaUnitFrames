@@ -8,7 +8,7 @@ Dependencies: AceLibrary, AceEvent-2.0, RosterLib-2.0
 ]]
 
 local MAJOR_VERSION = "HealComm-1.0"
-local MINOR_VERSION = "$Revision: 11240 $"
+local MINOR_VERSION = "$Revision: 11250 $"
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
 if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end
@@ -993,7 +993,7 @@ local function GetTargetSpellPower(spell)
 		end
 		local buffName = healcommTipTextLeft1:GetText()
 		if buffName == L["Blessing of Light"] then
-			local HLBonus, FoLBonus = strmatch(healcommTipTextLeft2:GetText(),"(%d+)")
+			local HLBonus, FoLBonus = strmatch(healcommTipTextLeft2:GetText(),"(%d+).-(%d+)")
 			if (spell == L["Flash of Light"]) then
 				targetpower = FoLBonus + targetpower
 			elseif spell == L["Holy Light"] then
