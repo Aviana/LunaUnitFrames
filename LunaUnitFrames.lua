@@ -30,7 +30,28 @@ CLASS_ICON_TCOORDS = {
 function LunaUnitFrames:GetHealthString(unit)
 	local result
 	local Health, maxHealth
-	if MobHealth3 and validUnits[unit] then
+	if MobHealthDB and validUnits[unit] then
+		local healthUnit = unit
+		local unitName = UnitName(healthUnit)
+		local unitLevel = UnitLevel(healthUnit)
+		local unitHealth = UnitHealth(healthUnit)
+		local unitMaxHealth = UnitHealthMax(healthUnit)
+		if (unitName ~= nil) then
+			local ppp = MobHealth_PPP(unitName..":"..unitLevel)
+			local ppp_curHP = math.floor(unitHealth * ppp + 0.5)
+			local ppp_maxHP = math.floor(100 * ppp + 0.5)
+			if (ppp_curHP and ppp_maxHP and ppp_maxHP ~= 0) then
+				Health = ppp_curHP
+				maxHealth = ppp_maxHP
+			else
+				Health = unitHealth
+				maxHealth = unitMaxHealth
+			end
+		else
+			Health = unitHealth
+			maxHealth = unitMaxHealth
+		end
+	elseif MobHealth3 and validUnits[unit] then
 		Health, maxHealth = MobHealth3:GetUnitHealth(unit)
 	else
 		Health = UnitHealth(unit)

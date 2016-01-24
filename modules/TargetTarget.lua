@@ -642,7 +642,28 @@ function LunaUnitFrames:UpdateTargetTargetFrame()
 		TargetTargetPortraitUpdate("targettarget")
 	end
 	local Health, maxHealth
-	if MobHealth3 then
+	if MobHealthDB then
+		local healthUnit = LunaTargetTargetFrame.unit
+		local unitName = UnitName(healthUnit)
+		local unitLevel = UnitLevel(healthUnit)
+		local unitHealth = UnitHealth(healthUnit)
+		local unitMaxHealth = UnitHealthMax(healthUnit)
+		if (unitName ~= nil) then
+			local ppp = MobHealth_PPP(unitName..":"..unitLevel)
+			local ppp_curHP = math.floor(unitHealth * ppp + 0.5)
+			local ppp_maxHP = math.floor(100 * ppp + 0.5)
+			if (ppp_curHP and ppp_maxHP and ppp_maxHP ~= 0) then
+				Health = ppp_curHP
+				maxHealth = ppp_maxHP
+			else
+				Health = unitHealth
+				maxHealth = unitMaxHealth
+			end
+		else
+			Health = unitHealth
+			maxHealth = unitMaxHealth
+		end
+	elseif MobHealth3 then
 		Health, maxHealth = MobHealth3:GetUnitHealth(LunaTargetTargetFrame.unit)
 	else
 		Health = UnitHealth(LunaTargetTargetFrame.unit)

@@ -233,7 +233,28 @@ Tags.defaultTags = {
 	["smarthealth"]			= function(unit)
 								local hp
 								local maxhp
-								if MobHealth3 then
+								if MobHealthDB then
+									local healthUnit = unit
+									local unitName = UnitName(healthUnit)
+									local unitLevel = UnitLevel(healthUnit)
+									local unitHealth = UnitHealth(healthUnit)
+									local unitMaxHealth = UnitHealthMax(healthUnit)
+									if (unitName ~= nil) then
+										local ppp = MobHealth_PPP(unitName..":"..unitLevel)
+										local ppp_curHP = math.floor(unitHealth * ppp + 0.5)
+										local ppp_maxHP = math.floor(100 * ppp + 0.5)
+										if (ppp_curHP and ppp_maxHP and ppp_maxHP ~= 0) then
+											hp = ppp_curHP
+											maxhp = ppp_maxHP
+										else
+											hp = unitHealth
+											maxhp = unitMaxHealth
+										end
+									else
+										hp = unitHealth
+										maxhp = unitMaxHealth
+									end
+								elseif MobHealth3 then
 									hp,maxhp = MobHealth3:GetUnitHealth(unit)
 								else
 									hp = UnitHealth(unit)
@@ -255,7 +276,24 @@ Tags.defaultTags = {
 	["healhp"]				= function(unit)
 								local heal = HealComm:getHeal(UnitName(unit))
 								local hp
-								if MobHealth3 then
+								if MobHealthDB then
+									local healthUnit = unit
+									local unitName = UnitName(healthUnit)
+									local unitLevel = UnitLevel(healthUnit)
+									local unitHealth = UnitHealth(healthUnit)
+									if (unitName ~= nil) then
+										local ppp = MobHealth_PPP(unitName..":"..unitLevel)
+										local ppp_curHP = math.floor(unitHealth * ppp + 0.5)
+										local ppp_maxHP = math.floor(100 * ppp + 0.5)
+										if (ppp_curHP and ppp_maxHP and ppp_maxHP ~= 0) then
+											hp = ppp_curHP
+										else
+											hp = unitHealth
+										end
+									else
+										hp = unitHealth
+									end
+								elseif MobHealth3 then
 									hp = MobHealth3:GetUnitHealth(unit)
 								else
 									hp = UnitHealth(unit)
@@ -268,7 +306,24 @@ Tags.defaultTags = {
 							end;
 	["hp"]            	    = function(unit)
 								local hp
-								if MobHealth3 then
+								if MobHealthDB then
+									local healthUnit = unit
+									local unitName = UnitName(healthUnit)
+									local unitLevel = UnitLevel(healthUnit)
+									local unitHealth = UnitHealth(healthUnit)
+									if (unitName ~= nil) then
+										local ppp = MobHealth_PPP(unitName..":"..unitLevel)
+										local ppp_curHP = math.floor(unitHealth * ppp + 0.5)
+										local ppp_maxHP = math.floor(100 * ppp + 0.5)
+										if (ppp_curHP and ppp_maxHP and ppp_maxHP ~= 0) then
+											hp = ppp_curHP
+										else
+											hp = unitHealth
+										end
+									else
+										hp = unitHealth
+									end
+								elseif MobHealth3 then
 									hp = MobHealth3:GetUnitHealth(unit)
 								else
 									hp = UnitHealth(unit)
@@ -277,7 +332,23 @@ Tags.defaultTags = {
 							end;
 	["maxhp"]				= function(unit)
 								local hpmax
-								if MobHealth3 then
+								if MobHealthDB then
+									local healthUnit = unit
+									local unitName = UnitName(healthUnit)
+									local unitLevel = UnitLevel(healthUnit)
+									local unitMaxHealth = UnitHealthMax(healthUnit)
+									if (unitName ~= nil) then
+										local ppp = MobHealth_PPP(unitName..":"..unitLevel)
+										local ppp_maxHP = math.floor(100 * ppp + 0.5)
+										if (ppp_maxHP and ppp_maxHP ~= 0) then
+											hpmax = ppp_maxHP
+										else
+											hpmax = unitMaxHealth
+										end
+									else
+										hpmax = unitMaxHealth
+									end
+								elseif MobHealth3 then
 									_,hpmax = MobHealth3:GetUnitHealth(unit)
 								else
 									hpmax = UnitHealthMax(unit)
@@ -286,7 +357,28 @@ Tags.defaultTags = {
 							end;
 	["missinghp"]           = function(unit)
 								local hp,maxhp
-								if MobHealth3 then
+								if MobHealthDB then
+									local healthUnit = unit
+									local unitName = UnitName(healthUnit)
+									local unitLevel = UnitLevel(healthUnit)
+									local unitHealth = UnitHealth(healthUnit)
+									local unitMaxHealth = UnitHealthMax(healthUnit)
+									if (unitName ~= nil) then
+										local ppp = MobHealth_PPP(unitName..":"..unitLevel)
+										local ppp_curHP = math.floor(unitHealth * ppp + 0.5)
+										local ppp_maxHP = math.floor(100 * ppp + 0.5)
+										if (ppp_curHP and ppp_maxHP and ppp_maxHP ~= 0) then
+											hp = ppp_curHP
+											maxhp = ppp_maxHP
+										else
+											hp = unitHealth
+											maxhp = unitMaxHealth
+										end
+									else
+										hp = unitHealth
+										maxhp = unitMaxHealth
+									end
+								elseif MobHealth3 then
 									hp,maxhp = MobHealth3:GetUnitHealth(unit)
 								else
 									hp = UnitHealth(unit)
@@ -301,7 +393,28 @@ Tags.defaultTags = {
 	["healmishp"]			= function(unit)
 								local hp,maxhp
 								local heal = HealComm:getHeal(UnitName(unit))
-								if MobHealth3 then
+								if MobHealthDB then
+									local healthUnit = unit
+									local unitName = UnitName(healthUnit)
+									local unitLevel = UnitLevel(healthUnit)
+									local unitHealth = UnitHealth(healthUnit)
+									local unitMaxHealth = UnitHealthMax(healthUnit)
+									if (unitName ~= nil) then
+										local ppp = MobHealth_PPP(unitName..":"..unitLevel)
+										local ppp_curHP = math.floor(unitHealth * ppp + 0.5)
+										local ppp_maxHP = math.floor(100 * ppp + 0.5)
+										if (ppp_curHP and ppp_maxHP and ppp_maxHP ~= 0) then
+											hp = ppp_curHP
+											maxhp = ppp_maxHP
+										else
+											hp = unitHealth
+											maxhp = unitMaxHealth
+										end
+									else
+										hp = unitHealth
+										maxhp = unitMaxHealth
+									end
+								elseif MobHealth3 then
 									hp,maxhp = MobHealth3:GetUnitHealth(unit)
 								else
 									hp = UnitHealth(unit)
@@ -320,7 +433,28 @@ Tags.defaultTags = {
 							end;
 	["perhp"]               = function(unit)
 								local hp,maxhp
-								if MobHealth3 then
+								if MobHealthDB then
+									local healthUnit = unit
+									local unitName = UnitName(healthUnit)
+									local unitLevel = UnitLevel(healthUnit)
+									local unitHealth = UnitHealth(healthUnit)
+									local unitMaxHealth = UnitHealthMax(healthUnit)
+									if (unitName ~= nil) then
+										local ppp = MobHealth_PPP(unitName..":"..unitLevel)
+										local ppp_curHP = math.floor(unitHealth * ppp + 0.5)
+										local ppp_maxHP = math.floor(100 * ppp + 0.5)
+										if (ppp_curHP and ppp_maxHP and ppp_maxHP ~= 0) then
+											hp = ppp_curHP
+											maxhp = ppp_maxHP
+										else
+											hp = unitHealth
+											maxhp = unitMaxHealth
+										end
+									else
+										hp = unitHealth
+										maxhp = unitMaxHealth
+									end
+								elseif MobHealth3 then
 									hp,maxhp = MobHealth3:GetUnitHealth(unit)
 								else
 									hp = UnitHealth(unit)
@@ -574,7 +708,28 @@ Tags.defaultTags = {
 									return "Offline"
 								end
 								local hp,maxhp
-								if MobHealth3 then
+								if MobHealthDB then
+									local healthUnit = unit
+									local unitName = UnitName(healthUnit)
+									local unitLevel = UnitLevel(healthUnit)
+									local unitHealth = UnitHealth(healthUnit)
+									local unitMaxHealth = UnitHealthMax(healthUnit)
+									if (unitName ~= nil) then
+										local ppp = MobHealth_PPP(unitName..":"..unitLevel)
+										local ppp_curHP = math.floor(unitHealth * ppp + 0.5)
+										local ppp_maxHP = math.floor(100 * ppp + 0.5)
+										if (ppp_curHP and ppp_maxHP and ppp_maxHP ~= 0) then
+											hp = ppp_curHP
+											maxhp = ppp_maxHP
+										else
+											hp = unitHealth
+											maxhp = unitMaxHealth
+										end
+									else
+										hp = unitHealth
+										maxhp = unitMaxHealth
+									end
+								elseif MobHealth3 then
 									hp,maxhp = MobHealth3:GetUnitHealth(unit)
 								else
 									hp = UnitHealth(unit)
@@ -622,7 +777,28 @@ Tags.defaultTags = {
 									return "Offline"
 								end
 								local hp,maxhp
-								if MobHealth3 then
+								if MobHealthDB then
+									local healthUnit = unit
+									local unitName = UnitName(healthUnit)
+									local unitLevel = UnitLevel(healthUnit)
+									local unitHealth = UnitHealth(healthUnit)
+									local unitMaxHealth = UnitHealthMax(healthUnit)
+									if (unitName ~= nil) then
+										local ppp = MobHealth_PPP(unitName..":"..unitLevel)
+										local ppp_curHP = math.floor(unitHealth * ppp + 0.5)
+										local ppp_maxHP = math.floor(100 * ppp + 0.5)
+										if (ppp_curHP and ppp_maxHP and ppp_maxHP ~= 0) then
+											hp = ppp_curHP
+											maxhp = ppp_maxHP
+										else
+											hp = unitHealth
+											maxhp = unitMaxHealth
+										end
+									else
+										hp = unitHealth
+										maxhp = unitMaxHealth
+									end
+								elseif MobHealth3 then
 									hp,maxhp = MobHealth3:GetUnitHealth(unit)
 								else
 									hp = UnitHealth(unit)
