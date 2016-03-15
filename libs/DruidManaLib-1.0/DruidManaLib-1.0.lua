@@ -8,7 +8,7 @@ Dependencies: AceLibrary, AceEvent-2.0
 ]]
 
 local MAJOR_VERSION = "DruidManaLib-1.0"
-local MINOR_VERSION = "$Revision: 10100 $"
+local MINOR_VERSION = "$Revision: 10200 $"
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
 if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end
@@ -170,10 +170,12 @@ local function DruidManaLib_MaxManaScript()
 			local strchek = getglobal("DruidManaLibTipTextLeft"..j):GetText();
 			if strchek then
 				if strfind(strchek, L["Equip: Restores %d+ mana per 5 sec."]) then
-					DruidManaLib.extra = DruidManaLib.extra + string.gsub(strchek, L["Equip: Restores (%d+) mana per 5 sec."], "%1")
+					local num = string.gsub(strchek, L["Equip: Restores (%d+) mana per 5 sec."], "%1")
+					DruidManaLib.extra = DruidManaLib.extra or 0 + tonumber(num or "0")
 				end
 				if strfind(strchek, L["Mana Regen %d+ per 5 sec."]) then
-					DruidManaLib.extra = DruidManaLib.extra + string.gsub(strchek, L["Mana Regen (%d+) per 5 sec."], "%1");
+					local num = string.gsub(strchek, L["Mana Regen (%d+) per 5 sec."], "%1")
+					DruidManaLib.extra = DruidManaLib.extra or 0 + tonumber(num or "0")
 				end
 			end
 		end
@@ -191,7 +193,7 @@ local function DruidManaLib_Subtract()
 		end
 		j = j + 1
 	end
-	DruidManaLib.keepthemana = DruidManaLib.keepthemana - DruidManaLib.subtractmana;
+	DruidManaLib.keepthemana = DruidManaLib.keepthemana - (DruidManaLib.subtractmana or 0);
 	DruidManaLib.SpecialEventScheduler:TriggerEvent("DruidManaLib_Manaupdate")
 end
 

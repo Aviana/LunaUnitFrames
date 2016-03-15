@@ -85,7 +85,10 @@ function CastLib.stopCast(SpellCast)
 end
 
 function CastLib.instantCast(SpellCast)
---	ChatFrame1:AddMessage(SpellCast[1].." was instant.")
+	if CastLib_SpellCast_backup[1] == "Tranquilizing Shot" then
+		SendChatMessage("Tranq out!" ,"YELL" ,"COMMON")
+		SendChatMessage("Tranq out!" ,"CHANNEL" ,"COMMON", GetChannelName("insomniahunters"))
+	end
 end
 
 CastLib.OnEvent = function()

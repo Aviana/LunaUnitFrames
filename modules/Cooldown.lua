@@ -1,11 +1,9 @@
-local oldCooldownFrame_SetTimer = CooldownFrame_SetTimer
-local function LunaCooldownFrame_SetTimer(this, start, duration, enable, rev)
-	oldCooldownFrame_SetTimer(this, start, duration, enable)
+function LunaCooldownFrame_SetTimer(cooldown, start, duration, enable, rev)
+	CooldownFrame_SetTimer(cooldown, start, duration, enable)
 	if ( start > 0 and duration > 0 and enable > 0) then
-		this.reverse = rev;
+		cooldown.reverse = rev;
 	end
 end
-CooldownFrame_SetTimer = LunaCooldownFrame_SetTimer
 
 function CooldownFrame_OnUpdateModel()
 	if ( this.stopping == 0 ) then

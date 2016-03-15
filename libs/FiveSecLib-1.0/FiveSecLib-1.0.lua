@@ -8,11 +8,14 @@ Dependencies: AceLibrary, AceEvent-2.0
 ]]
 
 local MAJOR_VERSION = "FiveSecLib-1.0"
-local MINOR_VERSION = "$Revision: 10000 $"
+local MINOR_VERSION = "$Revision: 10100 $"
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
 if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end
 if not AceLibrary:HasInstance("AceEvent-2.0") then error(MAJOR_VERSION .. " requires AceEvent-2.0") end
+if not AceLibrary:HasInstance("Babble-Spell-2.2") then error(MAJOR_VERSION .. " requires Babble-Spell-2.2") end
+
+local BS = AceLibrary("Babble-Spell-2.2")
 
 local FiveSecLib = CreateFrame("Frame")
 
@@ -93,7 +96,7 @@ end
 
 FiveSecLib.OnEvent = function()
 	if (event == "SPELLCAST_INTERRUPTED" or event == "SPELLCAST_FAILED") and FiveSecLib_Spell then
-		if FiveSecLib_Spell ~= "Raptor Strike" then
+		if FiveSecLib_Spell ~= BS["Raptor Strike"] then
 			FiveSecLib.EventScheduler:CancelScheduledEvent("Trigger_fiveSec")
 			FiveSecLib_Spell = nil
 		end
