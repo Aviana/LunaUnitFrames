@@ -317,15 +317,16 @@ end
 
 local function SetupGroupHeader(groupType)
 	local unitGroup = groupType or this.unitGroup
+	local config = LunaUF.db.profile.units.party
 	local header = headerFrames[unitGroup]
-	if UnitInRaid("player") and not LunaUF.db.profile.units.party.inraid then
+	if UnitInRaid("player") and not config.inraid then
 		header:Hide()
 		return
 	else
 		header:Show()
 	end
-	local point = LunaUF.constants.AnchorPoint[LunaUF.db.profile.units.party.growth]
-	local framesneeded = (LunaUF.db.profile.locked and GetNumPartyMembers() or 4) + (LunaUF.db.profile.units.party.player and 1 or 0)
+	local point = LunaUF.constants.AnchorPoint[config.growth]
+	local framesneeded = config.enabled and ((LunaUF.db.profile.locked and GetNumPartyMembers() or 4) + (config.player and 1 or 0)) or 0
 	for i=getn(header.frames)+1, framesneeded do
 		header.frames[i] = Units:CreateUnit("Button", "LUFUnit"..unitGroup..i, header)
 		header.frames[i]:SetScript("OnDragStop", GroupHeaderStopMovingOrSizing)
@@ -350,23 +351,23 @@ local function SetupGroupHeader(groupType)
 			table.insert(GroupRoster,{UnitName(unit), unit})
 		end
 	end
-	if LunaUF.db.profile.units.party.sortby == "NAME" then
-		if LunaUF.db.profile.units.party.player then
+	if config.sortby == "NAME" then
+		if config.player then
 			table.insert(GroupRoster,{UnitName("player"),"player"})
 		end
-		if LunaUF.db.profile.units.party.order == "ASC" then
+		if config.order == "ASC" then
 			table.sort(GroupRoster, function (a,b) return a[1]<b[1] end)
 		else
 			table.sort(GroupRoster, function (a,b) return a[1]>b[1] end)
 		end
 	else
-		if LunaUF.db.profile.units.party.order ~= "ASC" then
+		if config.order ~= "ASC" then
 			table.sort(GroupRoster, function (a,b) return a[2]>b[2] end)
-			if LunaUF.db.profile.units.party.player then
+			if config.player then
 				table.insert(GroupRoster,{UnitName("player"),"player"})
 			end
 		else
-			if LunaUF.db.profile.units.party.player then
+			if config.player then
 				table.insert(GroupRoster,1,{UnitName("player"),"player"})
 			end
 		end
@@ -375,15 +376,15 @@ local function SetupGroupHeader(groupType)
 	local anchor = header
 	
 	local xoffset
-	if LunaUF.db.profile.units.party.growth == "RIGHT" or LunaUF.db.profile.units.party.growth == "LEFT" then
-		xoffset = ((LunaUF.db.profile.units.party.growth == "RIGHT" and 1 or -1) * (LunaUF.db.profile.units[unitGroup].size.x + LunaUF.db.profile.units[unitGroup].padding))
+	if config.growth == "RIGHT" or config.growth == "LEFT" then
+		xoffset = ((config.growth == "RIGHT" and 1 or -1) * (LunaUF.db.profile.units[unitGroup].size.x + LunaUF.db.profile.units[unitGroup].padding))
 	else
 		xoffset = 0
 	end
 
 	local yoffset
-	if LunaUF.db.profile.units.party.growth == "UP" or LunaUF.db.profile.units.party.growth == "DOWN" then
-		yoffset = ((LunaUF.db.profile.units.party.growth == "UP" and 1 or -1) * (LunaUF.db.profile.units[unitGroup].size.y + LunaUF.db.profile.units[unitGroup].padding))
+	if config.growth == "UP" or config.growth == "DOWN" then
+		yoffset = ((config.growth == "UP" and 1 or -1) * (LunaUF.db.profile.units[unitGroup].size.y + LunaUF.db.profile.units[unitGroup].padding))
 	else
 		yoffset = 0
 	end

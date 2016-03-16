@@ -88,7 +88,7 @@ local Spells = {
 	[BS["Aquatic Form"]] = {t=0};
 	[L["Feral Charge Effect"]] = {t=0};
 	[BS["Bash"]] = {t=0};
-	[BS["Starfire Stun"]] = {t=0};
+	[L["Starfire Stun"]] = {t=0};
 	[BS["Pounce"]] = {t=0};
 	[BS["Nature's Swiftness"]] = {t=0};
 	

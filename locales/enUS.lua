@@ -1,4 +1,4 @@
-LunaUF.L:RegisterTranslations("enUS", function () return {
+local function enUS() return {
 ["Loaded. The ride never ends!"] = "Loaded. The ride never ends!",
 ["Mobhealth2/Mobinfo2 found. Please consider MobHealth3 for a better experience."] = "Mobhealth2/Mobinfo2 found. Please consider MobHealth3 for a better experience.",
 ["Test"] = "Test",
@@ -208,6 +208,7 @@ LunaUF.L:RegisterTranslations("enUS", function () return {
 ["Eye Beam"] = "Eye Beam",
 ["Locust Swarm"] = "Locust Swarm",
 ["Meteor"] = "Meteor",
+["Starfire Stun"] = "Starfire Stun",
 ["Energy / mp5 ticker"] = "Energy / mp5 ticker",
 ["Auratracker"] = "Auratracker",
 ["Show dispellable debuffs"] = "Show dispellable debuffs",
@@ -246,4 +247,7 @@ LunaUF.L:RegisterTranslations("enUS", function () return {
 ["Enable pet group"] = "Enable pet group",
 ["Enable raidgroup titles"] = "Enable raidgroup titles",
 }
-end )
+end
+
+LunaUF.L:RegisterTranslations("enUS", enUS)
+LunaUF.L:RegisterTranslations("enGB", enUS)
