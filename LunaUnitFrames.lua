@@ -895,10 +895,10 @@ function LunaUF:OnInitialize()
 			desc = L["Toggle config mode on and off."],
 			func = function ()
 					if LunaUF.db.profile.locked then
-						ChatFrame1:AddMessage(L["LunaUF: Entering Config Mode"])
+						ChatFrame1:AddMessage(L["LunaUF: Entering Config Mode."])
 						LunaUF.db.profile.locked = false
 					else
-						ChatFrame1:AddMessage(L["LunaUF: Exiting Config Mode"])
+						ChatFrame1:AddMessage(L["LunaUF: Exiting Config Mode."])
 						LunaUF.db.profile.locked = true
 					end
 					LunaUF:LoadUnits()
