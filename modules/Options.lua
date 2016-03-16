@@ -617,6 +617,10 @@ function LunaUF:LoadOptions()
 	LunaOptionsFrame.pages[2].totemsizeslider:SetValue(LunaUF.db.profile.units.player.totemBar.size)
 	LunaOptionsFrame.pages[2].enabledruid:SetChecked(LunaUF.db.profile.units.player.druidBar.enabled)
 	LunaOptionsFrame.pages[2].druidsizeslider:SetValue(LunaUF.db.profile.units.player.druidBar.size)
+	LunaOptionsFrame.pages[2].enablexp:SetChecked(LunaUF.db.profile.units.player.xpBar.enabled)
+	LunaOptionsFrame.pages[2].xpsizeslider:SetValue(LunaUF.db.profile.units.player.xpBar.size)
+	LunaOptionsFrame.pages[3].enablexp:SetChecked(LunaUF.db.profile.units.pet.xpBar.enabled)
+	LunaOptionsFrame.pages[3].xpsizeslider:SetValue(LunaUF.db.profile.units.pet.xpBar.size)
 	LunaOptionsFrame.pages[4].enablecombo:SetChecked(LunaUF.db.profile.units.target.comboPoints.enabled)
 	SetDropDownValue(LunaOptionsFrame.pages[4].combogrowth,LunaUF.db.profile.units.target.comboPoints.growth)
 	LunaOptionsFrame.pages[4].combosizeslider:SetValue(LunaUF.db.profile.units.target.comboPoints.size)
@@ -1977,6 +1981,72 @@ function LunaUF:CreateOptionsMenu()
 	LunaOptionsFrame.pages[2].druidsizeslider:SetPoint("TOPLEFT", LunaOptionsFrame.pages[2].druidheader, "BOTTOMLEFT", 280, -10)
 	LunaOptionsFrame.pages[2].druidsizeslider:SetWidth(190)
 
+	LunaOptionsFrame.pages[2].xpheader = LunaOptionsFrame.pages[2]:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+	LunaOptionsFrame.pages[2].xpheader:SetPoint("TOPLEFT", LunaOptionsFrame.pages[2].druidheader, "BOTTOMLEFT", 0, -60)
+	LunaOptionsFrame.pages[2].xpheader:SetHeight(24)
+	LunaOptionsFrame.pages[2].xpheader:SetJustifyH("LEFT")
+	LunaOptionsFrame.pages[2].xpheader:SetTextColor(1,1,0)
+	LunaOptionsFrame.pages[2].xpheader:SetText(L["XP Bar"])
+	
+	LunaOptionsFrame.pages[2].enablexp = CreateFrame("CheckButton", "EnableplayerXP", LunaOptionsFrame.pages[2], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[2].enablexp:SetPoint("TOPLEFT", LunaOptionsFrame.pages[2].xpheader, "BOTTOMLEFT", 0, -10)
+	LunaOptionsFrame.pages[2].enablexp:SetHeight(30)
+	LunaOptionsFrame.pages[2].enablexp:SetWidth(30)
+	LunaOptionsFrame.pages[2].enablexp:SetScript("OnClick", function()
+		local unit = this:GetParent().id
+		LunaUF.db.profile.units.player.xpBar.enabled = not LunaUF.db.profile.units.player.xpBar.enabled
+		for _,frame in pairs(LunaUF.Units.frameList) do
+			if frame.unitGroup == unit then
+				LunaUF.Units:SetupFrameModules(frame)
+			end
+		end
+	end)
+	getglobal("EnableplayerXPText"):SetText(L["Enable"])
+	
+	LunaOptionsFrame.pages[2].xpsizeslider = CreateFrame("Slider", "XPSizeSliderplayer", LunaOptionsFrame.pages[2], "OptionsSliderTemplate")
+	LunaOptionsFrame.pages[2].xpsizeslider:SetMinMaxValues(1,10)
+	LunaOptionsFrame.pages[2].xpsizeslider:SetValueStep(1)
+	LunaOptionsFrame.pages[2].xpsizeslider:SetScript("OnValueChanged", function()
+		LunaUF.db.profile.units.player.xpBar.size = math.floor(this:GetValue())
+		getglobal("XPSizeSliderplayerText"):SetText(L["Size"]..": "..LunaUF.db.profile.units.player.xpBar.size)
+		LunaUF.Units:SetupFrameModules(LunaUF.Units.unitFrames.player)
+	end)
+	LunaOptionsFrame.pages[2].xpsizeslider:SetPoint("TOPLEFT", LunaOptionsFrame.pages[2].xpheader, "BOTTOMLEFT", 280, -10)
+	LunaOptionsFrame.pages[2].xpsizeslider:SetWidth(190)
+	
+	LunaOptionsFrame.pages[3].xpheader = LunaOptionsFrame.pages[3]:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+	LunaOptionsFrame.pages[3].xpheader:SetPoint("TOPLEFT", LunaOptionsFrame.pages[3].barorder, "BOTTOMLEFT", 0, -60)
+	LunaOptionsFrame.pages[3].xpheader:SetHeight(24)
+	LunaOptionsFrame.pages[3].xpheader:SetJustifyH("LEFT")
+	LunaOptionsFrame.pages[3].xpheader:SetTextColor(1,1,0)
+	LunaOptionsFrame.pages[3].xpheader:SetText(L["XP Bar"])
+	
+	LunaOptionsFrame.pages[3].enablexp = CreateFrame("CheckButton", "EnablepetXP", LunaOptionsFrame.pages[3], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[3].enablexp:SetPoint("TOPLEFT", LunaOptionsFrame.pages[3].xpheader, "BOTTOMLEFT", 0, -10)
+	LunaOptionsFrame.pages[3].enablexp:SetHeight(30)
+	LunaOptionsFrame.pages[3].enablexp:SetWidth(30)
+	LunaOptionsFrame.pages[3].enablexp:SetScript("OnClick", function()
+		local unit = this:GetParent().id
+		LunaUF.db.profile.units.pet.xpBar.enabled = not LunaUF.db.profile.units.pet.xpBar.enabled
+		for _,frame in pairs(LunaUF.Units.frameList) do
+			if frame.unitGroup == unit then
+				LunaUF.Units:SetupFrameModules(frame)
+			end
+		end
+	end)
+	getglobal("EnablepetXPText"):SetText(L["Enable"])
+	
+	LunaOptionsFrame.pages[3].xpsizeslider = CreateFrame("Slider", "XPSizeSliderpet", LunaOptionsFrame.pages[3], "OptionsSliderTemplate")
+	LunaOptionsFrame.pages[3].xpsizeslider:SetMinMaxValues(1,10)
+	LunaOptionsFrame.pages[3].xpsizeslider:SetValueStep(1)
+	LunaOptionsFrame.pages[3].xpsizeslider:SetScript("OnValueChanged", function()
+		LunaUF.db.profile.units.pet.xpBar.size = math.floor(this:GetValue())
+		getglobal("XPSizeSliderpetText"):SetText(L["Size"]..": "..LunaUF.db.profile.units.pet.xpBar.size)
+		LunaUF.Units:SetupFrameModules(LunaUF.Units.unitFrames.pet)
+	end)
+	LunaOptionsFrame.pages[3].xpsizeslider:SetPoint("TOPLEFT", LunaOptionsFrame.pages[3].xpheader, "BOTTOMLEFT", 280, -10)
+	LunaOptionsFrame.pages[3].xpsizeslider:SetWidth(190)
+	
 	LunaOptionsFrame.pages[4].comboheader = LunaOptionsFrame.pages[4]:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
 	LunaOptionsFrame.pages[4].comboheader:SetPoint("TOPLEFT", LunaOptionsFrame.pages[4].barorder, "BOTTOMLEFT", 0, -30)
 	LunaOptionsFrame.pages[4].comboheader:SetHeight(24)

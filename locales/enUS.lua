@@ -246,6 +246,7 @@ local function enUS() return {
 ["Mode"] = "Mode",
 ["Enable pet group"] = "Enable pet group",
 ["Enable raidgroup titles"] = "Enable raidgroup titles",
+["XP Bar"] = "XP Bar",
 }
 end
 
