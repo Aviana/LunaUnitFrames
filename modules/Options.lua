@@ -552,6 +552,10 @@ function LunaUF:LoadOptions()
 		LunaOptionsFrame.pages[i].enableFader:SetChecked(LunaUF.db.profile.units[unit].fader.enabled)
 		LunaOptionsFrame.pages[i].FaderCombatslider:SetValue(LunaUF.db.profile.units[unit].fader.combatAlpha)
 		LunaOptionsFrame.pages[i].FaderNonCombatslider:SetValue(LunaUF.db.profile.units[unit].fader.inactiveAlpha)
+		LunaOptionsFrame.pages[i].enableCtext:SetChecked(LunaUF.db.profile.units[unit].combatText.enabled)
+		LunaOptionsFrame.pages[i].ctextscaleslider:SetValue(LunaUF.db.profile.units[unit].combatText.size)
+		LunaOptionsFrame.pages[i].ctextXslider:SetValue(LunaUF.db.profile.units[unit].combatText.xoffset)
+		LunaOptionsFrame.pages[i].ctextYslider:SetValue(LunaUF.db.profile.units[unit].combatText.yoffset)
 		LunaOptionsFrame.pages[i].enablePortrait:SetChecked(LunaUF.db.profile.units[unit].portrait.enabled)
 		SetDropDownValue(LunaOptionsFrame.pages[i].portraitType,LunaUF.db.profile.units[unit].portrait.type)
 		SetDropDownValue(LunaOptionsFrame.pages[i].portraitSide,LunaUF.db.profile.units[unit].portrait.side)
@@ -1324,8 +1328,82 @@ function LunaUF:CreateOptionsMenu()
 		LunaOptionsFrame.pages[i].FaderNonCombatslider:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].faderheader, "BOTTOMLEFT", 220, -50)
 		LunaOptionsFrame.pages[i].FaderNonCombatslider:SetWidth(200)
 		
+		----
+		
+		LunaOptionsFrame.pages[i].ctextheader = LunaOptionsFrame.pages[i]:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+		LunaOptionsFrame.pages[i].ctextheader:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].faderheader, "BOTTOMLEFT", 0, -100)
+		LunaOptionsFrame.pages[i].ctextheader:SetHeight(24)
+		LunaOptionsFrame.pages[i].ctextheader:SetJustifyH("LEFT")
+		LunaOptionsFrame.pages[i].ctextheader:SetTextColor(1,1,0)
+		LunaOptionsFrame.pages[i].ctextheader:SetText(L["Combat text"])
+		
+		LunaOptionsFrame.pages[i].enableCtext = CreateFrame("CheckButton", "Enable"..LunaUF.unitList[i-1].."CombatText", LunaOptionsFrame.pages[i], "UICheckButtonTemplate")
+		LunaOptionsFrame.pages[i].enableCtext:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].ctextheader, "BOTTOMLEFT", 0, -10)
+		LunaOptionsFrame.pages[i].enableCtext:SetHeight(30)
+		LunaOptionsFrame.pages[i].enableCtext:SetWidth(30)
+		LunaOptionsFrame.pages[i].enableCtext:SetScript("OnClick", function()
+			local unit = this:GetParent().id
+			LunaUF.db.profile.units[unit].combatText.enabled = not LunaUF.db.profile.units[unit].combatText.enabled
+			for _,frame in pairs(LunaUF.Units.frameList) do
+				if frame.unitGroup == unit then
+					LunaUF.Units:SetupFrameModules(frame)
+				end
+			end
+		end)
+		getglobal("Enable"..LunaUF.unitList[i-1].."CombatTextText"):SetText(L["Enable"])
+		
+		LunaOptionsFrame.pages[i].ctextscaleslider = CreateFrame("Slider", "CtextScale"..LunaUF.unitList[i-1], LunaOptionsFrame.pages[i], "OptionsSliderTemplate")
+		LunaOptionsFrame.pages[i].ctextscaleslider:SetMinMaxValues(1,5)
+		LunaOptionsFrame.pages[i].ctextscaleslider:SetValueStep(0.1)
+		LunaOptionsFrame.pages[i].ctextscaleslider:SetScript("OnValueChanged", function()
+			local unit = this:GetParent().id
+			LunaUF.db.profile.units[unit].combatText.size = math.floor(this:GetValue()*10)/10
+			getglobal("CtextScale"..unit.."Text"):SetText("Size: "..LunaUF.db.profile.units[unit].combatText.size)
+			for _,frame in pairs(LunaUF.Units.frameList) do
+				if frame.unitGroup == unit then
+					LunaUF.Units:SetupFrameModules(frame)
+				end
+			end
+		end)
+		LunaOptionsFrame.pages[i].ctextscaleslider:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].ctextheader, "BOTTOMLEFT", 220, -10)
+		LunaOptionsFrame.pages[i].ctextscaleslider:SetWidth(200)
+		
+		LunaOptionsFrame.pages[i].ctextXslider = CreateFrame("Slider", "CtextXSlider"..LunaUF.unitList[i-1], LunaOptionsFrame.pages[i], "OptionsSliderTemplate")
+		LunaOptionsFrame.pages[i].ctextXslider:SetMinMaxValues(-200,200)
+		LunaOptionsFrame.pages[i].ctextXslider:SetValueStep(2)
+		LunaOptionsFrame.pages[i].ctextXslider:SetScript("OnValueChanged", function()
+			local unit = this:GetParent().id
+			LunaUF.db.profile.units[unit].combatText.xoffset = math.floor(this:GetValue())
+			getglobal("CtextXSlider"..unit.."Text"):SetText("X: "..LunaUF.db.profile.units[unit].combatText.xoffset)
+			for _,frame in pairs(LunaUF.Units.frameList) do
+				if frame.unitGroup == unit then
+					LunaUF.Units:SetupFrameModules(frame)
+				end
+			end
+		end)
+		LunaOptionsFrame.pages[i].ctextXslider:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].ctextheader, "BOTTOMLEFT", 0, -50)
+		LunaOptionsFrame.pages[i].ctextXslider:SetWidth(200)
+		
+		LunaOptionsFrame.pages[i].ctextYslider = CreateFrame("Slider", "CtextYSlider"..LunaUF.unitList[i-1], LunaOptionsFrame.pages[i], "OptionsSliderTemplate")
+		LunaOptionsFrame.pages[i].ctextYslider:SetMinMaxValues(-200,200)
+		LunaOptionsFrame.pages[i].ctextYslider:SetValueStep(2)
+		LunaOptionsFrame.pages[i].ctextYslider:SetScript("OnValueChanged", function()
+			local unit = this:GetParent().id
+			LunaUF.db.profile.units[unit].combatText.yoffset = math.floor(this:GetValue())
+			getglobal("CtextYSlider"..unit.."Text"):SetText("Y: "..LunaUF.db.profile.units[unit].combatText.yoffset)
+			for _,frame in pairs(LunaUF.Units.frameList) do
+				if frame.unitGroup == unit then
+					LunaUF.Units:SetupFrameModules(frame)
+				end
+			end
+		end)
+		LunaOptionsFrame.pages[i].ctextYslider:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].ctextheader, "BOTTOMLEFT", 220, -50)
+		LunaOptionsFrame.pages[i].ctextYslider:SetWidth(200)
+		
+		----
+		
 		LunaOptionsFrame.pages[i].portraitheader = LunaOptionsFrame.pages[i]:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-		LunaOptionsFrame.pages[i].portraitheader:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].faderheader, "BOTTOMLEFT", 0, -100)
+		LunaOptionsFrame.pages[i].portraitheader:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].ctextheader, "BOTTOMLEFT", 0, -100)
 		LunaOptionsFrame.pages[i].portraitheader:SetHeight(24)
 		LunaOptionsFrame.pages[i].portraitheader:SetJustifyH("LEFT")
 		LunaOptionsFrame.pages[i].portraitheader:SetTextColor(1,1,0)

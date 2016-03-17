@@ -2,7 +2,7 @@ LunaUF = AceLibrary("AceAddon-2.0"):new("AceEvent-2.0", "AceConsole-2.0", "AceDB
 LunaUF:RegisterDB("LunaDB")
 
 -- Assets ----------------------------------------------------------------------------------
-LunaUF.Version = 2000
+LunaUF.Version = 2002
 LunaUF.BS = AceLibrary("Babble-Spell-2.2")
 LunaUF.Banzai = AceLibrary("Banzai-1.0")
 LunaUF.HealComm = AceLibrary("HealComm-1.0")
@@ -377,6 +377,7 @@ LunaUF.defaults = {
 				auras = { enabled = false, AurasPerRow = 8, position = "BOTTOM" },
 				highlight = { enabled = true, ontarget = false, ondebuff = true, onmouse = false },
 				fader = { enabled = false, inactiveAlpha = 0.2, combatAlpha = 1 },
+				combatText = { enabled = false, xoffset = 0, yoffset = 0, size = 2 },
 				tags = {
 					enabled = true,
 					bartags = {
@@ -427,6 +428,7 @@ LunaUF.defaults = {
 				auras = { enabled = false, AurasPerRow = 8, position = "BOTTOM" },
 				highlight = { enabled = true, ontarget = false, ondebuff = true, onmouse = false },
 				fader = { enabled = false, inactiveAlpha = 0.2, combatAlpha = 1 },
+				combatText = { enabled = false, xoffset = 0, yoffset = 0, size = 2 },
 				tags = {
 					enabled = true,
 					bartags = {
@@ -545,6 +547,7 @@ LunaUF.defaults = {
 				auras = { enabled = false, AurasPerRow = 8, position = "BOTTOM" },
 				highlight = { enabled = true, ontarget = false, ondebuff = true, onmouse = false },
 				fader = { enabled = false, inactiveAlpha = 0.2, combatAlpha = 1 },
+				combatText = { enabled = false, xoffset = 0, yoffset = 0, size = 2 },
 				tags = {
 					enabled = true,
 					bartags = {
@@ -591,6 +594,7 @@ LunaUF.defaults = {
 				auras = { enabled = false, AurasPerRow = 8, position = "BOTTOM" },
 				highlight = { enabled = true, ontarget = false, ondebuff = true, onmouse = false },
 				fader = { enabled = false, inactiveAlpha = 0.2, combatAlpha = 1 },
+				combatText = { enabled = false, xoffset = 0, yoffset = 0, size = 2 },
 				tags = {
 					enabled = true,
 					bartags = {

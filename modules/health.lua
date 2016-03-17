@@ -205,13 +205,13 @@ function Health:FullUpdate(frame)
 		fontstring:SetHeight(frame.healthBar:GetHeight())
 		if align == "left" then
 			fontstring:SetPoint("TOPLEFT", frame.healthBar, "TOPLEFT", 2, 0)
-			fontstring:SetWidth(frame.healthBar:GetWidth()/2)
+			fontstring:SetWidth(frame.healthBar:GetWidth()-4)
 		elseif align == "center" then
 			fontstring:SetAllPoints(frame.healthBar)
 			fontstring:SetWidth(frame.healthBar:GetWidth())
 		else
 			fontstring:SetPoint("TOPRIGHT", frame.healthBar, "TOPRIGHT", -2 , 0)
-			fontstring:SetWidth(frame.healthBar:GetWidth()/2)
+			fontstring:SetWidth(frame.healthBar:GetWidth()-4)
 		end
 	end
 	Health:Update(frame)
