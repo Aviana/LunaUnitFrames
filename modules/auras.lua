@@ -171,6 +171,7 @@ function Auras:OnEnable(frame)
 			button.border:Show()
 		end
 	end
+	frame.auras:Show()
 	frame.auras:RegisterEvent("UNIT_AURA")
 	frame.auras:SetScript("OnEvent", OnEvent)
 	frame.auras:SetScript("OnUpdate", OnUpdate)
@@ -181,6 +182,7 @@ function Auras:OnDisable(frame)
 		frame.auras:UnregisterAllEvents()
 		frame.auras:SetScript("OnEvent", nil)
 		frame.auras:SetScript("OnUpdate", nil)
+		frame.auras:Hide()
 	end
 end
 
