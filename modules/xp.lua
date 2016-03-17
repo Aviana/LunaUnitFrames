@@ -110,7 +110,7 @@ function XP:UpdateXP(frame)
 	frame.xpBar.xp:SetValue(current)
 	frame.xpBar.xp:Show()
 	
-	if( frame.unitOwner == "player" and GetXPExhaustion() ) then
+	if( frame.unitGroup == "player" and GetXPExhaustion() ) then
 		frame.xpBar.rested:SetMinMaxValues(min, max)
 		frame.xpBar.rested:SetValue(math.min(current + GetXPExhaustion(), max))
 		frame.xpBar.rested:Show()
