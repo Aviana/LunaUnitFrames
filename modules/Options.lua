@@ -879,10 +879,10 @@ function LunaUF:CreateOptionsMenu()
 	LunaOptionsFrame.Button11:SetText(L["Config Mode"])
 	LunaOptionsFrame.Button11:SetScript("OnClick", function () 
 		if LunaUF.db.profile.locked then
-			LunaUF:SystemMessage(L["Entering config mode."])
+			LunaUF:SystemMessage(L["LunaUF: Entering config mode."])
 			LunaUF.db.profile.locked = false
 		else
-			LunaUF:SystemMessage(L["Exiting config mode."])
+			LunaUF:SystemMessage(L["LunaUF: Exiting config mode."])
 			LunaUF.db.profile.locked = true
 		end
 		LunaUF:LoadUnits()
