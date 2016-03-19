@@ -113,8 +113,8 @@ local Spells = {
 	[BS["Conjure Mana Jade"]] = {t=3.0};
 	[BS["Conjure Mana Agate"]] = {t=3.0};
 	[BS["Polymorph"]] = {t=1.5};
-	[BS["Polymorph: Pig"]] = {t=1.5};
-	[BS["Polymorph: Turtle"]] = {t=1.5};
+	[L["Polymorph: Pig"]] = {t=1.5};
+	[L["Polymorph: Turtle"]] = {t=1.5};
 	[BS["Pyroblast"]] = {t=6.0, d=60.0};
 	[BS["Scorch"]] = {t=1.5};
 	[BS["Flamestrike"]] = {t=3.0, r="Death Talon Hatcher", a=2};
@@ -137,7 +137,7 @@ local Spells = {
 	[BS["Frost Armor"]] = {t=0.0};
 	[BS["Ice Armor"]] = {t=0.0};
 	[BS["Mage Armor"]] = {t=0.0};
-	[BS["Counterspell - Silenced"]] = {t=0.0, ni=1};
+	[L["Counterspell - Silenced"]] = {t=0.0, ni=1};
 	[BS["Ice Barrier"]] = {t=0.0};
 	[BS["Mana Shield"]] = {t=0.0};
 	[BS["Blink"]] = {t=0};
@@ -202,7 +202,7 @@ local Spells = {
 	[BS["Blind"]] = {t=0};
 	[BS["Gouge"]] = {t=0};
 	[BS["Kidney Shot"]] = {t=0};
-	[BS["Kick - Silenced"]] = {t=0, ni=1};
+	[L["Kick - Silenced"]] = {t=0, ni=1};
 	[BS["Kick"]] = {t=0, ni=1};
 	
 	-- Shaman
@@ -259,7 +259,7 @@ local Spells = {
 	[BS["Revenge Stun"]] = {t=0};
 	[BS["Mace Stun Effect"]] = {t=0};
 	[BS["Intimidating Shout"]] = {t=0};
-	[BS["Shield Bash - Silenced"]] = {t=0};
+	[L["Shield Bash - Silenced"]] = {t=0};
 	[BS["Shield Bash"]] = {t=0, ni=1};
 	[BS["Pummel"]] = {t=0, ni=1};
 	

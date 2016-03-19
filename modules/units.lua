@@ -160,27 +160,35 @@ UnitWatch:SetScript("OnUpdate", UnitWatchOnUpdate)
 
 -- Show tooltip
 local function OnEnter()
-	if this.unit then
-		if ( SpellIsTargeting() ) then
-			if ( SpellCanTargetUnit(this.unit) ) then
-				SetCursor("CAST_CURSOR")
-			else
-				SetCursor("CAST_ERROR_CURSOR")
+	if this.unit and LunaUF.db.profile.tooltips then
+		if not GameTooltip.orgSetUnit then
+			if ( SpellIsTargeting() ) then
+				if ( SpellCanTargetUnit(this.unit) ) then
+					SetCursor("CAST_CURSOR")
+				else
+					SetCursor("CAST_ERROR_CURSOR")
+				end
 			end
+			if( LunaUF.db.profile.tooltipCombat and UnitAffectingCombat("player") ) then return end
+			GameTooltip_SetDefaultAnchor(GameTooltip, this)
+			GameTooltip:SetUnit(this.unit)
+			local r, g, b = GameTooltip_UnitColor(this.unit)
+			GameTooltipTextLeft1:SetTextColor(r, g, b)
+		else
+			UnitFrame_OnEnter()
 		end
-		if( LunaUF.db.profile.tooltipCombat and UnitAffectingCombat("player") ) then return end
-		GameTooltip_SetDefaultAnchor(GameTooltip, this)
-		GameTooltip:SetUnit(this.unit)
-		local r, g, b = GameTooltip_UnitColor(this.unit)
-		GameTooltipTextLeft1:SetTextColor(r, g, b)
 	end
 end
 
 local function OnLeave()
-	if ( SpellIsTargeting() ) then
-		SetCursor("CAST_ERROR_CURSOR")
+	if not GameTooltip.orgSetUnit then
+		if ( SpellIsTargeting() ) then
+			SetCursor("CAST_ERROR_CURSOR")
+		end
+		GameTooltip:FadeOut()
+	else
+		UnitFrame_OnLeave()
 	end
-	GameTooltip:FadeOut()
 end
 
 -- Event handling
@@ -377,14 +385,14 @@ local function SetupGroupHeader(groupType)
 	
 	local xoffset
 	if config.growth == "RIGHT" or config.growth == "LEFT" then
-		xoffset = ((config.growth == "RIGHT" and 1 or -1) * (LunaUF.db.profile.units[unitGroup].size.x + LunaUF.db.profile.units[unitGroup].padding))
+		xoffset = ((config.growth == "RIGHT" and 1 or -1) * (LunaUF.db.profile.units[unitGroup].size.x + LunaUF.db.profile.units.party.padding))
 	else
 		xoffset = 0
 	end
 
 	local yoffset
 	if config.growth == "UP" or config.growth == "DOWN" then
-		yoffset = ((config.growth == "UP" and 1 or -1) * (LunaUF.db.profile.units[unitGroup].size.y + LunaUF.db.profile.units[unitGroup].padding))
+		yoffset = ((config.growth == "UP" and 1 or -1) * (LunaUF.db.profile.units[unitGroup].size.y + LunaUF.db.profile.units.party.padding))
 	else
 		yoffset = 0
 	end

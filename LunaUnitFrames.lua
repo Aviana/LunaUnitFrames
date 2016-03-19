@@ -154,6 +154,7 @@ LunaUF.defaults = {
 		font = "Luna",
 		texture = "Luna",
 		auraborderType = "dark",
+		tooltips = true,
 		tooltipCombat = false,
 		bars = { alpha = 1, backgroundAlpha = 0.20 },
 		classColors = {
@@ -532,7 +533,6 @@ LunaUF.defaults = {
 			},
 			partypet = {
 				enabled = true,
-				padding = 60,
 				indicators = {
 					enabled = true,
 					icons = {
@@ -578,7 +578,6 @@ LunaUF.defaults = {
 			},
 			partytarget = {
 				enabled = false,
-				padding = 60,
 				indicators = {
 					enabled = true,
 					icons = {
