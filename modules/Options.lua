@@ -2264,6 +2264,8 @@ function LunaUF:CreateOptionsMenu()
 		LunaUF.db.profile.units.party.padding = math.floor(this:GetValue())
 		getglobal("PartyPaddingSliderText"):SetText(L["Padding"]..": "..LunaUF.db.profile.units.party.padding)
 		LunaUF.Units:LoadGroupHeader("party")
+		LunaUF.Units:LoadGroupHeader("partytarget")
+		LunaUF.Units:LoadGroupHeader("partypet")
 	end)
 	LunaOptionsFrame.pages[7].partypadding:SetPoint("TOPLEFT", LunaOptionsFrame.pages[7].partyoptions, "BOTTOMLEFT", 270, -10)
 	LunaOptionsFrame.pages[7].partypadding:SetWidth(200)
@@ -2515,9 +2517,8 @@ function LunaUF:CreateOptionsMenu()
 	LunaOptionsFrame.pages[10].firstbuff:SetWidth(200)
 	LunaOptionsFrame.pages[10].firstbuff:SetAutoFocus(nil)
 	LunaOptionsFrame.pages[10].firstbuff:SetPoint("TOPLEFT", LunaOptionsFrame.pages[10].buffheader, "BOTTOMLEFT", 0, -10)
-	LunaOptionsFrame.pages[10].firstbuff.config = LunaUF.db.profile.units.raid.squares.buffs.names
 	LunaOptionsFrame.pages[10].firstbuff:SetScript("OnTextChanged", function()
-		this.config[1] = string.lower(this:GetText())
+		LunaUF.db.profile.units.raid.squares.buffs.names[1] = string.lower(this:GetText())
 		for _,frame in pairs(LunaUF.Units.frameList) do
 			if frame.unitGroup == "raid" then
 				LunaUF.Units.FullUpdate(frame)
@@ -2539,9 +2540,8 @@ function LunaUF:CreateOptionsMenu()
 	LunaOptionsFrame.pages[10].secondbuff:SetWidth(200)
 	LunaOptionsFrame.pages[10].secondbuff:SetAutoFocus(nil)
 	LunaOptionsFrame.pages[10].secondbuff:SetPoint("TOPLEFT", LunaOptionsFrame.pages[10].firstbuff, "BOTTOMLEFT", 0, -10)
-	LunaOptionsFrame.pages[10].secondbuff.config = LunaUF.db.profile.units.raid.squares.buffs.names
 	LunaOptionsFrame.pages[10].secondbuff:SetScript("OnTextChanged", function()
-		this.config[2] = string.lower(this:GetText())
+		LunaUF.db.profile.units.raid.squares.buffs.names[2] = string.lower(this:GetText())
 		for _,frame in pairs(LunaUF.Units.frameList) do
 			if frame.unitGroup == "raid" then
 				LunaUF.Units.FullUpdate(frame)
@@ -2563,9 +2563,8 @@ function LunaUF:CreateOptionsMenu()
 	LunaOptionsFrame.pages[10].thirdbuff:SetWidth(200)
 	LunaOptionsFrame.pages[10].thirdbuff:SetAutoFocus(nil)
 	LunaOptionsFrame.pages[10].thirdbuff:SetPoint("TOPLEFT", LunaOptionsFrame.pages[10].secondbuff, "BOTTOMLEFT", 0, -10)
-	LunaOptionsFrame.pages[10].thirdbuff.config = LunaUF.db.profile.units.raid.squares.buffs.names
 	LunaOptionsFrame.pages[10].thirdbuff:SetScript("OnTextChanged", function()
-		this.config[3] = string.lower(this:GetText())
+		LunaUF.db.profile.units.raid.squares.buffs.names[3] = string.lower(this:GetText())
 		for _,frame in pairs(LunaUF.Units.frameList) do
 			if frame.unitGroup == "raid" then
 				LunaUF.Units.FullUpdate(frame)
@@ -2591,9 +2590,8 @@ function LunaUF:CreateOptionsMenu()
 	LunaOptionsFrame.pages[10].firstdebuff:SetWidth(200)
 	LunaOptionsFrame.pages[10].firstdebuff:SetAutoFocus(nil)
 	LunaOptionsFrame.pages[10].firstdebuff:SetPoint("TOPLEFT", LunaOptionsFrame.pages[10].debuffheader, "BOTTOMLEFT", 0, -10)
-	LunaOptionsFrame.pages[10].firstdebuff.config = LunaUF.db.profile.units.raid.squares.debuffs.names
 	LunaOptionsFrame.pages[10].firstdebuff:SetScript("OnTextChanged", function()
-		this.config[1] = string.lower(this:GetText())
+		LunaUF.db.profile.units.raid.squares.debuffs.names[1] = string.lower(this:GetText())
 		for _,frame in pairs(LunaUF.Units.frameList) do
 			if frame.unitGroup == "raid" then
 				LunaUF.Units.FullUpdate(frame)
@@ -2615,9 +2613,8 @@ function LunaUF:CreateOptionsMenu()
 	LunaOptionsFrame.pages[10].seconddebuff:SetWidth(200)
 	LunaOptionsFrame.pages[10].seconddebuff:SetAutoFocus(nil)
 	LunaOptionsFrame.pages[10].seconddebuff:SetPoint("TOPLEFT", LunaOptionsFrame.pages[10].firstdebuff, "BOTTOMLEFT", 0, -10)
-	LunaOptionsFrame.pages[10].seconddebuff.config = LunaUF.db.profile.units.raid.squares.debuffs.names
 	LunaOptionsFrame.pages[10].seconddebuff:SetScript("OnTextChanged", function()
-		this.config[2] = string.lower(this:GetText())
+		LunaUF.db.profile.units.raid.squares.debuffs.names[2] = string.lower(this:GetText())
 		for _,frame in pairs(LunaUF.Units.frameList) do
 			if frame.unitGroup == "raid" then
 				LunaUF.Units.FullUpdate(frame)
@@ -2639,9 +2636,8 @@ function LunaUF:CreateOptionsMenu()
 	LunaOptionsFrame.pages[10].thirddebuff:SetWidth(200)
 	LunaOptionsFrame.pages[10].thirddebuff:SetAutoFocus(nil)
 	LunaOptionsFrame.pages[10].thirddebuff:SetPoint("TOPLEFT", LunaOptionsFrame.pages[10].seconddebuff, "BOTTOMLEFT", 0, -10)
-	LunaOptionsFrame.pages[10].thirddebuff.config = LunaUF.db.profile.units.raid.squares.debuffs.names
 	LunaOptionsFrame.pages[10].thirddebuff:SetScript("OnTextChanged", function()
-		this.config[3] = string.lower(this:GetText())
+		LunaUF.db.profile.units.raid.squares.debuffs.names[3] = string.lower(this:GetText())
 		for _,frame in pairs(LunaUF.Units.frameList) do
 			if frame.unitGroup == "raid" then
 				LunaUF.Units.FullUpdate(frame)

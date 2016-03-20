@@ -385,14 +385,14 @@ local function SetupGroupHeader(groupType)
 	
 	local xoffset
 	if config.growth == "RIGHT" or config.growth == "LEFT" then
-		xoffset = ((config.growth == "RIGHT" and 1 or -1) * (LunaUF.db.profile.units[unitGroup].size.x + LunaUF.db.profile.units.party.padding))
+		xoffset = ((config.growth == "RIGHT" and 1 or -1) * (LunaUF.db.profile.units.party.size.x + LunaUF.db.profile.units.party.padding))
 	else
 		xoffset = 0
 	end
 
 	local yoffset
 	if config.growth == "UP" or config.growth == "DOWN" then
-		yoffset = ((config.growth == "UP" and 1 or -1) * (LunaUF.db.profile.units[unitGroup].size.y + LunaUF.db.profile.units.party.padding))
+		yoffset = ((config.growth == "UP" and 1 or -1) * (LunaUF.db.profile.units.party.size.y + LunaUF.db.profile.units.party.padding))
 	else
 		yoffset = 0
 	end
@@ -402,7 +402,9 @@ local function SetupGroupHeader(groupType)
 			frame.parentunit = nil
 			frame:Hide()
 		else
-			frame:Show()
+			if unitGroup == "party" then
+				frame:Show()
+			end
 			frame:ClearAllPoints()
 			frame:SetPoint(point, anchor, point, i>1 and xoffset, i>1 and yoffset)
 			frame:SetWidth(LunaUF.db.profile.units[unitGroup].size.x)
