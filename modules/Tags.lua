@@ -5,7 +5,7 @@ local L = LunaUF.L
 local HealComm = LunaUF.HealComm
 local AceEvent = LunaUF.AceEvent
 local DruidManaLib = LunaUF.DruidManaLib
-local banzai = LunaUF.banzai
+local banzai = LunaUF.Banzai
 local UnitHealth = UnitHealth
 local realUnitHealth = UnitHealth
 local UnitHealthMax = UnitHealthMax
@@ -664,8 +664,9 @@ AceEvent:RegisterEvent("VARIABLES_LOADED", function ()
 		UnitHealth = function(unit)
 			local hp
 			if unit == "target" then
-				_,hp = MobHealth_GetTargetCurHP()
-			else
+				hp = MobHealth_GetTargetCurHP()
+			end
+			if not hp then
 				hp = realUnitHealth(unit)
 			end
 			return hp
@@ -673,8 +674,9 @@ AceEvent:RegisterEvent("VARIABLES_LOADED", function ()
 		UnitHealthMax = function(unit)
 			local maxhp
 			if unit == "target" then
-				_,maxhp = MobHealth_GetTargetMaxHP()
-			else
+				maxhp = MobHealth_GetTargetMaxHP()
+			end
+			if not maxhp then
 				maxhp = realUnitHealthMax(unit)
 			end
 			return maxhp

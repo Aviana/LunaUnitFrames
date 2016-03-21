@@ -38,7 +38,7 @@ local function UnitWatchOnUpdate()
 				else
 					FullUpdate(frame)
 				end
-			elseif frame:IsShown() then
+			elseif frame:IsShown() and (LunaUF.db.profile.locked or not LunaUF.db.profile.units[frame.unitGroup].enabled) then
 				frame:Hide()
 			end
 		end
@@ -119,14 +119,14 @@ local function UnitWatchOnEvent()
 			else
 				FullUpdate(frame)
 			end
-		elseif frame:IsShown() then
+		elseif frame:IsShown() and LunaUF.db.profile.locked then
 			frame:Hide()
 		end
 	elseif event == "UNIT_PET" and arg1 == "player" then
 		if unitFrames["pet"] then
 			if UnitExists(unitFrames["pet"].unit) and not unitFrames["pet"]:IsShown() then
 				unitFrames["pet"]:Show()
-			elseif not UnitExists(unitFrames["pet"].unit) and unitFrames["pet"]:IsShown() then
+			elseif not UnitExists(unitFrames["pet"].unit) and unitFrames["pet"]:IsShown() and LunaUF.db.profile.locked then
 				unitFrames["pet"]:Hide()
 			end
 			if unitFrames["pet"]:IsShown() then
@@ -593,7 +593,7 @@ function Units:CreateUnit(a1, a2, a3, a4)
 	frame:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up')
 	frame:SetScript("OnClick", OnClick)
 	frame:SetBackdrop(LunaUF.constants.backdrop)
-	frame:SetBackdropColor(0,0,0)
+	frame:SetBackdropColor(LunaUF.db.profile.bgcolor.r,LunaUF.db.profile.bgcolor.g,LunaUF.db.profile.bgcolor.b,LunaUF.db.profile.bgalpha)
 	
 	table.insert(frameList,frame)
 	return frame

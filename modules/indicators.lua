@@ -9,6 +9,7 @@ local Indicators = {
 		["ready"] = {"Interface\\AddOns\\LunaUnitFrames\\media\\textures\\ReadyCheck-Waiting", "CHAT_MSG_ADDON"},
 		["class"] = {"Interface\\Glues\\CharacterCreate\\UI-CharacterCreate-Classes"},
 		["rezz"] = {"Interface\\AddOns\\LunaUnitFrames\\media\\textures\\Raid-Icon-Rez"},
+		["pvprank"] = {"Interface\\PvPRankBadges\\PvPRank01"},
 	},
 }
 LunaUF:RegisterModule(Indicators, "indicators", LunaUF.L["Indicators"])
@@ -21,9 +22,9 @@ local readycheck = {}
 local function AceOnEvent(arg1)
 	if event == "HealComm_Ressupdate" then
 		for _,frame in pairs(LunaUF.Units.frameList) do
-			if frame.indicators and frame.indicators.rezz then
+			if frame.indicators and frame.indicators.rezz and LunaUF.db.profile.locked then
 				if frame.unit and UnitName(frame.unit) == arg1 then
-					if HealComm:UnitisResurrecting(UnitName(frame.unit)) then
+					if HealComm:UnitisResurrecting(UnitName(frame.unit)) and LunaUF.db.profile.units[frame.unitGroup].indicators.icons.rezz.enabled then
 						frame.indicators.rezz:Show()
 					else
 						frame.indicators.rezz:Hide()
@@ -62,7 +63,7 @@ local function combatMonitor()
 	
 	local frame = this:GetParent()
 	local config = LunaUF.db.profile.units[frame.unitGroup].indicators.icons
-	if UnitAffectingCombat(frame.unit) and config.status.enabled then
+	if (UnitAffectingCombat(frame.unit) or not LunaUF.db.profile.locked) and config.status.enabled then
 		frame.indicators.status:SetTexCoord(0.50, 1.0, 0.0, 0.49)
 		frame.indicators.status:Show()
 	elseif( frame.unitGroup == "player" and IsResting() and config.status.enabled ) then
@@ -91,7 +92,7 @@ local function OnEvent()
 			--arg4 voted not ready
 		end
 	elseif event == "PARTY_LEADER_CHANGED" or event == "PARTY_MEMBERS_CHANGED" or event == "RAID_ROSTER_UPDATE" then
-		if UnitIsPartyLeader(frame.unit) and (GetNumPartyMembers() > 0 or GetNumRaidMembers() > 0) and config.leader.enabled then
+		if ((UnitIsPartyLeader(frame.unit) and (GetNumPartyMembers() > 0 or GetNumRaidMembers() > 0)) or not LunaUF.db.profile.locked) and config.leader.enabled then
 			frame.indicators.leader:Show()
 		else
 			frame.indicators.leader:Hide()
@@ -101,6 +102,9 @@ local function OnEvent()
 			if GetRaidTargetIndex(frame.unit) and config.raidTarget.enabled then
 				SetRaidTargetIconTexture(frame.indicators.raidTarget, GetRaidTargetIndex(frame.unit))
 				frame.indicators.raidTarget:Show()
+			elseif not LunaUF.db.profile.locked and config.raidTarget.enabled then
+				SetRaidTargetIconTexture(frame.indicators.raidTarget, 1)
+				frame.indicators.raidTarget:Show()
 			else
 				frame.indicators.raidTarget:Hide()
 			end
@@ -109,7 +113,7 @@ local function OnEvent()
 		if frame.indicators.happiness then
 			local happiness = GetPetHappiness()
 			-- No pet
-			if not happiness or not config.happiness.enabled then
+			if (not happiness and LunaUF.db.profile.locked) or not config.happiness.enabled then
 				frame.indicators.happiness:Hide()
 			-- Happy :D
 			elseif happiness == 3 then
@@ -123,6 +127,10 @@ local function OnEvent()
 			elseif happiness == 1 then
 				frame.indicators.happiness:SetTexCoord(0.375, 0.5625, 0, 0.359375)
 				frame.indicators.happiness:Show()
+			else
+				frame.indicators.happiness:SetTexCoord(0, 0.1875, 0, 0.359375)
+				frame.indicators.happiness:Show()
+			-- Config mode
 			end
 		end
 	elseif event == "UNIT_FACTION" then
@@ -132,6 +140,9 @@ local function OnEvent()
 				frame.indicators.pvp:Show()
 			elseif( UnitIsPVPFreeForAll(frame.unit) ) then
 				frame.indicators.pvp:SetTexture("Interface\\TargetingFrame\\UI-PVP-FFA")
+				frame.indicators.pvp:Show()
+			elseif not LunaUF.db.profile.locked and config.pvp.enabled then
+				frame.indicators.pvp:SetTexture(string.format("Interface\\TargetingFrame\\UI-PVP-%s", UnitFactionGroup("player")))
 				frame.indicators.pvp:Show()
 			else
 				frame.indicators.pvp:Hide()
@@ -192,23 +203,42 @@ function Indicators:FullUpdate(frame)
 			frame.indicators[name]:Hide()
 		end
 	end
+	if frame.indicators.pvprank then
+		local rankNumber = UnitPVPRank(frame.unit)
+		if rankNumber and config.pvprank.enabled then
+			if not LunaUF.db.profile.locked then
+				frame.indicators.pvprank:SetTexture("Interface\\PvPRankBadges\\PvPRank14");
+				frame.indicators.pvprank:Show()
+			elseif (rankNumber == 0) then
+				frame.indicators.pvprank:Hide()
+			elseif (rankNumber < 14) then
+				rankNumber = rankNumber - 4
+				frame.indicators.pvprank:SetTexture("Interface\\PvPRankBadges\\PvPRank0"..rankNumber);
+				frame.indicators.pvprank:Show()
+			else
+				rankNumber = rankNumber - 4
+				frame.indicators.pvprank:SetTexture("Interface\\PvPRankBadges\\PvPRank"..rankNumber);
+				frame.indicators.pvprank:Show()
+			end
+		end
+	end
 	if frame.indicators.rezz then
 		local rezztime = HealComm:UnitisResurrecting(UnitName(frame.unit))
-		if rezztime and config.rezz.enabled then
+		if (rezztime or not LunaUF.db.profile.locked) and config.rezz.enabled then
 			frame.indicators.rezz:Show()
 		else
 			frame.indicators.rezz:Hide()
 		end
 	end
 	if frame.indicators.masterLoot then
-		if frame.unit and UnitName(frame.unit) == lootmaster and config.masterLoot.enabled then
+		if frame.unit and (UnitName(frame.unit) == lootmaster or not LunaUF.db.profile.locked) and config.masterLoot.enabled then
 			frame.indicators.masterLoot:Show()
 		else
 			frame.indicators.masterLoot:Hide()
 		end
 	end
 	if frame.indicators.leader then
-		if UnitIsPartyLeader(frame.unit) and (GetNumPartyMembers() > 0 or GetNumRaidMembers() > 0) and config.leader.enabled then
+		if ((UnitIsPartyLeader(frame.unit) and (GetNumPartyMembers() > 0 or GetNumRaidMembers() > 0)) or not LunaUF.db.profile.locked) and config.leader.enabled then
 			frame.indicators.leader:Show()
 		else
 			frame.indicators.leader:Hide()
@@ -221,6 +251,9 @@ function Indicators:FullUpdate(frame)
 		elseif( UnitIsPVPFreeForAll(frame.unit) and config.pvp.enabled ) then
 			frame.indicators.pvp:SetTexture("Interface\\TargetingFrame\\UI-PVP-FFA")
 			frame.indicators.pvp:Show()
+		elseif not LunaUF.db.profile.locked and config.pvp.enabled then
+			frame.indicators.pvp:SetTexture(string.format("Interface\\TargetingFrame\\UI-PVP-%s", UnitFactionGroup("player")))
+			frame.indicators.pvp:Show()
 		else
 			frame.indicators.pvp:Hide()
 		end
@@ -232,6 +265,9 @@ function Indicators:FullUpdate(frame)
 		elseif( frame.unitGroup == "player" and IsResting() and config.status.enabled ) then
 			frame.indicators.status:SetTexCoord(0.0, 0.50, 0.0, 0.421875)
 			frame.indicators.status:Show()
+		elseif not LunaUF.db.profile.locked and config.status.enabled then
+			frame.indicators.status:SetTexCoord(0.50, 1.0, 0.0, 0.49)
+			frame.indicators.status:Show()
 		else
 			frame.indicators.status:Hide()
 		end
@@ -240,6 +276,9 @@ function Indicators:FullUpdate(frame)
 		if GetRaidTargetIndex(frame.unit) and config.raidTarget.enabled then
 			SetRaidTargetIconTexture(frame.indicators.raidTarget, GetRaidTargetIndex(frame.unit))
 			frame.indicators.raidTarget:Show()
+		elseif not LunaUF.db.profile.locked and config.raidTarget.enabled then
+			SetRaidTargetIconTexture(frame.indicators.raidTarget, 1)
+			frame.indicators.raidTarget:Show()
 		else
 			frame.indicators.raidTarget:Hide()
 		end
@@ -247,7 +286,7 @@ function Indicators:FullUpdate(frame)
 	if frame.indicators.happiness then
 		local happiness = GetPetHappiness()
 		-- No pet
-		if not happiness or not config.happiness.enabled then
+		if (not happiness and LunaUF.db.profile.locked) or not config.happiness.enabled then
 			frame.indicators.happiness:Hide()
 		-- Happy :D
 		elseif happiness == 3 then
@@ -261,6 +300,10 @@ function Indicators:FullUpdate(frame)
 		elseif happiness == 1 then
 			frame.indicators.happiness:SetTexCoord(0.375, 0.5625, 0, 0.359375)
 			frame.indicators.happiness:Show()
+		else
+			frame.indicators.happiness:SetTexCoord(0, 0.1875, 0, 0.359375)
+			frame.indicators.happiness:Show()
+		-- Config Mode
 		end
 	end
 	if frame.indicators.class then

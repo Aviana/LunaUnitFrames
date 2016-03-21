@@ -2,7 +2,7 @@ LunaUF = AceLibrary("AceAddon-2.0"):new("AceEvent-2.0", "AceConsole-2.0", "AceDB
 LunaUF:RegisterDB("LunaDB")
 
 -- Assets ----------------------------------------------------------------------------------
-LunaUF.Version = 2003
+LunaUF.Version = 2004
 LunaUF.BS = AceLibrary("Babble-Spell-2.2")
 LunaUF.Banzai = AceLibrary("Banzai-1.0")
 LunaUF.HealComm = AceLibrary("HealComm-1.0")
@@ -157,6 +157,8 @@ LunaUF.defaults = {
 		tooltips = true,
 		tooltipCombat = false,
 		bars = { alpha = 1, backgroundAlpha = 0.20 },
+		bgcolor = {r = 0, g = 0, b = 0},
+		bgalpha = 1,
 		classColors = {
 			HUNTER = {r = 0.67, g = 0.83, b = 0.45},
 			WARLOCK = {r = 0.58, g = 0.51, b = 0.79},
@@ -254,9 +256,10 @@ LunaUF.defaults = {
 						masterLoot = { enabled = true, anchorPoint = "TOPLEFT", size = 12, x = 16, y = 0 },
 						leader = { enabled = true, anchorPoint = "TOPLEFT", size = 14, x = 2, y = 0 },
 						pvp = { enabled = true, anchorPoint = "TOPRIGHT", size = 30, x = 5, y = -25 },
+						pvprank = { enabled = true, anchorPoint = "BOTTOMLEFT", size = 8, x = 0, y = 0 },
 						ready = { enabled = true, anchorPoint = "LEFT", size = 24, x = 20, y = 0 },
 						status = { enabled = true, anchorPoint = "BOTTOMLEFT", size = 16, x = 20, y = -2 },
-						rezz = { enabled = true, anchorPoint = "CENTER", size = 20, x = 0, y = 0 },
+						rezz = { enabled = true, anchorPoint = "LEFT", size = 20, x = 20, y = 0 },
 					},
 				},
 				castBar = { enabled = true, size = 3, hide = true },
@@ -332,7 +335,7 @@ LunaUF.defaults = {
 						healthBar = {
 							size = 10,
 							["left"] = "[name]",
-							["right"] = "[smarthealth]",
+							["right"] = "[perhp]%[br][smarthealth]",
 						},
 						powerBar = {
 							size = 10,
@@ -355,8 +358,9 @@ LunaUF.defaults = {
 						masterLoot = { enabled = true, anchorPoint = "TOPRIGHT", size = 12, x = -16, y = 0 },
 						leader = { enabled = true, anchorPoint = "TOPRIGHT", size = 14, x = -2, y = 0 },
 						pvp = { enabled = true, anchorPoint = "TOPLEFT", size = 30, x = 5, y = -25 },
+						pvprank = { enabled = true, anchorPoint = "BOTTOMRIGHT", size = 8, x = 0, y = 0 },
 						status = { enabled = true, anchorPoint = "BOTTOMRIGHT", size = 16, x = -20, y = -2 },
-						rezz = { enabled = true, anchorPoint = "CENTER", size = 20, x = 0, y = 0 },
+						rezz = { enabled = true, anchorPoint = "RIGHT", size = 20, x = -20, y = 0 },
 					},
 				},
 				castBar = { enabled = true, size = 3, hide = true },
@@ -406,8 +410,9 @@ LunaUF.defaults = {
 						masterLoot = { enabled = true, anchorPoint = "TOPLEFT", size = 12, x = 16, y = 0 },
 						leader = { enabled = true, anchorPoint = "TOPLEFT", size = 14, x = 2, y = 0 },
 						pvp = { enabled = true, anchorPoint = "TOPRIGHT", size = 30, x = 5, y = -25 },
+						pvprank = { enabled = true, anchorPoint = "BOTTOMLEFT", size = 8, x = 0, y = 0 },
 						status = { enabled = true, anchorPoint = "BOTTOMLEFT", size = 16, x = 20, y = -2 },
-						rezz = { enabled = false, anchorPoint = "CENTER", size = 20, x = 0, y = 0 },
+						rezz = { enabled = false, anchorPoint = "LEFT", size = 20, x = 20, y = 0 },
 					},
 				},
 				castBar = { enabled = true, size = 3, hide = true },
@@ -457,8 +462,9 @@ LunaUF.defaults = {
 						masterLoot = { enabled = true, anchorPoint = "TOPLEFT", size = 12, x = 16, y = 0 },
 						leader = { enabled = true, anchorPoint = "TOPLEFT", size = 14, x = 2, y = 0 },
 						pvp = { enabled = true, anchorPoint = "TOPRIGHT", size = 30, x = 5, y = -25 },
+						pvprank = { enabled = true, anchorPoint = "BOTTOMLEFT", size = 8, x = 0, y = 0 },
 						status = { enabled = true, anchorPoint = "BOTTOMLEFT", size = 16, x = 20, y = -2 },
-						rezz = { enabled = false, anchorPoint = "CENTER", size = 20, x = 0, y = 0 },
+						rezz = { enabled = false, anchorPoint = "LEFT", size = 20, x = 20, y = 0 },
 					},
 				},
 				castBar = { enabled = true, size = 3, hide = true },
@@ -515,9 +521,10 @@ LunaUF.defaults = {
 						masterLoot = { enabled = true, anchorPoint = "TOPLEFT", size = 12, x = 16, y = 0 },
 						leader = { enabled = true, anchorPoint = "TOPLEFT", size = 14, x = 2, y = 0 },
 						pvp = { enabled = true, anchorPoint = "TOPRIGHT", size = 30, x = 5, y = -25 },
+						pvprank = { enabled = true, anchorPoint = "BOTTOMLEFT", size = 8, x = 0, y = 0 },
 						ready = { enabled = true, anchorPoint = "LEFT", size = 24, x = 20, y = 0 },
 						status = { enabled = true, anchorPoint = "BOTTOMLEFT", size = 16, x = 20, y = -2 },
-						rezz = { enabled = true, anchorPoint = "CENTER", size = 20, x = 0, y = 0 },
+						rezz = { enabled = true, anchorPoint = "LEFT", size = 20, x = 20, y = 0 },
 					},
 				},
 				castBar = { enabled = true, size = 3, hide = true },
@@ -583,6 +590,7 @@ LunaUF.defaults = {
 					icons = {
 						raidTarget = { enabled = true, anchorPoint = "CENTER", size = 20, x = 0, y = 0 },
 						rezz = { enabled = false, anchorPoint = "CENTER", size = 20, x = 0, y = 0 },
+						pvprank = { enabled = false, anchorPoint = "BOTTOMLEFT", size = 8, x = 0, y = 0 },
 					},
 				},
 				portrait = { enabled = false, type = "3D", side = "left", size = 6 },
@@ -667,6 +675,7 @@ LunaUF.defaults = {
 						masterLoot = { enabled = false, anchorPoint = "TOPLEFT", size = 12, x = 16, y = -10 },
 						leader = { enabled = false, anchorPoint = "TOPLEFT", size = 14, x = 2, y = -12 },
 						pvp = { enabled = false, anchorPoint = "TOPRIGHT", size = 22, x = 11, y = -21 },
+						pvprank = { enabled = false, anchorPoint = "BOTTOMLEFT", size = 8, x = 0, y = 0 },
 						status = { enabled = false, anchorPoint = "BOTTOMLEFT", size = 16, x = 12, y = -2 },
 						ready = { enabled = false, anchorPoint = "LEFT", size = 24, x = 35, y = 0 },
 						rezz = { enabled = true, anchorPoint = "CENTER", size = 20, x = 0, y = 0 },

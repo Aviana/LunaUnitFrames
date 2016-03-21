@@ -127,6 +127,7 @@ local function enUS() return {
 ["masterLoot"] = "Masterloot",
 ["leader"] = "Leader",
 ["pvp"] = "PvP",
+["pvprank"] = "PvP rank",
 ["ready"] = "Ready",
 ["status"] = "Status",
 ["happiness"] = "Happiness",
@@ -253,6 +254,8 @@ local function enUS() return {
 ["Enable pet group"] = "Enable pet group",
 ["Enable raidgroup titles"] = "Enable raidgroup titles",
 ["XP Bar"] = "XP Bar",
+["Frame background"] = "Frame background",
+["Color"] = "Color",
 }
 end
 
