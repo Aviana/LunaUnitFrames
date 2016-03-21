@@ -589,6 +589,7 @@ function Units:CreateUnit(a1, a2, a3, a4)
 	frame:RegisterForDrag("LeftButton")
 	frame:SetScript("OnDragStop", StopMovingOrSizing)
 
+	frame:SetFrameStrata("BACKGROUND")
 	frame:SetClampedToScreen(1)
 	frame:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up')
 	frame:SetScript("OnClick", OnClick)

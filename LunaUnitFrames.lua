@@ -117,6 +117,7 @@ LunaUF.hasIcon = "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\icon"
 LunaUF.defaultMinimapPosition = 180
 LunaUF.independentProfile = true
 LunaUF.cannotDetachTooltip = true
+LunaUF.hideWithoutStandby = true
 
 function LunaUF:OnClick()
 	if IsControlKeyDown() then
