@@ -708,6 +708,11 @@ function Units:LoadRaidGroupHeader()
 		else
 			header = headerFrames["raid"..i]
 		end
+		if not config.enabled then
+			header:Hide()
+		else
+			header:Show()
+		end
 		header:ClearAllPoints()
 		if config.interlock and header.id > 1 then
 			if config.interlockgrowth == "RIGHT" then
