@@ -126,9 +126,6 @@ function Power:OnDisable(frame)
 		frame.powerBar:Hide()
 		if frame.powerBar.ticker then
 			frame.powerBar.ticker:SetScript("OnUpdate", nil)
-			if AceEvent:IsEventRegistered("fiveSec") then
-				AceEvent:UnregisterEvent("fiveSec")
-			end
 		end
 	end
 end

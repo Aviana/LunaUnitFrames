@@ -10,6 +10,7 @@ local Indicators = {
 		["class"] = {"Interface\\Glues\\CharacterCreate\\UI-CharacterCreate-Classes"},
 		["rezz"] = {"Interface\\AddOns\\LunaUnitFrames\\media\\textures\\Raid-Icon-Rez"},
 		["pvprank"] = {"Interface\\PvPRankBadges\\PvPRank01"},
+		["elite"] = {"Interface\\AddOns\\LunaUnitFrames\\media\\textures\\UI-DialogBox-Gold-Dragon"},
 	},
 }
 LunaUF:RegisterModule(Indicators, "indicators", LunaUF.L["Indicators"])
@@ -222,6 +223,19 @@ function Indicators:FullUpdate(frame)
 			end
 		end
 	end
+	if frame.indicators.elite then
+		local classification = UnitClassification(frame.unit)
+		if (classification == "elite" or classification == "rareelite" or not LunaUF.db.profile.locked) and config.elite.enabled then
+			if LunaUF.db.profile.units[frame.unitGroup].portrait.side == "right" then
+				frame.indicators.elite:SetTexture("Interface\\AddOns\\LunaUnitFrames\\media\\textures\\UI-DialogBox-Gold-Dragon-right")
+			else
+				frame.indicators.elite:SetTexture("Interface\\AddOns\\LunaUnitFrames\\media\\textures\\UI-DialogBox-Gold-Dragon")
+			end
+			frame.indicators.elite:Show()
+		else
+			frame.indicators.elite:Hide()
+		end
+	end
 	if frame.indicators.rezz then
 		local rezztime = HealComm:UnitisResurrecting(UnitName(frame.unit))
 		if (rezztime or not LunaUF.db.profile.locked) and config.rezz.enabled then
@@ -246,13 +260,14 @@ function Indicators:FullUpdate(frame)
 	end
 	if frame.indicators.pvp then
 		if( UnitIsPVP(frame.unit) and UnitFactionGroup(frame.unit) and config.pvp.enabled) then
-			frame.indicators.pvp:SetTexture(string.format("Interface\\TargetingFrame\\UI-PVP-%s", UnitFactionGroup(frame.unit)))
+			--LunaUF.AllianceCheck
+			frame.indicators.pvp:SetTexture(LunaUF.AllianceCheck[LunaUF.playerRace] and "Interface\\TargetingFrame\\UI-PVP-Alliance" or "Interface\\TargetingFrame\\UI-PVP-Horde")
 			frame.indicators.pvp:Show()
 		elseif( UnitIsPVPFreeForAll(frame.unit) and config.pvp.enabled ) then
 			frame.indicators.pvp:SetTexture("Interface\\TargetingFrame\\UI-PVP-FFA")
 			frame.indicators.pvp:Show()
 		elseif not LunaUF.db.profile.locked and config.pvp.enabled then
-			frame.indicators.pvp:SetTexture(string.format("Interface\\TargetingFrame\\UI-PVP-%s", UnitFactionGroup("player")))
+			frame.indicators.pvp:SetTexture(LunaUF.AllianceCheck[LunaUF.playerRace] and "Interface\\TargetingFrame\\UI-PVP-Alliance" or "Interface\\TargetingFrame\\UI-PVP-Horde")
 			frame.indicators.pvp:Show()
 		else
 			frame.indicators.pvp:Hide()

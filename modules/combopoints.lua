@@ -29,8 +29,11 @@ end
 function Combo:Update(frame)
 	local points = GetComboPoints()
 	if points == 0 and UnitExists("target") then
-		if not frame.comboPoints.hidden then
+		if LunaUF.db.profile.units[frame.unitGroup].comboPoints.hide and not frame.comboPoints.hidden then
 			frame.comboPoints.hidden = true
+			LunaUF.Units:PositionWidgets(frame)
+		elseif not LunaUF.db.profile.units[frame.unitGroup].comboPoints.hide and frame.comboPoints.hidden then
+			frame.comboPoints.hidden = nil
 			LunaUF.Units:PositionWidgets(frame)
 		end
 	else

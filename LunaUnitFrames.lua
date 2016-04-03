@@ -2,7 +2,7 @@ LunaUF = AceLibrary("AceAddon-2.0"):new("AceEvent-2.0", "AceConsole-2.0", "AceDB
 LunaUF:RegisterDB("LunaDB")
 
 -- Assets ----------------------------------------------------------------------------------
-LunaUF.Version = 2004
+LunaUF.Version = 2005
 LunaUF.BS = AceLibrary("Babble-Spell-2.2")
 LunaUF.Banzai = AceLibrary("Banzai-1.0")
 LunaUF.HealComm = AceLibrary("HealComm-1.0")
@@ -13,7 +13,7 @@ LunaUF.ScanTip = CreateFrame("GameTooltip", "LunaScanTip", nil, "GameTooltipTemp
 LunaUF.ScanTip:SetOwner(WorldFrame, "ANCHOR_NONE")
 LunaUF.modules = {}
 _, LunaUF.playerRace = UnitRace("player")
-local Alliance = {
+LunaUF.AllianceCheck = {
 	["Dwarf"] = true,
 	["Human"] = true,
 	["Gnome"] = true,
@@ -325,7 +325,7 @@ LunaUF.defaults = {
 				enabled = true,
 				healthBar = { enabled = true, colorType = "class", reactionType="npc", size = 6 },
 				powerBar = { enabled = true, size = 4 },
-				comboPoints = { enabled = true, size = 2, growth = "LEFT" },
+				comboPoints = { enabled = true, size = 1, growth = "LEFT", hide = true },
 				portrait = { enabled = true, type = "3D", side = "right", size = 6 },
 				auras = { enabled = true, AurasPerRow = 12, position = "BOTTOM"},
 				highlight = { enabled = true, ontarget = false, ondebuff = true, onmouse = false },
@@ -355,6 +355,7 @@ LunaUF.defaults = {
 					enabled = true,
 					icons = {
 						raidTarget = { enabled = true, anchorPoint = "CENTER", size = 20, x = 0, y = 0 },
+						elite = { enabled = false, anchorPoint = "RIGHT", size = 74, x = -14, y = 0 },
 						class = { enabled = true, anchorPoint = "BOTTOMRIGHT", size = 16, x = 0, y = 0 },
 						masterLoot = { enabled = true, anchorPoint = "TOPRIGHT", size = 12, x = -16, y = 0 },
 						leader = { enabled = true, anchorPoint = "TOPRIGHT", size = 14, x = -2, y = 0 },
@@ -408,6 +409,7 @@ LunaUF.defaults = {
 					icons = {
 						raidTarget = { enabled = true, anchorPoint = "CENTER", size = 20, x = 0, y = 0 },
 						class = { enabled = true, anchorPoint = "BOTTOMLEFT", size = 16, x = 0, y = 0 },
+						elite = { enabled = false, anchorPoint = "LEFT", size = 74, x = 14, y = 0 },
 						masterLoot = { enabled = true, anchorPoint = "TOPLEFT", size = 12, x = 16, y = 0 },
 						leader = { enabled = true, anchorPoint = "TOPLEFT", size = 14, x = 2, y = 0 },
 						pvp = { enabled = true, anchorPoint = "TOPRIGHT", size = 30, x = 5, y = -25 },
@@ -460,6 +462,7 @@ LunaUF.defaults = {
 					icons = {
 						raidTarget = { enabled = true, anchorPoint = "CENTER", size = 20, x = 0, y = 0 },
 						class = { enabled = true, anchorPoint = "BOTTOMLEFT", size = 16, x = 0, y = 0 },
+						elite = { enabled = false, anchorPoint = "LEFT", size = 74, x = 14, y = 0 },
 						masterLoot = { enabled = true, anchorPoint = "TOPLEFT", size = 12, x = 16, y = 0 },
 						leader = { enabled = true, anchorPoint = "TOPLEFT", size = 14, x = 2, y = 0 },
 						pvp = { enabled = true, anchorPoint = "TOPRIGHT", size = 30, x = 5, y = -25 },
@@ -672,14 +675,14 @@ LunaUF.defaults = {
 					enabled = true,
 					icons = {
 						raidTarget = { enabled = false, anchorPoint = "CENTER", size = 20, x = 0, y = 0 },
-						class = { enabled = false, anchorPoint = "BOTTOMLEFT", size = 16, x = 0, y = 0 },
-						masterLoot = { enabled = false, anchorPoint = "TOPLEFT", size = 12, x = 16, y = -10 },
-						leader = { enabled = false, anchorPoint = "TOPLEFT", size = 14, x = 2, y = -12 },
-						pvp = { enabled = false, anchorPoint = "TOPRIGHT", size = 22, x = 11, y = -21 },
-						pvprank = { enabled = false, anchorPoint = "BOTTOMLEFT", size = 8, x = 0, y = 0 },
-						status = { enabled = false, anchorPoint = "BOTTOMLEFT", size = 16, x = 12, y = -2 },
+						class = { enabled = false, anchorPoint = "BOTTOMLEFT", size = 12, x = 3, y = 3 },
+						masterLoot = { enabled = false, anchorPoint = "TOPLEFT", size = 12, x = 1, y = -14 },
+						leader = { enabled = false, anchorPoint = "TOPLEFT", size = 14, x = 2, y = -3 },
+						pvp = { enabled = false, anchorPoint = "RIGHT", size = 22, x = 4, y = -2 },
+						pvprank = { enabled = false, anchorPoint = "BOTTOMRIGHT", size = 8, x = 0, y = 1 },
+						status = { enabled = false, anchorPoint = "BOTTOM", size = 16, x = 0, y = 1 },
 						ready = { enabled = false, anchorPoint = "LEFT", size = 24, x = 35, y = 0 },
-						rezz = { enabled = true, anchorPoint = "CENTER", size = 20, x = 0, y = 0 },
+						rezz = { enabled = true, anchorPoint = "TOPRIGHT", size = 20, x = -8, y = -9 },
 					},
 				},
 				castBar = { enabled = false, size = 3, hide = true },
@@ -810,7 +813,7 @@ LunaUF.constants = {
 	RaidClassMapping = {
 		[1] = "WARRIOR",
 		[2] = "DRUID",
-		[3] = Alliance[LunaUF.playerRace] and "PALADIN" or "SHAMAN",
+		[3] = LunaUF.AllianceCheck[LunaUF.playerRace] and "PALADIN" or "SHAMAN",
 		[4] = "WARLOCK",
 		[5] = "PRIEST",
 		[6] = "MAGE",

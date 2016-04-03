@@ -23,7 +23,7 @@ function Range:FullUpdate(frame)
 	if frame.DisableRangeAlpha then return end
 	local range,lastseen = proximity:GetUnitRange(frame.unit)
 	if range and ((GetTime()-lastseen) < 3 ) then
-		frame:SetAlpha(1)
+		frame:SetAlpha(LunaUF.db.profile.units[frame.unitGroup].fader.enabled and LunaUF.db.profile.units[frame.unitGroup].fader.combatAlpha or 1)
 	else
 		frame:SetAlpha(LunaUF.db.profile.units[frame.unitGroup].range.alpha)
 	end

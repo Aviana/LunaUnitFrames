@@ -566,8 +566,6 @@ function Cast:OnEnable(frame)
 		frame.castBar.Time:SetShadowOffset(0.80, -0.80)
 		frame.castBar.Time:SetJustifyH("RIGHT")
 	end
---	frame.castBar.Text:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\"..LunaUF.db.profile.font..".ttf", LunaUF.db.profile.units[frame.unitGroup].tags.bartags["castBar"].size)
---	frame.castBar.Time:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\"..LunaUF.db.profile.font..".ttf", LunaUF.db.profile.units[frame.unitGroup].tags.bartags["castBar"].size)
 	frame.castBar:RegisterEvent("SPELLCAST_CHANNEL_START")
 	frame.castBar:RegisterEvent("SPELLCAST_CHANNEL_STOP")
 	frame.castBar:RegisterEvent("SPELLCAST_CHANNEL_UPDATE")

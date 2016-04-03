@@ -7,6 +7,72 @@ local WithTags = {
 	["druidBar"] = true,
 }
 
+local TagsDescs = {}
+
+TagsDescs[L["INFO TAGS"]] = {
+	["numtargeting"] = L["Number of people in your group targeting this unit"],
+	["br"] = L["Adds a line break"],
+	["name"] = L["Returns plain name of the unit"],
+	["abbrev:name"] = L["Returns shortened names (Marshall Williams = M. Williams)"],
+	["guild"] = L["Guildname"],
+	["level"] = L["Current level, returns ?? for bosses and players too high"],
+	["smartlevel"] = L["Returns \"Boss\" for bosses and Level+10+ for players too high"],
+	["class"] = L["Class of the unit"],
+	["smartclass"] = L["Returns Class for players and Creaturetype for NPCs"],
+	["rare"] = L["\"rare\" if the creature is rare or rareelite"],
+	["elite"] = L["\"elite\" if the creature is elite or rareelite"],
+	["classification"] = L["Shows elite, rare, boss, etc..."],
+	["shortclassification"] = L["\"E\", \"R\", \"RE\" for the respective classification"],
+	["race"] = L["Race if available"],
+	["smartrace"] = L["Shows race when if player, creaturetype when npc"],
+	["creature"] = L["Creature type (Bat, Wolf , etc..)"],
+	["sex"] = L["Gender"],
+	["druidform"] = L["Current druid form of friendly unit"],
+	["civilian"] = L["Returns (civ) when civilian"],
+	["pvp"] = L["Displays \"PvP\" if flagged for it"],
+	["rank"] = L["PvP title"],
+	["numrank"] = L["Numeric PvP rank"],
+	["faction"] = L["Horde or Alliance"],
+	["ignore"] = L["Returns (i) if the player is on your ignore list"],
+	["server"] = L["Server name"],
+	["status"] = L["\"Dead\", \"Ghost\" or \"Offline\""],
+	["happiness"] = L["Pet happiness as 'unhappy','content' or 'happy'"],
+	["group"] = L["Current subgroup of the raid"],
+	["combat"] = L["(c) when in combat"],
+}
+TagsDescs[L["HEALTH AND POWER TAGS"]] = {
+	["healerhealth"] = L["Returns the same as \"smart:healmishp\" on friendly units and hp/maxhp on enemies"],
+	["smart:healmishp"] = L["Returns missing hp with healing factored in. Shows status when needed (\"Dead\", \"Offline\", \"Ghost\")"],
+	["cpoints"] = L["Combo Points"],
+	["smarthealth"] = L["The classic hp display (hp/maxhp and \"Dead\" if dead etc)"],
+	["healhp"] = L["Current hp and heal in one number (green when heal is incoming)"],
+	["hp"] = L["Current hp"],
+	["maxhp"] = L["Current maximum hp"],
+	["missinghp"] = L["Current missing hp"],
+	["healmishp"] = L["Missing hp after incoming heal (green when heal is incoming)"],
+	["perhp"] = L["HP percent"],
+	["pp"] = L["Current mana/rage/energy etc"],
+	["maxpp"] = L["Maximum mana/rage/energy etc"],
+	["missingpp"] = L["Missing mana/rage/energy"],
+	["perpp"] = L["Mana/rage/energy percent"],
+	["druid:pp"] = L["Returns current mana even in druid form"],
+	["druid:maxpp"] = L["Returns current maximum mana even in druid form"],
+	["druid:missingpp"] = L["Returns missing mana even in druid form"],
+	["druid:perpp"] = L["Returns mana percentage even in druid form"],
+	["incheal"] = L["Value of incoming heal"],
+}
+TagsDescs[L["COLOR TAGS"]] = {
+	["color:combat"] = L["Red when in combat"],
+	["pvpcolor"] = L["White for unflagged units, green for flagged friendlies and red for flagged enemies"],
+	["reactcolor"] = L["Red for enemies, yellow for neutrals, and green for friendlies"],
+	["levelcolor"] = L["Colors based on your level vs the level of the unit. (grey,green,yellow and red)"],
+	["color:aggro"] = L["Red if the unit is targeted by an enemy"],
+	["classcolor"] = L["Classcolor of the unit"],
+	["healthcolor"] = L["Color based on health (red = dead)"],
+	["color:xxxxxx"] = L["Custom color in hexadecimal (rrggbb)"],
+	["nocolor"] = L["Resets the color to white"],
+}
+
 local function SetDropDownValue(dropdown,value)
 	ToggleDropDownMenu(1,value,dropdown)
 	UIDropDownMenu_SetSelectedValue(dropdown, value)
@@ -118,7 +184,7 @@ local function CreateIndicatorOptionsFrame(parent, indicators)
 		
 		frame[name].sizeslider = CreateFrame("Slider", "SizeSlider"..parent.id..name, frame, "OptionsSliderTemplate")
 		frame[name].sizeslider.config = config
-		frame[name].sizeslider:SetMinMaxValues(1,50)
+		frame[name].sizeslider:SetMinMaxValues(1,80)
 		frame[name].sizeslider:SetValueStep(1)
 		frame[name].sizeslider:SetScript("OnValueChanged", function()
 			local config = this.config
@@ -162,7 +228,7 @@ local function CreateIndicatorOptionsFrame(parent, indicators)
 		
 		frame[name].xslider = CreateFrame("Slider", "XSlider"..parent.id..name, frame, "OptionsSliderTemplate")
 		frame[name].xslider.config = config
-		frame[name].xslider:SetMinMaxValues(-50,50)
+		frame[name].xslider:SetMinMaxValues(-40,40)
 		frame[name].xslider:SetValueStep(1)
 		frame[name].xslider:SetScript("OnValueChanged", function()
 			local config = this.config
@@ -179,7 +245,7 @@ local function CreateIndicatorOptionsFrame(parent, indicators)
 		
 		frame[name].yslider = CreateFrame("Slider", "YSlider"..parent.id..name, frame, "OptionsSliderTemplate")
 		frame[name].yslider.config = config
-		frame[name].yslider:SetMinMaxValues(-50,50)
+		frame[name].yslider:SetMinMaxValues(-40,40)
 		frame[name].yslider:SetValueStep(1)
 		frame[name].yslider:SetScript("OnValueChanged", function()
 			local config = this.config
@@ -254,9 +320,11 @@ local function CreateTagEditFrame(parent, tagconfig)
 				frame[barname].middle:SetAutoFocus(nil)
 				frame[barname].middle:SetPoint("TOPLEFT", frame[barname].size, "TOPRIGHT", 20, 0)
 				frame[barname].middle.config = tags
+				frame[barname].middle:SetScript("OnTextChanged" , function()
+					this.config.center = this:GetText()
+				end)
 				frame[barname].middle:SetScript("OnEnterPressed", function()
 					this:ClearFocus()
-					this.config.center = this:GetText()
 				end)
 				
 				frame[barname].MiddleDesc = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
@@ -269,9 +337,11 @@ local function CreateTagEditFrame(parent, tagconfig)
 				frame[barname].left:SetAutoFocus(nil)
 				frame[barname].left:SetPoint("TOP", frame[barname].size, "BOTTOM", 0, -30)
 				frame[barname].left.config = tags
+				frame[barname].left:SetScript("OnTextChanged" , function()
+					this.config.left = this:GetText()
+				end)
 				frame[barname].left:SetScript("OnEnterPressed", function()
 					this:ClearFocus()
-					this.config.left = this:GetText()
 				end)
 				
 				frame[barname].LeftDesc = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
@@ -284,11 +354,12 @@ local function CreateTagEditFrame(parent, tagconfig)
 				frame[barname].right:SetAutoFocus(nil)
 				frame[barname].right:SetPoint("TOPLEFT", frame[barname].left, "TOPRIGHT", 20, 0)
 				frame[barname].right.config = tags
-				frame[barname].right:SetScript("OnEnterPressed", function()
-					this:ClearFocus()
+				frame[barname].right:SetScript("OnTextChanged" , function()
 					this.config.right = this:GetText()
 				end)
-				
+				frame[barname].right:SetScript("OnEnterPressed", function()
+					this:ClearFocus()
+				end)
 				
 				frame[barname].RightDesc = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
 				frame[barname].RightDesc:SetPoint("BOTTOM", frame[barname].right, "TOP", 0, 0)
@@ -631,6 +702,7 @@ function LunaUF:LoadOptions()
 	LunaOptionsFrame.pages[3].xpsizeslider:SetValue(LunaUF.db.profile.units.pet.xpBar.size)
 	LunaOptionsFrame.pages[4].enablecombo:SetChecked(LunaUF.db.profile.units.target.comboPoints.enabled)
 	SetDropDownValue(LunaOptionsFrame.pages[4].combogrowth,LunaUF.db.profile.units.target.comboPoints.growth)
+	LunaOptionsFrame.pages[4].hidecombo:SetChecked(LunaUF.db.profile.units.target.comboPoints.hide)
 	LunaOptionsFrame.pages[4].combosizeslider:SetValue(LunaUF.db.profile.units.target.comboPoints.size)
 	LunaOptionsFrame.pages[7].enablerange:SetChecked(LunaUF.db.profile.units.party.range.enabled)
 	LunaOptionsFrame.pages[7].partyrangealpha:SetValue(LunaUF.db.profile.units.party.range.alpha)
@@ -666,9 +738,10 @@ function LunaUF:LoadOptions()
 	LunaOptionsFrame.pages[10].showparty:SetChecked(LunaUF.db.profile.units.raid.showparty)
 	LunaOptionsFrame.pages[10].showalways:SetChecked(LunaUF.db.profile.units.raid.showalways)
 	LunaOptionsFrame.pages[10].raidpadding:SetValue(LunaUF.db.profile.units.raid.padding)
-	LunaOptionsFrame.pages[10].petgrp:SetChecked(LunaUF.db.profile.units.raid.petgrp)
 	LunaOptionsFrame.pages[10].interlock:SetChecked(LunaUF.db.profile.units.raid.interlock)
 	SetDropDownValue(LunaOptionsFrame.pages[10].interlockgrowth,LunaUF.db.profile.units.raid.interlockgrowth)
+	LunaOptionsFrame.pages[10].petgrp:SetChecked(LunaUF.db.profile.units.raid.petgrp)
+	LunaOptionsFrame.pages[10].titles:SetChecked(LunaUF.db.profile.units.raid.titles)
 	SetDropDownValue(LunaOptionsFrame.pages[10].sortby,LunaUF.db.profile.units.raid.sortby)
 	SetDropDownValue(LunaOptionsFrame.pages[10].orderby,LunaUF.db.profile.units.raid.order)
 	SetDropDownValue(LunaOptionsFrame.pages[10].growth,LunaUF.db.profile.units.raid.growth)
@@ -1333,7 +1406,7 @@ function LunaUF:CreateOptionsMenu()
 		LunaOptionsFrame.pages[i].FaderCombatslider:SetValueStep(0.1)
 		LunaOptionsFrame.pages[i].FaderCombatslider:SetScript("OnValueChanged", function()
 			local unit = this:GetParent().id
-			LunaUF.db.profile.units[unit].fader.combatAlpha = math.floor(this:GetValue()*10)/10
+			LunaUF.db.profile.units[unit].fader.combatAlpha = math.floor((this:GetValue()*10)+0.5)/10
 			getglobal("FaderCombatSlider"..unit.."Text"):SetText("Combat alpha: "..LunaUF.db.profile.units[unit].fader.combatAlpha)
 			for _,frame in pairs(LunaUF.Units.frameList) do
 				if frame.unitGroup == unit then
@@ -2210,6 +2283,21 @@ function LunaUF:CreateOptionsMenu()
 	LunaOptionsFrame.pages[4].combogrDesc:SetPoint("BOTTOM", LunaOptionsFrame.pages[4].combogrowth, "TOP", 0, 0)
 	LunaOptionsFrame.pages[4].combogrDesc:SetText(L["Growth"])
 	
+	LunaOptionsFrame.pages[4].hidecombo = CreateFrame("CheckButton", "HidetargetCombo", LunaOptionsFrame.pages[4], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[4].hidecombo:SetPoint("TOPLEFT", LunaOptionsFrame.pages[4].comboheader, "BOTTOMLEFT", 190, -10)
+	LunaOptionsFrame.pages[4].hidecombo:SetHeight(30)
+	LunaOptionsFrame.pages[4].hidecombo:SetWidth(30)
+	LunaOptionsFrame.pages[4].hidecombo:SetScript("OnClick", function()
+		local unit = this:GetParent().id
+		LunaUF.db.profile.units[unit].comboPoints.hide = not LunaUF.db.profile.units[unit].comboPoints.hide
+		for _,frame in pairs(LunaUF.Units.frameList) do
+			if frame.unitGroup == unit then
+				LunaUF.Units:SetupFrameModules(frame)
+			end
+		end
+	end)
+	getglobal("HidetargetComboText"):SetText(L["hide"])
+	
 	LunaOptionsFrame.pages[4].combosizeslider = CreateFrame("Slider", "ComboSizeSlidertarget", LunaOptionsFrame.pages[4], "OptionsSliderTemplate")
 	LunaOptionsFrame.pages[4].combosizeslider:SetMinMaxValues(1,10)
 	LunaOptionsFrame.pages[4].combosizeslider:SetValueStep(1)
@@ -2993,7 +3081,7 @@ function LunaUF:CreateOptionsMenu()
 
 	LunaOptionsFrame.helpframescrollchild.title = LunaOptionsFrame.helpframescrollchild:CreateFontString(nil, "OVERLAY", LunaOptionsFrame.helpframescrollchild)
 	LunaOptionsFrame.helpframescrollchild.title:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", 20)
-	LunaOptionsFrame.helpframescrollchild.title:SetText("Help is for the weak")
+	LunaOptionsFrame.helpframescrollchild.title:SetText(L["Tag listing"])
 	LunaOptionsFrame.helpframescrollchild.title:SetJustifyH("CENTER")
 	LunaOptionsFrame.helpframescrollchild.title:SetJustifyV("TOP")
 	LunaOptionsFrame.helpframescrollchild.title:SetPoint("TOP", LunaOptionsFrame.helpframescrollchild, "TOP")
@@ -3001,7 +3089,52 @@ function LunaUF:CreateOptionsMenu()
 	LunaOptionsFrame.helpframescrollchild.title:SetWidth(300)
 
 	LunaOptionsFrame.helpframescrollchild.texts = {}
-
+	local first
+	local count = 1
+	local prevframe = LunaOptionsFrame.helpframescrollchild.title
+	for _,l in pairs({"INFO TAGS","HEALTH AND POWER TAGS","COLOR TAGS"}) do
+		LunaOptionsFrame.helpframescrollchild.texts[count] = LunaOptionsFrame.helpframescrollchild:CreateFontString(nil, "OVERLAY", LunaOptionsFrame.helpframescrollchild)
+		LunaOptionsFrame.helpframescrollchild.texts[count]:SetFont("Fonts\\FRIZQT__.TTF", 12)
+		LunaOptionsFrame.helpframescrollchild.texts[count]:SetText("\n"..l)
+		LunaOptionsFrame.helpframescrollchild.texts[count]:SetJustifyH("LEFT")
+		LunaOptionsFrame.helpframescrollchild.texts[count]:SetJustifyV("TOP")
+		if LunaOptionsFrame.helpframescrollchild.texts[count]:GetStringWidth() > 280 then
+			LunaOptionsFrame.helpframescrollchild.texts[count]:SetHeight(22)
+		else
+			LunaOptionsFrame.helpframescrollchild.texts[count]:SetHeight(30)
+		end
+		LunaOptionsFrame.helpframescrollchild.texts[count]:SetWidth(300)
+		if not first then
+			LunaOptionsFrame.helpframescrollchild.texts[count]:SetPoint("TOP", prevframe, "BOTTOM")
+		else
+			LunaOptionsFrame.helpframescrollchild.texts[count]:SetPoint("TOPLEFT", prevframe, "BOTTOMLEFT")
+		end
+		prevframe = LunaOptionsFrame.helpframescrollchild.texts[count]
+		first = true
+		count = count + 1
+		
+		for k,v in pairs(TagsDescs[l]) do
+			LunaOptionsFrame.helpframescrollchild.texts[count] = LunaOptionsFrame.helpframescrollchild:CreateFontString(nil, "OVERLAY", LunaOptionsFrame.helpframescrollchild)
+			LunaOptionsFrame.helpframescrollchild.texts[count]:SetFont("Fonts\\FRIZQT__.TTF", 9)
+			LunaOptionsFrame.helpframescrollchild.texts[count]:SetText("\124cffffff00".."["..k.."]\124cffffffff: "..v)
+			LunaOptionsFrame.helpframescrollchild.texts[count]:SetJustifyH("LEFT")
+			LunaOptionsFrame.helpframescrollchild.texts[count]:SetJustifyV("TOP")
+			if LunaOptionsFrame.helpframescrollchild.texts[count]:GetStringWidth() > 281 then
+				LunaOptionsFrame.helpframescrollchild.texts[count]:SetHeight(22)
+			else
+				LunaOptionsFrame.helpframescrollchild.texts[count]:SetHeight(11)
+			end
+			LunaOptionsFrame.helpframescrollchild.texts[count]:SetWidth(280)
+			if not first then
+				LunaOptionsFrame.helpframescrollchild.texts[count]:SetPoint("TOP", prevframe, "BOTTOM")
+			else
+				LunaOptionsFrame.helpframescrollchild.texts[count]:SetPoint("TOPLEFT", prevframe, "BOTTOMLEFT")
+			end
+			prevframe = LunaOptionsFrame.helpframescrollchild.texts[count]
+			first = true
+			count = count + 1
+		end
+	end
 	LunaOptionsFrame.HelpScrollFrame:SetScrollChild(LunaOptionsFrame.helpframescrollchild)
 	LunaOptionsFrame.Helpframe:Hide()
 	LunaOptionsFrame:SetScale(0.8)
