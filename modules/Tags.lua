@@ -596,31 +596,24 @@ local defaultTags = {
 }
 
 function GetTagText(text,unit)
-	if not text or text == "" then return "" end
-	local maxTags = 20
-	local numfound = 1
+	if not text or text == "" then return text or "" end
 	local tag, tagtext
 	local result = text
-	while numfound and numfound > 0 and maxTags > 0 do
-		_,numfound,tagtext = string.find(result,"%[(color:[A-Fa-f0-9]+)%]")
-		if not tagtext then
-			_,numfound,tagtext = string.find(result,"%[([%s%a:]+)%]")
-		end
+	_,_,tag = string.find(result,"%[(.+)%]")
+	while tag do
+		_,_,tagtext = string.find(tag,"color:(%x%x%x%x%x%x)")
 		if tagtext then
-			_,_,tag = string.find(tagtext,"([%a:]+)")
-			if defaultTags[tag] then
-				if tag == "color" then
-					local colorcode
-					_,_,colorcode = string.find(tagtext,"%a+:([A-Fa-f0-9]+)")
-					result = string.gsub(result, "%["..tagtext.."%]", defaultTags[tag](colorcode))
-				else
-					result = string.gsub(result, "%["..tagtext.."%]", string.gsub(tagtext,tag,defaultTags[tag](unit)))
-				end
+			tagtext = defaultTags["color"](tagtext)
+		else
+			_,_,tagtext = string.find(tag,"([%a:]+)")
+			if tagtext and defaultTags[tagtext] then
+				tagtext = defaultTags[tagtext](unit)
 			else
-				result = string.gsub(result, "%["..tagtext.."%]", "#invalidTag#")
+				tagtext = "#invalidTag#"
 			end
 		end
-		maxTags = maxTags - 1
+		result = string.gsub(result, "(%[[%w:]+%])", tagtext, 1)
+		_,_,tag = string.find(result,"%[(.+)%]")
 	end
 	return result
 end
