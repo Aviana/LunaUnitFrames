@@ -58,7 +58,7 @@ function Squares:OnEnable(frame)
 			frame.squares.trackdebuffs[i] = CreateFrame("Frame", nil, frame.squares)
 			frame.squares.trackdebuffs[i]:SetBackdrop(LunaUF.constants.backdrop)
 			frame.squares.trackdebuffs[i]:SetBackdropColor(0,0,0)
-			frame.squares.trackdebuffs[i].texture = frame.squares:CreateTexture(nil, "ARTWORK")
+			frame.squares.trackdebuffs[i].texture = frame.squares.trackdebuffs[i]:CreateTexture(nil, "ARTWORK")
 			frame.squares.trackdebuffs[i].texture:SetAllPoints(frame.squares.trackdebuffs[i])
 			
 			frame.squares.centericons[i] = frame.squares:CreateTexture(nil, "ARTWORK")

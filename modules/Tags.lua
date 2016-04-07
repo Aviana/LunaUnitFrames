@@ -458,14 +458,14 @@ local defaultTags = {
 							end;
 	["reactcolor"]			= function(unit)
 								local reaction = UnitReaction("player",unit)
-								if reaction == 4 then
+								if not reaction then
+									return ""
+								elseif reaction == 4 then
 									return Hex(LunaUF.db.profile.healthColors["neutral"])
 								elseif reaction < 4 then
 									return Hex(LunaUF.db.profile.healthColors["hostile"])
-								elseif reaction then
-									return Hex(LunaUF.db.profile.healthColors["friendly"])
 								else
-									return ""
+									return Hex(LunaUF.db.profile.healthColors["friendly"])
 								end
 							end;
 	["pvpcolor"]			= function(unit)

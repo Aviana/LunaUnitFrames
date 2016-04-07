@@ -1,6 +1,7 @@
 local Cast = CreateFrame("Frame")
 local L = LunaUF.L
 local BS = LunaUF.BS
+local AceEvent = LunaUF.AceEvent
 LunaUF:RegisterModule(Cast, "castBar", L["Cast bar"], true)
 
 local CasterDB = {}
@@ -552,6 +553,46 @@ local function OnEvent()
 	end
 end
 
+local function OnAimed(cast)
+	if cast == "Aimed Shot" then
+		local frame
+		local _,_, latency = GetNetStats()
+		local casttime = 3
+		for i=1,32 do
+			if UnitBuff("player",i) == "Interface\\Icons\\Ability_Warrior_InnerRage" then
+				casttime = casttime/1.3
+			end
+			if UnitBuff("player",i) == "Interface\\Icons\\Ability_Hunter_RunningShot" then
+				casttime = casttime/1.4
+			end
+			if UnitBuff("player",i) == "Interface\\Icons\\Racial_Troll_Berserk" then
+				casttime = casttime/ (1 + berserkValue)
+			end
+			if UnitBuff("player",i) == "Interface\\Icons\\Inv_Trinket_Naxxramas04" then
+				casttime = casttime/1.2
+			end
+			if UnitDebuff("player",i) == "Interface\\Icons\\Spell_Shadow_CurseOfTounges" then
+				casttime = casttime/0.5
+			end
+		end
+		for _,uframe in pairs(LunaUF.Units.frameList) do
+			if uframe.castBar and LunaUF.db.profile.units[uframe.unitGroup].castBar.enabled and UnitIsUnit(uframe.unit,"player") then
+				frame = uframe
+			end
+		end
+		frame.castBar.startTime = GetTime()
+		frame.castBar.maxValue = frame.castBar.startTime + casttime + (latency/1000)
+		frame.castBar.holdTime = 0
+		frame.castBar.casting = true
+		frame.castBar.delaySum = 0	
+		frame.castBar.Text:SetText(BS["Aimed Shot"])
+		frame.castBar:SetMinMaxValues(frame.castBar.startTime, frame.castBar.maxValue)
+		frame.castBar:SetValue(frame.castBar.startTime)
+		frame.castBar:SetScript("OnUpdate", OnUpdatePlayer)
+		Cast:FullUpdate(frame)
+	end
+end
+
 function Cast:OnEnable(frame)
 	if not frame.castBar then
 		frame.castBar = CreateFrame("Statusbar", nil, frame)
@@ -574,6 +615,9 @@ function Cast:OnEnable(frame)
 	frame.castBar:RegisterEvent("SPELLCAST_INTERRUPTED")
 	frame.castBar:RegisterEvent("SPELLCAST_START")
 	frame.castBar:RegisterEvent("SPELLCAST_STOP")
+	if not AceEvent:IsEventRegistered("CASTLIB_STARTCAST") then
+		AceEvent:RegisterEvent("CASTLIB_STARTCAST", OnAimed)
+	end
 end
 
 function Cast:OnDisable(frame)

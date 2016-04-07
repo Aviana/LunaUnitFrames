@@ -86,8 +86,8 @@ end
 
 function CastLib.instantCast(SpellCast)
 	if CastLib_SpellCast_backup[1] == "Tranquilizing Shot" then
-		SendChatMessage("Tranq out!" ,"YELL" ,"COMMON")
-		SendChatMessage("Tranq out!" ,"CHANNEL" ,"COMMON", GetChannelName("insomniahunters"))
+		--SendChatMessage("Tranq out!" ,"YELL" ,"COMMON")
+		--SendChatMessage("Tranq out!" ,"CHANNEL" ,"COMMON", GetChannelName("insomniahunters"))
 	end
 end
 
