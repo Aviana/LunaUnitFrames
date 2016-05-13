@@ -45,8 +45,17 @@ local function BuffUpdate(frame)
 			button.stack:SetText(stacks == 1 and "" or stacks)
 			button.filter = "HELPFUL"
 			button.auraID = i
+			if (frame:GetParent().unitGroup == "player") then
+				button:SetScript("OnUpdate", BuffButtonUpdate)
+				button:SetScript("OnClick", BuffButtonClick)
+			else
+				button:SetScript("OnUpdate", nil)
+				button:SetScript("OnClick", nil)
+			end
 			button:Show()
 		else
+			button:SetScript("OnUpdate", nil)
+			button:SetScript("OnClick", nil)
 			button:Hide()
 		end
 	end
@@ -57,11 +66,42 @@ local function BuffUpdate(frame)
 			button.stack:SetText(stacks == 1 and "" or stacks)
 			button.filter = "HARMFUL"
 			button.auraID = i
+			if (frame:GetParent().unitGroup == "player") then
+				button:SetScript("OnUpdate", BuffButtonUpdate)
+			else
+				button:SetScript("OnUpdate", nil)
+			end
 			button:Show()
 		else
+			button:SetScript("OnUpdate", nil)
 			button:Hide()
 		end
 	end
+end
+
+function BuffButtonClick()
+	if (arg1 ~= "RightButton") then return; end
+	local buffIndex, untilCancelled = GetPlayerBuff(this.auraID - 1, this.filter);
+	CancelPlayerBuff(buffIndex)
+end
+
+function BuffButtonUpdate()
+	--if(this.timeFontstrings == nil) then return; end
+	local buffIndex, untilCancelled = GetPlayerBuff(this.auraID - 1, this.filter);
+	local timeString = ""
+	local timeLeft = math.floor(GetPlayerBuffTimeLeft(buffIndex));
+	if (timeLeft and timeLeft > 0) then
+		if (timeLeft > 59) then
+			local minutes = math.floor(timeLeft / 60)
+			timeString = minutes..":"
+			timeLeft = timeLeft - minutes * 60;
+			if (timeLeft < 10) then
+				timeString = timeString.."0"
+			end
+		end
+		timeString = timeString..timeLeft
+	end
+	this.timeFontstrings:SetText(timeString)
 end
 
 local function OnEvent()
@@ -90,6 +130,13 @@ function Auras:OnEnable(frame)
 		--		button.cooldown:SetReverse(true)
 				button.cooldown:SetFrameLevel(7)
 				button.cooldown:Hide()
+				button.timeFontstrings = button:CreateFontString(nil, "ARTWORK");
+				button.timeFontstrings:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", 12)
+				button.timeFontstrings:SetShadowColor(0, 0, 0, 1.0)
+				button.timeFontstrings:SetShadowOffset(0.80, -0.80)
+				button.timeFontstrings:SetJustifyH("CENTER")
+				button.timeFontstrings:SetPoint("TOPLEFT", button, "BOTTOMLEFT",0,0)
+				button.timeFontstrings:SetPoint("TOPRIGHT", button, "BOTTOMRIGHT",0,0)
 			end
 			
 			button.stack = button:CreateFontString(nil, "OVERLAY")
@@ -123,6 +170,13 @@ function Auras:OnEnable(frame)
 		--		button.cooldown:SetReverse(true)
 				button.cooldown:SetFrameLevel(7)
 				button.cooldown:Hide()
+				button.timeFontstrings = button:CreateFontString(nil, "ARTWORK");
+				button.timeFontstrings:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", 12)
+				button.timeFontstrings:SetShadowColor(0, 0, 0, 1.0)
+				button.timeFontstrings:SetShadowOffset(0.80, -0.80)
+				button.timeFontstrings:SetJustifyH("CENTER")
+				button.timeFontstrings:SetPoint("TOPLEFT", button, "BOTTOMLEFT",0,0)
+				button.timeFontstrings:SetPoint("TOPRIGHT", button, "BOTTOMRIGHT",0,0)
 			end
 			
 			button.stack = button:CreateFontString(nil, "OVERLAY")
