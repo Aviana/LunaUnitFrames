@@ -257,6 +257,7 @@ local function enUS() return {
 ["XP Bar"] = "XP Bar",
 ["Frame background"] = "Frame background",
 ["Color"] = "Color",
+["Enable Timer Text"] = "Enable Timer Text",
 
 ["Returns plain name of the unit"] = "Returns plain name of the unit",
 ["Returns shortened names (Marshall Williams = M. Williams)"] = "Returns shortened names (Marshall Williams = M. Williams)",
