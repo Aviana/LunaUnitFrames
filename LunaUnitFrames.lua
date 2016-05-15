@@ -222,7 +222,7 @@ LunaUF.defaults = {
 				totemBar = { enabled = true, size = 2, hide=true },
 				druidBar = { enabled = true, size = 2 },
 				portrait = { enabled = true, type = "3D", side = "left", size = 6 },
-				auras = { enabled = false, AurasPerRow = 12, position = "BOTTOM", weaponbuffs = true },
+				auras = { enabled = false, AurasPerRow = 12, position = "BOTTOM", weaponbuffs = true, timertextenabled = true },
 				highlight = { enabled = true, ontarget = false, ondebuff = true, onmouse = false },
 				fader = { enabled = false, inactiveAlpha = 0.2, combatAlpha = 1 },
 				tags = {
