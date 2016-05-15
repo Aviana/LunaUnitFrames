@@ -15,6 +15,8 @@ local function showTooltip()
 	GameTooltip:SetOwner(this, "ANCHOR_BOTTOMLEFT")
 	if( this.filter == "TEMP" ) then
 		GameTooltip:SetInventoryItem("player", this.auraID)
+	elseif this:GetParent():GetParent().unitGroup == "player" then
+		GameTooltip:SetPlayerBuff(this.auraID);
 	elseif this.filter == "HELPFUL" then
 		GameTooltip:SetUnitBuff(this:GetParent():GetParent().unit, this.auraID)
 	else
@@ -39,18 +41,25 @@ local function BuffUpdate(frame)
 	auraframe:SetHeight(height == 0 and 1 or height)
 	local texture,stacks
 	for i,button in ipairs(auraframe.buffbuttons) do
-		texture,stacks = UnitBuff(unit,i)
+		local buffIndex = GetPlayerBuff(i - 1, "HELPFUL");
+		if (frame:GetParent().unitGroup == "player") then
+			texture = GetPlayerBuffTexture(buffIndex);
+			stacks = GetPlayerBuffApplications(buffIndex);
+		else
+			texture,stacks = UnitBuff(unit,i)
+		end
 		if texture then
 			button.icon:SetTexture(texture)
 			button.stack:SetText(stacks == 1 and "" or stacks)
 			button.filter = "HELPFUL"
-			button.auraID = i
 			if (frame:GetParent().unitGroup == "player") then
 				button:SetScript("OnUpdate", BuffButtonUpdate)
 				button:SetScript("OnClick", BuffButtonClick)
+				button.auraID = buffIndex
 			else
 				button:SetScript("OnUpdate", nil)
 				button:SetScript("OnClick", nil)
+				button.auraID = i
 			end
 			button:Show()
 		else
@@ -60,15 +69,22 @@ local function BuffUpdate(frame)
 		end
 	end
 	for i,button in ipairs(auraframe.debuffbuttons) do
-		texture,stacks = UnitDebuff(unit,i)
+		local buffIndex = GetPlayerBuff(i - 1, "HARMFUL");
+		if (frame:GetParent().unitGroup == "player") then
+				texture = GetPlayerBuffTexture(buffIndex);
+				stacks = GetPlayerBuffApplications(buffIndex);
+		else
+			texture,stacks = UnitDebuff(unit,i)
+		end
 		if texture then
 			button.icon:SetTexture(texture)
 			button.stack:SetText(stacks == 1 and "" or stacks)
 			button.filter = "HARMFUL"
-			button.auraID = i
 			if (frame:GetParent().unitGroup == "player") then
 				button:SetScript("OnUpdate", BuffButtonUpdate)
+				button.auraID = buffIndex
 			else
+				button.auraID = i
 				button:SetScript("OnUpdate", nil)
 			end
 			button:Show()
@@ -81,34 +97,46 @@ end
 
 function BuffButtonClick()
 	if (arg1 ~= "RightButton") then return; end
-	local buffIndex, untilCancelled = GetPlayerBuff(this.auraID - 1, this.filter);
-	CancelPlayerBuff(buffIndex)
+	this:SetScript("OnUpdate", nil)
+	this:SetScript("OnClick", nil)
+	CancelPlayerBuff(this.auraID)
 end
 
 function BuffButtonUpdate()
-	--if(this.timeFontstrings == nil) then return; end
-	local buffIndex, untilCancelled = GetPlayerBuff(this.auraID - 1, this.filter);
 	local timeString = ""
-	local timeLeft = math.floor(GetPlayerBuffTimeLeft(buffIndex));
+	local timeLeft = GetPlayerBuffTimeLeft(this.auraID);
+	local centered = (timeLeft < 10);
 	if (timeLeft and timeLeft > 0) then
 		if (timeLeft > 59) then
-			local minutes = math.floor(timeLeft / 60)
-			timeString = minutes..":"
-			timeLeft = timeLeft - minutes * 60;
-			if (timeLeft < 10) then
-				timeString = timeString.."0"
-			end
+			timeString = math.ceil(timeLeft / 60).." m"
+		elseif not centered then
+			timeString = timeLeft.." s"
+		else
+			timeString = timeLeft
 		end
-		timeString = timeString..timeLeft
 	end
-	this.timeFontstrings:SetText(timeString)
+	if centered then
+		this.timeFontstrings["CENTER"]:SetText(timeString)
+		this.timeFontstrings["TOP"]:SetText("")
+	else
+		this.timeFontstrings["CENTER"]:SetText("")
+		this.timeFontstrings["TOP"]:SetText(timeString)
+	end
 end
 
 local function OnEvent()
 	if arg1 == this:GetParent().unit then
+		this.updateNeeded = true
+		--BuffUpdate(this)
+	end
+end
+
+local function OnUpdate()
+	if this.updateNeeded then
+		this.updateNeeded = nil
 		BuffUpdate(this)
 	end
-end	
+end
 
 function Auras:OnEnable(frame)
 	local isPlayer = frame.unitGroup == "player"
@@ -123,22 +151,25 @@ function Auras:OnEnable(frame)
 			if isPlayer then
 				button:SetScript("OnClick", cancelBuff)
 				button:RegisterForClicks("RightButtonUp")
-				button.cooldown = CreateFrame("Model", button:GetName().."CD", button, "CooldownFrameTemplate")		
+				button.cooldown = CreateFrame("Model", button:GetName().."CD", button, "CooldownFrameTemplate")
 				button.cooldown:SetPoint("TOPLEFT", button, "TOPLEFT")
 				button.cooldown:SetHeight(36)
 				button.cooldown:SetWidth(36)
 		--		button.cooldown:SetReverse(true)
 				button.cooldown:SetFrameLevel(7)
 				button.cooldown:Hide()
-				button.timeFontstrings = button:CreateFontString(nil, "ARTWORK");
-				button.timeFontstrings:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", 12)
-				button.timeFontstrings:SetShadowColor(0, 0, 0, 1.0)
-				button.timeFontstrings:SetShadowOffset(0.80, -0.80)
-				button.timeFontstrings:SetJustifyH("CENTER")
-				button.timeFontstrings:SetPoint("TOPLEFT", button, "BOTTOMLEFT",0,0)
-				button.timeFontstrings:SetPoint("TOPRIGHT", button, "BOTTOMRIGHT",0,0)
+				button.timeFontstrings = {}
+				button.timeFontstrings["TOP"] = button:CreateFontString(nil, "ARTWORK");
+				button.timeFontstrings["TOP"]:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", 12, "OUTLINE")
+				button.timeFontstrings["TOP"]:SetJustifyH("CENTER")
+				button.timeFontstrings["TOP"]:SetPoint("TOPLEFT", button, "TOPLEFT",0,0)
+				button.timeFontstrings["TOP"]:SetPoint("TOPRIGHT", button, "TOPRIGHT",0,0)
+				button.timeFontstrings["CENTER"] = button:CreateFontString(nil, "ARTWORK");
+				button.timeFontstrings["CENTER"]:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", 30, "OUTLINE")
+				button.timeFontstrings["CENTER"]:SetJustifyH("CENTER")
+				button.timeFontstrings["CENTER"]:SetPoint("CENTER", button, "CENTER",0,0)
 			end
-			
+
 			button.stack = button:CreateFontString(nil, "OVERLAY")
 			button.stack:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", 10, "OUTLINE")
 			button.stack:SetShadowColor(0, 0, 0, 1.0)
@@ -150,12 +181,12 @@ function Auras:OnEnable(frame)
 			button.stack:SetJustifyH("RIGHT")
 
 			button.border = button:CreateTexture(nil, "OVERLAY")
-			button.border:SetPoint("CENTER", button)		
-			
+			button.border:SetPoint("CENTER", button)
+
 			button.icon = button:CreateTexture(nil, "BACKGROUND")
 			button.icon:SetAllPoints(button)
 			button.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
-			
+
 			frame.auras.buffbuttons[i] = button
 		end
 		for i=1, 16 do
@@ -163,22 +194,25 @@ function Auras:OnEnable(frame)
 			button:SetScript("OnEnter", showTooltip)
 			button:SetScript("OnLeave", hideTooltip)
 			if isPlayer then
-				button.cooldown = CreateFrame("Model", button:GetName().."CD", button, "CooldownFrameTemplate")		
+				button.cooldown = CreateFrame("Model", button:GetName().."CD", button, "CooldownFrameTemplate")
 				button.cooldown:SetPoint("TOPLEFT", button, "TOPLEFT")
 				button.cooldown:SetHeight(36)
 				button.cooldown:SetWidth(36)
 		--		button.cooldown:SetReverse(true)
 				button.cooldown:SetFrameLevel(7)
 				button.cooldown:Hide()
-				button.timeFontstrings = button:CreateFontString(nil, "ARTWORK");
-				button.timeFontstrings:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", 12)
-				button.timeFontstrings:SetShadowColor(0, 0, 0, 1.0)
-				button.timeFontstrings:SetShadowOffset(0.80, -0.80)
-				button.timeFontstrings:SetJustifyH("CENTER")
-				button.timeFontstrings:SetPoint("TOPLEFT", button, "BOTTOMLEFT",0,0)
-				button.timeFontstrings:SetPoint("TOPRIGHT", button, "BOTTOMRIGHT",0,0)
+				button.timeFontstrings = {}
+				button.timeFontstrings["TOP"] = button:CreateFontString(nil, "ARTWORK");
+				button.timeFontstrings["TOP"]:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", 12, "OUTLINE")
+				button.timeFontstrings["TOP"]:SetJustifyH("CENTER")
+				button.timeFontstrings["TOP"]:SetPoint("TOPLEFT", button, "TOPLEFT",0,0)
+				button.timeFontstrings["TOP"]:SetPoint("TOPRIGHT", button, "TOPRIGHT",0,0)
+				button.timeFontstrings["CENTER"] = button:CreateFontString(nil, "ARTWORK");
+				button.timeFontstrings["CENTER"]:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", 30, "OUTLINE")
+				button.timeFontstrings["CENTER"]:SetJustifyH("CENTER")
+				button.timeFontstrings["CENTER"]:SetPoint("CENTER", button, "CENTER",0,0)
 			end
-			
+
 			button.stack = button:CreateFontString(nil, "OVERLAY")
 			button.stack:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", 10, "OUTLINE")
 			button.stack:SetShadowColor(0, 0, 0, 1.0)
@@ -190,12 +224,12 @@ function Auras:OnEnable(frame)
 			button.stack:SetJustifyH("RIGHT")
 
 			button.border = button:CreateTexture(nil, "OVERLAY")
-			button.border:SetPoint("CENTER", button)		
-			
+			button.border:SetPoint("CENTER", button)
+
 			button.icon = button:CreateTexture(nil, "BACKGROUND")
 			button.icon:SetAllPoints(button)
 			button.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
-			
+
 			frame.auras.debuffbuttons[i] = button
 		end
 	end
