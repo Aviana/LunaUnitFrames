@@ -53,11 +53,16 @@ local function BuffUpdate(frame)
 			button.stack:SetText(stacks == 1 and "" or stacks)
 			button.filter = "HELPFUL"
 			if (frame:GetParent().unitGroup == "player") then
-				button:SetScript("OnUpdate", BuffButtonUpdate)
+				if (config.timertextenabled) then
+					button:SetScript("OnUpdate", BuffButtonUpdate)
+				else
+					button:SetScript("OnUpdate", nil)
+					button.timeFontstrings["CENTER"]:SetText("")
+					button.timeFontstrings["TOP"]:SetText("")
+				end
 				button:SetScript("OnClick", BuffButtonClick)
 				button.auraID = buffIndex
 			else
-				button:SetScript("OnUpdate", nil)
 				button:SetScript("OnClick", nil)
 				button.auraID = i
 			end
@@ -71,8 +76,8 @@ local function BuffUpdate(frame)
 	for i,button in ipairs(auraframe.debuffbuttons) do
 		local buffIndex = GetPlayerBuff(i - 1, "HARMFUL");
 		if (frame:GetParent().unitGroup == "player") then
-				texture = GetPlayerBuffTexture(buffIndex);
-				stacks = GetPlayerBuffApplications(buffIndex);
+			texture = GetPlayerBuffTexture(buffIndex);
+			stacks = GetPlayerBuffApplications(buffIndex);
 		else
 			texture,stacks = UnitDebuff(unit,i)
 		end
@@ -81,11 +86,16 @@ local function BuffUpdate(frame)
 			button.stack:SetText(stacks == 1 and "" or stacks)
 			button.filter = "HARMFUL"
 			if (frame:GetParent().unitGroup == "player") then
-				button:SetScript("OnUpdate", BuffButtonUpdate)
+				if (config.timertextenabled) then
+					button:SetScript("OnUpdate", BuffButtonUpdate)
+				else
+					button:SetScript("OnUpdate", nil)
+					button.timeFontstrings["CENTER"]:SetText("")
+					button.timeFontstrings["TOP"]:SetText("")
+				end
 				button.auraID = buffIndex
 			else
 				button.auraID = i
-				button:SetScript("OnUpdate", nil)
 			end
 			button:Show()
 		else
@@ -110,9 +120,9 @@ function BuffButtonUpdate()
 		if (timeLeft > 59) then
 			timeString = math.ceil(timeLeft / 60).." m"
 		elseif not centered then
-			timeString = timeLeft.." s"
+			timeString = math.ceil(timeLeft).." s"
 		else
-			timeString = timeLeft
+			timeString = math.ceil(timeLeft)
 		end
 	end
 	if centered then
