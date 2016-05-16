@@ -358,5 +358,6 @@ function Auras:FullUpdate(frame)
 			button:SetPoint("TOPLEFT", frame.auras, "BOTTOMLEFT", (i-1)*(buttonsize+1)-((math.ceil(i/config.AurasPerRow)-1)*(config.AurasPerRow)*(buttonsize+1)), -(math.ceil(i/config.AurasPerRow)-1)*(buttonsize+1))
 		end
 	end
-	BuffUpdate(frame.auras)
+	frame.auras.updateNeeded = true
+	--BuffUpdate(frame.auras)
 end
