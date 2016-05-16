@@ -114,15 +114,15 @@ end
 
 function BuffButtonUpdate()
 	local timeString = ""
-	local timeLeft = GetPlayerBuffTimeLeft(this.auraID);
+	local timeLeft = math.ceil(GetPlayerBuffTimeLeft(this.auraID));
 	local centered = (timeLeft < 10);
 	if (timeLeft and timeLeft > 0) then
 		if (timeLeft > 59) then
 			timeString = math.ceil(timeLeft / 60).." m"
 		elseif not centered then
-			timeString = math.ceil(timeLeft).." s"
+			timeString = timeLeft.." s"
 		else
-			timeString = math.ceil(timeLeft)
+			timeString = timeLeft
 		end
 	end
 	if centered then
