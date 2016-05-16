@@ -114,10 +114,15 @@ end
 
 function BuffButtonUpdate()
 	local timeString = ""
-	local timeLeft = math.ceil(GetPlayerBuffTimeLeft(this.auraID));
-	local centered = (timeLeft < 10);
+	local timeLeft = GetPlayerBuffTimeLeft(this.auraID);
+	local centered
+	
 	if (timeLeft and timeLeft > 0) then
-		if (timeLeft > 59) then
+		timeLeft = math.ceil(timeLeft);
+		centered = (timeLeft < 10)
+		if (timeLeft > 3599) then
+			timeString = math.ceil(timeLeft / 3600).." h"
+		elseif (timeLeft > 59) then
 			timeString = math.ceil(timeLeft / 60).." m"
 		elseif not centered then
 			timeString = timeLeft.." s"
@@ -169,12 +174,11 @@ function Auras:OnEnable(frame)
 				button.cooldown:SetFrameLevel(7)
 				button.cooldown:Hide()
 				button.timeFontstrings = {}
-				button.timeFontstrings["TOP"] = button:CreateFontString(nil, "ARTWORK");
+				button.timeFontstrings["TOP"] = button:CreateFontString(nil, "OVERLAY");
 				button.timeFontstrings["TOP"]:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", 12, "OUTLINE")
 				button.timeFontstrings["TOP"]:SetJustifyH("CENTER")
-				button.timeFontstrings["TOP"]:SetPoint("TOPLEFT", button, "TOPLEFT",0,0)
-				button.timeFontstrings["TOP"]:SetPoint("TOPRIGHT", button, "TOPRIGHT",0,0)
-				button.timeFontstrings["CENTER"] = button:CreateFontString(nil, "ARTWORK");
+				button.timeFontstrings["TOP"]:SetPoint("TOP", button, "TOP",0,0)
+				button.timeFontstrings["CENTER"] = button:CreateFontString(nil, "OVERLAY");
 				button.timeFontstrings["CENTER"]:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", 30, "OUTLINE")
 				button.timeFontstrings["CENTER"]:SetJustifyH("CENTER")
 				button.timeFontstrings["CENTER"]:SetPoint("CENTER", button, "CENTER",0,0)
@@ -212,12 +216,11 @@ function Auras:OnEnable(frame)
 				button.cooldown:SetFrameLevel(7)
 				button.cooldown:Hide()
 				button.timeFontstrings = {}
-				button.timeFontstrings["TOP"] = button:CreateFontString(nil, "ARTWORK");
+				button.timeFontstrings["TOP"] = button:CreateFontString(nil, "OVERLAY");
 				button.timeFontstrings["TOP"]:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", 12, "OUTLINE")
 				button.timeFontstrings["TOP"]:SetJustifyH("CENTER")
-				button.timeFontstrings["TOP"]:SetPoint("TOPLEFT", button, "TOPLEFT",0,0)
-				button.timeFontstrings["TOP"]:SetPoint("TOPRIGHT", button, "TOPRIGHT",0,0)
-				button.timeFontstrings["CENTER"] = button:CreateFontString(nil, "ARTWORK");
+				button.timeFontstrings["TOP"]:SetPoint("TOP", button, "TOP",0,0)
+				button.timeFontstrings["CENTER"] = button:CreateFontString(nil, "OVERLAY");
 				button.timeFontstrings["CENTER"]:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", 30, "OUTLINE")
 				button.timeFontstrings["CENTER"]:SetJustifyH("CENTER")
 				button.timeFontstrings["CENTER"]:SetPoint("CENTER", button, "CENTER",0,0)
