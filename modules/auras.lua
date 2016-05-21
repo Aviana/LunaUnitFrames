@@ -19,7 +19,7 @@ local function showTooltip()
 		GameTooltip:SetPlayerBuff(this.auraID);
 	elseif this.filter == "HELPFUL" then
 		GameTooltip:SetUnitBuff(this:GetParent():GetParent().unit, this.auraID)
-	else
+	elseif this.filter == "HARMFULL" then
 		GameTooltip:SetUnitDebuff(this:GetParent():GetParent().unit, this.auraID)
 	end
 end
@@ -60,6 +60,18 @@ local function BuffUpdate(frame)
 					button.timeFontstrings["CENTER"]:SetText("")
 					button.timeFontstrings["TOP"]:SetText("")
 				end
+				if (config.timerspinenabled) then
+					if(texture ~= button.cooldown.texture) then
+						button.cooldown.stopped = 1
+						button.cooldown.texture = texture
+					end
+					CooldownFrame_SetTimer(button.cooldown, GetTime(), GetPlayerBuffTimeLeft(buffIndex), button.cooldown.stopped)
+					button.cooldown.stopped = 0;
+					button.cooldown:Show();
+				else
+					button.cooldown.stopped = 1
+					button.cooldown:Hide();
+				end
 				button:SetScript("OnClick", BuffButtonClick)
 				button.auraID = buffIndex
 			else
@@ -68,8 +80,12 @@ local function BuffUpdate(frame)
 			end
 			button:Show()
 		else
-			button:SetScript("OnUpdate", nil)
-			button:SetScript("OnClick", nil)
+			if (frame:GetParent().unitGroup == "player") then
+				button:SetScript("OnUpdate", nil)
+				button:SetScript("OnClick", nil)
+				button.cooldown.stopped = 1;
+				button.cooldown:Hide();
+			end
 			button:Hide()
 		end
 	end
@@ -93,13 +109,29 @@ local function BuffUpdate(frame)
 					button.timeFontstrings["CENTER"]:SetText("")
 					button.timeFontstrings["TOP"]:SetText("")
 				end
+				if (config.timerspinenabled) then
+					if(texture ~= button.cooldown.texture) then
+						button.cooldown.stopped = 1
+						button.cooldown.texture = texture
+					end
+					CooldownFrame_SetTimer(button.cooldown, GetTime(), GetPlayerBuffTimeLeft(buffIndex), button.cooldown.stopped)
+					button.cooldown.stopped = 0;
+					button.cooldown:Show();
+				else
+					button.cooldown.stopped = 1
+					button.cooldown:Hide();
+				end
 				button.auraID = buffIndex
 			else
 				button.auraID = i
 			end
 			button:Show()
 		else
-			button:SetScript("OnUpdate", nil)
+			if (frame:GetParent().unitGroup == "player") then
+				button:SetScript("OnUpdate", nil)
+				button.cooldown.stopped = 1;
+				button.cooldown:Hide();
+			end
 			button:Hide()
 		end
 	end
@@ -167,11 +199,11 @@ function Auras:OnEnable(frame)
 				button:SetScript("OnClick", cancelBuff)
 				button:RegisterForClicks("RightButtonUp")
 				button.cooldown = CreateFrame("Model", button:GetName().."CD", button, "CooldownFrameTemplate")
-				button.cooldown:SetPoint("TOPLEFT", button, "TOPLEFT")
-				button.cooldown:SetHeight(36)
-				button.cooldown:SetWidth(36)
+				--button.cooldown:SetHeight(36)
+				--button.cooldown:SetWidth(36)
 		--		button.cooldown:SetReverse(true)
 				button.cooldown:SetFrameLevel(7)
+				button.cooldown.stopped = 1;
 				button.cooldown:Hide()
 				button.timeFontstrings = {}
 				button.timeFontstrings["TOP"] = button:CreateFontString(nil, "OVERLAY");
@@ -209,11 +241,11 @@ function Auras:OnEnable(frame)
 			button:SetScript("OnLeave", hideTooltip)
 			if isPlayer then
 				button.cooldown = CreateFrame("Model", button:GetName().."CD", button, "CooldownFrameTemplate")
-				button.cooldown:SetPoint("TOPLEFT", button, "TOPLEFT")
-				button.cooldown:SetHeight(36)
-				button.cooldown:SetWidth(36)
+				--button.cooldown:SetHeight(36)
+				--button.cooldown:SetWidth(36)
 		--		button.cooldown:SetReverse(true)
 				button.cooldown:SetFrameLevel(7)
+				button.cooldown.stopped = 1;
 				button.cooldown:Hide()
 				button.timeFontstrings = {}
 				button.timeFontstrings["TOP"] = button:CreateFontString(nil, "OVERLAY");
@@ -306,6 +338,11 @@ function Auras:FullUpdate(frame)
 			button.border:SetWidth(buttonsize+1)
 			button.stack:SetText(i)
 			button:SetPoint("BOTTOMLEFT", frame.auras, "BOTTOMLEFT", (i-1)*(buttonsize+1)-((math.ceil(i/config.AurasPerRow)-1)*(config.AurasPerRow)*(buttonsize+1)), (math.ceil(i/config.AurasPerRow)-1)*(buttonsize+1))
+			if button.cooldown then
+				button.cooldown:SetModelScale(buttonsize/48)
+				button.cooldown:SetPoint("TOPLEFT", button.border, "TOPLEFT")
+				button.cooldown:SetPoint("BOTTOMRIGHT", button.border, "BOTTOMRIGHT",1,0)
+			end
 		end
 		for i,button in ipairs(frame.auras.debuffbuttons) do
 			button:ClearAllPoints()
@@ -315,6 +352,11 @@ function Auras:FullUpdate(frame)
 			button.border:SetWidth(buttonsize+1)
 			button.stack:SetText(i)
 			button:SetPoint("BOTTOMLEFT", frame.auras, "TOPLEFT", (i-1)*(buttonsize+1)-((math.ceil(i/config.AurasPerRow)-1)*(config.AurasPerRow)*(buttonsize+1)), (math.ceil(i/config.AurasPerRow)-1)*(buttonsize+1))
+			if button.cooldown then
+				button.cooldown:SetModelScale(buttonsize/48)
+				button.cooldown:SetPoint("TOPLEFT", button.border, "TOPLEFT")
+				button.cooldown:SetPoint("BOTTOMRIGHT", button.border, "BOTTOMRIGHT",1,0)
+			end
 		end
 	elseif config.position == "LEFT" then
 		frame.auras:SetPoint("TOPRIGHT", frame, "TOPLEFT", -3, 0)
@@ -326,6 +368,11 @@ function Auras:FullUpdate(frame)
 			button.border:SetWidth(buttonsize+1)
 			button.stack:SetText(i)
 			button:SetPoint("TOPRIGHT", frame.auras, "TOPRIGHT", -((i-1)*(buttonsize+1)-((math.ceil(i/config.AurasPerRow)-1)*(config.AurasPerRow)*(buttonsize+1))), -(math.ceil(i/config.AurasPerRow)-1)*(buttonsize+1))
+			if button.cooldown then
+				button.cooldown:SetModelScale(buttonsize/48)
+				button.cooldown:SetPoint("TOPLEFT", button.border, "TOPLEFT")
+				button.cooldown:SetPoint("BOTTOMRIGHT", button.border, "BOTTOMRIGHT",1,0)
+			end
 		end
 		for i,button in ipairs(frame.auras.debuffbuttons) do
 			button:ClearAllPoints()
@@ -335,6 +382,11 @@ function Auras:FullUpdate(frame)
 			button.border:SetWidth(buttonsize+1)
 			button.stack:SetText(i)
 			button:SetPoint("TOPRIGHT", frame.auras, "BOTTOMRIGHT", -((i-1)*(buttonsize+1)-((math.ceil(i/config.AurasPerRow)-1)*(config.AurasPerRow)*(buttonsize+1))), -(math.ceil(i/config.AurasPerRow)-1)*(buttonsize+1))
+			if button.cooldown then
+				button.cooldown:SetModelScale(buttonsize/48)
+				button.cooldown:SetPoint("TOPLEFT", button.border, "TOPLEFT")
+				button.cooldown:SetPoint("BOTTOMRIGHT", button.border, "BOTTOMRIGHT",1,0)
+			end
 		end
 	else
 		if config.position == "BOTTOM" then
@@ -350,6 +402,11 @@ function Auras:FullUpdate(frame)
 			button.border:SetWidth(buttonsize+1)
 			button.stack:SetText(i)
 			button:SetPoint("TOPLEFT", frame.auras, "TOPLEFT", (i-1)*(buttonsize+1)-((math.ceil(i/config.AurasPerRow)-1)*(config.AurasPerRow)*(buttonsize+1)), -(math.ceil(i/config.AurasPerRow)-1)*(buttonsize+1))
+			if button.cooldown then
+				button.cooldown:SetModelScale(buttonsize/48)
+				button.cooldown:SetPoint("TOPLEFT", button.border, "TOPLEFT")
+				button.cooldown:SetPoint("BOTTOMRIGHT", button.border, "BOTTOMRIGHT",1,0)
+			end
 		end
 		for i,button in ipairs(frame.auras.debuffbuttons) do
 			button:ClearAllPoints()
@@ -359,6 +416,11 @@ function Auras:FullUpdate(frame)
 			button.border:SetWidth(buttonsize+1)
 			button.stack:SetText(i)
 			button:SetPoint("TOPLEFT", frame.auras, "BOTTOMLEFT", (i-1)*(buttonsize+1)-((math.ceil(i/config.AurasPerRow)-1)*(config.AurasPerRow)*(buttonsize+1)), -(math.ceil(i/config.AurasPerRow)-1)*(buttonsize+1))
+			if button.cooldown then
+				button.cooldown:SetModelScale(buttonsize/48)
+				button.cooldown:SetPoint("TOPLEFT", button.border, "TOPLEFT")
+				button.cooldown:SetPoint("BOTTOMRIGHT", button.border, "BOTTOMRIGHT",1,0)
+			end
 		end
 	end
 	frame.auras.updateNeeded = true

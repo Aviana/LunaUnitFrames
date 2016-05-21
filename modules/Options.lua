@@ -656,6 +656,7 @@ function LunaUF:LoadOptions()
 		LunaOptionsFrame.pages[i].aurasizeslider:SetValue(17-LunaUF.db.profile.units[unit].auras.AurasPerRow)
 		if (unit == "player") then
 			LunaOptionsFrame.pages[i].enableaurastimertext:SetChecked(LunaUF.db.profile.units[unit].auras.timertextenabled)
+			LunaOptionsFrame.pages[i].enableaurastimerspin:SetChecked(LunaUF.db.profile.units[unit].auras.timerspinenabled)
 		end
 		LunaOptionsFrame.pages[i].enabletags:SetChecked(LunaUF.db.profile.units[unit].tags.enabled)
 		LunaOptionsFrame.pages[i].tags.load(LunaOptionsFrame.pages[i].tags,LunaUF.db.profile.units[unit].tags.bartags)
@@ -2035,7 +2036,7 @@ function LunaUF:CreateOptionsMenu()
 		LunaOptionsFrame.pages[i].aurasizeslider:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].auraheader, "BOTTOMLEFT", 280, -10)
 		LunaOptionsFrame.pages[i].aurasizeslider:SetWidth(190)
 		
-	    if (LunaUF.unitList[i-1] == "player") then
+		if (LunaUF.unitList[i-1] == "player") then
 			LunaOptionsFrame.pages[i].enableaurastimertext = CreateFrame("CheckButton", "Enable"..LunaUF.unitList[i-1].."AurasTimerText", LunaOptionsFrame.pages[i], "UICheckButtonTemplate")
 			LunaOptionsFrame.pages[i].enableaurastimertext:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].enableauras, "BOTTOMLEFT", 0, -10)
 			LunaOptionsFrame.pages[i].enableaurastimertext:SetHeight(30)
@@ -2050,6 +2051,21 @@ function LunaUF:CreateOptionsMenu()
 				end
 			end)
 			getglobal("Enable"..LunaUF.unitList[i-1].."AurasTimerText".."Text"):SetText(L["Enable Timer Text"])
+
+			LunaOptionsFrame.pages[i].enableaurastimerspin = CreateFrame("CheckButton", "Enable"..LunaUF.unitList[i-1].."AurasTimerSpin", LunaOptionsFrame.pages[i], "UICheckButtonTemplate")
+			LunaOptionsFrame.pages[i].enableaurastimerspin:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].enableauras, "BOTTOMLEFT", 150, -10)
+			LunaOptionsFrame.pages[i].enableaurastimerspin:SetHeight(30)
+			LunaOptionsFrame.pages[i].enableaurastimerspin:SetWidth(30)
+			LunaOptionsFrame.pages[i].enableaurastimerspin:SetScript("OnClick", function()
+				local unit = this:GetParent().id
+				LunaUF.db.profile.units[unit].auras.timerspinenabled = not LunaUF.db.profile.units[unit].auras.timerspinenabled
+				for _,frame in pairs(LunaUF.Units.frameList) do
+					if frame.unitGroup == unit then
+						LunaUF.Units.FullUpdate(frame)
+					end
+				end
+			end)
+			getglobal("Enable"..LunaUF.unitList[i-1].."AurasTimerSpin".."Text"):SetText(L["Enable Timer Spin"])
 		end
 
 		LunaOptionsFrame.pages[i].tagheader = LunaOptionsFrame.pages[i]:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
