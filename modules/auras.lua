@@ -201,8 +201,8 @@ function Auras:OnEnable(frame)
 				button.cooldown = CreateFrame("Model", button:GetName().."CD", button, "CooldownFrameTemplate")
 				--button.cooldown:SetHeight(36)
 				--button.cooldown:SetWidth(36)
-		--		button.cooldown:SetReverse(true)
 				button.cooldown:SetFrameLevel(7)
+				button.cooldown.reverse = true
 				button.cooldown.stopped = 1;
 				button.cooldown:Hide()
 				button.timeFontstrings = {}
@@ -243,8 +243,8 @@ function Auras:OnEnable(frame)
 				button.cooldown = CreateFrame("Model", button:GetName().."CD", button, "CooldownFrameTemplate")
 				--button.cooldown:SetHeight(36)
 				--button.cooldown:SetWidth(36)
-		--		button.cooldown:SetReverse(true)
 				button.cooldown:SetFrameLevel(7)
+				button.cooldown.reverse = true
 				button.cooldown.stopped = 1;
 				button.cooldown:Hide()
 				button.timeFontstrings = {}
