@@ -205,15 +205,18 @@ function Auras:OnEnable(frame)
 				button.cooldown.reverse = true
 				button.cooldown.stopped = 1;
 				button.cooldown:Hide()
+				button.textFrame = CreateFrame("Frame", nil, button)
+				button.textFrame:SetAllPoints(button)
+				button.textFrame:SetFrameLevel(button.cooldown:GetFrameLevel() + 1);
 				button.timeFontstrings = {}
-				button.timeFontstrings["TOP"] = button:CreateFontString(nil, "OVERLAY");
+				button.timeFontstrings["TOP"] = button.textFrame:CreateFontString(nil, "OVERLAY");
 				button.timeFontstrings["TOP"]:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", 12, "OUTLINE")
 				button.timeFontstrings["TOP"]:SetJustifyH("CENTER")
-				button.timeFontstrings["TOP"]:SetPoint("TOP", button, "TOP",0,0)
-				button.timeFontstrings["CENTER"] = button:CreateFontString(nil, "OVERLAY");
+				button.timeFontstrings["TOP"]:SetPoint("TOP", button.textFrame, "TOP",0,0)
+				button.timeFontstrings["CENTER"] = button.textFrame:CreateFontString(nil, "OVERLAY");
 				button.timeFontstrings["CENTER"]:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", 30, "OUTLINE")
 				button.timeFontstrings["CENTER"]:SetJustifyH("CENTER")
-				button.timeFontstrings["CENTER"]:SetPoint("CENTER", button, "CENTER",0,0)
+				button.timeFontstrings["CENTER"]:SetPoint("CENTER", button.textFrame, "CENTER",0,0)
 			end
 
 			button.stack = button:CreateFontString(nil, "OVERLAY")
@@ -247,15 +250,18 @@ function Auras:OnEnable(frame)
 				button.cooldown.reverse = true
 				button.cooldown.stopped = 1;
 				button.cooldown:Hide()
+				button.textFrame = CreateFrame("Frame", nil, button)
+				button.textFrame:SetAllPoints(button)
+				button.textFrame:SetFrameLevel(button.cooldown:GetFrameLevel() + 1);
 				button.timeFontstrings = {}
-				button.timeFontstrings["TOP"] = button:CreateFontString(nil, "OVERLAY");
+				button.timeFontstrings["TOP"] = button.textFrame:CreateFontString(nil, "OVERLAY");
 				button.timeFontstrings["TOP"]:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", 12, "OUTLINE")
 				button.timeFontstrings["TOP"]:SetJustifyH("CENTER")
-				button.timeFontstrings["TOP"]:SetPoint("TOP", button, "TOP",0,0)
-				button.timeFontstrings["CENTER"] = button:CreateFontString(nil, "OVERLAY");
+				button.timeFontstrings["TOP"]:SetPoint("TOP", button.textFrame, "TOP",0,0)
+				button.timeFontstrings["CENTER"] = button.textFrame:CreateFontString(nil, "OVERLAY");
 				button.timeFontstrings["CENTER"]:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", 30, "OUTLINE")
 				button.timeFontstrings["CENTER"]:SetJustifyH("CENTER")
-				button.timeFontstrings["CENTER"]:SetPoint("CENTER", button, "CENTER",0,0)
+				button.timeFontstrings["CENTER"]:SetPoint("CENTER", button.textFrame, "CENTER",0,0)
 			end
 
 			button.stack = button:CreateFontString(nil, "OVERLAY")
