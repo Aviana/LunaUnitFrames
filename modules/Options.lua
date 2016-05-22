@@ -656,6 +656,8 @@ function LunaUF:LoadOptions()
 		LunaOptionsFrame.pages[i].aurasizeslider:SetValue(17-LunaUF.db.profile.units[unit].auras.AurasPerRow)
 		if (unit == "player") then
 			LunaOptionsFrame.pages[i].enableaurastimertext:SetChecked(LunaUF.db.profile.units[unit].auras.timertextenabled)
+			LunaOptionsFrame.pages[i].auratimertextbigfontsizeslider:SetValue(LunaUF.db.profile.units[unit].auras.timertextbigsize)
+			LunaOptionsFrame.pages[i].auratimertextsmallfontsizeslider:SetValue(LunaUF.db.profile.units[unit].auras.timertextsmallsize)
 			LunaOptionsFrame.pages[i].enableaurastimerspin:SetChecked(LunaUF.db.profile.units[unit].auras.timerspinenabled)
 		end
 		LunaOptionsFrame.pages[i].enabletags:SetChecked(LunaUF.db.profile.units[unit].tags.enabled)
@@ -2052,8 +2054,40 @@ function LunaUF:CreateOptionsMenu()
 			end)
 			getglobal("Enable"..LunaUF.unitList[i-1].."AurasTimerText".."Text"):SetText(L["Enable Timer Text"])
 
+			LunaOptionsFrame.pages[i].auratimertextbigfontsizeslider = CreateFrame("Slider", "AuraTimerBigFontSlider"..LunaUF.unitList[i-1], LunaOptionsFrame.pages[i], "OptionsSliderTemplate")
+			LunaOptionsFrame.pages[i].auratimertextbigfontsizeslider:SetMinMaxValues(1,23)
+			LunaOptionsFrame.pages[i].auratimertextbigfontsizeslider:SetValueStep(1)
+			LunaOptionsFrame.pages[i].auratimertextbigfontsizeslider:SetScript("OnValueChanged", function()
+				local unit = this:GetParent().id
+				LunaUF.db.profile.units[unit].auras.timertextbigsize = this:GetValue()
+				getglobal("AuraTimerBigFontSlider"..unit.."Text"):SetText(L["Big font size"]..": "..LunaUF.db.profile.units[unit].auras.timertextbigsize)
+				for _,frame in pairs(LunaUF.Units.frameList) do
+					if frame.unitGroup == unit then
+						LunaUF.Units.FullUpdate(frame)
+					end
+				end
+			end)
+			LunaOptionsFrame.pages[i].auratimertextbigfontsizeslider:SetPoint("LEFT", LunaOptionsFrame.pages[i].enableaurastimertext, "RIGHT", 120, 0)
+			LunaOptionsFrame.pages[i].auratimertextbigfontsizeslider:SetWidth(150)
+
+			LunaOptionsFrame.pages[i].auratimertextsmallfontsizeslider = CreateFrame("Slider", "AuraTimerSmallFontSlider"..LunaUF.unitList[i-1], LunaOptionsFrame.pages[i], "OptionsSliderTemplate")
+			LunaOptionsFrame.pages[i].auratimertextsmallfontsizeslider:SetMinMaxValues(1,23)
+			LunaOptionsFrame.pages[i].auratimertextsmallfontsizeslider:SetValueStep(1)
+			LunaOptionsFrame.pages[i].auratimertextsmallfontsizeslider:SetScript("OnValueChanged", function()
+				local unit = this:GetParent().id
+				LunaUF.db.profile.units[unit].auras.timertextsmallsize = this:GetValue()
+				getglobal("AuraTimerSmallFontSlider"..unit.."Text"):SetText(L["Small font size"]..": "..LunaUF.db.profile.units[unit].auras.timertextsmallsize)
+				for _,frame in pairs(LunaUF.Units.frameList) do
+					if frame.unitGroup == unit then
+						LunaUF.Units.FullUpdate(frame)
+					end
+				end
+			end)
+			LunaOptionsFrame.pages[i].auratimertextsmallfontsizeslider:SetPoint("LEFT", LunaOptionsFrame.pages[i].enableaurastimertext, "RIGHT", 290, 0)
+			LunaOptionsFrame.pages[i].auratimertextsmallfontsizeslider:SetWidth(150)
+
 			LunaOptionsFrame.pages[i].enableaurastimerspin = CreateFrame("CheckButton", "Enable"..LunaUF.unitList[i-1].."AurasTimerSpin", LunaOptionsFrame.pages[i], "UICheckButtonTemplate")
-			LunaOptionsFrame.pages[i].enableaurastimerspin:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].enableauras, "BOTTOMLEFT", 150, -10)
+			LunaOptionsFrame.pages[i].enableaurastimerspin:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].enableaurastimertext, "BOTTOMLEFT", 0, -10)
 			LunaOptionsFrame.pages[i].enableaurastimerspin:SetHeight(30)
 			LunaOptionsFrame.pages[i].enableaurastimerspin:SetWidth(30)
 			LunaOptionsFrame.pages[i].enableaurastimerspin:SetScript("OnClick", function()
@@ -2069,7 +2103,7 @@ function LunaUF:CreateOptionsMenu()
 		end
 
 		LunaOptionsFrame.pages[i].tagheader = LunaOptionsFrame.pages[i]:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-		LunaOptionsFrame.pages[i].tagheader:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].enableaurastimertext and LunaOptionsFrame.pages[i].enableauras or LunaOptionsFrame.pages[i].auraheader, "BOTTOMLEFT", 0, -60)
+		LunaOptionsFrame.pages[i].tagheader:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].enableaurastimertext or LunaOptionsFrame.pages[i].auraheader, "BOTTOMLEFT", 0, -60)
 		LunaOptionsFrame.pages[i].tagheader:SetHeight(24)
 		LunaOptionsFrame.pages[i].tagheader:SetJustifyH("LEFT")
 		LunaOptionsFrame.pages[i].tagheader:SetTextColor(1,1,0)

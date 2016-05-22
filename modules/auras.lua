@@ -210,11 +210,11 @@ function Auras:OnEnable(frame)
 				button.textFrame:SetFrameLevel(button.cooldown:GetFrameLevel() + 1);
 				button.timeFontstrings = {}
 				button.timeFontstrings["TOP"] = button.textFrame:CreateFontString(nil, "OVERLAY");
-				button.timeFontstrings["TOP"]:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", 12, "OUTLINE")
+				button.timeFontstrings["TOP"]:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", LunaUF.db.profile.units["player"].auras.timertextsmallsize, "OUTLINE")
 				button.timeFontstrings["TOP"]:SetJustifyH("CENTER")
 				button.timeFontstrings["TOP"]:SetPoint("TOP", button.textFrame, "TOP",0,0)
 				button.timeFontstrings["CENTER"] = button.textFrame:CreateFontString(nil, "OVERLAY");
-				button.timeFontstrings["CENTER"]:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", 30, "OUTLINE")
+				button.timeFontstrings["CENTER"]:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", LunaUF.db.profile.units["player"].auras.timertextbigsize, "OUTLINE")
 				button.timeFontstrings["CENTER"]:SetJustifyH("CENTER")
 				button.timeFontstrings["CENTER"]:SetPoint("CENTER", button.textFrame, "CENTER",0,0)
 			end
@@ -255,11 +255,9 @@ function Auras:OnEnable(frame)
 				button.textFrame:SetFrameLevel(button.cooldown:GetFrameLevel() + 1);
 				button.timeFontstrings = {}
 				button.timeFontstrings["TOP"] = button.textFrame:CreateFontString(nil, "OVERLAY");
-				button.timeFontstrings["TOP"]:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", 12, "OUTLINE")
 				button.timeFontstrings["TOP"]:SetJustifyH("CENTER")
 				button.timeFontstrings["TOP"]:SetPoint("TOP", button.textFrame, "TOP",0,0)
 				button.timeFontstrings["CENTER"] = button.textFrame:CreateFontString(nil, "OVERLAY");
-				button.timeFontstrings["CENTER"]:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", 30, "OUTLINE")
 				button.timeFontstrings["CENTER"]:SetJustifyH("CENTER")
 				button.timeFontstrings["CENTER"]:SetPoint("CENTER", button.textFrame, "CENTER",0,0)
 			end
@@ -349,6 +347,10 @@ function Auras:FullUpdate(frame)
 				button.cooldown:SetPoint("TOPLEFT", button.border, "TOPLEFT")
 				button.cooldown:SetPoint("BOTTOMRIGHT", button.border, "BOTTOMRIGHT",1,0)
 			end
+			if button.timeFontstrings then
+				button.timeFontstrings["TOP"]:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", LunaUF.db.profile.units["player"].auras.timertextsmallsize, "OUTLINE")
+				button.timeFontstrings["CENTER"]:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", LunaUF.db.profile.units["player"].auras.timertextbigsize, "OUTLINE")
+			end
 		end
 		for i,button in ipairs(frame.auras.debuffbuttons) do
 			button:ClearAllPoints()
@@ -362,6 +364,10 @@ function Auras:FullUpdate(frame)
 				button.cooldown:SetModelScale(buttonsize/48)
 				button.cooldown:SetPoint("TOPLEFT", button.border, "TOPLEFT")
 				button.cooldown:SetPoint("BOTTOMRIGHT", button.border, "BOTTOMRIGHT",1,0)
+			end
+			if button.timeFontstrings then
+				button.timeFontstrings["TOP"]:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", LunaUF.db.profile.units["player"].auras.timertextsmallsize, "OUTLINE")
+				button.timeFontstrings["CENTER"]:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", LunaUF.db.profile.units["player"].auras.timertextbigsize, "OUTLINE")
 			end
 		end
 	elseif config.position == "LEFT" then
@@ -379,6 +385,10 @@ function Auras:FullUpdate(frame)
 				button.cooldown:SetPoint("TOPLEFT", button.border, "TOPLEFT")
 				button.cooldown:SetPoint("BOTTOMRIGHT", button.border, "BOTTOMRIGHT",1,0)
 			end
+			if button.timeFontstrings then
+				button.timeFontstrings["TOP"]:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", LunaUF.db.profile.units["player"].auras.timertextsmallsize, "OUTLINE")
+				button.timeFontstrings["CENTER"]:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", LunaUF.db.profile.units["player"].auras.timertextbigsize, "OUTLINE")
+			end
 		end
 		for i,button in ipairs(frame.auras.debuffbuttons) do
 			button:ClearAllPoints()
@@ -392,6 +402,10 @@ function Auras:FullUpdate(frame)
 				button.cooldown:SetModelScale(buttonsize/48)
 				button.cooldown:SetPoint("TOPLEFT", button.border, "TOPLEFT")
 				button.cooldown:SetPoint("BOTTOMRIGHT", button.border, "BOTTOMRIGHT",1,0)
+			end
+			if button.timeFontstrings then
+				button.timeFontstrings["TOP"]:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", LunaUF.db.profile.units["player"].auras.timertextsmallsize, "OUTLINE")
+				button.timeFontstrings["CENTER"]:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", LunaUF.db.profile.units["player"].auras.timertextbigsize, "OUTLINE")
 			end
 		end
 	else
@@ -413,6 +427,10 @@ function Auras:FullUpdate(frame)
 				button.cooldown:SetPoint("TOPLEFT", button.border, "TOPLEFT")
 				button.cooldown:SetPoint("BOTTOMRIGHT", button.border, "BOTTOMRIGHT",1,0)
 			end
+			if button.timeFontstrings then
+				button.timeFontstrings["TOP"]:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", LunaUF.db.profile.units["player"].auras.timertextsmallsize, "OUTLINE")
+				button.timeFontstrings["CENTER"]:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", LunaUF.db.profile.units["player"].auras.timertextbigsize, "OUTLINE")
+			end
 		end
 		for i,button in ipairs(frame.auras.debuffbuttons) do
 			button:ClearAllPoints()
@@ -426,6 +444,10 @@ function Auras:FullUpdate(frame)
 				button.cooldown:SetModelScale(buttonsize/48)
 				button.cooldown:SetPoint("TOPLEFT", button.border, "TOPLEFT")
 				button.cooldown:SetPoint("BOTTOMRIGHT", button.border, "BOTTOMRIGHT",1,0)
+			end
+			if button.timeFontstrings then
+				button.timeFontstrings["TOP"]:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", LunaUF.db.profile.units["player"].auras.timertextsmallsize, "OUTLINE")
+				button.timeFontstrings["CENTER"]:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", LunaUF.db.profile.units["player"].auras.timertextbigsize, "OUTLINE")
 			end
 		end
 	end
