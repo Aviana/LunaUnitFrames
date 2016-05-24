@@ -31,6 +31,7 @@ end
 local function BuffUpdate(frame)
 	local auraframe = frame or this
 	local unit = auraframe:GetParent().unit
+	local isPlayer = unit == "player"
 	local config = LunaUF.db.profile.units[auraframe:GetParent().unitGroup].auras
 	local numBuffs = 0
 	while UnitBuff(unit, numBuffs+1) do
@@ -39,10 +40,10 @@ local function BuffUpdate(frame)
 	local rows = math.ceil(numBuffs/config.AurasPerRow)
 	local height = rows*auraframe.buffbuttons[1]:GetHeight()+rows
 	auraframe:SetHeight(height == 0 and 1 or height)
-	local texture,stacks
+	local texture, stacks
 	for i,button in ipairs(auraframe.buffbuttons) do
-		local buffIndex = GetPlayerBuff(i - 1, "HELPFUL");
-		if (frame:GetParent().unitGroup == "player") then
+		local buffIndex, untilCancelled = GetPlayerBuff(i - 1, "HELPFUL");
+		if isPlayer then
 			texture = GetPlayerBuffTexture(buffIndex);
 			stacks = GetPlayerBuffApplications(buffIndex);
 		else
@@ -52,24 +53,17 @@ local function BuffUpdate(frame)
 			button.icon:SetTexture(texture)
 			button.stack:SetText(stacks == 1 and "" or stacks)
 			button.filter = "HELPFUL"
-			if (frame:GetParent().unitGroup == "player") then
-				if (config.timertextenabled) then
+			if isPlayer then
+				if (untilCancelled == 0 and config.timertextenabled) then
 					button:SetScript("OnUpdate", BuffButtonUpdate)
 				else
 					button:SetScript("OnUpdate", nil)
 					button.timeFontstrings["CENTER"]:SetText("")
 					button.timeFontstrings["TOP"]:SetText("")
 				end
-				if (config.timerspinenabled) then
-					if(texture ~= button.cooldown.texture) then
-						button.cooldown.stopped = 1
-						button.cooldown.texture = texture
-					end
-					CooldownFrame_SetTimer(button.cooldown, GetTime(), GetPlayerBuffTimeLeft(buffIndex), button.cooldown.stopped)
-					button.cooldown.stopped = 0;
+				if (untilCancelled == 0 and config.timerspinenabled) then
 					button.cooldown:Show();
 				else
-					button.cooldown.stopped = 1
 					button.cooldown:Hide();
 				end
 				button:SetScript("OnClick", BuffButtonClick)
@@ -80,10 +74,9 @@ local function BuffUpdate(frame)
 			end
 			button:Show()
 		else
-			if (frame:GetParent().unitGroup == "player") then
+			if isPlayer then
 				button:SetScript("OnUpdate", nil)
 				button:SetScript("OnClick", nil)
-				button.cooldown.stopped = 1;
 				button.cooldown:Hide();
 			end
 			button:Hide()
@@ -91,7 +84,7 @@ local function BuffUpdate(frame)
 	end
 	for i,button in ipairs(auraframe.debuffbuttons) do
 		local buffIndex = GetPlayerBuff(i - 1, "HARMFUL");
-		if (frame:GetParent().unitGroup == "player") then
+		if isPlayer then
 			texture = GetPlayerBuffTexture(buffIndex);
 			stacks = GetPlayerBuffApplications(buffIndex);
 		else
@@ -101,7 +94,7 @@ local function BuffUpdate(frame)
 			button.icon:SetTexture(texture)
 			button.stack:SetText(stacks == 1 and "" or stacks)
 			button.filter = "HARMFUL"
-			if (frame:GetParent().unitGroup == "player") then
+			if isPlayer then
 				if (config.timertextenabled) then
 					button:SetScript("OnUpdate", BuffButtonUpdate)
 				else
@@ -110,15 +103,8 @@ local function BuffUpdate(frame)
 					button.timeFontstrings["TOP"]:SetText("")
 				end
 				if (config.timerspinenabled) then
-					if(texture ~= button.cooldown.texture) then
-						button.cooldown.stopped = 1
-						button.cooldown.texture = texture
-					end
-					CooldownFrame_SetTimer(button.cooldown, GetTime(), GetPlayerBuffTimeLeft(buffIndex), button.cooldown.stopped)
-					button.cooldown.stopped = 0;
 					button.cooldown:Show();
 				else
-					button.cooldown.stopped = 1
 					button.cooldown:Hide();
 				end
 				button.auraID = buffIndex
@@ -127,9 +113,8 @@ local function BuffUpdate(frame)
 			end
 			button:Show()
 		else
-			if (frame:GetParent().unitGroup == "player") then
+			if isPlayer then
 				button:SetScript("OnUpdate", nil)
-				button.cooldown.stopped = 1;
 				button.cooldown:Hide();
 			end
 			button:Hide()
@@ -150,6 +135,13 @@ function BuffButtonUpdate()
 	local centered
 	
 	if (timeLeft and timeLeft > 0) then
+		-- local delta
+		-- if this.cooldown.start then delta = timeLeft + GetTime() - this.cooldown.start - this.cooldown.duration end
+		-- if not this.cooldown.start or math.abs(delta) > 0.1 then
+		-- 	DEFAULT_CHAT_FRAME:AddMessage("BuffButtonUpdate cdset "..this.auraID.." delta "..(delta or "nil"))
+		if not this.cooldown.start or math.abs(timeLeft + GetTime() - this.cooldown.start - this.cooldown.duration) > 0.1 then
+			CooldownFrame_SetTimer(this.cooldown, GetTime(), timeLeft, 1)
+		end
 		timeLeft = math.ceil(timeLeft);
 		centered = (timeLeft < 10)
 		if (timeLeft > 3599) then
