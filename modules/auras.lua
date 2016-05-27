@@ -2,6 +2,10 @@ local L = LunaUF.L
 local Auras = {}
 LunaUF:RegisterModule(Auras, "auras", L["Auras"])
 
+local PlayerScanTip = CreateFrame("GameTooltip", "PlayerScanTip", nil, "GameTooltipTemplate")
+PlayerScanTip:SetOwner(WorldFrame, "ANCHOR_NONE")
+LunaBuffDBPlayerString = UnitName("player") .. " of " .. GetCVar("realmName")
+
 -- Thanks schaka! :D
 local function firstToUpper(str)
 	if (str~=nil) then
@@ -28,7 +32,7 @@ local function hideTooltip()
 	GameTooltip:Hide()
 end
 
-local function BuffUpdate(frame)
+local function BuffFrameUpdate(frame)
 	local auraframe = frame or this
 	local unit = auraframe:GetParent().unit
 	local isPlayer = unit == "player"
@@ -42,8 +46,9 @@ local function BuffUpdate(frame)
 	auraframe:SetHeight(height == 0 and 1 or height)
 	local texture, stacks
 	for i,button in ipairs(auraframe.buffbuttons) do
-		local buffIndex, untilCancelled = GetPlayerBuff(i - 1, "HELPFUL");
+		local buffIndex, untilCancelled
 		if isPlayer then
+			buffIndex, untilCancelled = GetPlayerBuff(i - 1, "HELPFUL");
 			texture = GetPlayerBuffTexture(buffIndex);
 			stacks = GetPlayerBuffApplications(buffIndex);
 		else
@@ -54,18 +59,7 @@ local function BuffUpdate(frame)
 			button.stack:SetText(stacks == 1 and "" or stacks)
 			button.filter = "HELPFUL"
 			if isPlayer then
-				if (untilCancelled == 0 and config.timertextenabled) then
-					button:SetScript("OnUpdate", BuffButtonUpdate)
-				else
-					button:SetScript("OnUpdate", nil)
-					button.timeFontstrings["CENTER"]:SetText("")
-					button.timeFontstrings["TOP"]:SetText("")
-				end
-				if (untilCancelled == 0 and config.timerspinenabled) then
-					button.cooldown:Show();
-				else
-					button.cooldown:Hide();
-				end
+				button.untilCancelled = untilCancelled
 				button:SetScript("OnClick", BuffButtonClick)
 				button.auraID = buffIndex
 			else
@@ -75,9 +69,7 @@ local function BuffUpdate(frame)
 			button:Show()
 		else
 			if isPlayer then
-				button:SetScript("OnUpdate", nil)
 				button:SetScript("OnClick", nil)
-				button.cooldown:Hide();
 			end
 			button:Hide()
 		end
@@ -95,28 +87,12 @@ local function BuffUpdate(frame)
 			button.stack:SetText(stacks == 1 and "" or stacks)
 			button.filter = "HARMFUL"
 			if isPlayer then
-				if (config.timertextenabled) then
-					button:SetScript("OnUpdate", BuffButtonUpdate)
-				else
-					button:SetScript("OnUpdate", nil)
-					button.timeFontstrings["CENTER"]:SetText("")
-					button.timeFontstrings["TOP"]:SetText("")
-				end
-				if (config.timerspinenabled) then
-					button.cooldown:Show();
-				else
-					button.cooldown:Hide();
-				end
 				button.auraID = buffIndex
 			else
 				button.auraID = i
 			end
 			button:Show()
 		else
-			if isPlayer then
-				button:SetScript("OnUpdate", nil)
-				button.cooldown:Hide();
-			end
 			button:Hide()
 		end
 	end
@@ -124,61 +100,146 @@ end
 
 function BuffButtonClick()
 	if (arg1 ~= "RightButton") then return; end
-	this:SetScript("OnUpdate", nil)
 	this:SetScript("OnClick", nil)
 	CancelPlayerBuff(this.auraID)
 end
 
-function BuffButtonUpdate()
-	local timeString = ""
-	local timeLeft = GetPlayerBuffTimeLeft(this.auraID);
-	local centered
-	
-	if (timeLeft and timeLeft > 0) then
-		-- local delta
-		-- if this.cooldown.start then delta = timeLeft + GetTime() - this.cooldown.start - this.cooldown.duration end
-		-- if not this.cooldown.start or math.abs(delta) > 0.1 then
-		-- 	DEFAULT_CHAT_FRAME:AddMessage("BuffButtonUpdate cdset "..this.auraID.." delta "..(delta or "nil"))
-		if not this.cooldown.start or math.abs(timeLeft + GetTime() - this.cooldown.start - this.cooldown.duration) > 0.1 then
-			CooldownFrame_SetTimer(this.cooldown, GetTime(), timeLeft, 1)
-		end
-		timeLeft = math.ceil(timeLeft);
-		centered = (timeLeft < 10)
-		if (timeLeft > 3599) then
-			timeString = math.ceil(timeLeft / 3600).." h"
-		elseif (timeLeft > 59) then
-			timeString = math.ceil(timeLeft / 60).." m"
-		elseif not centered then
-			timeString = timeLeft.." s"
-		else
-			timeString = timeLeft
-		end
-	end
-	if centered then
-		this.timeFontstrings["CENTER"]:SetText(timeString)
-		this.timeFontstrings["TOP"]:SetText("")
-	else
-		this.timeFontstrings["CENTER"]:SetText("")
-		this.timeFontstrings["TOP"]:SetText(timeString)
-	end
-end
-
 local function OnEvent()
 	if arg1 == this:GetParent().unit then
-		this.updateNeeded = true
-		--BuffUpdate(this)
+		this.frameUpdateNeeded = true
 	end
 end
 
 local function OnUpdate()
-	if this.updateNeeded then
-		this.updateNeeded = nil
-		BuffUpdate(this)
+	if this.frameUpdateNeeded then
+		this.frameUpdateNeeded = false
+		BuffFrameUpdate(this)
+	end
+
+	if not (this:GetParent().unit == "player") then return end
+	local config = LunaUF.db.profile.units[this:GetParent().unitGroup].auras
+	local OldLunaBuffDB = LunaBuffDB[LunaBuffDBPlayerString]
+	LunaBuffDB[LunaBuffDBPlayerString] = {}
+	for i,button in ipairs(this.buffbuttons) do
+		if (button:IsVisible() and button.untilCancelled == 0) then
+			local timeLeft = GetPlayerBuffTimeLeft(button.auraID)
+			PlayerScanTip:ClearLines()
+			PlayerScanTip:SetPlayerBuff(button.auraID)
+			local buffName = PlayerScanTipTextLeft1:GetText()
+			if OldLunaBuffDB[buffName] then
+				if timeLeft > OldLunaBuffDB[buffName] then
+					LunaBuffDB[LunaBuffDBPlayerString][buffName] = timeLeft
+				else
+					LunaBuffDB[LunaBuffDBPlayerString][buffName] = OldLunaBuffDB[buffName]
+				end
+			elseif timeLeft > 0 and buffName then
+				LunaBuffDB[LunaBuffDBPlayerString][buffName] = timeLeft
+			end
+			if (config.timertextenabled) then
+				local timeString = ""
+				local centered
+				local timeL = timeLeft
+				if (timeL and timeL > 0) then
+					timeL = math.ceil(timeL);
+					centered = (timeL < 10)
+					if (timeL > 3599) then
+						timeString = math.ceil(timeL / 3600).." h"
+					elseif (timeL > 59) then
+						timeString = math.ceil(timeL / 60).." m"
+					elseif not centered then
+						timeString = timeL.." s"
+					else
+						timeString = timeL
+					end
+				end
+				if centered then
+					button.timeFontstrings["CENTER"]:SetText(timeString)
+					button.timeFontstrings["TOP"]:SetText("")
+				else
+					button.timeFontstrings["CENTER"]:SetText("")
+					button.timeFontstrings["TOP"]:SetText(timeString)
+				end
+			else
+				button.timeFontstrings["CENTER"]:SetText("")
+				button.timeFontstrings["TOP"]:SetText("")
+			end
+			if (config.timerspinenabled) then
+				if timeLeft > 0 then
+					CooldownFrame_SetTimer(button.cooldown, GetTime() - (LunaBuffDB[LunaBuffDBPlayerString][buffName] - timeLeft), LunaBuffDB[LunaBuffDBPlayerString][buffName] , 1)
+				else
+					CooldownFrame_SetTimer(button.cooldown, 0, timeLeft, 0)
+				end
+				button.cooldown:Show();
+			else
+				button.cooldown:Hide();
+			end
+		end
+	end
+	for i,button in ipairs(this.debuffbuttons) do
+		if (button:IsVisible()) then
+			local timeLeft = GetPlayerBuffTimeLeft(button.auraID)
+			PlayerScanTip:ClearLines()
+			PlayerScanTip:SetPlayerBuff(button.auraID)
+			local buffName = PlayerScanTipTextLeft1:GetText()
+			if OldLunaBuffDB[buffName] then
+				if timeLeft > OldLunaBuffDB[buffName] then
+					LunaBuffDB[LunaBuffDBPlayerString][buffName] = timeLeft
+				else
+					LunaBuffDB[LunaBuffDBPlayerString][buffName] = OldLunaBuffDB[buffName]
+				end
+			elseif timeLeft > 0 and buffName then
+				LunaBuffDB[LunaBuffDBPlayerString][buffName] = timeLeft
+			end
+			if (config.timertextenabled) then
+				local timeString = ""
+				local centered
+				local timeL = timeLeft
+				if (timeL and timeL > 0) then
+					timeL = math.ceil(timeL);
+					centered = (timeL < 10)
+					if (timeL > 3599) then
+						timeString = math.ceil(timeL / 3600).." h"
+					elseif (timeL > 59) then
+						timeString = math.ceil(timeL / 60).." m"
+					elseif not centered then
+						timeString = timeL.." s"
+					else
+						timeString = timeL
+					end
+				end
+				if centered then
+					button.timeFontstrings["CENTER"]:SetText(timeString)
+					button.timeFontstrings["TOP"]:SetText("")
+				else
+					button.timeFontstrings["CENTER"]:SetText("")
+					button.timeFontstrings["TOP"]:SetText(timeString)
+				end
+			else
+				button.timeFontstrings["CENTER"]:SetText("")
+				button.timeFontstrings["TOP"]:SetText("")
+			end
+			if (config.timerspinenabled) then
+				if timeLeft > 0 then
+					CooldownFrame_SetTimer(button.cooldown, GetTime() - (LunaBuffDB[LunaBuffDBPlayerString][buffName] - timeLeft), LunaBuffDB[LunaBuffDBPlayerString][buffName], 1)
+				else
+					CooldownFrame_SetTimer(button.cooldown, 0, timeLeft, 0)
+				end
+				button.cooldown:Show();
+			else
+				button.cooldown:Hide();
+			end
+		end
 	end
 end
 
 function Auras:OnEnable(frame)
 	local isPlayer = frame.unitGroup == "player"
+	if not LunaBuffDB then
+		LunaBuffDB = {}
+	end
+	if not LunaBuffDB[LunaBuffDBPlayerString] then
+		LunaBuffDB[LunaBuffDBPlayerString] = {}
+	end
 	if not frame.auras then
 		frame.auras = CreateFrame("Frame", nil, frame)
 		frame.auras.buffbuttons = {}
@@ -191,22 +252,20 @@ function Auras:OnEnable(frame)
 				button:SetScript("OnClick", cancelBuff)
 				button:RegisterForClicks("RightButtonUp")
 				button.cooldown = CreateFrame("Model", button:GetName().."CD", button, "CooldownFrameTemplate")
-				--button.cooldown:SetHeight(36)
-				--button.cooldown:SetWidth(36)
+				button.cooldown:ClearAllPoints()
+				button.cooldown:SetHeight(36)
+				button.cooldown:SetWidth(36)
 				button.cooldown:SetFrameLevel(7)
 				button.cooldown.reverse = true
-				button.cooldown.stopped = 1;
 				button.cooldown:Hide()
 				button.textFrame = CreateFrame("Frame", nil, button)
 				button.textFrame:SetAllPoints(button)
 				button.textFrame:SetFrameLevel(button.cooldown:GetFrameLevel() + 1);
 				button.timeFontstrings = {}
 				button.timeFontstrings["TOP"] = button.textFrame:CreateFontString(nil, "OVERLAY");
-				button.timeFontstrings["TOP"]:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", LunaUF.db.profile.units["player"].auras.timertextsmallsize, "OUTLINE")
 				button.timeFontstrings["TOP"]:SetJustifyH("CENTER")
 				button.timeFontstrings["TOP"]:SetPoint("TOP", button.textFrame, "TOP",0,0)
 				button.timeFontstrings["CENTER"] = button.textFrame:CreateFontString(nil, "OVERLAY");
-				button.timeFontstrings["CENTER"]:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", LunaUF.db.profile.units["player"].auras.timertextbigsize, "OUTLINE")
 				button.timeFontstrings["CENTER"]:SetJustifyH("CENTER")
 				button.timeFontstrings["CENTER"]:SetPoint("CENTER", button.textFrame, "CENTER",0,0)
 			end
@@ -236,11 +295,11 @@ function Auras:OnEnable(frame)
 			button:SetScript("OnLeave", hideTooltip)
 			if isPlayer then
 				button.cooldown = CreateFrame("Model", button:GetName().."CD", button, "CooldownFrameTemplate")
-				--button.cooldown:SetHeight(36)
-				--button.cooldown:SetWidth(36)
+				button.cooldown:ClearAllPoints()
+				button.cooldown:SetHeight(36)
+				button.cooldown:SetWidth(36)
 				button.cooldown:SetFrameLevel(7)
 				button.cooldown.reverse = true
-				button.cooldown.stopped = 1;
 				button.cooldown:Hide()
 				button.textFrame = CreateFrame("Frame", nil, button)
 				button.textFrame:SetAllPoints(button)
@@ -302,6 +361,7 @@ function Auras:OnEnable(frame)
 	end
 	frame.auras:Show()
 	frame.auras:RegisterEvent("UNIT_AURA")
+	frame.auras:RegisterEvent("PLAYER_AURAS_CHANGED")
 	frame.auras:SetScript("OnEvent", OnEvent)
 	frame.auras:SetScript("OnUpdate", OnUpdate)
 end
@@ -335,9 +395,8 @@ function Auras:FullUpdate(frame)
 			button.stack:SetText(i)
 			button:SetPoint("BOTTOMLEFT", frame.auras, "BOTTOMLEFT", (i-1)*(buttonsize+1)-((math.ceil(i/config.AurasPerRow)-1)*(config.AurasPerRow)*(buttonsize+1)), (math.ceil(i/config.AurasPerRow)-1)*(buttonsize+1))
 			if button.cooldown then
-				button.cooldown:SetModelScale(buttonsize/48)
-				button.cooldown:SetPoint("TOPLEFT", button.border, "TOPLEFT")
-				button.cooldown:SetPoint("BOTTOMRIGHT", button.border, "BOTTOMRIGHT",1,0)
+				button.cooldown:SetPoint("TOPLEFT", button.border, "TOPLEFT",0,0)
+				button.cooldown:SetScale((button.border:GetWidth()+1)/36)
 			end
 			if button.timeFontstrings then
 				button.timeFontstrings["TOP"]:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", LunaUF.db.profile.units["player"].auras.timertextsmallsize, "OUTLINE")
@@ -353,9 +412,8 @@ function Auras:FullUpdate(frame)
 			button.stack:SetText(i)
 			button:SetPoint("BOTTOMLEFT", frame.auras, "TOPLEFT", (i-1)*(buttonsize+1)-((math.ceil(i/config.AurasPerRow)-1)*(config.AurasPerRow)*(buttonsize+1)), (math.ceil(i/config.AurasPerRow)-1)*(buttonsize+1))
 			if button.cooldown then
-				button.cooldown:SetModelScale(buttonsize/48)
-				button.cooldown:SetPoint("TOPLEFT", button.border, "TOPLEFT")
-				button.cooldown:SetPoint("BOTTOMRIGHT", button.border, "BOTTOMRIGHT",1,0)
+				button.cooldown:SetPoint("TOPLEFT", button.border, "TOPLEFT",0,0)
+				button.cooldown:SetScale((button.border:GetWidth()+1)/36)
 			end
 			if button.timeFontstrings then
 				button.timeFontstrings["TOP"]:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", LunaUF.db.profile.units["player"].auras.timertextsmallsize, "OUTLINE")
@@ -373,9 +431,8 @@ function Auras:FullUpdate(frame)
 			button.stack:SetText(i)
 			button:SetPoint("TOPRIGHT", frame.auras, "TOPRIGHT", -((i-1)*(buttonsize+1)-((math.ceil(i/config.AurasPerRow)-1)*(config.AurasPerRow)*(buttonsize+1))), -(math.ceil(i/config.AurasPerRow)-1)*(buttonsize+1))
 			if button.cooldown then
-				button.cooldown:SetModelScale(buttonsize/48)
-				button.cooldown:SetPoint("TOPLEFT", button.border, "TOPLEFT")
-				button.cooldown:SetPoint("BOTTOMRIGHT", button.border, "BOTTOMRIGHT",1,0)
+				button.cooldown:SetPoint("TOPLEFT", button.border, "TOPLEFT",0,0)
+				button.cooldown:SetScale((button.border:GetWidth()+1)/36)
 			end
 			if button.timeFontstrings then
 				button.timeFontstrings["TOP"]:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", LunaUF.db.profile.units["player"].auras.timertextsmallsize, "OUTLINE")
@@ -391,9 +448,8 @@ function Auras:FullUpdate(frame)
 			button.stack:SetText(i)
 			button:SetPoint("TOPRIGHT", frame.auras, "BOTTOMRIGHT", -((i-1)*(buttonsize+1)-((math.ceil(i/config.AurasPerRow)-1)*(config.AurasPerRow)*(buttonsize+1))), -(math.ceil(i/config.AurasPerRow)-1)*(buttonsize+1))
 			if button.cooldown then
-				button.cooldown:SetModelScale(buttonsize/48)
-				button.cooldown:SetPoint("TOPLEFT", button.border, "TOPLEFT")
-				button.cooldown:SetPoint("BOTTOMRIGHT", button.border, "BOTTOMRIGHT",1,0)
+				button.cooldown:SetPoint("TOPLEFT", button.border, "TOPLEFT",0,0)
+				button.cooldown:SetScale((button.border:GetWidth()+1)/36)
 			end
 			if button.timeFontstrings then
 				button.timeFontstrings["TOP"]:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", LunaUF.db.profile.units["player"].auras.timertextsmallsize, "OUTLINE")
@@ -415,9 +471,8 @@ function Auras:FullUpdate(frame)
 			button.stack:SetText(i)
 			button:SetPoint("TOPLEFT", frame.auras, "TOPLEFT", (i-1)*(buttonsize+1)-((math.ceil(i/config.AurasPerRow)-1)*(config.AurasPerRow)*(buttonsize+1)), -(math.ceil(i/config.AurasPerRow)-1)*(buttonsize+1))
 			if button.cooldown then
-				button.cooldown:SetModelScale(buttonsize/48)
-				button.cooldown:SetPoint("TOPLEFT", button.border, "TOPLEFT")
-				button.cooldown:SetPoint("BOTTOMRIGHT", button.border, "BOTTOMRIGHT",1,0)
+				button.cooldown:SetPoint("TOPLEFT", button.border, "TOPLEFT",0,0)
+				button.cooldown:SetScale((button.border:GetWidth()+1)/36)
 			end
 			if button.timeFontstrings then
 				button.timeFontstrings["TOP"]:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", LunaUF.db.profile.units["player"].auras.timertextsmallsize, "OUTLINE")
@@ -433,9 +488,8 @@ function Auras:FullUpdate(frame)
 			button.stack:SetText(i)
 			button:SetPoint("TOPLEFT", frame.auras, "BOTTOMLEFT", (i-1)*(buttonsize+1)-((math.ceil(i/config.AurasPerRow)-1)*(config.AurasPerRow)*(buttonsize+1)), -(math.ceil(i/config.AurasPerRow)-1)*(buttonsize+1))
 			if button.cooldown then
-				button.cooldown:SetModelScale(buttonsize/48)
-				button.cooldown:SetPoint("TOPLEFT", button.border, "TOPLEFT")
-				button.cooldown:SetPoint("BOTTOMRIGHT", button.border, "BOTTOMRIGHT",1,0)
+				button.cooldown:SetPoint("TOPLEFT", button.border, "TOPLEFT",0,0)
+				button.cooldown:SetScale((button.border:GetWidth()+1)/36)
 			end
 			if button.timeFontstrings then
 				button.timeFontstrings["TOP"]:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", LunaUF.db.profile.units["player"].auras.timertextsmallsize, "OUTLINE")
@@ -443,6 +497,5 @@ function Auras:FullUpdate(frame)
 			end
 		end
 	end
-	frame.auras.updateNeeded = true
-	--BuffUpdate(frame.auras)
+	frame.auras.frameUpdateNeeded = true
 end
