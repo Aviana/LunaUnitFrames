@@ -105,17 +105,13 @@ function BuffButtonClick()
 end
 
 local function OnEvent()
-	if arg1 == this:GetParent().unit then
-		this.frameUpdateNeeded = true
+	if (((this:GetParent().unit == "player") and (event == "PLAYER_AURAS_CHANGED"))
+	or ((this:GetParent().unit ~= "player") and (arg1 == this:GetParent().unit))) then
+		BuffFrameUpdate(this)
 	end
 end
 
 local function OnUpdate()
-	if this.frameUpdateNeeded then
-		this.frameUpdateNeeded = false
-		BuffFrameUpdate(this)
-	end
-
 	if not (this:GetParent().unit == "player") then return end
 	local config = LunaUF.db.profile.units[this:GetParent().unitGroup].auras
 	local OldLunaBuffDB = LunaBuffDB[LunaBuffDBPlayerString]
@@ -497,5 +493,5 @@ function Auras:FullUpdate(frame)
 			end
 		end
 	end
-	frame.auras.frameUpdateNeeded = true
+	BuffFrameUpdate(frame.auras)
 end
