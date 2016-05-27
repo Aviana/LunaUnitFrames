@@ -169,6 +169,10 @@ local function OnUpdate()
 			else
 				button.cooldown:Hide();
 			end
+		else
+			button.cooldown:Hide()
+			button.timeFontstrings["CENTER"]:SetText("")
+			button.timeFontstrings["TOP"]:SetText("")
 		end
 	end
 	for i,button in ipairs(this.debuffbuttons) do
@@ -224,6 +228,10 @@ local function OnUpdate()
 			else
 				button.cooldown:Hide();
 			end
+		else
+			button.cooldown:Hide()
+			button.timeFontstrings["CENTER"]:SetText("")
+			button.timeFontstrings["TOP"]:SetText("")
 		end
 	end
 end
