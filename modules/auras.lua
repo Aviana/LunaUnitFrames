@@ -23,7 +23,7 @@ local function showTooltip()
 		GameTooltip:SetPlayerBuff(this.auraID);
 	elseif this.filter == "HELPFUL" then
 		GameTooltip:SetUnitBuff(this:GetParent():GetParent().unit, this.auraID)
-	elseif this.filter == "HARMFULL" then
+	elseif this.filter == "HARMFUL" then
 		GameTooltip:SetUnitDebuff(this:GetParent():GetParent().unit, this.auraID)
 	end
 end
