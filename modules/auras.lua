@@ -3,6 +3,7 @@ local Auras = {}
 LunaUF:RegisterModule(Auras, "auras", L["Auras"])
 
 LunaBuffDBPlayerString = UnitName("player") .. " of " .. GetCVar("realmName")
+OldLunaBuffDB = {}
 
 -- Thanks schaka! :D
 local function firstToUpper(str)
@@ -42,10 +43,10 @@ local function BuffFrameUpdate(frame, buildOnly)
 	local rows = math.ceil(numBuffs/config.AurasPerRow)
 	local height = rows*auraframe.buffbuttons[1]:GetHeight()+rows
 	auraframe:SetHeight(height == 0 and 1 or height)
-	local texture, stacks, OldLunaBuffDB
+	local texture, stacks
 	if isPlayer and not buildOnly then
-		OldLunaBuffDB = LunaBuffDB[LunaBuffDBPlayerString]
 		for k, v in pairs(LunaBuffDB[LunaBuffDBPlayerString]) do
+			OldLunaBuffDB[k] = LunaBuffDB[LunaBuffDBPlayerString][k]
 			LunaBuffDB[LunaBuffDBPlayerString][k] = nil
 		end
 	end
@@ -66,7 +67,7 @@ local function BuffFrameUpdate(frame, buildOnly)
 				button.untilCancelled = untilCancelled
 				button:SetScript("OnClick", BuffButtonClick)
 				button.auraID = buffIndex
-				if OldLunaBuffDB then
+				if not buildOnly then
 					local timeLeft = GetPlayerBuffTimeLeft(buffIndex)
 					LunaUF.ScanTip:ClearLines()
 					LunaUF.ScanTip:SetPlayerBuff(buffIndex)
@@ -79,6 +80,16 @@ local function BuffFrameUpdate(frame, buildOnly)
 						end
 					elseif timeLeft > 0 and buffName then
 						LunaBuffDB[LunaBuffDBPlayerString][buffName] = math.ceil(timeLeft)
+					end
+					if (config.timerspinenabled) then
+						if timeLeft > 0 then
+							CooldownFrame_SetTimer(button.cooldown, GetTime() - (LunaBuffDB[LunaBuffDBPlayerString][buffName] - timeLeft), LunaBuffDB[LunaBuffDBPlayerString][buffName], 1)
+						else
+							CooldownFrame_SetTimer(button.cooldown, 0, timeLeft, 0)
+						end
+						button.cooldown:Show();
+					else
+						button.cooldown:Hide();
 					end
 				end
 			else
@@ -121,6 +132,16 @@ local function BuffFrameUpdate(frame, buildOnly)
 					elseif timeLeft > 0 and buffName then
 						LunaBuffDB[LunaBuffDBPlayerString][buffName] =  math.ceil(timeLeft)
 					end
+					if (config.timerspinenabled) then
+						if timeLeft > 0 then
+							CooldownFrame_SetTimer(button.cooldown, GetTime() - (LunaBuffDB[LunaBuffDBPlayerString][buffName] - timeLeft), LunaBuffDB[LunaBuffDBPlayerString][buffName] , 1)
+						else
+							CooldownFrame_SetTimer(button.cooldown, 0, timeLeft, 0)
+						end
+						button.cooldown:Show();
+					else
+						button.cooldown:Hide();
+					end
 				end
 			else
 				button.auraID = i
@@ -129,6 +150,9 @@ local function BuffFrameUpdate(frame, buildOnly)
 		else
 			button:Hide()
 		end
+	end
+	for k, v in pairs(OldLunaBuffDB) do
+		OldLunaBuffDB[k] = nil
 	end
 end
 
@@ -179,19 +203,6 @@ local function OnUpdate()
 				button.timeFontstrings["CENTER"]:SetText("")
 				button.timeFontstrings["TOP"]:SetText("")
 			end
-			if (config.timerspinenabled) then
-				LunaUF.ScanTip:ClearLines()
-				LunaUF.ScanTip:SetPlayerBuff(button.auraID)
-				local buffName = LunaScanTipTextLeft1:GetText()
-				if timeLeft > 0 then
-					CooldownFrame_SetTimer(button.cooldown, GetTime() - (LunaBuffDB[LunaBuffDBPlayerString][buffName] - timeLeft), LunaBuffDB[LunaBuffDBPlayerString][buffName] , 1)
-				else
-					CooldownFrame_SetTimer(button.cooldown, 0, timeLeft, 0)
-				end
-				button.cooldown:Show();
-			else
-				button.cooldown:Hide();
-			end
 		else
 			button.cooldown:Hide()
 			button.timeFontstrings["CENTER"]:SetText("")
@@ -228,19 +239,6 @@ local function OnUpdate()
 			else
 				button.timeFontstrings["CENTER"]:SetText("")
 				button.timeFontstrings["TOP"]:SetText("")
-			end
-			if (config.timerspinenabled) then
-				LunaUF.ScanTip:ClearLines()
-				LunaUF.ScanTip:SetPlayerBuff(button.auraID)
-				local buffName = LunaScanTipTextLeft1:GetText()
-				if timeLeft > 0 then
-					CooldownFrame_SetTimer(button.cooldown, GetTime() - (LunaBuffDB[LunaBuffDBPlayerString][buffName] - timeLeft), LunaBuffDB[LunaBuffDBPlayerString][buffName], 1)
-				else
-					CooldownFrame_SetTimer(button.cooldown, 0, timeLeft, 0)
-				end
-				button.cooldown:Show();
-			else
-				button.cooldown:Hide();
 			end
 		else
 			button.cooldown:Hide()
