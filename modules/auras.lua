@@ -2,8 +2,10 @@ local L = LunaUF.L
 local Auras = {}
 LunaUF:RegisterModule(Auras, "auras", L["Auras"])
 
-LunaBuffDBPlayerString = UnitName("player") .. " of " .. GetCVar("realmName")
-OldLunaBuffDB = {}
+local LunaBuffDBPlayerString = UnitName("player") .. " of " .. GetCVar("realmName")
+local OldLunaBuffDB = {}
+local bufftimers = {}
+local debufftimers = {}
 
 -- Thanks schaka! :D
 local function firstToUpper(str)
@@ -172,9 +174,14 @@ end
 local function OnUpdate()
 	if not (this:GetParent().unit == "player") then return end
 	local config = LunaUF.db.profile.units[this:GetParent().unitGroup].auras
+	local changed
 	for i,button in ipairs(this.buffbuttons) do
+		local timeLeft = button.auraID and GetPlayerBuffTimeLeft(button.auraID) or 0
+		if bufftimers[i] and timeLeft > bufftimers[i] then
+			changed = 1
+		end
+		bufftimers[i] = timeLeft
 		if (button:IsVisible() and button.untilCancelled == 0) then
-			local timeLeft = GetPlayerBuffTimeLeft(button.auraID)
 			if (config.timertextenabled) then
 				local timeString = ""
 				local centered
@@ -210,8 +217,12 @@ local function OnUpdate()
 		end
 	end
 	for i,button in ipairs(this.debuffbuttons) do
+		local timeLeft = button.auraID and GetPlayerBuffTimeLeft(button.auraID) or 0
+		if debufftimers[i] and timeLeft > debufftimers[i] then
+			changed = 1
+		end
+		debufftimers[i] = timeLeft
 		if (button:IsVisible()) then
-			local timeLeft = GetPlayerBuffTimeLeft(button.auraID)
 			if (config.timertextenabled) then
 				local timeString = ""
 				local centered
@@ -245,6 +256,9 @@ local function OnUpdate()
 			button.timeFontstrings["CENTER"]:SetText("")
 			button.timeFontstrings["TOP"]:SetText("")
 		end
+	end
+	if changed then
+		BuffFrameUpdate(this, false)
 	end
 end
 
