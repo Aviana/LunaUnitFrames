@@ -425,8 +425,8 @@ function Auras:FullUpdate(frame)
 			button.stack:SetText(i)
 			button:SetPoint("BOTTOMLEFT", frame.auras, "BOTTOMLEFT", (i-1)*(buttonsize+1)-((math.ceil(i/config.AurasPerRow)-1)*(config.AurasPerRow)*(buttonsize+1)), (math.ceil(i/config.AurasPerRow)-1)*(buttonsize+1))
 			if button.cooldown then
-				button.cooldown:SetPoint("TOPLEFT", button.border, "TOPLEFT",0,0)
-				button.cooldown:SetScale((button.border:GetWidth()+1)/36)
+				button.cooldown:SetPoint("TOPLEFT", button, "TOPLEFT", 0, 0)
+				button.cooldown:SetScale((button:GetWidth() + 0.7)/36)
 			end
 			if button.timeFontstrings then
 				button.timeFontstrings["TOP"]:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", LunaUF.db.profile.units["player"].auras.timertextsmallsize, "OUTLINE")
@@ -442,8 +442,8 @@ function Auras:FullUpdate(frame)
 			button.stack:SetText(i)
 			button:SetPoint("BOTTOMLEFT", frame.auras, "TOPLEFT", (i-1)*(buttonsize+1)-((math.ceil(i/config.AurasPerRow)-1)*(config.AurasPerRow)*(buttonsize+1)), (math.ceil(i/config.AurasPerRow)-1)*(buttonsize+1))
 			if button.cooldown then
-				button.cooldown:SetPoint("TOPLEFT", button.border, "TOPLEFT",0,0)
-				button.cooldown:SetScale((button.border:GetWidth()+1)/36)
+				button.cooldown:SetPoint("TOPLEFT", button, "TOPLEFT", 0, 0)
+				button.cooldown:SetScale((button:GetWidth() + 0.7)/36)
 			end
 			if button.timeFontstrings then
 				button.timeFontstrings["TOP"]:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", LunaUF.db.profile.units["player"].auras.timertextsmallsize, "OUTLINE")
@@ -461,8 +461,8 @@ function Auras:FullUpdate(frame)
 			button.stack:SetText(i)
 			button:SetPoint("TOPRIGHT", frame.auras, "TOPRIGHT", -((i-1)*(buttonsize+1)-((math.ceil(i/config.AurasPerRow)-1)*(config.AurasPerRow)*(buttonsize+1))), -(math.ceil(i/config.AurasPerRow)-1)*(buttonsize+1))
 			if button.cooldown then
-				button.cooldown:SetPoint("TOPLEFT", button.border, "TOPLEFT",0,0)
-				button.cooldown:SetScale((button.border:GetWidth()+1)/36)
+				button.cooldown:SetPoint("TOPLEFT", button, "TOPLEFT", 0, 0)
+				button.cooldown:SetScale((button:GetWidth() + 0.7)/36)
 			end
 			if button.timeFontstrings then
 				button.timeFontstrings["TOP"]:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", LunaUF.db.profile.units["player"].auras.timertextsmallsize, "OUTLINE")
@@ -478,8 +478,8 @@ function Auras:FullUpdate(frame)
 			button.stack:SetText(i)
 			button:SetPoint("TOPRIGHT", frame.auras, "BOTTOMRIGHT", -((i-1)*(buttonsize+1)-((math.ceil(i/config.AurasPerRow)-1)*(config.AurasPerRow)*(buttonsize+1))), -(math.ceil(i/config.AurasPerRow)-1)*(buttonsize+1))
 			if button.cooldown then
-				button.cooldown:SetPoint("TOPLEFT", button.border, "TOPLEFT",0,0)
-				button.cooldown:SetScale((button.border:GetWidth()+1)/36)
+				button.cooldown:SetPoint("TOPLEFT", button, "TOPLEFT", 0, 0)
+				button.cooldown:SetScale((button:GetWidth() + 0.7)/36)
 			end
 			if button.timeFontstrings then
 				button.timeFontstrings["TOP"]:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", LunaUF.db.profile.units["player"].auras.timertextsmallsize, "OUTLINE")
@@ -501,8 +501,8 @@ function Auras:FullUpdate(frame)
 			button.stack:SetText(i)
 			button:SetPoint("TOPLEFT", frame.auras, "TOPLEFT", (i-1)*(buttonsize+1)-((math.ceil(i/config.AurasPerRow)-1)*(config.AurasPerRow)*(buttonsize+1)), -(math.ceil(i/config.AurasPerRow)-1)*(buttonsize+1))
 			if button.cooldown then
-				button.cooldown:SetPoint("TOPLEFT", button.border, "TOPLEFT",0,0)
-				button.cooldown:SetScale((button.border:GetWidth()+1)/36)
+				button.cooldown:SetPoint("TOPLEFT", button, "TOPLEFT", 0, 0)
+				button.cooldown:SetScale((button:GetWidth() + 0.7)/36)
 			end
 			if button.timeFontstrings then
 				button.timeFontstrings["TOP"]:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", LunaUF.db.profile.units["player"].auras.timertextsmallsize, "OUTLINE")
@@ -518,8 +518,8 @@ function Auras:FullUpdate(frame)
 			button.stack:SetText(i)
 			button:SetPoint("TOPLEFT", frame.auras, "BOTTOMLEFT", (i-1)*(buttonsize+1)-((math.ceil(i/config.AurasPerRow)-1)*(config.AurasPerRow)*(buttonsize+1)), -(math.ceil(i/config.AurasPerRow)-1)*(buttonsize+1))
 			if button.cooldown then
-				button.cooldown:SetPoint("TOPLEFT", button.border, "TOPLEFT",0,0)
-				button.cooldown:SetScale((button.border:GetWidth()+1)/36)
+				button.cooldown:SetPoint("TOPLEFT", button, "TOPLEFT", 0, 0)
+				button.cooldown:SetScale((button:GetWidth() + 0.7)/36)
 			end
 			if button.timeFontstrings then
 				button.timeFontstrings["TOP"]:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", LunaUF.db.profile.units["player"].auras.timertextsmallsize, "OUTLINE")
