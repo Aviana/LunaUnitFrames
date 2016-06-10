@@ -83,7 +83,7 @@ local function BuffFrameUpdate(frame, buildOnly)
 					elseif timeLeft > 0 and buffName then
 						LunaBuffDB[LunaBuffDBPlayerString][buffName] = math.ceil(timeLeft)
 					end
-					if (config.timerspinenabled) then
+					if (config.timerspinenabled and untilCancelled == 0) then
 						if timeLeft > 0 then
 							CooldownFrame_SetTimer(button.cooldown, GetTime() - (LunaBuffDB[LunaBuffDBPlayerString][buffName] - timeLeft), LunaBuffDB[LunaBuffDBPlayerString][buffName], 1)
 						else
@@ -211,7 +211,6 @@ local function OnUpdate()
 				button.timeFontstrings["TOP"]:SetText("")
 			end
 		else
-			button.cooldown:Hide()
 			button.timeFontstrings["CENTER"]:SetText("")
 			button.timeFontstrings["TOP"]:SetText("")
 		end
@@ -252,7 +251,6 @@ local function OnUpdate()
 				button.timeFontstrings["TOP"]:SetText("")
 			end
 		else
-			button.cooldown:Hide()
 			button.timeFontstrings["CENTER"]:SetText("")
 			button.timeFontstrings["TOP"]:SetText("")
 		end
