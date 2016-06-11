@@ -6,6 +6,7 @@ local LunaBuffDBPlayerString = UnitName("player") .. " of " .. GetCVar("realmNam
 local currentBuffTable = {}
 local bufftimers = {}
 local debufftimers = {}
+local FrameUpdateNeeded
 
 -- Thanks schaka! :D
 local function firstToUpper(str)
@@ -36,7 +37,7 @@ end
 local function BuffFrameUpdate(frame, buildOnly)
 	local auraframe = frame or this
 	local unit = auraframe:GetParent().unit
-	local isPlayer = unit == "player"
+	local isPlayer = auraframe:GetParent().unitGroup == "player"
 	local config = LunaUF.db.profile.units[auraframe:GetParent().unitGroup].auras
 	local numBuffs = 0
 	while UnitBuff(unit, numBuffs+1) do
@@ -161,14 +162,14 @@ function BuffButtonClick()
 end
 
 local function OnEvent()
-	if (((this:GetParent().unit == "player") and (event == "PLAYER_AURAS_CHANGED"))
-	or ((this:GetParent().unit ~= "player") and (arg1 == this:GetParent().unit))) then
+	if (((this:GetParent().unitGroup == "player") and (event == "PLAYER_AURAS_CHANGED"))
+	or ((this:GetParent().unitGroup ~= "player") and (arg1 == this:GetParent().unit))) then
 		BuffFrameUpdate(this, false)
 	end
 end
 
 local function OnUpdate()
-	if not (this:GetParent().unit == "player") then return end
+	if not (this:GetParent().unitGroup == "player") then return end
 	local config = LunaUF.db.profile.units[this:GetParent().unitGroup].auras
 	local changed
 	for i,button in ipairs(this.buffbuttons) do
@@ -251,8 +252,9 @@ local function OnUpdate()
 			button.timeFontstrings["TOP"]:SetText("")
 		end
 	end
-	if changed then
+	if changed or FrameUpdateNeeded then
 		BuffFrameUpdate(this, false)
+		FrameUpdateNeeded = false
 	end
 end
 
@@ -522,4 +524,5 @@ function Auras:FullUpdate(frame)
 		end
 	end
 	BuffFrameUpdate(frame.auras, true)
+	FrameUpdateNeeded = true
 end
