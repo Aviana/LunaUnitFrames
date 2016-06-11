@@ -3,7 +3,7 @@ local Auras = {}
 LunaUF:RegisterModule(Auras, "auras", L["Auras"])
 
 local LunaBuffDBPlayerString = UnitName("player") .. " of " .. GetCVar("realmName")
-local OldLunaBuffDB = {}
+local currentBuffTable = {}
 local bufftimers = {}
 local debufftimers = {}
 
@@ -46,12 +46,7 @@ local function BuffFrameUpdate(frame, buildOnly)
 	local height = rows*auraframe.buffbuttons[1]:GetHeight()+rows
 	auraframe:SetHeight(height == 0 and 1 or height)
 	local texture, stacks
-	if isPlayer and not buildOnly then
-		for k, v in pairs(LunaBuffDB[LunaBuffDBPlayerString]) do
-			OldLunaBuffDB[k] = LunaBuffDB[LunaBuffDBPlayerString][k]
-			LunaBuffDB[LunaBuffDBPlayerString][k] = nil
-		end
-	end
+	local currentEventTime = GetTime()
 	for i,button in ipairs(auraframe.buffbuttons) do
 		local buffIndex, untilCancelled
 		if isPlayer then
@@ -69,21 +64,18 @@ local function BuffFrameUpdate(frame, buildOnly)
 				button.untilCancelled = untilCancelled
 				button:SetScript("OnClick", BuffButtonClick)
 				button.auraID = buffIndex
-				if not buildOnly then
+				if not buildOnly and untilCancelled == 0 then
 					local timeLeft = GetPlayerBuffTimeLeft(buffIndex)
 					LunaUF.ScanTip:ClearLines()
 					LunaUF.ScanTip:SetPlayerBuff(buffIndex)
 					local buffName = LunaScanTipTextLeft1:GetText()
-					if OldLunaBuffDB[buffName] then
-						if timeLeft > OldLunaBuffDB[buffName] then
+					if timeLeft and timeLeft > 0 then
+						currentBuffTable[buffName] = currentEventTime
+						if not LunaBuffDB[LunaBuffDBPlayerString][buffName] or timeLeft > LunaBuffDB[LunaBuffDBPlayerString][buffName] then
 							LunaBuffDB[LunaBuffDBPlayerString][buffName] = math.ceil(timeLeft)
-						else
-							LunaBuffDB[LunaBuffDBPlayerString][buffName] = OldLunaBuffDB[buffName]
 						end
-					elseif timeLeft > 0 and buffName then
-						LunaBuffDB[LunaBuffDBPlayerString][buffName] = math.ceil(timeLeft)
 					end
-					if (config.timerspinenabled and untilCancelled == 0) then
+					if config.timerspinenabled then
 						if timeLeft > 0 then
 							CooldownFrame_SetTimer(button.cooldown, GetTime() - (LunaBuffDB[LunaBuffDBPlayerString][buffName] - timeLeft), LunaBuffDB[LunaBuffDBPlayerString][buffName], 1)
 						else
@@ -93,6 +85,8 @@ local function BuffFrameUpdate(frame, buildOnly)
 					else
 						button.cooldown:Hide();
 					end
+				else
+					button.cooldown:Hide();
 				end
 			else
 				button:SetScript("OnClick", nil)
@@ -120,19 +114,17 @@ local function BuffFrameUpdate(frame, buildOnly)
 			button.filter = "HARMFUL"
 			if isPlayer then
 				button.auraID = buffIndex
-				if OldLunaBuffDB then
+				if not buildOnly then
 					local timeLeft = GetPlayerBuffTimeLeft(buffIndex)
 					LunaUF.ScanTip:ClearLines()
 					LunaUF.ScanTip:SetPlayerBuff(buffIndex)
 					local buffName = LunaScanTipTextLeft1:GetText()
-					if OldLunaBuffDB[buffName] then
-						if timeLeft > OldLunaBuffDB[buffName] then
-							LunaBuffDB[LunaBuffDBPlayerString][buffName] =  math.ceil(timeLeft)
-						else
-							LunaBuffDB[LunaBuffDBPlayerString][buffName] = OldLunaBuffDB[buffName]
+					if timeLeft and timeLeft > 0 then
+						currentBuffTable[buffName] = currentEventTime
+						if not LunaBuffDB[LunaBuffDBPlayerString][buffName] or timeLeft > LunaBuffDB[LunaBuffDBPlayerString][buffName] then
+							LunaBuffDB[LunaBuffDBPlayerString][buffName] = math.ceil(timeLeft)
+							currentBuffTable[buffName] = currentEventTime
 						end
-					elseif timeLeft > 0 and buffName then
-						LunaBuffDB[LunaBuffDBPlayerString][buffName] =  math.ceil(timeLeft)
 					end
 					if (config.timerspinenabled) then
 						if timeLeft > 0 then
@@ -153,8 +145,12 @@ local function BuffFrameUpdate(frame, buildOnly)
 			button:Hide()
 		end
 	end
-	for k, v in pairs(OldLunaBuffDB) do
-		OldLunaBuffDB[k] = nil
+	if isPlayer and not buildOnly then
+		for k, v in pairs(LunaBuffDB[LunaBuffDBPlayerString]) do
+			if currentBuffTable[k] ~= currentEventTime then
+				LunaBuffDB[LunaBuffDBPlayerString][k] = nil
+			end
+		end
 	end
 end
 
