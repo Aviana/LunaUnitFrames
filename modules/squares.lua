@@ -171,7 +171,6 @@ function Squares:UpdateAuras(frame)
 		ScanTip:ClearLines()
 		ScanTip:SetUnitBuff(frame.unit,i)
 		buffname = LunaScanTipTextLeft1:GetText() or ""
-	
 		if config.hottracker then
 			if buffname == BS["Rejuvenation"] then
 				frame.squares.centericons[1]:Show()
