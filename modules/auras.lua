@@ -40,8 +40,14 @@ local function BuffFrameUpdate(frame, buildOnly)
 	local isPlayer = auraframe:GetParent().unitGroup == "player"
 	local config = LunaUF.db.profile.units[auraframe:GetParent().unitGroup].auras
 	local numBuffs = 0
-	while UnitBuff(unit, numBuffs+1) do
-		numBuffs = numBuffs + 1
+	if isPlayer then
+		while GetPlayerBuff(numBuffs, "HELPFUL") ~= -1 do
+			numBuffs = numBuffs + 1
+		end
+	else
+		while UnitBuff(unit, numBuffs+1) do
+			numBuffs = numBuffs + 1
+		end
 	end
 	local rows = math.ceil(numBuffs/config.AurasPerRow)
 	local height = rows*auraframe.buffbuttons[1]:GetHeight()+rows
