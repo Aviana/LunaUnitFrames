@@ -170,7 +170,8 @@ function Squares:UpdateAuras(frame)
 	while UnitBuff(frame.unit,i) do
 		ScanTip:ClearLines()
 		ScanTip:SetUnitBuff(frame.unit,i)
-		buffname = LunaScanTipTextLeft1:GetText()
+		buffname = LunaScanTipTextLeft1:GetText() or ""
+	
 		if config.hottracker then
 			if buffname == BS["Rejuvenation"] then
 				frame.squares.centericons[1]:Show()
@@ -187,6 +188,7 @@ function Squares:UpdateAuras(frame)
 				break
 			end
 		end
+		
 		i = i + 1
 	end
 	i = 1
@@ -204,7 +206,7 @@ function Squares:UpdateAuras(frame)
 	while UnitDebuff(frame.unit,i) do
 		ScanTip:ClearLines()
 		ScanTip:SetUnitDebuff(frame.unit,i)
-		buffname = LunaScanTipTextLeft1:GetText()
+		buffname = LunaScanTipTextLeft1:GetText() or ""
 
 		texture,_,disptype = UnitDebuff(frame.unit,i,config.dispellabledebuffs)
 		if disptype and config.enabledebuffs and num <= 3 then
