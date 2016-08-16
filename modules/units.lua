@@ -243,8 +243,8 @@ local function ShowMenu()
 end
 
 local function OnClick()
-	if Luna_Custom_ClickFunction then
-		Luna_Custom_ClickFunction(arg1, this.unit)
+	if Luna_Custom_ClickFunction and Luna_Custom_ClickFunction(arg1, this.unit) then 
+		return;
 	else
 		local button = (IsControlKeyDown() and "Ctrl-" or "") .. (IsShiftKeyDown() and "Shift-" or "") .. (IsAltKeyDown() and "Alt-" or "") .. arg1
 		local action = LunaUF.db.profile.clickcasting.bindings[button]
