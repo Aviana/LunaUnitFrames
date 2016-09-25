@@ -109,8 +109,9 @@ local function BuffFrameUpdate(frame, buildOnly)
 		end
 	end
 	for i,button in ipairs(auraframe.debuffbuttons) do
-		local buffIndex = GetPlayerBuff(i - 1, "HARMFUL");
+		local buffIndex, untilCancelled
 		if isPlayer then
+			buffIndex, untilCancelled = GetPlayerBuff(i - 1, "HARMFUL");
 			texture = GetPlayerBuffTexture(buffIndex);
 			stacks = GetPlayerBuffApplications(buffIndex);
 			dtype = GetPlayerBuffDispelType(buffIndex)
@@ -127,8 +128,9 @@ local function BuffFrameUpdate(frame, buildOnly)
 				button.border:SetVertexColor(1,1,1)
 			end
 			if isPlayer then
+				button.untilCancelled = untilCancelled
 				button.auraID = buffIndex
-				if not buildOnly then
+				if not buildOnly and untilCancelled == 0 then
 					local timeLeft = GetPlayerBuffTimeLeft(buffIndex)
 					LunaUF.ScanTip:ClearLines()
 					LunaUF.ScanTip:SetPlayerBuff(buffIndex)
@@ -150,6 +152,8 @@ local function BuffFrameUpdate(frame, buildOnly)
 					else
 						button.cooldown:Hide();
 					end
+				else
+					button.cooldown:Hide();
 				end
 			else
 				button.auraID = i
@@ -228,7 +232,7 @@ local function OnUpdate()
 			changed = 1
 		end
 		debufftimers[i] = timeLeft
-		if (button:IsVisible()) then
+		if (button:IsVisible() and button.untilCancelled == 0) then
 			if (config.timertextenabled) then
 				local timeString = ""
 				local centered
