@@ -229,14 +229,14 @@ local oldUseAction = UseAction
 local function newUseAction(a1, a2, a3)
 	tooltip:ClearLines()
 	tooltip:SetAction(a1)
-	local spellName = LunaScanTipTextLeft1:GetText()
+	local spellName = LunaScanTipTextLeft1:GetText() or ""
 	-- Call the original function
 	oldUseAction(a1, a2, a3)
 	-- Test to see if this is a macro
 	if ( GetActionText(a1) or not spellName ) then
 		return
 	end
-	local rank = LunaScanTipTextRight1:GetText()
+	local rank = LunaScanTipTextRight1:GetText() or ""
 	if rank then
 		_,_,rank = string.find(rank,"(%d+)")
 	else
