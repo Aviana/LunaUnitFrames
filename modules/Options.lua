@@ -472,7 +472,7 @@ local function CreateBarOrderWidget(parent, config)
 		local frame = this:GetParent()
 		if not frame.selectedID then return end
 		local config = frame.config
-		if frame.selectedID < frame.numhBars then
+		if frame.selectedID <= frame.numhBars then
 			return
 		else
 			if frame.selectedID == frame.numhBars+1 then
@@ -648,6 +648,7 @@ function LunaUF:LoadOptions()
 		LunaOptionsFrame.pages[i].invertHealth:SetChecked(LunaUF.db.profile.units[unit].healthBar.invert)
 		LunaOptionsFrame.pages[i].vertHealth:SetChecked(LunaUF.db.profile.units[unit].healthBar.vertical)
 		LunaOptionsFrame.pages[i].enablePower:SetChecked(LunaUF.db.profile.units[unit].powerBar.enabled)
+		LunaOptionsFrame.pages[i].hidePower:SetChecked(LunaUF.db.profile.units[unit].powerBar.hide)
 		LunaOptionsFrame.pages[i].powersizeslider:SetValue(LunaUF.db.profile.units[unit].powerBar.size)
 		LunaOptionsFrame.pages[i].invertPower:SetChecked(LunaUF.db.profile.units[unit].powerBar.invert)
 		LunaOptionsFrame.pages[i].vertPower:SetChecked(LunaUF.db.profile.units[unit].powerBar.vertical)
@@ -657,6 +658,7 @@ function LunaUF:LoadOptions()
 		LunaOptionsFrame.pages[i].enableheal:SetChecked(LunaUF.db.profile.units[unit].incheal.enabled)
 		LunaOptionsFrame.pages[i].healsizeslider:SetValue(LunaUF.db.profile.units[unit].incheal.cap*100)
 		LunaOptionsFrame.pages[i].enableauras:SetChecked(LunaUF.db.profile.units[unit].auras.enabled)
+		LunaOptionsFrame.pages[i].enablebordercolor:SetChecked(LunaUF.db.profile.units[unit].auras.bordercolor)
 		SetDropDownValue(LunaOptionsFrame.pages[i].auraposition,LunaUF.db.profile.units[unit].auras.position)
 		LunaOptionsFrame.pages[i].aurasizeslider:SetValue(17-LunaUF.db.profile.units[unit].auras.AurasPerRow)
 		if (unit == "player") then
@@ -1852,7 +1854,22 @@ function LunaUF:CreateOptionsMenu()
 				end
 			end
 		end)
-		getglobal("Enable"..LunaUF.unitList[i-1].."Power".."Text"):SetText(L["Enable"])
+		getglobal("Enable"..LunaUF.unitList[i-1].."PowerText"):SetText(L["Enable"])
+		
+		LunaOptionsFrame.pages[i].hidePower = CreateFrame("CheckButton", "Hide"..LunaUF.unitList[i-1].."Power", LunaOptionsFrame.pages[i], "UICheckButtonTemplate")
+		LunaOptionsFrame.pages[i].hidePower:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].powerheader, "BOTTOMLEFT", 80, -10)
+		LunaOptionsFrame.pages[i].hidePower:SetHeight(30)
+		LunaOptionsFrame.pages[i].hidePower:SetWidth(30)
+		LunaOptionsFrame.pages[i].hidePower:SetScript("OnClick", function()
+			local unit = this:GetParent().id
+			LunaUF.db.profile.units[unit].powerBar.hide = not LunaUF.db.profile.units[unit].powerBar.hide
+			for _,frame in pairs(LunaUF.Units.frameList) do
+				if frame.unitGroup == unit then
+					LunaUF.Units:SetupFrameModules(frame)
+				end
+			end
+		end)
+		getglobal("Hide"..LunaUF.unitList[i-1].."PowerText"):SetText(L["Hide when not Mana"])
 		
 		LunaOptionsFrame.pages[i].powersizeslider = CreateFrame("Slider", "PowerSizeSlider"..LunaUF.unitList[i-1], LunaOptionsFrame.pages[i], "OptionsSliderTemplate")
 		LunaOptionsFrame.pages[i].powersizeslider:SetMinMaxValues(1,10)
@@ -2060,9 +2077,24 @@ function LunaUF:CreateOptionsMenu()
 		LunaOptionsFrame.pages[i].aurasizeslider:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].auraheader, "BOTTOMLEFT", 280, -10)
 		LunaOptionsFrame.pages[i].aurasizeslider:SetWidth(190)
 		
+		LunaOptionsFrame.pages[i].enablebordercolor = CreateFrame("CheckButton", "Enable"..LunaUF.unitList[i-1].."BorderColor", LunaOptionsFrame.pages[i], "UICheckButtonTemplate")
+		LunaOptionsFrame.pages[i].enablebordercolor:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].auraheader, "BOTTOMLEFT", 0, -50)
+		LunaOptionsFrame.pages[i].enablebordercolor:SetHeight(30)
+		LunaOptionsFrame.pages[i].enablebordercolor:SetWidth(30)
+		LunaOptionsFrame.pages[i].enablebordercolor:SetScript("OnClick", function()
+			local unit = this:GetParent().id
+			LunaUF.db.profile.units[unit].auras.bordercolor = not LunaUF.db.profile.units[unit].auras.bordercolor
+			for _,frame in pairs(LunaUF.Units.frameList) do
+				if frame.unitGroup == unit then
+					LunaUF.Units.FullUpdate(frame)
+				end
+			end
+		end)
+		getglobal("Enable"..LunaUF.unitList[i-1].."BorderColorText"):SetText(L["Enable Border Color"])
+		
 		if (LunaUF.unitList[i-1] == "player") then
 			LunaOptionsFrame.pages[i].enableaurastimertext = CreateFrame("CheckButton", "Enable"..LunaUF.unitList[i-1].."AurasTimerText", LunaOptionsFrame.pages[i], "UICheckButtonTemplate")
-			LunaOptionsFrame.pages[i].enableaurastimertext:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].enableauras, "BOTTOMLEFT", 0, -10)
+			LunaOptionsFrame.pages[i].enableaurastimertext:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].enablebordercolor, "BOTTOMLEFT", 0, -10)
 			LunaOptionsFrame.pages[i].enableaurastimertext:SetHeight(30)
 			LunaOptionsFrame.pages[i].enableaurastimertext:SetWidth(30)
 			LunaOptionsFrame.pages[i].enableaurastimertext:SetScript("OnClick", function()
@@ -2125,7 +2157,7 @@ function LunaUF:CreateOptionsMenu()
 		end
 
 		LunaOptionsFrame.pages[i].tagheader = LunaOptionsFrame.pages[i]:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-		LunaOptionsFrame.pages[i].tagheader:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].enableaurastimertext or LunaOptionsFrame.pages[i].auraheader, "BOTTOMLEFT", 0, -60)
+		LunaOptionsFrame.pages[i].tagheader:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].enableaurastimertext or LunaOptionsFrame.pages[i].auraheader, "BOTTOMLEFT", 0, LunaOptionsFrame.pages[i].enableaurastimertext and -60 or -90)
 		LunaOptionsFrame.pages[i].tagheader:SetHeight(24)
 		LunaOptionsFrame.pages[i].tagheader:SetJustifyH("LEFT")
 		LunaOptionsFrame.pages[i].tagheader:SetTextColor(1,1,0)

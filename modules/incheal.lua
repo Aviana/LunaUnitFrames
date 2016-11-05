@@ -17,6 +17,7 @@ function Incheal:OnEnable(frame)
 		frame.incheal.healBar = CreateFrame("StatusBar", nil, frame)
 		frame.incheal.healBar:SetMinMaxValues(0,1)
 		frame.incheal.healBar:SetValue(1)
+		frame.incheal.healBar:SetFrameLevel(5)
 	end
 	if not AceEvent:IsEventRegistered("HealComm_Healupdate") then
 		AceEvent:RegisterEvent("HealComm_Healupdate", OnHeal)

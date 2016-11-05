@@ -49,13 +49,12 @@ local function OnEvent()
 	if arg1 ~= this:GetParent().unit then return end
 	if event == "UNIT_DISPLAYPOWER" then
 		Power:UpdateColor(this:GetParent())
-		Power:Update(this:GetParent())
 	else
 		if this.ticker and (not this.ticker.startTime or UnitMana("player") > this.currentPower) then
 			this.ticker.startTime = GetTime()
 		end
-		Power:Update(this:GetParent())
 	end
+	Power:Update(this:GetParent())
 end
 
 local function updatePower()
@@ -159,6 +158,18 @@ function Power:UpdateColor(frame)
 end
 
 function Power:Update(frame)
+	if UnitPowerType(frame.unit) > 0 then
+		if LunaUF.db.profile.units[frame.unitGroup].powerBar.hide and not frame.powerBar.hidden then
+			frame.powerBar.hidden = true
+			LunaUF.Units:PositionWidgets(frame)
+		elseif not LunaUF.db.profile.units[frame.unitGroup].powerBar.hide and frame.powerBar.hidden then
+			frame.powerBar.hidden = nil
+			LunaUF.Units:PositionWidgets(frame)
+		end
+	elseif frame.powerBar.hidden then
+		frame.powerBar.hidden = nil
+		LunaUF.Units:PositionWidgets(frame)
+	end
 	frame.powerBar.currentPower = UnitMana(frame.unit)
 	frame.powerBar:SetMinMaxValues(0, UnitManaMax(frame.unit))
 	frame.powerBar:SetValue(UnitIsDeadOrGhost(frame.unit) and 0 or not UnitIsConnected(frame.unit) and 0 or frame.powerBar.currentPower)
