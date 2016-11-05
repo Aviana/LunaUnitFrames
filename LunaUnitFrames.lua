@@ -2,7 +2,11 @@ LunaUF = AceLibrary("AceAddon-2.0"):new("AceEvent-2.0", "AceConsole-2.0", "AceDB
 LunaUF:RegisterDB("LunaDB")
 
 -- Assets ----------------------------------------------------------------------------------
+<<<<<<< HEAD
 LunaUF.Version = 2009
+=======
+LunaUF.Version = 2008
+>>>>>>> origin/master
 LunaUF.BS = AceLibrary("Babble-Spell-2.2")
 LunaUF.Banzai = AceLibrary("Banzai-1.0")
 LunaUF.HealComm = AceLibrary("HealComm-1.0")
@@ -222,7 +226,7 @@ LunaUF.defaults = {
 				totemBar = { enabled = true, size = 2, hide=true },
 				druidBar = { enabled = true, size = 2 },
 				portrait = { enabled = true, type = "3D", side = "left", size = 6 },
-				auras = { enabled = false, AurasPerRow = 12, position = "BOTTOM", weaponbuffs = true },
+				auras = { enabled = false, AurasPerRow = 12, position = "BOTTOM", weaponbuffs = true, timertextenabled = true, timertextbigsize = 23,timertextsmallsize = 12, timerspinenabled = true },
 				highlight = { enabled = true, ontarget = false, ondebuff = true, onmouse = false },
 				fader = { enabled = false, inactiveAlpha = 0.2, combatAlpha = 1 },
 				tags = {
@@ -980,23 +984,39 @@ function LunaUF:HideBlizzard()
 	-- Castbar
 	local CastingBarFrame = getglobal("CastingBarFrame")
 	if self.db.profile.blizzard.castbar then
-		CastingBarFrame:RegisterEvent("SPELLCAST_START")
-		CastingBarFrame:RegisterEvent("SPELLCAST_STOP")
-		CastingBarFrame:RegisterEvent("SPELLCAST_FAILED")
-		CastingBarFrame:RegisterEvent("SPELLCAST_INTERRUPTED")
-		CastingBarFrame:RegisterEvent("SPELLCAST_DELAYED")
-		CastingBarFrame:RegisterEvent("SPELLCAST_CHANNEL_START")
-		CastingBarFrame:RegisterEvent("SPELLCAST_CHANNEL_UPDATE")
-		CastingBarFrame:RegisterEvent("SPELLCAST_CHANNEL_STOP")
+		if CastingBarFrame.OldShow then
+			CastingBarFrame.Show = CastingBarFrame.OldShow
+		end
+		if CastingBarFrame.OldHide then
+			CastingBarFrame.Hide = CastingBarFrame.OldHide
+		end
+		if CastingBarFrame.OldIsShown then
+			CastingBarFrame.IsShown = CastingBarFrame.OldIsShown
+		end
+		if CastingBarFrame.OldIsVisible then
+			CastingBarFrame.IsVisible = CastingBarFrame.OldIsVisible
+		end
+		if CastingBarFrame.LUAFShown then
+			CastingBarFrame.LUAFShown = nil
+			CastingBarFrame:Show()
+		end
 	else
-		CastingBarFrame:UnregisterEvent("SPELLCAST_START")
-		CastingBarFrame:UnregisterEvent("SPELLCAST_STOP")
-		CastingBarFrame:UnregisterEvent("SPELLCAST_FAILED")
-		CastingBarFrame:UnregisterEvent("SPELLCAST_INTERRUPTED")
-		CastingBarFrame:UnregisterEvent("SPELLCAST_DELAYED")
-		CastingBarFrame:UnregisterEvent("SPELLCAST_CHANNEL_START")
-		CastingBarFrame:UnregisterEvent("SPELLCAST_CHANNEL_UPDATE")
-		CastingBarFrame:UnregisterEvent("SPELLCAST_CHANNEL_STOP")
+		CastingBarFrame.OldShow = CastingBarFrame.Show
+		CastingBarFrame.OldHide = CastingBarFrame.Hide
+		CastingBarFrame.OldIsShown = CastingBarFrame.IsShown
+		CastingBarFrame.OldIsVisible = CastingBarFrame.IsVisible
+		CastingBarFrame.Show = function(this)
+				this.LUAFShown = true
+			end
+		CastingBarFrame.Hide = function(this)
+				this.LUAFShown = nil
+			end
+		CastingBarFrame.IsShown = function(this)
+				return this.LUAFShown
+			end
+		CastingBarFrame.IsVisible = function(this)
+				return this.LUAFShown and this:GetParent():IsVisible()
+			end
 	end
 	--Buffs
 	if self.db.profile.blizzard.buffs then
