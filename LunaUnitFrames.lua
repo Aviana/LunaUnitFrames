@@ -2,7 +2,7 @@ LunaUF = AceLibrary("AceAddon-2.0"):new("AceEvent-2.0", "AceConsole-2.0", "AceDB
 LunaUF:RegisterDB("LunaDB")
 
 -- Assets ----------------------------------------------------------------------------------
-LunaUF.Version = 2007
+LunaUF.Version = 2009
 LunaUF.BS = AceLibrary("Babble-Spell-2.2")
 LunaUF.Banzai = AceLibrary("Banzai-1.0")
 LunaUF.HealComm = AceLibrary("HealComm-1.0")
@@ -289,12 +289,12 @@ LunaUF.defaults = {
 						healthBar = {
 							size = 10,
 							["left"] = "[name]",
-							["right"] = "[smarthealth]",
+							["right"] = "[ssmarthealth]",
 						},
 						powerBar = {
 							size = 10,
 							["left"] = "[levelcolor][level][shortclassification] [classcolor][smartclass]",
-							["right"] = "[pp]/[maxpp]",
+							["right"] = "[spp]/[smaxpp]",
 						},
 						castBar = {
 							size = 8,
@@ -336,12 +336,12 @@ LunaUF.defaults = {
 						healthBar = {
 							size = 10,
 							["left"] = "[name]",
-							["right"] = "[perhp]%[br][smarthealth]",
+							["right"] = "[perhp]%[br][ssmarthealth]",
 						},
 						powerBar = {
 							size = 10,
 							["left"] = "[levelcolor][level][shortclassification] [classcolor][smartclass]",
-							["right"] = "[pp]/[maxpp]",
+							["right"] = "[spp]/[smaxpp]",
 						},
 						castBar = {
 							size = 10,
@@ -391,12 +391,12 @@ LunaUF.defaults = {
 						healthBar = {
 							size = 10,
 							["left"] = "[name]",
-							["right"] = "[smarthealth]",
+							["right"] = "[ssmarthealth]",
 						},
 						powerBar = {
 							size = 10,
 							["left"] = "[levelcolor][level][shortclassification] [classcolor][smartclass]",
-							["right"] = "[pp]/[maxpp]",
+							["right"] = "[spp]/[smaxpp]",
 						},
 						castBar = {
 							size = 10,
@@ -444,12 +444,12 @@ LunaUF.defaults = {
 						healthBar = {
 							size = 10,
 							["left"] = "[name]",
-							["right"] = "[smarthealth]",
+							["right"] = "[ssmarthealth]",
 						},
 						powerBar = {
 							size = 10,
 							["left"] = "[levelcolor][level][shortclassification] [classcolor][smartclass]",
-							["right"] = "[pp]/[maxpp]",
+							["right"] = "[spp]/[smaxpp]",
 						},
 						castBar = {
 							size = 10,
@@ -565,7 +565,7 @@ LunaUF.defaults = {
 						healthBar = {
 							size = 10,
 							["left"] = "[name]",
-							["right"] = "[smarthealth]",
+							["right"] = "[ssmarthealth]",
 						},
 						powerBar = {
 							size = 10,
@@ -612,7 +612,7 @@ LunaUF.defaults = {
 						healthBar = {
 							size = 10,
 							["left"] = "[name]",
-							["right"] = "[smarthealth]",
+							["right"] = "[ssmarthealth]",
 						},
 						powerBar = {
 							size = 10,

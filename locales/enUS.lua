@@ -289,14 +289,19 @@ local function enUS() return {
 ["Returns missing hp with healing factored in. Shows status when needed (\"Dead\", \"Offline\", \"Ghost\")"] = "Returns missing hp with healing factored in. Shows status when needed (\"Dead\", \"Offline\", \"Ghost\")",
 ["Combo Points"] = "Combo Points",
 ["The classic hp display (hp/maxhp and \"Dead\" if dead etc)"] = "The classic hp display (hp/maxhp and \"Dead\" if dead etc)",
+["Like [smarthealth] but shortened when over 10K"] = "Like [smarthealth] but shortened when over 10K",
 ["Current hp and heal in one number (green when heal is incoming)"] = "Current hp and heal in one number (green when heal is incoming)",
 ["Current hp"] = "Current hp",
+["Current hp shortened when over 10K"] = "Current hp shortened when over 10K",
 ["Current maximum hp"] = "Current maximum hp",
+["Current maximum hp shortened when over 10K"] = "Current maximum hp shortened when over 10K",
 ["Current missing hp"] = "Current missing hp",
 ["Missing hp after incoming heal (green when heal is incoming)"] = "Missing hp after incoming heal (green when heal is incoming)",
 ["HP percent"] = "HP percent",
 ["Current mana/rage/energy etc"] = "Current mana/rage/energy etc",
+["Current mana/rage/energy etc shortened when over 10K"] = "Current mana/rage/energy etc shortened when over 10K",
 ["Maximum mana/rage/energy etc"] = "Maximum mana/rage/energy etc",
+["Maximum mana/rage/energy etc shortened when over 10K"] = "Maximum mana/rage/energy etc shortened when over 10K",
 ["Missing mana/rage/energy"] = "Missing mana/rage/energy",
 ["Mana/rage/energy percent"] = "Mana/rage/energy percent",
 ["Returns current mana even in druid form"] = "Returns current mana even in druid form",
@@ -319,6 +324,8 @@ local function enUS() return {
 ["INFO TAGS"] = "INFO TAGS",
 ["HEALTH AND POWER TAGS"] = "HEALTH AND POWER TAGS",
 ["COLOR TAGS"] = "COLOR TAGS",
+["Mouseover"] = "Mouseover",
+["Mouseover in 3D world"] = "Mouseover in 3D world",
 }
 end
 

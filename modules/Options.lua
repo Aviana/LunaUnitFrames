@@ -45,14 +45,19 @@ TagsDescs[L["HEALTH AND POWER TAGS"]] = {
 	["smart:healmishp"] = L["Returns missing hp with healing factored in. Shows status when needed (\"Dead\", \"Offline\", \"Ghost\")"],
 	["cpoints"] = L["Combo Points"],
 	["smarthealth"] = L["The classic hp display (hp/maxhp and \"Dead\" if dead etc)"],
+	["ssmarthealth"] = L["Like [smarthealth] but shortened when over 10K"],
 	["healhp"] = L["Current hp and heal in one number (green when heal is incoming)"],
 	["hp"] = L["Current hp"],
+	["shp"] = L["Current hp shortened when over 10K"],
 	["maxhp"] = L["Current maximum hp"],
+	["smaxhp"] = L["Current maximum hp shortened when over 10K"],
 	["missinghp"] = L["Current missing hp"],
 	["healmishp"] = L["Missing hp after incoming heal (green when heal is incoming)"],
 	["perhp"] = L["HP percent"],
 	["pp"] = L["Current mana/rage/energy etc"],
+	["spp"] = L["Current mana/rage/energy etc shortened when over 10K"],
 	["maxpp"] = L["Maximum mana/rage/energy etc"],
+	["smaxpp"] = L["Maximum mana/rage/energy etc shortened when over 10K"],
 	["missingpp"] = L["Missing mana/rage/energy"],
 	["perpp"] = L["Mana/rage/energy percent"],
 	["druid:pp"] = L["Returns current mana even in druid form"],
@@ -690,6 +695,7 @@ function LunaUF:LoadOptions()
 	LunaOptionsFrame.pages[1].pet:SetChecked(LunaUF.db.profile.blizzard.pet)
 	LunaOptionsFrame.pages[1].party:SetChecked(LunaUF.db.profile.blizzard.party)
 	LunaOptionsFrame.pages[1].target:SetChecked(LunaUF.db.profile.blizzard.target)
+	LunaOptionsFrame.pages[1].mouseovercheck:SetChecked(LunaUF.db.profile.mouseover)
 	LunaOptionsFrame.pages[2].ticker:SetChecked(LunaUF.db.profile.units.player.powerBar.ticker)
 	LunaOptionsFrame.pages[2].enabletotem:SetChecked(LunaUF.db.profile.units.player.totemBar.enabled)
 	LunaOptionsFrame.pages[2].totemhide:SetChecked(LunaUF.db.profile.units.player.totemBar.hide)
@@ -1318,6 +1324,22 @@ function LunaUF:CreateOptionsMenu()
 		LunaUF:HideBlizzard()
 	end)
 	getglobal("BlizzTargetText"):SetText(L["Target"])
+	
+	LunaOptionsFrame.pages[1].mouseover = LunaOptionsFrame.pages[1]:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+	LunaOptionsFrame.pages[1].mouseover:SetPoint("TOPLEFT", LunaOptionsFrame.pages[1], "TOPLEFT", 20, -960)
+	LunaOptionsFrame.pages[1].mouseover:SetHeight(24)
+	LunaOptionsFrame.pages[1].mouseover:SetJustifyH("LEFT")
+	LunaOptionsFrame.pages[1].mouseover:SetTextColor(1,1,0)
+	LunaOptionsFrame.pages[1].mouseover:SetText(L["Mouseover"])
+	
+	LunaOptionsFrame.pages[1].mouseovercheck = CreateFrame("CheckButton", "Mouseover3D", LunaOptionsFrame.pages[1], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[1].mouseovercheck:SetPoint("TOPLEFT", LunaOptionsFrame.pages[1], "TOPLEFT", 20, -990)
+	LunaOptionsFrame.pages[1].mouseovercheck:SetHeight(30)
+	LunaOptionsFrame.pages[1].mouseovercheck:SetWidth(30)
+	LunaOptionsFrame.pages[1].mouseovercheck:SetScript("OnClick", function()
+		LunaUF.db.profile.mouseover = not LunaUF.db.profile.mouseover
+	end)
+	getglobal("Mouseover3DText"):SetText(L["Mouseover in 3D world"])
 	
 	for i=2, 10 do
 		LunaOptionsFrame.pages[i].id = LunaUF.unitList[i-1]

@@ -193,6 +193,31 @@ local defaultTags = {
 								end
 								return hp.."/"..maxhp
 							end;
+	["ssmarthealth"]			= function(unit)
+								local hp
+								local maxhp
+								hp = UnitHealth(unit)
+								if hp < 1 or (hp == 1 and not UnitIsVisible(unit)) then
+									if UnitDebuff(unit,2) or UnitBuff(unit,2) then
+										return L["Feigned"]
+									else
+										return L["Dead"]
+									end
+								end
+								if hp > 10000 then
+									hp = math.floor(hp/1000).."K"
+								end
+								maxhp = UnitHealthMax(unit)
+								if maxhp > 10000 then
+									maxhp = math.floor(maxhp/1000).."K"
+								end
+								if UnitIsGhost(unit) then
+									return "Ghost"
+								elseif not UnitIsConnected(unit) then
+									return "Offline"
+								end
+								return hp.."/"..maxhp
+							end;
 	["healhp"]				= function(unit)
 								local heal = HealComm:getHeal(UnitName(unit))
 								local hp
@@ -206,8 +231,22 @@ local defaultTags = {
 	["hp"]            	    = function(unit)
 								return UnitHealth(unit)
 							end;
+	["shp"]					= function(unit)
+								if UnitHealth(unit) > 10000 then
+									return math.floor(UnitHealth(unit)/1000).."K"
+								else
+									return UnitHealth(unit)
+								end
+							end;
 	["maxhp"]				= function(unit)
 								return UnitHealthMax(unit)
+							end;
+	["smaxhp"]				= function(unit)
+								if UnitHealthMax(unit) > 10000 then
+									return math.floor(UnitHealthMax(unit)/1000).."K"
+								else
+									return UnitHealthMax(unit)
+								end
 							end;
 	["missinghp"]           = function(unit)
 								local hp,maxhp
@@ -246,7 +285,21 @@ local defaultTags = {
 								end
 							end;
 	["pp"]            	    = function(unit) return UnitMana(unit) end;
+	["spp"]            	    = function(unit)
+								if UnitMana(unit) > 10000 then
+									return math.floor(UnitMana(unit)/1000).."K"
+								else
+									return UnitMana(unit)
+								end
+							end;
 	["maxpp"]				= function(unit) return UnitManaMax(unit) end;
+	["smaxpp"]            	    = function(unit)
+								if UnitManaMax(unit) > 10000 then
+									return math.floor(UnitManaMax(unit)/1000).."K"
+								else
+									return UnitManaMax(unit)
+								end
+							end;
 	["missingpp"]           = function(unit)
 								local mana = UnitMana(unit)
 								local manamax = UnitManaMax(unit)
@@ -595,25 +648,31 @@ local defaultTags = {
 							end;
 }
 
+function StringInsert(text,startPos,endPos,inserttext)
+	if startPos > 1 then
+		return strsub(text,1,startPos-1) .. inserttext .. strsub(text,endPos+1)
+	else
+		return inserttext .. strsub(text,endPos+1)
+	end
+end
+
 function GetTagText(text,unit)
 	if not text or text == "" then return text or "" end
-	local tag, tagtext
+	local tag, tagtext, startPos, endPos
 	local result = text
-	_,_,tag = string.find(result,"%[(.+)%]")
-	while tag do
-		_,_,tagtext = string.find(tag,"color:(%x%x%x%x%x%x)")
-		if tagtext then
-			tagtext = defaultTags["color"](tagtext)
+	startPos,endPos,tagtext = string.find(result,"%[([%w:]+)%]")
+	while tagtext do
+		if string.find(tagtext,"color:(%x%x%x%x%x%x)") then
+			startPos,endPos,tagtext = string.find(tagtext,"color:(%x%x%x%x%x%x)")
+			result = StringInsert(result,startPos,endPos,defaultTags["color"](tagtext))
 		else
-			_,_,tagtext = string.find(tag,"([%a:]+)")
-			if tagtext and defaultTags[tagtext] then
-				tagtext = defaultTags[tagtext](unit)
+			if defaultTags[tagtext] then
+				result = StringInsert(result,startPos,endPos,defaultTags[tagtext](unit))
 			else
-				tagtext = "#invalidTag#"
+				result = StringInsert(result,startPos,endPos,"#invalidTag#")
 			end
 		end
-		result = string.gsub(result, "(%[[%w:]+%])", tagtext, 1)
-		_,_,tag = string.find(result,"%[(.+)%]")
+		startPos,endPos,tagtext = string.find(result,"%[([%w:]+)%]")
 	end
 	return result
 end
