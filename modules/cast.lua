@@ -577,19 +577,18 @@ local function OnAimed(cast)
 		end
 		for _,uframe in pairs(LunaUF.Units.frameList) do
 			if uframe.castBar and LunaUF.db.profile.units[uframe.unitGroup].castBar.enabled and UnitIsUnit(uframe.unit,"player") then
-				frame = uframe
+				uframe.castBar.startTime = GetTime()
+				uframe.castBar.maxValue = uframe.castBar.startTime + casttime + (latency/1000)
+				uframe.castBar.holdTime = 0
+				uframe.castBar.casting = true
+				uframe.castBar.delaySum = 0	
+				uframe.castBar.Text:SetText(BS["Aimed Shot"])
+				uframe.castBar:SetMinMaxValues(uframe.castBar.startTime, uframe.castBar.maxValue)
+				uframe.castBar:SetValue(frame.castBar.startTime)
+				uframe.castBar:SetScript("OnUpdate", OnUpdatePlayer)
+				Cast:FullUpdate(uframe)
 			end
 		end
-		frame.castBar.startTime = GetTime()
-		frame.castBar.maxValue = frame.castBar.startTime + casttime + (latency/1000)
-		frame.castBar.holdTime = 0
-		frame.castBar.casting = true
-		frame.castBar.delaySum = 0	
-		frame.castBar.Text:SetText(BS["Aimed Shot"])
-		frame.castBar:SetMinMaxValues(frame.castBar.startTime, frame.castBar.maxValue)
-		frame.castBar:SetValue(frame.castBar.startTime)
-		frame.castBar:SetScript("OnUpdate", OnUpdatePlayer)
-		Cast:FullUpdate(frame)
 	end
 end
 
