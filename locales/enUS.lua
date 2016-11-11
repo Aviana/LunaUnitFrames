@@ -332,6 +332,13 @@ local function enUS() return {
 ["COLOR TAGS"] = "COLOR TAGS",
 ["Mouseover"] = "Mouseover",
 ["Mouseover in 3D world"] = "Mouseover in 3D world",
+["Warsong Gulch"] = "Warsong Gulch",
+["Arathi Basin"] = "Arathi Basin",
+["Alterac Valley"] = "Alterac Valley",
+["Polling Rate"] = "Polling Rate",
+["you"] = "you",
+["You"] = "You",
+["Enable Combatlog based Range"] = "Enable Combatlog based Range",
 }
 end
 

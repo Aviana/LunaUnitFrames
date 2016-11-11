@@ -704,6 +704,8 @@ function LunaUF:LoadOptions()
 	LunaOptionsFrame.pages[1].party:SetChecked(LunaUF.db.profile.blizzard.party)
 	LunaOptionsFrame.pages[1].target:SetChecked(LunaUF.db.profile.blizzard.target)
 	LunaOptionsFrame.pages[1].mouseovercheck:SetChecked(LunaUF.db.profile.mouseover)
+	LunaOptionsFrame.pages[1].rangepolling:SetValue(LunaUF.db.profile.RangePolRate or 1.5)
+	LunaOptionsFrame.pages[1].rangecl:SetChecked(LunaUF.db.profile.RangeCLparsing)
 	LunaOptionsFrame.pages[2].ticker:SetChecked(LunaUF.db.profile.units.player.powerBar.ticker)
 	LunaOptionsFrame.pages[2].enabletotem:SetChecked(LunaUF.db.profile.units.player.totemBar.enabled)
 	LunaOptionsFrame.pages[2].totemhide:SetChecked(LunaUF.db.profile.units.player.totemBar.hide)
@@ -1348,6 +1350,32 @@ function LunaUF:CreateOptionsMenu()
 		LunaUF.db.profile.mouseover = not LunaUF.db.profile.mouseover
 	end)
 	getglobal("Mouseover3DText"):SetText(L["Mouseover in 3D world"])
+	
+	LunaOptionsFrame.pages[1].RangeCheck = LunaOptionsFrame.pages[1]:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+	LunaOptionsFrame.pages[1].RangeCheck:SetPoint("TOPLEFT", LunaOptionsFrame.pages[1], "TOPLEFT", 20, -1020)
+	LunaOptionsFrame.pages[1].RangeCheck:SetHeight(24)
+	LunaOptionsFrame.pages[1].RangeCheck:SetJustifyH("LEFT")
+	LunaOptionsFrame.pages[1].RangeCheck:SetTextColor(1,1,0)
+	LunaOptionsFrame.pages[1].RangeCheck:SetText(L["Range"])
+	
+	LunaOptionsFrame.pages[1].rangepolling = CreateFrame("Slider", "RangePollingRate", LunaOptionsFrame.pages[1], "OptionsSliderTemplate")
+	LunaOptionsFrame.pages[1].rangepolling:SetMinMaxValues(0.5,5)
+	LunaOptionsFrame.pages[1].rangepolling:SetValueStep(0.1)
+	LunaOptionsFrame.pages[1].rangepolling:SetScript("OnValueChanged", function()
+		LunaUF.db.profile.RangePolRate = math.floor((this:GetValue()+0.05)*10)/10
+		getglobal("RangePollingRateText"):SetText(L["Polling Rate"]..": "..LunaUF.db.profile.RangePolRate.."s")
+	end)
+	LunaOptionsFrame.pages[1].rangepolling:SetPoint("TOPLEFT", LunaOptionsFrame.pages[1], "BOTTOMLEFT", 30, -1050)
+	LunaOptionsFrame.pages[1].rangepolling:SetWidth(220)
+	
+	LunaOptionsFrame.pages[1].rangecl = CreateFrame("CheckButton", "RangeCombatLog", LunaOptionsFrame.pages[1], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[1].rangecl:SetPoint("TOPLEFT", LunaOptionsFrame.pages[1], "TOPLEFT", 280, -1050)
+	LunaOptionsFrame.pages[1].rangecl:SetHeight(30)
+	LunaOptionsFrame.pages[1].rangecl:SetWidth(30)
+	LunaOptionsFrame.pages[1].rangecl:SetScript("OnClick", function()
+		LunaUF.db.profile.RangeCLparsing = not LunaUF.db.profile.RangeCLparsing
+	end)
+	getglobal("RangeCombatLogText"):SetText(L["Enable Combatlog based Range"])
 	
 	for i=2, 10 do
 		LunaOptionsFrame.pages[i].id = LunaUF.unitList[i-1]

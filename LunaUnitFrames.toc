@@ -4,7 +4,7 @@
 ## Author: Avi
 ## Dependencies:
 ## SavedVariables: LunaDB, LunaBuffDB
-## OptionalDeps: Ace2, ProximityLib, RosterLib, BanzaiLib, HealComm, DruidManaLib, MobHealth, Clique, FuBar, FuBarPlugin-2.0, Babble-2.2, CompostLib, SurfaceLib, Surfaces, DewdropLib, TabletLib
+## OptionalDeps: Ace2, RosterLib, BanzaiLib, HealComm, DruidManaLib, MobHealth, Clique, FuBar, FuBarPlugin-2.0, Babble-2.2, CompostLib, SurfaceLib, Surfaces, DewdropLib, TabletLib
 ## X-Category: UnitFrame
 
 
@@ -23,7 +23,6 @@ libs\Babble-Zone-2.2\Babble-Zone-2.2.lua
 libs\Dewdrop-2.0\Dewdrop-2.0.lua
 libs\Tablet-2.0\Tablet-2.0.lua
 libs\FuBarPlugin-2.0\FuBarPlugin-2.0.lua
-libs\ProximityLib\ProximityLib.lua
 libs\RosterLib-2.0\RosterLib-2.0.lua
 libs\Banzai-1.0\Banzai-1.0.lua
 libs\FiveSecLib-1.0\FiveSecLib-1.0.lua
