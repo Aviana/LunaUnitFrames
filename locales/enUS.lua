@@ -265,6 +265,7 @@ local function enUS() return {
 ["Enable Timer Spin"] = "Enable Timer Spin",
 
 ["Returns plain name of the unit"] = "Returns plain name of the unit",
+["Returns the first 3 letters of the name"] = "Returns the first 3 letters of the name",
 ["Returns shortened names (Marshall Williams = M. Williams)"] = "Returns shortened names (Marshall Williams = M. Williams)",
 ["Guildname"] = "Guildname",
 ["Current level, returns ?? for bosses and players too high"] = "Current level, returns ?? for bosses and players too high",
@@ -291,6 +292,7 @@ local function enUS() return {
 ["Pet happiness as 'unhappy','content' or 'happy'"] = "Pet happiness as 'unhappy','content' or 'happy'",
 ["Current subgroup of the raid"] = "Current subgroup of the raid",
 ["(c) when in combat"] = "(c) when in combat",
+["The same as \"healerhealth\" but displays name on full health"] = "The same as \"healerhealth\" but displays name on full health",
 ["Returns the same as \"smart:healmishp\" on friendly units and hp/maxhp on enemies"] = "Returns the same as \"smart:healmishp\" on friendly units and hp/maxhp on enemies",
 ["Returns missing hp with healing factored in. Shows status when needed (\"Dead\", \"Offline\", \"Ghost\")"] = "Returns missing hp with healing factored in. Shows status when needed (\"Dead\", \"Offline\", \"Ghost\")",
 ["Combo Points"] = "Combo Points",

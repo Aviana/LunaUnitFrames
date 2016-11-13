@@ -13,6 +13,7 @@ TagsDescs[L["INFO TAGS"]] = {
 	["numtargeting"] = L["Number of people in your group targeting this unit"],
 	["br"] = L["Adds a line break"],
 	["name"] = L["Returns plain name of the unit"],
+	["shortname"] = L["Returns the first 3 letters of the name"],
 	["abbrev:name"] = L["Returns shortened names (Marshall Williams = M. Williams)"],
 	["guild"] = L["Guildname"],
 	["level"] = L["Current level, returns ?? for bosses and players too high"],
@@ -41,6 +42,7 @@ TagsDescs[L["INFO TAGS"]] = {
 	["combat"] = L["(c) when in combat"],
 }
 TagsDescs[L["HEALTH AND POWER TAGS"]] = {
+	["namehealerhealth"] = L["The same as \"healerhealth\" but displays name on full health"],
 	["healerhealth"] = L["Returns the same as \"smart:healmishp\" on friendly units and hp/maxhp on enemies"],
 	["smart:healmishp"] = L["Returns missing hp with healing factored in. Shows status when needed (\"Dead\", \"Offline\", \"Ghost\")"],
 	["cpoints"] = L["Combo Points"],

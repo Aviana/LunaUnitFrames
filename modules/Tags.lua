@@ -380,6 +380,7 @@ local defaultTags = {
 								return Hex(color)
 							end;
 	["name"]                = function(unit) return UnitName(unit) or "" end;
+	["shortname"]			= function(unit) return strsub(UnitName(unit),1,3) or "" end;
 	["ignore"]				= function(unit)
 								if not UnitIsPlayer(unit) then
 									return ""
@@ -605,6 +606,45 @@ local defaultTags = {
 								if result == 0 then
 									if heal == 0 then
 										return ""
+									else
+										return Hex(0,1,0).."0"..Hex(1,1,1)
+									end
+								else
+									if heal > 0 then
+										return Hex(0,1,0)..result..Hex(1,1,1)
+									else
+										return result
+									end
+								end
+							end;
+	["namehealerhealth"]		= function(unit)
+								if UnitIsGhost(unit) then
+									return "Ghost"
+								elseif not UnitIsConnected(unit) then
+									return "Offline"
+								end
+								local hp,maxhp
+								hp = UnitHealth(unit)
+								maxhp = UnitHealthMax(unit)
+								if hp < 1 or (hp == 1 and not UnitIsVisible(unit)) then
+									if UnitDebuff(unit,2) or UnitBuff(unit,2) then
+										return L["Feigned"]
+									else
+										return L["Dead"]
+									end
+								end
+								local heal = HealComm:getHeal(UnitName(unit))
+								if UnitIsEnemy("player", unit) then
+									if heal == 0 then
+										return hp.."/"..maxhp
+									else
+										return Hex(0,1,0)..hp..Hex(1,1,1).."/"..maxhp
+									end
+								end
+								local result = hp-maxhp+heal
+								if result == 0 then
+									if heal == 0 then
+										return UnitName(unit)
 									else
 										return Hex(0,1,0).."0"..Hex(1,1,1)
 									end
