@@ -231,6 +231,7 @@ local function enUS() return {
 ["Buffcolor"] = "Buffcolor",
 ["Debuffcolor"] = "Debuffcolor",
 ["Feigned"] = "Feigned",
+["Feign Death"] = "Feign Death",
 ["Dead"] = "Dead",
 ["Size"] = "Size",
 ["Partyoptions"] = "Partyoptions",

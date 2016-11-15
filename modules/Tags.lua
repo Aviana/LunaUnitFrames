@@ -6,6 +6,7 @@ local HealComm = LunaUF.HealComm
 local AceEvent = LunaUF.AceEvent
 local DruidManaLib = LunaUF.DruidManaLib
 local banzai = LunaUF.Banzai
+local tooltip = LunaUF.ScanTip
 local UnitHealth = UnitHealth
 local realUnitHealth = UnitHealth
 local UnitHealthMax = UnitHealthMax
@@ -42,6 +43,19 @@ local function Hex(r, g, b)
 		end
 	end
 	return string.format("|cff%02x%02x%02x", r * 255, g * 255, b * 255)
+end
+
+local function feigncheck(unit)
+	for i=1,32 do
+		if not UnitBuff(unit,i) then
+			return
+		end
+		tooltip:ClearLines()
+		tooltip:SetUnitBuff(unit,i)
+		if LunaScanTipTextLeft1:GetText() == L["Feign Death"] then
+			return true
+		end
+	end
 end
 
 local defaultTags = {
@@ -185,7 +199,7 @@ local defaultTags = {
 								elseif not UnitIsConnected(unit) then
 									return "Offline"
 								elseif hp < 1 or (hp == 1 and not UnitIsVisible(unit)) then
-									if UnitDebuff(unit,2) or UnitBuff(unit,2) then
+									if feigncheck(unit) then
 										return L["Feigned"]
 									else
 										return L["Dead"]
@@ -198,7 +212,7 @@ local defaultTags = {
 								local maxhp
 								hp = UnitHealth(unit)
 								if hp < 1 or (hp == 1 and not UnitIsVisible(unit)) then
-									if UnitDebuff(unit,2) or UnitBuff(unit,2) then
+									if feigncheck(unit) then
 										return L["Feigned"]
 									else
 										return L["Dead"]
@@ -406,7 +420,7 @@ local defaultTags = {
 							end;
 	["status"]              = function(unit)
 								if UnitIsDead(unit) then
-									if UnitDebuff(unit,2) or UnitBuff(unit,2) then
+									if feigncheck(unit) then
 										return L["Feigned"]
 									else
 										return L["Dead"]
@@ -544,7 +558,7 @@ local defaultTags = {
 								hp = UnitHealth(unit)
 								maxhp = UnitHealthMax(unit)
 								if hp < 1 or (hp == 1 and not UnitIsVisible(unit)) then
-									if UnitDebuff(unit,2) or UnitBuff(unit,2) then
+									if feigncheck(unit) then
 										return L["Feigned"]
 									else
 										return L["Dead"]
@@ -588,7 +602,7 @@ local defaultTags = {
 								hp = UnitHealth(unit)
 								maxhp = UnitHealthMax(unit)
 								if hp < 1 or (hp == 1 and not UnitIsVisible(unit)) then
-									if UnitDebuff(unit,2) or UnitBuff(unit,2) then
+									if feigncheck(unit) then
 										return L["Feigned"]
 									else
 										return L["Dead"]
@@ -627,7 +641,7 @@ local defaultTags = {
 								hp = UnitHealth(unit)
 								maxhp = UnitHealthMax(unit)
 								if hp < 1 or (hp == 1 and not UnitIsVisible(unit)) then
-									if UnitDebuff(unit,2) or UnitBuff(unit,2) then
+									if feigncheck(unit) then
 										return L["Feigned"]
 									else
 										return L["Dead"]
