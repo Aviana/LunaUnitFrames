@@ -121,14 +121,20 @@ function Squares:UpdateTimers(frame)
 	local start, dur = HealComm:getRejuTime(frame.unit)
 	if start then
 		LunaCooldownFrame_SetTimer(frame.squares.centericons[1].cd, tonumber(start), tonumber(dur), 1, 1)
+	else
+		frame.squares.centericons[1].cd:Hide()
 	end
 	start, dur = HealComm:getRenewTime(frame.unit)
 	if start then
 		LunaCooldownFrame_SetTimer(frame.squares.centericons[2].cd, tonumber(start), tonumber(dur), 1, 1)
+	else
+		frame.squares.centericons[2].cd:Hide()
 	end
 	start, dur = HealComm:getRegrTime(frame.unit)
 	if start then
 		LunaCooldownFrame_SetTimer(frame.squares.centericons[3].cd, tonumber(start), tonumber(dur), 1, 1)
+	else
+		frame.squares.centericons[3].cd:Hide()
 	end
 end
 

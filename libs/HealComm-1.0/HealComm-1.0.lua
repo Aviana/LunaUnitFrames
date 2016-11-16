@@ -1,6 +1,6 @@
 --[[
 Name: HealComm-1.0
-Revision: $Rev: 10000 $
+Revision: $Rev: 11350 $
 Author(s): aviana
 Website: https://github.com/Aviana
 Description: A library to provide communication of heals and resurrections.
@@ -8,7 +8,7 @@ Dependencies: AceLibrary, AceEvent-2.0, RosterLib-2.0
 ]]
 
 local MAJOR_VERSION = "HealComm-1.0"
-local MINOR_VERSION = "$Revision: 11300 $"
+local MINOR_VERSION = "$Revision: 11350 $"
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
 if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end
@@ -253,6 +253,7 @@ function HealComm:AceEvent_FullyInitialized()
 	self:RegisterEvent("SPELLCAST_DELAYED", HealComm.OnEvent)
 	self:RegisterEvent("SPELLCAST_STOP", HealComm.OnEvent)
 	self:RegisterEvent("CHAT_MSG_ADDON", HealComm.OnEvent)
+	self:RegisterEvent("UNIT_AURA", HealComm.OnEvent)
 	self:RegisterEvent("UNIT_HEALTH" , HealComm.OnHealth)
 end
 
@@ -1320,6 +1321,33 @@ HealComm.OnEvent = function()
 				local targetUnit = roster:GetUnitIDFromName(result[2])
 				HealComm.SpecialEventScheduler:TriggerEvent("HealComm_Hotupdate", targetUnit, "Regrowth")
 			end
+		end
+	elseif event == "UNIT_AURA" then
+		local name = UnitName(arg1)
+		if HealComm.Hots[name] and (HealComm.Hots[name]["Regr"] or HealComm.Hots[name]["Reju"] or HealComm.Hots[name]["Renew"]) then
+			local regr,reju,renew
+			for i=1,32 do
+				if not UnitBuff(arg1,i) then
+					break
+				end
+				healcommTip:ClearLines()
+				healcommTip:SetUnitBuff(arg1,i)
+				regr = regr or healcommTipTextLeft1:GetText() == L["Regrowth"]
+				reju = reju or healcommTipTextLeft1:GetText() == L["Rejuvenation"]
+				renew = renew or healcommTipTextLeft1:GetText() == L["Renew"]
+			end
+			if not regr then
+				HealComm.Hots[name]["Regr"] = nil
+				HealComm.SpecialEventScheduler:TriggerEvent("HealComm_Hotupdate", arg1, "Regrowth")
+			end
+			if not reju then
+				HealComm.Hots[name]["Reju"] = nil
+				HealComm.SpecialEventScheduler:TriggerEvent("HealComm_Hotupdate", arg1, "Rejuvenation")
+			end
+			if not renew then
+				HealComm.Hots[name]["Renew"] = nil
+				HealComm.SpecialEventScheduler:TriggerEvent("HealComm_Hotupdate", arg1, "Renew")
+			end			
 		end
 	end
 end
