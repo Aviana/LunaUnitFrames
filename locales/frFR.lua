@@ -1,4 +1,4 @@
-local function enUS() return {
+local function frFR() return {
 ["Loaded. The ride never ends!"] = "Loaded. The ride never ends!",
 ["Mobhealth2/Mobinfo2 found. Please consider MobHealth3 for a better experience."] = "Mobhealth2/Mobinfo2 found. Please consider MobHealth3 for a better experience.",
 ["Test"] = "Test",
@@ -112,6 +112,7 @@ local function enUS() return {
 ["Textures"] = "Textures",
 ["Bar Texture"] = "Bar Texture",
 ["Aura Border"] = "Aura Border",
+["Indicators"] = "Indicators",
 ["TOPLEFT"] = "Topleft",
 ["TOP"] = "Top",
 ["TOPRIGHT"] = "Topright",
@@ -143,14 +144,13 @@ local function enUS() return {
 ["Buffs"] = "Buffs",
 ["Weaponbuffs"] = "Weaponbuffs",
 ["Enable"] = "Enable",
-["Height"] = "Height",
-["Width"] = "Width",
-["Scale"] = "Scale",
 ["Left"] = "Left",
 ["Right"] = "Right",
 ["Middle"] = "Middle",
+["static"] = "Static",
 ["npc"] = "NPC",
 ["both"] = "Player & NPC",
+["happiness"] = "Happiness",
 ["colortype"] = "Color type",
 ["colorreaction"] = "Reaction color if",
 ["never"] = "Never",
@@ -160,6 +160,7 @@ local function enUS() return {
 ["Healing prediction"] = "Healing prediction",
 ["Type"] = "Type",
 ["Side"] = "Side",
+["Tags"] = "Tags",
 ["healthBar"] = "Health Bar",
 ["powerBar"] = "Power Bar",
 ["Hide when not Mana"] = "Hide when not Mana",
@@ -170,6 +171,7 @@ local function enUS() return {
 ["comboPoints"] = "Combo Points",
 ["XP/Rep bar"] = "XP/Rep bar",
 ["xpBar"] = "XP/Rep bar",
+["rested"] = "rested",
 ["Level"] = "Level",
 ["done"] = "done",
 ["druidBar"] = "Druid Bar",
@@ -250,6 +252,7 @@ local function enUS() return {
 ["Always show"] = "Always show",
 ["Interlock raidframes"] = "Interlock raidframes",
 ["Class"] = "Class",
+["Group"] = "Group",
 ["Mode"] = "Mode",
 ["Enable pet group"] = "Enable pet group",
 ["Enable raidgroup titles"] = "Enable raidgroup titles",
@@ -261,6 +264,7 @@ local function enUS() return {
 ["Small font size"] = "Small font size",
 ["Big font size"] = "Big font size",
 ["Enable Timer Spin"] = "Enable Timer Spin",
+
 ["Returns plain name of the unit"] = "Returns plain name of the unit",
 ["Returns the first 3 letters of the name"] = "Returns the first 3 letters of the name",
 ["Returns shortened names (Marshall Williams = M. Williams)"] = "Returns shortened names (Marshall Williams = M. Williams)",
@@ -341,5 +345,4 @@ local function enUS() return {
 }
 end
 
-LunaUF.L:RegisterTranslations("enUS", enUS)
-LunaUF.L:RegisterTranslations("enGB", enUS)
+LunaUF.L:RegisterTranslations("frFR", frFR)

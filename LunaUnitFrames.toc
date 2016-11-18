@@ -36,6 +36,9 @@ libs\Compost-2.0\Compost-2.0.lua
 LunaUnitFrames.lua
 
 locales\enUS.lua
+locales\deDE.lua
+locales\frFR.lua
+
 
 modules\cooldown.lua
 modules\units.lua
