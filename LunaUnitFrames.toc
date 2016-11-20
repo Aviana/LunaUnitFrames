@@ -38,6 +38,8 @@ LunaUnitFrames.lua
 
 locales\enUS.lua
 locales\zhCN.lua
+locales\deDE.lua
+locales\frFR.lua
 
 default.lua
 
