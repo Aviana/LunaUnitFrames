@@ -1,7 +1,11 @@
 ## Interface: 11200
 ## Title: Luna Unit Frames
+## Title-zhCN: LunaUF |cffffffff露娜框架|r |cff7fff7f-Ace2-|r
 ## Notes: Lightweight Unit Frames in a modern look.
+## Notes-zhCN: 轻量级的现代风框架
 ## Author: Avi
+## Author-zhCN: 原作者Avi，中文协作者zerosnake0
+##
 ## Dependencies:
 ## SavedVariables: LunaDB, LunaBuffDB
 ## OptionalDeps: Ace2, RosterLib, BanzaiLib, HealComm, DruidManaLib, MobHealth, Clique, FuBar, FuBarPlugin-2.0, Babble-2.2, CompostLib, SurfaceLib, Surfaces, DewdropLib, TabletLib
