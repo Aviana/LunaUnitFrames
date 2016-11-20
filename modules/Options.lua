@@ -1,4 +1,5 @@
 local L = LunaUF.L
+local defaultFont = LunaUF.defaultFont
 local OptionsPageNames = {L["General"],L["Player"],L["Pet"],L["Target"],L["ToT"],L["ToToT"],L["Party"],L["Party Target"],L["Party Pet"],L["Raid"],L["Clickcasting"],L["Config Mode"],L["Reset Settings"]}
 local shownFrame = 1
 local WithTags = {
@@ -1095,7 +1096,7 @@ function LunaUF:CreateOptionsMenu()
 
 	UIDropDownMenu_Initialize(LunaOptionsFrame.pages[1].FontSelect, function()
 		local info={}
-		for k,v in ipairs({"Aldrich","Bangers","Celestia","DorisPP","Enigmatic","FasterOne","Fitzgerald","Gentium","Iceland","Inconsolata","LiberationSans","Luna","MetalLord","Optimus","TradeWinds","VeraSerif","Yellowjacket"}) do
+		for k,v in ipairs(L["FONT_LIST"]) do
 			info.text=v
 			info.value=v
 			info.func= function ()
@@ -1467,7 +1468,7 @@ function LunaUF:CreateOptionsMenu()
 		LunaOptionsFrame.pages[i].FaderCombatslider:SetScript("OnValueChanged", function()
 			local unit = this:GetParent().id
 			LunaUF.db.profile.units[unit].fader.combatAlpha = math.floor((this:GetValue()*10)+0.5)/10
-			getglobal("FaderCombatSlider"..unit.."Text"):SetText("Combat alpha: "..LunaUF.db.profile.units[unit].fader.combatAlpha)
+			getglobal("FaderCombatSlider"..unit.."Text"):SetText(L["Combat alpha"]..": "..LunaUF.db.profile.units[unit].fader.combatAlpha)
 			for _,frame in pairs(LunaUF.Units.frameList) do
 				if frame.unitGroup == unit then
 					LunaUF.Units:SetupFrameModules(frame)
@@ -1483,7 +1484,7 @@ function LunaUF:CreateOptionsMenu()
 		LunaOptionsFrame.pages[i].FaderNonCombatslider:SetScript("OnValueChanged", function()
 			local unit = this:GetParent().id
 			LunaUF.db.profile.units[unit].fader.inactiveAlpha = math.floor(this:GetValue()*10)/10
-			getglobal("FaderNonCombatSlider"..unit.."Text"):SetText("Non combat alpha: "..LunaUF.db.profile.units[unit].fader.inactiveAlpha)
+			getglobal("FaderNonCombatSlider"..unit.."Text"):SetText(L["Non combat alpha"]..": "..LunaUF.db.profile.units[unit].fader.inactiveAlpha)
 			for _,frame in pairs(LunaUF.Units.frameList) do
 				if frame.unitGroup == unit then
 					LunaUF.Units:SetupFrameModules(frame)
@@ -1523,7 +1524,7 @@ function LunaUF:CreateOptionsMenu()
 		LunaOptionsFrame.pages[i].ctextscaleslider:SetScript("OnValueChanged", function()
 			local unit = this:GetParent().id
 			LunaUF.db.profile.units[unit].combatText.size = math.floor(this:GetValue()*10)/10
-			getglobal("CtextScale"..unit.."Text"):SetText("Size: "..LunaUF.db.profile.units[unit].combatText.size)
+			getglobal("CtextScale"..unit.."Text"):SetText(L["Size"]..": "..LunaUF.db.profile.units[unit].combatText.size)
 			for _,frame in pairs(LunaUF.Units.frameList) do
 				if frame.unitGroup == unit then
 					LunaUF.Units:SetupFrameModules(frame)
@@ -1850,7 +1851,7 @@ function LunaUF:CreateOptionsMenu()
 		getglobal("Invert"..LunaUF.unitList[i-1].."HealthText"):SetText(L["Invert"])
 		
 		LunaOptionsFrame.pages[i].vertHealth = CreateFrame("CheckButton", "Vertical"..LunaUF.unitList[i-1].."Health", LunaOptionsFrame.pages[i], "UICheckButtonTemplate")
-		LunaOptionsFrame.pages[i].vertHealth:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].healthheader, "BOTTOMLEFT", 80, -50)
+		LunaOptionsFrame.pages[i].vertHealth:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].healthheader, "BOTTOMLEFT", 90, -50)
 		LunaOptionsFrame.pages[i].vertHealth:SetHeight(30)
 		LunaOptionsFrame.pages[i].vertHealth:SetWidth(30)
 		LunaOptionsFrame.pages[i].vertHealth:SetScript("OnClick", function()
@@ -1933,7 +1934,7 @@ function LunaUF:CreateOptionsMenu()
 		getglobal("Invert"..LunaUF.unitList[i-1].."Power".."Text"):SetText(L["Invert"])
 		
 		LunaOptionsFrame.pages[i].vertPower = CreateFrame("CheckButton", "Vertical"..LunaUF.unitList[i-1].."Power", LunaOptionsFrame.pages[i], "UICheckButtonTemplate")
-		LunaOptionsFrame.pages[i].vertPower:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].powerheader, "BOTTOMLEFT", 80, -50)
+		LunaOptionsFrame.pages[i].vertPower:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].powerheader, "BOTTOMLEFT", 90, -50)
 		LunaOptionsFrame.pages[i].vertPower:SetHeight(30)
 		LunaOptionsFrame.pages[i].vertPower:SetWidth(30)
 		LunaOptionsFrame.pages[i].vertPower:SetScript("OnClick", function()
@@ -2223,7 +2224,7 @@ function LunaUF:CreateOptionsMenu()
 	end
 	
 	LunaOptionsFrame.pages[2].ticker = CreateFrame("CheckButton", "TickerplayerPower", LunaOptionsFrame.pages[2], "UICheckButtonTemplate")
-	LunaOptionsFrame.pages[2].ticker:SetPoint("TOPLEFT", LunaOptionsFrame.pages[2].powerheader, "BOTTOMLEFT", 160, -50)
+	LunaOptionsFrame.pages[2].ticker:SetPoint("TOPLEFT", LunaOptionsFrame.pages[2].powerheader, "BOTTOMLEFT", 180, -50)
 	LunaOptionsFrame.pages[2].ticker:SetHeight(30)
 	LunaOptionsFrame.pages[2].ticker:SetWidth(30)
 	LunaOptionsFrame.pages[2].ticker:SetScript("OnClick", function()
@@ -2512,7 +2513,7 @@ function LunaUF:CreateOptionsMenu()
 	getglobal("EnablepartyInRaidText"):SetText(L["Show party in raid"])
 	
 	LunaOptionsFrame.pages[7].playerparty = CreateFrame("CheckButton", "EnablePlayerparty", LunaOptionsFrame.pages[7], "UICheckButtonTemplate")
-	LunaOptionsFrame.pages[7].playerparty:SetPoint("TOPLEFT", LunaOptionsFrame.pages[7].partyoptions, "BOTTOMLEFT", 150, -10)
+	LunaOptionsFrame.pages[7].playerparty:SetPoint("TOPLEFT", LunaOptionsFrame.pages[7].inraid, "BOTTOMLEFT", 0, -10)
 	LunaOptionsFrame.pages[7].playerparty:SetHeight(30)
 	LunaOptionsFrame.pages[7].playerparty:SetWidth(30)
 	LunaOptionsFrame.pages[7].playerparty:SetScript("OnClick", function()
@@ -2535,7 +2536,7 @@ function LunaUF:CreateOptionsMenu()
 	LunaOptionsFrame.pages[7].partypadding:SetWidth(200)
 	
 	LunaOptionsFrame.pages[7].sortby = CreateFrame("Button", "PartySortBy", LunaOptionsFrame.pages[7], "UIDropDownMenuTemplate")
-	LunaOptionsFrame.pages[7].sortby:SetPoint("TOPLEFT", LunaOptionsFrame.pages[7].inraid, "BOTTOMLEFT", -10 , -20)
+	LunaOptionsFrame.pages[7].sortby:SetPoint("TOPLEFT", LunaOptionsFrame.pages[7].playerparty, "BOTTOMLEFT", -10 , -20)
 	UIDropDownMenu_SetWidth(80, LunaOptionsFrame.pages[7].sortby)
 	UIDropDownMenu_JustifyText("LEFT", LunaOptionsFrame.pages[7].sortby)
 
@@ -2560,7 +2561,7 @@ function LunaUF:CreateOptionsMenu()
 	LunaOptionsFrame.pages[7].sortDesc:SetText(L["Sort by"])
 	
 	LunaOptionsFrame.pages[7].orderby = CreateFrame("Button", "PartyOrderBy", LunaOptionsFrame.pages[7], "UIDropDownMenuTemplate")
-	LunaOptionsFrame.pages[7].orderby:SetPoint("TOPLEFT", LunaOptionsFrame.pages[7].inraid, "BOTTOMLEFT", 140 , -20)
+	LunaOptionsFrame.pages[7].orderby:SetPoint("TOPLEFT", LunaOptionsFrame.pages[7].playerparty, "BOTTOMLEFT", 140 , -20)
 	UIDropDownMenu_SetWidth(80, LunaOptionsFrame.pages[7].orderby)
 	UIDropDownMenu_JustifyText("LEFT", LunaOptionsFrame.pages[7].orderby)
 
@@ -2585,7 +2586,7 @@ function LunaUF:CreateOptionsMenu()
 	LunaOptionsFrame.pages[7].orderDesc:SetText(L["Sort direction"])
 	
 	LunaOptionsFrame.pages[7].growth = CreateFrame("Button", "PartyGrowth", LunaOptionsFrame.pages[7], "UIDropDownMenuTemplate")
-	LunaOptionsFrame.pages[7].growth:SetPoint("TOPLEFT", LunaOptionsFrame.pages[7].inraid, "BOTTOMLEFT", 300 , -20)
+	LunaOptionsFrame.pages[7].growth:SetPoint("TOPLEFT", LunaOptionsFrame.pages[7].playerparty, "BOTTOMLEFT", 300 , -20)
 	UIDropDownMenu_SetWidth(80, LunaOptionsFrame.pages[7].growth)
 	UIDropDownMenu_JustifyText("LEFT", LunaOptionsFrame.pages[7].growth)
 
@@ -3113,7 +3114,7 @@ function LunaUF:CreateOptionsMenu()
 	LunaOptionsFrame.pages[11].Button:SetText(L["Click me"])
 	LunaOptionsFrame.pages[11].Button:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up')
 	LunaOptionsFrame.pages[11].Button:SetScript("OnClick", function ()
-		this:SetText((IsControlKeyDown() and "Ctrl-" or "") .. (IsShiftKeyDown() and "Shift-" or "") .. (IsAltKeyDown() and "Alt-" or "") .. arg1)
+		this:SetText((IsControlKeyDown() and "Ctrl-" or "") .. (IsShiftKeyDown() and "Shift-" or "") .. (IsAltKeyDown() and "Alt-" or "") .. L[arg1])
 	end)
 	
 	LunaOptionsFrame.pages[11].input = CreateFrame("Editbox", "ClickCastInput", LunaOptionsFrame.pages[11], "InputBoxTemplate")
@@ -3234,7 +3235,7 @@ function LunaUF:CreateOptionsMenu()
 	LunaOptionsFrame.helpframescrollchild:SetWidth(300)
 
 	LunaOptionsFrame.helpframescrollchild.title = LunaOptionsFrame.helpframescrollchild:CreateFontString(nil, "OVERLAY", LunaOptionsFrame.helpframescrollchild)
-	LunaOptionsFrame.helpframescrollchild.title:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", 20)
+	LunaOptionsFrame.helpframescrollchild.title:SetFont(defaultFont, 20)
 	LunaOptionsFrame.helpframescrollchild.title:SetText(L["Tag listing"])
 	LunaOptionsFrame.helpframescrollchild.title:SetJustifyH("CENTER")
 	LunaOptionsFrame.helpframescrollchild.title:SetJustifyV("TOP")
@@ -3247,8 +3248,9 @@ function LunaUF:CreateOptionsMenu()
 	local count = 1
 	local prevframe = LunaOptionsFrame.helpframescrollchild.title
 	for _,l in pairs({"INFO TAGS","HEALTH AND POWER TAGS","COLOR TAGS"}) do
+		l = L[l]
 		LunaOptionsFrame.helpframescrollchild.texts[count] = LunaOptionsFrame.helpframescrollchild:CreateFontString(nil, "OVERLAY", LunaOptionsFrame.helpframescrollchild)
-		LunaOptionsFrame.helpframescrollchild.texts[count]:SetFont("Fonts\\FRIZQT__.TTF", 12)
+		LunaOptionsFrame.helpframescrollchild.texts[count]:SetFont(defaultFont, 12)
 		LunaOptionsFrame.helpframescrollchild.texts[count]:SetText("\n"..l)
 		LunaOptionsFrame.helpframescrollchild.texts[count]:SetJustifyH("LEFT")
 		LunaOptionsFrame.helpframescrollchild.texts[count]:SetJustifyV("TOP")
@@ -3269,7 +3271,7 @@ function LunaUF:CreateOptionsMenu()
 		
 		for k,v in pairs(TagsDescs[l]) do
 			LunaOptionsFrame.helpframescrollchild.texts[count] = LunaOptionsFrame.helpframescrollchild:CreateFontString(nil, "OVERLAY", LunaOptionsFrame.helpframescrollchild)
-			LunaOptionsFrame.helpframescrollchild.texts[count]:SetFont("Fonts\\FRIZQT__.TTF", 9)
+			LunaOptionsFrame.helpframescrollchild.texts[count]:SetFont(defaultFont, 9)
 			LunaOptionsFrame.helpframescrollchild.texts[count]:SetText("\124cffffff00".."["..k.."]\124cffffffff: "..v)
 			LunaOptionsFrame.helpframescrollchild.texts[count]:SetJustifyH("LEFT")
 			LunaOptionsFrame.helpframescrollchild.texts[count]:SetJustifyV("TOP")

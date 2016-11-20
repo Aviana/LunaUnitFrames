@@ -1,5 +1,5 @@
+local LunaUF = LunaUF
 local Squares = {}
-local AceEvent = LunaUF.AceEvent
 local HealComm = LunaUF.HealComm
 local banzai = LunaUF.Banzai
 local ScanTip = LunaUF.ScanTip
@@ -99,14 +99,14 @@ function Squares:OnEnable(frame)
 	frame.squares:Show()
 	frame.squares:RegisterEvent("UNIT_AURA")
 	frame.squares:SetScript("OnEvent", OnEvent)
-	if not AceEvent:IsEventRegistered("HealComm_Hotupdate") then
-		AceEvent:RegisterEvent("HealComm_Hotupdate", OnTimer)
+	if not LunaUF:IsEventRegistered("HealComm_Hotupdate") then
+		LunaUF:RegisterEvent("HealComm_Hotupdate", OnTimer)
 	end
-	if not AceEvent:IsEventRegistered("Banzai_UnitGainedAggro") then
-		AceEvent:RegisterEvent("Banzai_UnitGainedAggro", OnAggro)
+	if not LunaUF:IsEventRegistered("Banzai_UnitGainedAggro") then
+		LunaUF:RegisterEvent("Banzai_UnitGainedAggro", OnAggro)
 	end
-	if not AceEvent:IsEventRegistered("Banzai_UnitLostAggro") then
-		AceEvent:RegisterEvent("Banzai_UnitLostAggro", OnAggro)
+	if not LunaUF:IsEventRegistered("Banzai_UnitLostAggro") then
+		LunaUF:RegisterEvent("Banzai_UnitLostAggro", OnAggro)
 	end
 end
 

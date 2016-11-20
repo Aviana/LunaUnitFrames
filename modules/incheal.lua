@@ -1,7 +1,7 @@
+local LunaUF = LunaUF
 local Incheal = {}
 LunaUF:RegisterModule(Incheal, "incheal", LunaUF.L["Incheal"])
 local HealComm = LunaUF.HealComm
-local AceEvent = LunaUF.AceEvent
 
 local function OnHeal()
 	for _,frame in pairs(LunaUF.Units.frameList) do
@@ -19,8 +19,8 @@ function Incheal:OnEnable(frame)
 		frame.incheal.healBar:SetValue(1)
 		frame.incheal.healBar:SetFrameLevel(5)
 	end
-	if not AceEvent:IsEventRegistered("HealComm_Healupdate") then
-		AceEvent:RegisterEvent("HealComm_Healupdate", OnHeal)
+	if not LunaUF:IsEventRegistered("HealComm_Healupdate") then
+		LunaUF:RegisterEvent("HealComm_Healupdate", OnHeal)
 	end
 end
 

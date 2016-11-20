@@ -1,3 +1,4 @@
+local LunaUF = LunaUF
 local Druid = {}
 local DruidManaLib = LunaUF.DruidManaLib
 local _,playerclass = UnitClass("player")
@@ -23,7 +24,7 @@ function Druid:OnEnable(frame)
 			["right"] = frame.druidBar:CreateFontString(nil, "ARTWORK"),
 		}
 		for align,fontstring in pairs(frame.fontstrings.druidBar) do
-			fontstring:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", 14)
+			fontstring:SetFont(LunaUF.defaultFont, 14)
 			fontstring:SetShadowColor(0, 0, 0, 1.0)
 			fontstring:SetShadowOffset(0.80, -0.80)
 			fontstring:SetJustifyH(string.upper(align))

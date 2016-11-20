@@ -1,17 +1,21 @@
+local LunaUF = LunaUF
 local Cast = CreateFrame("Frame")
 local L = LunaUF.L
 local BS = LunaUF.BS
-local AceEvent = LunaUF.AceEvent
 LunaUF:RegisterModule(Cast, "castBar", L["Cast bar"], true)
 
 local CasterDB = {}
 
-local SPELL_GAINS 				= L["(.+) gains (.+)."]
-local SPELL_CAST 				= L["(.+) begins to cast (.+)."]
-local SPELL_PERFORM				= L["(.+) begins to perform (.+)."]
-local SPELL_AFFLICTED			= L["(.+) (.+) afflicted by (.+)."]
-local SPELL_HIT					= L["Your (.+) %a%a?its (.+) for %d+\."]
-local OTHER_SPELL_HIT			= L["%a+'s (.+) %a%a?its (.+) for %d+\."]
+local CHAT_PATTERNS = {
+	[L["(.+) gains (.+)."]] = "gains",
+	[L["(.+) begins to cast (.+)."]] = "casts",
+	[L["(.+) begins to perform (.+)."]] = "performs",
+	[L["(.+) (.+) afflicted by (.+)."]] = "afflicted",
+	[L["Your (.+) hits (.+) for %d+\."]] = "hit",
+	[L["Your (.+) crits (.+) for %d+\."]] = "hit",
+	[L["%a+'s (.+) hits (.+) for %d+\."]] = "hit",
+	[L["%a+'s (.+) crits (.+) for %d+\."]] = "hit",
+}
 
 local Spells = {
 
@@ -403,29 +407,11 @@ end
 
 local function OnChatEvent()
 	if (arg1 ~= nil) then
-		for mob, spell in string.gfind(arg1, SPELL_CAST) do
-			ProcessData(mob, spell, "casts")
-			return
-		end	
-		for mob, spell in string.gfind(arg1, SPELL_PERFORM) do
-			ProcessData(mob, spell, "performs")
-			return
-		end
-		for mob, spell in string.gfind(arg1, SPELL_GAINS) do
-			ProcessData(mob, spell, "gains")
-			return
-		end
-		for mob, _, spell in string.gfind(arg1, SPELL_AFFLICTED) do
-			ProcessData(mob, spell, "afflicted")
-			return
-		end
-		for spell, mob in string.gfind(arg1, SPELL_HIT) do
-			ProcessData(mob, spell, "hit")
-			return
-		end
-		for spell, mob in string.gfind(arg1, OTHER_SPELL_HIT) do
-			ProcessData(mob, spell, "hit")
-			return
+		for pattern, data_type in pairs(CHAT_PATTERNS) do
+			for mob, spell in string.gfind(arg1, pattern) do
+				ProcessData(mob, spell, data_type)
+				return
+			end
 		end
 	end
 end
@@ -614,8 +600,8 @@ function Cast:OnEnable(frame)
 	frame.castBar:RegisterEvent("SPELLCAST_INTERRUPTED")
 	frame.castBar:RegisterEvent("SPELLCAST_START")
 	frame.castBar:RegisterEvent("SPELLCAST_STOP")
-	if not AceEvent:IsEventRegistered("CASTLIB_STARTCAST") then
-		AceEvent:RegisterEvent("CASTLIB_STARTCAST", OnAimed)
+	if not LunaUF:IsEventRegistered("CASTLIB_STARTCAST") then
+		LunaUF:RegisterEvent("CASTLIB_STARTCAST", OnAimed)
 	end
 end
 

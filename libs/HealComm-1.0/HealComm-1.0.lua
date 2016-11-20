@@ -129,6 +129,27 @@ elseif ( GetLocale() == "frFR" ) then
 	L["Blessing of Light"] = "B\195\169n\195\169diction de lumi\195\168re"
 	L["Set: Increases the duration of your Rejuvenation spell by 3 sec."] = "Set: Augmente la dur\195\169e de votre sort R\195\169cup\195\169ration de 3 s."
 	L["Set: Increases the duration of your Renew spell by 3 sec."] = "Set: Augmente la dur\195\169e de votre sort R\195\169novation de 3 s."
+elseif GetLocale() == "zhCN" then
+	if AceLibrary:HasInstance("Babble-Spell-2.2") then
+		L.BS = AceLibrary("Babble-Spell-2.2")
+	end
+	if AceLibrary:HasInstance("Babble-Zone-2.2") then
+		L.BZ = AceLibrary("Babble-Zone-2.2")
+	end
+	setmetatable(L, {__index = function(table, key)
+		if table.BS and table.BS:HasTranslation(key) then
+			return table.BS[key]
+		elseif table.BZ and table.BZ:HasTranslation(key) then
+			return table.BZ[key]
+		end
+	end})
+	L["Libram of Divinity"] = "神性圣契"
+	L["Libram of Light"] = "光明圣契"
+	L["Necrotic Aura"] = "死灵光环"  -- 这个技能不知道是否存在
+	L["Set: Increases the duration of your Rejuvenation spell by 3 sec."] = "套装：使你的回春术的持续时间延长3秒。" -- T2
+	L["Set: Increases the duration of your Renew spell by 3 sec."] = "套装：使你的恢复术的持续时间延长3秒。" -- T2.5
+	L["Totem of Life"] = "生命图腾"
+	L["Totem of Sustaining"] = "持久图腾"
 else
 	L["Renew"] = "Renew"
 	L["Rejuvenation"] = "Rejuvenation"

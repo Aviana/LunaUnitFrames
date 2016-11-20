@@ -1,9 +1,9 @@
+local LunaUF = LunaUF
 local Tags = {}
 LunaUF:RegisterModule(Tags, "tags", LunaUF.L["Tags"])
 
 local L = LunaUF.L
 local HealComm = LunaUF.HealComm
-local AceEvent = LunaUF.AceEvent
 local DruidManaLib = LunaUF.DruidManaLib
 local banzai = LunaUF.Banzai
 local tooltip = LunaUF.ScanTip
@@ -24,11 +24,11 @@ local abbrevCache = setmetatable({}, {
 end})
 
 local DruidForms = {
-	["Interface\\Icons\\Ability_Druid_CatForm"] = "Cat ",
-	["Interface\\Icons\\Ability_Racial_BearForm"] = "Bear ",
-	["Interface\\Icons\\Spell_Nature_ForceOfNature"] = "Moonkin ",
-	["Interface\\Icons\\Ability_Druid_AquaticForm"] = "Aquatic ",
-	["Interface\\Icons\\Ability_Druid_TravelForm"] = "Travel "
+	["Interface\\Icons\\Ability_Druid_CatForm"] = L["form_cat"],
+	["Interface\\Icons\\Ability_Racial_BearForm"] = L["form_bear"],
+	["Interface\\Icons\\Spell_Nature_ForceOfNature"] = L["form_moonkin"],
+	["Interface\\Icons\\Ability_Druid_AquaticForm"] = L["form_aquatic"],
+	["Interface\\Icons\\Ability_Druid_TravelForm"] = L["form_travel"],
 }
 
 local function Hex(r, g, b)
@@ -88,16 +88,16 @@ local defaultTags = {
 									return ""
 								end
 								if GetPetHappiness() == 1 then
-									return "unhappy"
+									return L["unhappy"]
 								elseif GetPetHappiness() == 2 then
-									return "content"
+									return L["content"]
 								else
-									return "happy"
+									return L["happy"]
 								end
 							end;
 	["combat"]				= function(unit)
 								if UnitAffectingCombat(unit) then
-									return "(c)"
+									return L["(c)"]
 								else
 									return ""
 								end
@@ -143,7 +143,7 @@ local defaultTags = {
 								end
 							end;
 	["faction"]				= function(unit)
-								local faction = UnitFactionGroup(unit)
+								local _,faction = UnitFactionGroup(unit)
 								if faction then
 									return faction
 								else
@@ -155,9 +155,9 @@ local defaultTags = {
 								if sex == 1 then
 									return ""
 								elseif sex == 2 then
-									return "male"
+									return L["male"]
 								else
-									return "female"
+									return L["female"]
 								end
 							end;
 	["nocolor"]				= function(unit) return Hex(1,1,1) end;
@@ -165,9 +165,9 @@ local defaultTags = {
 								local _,class = UnitClass(unit)
 								if class == "DRUID" then
 									if UnitPowerType(unit) == 1 then
-										return "Bear "
+										return L["form_bear"]
 									elseif UnitPowerType(unit) == 3 then
-										return "Cat "
+										return L["form_cat"]
 									end
 								end
 								local form
@@ -195,9 +195,9 @@ local defaultTags = {
 								hp = UnitHealth(unit)
 								maxhp = UnitHealthMax(unit)
 								if UnitIsGhost(unit) then
-									return "Ghost"
+									return L["Ghost"]
 								elseif not UnitIsConnected(unit) then
-									return "Offline"
+									return L["Offline"]
 								elseif hp < 1 or (hp == 1 and not UnitIsVisible(unit)) then
 									if feigncheck(unit) then
 										return L["Feigned"]
@@ -208,9 +208,7 @@ local defaultTags = {
 								return hp.."/"..maxhp
 							end;
 	["ssmarthealth"]			= function(unit)
-								local hp
-								local maxhp
-								hp = UnitHealth(unit)
+								local hp = UnitHealth(unit)
 								if hp < 1 or (hp == 1 and not UnitIsVisible(unit)) then
 									if feigncheck(unit) then
 										return L["Feigned"]
@@ -221,14 +219,14 @@ local defaultTags = {
 								if hp > 10000 then
 									hp = math.floor(hp/1000).."K"
 								end
-								maxhp = UnitHealthMax(unit)
+								local maxhp = UnitHealthMax(unit)
 								if maxhp > 10000 then
 									maxhp = math.floor(maxhp/1000).."K"
 								end
 								if UnitIsGhost(unit) then
-									return "Ghost"
+									return L["Ghost"]
 								elseif not UnitIsConnected(unit) then
-									return "Offline"
+									return L["Offline"]
 								end
 								return hp.."/"..maxhp
 							end;
@@ -402,7 +400,7 @@ local defaultTags = {
 								local name = UnitName(unit)
 								for i=1, GetNumIgnores() do
 									if name == GetIgnoreName(i) then
-										return "(i)"
+										return L["(i)"]
 									end
 								end
 								return ""
@@ -419,16 +417,17 @@ local defaultTags = {
 								return server or GetRealmName()
 							end;
 	["status"]              = function(unit)
-								if UnitIsDead(unit) then
+								local hp = UnitHealth(unit)
+								if hp < 1 or (hp == 1 and not UnitIsVisible(unit)) then
 									if feigncheck(unit) then
 										return L["Feigned"]
 									else
 										return L["Dead"]
 									end
 								elseif UnitIsGhost(unit) then
-									return "Ghost"
+									return L["Ghost"]
 								elseif not UnitIsConnected(unit) then
-									return "Offline"
+									return L["Offline"]
 								else
 									return ""
 								end
@@ -442,7 +441,7 @@ local defaultTags = {
 	["rare"]                = function(unit)
 								local classif = UnitClassification(unit)
 								if classif == "rare" or classif == "rareelite" then
-									return "rare"
+									return L["rare"]
 								else
 									return ""
 								end
@@ -450,7 +449,7 @@ local defaultTags = {
 	["elite"]     			= function(unit)
 								local classif = UnitClassification(unit)
 								if classif == "elite" or classif == "rareelite" then
-									return "elite"
+									return L["elite"]
 								else
 									return ""
 								end
@@ -460,7 +459,7 @@ local defaultTags = {
 								if classif == "normal" then
 									return ""
 								else
-									return classif
+									return L[classif]
 								end
 							end;						
 	["shortclassification"] = function(unit)
@@ -478,14 +477,9 @@ local defaultTags = {
 								end
 							end;
 	["group"]				= function(unit)
-								if UnitInParty(unit) or UnitIsUnit("player",unit) then
-									if(GetNumRaidMembers() == 0) then
-										if GetNumPartyMembers() == 0 then
-											return ""
-										else
-											return 1
-										end
-									end
+								if UnitInParty(unit) and GetNumPartyMembers() > 0 then
+									return 1
+								elseif GetNumRaidMembers() > 0 then
 									local name = UnitName(unit)
 									for i=1, GetNumRaidMembers() do
 										local raidName, _, group = GetRaidRosterInfo(i)
@@ -493,9 +487,8 @@ local defaultTags = {
 											return group
 										end
 									end
-								else
-									return ""
 								end
+								return ""
 							end;
 	["color:aggro"]			= function(unit)
 								local aggro = banzai:GetUnitAggroByUnitId(unit)
@@ -587,16 +580,16 @@ local defaultTags = {
 							end;
 	["civilian"]			= function(unit)
 								if UnitIsCivilian(unit) then
-									return "(civ)"
+									return L["(civ)"]
 								else
 									return ""
 								end
 							end;
 	["healerhealth"]		= function(unit)
 								if UnitIsGhost(unit) then
-									return "Ghost"
+									return L["Ghost"]
 								elseif not UnitIsConnected(unit) then
-									return "Offline"
+									return L["Offline"]
 								end
 								local hp,maxhp
 								hp = UnitHealth(unit)
@@ -694,7 +687,7 @@ local defaultTags = {
 								if color then
 									return ("|cff"..color)
 								else
-									return "#invalidTag#"
+									return L["#invalidTag#"]
 								end
 							end;
 	["br"]					= function(unit)
@@ -723,7 +716,7 @@ function GetTagText(text,unit)
 			if defaultTags[tagtext] then
 				result = StringInsert(result,startPos,endPos,defaultTags[tagtext](unit))
 			else
-				result = StringInsert(result,startPos,endPos,"#invalidTag#")
+				result = StringInsert(result,startPos,endPos,L["#invalidTag#"])
 			end
 		end
 		startPos,endPos,tagtext = string.find(result,"%[([%w:]+)%]")
@@ -732,7 +725,13 @@ function GetTagText(text,unit)
 end
 
 local function OnUpdate()
-	Tags:FullUpdate(this:GetParent())
+	local frame = this:GetParent()
+	local bartags = LunaUF.db.profile.units[frame.unitGroup].tags.bartags
+	for barname,barfontstrings in pairs(frame.fontstrings) do
+		for align,fontstring in pairs(barfontstrings) do
+			fontstring:SetText(GetTagText(bartags[barname][align], frame.unit))
+		end
+	end
 end
 
 function Tags:OnEnable(frame)
@@ -740,23 +739,34 @@ function Tags:OnEnable(frame)
 		frame.tags = CreateFrame("Frame", nil, frame)
 	end
 	frame.tags:SetScript("OnUpdate", OnUpdate)
+	for barname,barfontstrings in pairs(frame.fontstrings) do
+		for align,fontstring in pairs(barfontstrings) do
+			fontstring:Show()
+		end
+	end
 end
 
 function Tags:OnDisable(frame)
 	if frame.tags then
 		frame.tags:SetScript("OnUpdate", nil)
-	end
-end
-
-function Tags:FullUpdate(frame)
-	for barname,barfontstrings in pairs(frame.fontstrings) do
-		for align,fontstring in pairs(barfontstrings) do
-			fontstring:SetText(GetTagText(LunaUF.db.profile.units[frame.unitGroup].tags.bartags[barname][align], frame.unit))
+		for barname,barfontstrings in pairs(frame.fontstrings) do
+			for align,fontstring in pairs(barfontstrings) do
+				fontstring:Hide()
+			end
 		end
 	end
 end
 
-AceEvent:RegisterEvent("VARIABLES_LOADED", function ()
+function Tags:FullUpdate(frame)
+	local bartags = LunaUF.db.profile.units[frame.unitGroup].tags.bartags
+	for barname,barfontstrings in pairs(frame.fontstrings) do
+		for align,fontstring in pairs(barfontstrings) do
+			fontstring:SetText(GetTagText(bartags[barname][align], frame.unit))
+		end
+	end
+end
+
+LunaUF:RegisterEvent("VARIABLES_LOADED", function ()
 	if MobHealth3 then
 		UnitHealth = function(unit)
 				local hp = MobHealth3:GetUnitHealth(unit)

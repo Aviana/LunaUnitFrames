@@ -24,25 +24,32 @@ DruidManaLibOnUpdateFrame:RegisterEvent("PLAYER_LOGIN")
 ------------------------------------------------
 
 local L = {}
+local locale = GetLocale()
 
-if( GetLocale() == "deDE" ) then
+if locale == "deDE" then
 	L["Equip: Restores %d+ mana per 5 sec."] = "Anlegen: Stellt alle 5 Sek. %d+ Punkt(e) Mana wieder her.";
 	L["Mana Regen %d+ per 5 sec."] = "Manaregeneration %d+ per 5 Sek.";
 	L["Equip: Restores (%d+) mana per 5 sec."] = "Anlegen: Stellt alle 5 Sek. (%d+) Punkt(e) Mana wieder her."
 	L["Mana Regen (%d+) per 5 sec."] = "Manaregeneration (%d+) per 5 Sek.";
 	L[" "] = " ";
-elseif( GetLocale() == "frFR" ) then
+elseif locale == "frFR" then
 	L["Equip: Restores %d+ mana per 5 sec."] = "Equip\195\169 : Rend %d+ points de mana toutes les 5 secondes.";
 	L["Mana Regen %d+ per 5 sec."] = "R\195\169cup. mana %d+/5 sec.";
 	L["Equip: Restores (%d+) mana per 5 sec."] = "Equip\195\169 : Rend (%d+) points de mana toutes les 5 secondes."
 	L["Mana Regen (%d+) per 5 sec."] = "R\195\169cup. mana (%d+)/5 sec.";
 	L[" "] = ":";
+elseif locale == "zhCN" then
+	L["Equip: Restores %d+ mana per 5 sec."] = "装备：每5秒回复%d+点法力值。";
+	L["Mana Regen %d+ per 5 sec."] = "每5秒恢复%d+点法力值。";
+	L["Equip: Restores (%d+) mana per 5 sec."] = "装备：每5秒回复(%d+)点法力值。"
+	L["Mana Regen (%d+) per 5 sec."] = "每5秒恢复(%d+)点法力值。";
+	L["(%d+) mana"] = "(%d+)法力值";
 else
 	L["Equip: Restores %d+ mana per 5 sec."] = "Equip: Restores %d+ mana per 5 sec.";
 	L["Mana Regen %d+ per 5 sec."] = "Mana Regen %d+ per 5 sec.";
 	L["Equip: Restores (%d+) mana per 5 sec."] = "Equip: Restores (%d+) mana per 5 sec."
 	L["Mana Regen (%d+) per 5 sec."] = "Mana Regen (%d+) per 5 sec.";
-	L[" "] = " ";
+	L["(%d+) mana"] = "(%d+) mana";
 end
 
 ------------------------------------------------
@@ -123,11 +130,17 @@ local function DruidManaLib_GetShapeshiftCost()
 		if spelltexture and spelltexture == "Interface\\Icons\\Ability_Druid_CatForm" then
 			DruidManaLibTip:SetSpell(i, 1);
 			local msg = DruidManaLibTipTextLeft2:GetText();
-			local params;
 			if msg then
-				local index = strfind(msg, L[" "]);
-				if index then
-					if (GetLocale() == "frFR" or GetLocale() == "koKR") then params = strsub(msg, index+1); else params = strsub(msg, 1, index-1); end
+				local params;
+				if (locale == "frFR" or locale == "koKR") then
+					local index = strfind(msg, L[" "]);
+					if index then
+						params = strsub(msg, index+1);
+					end
+				else
+					_,_,params = strfind(msg, L["(%d+) mana"])
+				end
+				if params then
 					DruidManaLib.subtractmana = tonumber(params);
 					if DruidManaLib.subtractmana and DruidManaLib.subtractmana > 0 then return; end
 				end
