@@ -95,7 +95,7 @@ local L = LunaUF.L
 --------------------------------------------------------------------------------------------
 
 -- FUBAR Stuff -----------------------------------------------------------------------------
-LunaUF.name = "FuBar - LunaUnitFrames"
+LunaUF.name = "LunaUnitFrames"
 LunaUF.hasNoColor = true
 LunaUF.hasIcon = "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\icon"
 LunaUF.defaultMinimapPosition = 180

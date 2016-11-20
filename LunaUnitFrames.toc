@@ -41,8 +41,8 @@ locales\zhCN.lua
 locales\deDE.lua
 locales\frFR.lua
 
-default.lua
 
+modules\defaults.lua
 modules\cooldown.lua
 modules\units.lua
 modules\health.lua
