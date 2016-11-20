@@ -1,3 +1,5 @@
+local LunaUF = LunaUF
+local L = LunaUF.L
 local Units = {headerFrames = {}, unitFrames = {}, frameList = {}, childframeList = {}}
 local unitFrames, headerFrames, frameList, childframeList = Units.unitFrames, Units.headerFrames, Units.frameList, Units.childframeList
 local UnitWatch = CreateFrame("Frame")
@@ -239,24 +241,26 @@ local function ShowMenu()
 		menuFrame.displayMode = "MENU"
 		menuFrame.initialize = function() UnitPopup_ShowMenu(getglobal(UIDROPDOWNMENU_OPEN_MENU), "PARTY", unit, name, id) end
 		ToggleDropDownMenu(1, nil, FriendsDropDown, "cursor")
-	end	
+	end
 end
 
+local func = {}
 local function OnClick()
-	if Luna_Custom_ClickFunction and Luna_Custom_ClickFunction(arg1, this.unit) then 
+	if Luna_Custom_ClickFunction and Luna_Custom_ClickFunction(arg1, this.unit) then
 		return;
 	else
-		local button = (IsControlKeyDown() and "Ctrl-" or "") .. (IsShiftKeyDown() and "Shift-" or "") .. (IsAltKeyDown() and "Alt-" or "") .. arg1
+		local button = (IsControlKeyDown() and "Ctrl-" or "") .. (IsShiftKeyDown() and "Shift-" or "") .. (IsAltKeyDown() and "Alt-" or "") .. L[arg1]
 		local action = LunaUF.db.profile.clickcasting.bindings[button]
-		local func = loadstring(action or "")
-		if action == "menu" then
+		if not action then
+			return
+		elseif action == L["menu"] then
 			if (SpellIsTargeting()) then
 				SpellStopTargeting()
 				return;
 			else
 				this:ShowMenu()
 			end
-		elseif action == "target" or SpellIsTargeting() then
+		elseif action == L["target"] or SpellIsTargeting() then
 			if (SpellIsTargeting()) then
 				SpellTargetUnit(this.unit)
 			elseif (CursorHasItem()) then
@@ -266,16 +270,22 @@ local function OnClick()
 			end
 			return
 		elseif UnitIsUnit("target", this.unit) then
-			if func then
-				func()
+			if not func[action] then
+				func[action] = loadstring(action or "")
+			end
+			if func[action] then
+				func[action]()
 			else
 				CastSpellByName(action)
 			end
 		else
+			if not func[action] then
+				func[action] = loadstring(action or "")
+			end
 			Units.pauseUpdates = true
 			TargetUnit(this.unit)
-			if func then
-				func()
+			if func[action] then
+				func[action]()
 			else
 				CastSpellByName(action)
 			end
@@ -348,7 +358,7 @@ local function SetupGroupHeader(groupType)
 			header.frames[i].UnitExists = UnitIsVisible
 		end
 	end
-	
+
 	--Generate Group Table
 	while getn(GroupRoster) > 0 do
 		table.remove(GroupRoster)
@@ -380,9 +390,9 @@ local function SetupGroupHeader(groupType)
 			end
 		end
 	end
-	
+
 	local anchor = header
-	
+
 	local xoffset
 	if config.growth == "RIGHT" or config.growth == "LEFT" then
 		xoffset = ((config.growth == "RIGHT" and 1 or -1) * (LunaUF.db.profile.units.party.size.x + LunaUF.db.profile.units.party.padding))
@@ -467,7 +477,7 @@ local function SetupRaidHeader(passedHeader)
 		header.frames[i]:SetScript("OnDragStop", RaidHeaderStopMovingOrSizing)
 		header.frames[i].unitGroup = "raid"
 	end
-	
+
 	--Generate RaidGroup Table
 	while getn(RaidRoster) > 0 do
 		table.remove(RaidRoster)
@@ -508,11 +518,11 @@ local function SetupRaidHeader(passedHeader)
 			end
 		end
 	end
-	
+
 	local anchor = header
 	local xoffset
 	local yoffset
-	
+
 	if config.growth == "RIGHT" or config.growth == "LEFT" then
 		xoffset = (config.growth == "LEFT" and 1 or -1)
 	else
@@ -524,7 +534,7 @@ local function SetupRaidHeader(passedHeader)
 	else
 		yoffset = 0
 	end
-	
+
 	if framesneeded > 0 then
 		if LunaUF.db.profile.units.raid.sortby == "NAME" then
 			if LunaUF.db.profile.units.raid.order == "ASC" then
@@ -545,10 +555,10 @@ local function SetupRaidHeader(passedHeader)
 	else
 		header.title:SetText("")
 	end
-	
+
 	xoffset = xoffset * (config.size.x + config.padding) * -1
 	yoffset = yoffset * (config.size.y + config.padding) * -1
-	
+
 	for i,frame in pairs(header.frames) do
 		if i > framesneeded then
 			frame:Hide()
@@ -578,9 +588,9 @@ function Units:CreateUnit(a1, a2, a3, a4)
 	frame.FullUpdate = FullUpdate
 	frame.ShowMenu = ShowMenu
 	frame.topFrameLevel = 5
-	
+
 	frame.fontstrings = {}
-	
+
 	frame:SetScript("OnEvent", OnEvent)
 	frame:SetScript("OnEnter", OnEnter)
 	frame:SetScript("OnLeave", OnLeave)
@@ -595,7 +605,7 @@ function Units:CreateUnit(a1, a2, a3, a4)
 	frame:SetScript("OnClick", OnClick)
 	frame:SetBackdrop(LunaUF.constants.backdrop)
 	frame:SetBackdropColor(LunaUF.db.profile.bgcolor.r,LunaUF.db.profile.bgcolor.g,LunaUF.db.profile.bgcolor.b,LunaUF.db.profile.bgalpha)
-	
+
 	table.insert(frameList,frame)
 	return frame
 end
@@ -603,7 +613,7 @@ end
 -- Load a single unit such as player, target, pet, etc
 function Units:LoadUnit(unit)
 	local frame
-	
+
 	if( unitFrames[unit] ) then
 		frame = unitFrames[unit]
 	else
@@ -616,9 +626,9 @@ function Units:LoadUnit(unit)
 			table.insert(childframeList,frame)
 		end
 	end
-	
+
 	-- And lets get this going
-	
+
 	frame:ClearAllPoints()
 	frame:SetWidth(LunaUF.db.profile.units[frame.unitGroup].size.x)
 	frame:SetHeight(LunaUF.db.profile.units[frame.unitGroup].size.y)
@@ -645,7 +655,7 @@ function Units:LoadUnit(unit)
 		if string.find(frame.unitGroup,"(target)") then
 			frame:RegisterEvent("PLAYER_TARGET_CHANGED")
 		end
-		
+
 		frame:SetScript("OnDragStart", nil)
 		frame:SetMovable(0)
 		frame.unit = frame.unitGroup
@@ -699,7 +709,7 @@ function Units:LoadRaidGroupHeader()
 			header.title = header:CreateFontString(nil, "ARTWORK")
 			header.title:SetShadowColor(0, 0, 0, 1.0)
 			header.title:SetShadowOffset(0.80, -0.80)
-			header.title:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", 14)
+			header.title:SetFont(LunaUF.defaultFont, 14)
 			header:SetScript("OnEvent", SetupRaidHeader)
 			if header.id == 1 or header.id == 9 then
 				header:RegisterEvent("PARTY_MEMBERS_CHANGED")
@@ -727,7 +737,7 @@ function Units:LoadRaidGroupHeader()
 		else
 			header:SetPoint("TOPLEFT", UIParent, "TOPLEFT", config[header.id].position.x, config[header.id].position.y)
 		end
-		
+
 		if not LunaUF.db.profile.locked then
 			header:SetMovable(1)
 		else
@@ -786,7 +796,7 @@ function Units:PositionWidgets(frame)
 			end
 		end
 	end
-	
+
 	local barunith = (frameheight-(numhbars > 0 and (numhbars-1) or 0))/barweightH --Size of one unit of horizontal bar
 	local barunitv = (framelength-(numhbars > 0 and numvbars or numvbars > 0 and (numvbars-1) or 0 ))/(barweightH+barweightV) --Size of one unit of vertical bar
 	if horizontal then
@@ -850,7 +860,7 @@ function Units:CreateBar(parent)
 	local bar = CreateFrame("StatusBar", nil, parent)
 	bar:SetFrameLevel(parent.topFrameLevel or 5)
 	bar.parent = parent
-	
+
 	bar.background = bar:CreateTexture(nil, "BORDER")
 	bar.background:SetAllPoints(bar)
 

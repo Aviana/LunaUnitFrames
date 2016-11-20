@@ -1,5 +1,6 @@
 local L = LunaUF.L
 local Auras = {}
+local defaultFont = LunaUF.defaultFont
 LunaUF:RegisterModule(Auras, "auras", L["Auras"])
 
 local LunaBuffDBPlayerString = UnitName("player") .. " of " .. GetCVar("realmName")
@@ -210,9 +211,9 @@ local function OnUpdate()
 				end
 				button.timeFontstring:SetText(timeString)
 				if centered then
-					button.timeFontstring:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", LunaUF.db.profile.units["player"].auras.timertextbigsize, "OUTLINE")
+					button.timeFontstring:SetFont(defaultFont, LunaUF.db.profile.units["player"].auras.timertextbigsize, "OUTLINE")
 				else
-					button.timeFontstring:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", LunaUF.db.profile.units["player"].auras.timertextsmallsize, "OUTLINE")
+					button.timeFontstring:SetFont(defaultFont, LunaUF.db.profile.units["player"].auras.timertextsmallsize, "OUTLINE")
 				end
 			else
 				button.timeFontstring:SetText("")
@@ -247,9 +248,9 @@ local function OnUpdate()
 				end
 				button.timeFontstring:SetText(timeString)
 				if centered then
-					button.timeFontstring:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", LunaUF.db.profile.units["player"].auras.timertextbigsize, "OUTLINE")
+					button.timeFontstring:SetFont(defaultFont, LunaUF.db.profile.units["player"].auras.timertextbigsize, "OUTLINE")
 				else
-					button.timeFontstring:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", LunaUF.db.profile.units["player"].auras.timertextsmallsize, "OUTLINE")
+					button.timeFontstring:SetFont(defaultFont, LunaUF.db.profile.units["player"].auras.timertextsmallsize, "OUTLINE")
 				end
 			else
 				button.timeFontstring:SetText("")
@@ -299,7 +300,7 @@ function Auras:OnEnable(frame)
 			end
 
 			button.stack = button:CreateFontString(nil, "OVERLAY")
-			button.stack:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", 10, "OUTLINE")
+			button.stack:SetFont(defaultFont, 10, "OUTLINE")
 			button.stack:SetShadowColor(0, 0, 0, 1.0)
 			button.stack:SetShadowOffset(0.50, -0.50)
 			button.stack:SetHeight(1)
@@ -338,7 +339,7 @@ function Auras:OnEnable(frame)
 			end
 
 			button.stack = button:CreateFontString(nil, "OVERLAY")
-			button.stack:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", 10, "OUTLINE")
+			button.stack:SetFont(defaultFont, 10, "OUTLINE")
 			button.stack:SetShadowColor(0, 0, 0, 1.0)
 			button.stack:SetShadowOffset(0.50, -0.50)
 			button.stack:SetHeight(1)
@@ -423,7 +424,7 @@ function Auras:FullUpdate(frame)
 				button.cooldown:SetScale((button:GetWidth() + 0.7)/36)
 			end
 			if button.timeFontstring then
-				button.timeFontstring:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", LunaUF.db.profile.units["player"].auras.timertextsmallsize, "OUTLINE")
+				button.timeFontstring:SetFont(defaultFont, LunaUF.db.profile.units["player"].auras.timertextsmallsize, "OUTLINE")
 			end
 		end
 		for i,button in ipairs(frame.auras.debuffbuttons) do
@@ -439,7 +440,7 @@ function Auras:FullUpdate(frame)
 				button.cooldown:SetScale((button:GetWidth() + 0.7)/36)
 			end
 			if button.timeFontstring then
-				button.timeFontstring:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", LunaUF.db.profile.units["player"].auras.timertextsmallsize, "OUTLINE")
+				button.timeFontstring:SetFont(defaultFont, LunaUF.db.profile.units["player"].auras.timertextsmallsize, "OUTLINE")
 			end
 		end
 	elseif config.position == "LEFT" then
@@ -457,7 +458,7 @@ function Auras:FullUpdate(frame)
 				button.cooldown:SetScale((button:GetWidth() + 0.7)/36)
 			end
 			if button.timeFontstring then
-				button.timeFontstring:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", LunaUF.db.profile.units["player"].auras.timertextsmallsize, "OUTLINE")
+				button.timeFontstring:SetFont(defaultFont, LunaUF.db.profile.units["player"].auras.timertextsmallsize, "OUTLINE")
 			end
 		end
 		for i,button in ipairs(frame.auras.debuffbuttons) do
@@ -473,7 +474,7 @@ function Auras:FullUpdate(frame)
 				button.cooldown:SetScale((button:GetWidth() + 0.7)/36)
 			end
 			if button.timeFontstring then
-				button.timeFontstring:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", LunaUF.db.profile.units["player"].auras.timertextsmallsize, "OUTLINE")
+				button.timeFontstring:SetFont(defaultFont, LunaUF.db.profile.units["player"].auras.timertextsmallsize, "OUTLINE")
 			end
 		end
 	else
@@ -495,7 +496,7 @@ function Auras:FullUpdate(frame)
 				button.cooldown:SetScale((button:GetWidth() + 0.7)/36)
 			end
 			if button.timeFontstring then
-				button.timeFontstring:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", LunaUF.db.profile.units["player"].auras.timertextsmallsize, "OUTLINE")
+				button.timeFontstring:SetFont(defaultFont, LunaUF.db.profile.units["player"].auras.timertextsmallsize, "OUTLINE")
 			end
 		end
 		for i,button in ipairs(frame.auras.debuffbuttons) do
@@ -511,7 +512,7 @@ function Auras:FullUpdate(frame)
 				button.cooldown:SetScale((button:GetWidth() + 0.7)/36)
 			end
 			if button.timeFontstring then
-				button.timeFontstring:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", LunaUF.db.profile.units["player"].auras.timertextsmallsize, "OUTLINE")
+				button.timeFontstring:SetFont(defaultFont, LunaUF.db.profile.units["player"].auras.timertextsmallsize, "OUTLINE")
 			end
 		end
 	end

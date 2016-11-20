@@ -11,6 +11,7 @@
 libs\AceLibrary\AceLibrary.lua
 
 libs\AceOO-2.0\AceOO-2.0.lua
+libs\AceDebug-2.0\AceDebug-2.0.lua
 libs\AceAddon-2.0\AceAddon-2.0.lua
 libs\AceConsole-2.0\AceConsole-2.0.lua
 libs\AceHook-2.1\AceHook-2.1.lua
@@ -36,6 +37,9 @@ libs\Compost-2.0\Compost-2.0.lua
 LunaUnitFrames.lua
 
 locales\enUS.lua
+locales\zhCN.lua
+
+default.lua
 
 modules\cooldown.lua
 modules\units.lua

@@ -1,3 +1,4 @@
+local LunaUF = LunaUF
 local Power = {}
 local POWERMATCH = {
 		[0] = "MANA",
@@ -7,7 +8,6 @@ local POWERMATCH = {
 		}
 local timestamp
 local playerFrame
-local AceEvent = LunaUF.AceEvent
 LunaUF:RegisterModule(Power, "powerBar", LunaUF.L["Power bar"], true)
 
 local function reset()
@@ -76,7 +76,7 @@ function Power:OnEnable(frame)
 			["right"] = frame.powerBar:CreateFontString(nil, "ARTWORK"),
 		}
 		for align,fontstring in pairs(frame.fontstrings["powerBar"]) do
-			fontstring:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Luna.ttf", 14)
+			fontstring:SetFont(LunaUF.defaultFont, 14)
 			fontstring:SetShadowColor(0, 0, 0, 1.0)
 			fontstring:SetShadowOffset(0.80, -0.80)
 			fontstring:SetJustifyH(string.upper(align))
@@ -111,8 +111,8 @@ function Power:OnEnable(frame)
 	frame.powerBar:SetScript("OnUpdate", updatePower)
 	if frame.powerBar.ticker then
 		frame.powerBar.ticker:SetScript("OnUpdate", EnergyUpdate)
-		if not AceEvent:IsEventRegistered("fiveSec") then
-			AceEvent:RegisterEvent("fiveSec", reset)
+		if not LunaUF:IsEventRegistered("fiveSec") then
+			LunaUF:RegisterEvent("fiveSec", reset)
 		end
 	end
 end
