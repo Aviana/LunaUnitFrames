@@ -717,6 +717,10 @@ function LunaUF:LoadOptions()
 	LunaOptionsFrame.pages[2].druidsizeslider:SetValue(LunaUF.db.profile.units.player.druidBar.size)
 	LunaOptionsFrame.pages[2].enablexp:SetChecked(LunaUF.db.profile.units.player.xpBar.enabled)
 	LunaOptionsFrame.pages[2].xpsizeslider:SetValue(LunaUF.db.profile.units.player.xpBar.size)
+	LunaOptionsFrame.pages[2].enablereck:SetChecked(LunaUF.db.profile.units.player.reckStacks.enabled)
+	SetDropDownValue(LunaOptionsFrame.pages[2].reckgrowth,LunaUF.db.profile.units.player.reckStacks.growth)
+	LunaOptionsFrame.pages[2].hidereck:SetChecked(LunaUF.db.profile.units.player.reckStacks.hide)
+	LunaOptionsFrame.pages[2].recksizeslider:SetValue(LunaUF.db.profile.units.player.reckStacks.size)
 	LunaOptionsFrame.pages[3].enablexp:SetChecked(LunaUF.db.profile.units.pet.xpBar.enabled)
 	LunaOptionsFrame.pages[3].xpsizeslider:SetValue(LunaUF.db.profile.units.pet.xpBar.size)
 	LunaOptionsFrame.pages[4].enablecombo:SetChecked(LunaUF.db.profile.units.target.comboPoints.enabled)
@@ -2351,6 +2355,85 @@ function LunaUF:CreateOptionsMenu()
 	end)
 	LunaOptionsFrame.pages[2].xpsizeslider:SetPoint("TOPLEFT", LunaOptionsFrame.pages[2].xpheader, "BOTTOMLEFT", 280, -10)
 	LunaOptionsFrame.pages[2].xpsizeslider:SetWidth(190)
+	
+	LunaOptionsFrame.pages[2].reckheader = LunaOptionsFrame.pages[2]:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+	LunaOptionsFrame.pages[2].reckheader:SetPoint("TOPLEFT", LunaOptionsFrame.pages[2].xpheader, "BOTTOMLEFT", 0, -60)
+	LunaOptionsFrame.pages[2].reckheader:SetHeight(24)
+	LunaOptionsFrame.pages[2].reckheader:SetJustifyH("LEFT")
+	LunaOptionsFrame.pages[2].reckheader:SetTextColor(1,1,0)
+	LunaOptionsFrame.pages[2].reckheader:SetText(L["Reckoning Stacks"])
+	
+	LunaOptionsFrame.pages[2].enablereck = CreateFrame("CheckButton", "EnabletargetCombo", LunaOptionsFrame.pages[2], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[2].enablereck:SetPoint("TOPLEFT", LunaOptionsFrame.pages[2].reckheader, "BOTTOMLEFT", 0, -10)
+	LunaOptionsFrame.pages[2].enablereck:SetHeight(30)
+	LunaOptionsFrame.pages[2].enablereck:SetWidth(30)
+	LunaOptionsFrame.pages[2].enablereck:SetScript("OnClick", function()
+		local unit = this:GetParent().id
+		LunaUF.db.profile.units[unit].reckStacks.enabled = not LunaUF.db.profile.units[unit].reckStacks.enabled
+		for _,frame in pairs(LunaUF.Units.frameList) do
+			if frame.unitGroup == unit then
+				LunaUF.Units:SetupFrameModules(frame)
+			end
+		end
+	end)
+	getglobal("EnabletargetCombo".."Text"):SetText(L["Enable"])
+	
+	LunaOptionsFrame.pages[2].reckgrowth = CreateFrame("Button", "ReckGrowth", LunaOptionsFrame.pages[2], "UIDropDownMenuTemplate")
+	LunaOptionsFrame.pages[2].reckgrowth:SetPoint("TOPLEFT", LunaOptionsFrame.pages[2].reckheader, "BOTTOMLEFT", 60 , -10)
+	UIDropDownMenu_SetWidth(80, LunaOptionsFrame.pages[2].reckgrowth)
+	UIDropDownMenu_JustifyText("LEFT", LunaOptionsFrame.pages[2].reckgrowth)
+	
+	UIDropDownMenu_Initialize(LunaOptionsFrame.pages[2].reckgrowth, function()
+		local info={}
+		for k,v in pairs({["LEFT"]=L["LEFT"],["RIGHT"]=L["RIGHT"]}) do
+			info.text=v
+			info.value=k
+			info.func= function ()
+				local dropdown = getglobal(UIDROPDOWNMENU_OPEN_MENU)
+				local unit = dropdown:GetParent().id
+				UIDropDownMenu_SetSelectedValue(dropdown, this.value)
+				LunaUF.db.profile.units.player.reckStacks.growth = UIDropDownMenu_GetSelectedValue(dropdown)
+				for _,frame in pairs(LunaUF.Units.frameList) do
+					if frame.unitGroup == unit then
+						LunaUF.Units.FullUpdate(frame)
+					end
+				end
+			end
+			info.checked = nil
+			info.checkable = nil
+			UIDropDownMenu_AddButton(info, 1)
+		end
+	end)
+	
+	LunaOptionsFrame.pages[2].reckgrDesc = LunaOptionsFrame.pages[2]:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+	LunaOptionsFrame.pages[2].reckgrDesc:SetPoint("BOTTOM", LunaOptionsFrame.pages[2].reckgrowth, "TOP", 0, 0)
+	LunaOptionsFrame.pages[2].reckgrDesc:SetText(L["Growth"])
+	
+	LunaOptionsFrame.pages[2].hidereck = CreateFrame("CheckButton", "HideReckStacks", LunaOptionsFrame.pages[2], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[2].hidereck:SetPoint("TOPLEFT", LunaOptionsFrame.pages[2].reckheader, "BOTTOMLEFT", 190, -10)
+	LunaOptionsFrame.pages[2].hidereck:SetHeight(30)
+	LunaOptionsFrame.pages[2].hidereck:SetWidth(30)
+	LunaOptionsFrame.pages[2].hidereck:SetScript("OnClick", function()
+		local unit = this:GetParent().id
+		LunaUF.db.profile.units[unit].reckStacks.hide = not LunaUF.db.profile.units[unit].reckStacks.hide
+		for _,frame in pairs(LunaUF.Units.frameList) do
+			if frame.unitGroup == unit then
+				LunaUF.Units:SetupFrameModules(frame)
+			end
+		end
+	end)
+	getglobal("HideReckStacksText"):SetText(L["hide"])
+	
+	LunaOptionsFrame.pages[2].recksizeslider = CreateFrame("Slider", "ReckSizeSliderplayer", LunaOptionsFrame.pages[2], "OptionsSliderTemplate")
+	LunaOptionsFrame.pages[2].recksizeslider:SetMinMaxValues(1,10)
+	LunaOptionsFrame.pages[2].recksizeslider:SetValueStep(1)
+	LunaOptionsFrame.pages[2].recksizeslider:SetScript("OnValueChanged", function()
+		LunaUF.db.profile.units.player.reckStacks.size = math.floor(this:GetValue())
+		getglobal("ReckSizeSliderplayerText"):SetText(L["Size"]..": "..LunaUF.db.profile.units.player.reckStacks.size)
+		LunaUF.Units:SetupFrameModules(LunaUF.Units.unitFrames.player)
+	end)
+	LunaOptionsFrame.pages[2].recksizeslider:SetPoint("TOPLEFT", LunaOptionsFrame.pages[2].reckheader, "BOTTOMLEFT", 280, -10)
+	LunaOptionsFrame.pages[2].recksizeslider:SetWidth(190)
 	
 	LunaOptionsFrame.pages[3].xpheader = LunaOptionsFrame.pages[3]:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
 	LunaOptionsFrame.pages[3].xpheader:SetPoint("TOPLEFT", LunaOptionsFrame.pages[3].barorder, "BOTTOMLEFT", 0, -60)

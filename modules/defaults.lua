@@ -99,6 +99,7 @@ LunaUF.defaults = {
 				powerBar = { enabled = true, size = 4, invert = false },
 				totemBar = { enabled = true, size = 2, hide=true },
 				druidBar = { enabled = true, size = 2 },
+				reckStacks = { enabled = true, size = 1, growth = "RIGHT", hide = true },
 				portrait = { enabled = true, type = "3D", side = "left", size = 6 },
 				auras = { enabled = false, AurasPerRow = 12, position = "BOTTOM", weaponbuffs = true, timertextenabled = true, timertextbigsize = 23,timertextsmallsize = 12, timerspinenabled = true },
 				highlight = { enabled = true, ontarget = false, ondebuff = true, onmouse = false },

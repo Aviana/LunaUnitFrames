@@ -379,6 +379,8 @@ local function deDE() return {
 ["content"] = "zufrieden",
 ["worldboss"] = "weltenboss",
 ["rareelite"] = "rarelite",
+["Reckoning Stacks"] = "Abrechnungsstapel",
+["reckStacks"] = "Abrechnungsstapel",
 }
 end
 
