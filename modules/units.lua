@@ -806,11 +806,11 @@ function Units:PositionWidgets(frame)
 					frame[key]:ClearAllPoints()
 					frame[key]:SetPoint("TOPLEFT", frame, "TOPLEFT", xoffset, yoffset)
 					frame[key]:SetWidth(barunitv*barweightH)
-					frame[key]:SetHeight(barunith*(config[key].size or 0))
+					frame[key]:SetHeight((barunith*(config[key].size or 0)) + ((key == "portrait" and config.portrait.type == "3D") and 1 or 0))
 					if frame[key].hidden then
 						frame[key]:Hide()
 					else
-						yoffset = yoffset - (barunith*(config[key].size or 0)) - (key ~= "portrait" and 1 or 0)
+						yoffset = yoffset - (barunith*(config[key].size or 0)) - 1
 						frame[key]:Show()
 					end
 				end
@@ -825,7 +825,7 @@ function Units:PositionWidgets(frame)
 					frame[key]:ClearAllPoints()
 					frame[key]:SetPoint("TOPLEFT", frame, "TOPLEFT", xoffset, 0)
 					frame[key]:SetWidth(barunitv*(config[key].size or 0))
-					frame[key]:SetHeight(frameheight)
+					frame[key]:SetHeight(frameheight + ((key == "portrait" and config.portrait.type == "3D") and 1 or 0))
 					if frame[key].hidden then
 						frame[key]:Hide()
 					else
