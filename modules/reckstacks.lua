@@ -2,12 +2,14 @@ local ReckStacks = {}
 LunaUF:RegisterModule(ReckStacks, "reckStacks", LunaUF.L["Reckoning Stacks"])
 local _,playerclass = UnitClass("player")
 local currStacks = 0
+local talentRank
 
 local events
 
 if ( GetLocale() == "deDE" ) then
 	events = {
 		CHAT_MSG_COMBAT_SELF_HITS = "Ihr trefft .+",
+		CHAT_MSG_COMBAT_FRIENDLY_DEATH = "Ihr sterbt.",
 
 		CHAT_MSG_COMBAT_CREATURE_VS_SELF_HITS = ".+ trifft (%a+) kritisch: %d+ Schaden%.",
 		CHAT_MSG_COMBAT_HOSTILEPLAYER_HITS = ".+ trifft (Euch) kritisch: %d+ Schaden%.",
@@ -18,6 +20,7 @@ if ( GetLocale() == "deDE" ) then
 else
 	events = {
 		CHAT_MSG_COMBAT_SELF_HITS = "You c?[rh]it .+ for .+",
+		CHAT_MSG_COMBAT_FRIENDLY_DEATH = "You die.",
 		
 		CHAT_MSG_COMBAT_CREATURE_VS_SELF_HITS = ".+ crits (%a+) for .+",
 		CHAT_MSG_COMBAT_HOSTILEPLAYER_HITS = ".+ crits (you) for .+",
@@ -28,14 +31,16 @@ else
 end
 
 local function OnEvent()
-	if event == "CHAT_MSG_COMBAT_SELF_HITS" then
+	if event == "CHARACTER_POINTS_CHANGED" then
+		_,_,_,_,talentRank = GetTalentInfo(2,13)
+	elseif event == "CHAT_MSG_COMBAT_SELF_HITS" or (event == "CHAT_MSG_COMBAT_FRIENDLY_DEATH" and arg1 == events[event]) then
 		if currStacks > 0 then
 			currStacks = 0
 			ReckStacks:Update(this:GetParent())
 		else
 			return
 		end
-	elseif string.find(arg1, events[event]) and currStacks < 5 then
+	elseif talentRank == 5 and currStacks < 5 and string.find(arg1, events[event]) then
 		currStacks = currStacks + 1
 		ReckStacks:Update(this:GetParent())
 	end
@@ -50,7 +55,9 @@ function ReckStacks:OnEnable(frame)
 			frame.reckStacks.blocks[id] = frame.reckStacks.blocks[id] or frame.reckStacks:CreateTexture(nil, "OVERLAY")
 		end
 	end
+	_,_,_,_,talentRank = GetTalentInfo(2,13)
 	for i in pairs(events) do frame.reckStacks:RegisterEvent(i) end
+	frame.reckStacks:RegisterEvent("CHARACTER_POINTS_CHANGED")
 	frame.reckStacks:SetScript("OnEvent", OnEvent)
 end
 
