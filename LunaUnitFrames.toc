@@ -45,8 +45,8 @@ locales\zhCN.lua
 locales\deDE.lua
 locales\frFR.lua
 
-default.lua
 
+modules\defaults.lua
 modules\cooldown.lua
 modules\units.lua
 modules\health.lua
@@ -66,5 +66,6 @@ modules\druid.lua
 modules\highlight.lua
 modules\fader.lua
 modules\squares.lua
+modules\reckstacks.lua
 
 modules\options.lua

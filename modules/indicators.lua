@@ -160,7 +160,7 @@ end
 
 local function GetLootMaster()
 	local lootmethod, pid, rid = GetLootMethod()
-	if lootmethod == "master" then
+	if lootmethod == "master" and (UnitInRaid("player") or GetNumPartyMembers() > 0) then
 		if pid then
 			return GetUnitName(pid == 0 and "player" or "party"..pid)
 		elseif rid then
@@ -334,7 +334,10 @@ local function OnEvent()
 		--	end
 		--end
 		if frame.indicators.ready then UpdateReady(config.ready.enabled, frame.indicators.ready, frame.unit) end
-	elseif event == "PARTY_LEADER_CHANGED" or event == "PARTY_MEMBERS_CHANGED" or event == "RAID_ROSTER_UPDATE" then
+	elseif event == "PARTY_LEADER_CHANGED" then
+		if frame.indicators.leader then UpdateLeader(config.leader.enabled, frame.indicators.leader, frame.unit) end
+	elseif event == "PARTY_MEMBERS_CHANGED" or event == "RAID_ROSTER_UPDATE" then
+		if frame.indicators.masterLoot then UpdateMasterLoot(config.masterLoot.enabled, frame.indicators.masterLoot, frame.unit) end
 		if frame.indicators.leader then UpdateLeader(config.leader.enabled, frame.indicators.leader, frame.unit) end
 	elseif event == "RAID_TARGET_UPDATE" then
 		if frame.indicators.raidTarget then UpdateRaidTarget(config.raidTarget.enabled, frame.indicators.raidTarget, frame.unit) end

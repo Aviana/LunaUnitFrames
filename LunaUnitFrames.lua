@@ -95,7 +95,7 @@ local L = LunaUF.L
 --------------------------------------------------------------------------------------------
 
 -- FUBAR Stuff -----------------------------------------------------------------------------
-LunaUF.name = "FuBar - LunaUnitFrames"
+LunaUF.name = "LunaUnitFrames"
 LunaUF.hasNoColor = true
 LunaUF.hasIcon = "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\icon"
 LunaUF.defaultMinimapPosition = 180
@@ -179,7 +179,8 @@ LunaUF.constants = {
 				[4] = "castBar",
 				[5] = "druidBar",
 				[6] = "totemBar",
-				[7] = "xpBar",
+				[7] = "reckStacks",
+				[8] = "xpBar",
 			},
 			vertical = {
 			},
@@ -457,6 +458,8 @@ function LunaUF:InitBarorder()
 			else
 				unitGroup.barorder = deepcopy(LunaUF.constants.barorder)
 			end
+		elseif key == "player" and (getn(unitGroup.barorder.horizontal) + getn(unitGroup.barorder.vertical)) < 8 then
+			tinsert(unitGroup.barorder.horizontal, "reckStacks")
 		end
 	end
 end

@@ -73,32 +73,7 @@ local MapScales = {
 }
 
 -- This table needs to be localized, of course
-local events = {
-	CHAT_MSG_COMBAT_PARTY_HITS = "(%a+) c?[rh]its .+",
-	CHAT_MSG_COMBAT_FRIENDLYPLAYER_HITS = "(%a+) c?[rh]its .+",
-	CHAT_MSG_COMBAT_CREATURE_VS_SELF_HITS = ".+ c?[rh]its (%a+) for .+",
-	CHAT_MSG_COMBAT_CREATURE_VS_PARTY_HITS = ".+ c?[rh]its (%a+) for .+",
-	CHAT_MSG_COMBAT_CREATURE_VS_CREATURE_HITS = ".+ c?[rh]its (%a+) for .+",
-
-	CHAT_MSG_SPELL_CREATURE_VS_SELF_DAMAGE = {".+'s .+ c?[rh]its (%a+) for .+", ".+'s .+ was resisted by (%a+)%."},
-	CHAT_MSG_SPELL_CREATURE_VS_PARTY_DAMAGE = {".+'s .+ c?[rh]its (%a+) for .+", ".+'s .+ was resisted by (%a+)%."},
-	CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE = {".+'s .+ c?[rh]its (%a+) for .+", ".+'s .+ was resisted by (%a+)%."},
-
-	CHAT_MSG_SPELL_FRIENDLYPLAYER_BUFF = "(%a+)'s .+",
-	CHAT_MSG_SPELL_FRIENDLYPLAYER_DAMAGE = "(%a+)'s .+ c?[rh]its .+",
-	CHAT_MSG_SPELL_HOSTILEPLAYER_DAMAGE = ".+'s .+ c?[rh]its (%a+) for .+",
-	CHAT_MSG_SPELL_PARTY_BUFF = "(%a+)'s .+",
-	CHAT_MSG_SPELL_PARTY_DAMAGE = "(%a+)'s .+ c?[rh]its .+",
-	CHAT_MSG_SPELL_PERIODIC_CREATURE_DAMAGE = "%a+ suffers %d+ %a+ damage from (%a+)'s .+",
-	CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_BUFFS = ".+ gains %d+ health from (.+)'s .+",
-	CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE = {"(%a+) suffers %d+ .+", "(%a+) is afflicted by .+"},
-	CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_DAMAGE = {"(%a+) suffers %d+ .+", "(%a+) is afflicted by .+"},
-	CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE = "(%a+) suffers %d+ .+",
-	CHAT_MSG_SPELL_PERIODIC_PARTY_BUFFS = {".+ gains %d+ health from (.+)'s .+", "(%a+) gains .+"},
-	
-	CHAT_MSG_COMBAT_CREATURE_VS_PARTY_MISSES = {".+ attacks. (%a+) parries.", ".+ attacks. (%a+) dodges.", ".+ attacks. (%a+) blocks.", ".+ misses (%a+)."},
-	CHAT_MSG_SPELL_HOSTILEPLAYER_BUFF = {".+ heals (%a+) for .+", "(%a+)'s .+"},
-}
+local events
 
 if ( GetLocale() == "koKR" ) then
 	events = {
@@ -117,12 +92,66 @@ if ( GetLocale() == "koKR" ) then
 		CHAT_MSG_SPELL_HOSTILEPLAYER_DAMAGE = ".-|1이;가; .+|1으로;로; (.-)에게 %d+의 .- 입혔습니다",
 		CHAT_MSG_SPELL_PARTY_BUFF = "([^%s]+)의 .+%.",
 		CHAT_MSG_SPELL_PARTY_DAMAGE = "(.-)|1이;가; .+|1으로;로; .-에게 %d+의 .- 입혔습니다",
-		CHAT_MSG_SPELL_PERIODIC_CREATURE_DAMAGE = ".-|1이;가; ([^%s]+)의 .-에 의해 %d+의 .+",
+		--CHAT_MSG_SPELL_PERIODIC_CREATURE_DAMAGE = ".-|1이;가; ([^%s]+)의 .-에 의해 %d+의 .+",
 		CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_BUFFS = "([^%s]+)|1이;가; .+%.",
 		CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE = "([^%s]+)|1이;가; .-에 의해 %d+의 .+",
 		CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_DAMAGE = "([^%s]+)|1이;가; .-에 의해 %d+의 .+",
 		CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE = "([^%s]+)|1이;가; .-에 의해 %d+의 .+",
 		CHAT_MSG_SPELL_PERIODIC_PARTY_BUFFS = "([^%s]+)|1이;가; .+%.",
+	}
+elseif ( GetLocale() == "deDE" ) then
+	events = {
+		CHAT_MSG_COMBAT_PARTY_HITS = "(%a+) trifft .+",
+		CHAT_MSG_COMBAT_FRIENDLYPLAYER_HITS = "(%a+) trifft .+",
+		CHAT_MSG_COMBAT_CREATURE_VS_SELF_HITS = ".+ trifft (%a+) .+",
+		CHAT_MSG_COMBAT_CREATURE_VS_PARTY_HITS = ".+ trifft (%a+) .+",
+		CHAT_MSG_COMBAT_CREATURE_VS_CREATURE_HITS = ".+ trifft (%a+) .+",
+
+		CHAT_MSG_SPELL_CREATURE_VS_SELF_DAMAGE = {".+s .+ trifft (%a+) .+", ".+s .+ wurde von (%a+) widerstanden%."},
+		CHAT_MSG_SPELL_CREATURE_VS_PARTY_DAMAGE = {".+s .+ trifft (%a+) .+", ".+s .+ wurde von (%a+) widerstanden%."},
+		CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE = {".+s .+ trifft (%a+) .+", ".+s .+ wurde von (%a+) widerstanden%."},
+
+		CHAT_MSG_SPELL_FRIENDLYPLAYER_BUFF = "(%a+)s .+",
+		CHAT_MSG_SPELL_FRIENDLYPLAYER_DAMAGE = "(%a+)s .+ trifft .+",
+		CHAT_MSG_SPELL_HOSTILEPLAYER_DAMAGE = ".+s .+ trifft (%a+) .+",
+		CHAT_MSG_SPELL_PARTY_BUFF = "(%a+)s .+",
+		CHAT_MSG_SPELL_PARTY_DAMAGE = "(%a+)s .+ trifft .+",
+		--CHAT_MSG_SPELL_PERIODIC_CREATURE_DAMAGE = "%a+ suffers %d+ %a+ damage from (%a+)'s .+",
+		CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_BUFFS = "(.+) erh\195\164lt %d+ Gesundheit von .+",
+		CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE = {"(%a+) erleidet %d+ .+", "(%a+) ist von .+ betroffen."},
+		CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_DAMAGE = {"(%a+) erleidet %d+ .+", "(%a+) is afflicted by .+"},
+		CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE = "(%a+) erleidet %d+ .+",
+		CHAT_MSG_SPELL_PERIODIC_PARTY_BUFFS = {"(%a+) erh\195\164lt %d+ Gesundheit von (.+)s .+", "(%a+) bekommt .+"},
+		
+		CHAT_MSG_COMBAT_CREATURE_VS_PARTY_MISSES = {".+ greift an%. (%a+) pariert%.", ".+ greift an%. (%a+) weicht aus%.", ".+ greift an%. (%a+) blockt ab%.", ".+ verfehlt (%a+)%."},
+		CHAT_MSG_SPELL_HOSTILEPLAYER_BUFF = {".+ heilt (%a+) um .+", "(%a+)'s .+"},
+	}
+else
+	events = {
+		CHAT_MSG_COMBAT_PARTY_HITS = "(%a+) c?[rh]its .+",
+		CHAT_MSG_COMBAT_FRIENDLYPLAYER_HITS = "(%a+) c?[rh]its .+",
+		CHAT_MSG_COMBAT_CREATURE_VS_SELF_HITS = ".+ c?[rh]its (%a+) for .+",
+		CHAT_MSG_COMBAT_CREATURE_VS_PARTY_HITS = ".+ c?[rh]its (%a+) for .+",
+		CHAT_MSG_COMBAT_CREATURE_VS_CREATURE_HITS = ".+ c?[rh]its (%a+) for .+",
+
+		CHAT_MSG_SPELL_CREATURE_VS_SELF_DAMAGE = {".+'s .+ c?[rh]its (%a+) for .+", ".+'s .+ was resisted by (%a+)%."},
+		CHAT_MSG_SPELL_CREATURE_VS_PARTY_DAMAGE = {".+'s .+ c?[rh]its (%a+) for .+", ".+'s .+ was resisted by (%a+)%."},
+		CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE = {".+'s .+ c?[rh]its (%a+) for .+", ".+'s .+ was resisted by (%a+)%."},
+
+		CHAT_MSG_SPELL_FRIENDLYPLAYER_BUFF = "(%a+)'s .+",
+		CHAT_MSG_SPELL_FRIENDLYPLAYER_DAMAGE = "(%a+)'s .+ c?[rh]its .+",
+		CHAT_MSG_SPELL_HOSTILEPLAYER_DAMAGE = ".+'s .+ c?[rh]its (%a+) for .+",
+		CHAT_MSG_SPELL_PARTY_BUFF = "(%a+)'s .+",
+		CHAT_MSG_SPELL_PARTY_DAMAGE = "(%a+)'s .+ c?[rh]its .+",
+		--CHAT_MSG_SPELL_PERIODIC_CREATURE_DAMAGE = "%a+ suffers %d+ %a+ damage from (%a+)'s .+",
+		CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_BUFFS = "(.+) gains %d+ health from .+",
+		CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE = {"(%a+) suffers %d+ .+", "(%a+) is afflicted by .+"},
+		CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_DAMAGE = {"(%a+) suffers %d+ .+", "(%a+) is afflicted by .+"},
+		CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE = "(%a+) suffers %d+ .+",
+		CHAT_MSG_SPELL_PERIODIC_PARTY_BUFFS = {".+ gains %d+ health from (.+)'s .+", "(%a+) gains .+"},
+		
+		CHAT_MSG_COMBAT_CREATURE_VS_PARTY_MISSES = {".+ attacks%. (%a+) parries%.", ".+ attacks%. (%a+) dodges%.", ".+ attacks%. (%a+) blocks%.", ".+ misses (%a+)%."},
+		CHAT_MSG_SPELL_HOSTILEPLAYER_BUFF = {".+ heals (%a+) for .+", "(%a+)'s .+"},
 	}
 end
 

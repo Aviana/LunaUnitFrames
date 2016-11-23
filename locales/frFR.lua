@@ -377,6 +377,8 @@ local function frFR() return {
 ["content"] = "content",
 ["worldboss"] = "worldboss",
 ["rareelite"] = "rareelite",
+["Reckoning Stacks"] = "Reckoning Stacks",
+["reckStacks"] = "Reckoning Stacks",
 }
 end
 
