@@ -379,6 +379,14 @@ local function frFR() return {
 ["rareelite"] = "rareelite",
 ["Reckoning Stacks"] = "Reckoning Stacks",
 ["reckStacks"] = "Reckoning Stacks",
+["Settings"] = "Settings",
+["CurrentProfile"] = "Current Profile: ",
+["NewProfile"] = "New Profile:",
+["Create"] = "Create",
+["LoadProfile"] = "Load Profile:",
+["Load"] = "Load",
+["Delete"] = "Delete",
+["ResetProfile"] = "Reset Profile",
 }
 end
 

@@ -381,6 +381,14 @@ local function deDE() return {
 ["rareelite"] = "rarelite",
 ["Reckoning Stacks"] = "Abrechnungsstapel",
 ["reckStacks"] = "Abrechnungsstapel",
+["Settings"] = "Einstellungen",
+["CurrentProfile"] = "Current Profile: ",
+["NewProfile"] = "New Profile:",
+["Create"] = "Create",
+["LoadProfile"] = "Load Profile:",
+["Load"] = "Load",
+["Delete"] = "Delete",
+["ResetProfile"] = "Reset Profile",
 }
 end
 
