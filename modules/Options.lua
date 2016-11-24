@@ -772,6 +772,20 @@ function LunaUF:LoadOptions()
 	SetDropDownValue(LunaOptionsFrame.pages[10].mode,LunaUF.db.profile.units.raid.mode)
 	ToggleDropDownMenu(1,nil,LunaOptionsFrame.pages[10].mode)
 	LunaOptionsFrame.pages[11].Load()
+    do
+        local position
+        if LunaUF.db then
+            position = LunaUF.db.profile.minimapPosition or LunaUF.defaultMinimapPosition or math.random(1, 360)
+        else
+            position = LunaUF.minimapPosition or LunaUF.defaultMinimapPosition or math.random(1, 360)
+        end
+        
+        LunaOptionsFrame.pages[13].minimapslider:SetValue(position)
+        getglobal("ConfigMinimapPositionText"):SetText(L["MinimapPosition"]..math.floor(position + 0.5).."°")
+    end
+    LunaOptionsFrame.pages[13].minimap:SetChecked(LunaUF.db.profile.hidden)
+    LunaOptionsFrame.pages[13].enable:SetChecked(LunaUF:IsActive())
+    LunaOptionsFrame.pages[13].debug:SetChecked(LunaUF:IsDebugging())
 end
 
 function LunaUF:CreateOptionsMenu()
@@ -3385,6 +3399,74 @@ function LunaUF:CreateOptionsMenu()
 	LunaOptionsFrame.pages[13].reset:SetText(L["ResetProfile"])
 	LunaOptionsFrame.pages[13].reset:SetScript("OnClick", function ()
 		StaticPopup_Show("RESET_LUNA")
+	end)
+    
+    local position
+    if LunaUF.db then
+        position = LunaUF.db.profile.minimapPosition or LunaUF.defaultMinimapPosition or math.random(1, 360)
+    else
+        position = LunaUF.minimapPosition or LunaUF.defaultMinimapPosition or math.random(1, 360)
+    end
+		
+    LunaOptionsFrame.pages[13].minimapslider = CreateFrame("Slider", "ConfigMinimapPosition", LunaOptionsFrame.pages[13], "OptionsSliderTemplate")
+    LunaOptionsFrame.pages[13].minimapslider:SetMinMaxValues(1,360)
+    LunaOptionsFrame.pages[13].minimapslider:SetValueStep(1)
+    LunaOptionsFrame.pages[13].minimapslider:SetValue(position)
+    getglobal("ConfigMinimapPositionHigh"):SetText("360°")
+    getglobal("ConfigMinimapPositionLow"):SetText("1°")
+    getglobal("ConfigMinimapPositionText"):SetText(L["MinimapPosition"]..math.floor(position + 0.5).."°")
+    LunaOptionsFrame.pages[13].minimapslider:SetScript("OnValueChanged", function()
+        local value = this:GetValue()
+        getglobal("ConfigMinimapPositionText"):SetText(L["MinimapPosition"]..value.."°")
+        
+        LunaUF.db.profile.minimapPosition = value
+        AceLibrary("FuBarPlugin-MinimapContainer-2.0"):ReadjustLocation(LunaUF)
+    end)
+    LunaOptionsFrame.pages[13].minimapslider:SetPoint("TOPLEFT", LunaOptionsFrame.pages[13].reset, "BOTTOMLEFT", 0, -40)
+    LunaOptionsFrame.pages[13].minimapslider:SetWidth(200)
+    
+    LunaOptionsFrame.pages[13].minimap = CreateFrame("CheckButton", "ConfigMinimap", LunaOptionsFrame.pages[13], "UICheckButtonTemplate")
+    LunaOptionsFrame.pages[13].minimap:SetPoint("LEFT", LunaOptionsFrame.pages[13].minimapslider, "RIGHT", 50, 0)
+    LunaOptionsFrame.pages[13].minimap:SetHeight(20)
+    LunaOptionsFrame.pages[13].minimap:SetWidth(20)
+    getglobal("ConfigMinimapText"):SetText(L["HideMinimap"])
+    LunaOptionsFrame.pages[13].minimap:SetScript("OnClick", function()
+        if LunaUF.db.profile.hidden then
+            LunaUF:Show()
+        else
+            LunaUF:Hide()
+        end
+    end)
+    
+    LunaOptionsFrame.pages[13].enable = CreateFrame("CheckButton", "ConfigEnable", LunaOptionsFrame.pages[13], "UICheckButtonTemplate")
+    LunaOptionsFrame.pages[13].enable:SetPoint("TOPLEFT", LunaOptionsFrame.pages[13].minimapslider, "BOTTOMLEFT", 0, -25)
+    LunaOptionsFrame.pages[13].enable:SetHeight(20)
+    LunaOptionsFrame.pages[13].enable:SetWidth(20)
+    getglobal("ConfigEnableText"):SetText(L["EnableAddon"])
+    LunaOptionsFrame.pages[13].enable:SetScript("OnClick", function()
+        LunaUF:ToggleActive()
+    end)
+    
+    LunaOptionsFrame.pages[13].debug = CreateFrame("CheckButton", "ConfigDebugging", LunaOptionsFrame.pages[13], "UICheckButtonTemplate")
+    LunaOptionsFrame.pages[13].debug:SetPoint("LEFT", LunaOptionsFrame.pages[13].enable, "LEFT", 170, 0)
+    LunaOptionsFrame.pages[13].debug:SetHeight(20)
+    LunaOptionsFrame.pages[13].debug:SetWidth(20)
+    getglobal("ConfigDebuggingText"):SetText(L["DebugMode"])
+    LunaOptionsFrame.pages[13].debug:SetScript("OnClick", function()
+        if LunaUF:IsDebugging() then
+            LunaUF:SetDebugging(nil)
+        else
+            LunaUF:SetDebugging(true)
+        end
+    end)
+	
+	LunaOptionsFrame.pages[13].reset = CreateFrame("Button", "ProfileResetButton", LunaOptionsFrame.pages[13], "UIPanelButtonTemplate")
+	LunaOptionsFrame.pages[13].reset:SetPoint("TOPLEFT", LunaOptionsFrame.pages[13].enable, "BOTTOMLEFT", 0, -35)
+	LunaOptionsFrame.pages[13].reset:SetHeight(20)
+	LunaOptionsFrame.pages[13].reset:SetWidth(90)
+	LunaOptionsFrame.pages[13].reset:SetText(L["About"])
+	LunaOptionsFrame.pages[13].reset:SetScript("OnClick", function ()
+        LunaUF:PrintAddonInfo()
 	end)
 
 --------

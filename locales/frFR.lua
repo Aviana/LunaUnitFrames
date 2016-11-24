@@ -387,6 +387,11 @@ local function frFR() return {
 ["Load"] = "Load",
 ["Delete"] = "Delete",
 ["ResetProfile"] = "Reset Profile",
+["HideMinimap"] = "Hide minimap button",
+["EnableAddon"] = "Enable Luna Unit Frames",
+["DebugMode"] = "Debug mode",
+["MinimapPosition"] = "Minimap position: ",
+["About"] = "About",
 }
 end
 
