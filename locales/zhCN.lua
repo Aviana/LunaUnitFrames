@@ -378,6 +378,19 @@ local function zhCN() return {
 ["rareelite"] = "稀有精英",
 ["Reckoning Stacks"] = "Reckoning Stacks",
 ["reckStacks"] = "Reckoning Stacks",
+["Settings"] = "设置",
+["CurrentProfile"] = "Current Profile: ",
+["NewProfile"] = "New Profile:",
+["Create"] = "Create",
+["LoadProfile"] = "Load Profile:",
+["Load"] = "Load",
+["Delete"] = "Delete",
+["ResetProfile"] = "Reset Profile",
+["HideMinimap"] = "Hide minimap button",
+["EnableAddon"] = "Enable Luna Unit Frames",
+["DebugMode"] = "Debug mode",
+["MinimapPosition"] = "Minimap position: ",
+["About"] = "About",
 }
 end
 

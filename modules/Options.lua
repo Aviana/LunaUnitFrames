@@ -1,6 +1,6 @@
 local L = LunaUF.L
 local defaultFont = LunaUF.defaultFont
-local OptionsPageNames = {L["General"],L["Player"],L["Pet"],L["Target"],L["ToT"],L["ToToT"],L["Party"],L["Party Target"],L["Party Pet"],L["Raid"],L["Clickcasting"],L["Config Mode"],L["Reset Settings"]}
+local OptionsPageNames = {L["General"],L["Player"],L["Pet"],L["Target"],L["ToT"],L["ToToT"],L["Party"],L["Party Target"],L["Party Pet"],L["Raid"],L["Clickcasting"],L["Config Mode"],L["Settings"]}
 local shownFrame = 1
 local WithTags = {
 	["healthBar"] = true,
@@ -84,6 +84,7 @@ TagsDescs[L["COLOR TAGS"]] = {
 local function SetDropDownValue(dropdown,value)
 	ToggleDropDownMenu(1,value,dropdown)
 	UIDropDownMenu_SetSelectedValue(dropdown, value)
+	CloseDropDownMenus()
 end
 
 local function ShowColorPicker(r, g, b, Callback, options)
@@ -771,6 +772,20 @@ function LunaUF:LoadOptions()
 	SetDropDownValue(LunaOptionsFrame.pages[10].mode,LunaUF.db.profile.units.raid.mode)
 	ToggleDropDownMenu(1,nil,LunaOptionsFrame.pages[10].mode)
 	LunaOptionsFrame.pages[11].Load()
+    do
+        local position
+        if LunaUF.db then
+            position = LunaUF.db.profile.minimapPosition or LunaUF.defaultMinimapPosition or math.random(1, 360)
+        else
+            position = LunaUF.minimapPosition or LunaUF.defaultMinimapPosition or math.random(1, 360)
+        end
+        
+        LunaOptionsFrame.pages[13].minimapslider:SetValue(position)
+        getglobal("ConfigMinimapPositionText"):SetText(L["MinimapPosition"]..math.floor(position + 0.5).."°")
+    end
+    LunaOptionsFrame.pages[13].minimap:SetChecked(LunaUF.db.profile.hidden)
+    LunaOptionsFrame.pages[13].enable:SetChecked(LunaUF:IsActive())
+    LunaOptionsFrame.pages[13].debug:SetChecked(LunaUF:IsDebugging())
 end
 
 function LunaUF:CreateOptionsMenu()
@@ -997,10 +1012,8 @@ function LunaUF:CreateOptionsMenu()
 	LunaOptionsFrame.Button12:SetPoint("TOPLEFT", LunaOptionsFrame.Button11, "BOTTOMLEFT", 0, -5)
 	LunaOptionsFrame.Button12:SetHeight(20)
 	LunaOptionsFrame.Button12:SetWidth(140)
-	LunaOptionsFrame.Button12:SetText(L["Reset Settings"])
-	LunaOptionsFrame.Button12:SetScript("OnClick", function ()
-		StaticPopup_Show("RESET_LUNA")
-	end )
+	LunaOptionsFrame.Button12:SetText(L["Settings"])
+	LunaOptionsFrame.Button12:SetScript("OnClick", OnPageSwitch)
 	LunaOptionsFrame.Button12.id = 13
 
 	LunaOptionsFrame.pages[1].cColorHeader = LunaOptionsFrame.pages[1]:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
@@ -3266,6 +3279,197 @@ function LunaUF:CreateOptionsMenu()
 		end
 		LunaOptionsFrame.ScrollFrames[11]:SetScrollChild(LunaOptionsFrame.pages[11])
 	end
+
+--------
+	
+	LunaOptionsFrame.pages[13].currentProfile = LunaOptionsFrame.pages[13]:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+	LunaOptionsFrame.pages[13].currentProfile:SetPoint("TOPLEFT", LunaOptionsFrame.pages[13], "TOPLEFT", 10, -50)
+	LunaOptionsFrame.pages[13].currentProfile:SetJustifyH("LEFT")
+	LunaOptionsFrame.pages[13].currentProfile:SetTextColor(1,1,0)
+	LunaOptionsFrame.pages[13].currentProfile:SetText(L["CurrentProfile"]..LunaUF:GetProfile())
+	LunaOptionsFrame.pages[13].currentProfile:Show()
+	
+	LunaOptionsFrame.pages[13].newProfile = LunaOptionsFrame.pages[13]:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+	LunaOptionsFrame.pages[13].newProfile:SetPoint("TOPLEFT", LunaOptionsFrame.pages[13].currentProfile, "BOTTOMLEFT", 0, -10)
+	LunaOptionsFrame.pages[13].newProfile:SetJustifyH("LEFT")
+	LunaOptionsFrame.pages[13].newProfile:SetTextColor(1,1,0)
+	LunaOptionsFrame.pages[13].newProfile:SetText(L["NewProfile"])
+	LunaOptionsFrame.pages[13].newProfile:Show()
+	
+	LunaOptionsFrame.pages[13].input = CreateFrame("Editbox", "ProfileInput", LunaOptionsFrame.pages[13], "InputBoxTemplate")
+	LunaOptionsFrame.pages[13].input:SetHeight(20)
+	LunaOptionsFrame.pages[13].input:SetWidth(150)
+	LunaOptionsFrame.pages[13].input:SetAutoFocus(nil)
+	LunaOptionsFrame.pages[13].input:SetPoint("LEFT", LunaOptionsFrame.pages[13].newProfile, "RIGHT", 5, 0)
+	LunaOptionsFrame.pages[13].input:SetScript("OnEnterPressed", function()
+		this:ClearFocus()
+	end)
+	
+	LunaOptionsFrame.pages[13].create = CreateFrame("Button", "ProfileCreateButton", LunaOptionsFrame.pages[13], "UIPanelButtonTemplate")
+	LunaOptionsFrame.pages[13].create:SetPoint("LEFT", LunaOptionsFrame.pages[13].input, "RIGHT", 0, 0)
+	LunaOptionsFrame.pages[13].create:SetHeight(20)
+	LunaOptionsFrame.pages[13].create:SetWidth(90)
+	LunaOptionsFrame.pages[13].create:SetText(L["Create"])
+	LunaOptionsFrame.pages[13].create:SetScript("OnClick", function ()
+		local profileName = LunaOptionsFrame.pages[13].input:GetText()
+		
+		if not profileName or profileName == "" then
+			return
+		end
+		
+		for name,_ in pairs(LunaUF.db.raw.profiles) do
+			if name == profileName then
+				return
+			end
+		end
+		
+		LunaOptionsFrame.pages[13].input:ClearFocus()
+		LunaOptionsFrame.pages[13].input:SetText("")
+		LunaOptionsFrame.pages[13].currentProfile:SetText(L["CurrentProfile"]..profileName)
+		LunaUF:SetProfile(profileName, LunaUF:GetProfile())
+	end)
+	
+	LunaOptionsFrame.pages[13].loadProfile = LunaOptionsFrame.pages[13]:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+	LunaOptionsFrame.pages[13].loadProfile:SetPoint("TOPLEFT", LunaOptionsFrame.pages[13].newProfile, "BOTTOMLEFT", 0, -15)
+	LunaOptionsFrame.pages[13].loadProfile:SetJustifyH("LEFT")
+	LunaOptionsFrame.pages[13].loadProfile:SetTextColor(1,1,0)
+	LunaOptionsFrame.pages[13].loadProfile:SetText(L["LoadProfile"])
+	LunaOptionsFrame.pages[13].loadProfile:Show()
+	
+	LunaOptionsFrame.pages[13].profiles = CreateFrame("Button", "ProfileSelector", LunaOptionsFrame.pages[13], "UIDropDownMenuTemplate")
+	LunaOptionsFrame.pages[13].profiles:SetPoint("LEFT", LunaOptionsFrame.pages[13].loadProfile, "RIGHT", -18, 0)
+	UIDropDownMenu_SetWidth(140, LunaOptionsFrame.pages[13].profiles)
+	UIDropDownMenu_JustifyText("LEFT", LunaOptionsFrame.pages[13].profiles)
+
+	UIDropDownMenu_Initialize(LunaOptionsFrame.pages[13].profiles, function()
+		local info={}
+		for k,_ in pairs(LunaUF.db.raw.profiles) do
+			info.text=k
+			info.value=k
+			info.func= function ()
+				UIDropDownMenu_SetSelectedID(LunaOptionsFrame.pages[13].profiles, this:GetID())
+			end
+			info.checked = nil
+			info.checkable = nil
+			UIDropDownMenu_AddButton(info, 1)
+		end
+	end)
+	
+	LunaOptionsFrame.pages[13].load = CreateFrame("Button", "ProfileLoadButton", LunaOptionsFrame.pages[13], "UIPanelButtonTemplate")
+	LunaOptionsFrame.pages[13].load:SetPoint("LEFT", LunaOptionsFrame.pages[13].profiles, "RIGHT", -18, 0)
+	LunaOptionsFrame.pages[13].load:SetHeight(20)
+	LunaOptionsFrame.pages[13].load:SetWidth(90)
+	LunaOptionsFrame.pages[13].load:SetText(L["Load"])
+	LunaOptionsFrame.pages[13].load:SetScript("OnClick", function ()
+		local profileName = UIDropDownMenu_GetText(LunaOptionsFrame.pages[13].profiles)
+		
+		if not profileName or profileName == "" then
+			return
+		end
+		
+		LunaUF:SetProfile(profileName)
+		LunaOptionsFrame.pages[13].currentProfile:SetText(L["CurrentProfile"]..profileName)
+	end)
+	
+	LunaOptionsFrame.pages[13].delete = CreateFrame("Button", "ProfileDeleteButton", LunaOptionsFrame.pages[13], "UIPanelButtonTemplate")
+	LunaOptionsFrame.pages[13].delete:SetPoint("LEFT", LunaOptionsFrame.pages[13].load, "RIGHT", 0, 0)
+	LunaOptionsFrame.pages[13].delete:SetHeight(20)
+	LunaOptionsFrame.pages[13].delete:SetWidth(90)
+	LunaOptionsFrame.pages[13].delete:SetText(L["Delete"])
+	LunaOptionsFrame.pages[13].delete:SetScript("OnClick", function ()
+		local profileName = UIDropDownMenu_GetText(LunaOptionsFrame.pages[13].profiles)
+		
+		if not profileName or profileName == "" or profileName == "Default" then
+			return
+		end
+		
+		if profileName == LunaUF:GetProfile() then
+			LunaOptionsFrame.pages[13].currentProfile:SetText(L["CurrentProfile"].."Default")
+			LunaUF:SetProfile("Default")
+		end
+		
+		SetDropDownValue(LunaOptionsFrame.pages[13].profiles, "Default")
+		LunaUF.db.raw.profiles[profileName] = nil
+	end)
+	
+	LunaOptionsFrame.pages[13].reset = CreateFrame("Button", "ProfileResetButton", LunaOptionsFrame.pages[13], "UIPanelButtonTemplate")
+	LunaOptionsFrame.pages[13].reset:SetPoint("TOPLEFT", LunaOptionsFrame.pages[13].loadProfile, "BOTTOMLEFT", 0, -15)
+	LunaOptionsFrame.pages[13].reset:SetHeight(20)
+	LunaOptionsFrame.pages[13].reset:SetWidth(120)
+	LunaOptionsFrame.pages[13].reset:SetText(L["ResetProfile"])
+	LunaOptionsFrame.pages[13].reset:SetScript("OnClick", function ()
+		StaticPopup_Show("RESET_LUNA")
+	end)
+    
+    local position
+    if LunaUF.db then
+        position = LunaUF.db.profile.minimapPosition or LunaUF.defaultMinimapPosition or math.random(1, 360)
+    else
+        position = LunaUF.minimapPosition or LunaUF.defaultMinimapPosition or math.random(1, 360)
+    end
+		
+    LunaOptionsFrame.pages[13].minimapslider = CreateFrame("Slider", "ConfigMinimapPosition", LunaOptionsFrame.pages[13], "OptionsSliderTemplate")
+    LunaOptionsFrame.pages[13].minimapslider:SetMinMaxValues(1,360)
+    LunaOptionsFrame.pages[13].minimapslider:SetValueStep(1)
+    LunaOptionsFrame.pages[13].minimapslider:SetValue(position)
+    getglobal("ConfigMinimapPositionHigh"):SetText("360°")
+    getglobal("ConfigMinimapPositionLow"):SetText("1°")
+    getglobal("ConfigMinimapPositionText"):SetText(L["MinimapPosition"]..math.floor(position + 0.5).."°")
+    LunaOptionsFrame.pages[13].minimapslider:SetScript("OnValueChanged", function()
+        local value = this:GetValue()
+        getglobal("ConfigMinimapPositionText"):SetText(L["MinimapPosition"]..value.."°")
+        
+        LunaUF.db.profile.minimapPosition = value
+        AceLibrary("FuBarPlugin-MinimapContainer-2.0"):ReadjustLocation(LunaUF)
+    end)
+    LunaOptionsFrame.pages[13].minimapslider:SetPoint("TOPLEFT", LunaOptionsFrame.pages[13].reset, "BOTTOMLEFT", 0, -40)
+    LunaOptionsFrame.pages[13].minimapslider:SetWidth(200)
+    
+    LunaOptionsFrame.pages[13].minimap = CreateFrame("CheckButton", "ConfigMinimap", LunaOptionsFrame.pages[13], "UICheckButtonTemplate")
+    LunaOptionsFrame.pages[13].minimap:SetPoint("LEFT", LunaOptionsFrame.pages[13].minimapslider, "RIGHT", 50, 0)
+    LunaOptionsFrame.pages[13].minimap:SetHeight(20)
+    LunaOptionsFrame.pages[13].minimap:SetWidth(20)
+    getglobal("ConfigMinimapText"):SetText(L["HideMinimap"])
+    LunaOptionsFrame.pages[13].minimap:SetScript("OnClick", function()
+        if LunaUF.db.profile.hidden then
+            LunaUF:Show()
+        else
+            LunaUF:Hide()
+        end
+    end)
+    
+    LunaOptionsFrame.pages[13].enable = CreateFrame("CheckButton", "ConfigEnable", LunaOptionsFrame.pages[13], "UICheckButtonTemplate")
+    LunaOptionsFrame.pages[13].enable:SetPoint("TOPLEFT", LunaOptionsFrame.pages[13].minimapslider, "BOTTOMLEFT", 0, -25)
+    LunaOptionsFrame.pages[13].enable:SetHeight(20)
+    LunaOptionsFrame.pages[13].enable:SetWidth(20)
+    getglobal("ConfigEnableText"):SetText(L["EnableAddon"])
+    LunaOptionsFrame.pages[13].enable:SetScript("OnClick", function()
+        LunaUF:ToggleActive()
+    end)
+    
+    LunaOptionsFrame.pages[13].debug = CreateFrame("CheckButton", "ConfigDebugging", LunaOptionsFrame.pages[13], "UICheckButtonTemplate")
+    LunaOptionsFrame.pages[13].debug:SetPoint("TOPLEFT", LunaOptionsFrame.pages[13].enable, "BOTTOMLEFT", 0, -15)
+    LunaOptionsFrame.pages[13].debug:SetHeight(20)
+    LunaOptionsFrame.pages[13].debug:SetWidth(20)
+    getglobal("ConfigDebuggingText"):SetText(L["DebugMode"])
+    LunaOptionsFrame.pages[13].debug:SetScript("OnClick", function()
+        if LunaUF:IsDebugging() then
+            LunaUF:SetDebugging(nil)
+        else
+            LunaUF:SetDebugging(true)
+        end
+    end)
+	
+	LunaOptionsFrame.pages[13].reset = CreateFrame("Button", "ProfileResetButton", LunaOptionsFrame.pages[13], "UIPanelButtonTemplate")
+	LunaOptionsFrame.pages[13].reset:SetPoint("TOPLEFT", LunaOptionsFrame.pages[13].debug, "BOTTOMLEFT", 0, -35)
+	LunaOptionsFrame.pages[13].reset:SetHeight(20)
+	LunaOptionsFrame.pages[13].reset:SetWidth(90)
+	LunaOptionsFrame.pages[13].reset:SetText(L["About"])
+	LunaOptionsFrame.pages[13].reset:SetScript("OnClick", function ()
+        LunaUF:PrintAddonInfo()
+	end)
+
+--------
 
 	LunaOptionsFrame.Helpframe = CreateFrame("ScrollFrame", nil, LunaOptionsFrame)
 	LunaOptionsFrame.Helpframe:SetHeight(400)

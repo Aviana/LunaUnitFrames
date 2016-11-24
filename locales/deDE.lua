@@ -381,6 +381,19 @@ local function deDE() return {
 ["rareelite"] = "rarelite",
 ["Reckoning Stacks"] = "Abrechnungsstapel",
 ["reckStacks"] = "Abrechnungsstapel",
+["Settings"] = "Einstellungen",
+["CurrentProfile"] = "Current Profile: ",
+["NewProfile"] = "New Profile:",
+["Create"] = "Create",
+["LoadProfile"] = "Load Profile:",
+["Load"] = "Load",
+["Delete"] = "Delete",
+["ResetProfile"] = "Reset Profile",
+["HideMinimap"] = "Hide minimap button",
+["EnableAddon"] = "Enable Luna Unit Frames",
+["DebugMode"] = "Debug mode",
+["MinimapPosition"] = "Minimap position: ",
+["About"] = "About",
 }
 end
 
