@@ -381,6 +381,7 @@ local function deDE() return {
 ["rareelite"] = "rarelite",
 ["Reckoning Stacks"] = "Abrechnungsstapel",
 ["reckStacks"] = "Abrechnungsstapel",
+["Position"] = "Position",
 }
 end
 

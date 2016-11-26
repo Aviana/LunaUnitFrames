@@ -628,6 +628,10 @@ function LunaUF:LoadOptions()
 		LunaOptionsFrame.pages[i].heightslider:SetValue(LunaUF.db.profile.units[unit].size.y)
 		LunaOptionsFrame.pages[i].widthslider:SetValue(LunaUF.db.profile.units[unit].size.x)
 		LunaOptionsFrame.pages[i].scaleslider:SetValue(LunaUF.db.profile.units[unit].scale)
+		if unit ~= "raid" then
+			LunaOptionsFrame.pages[i].xInput:SetText(LunaUF.db.profile.units[unit].position.x)
+			LunaOptionsFrame.pages[i].yInput:SetText(LunaUF.db.profile.units[unit].position.y)
+		end
 		LunaOptionsFrame.pages[i].indicators.load(LunaOptionsFrame.pages[i].indicators,LunaUF.db.profile.units[unit].indicators.icons)
 		LunaOptionsFrame.pages[i].enableFader:SetChecked(LunaUF.db.profile.units[unit].fader.enabled)
 		LunaOptionsFrame.pages[i].FaderCombatslider:SetValue(LunaUF.db.profile.units[unit].fader.combatAlpha)
@@ -735,6 +739,9 @@ function LunaUF:LoadOptions()
 	SetDropDownValue(LunaOptionsFrame.pages[7].sortby,LunaUF.db.profile.units.party.sortby)
 	SetDropDownValue(LunaOptionsFrame.pages[7].orderby,LunaUF.db.profile.units.party.order)
 	SetDropDownValue(LunaOptionsFrame.pages[7].growth,LunaUF.db.profile.units.party.growth)
+	SetDropDownValue(LunaOptionsFrame.pages[10].GrpSelect, "1")
+	LunaOptionsFrame.pages[10].xInput:SetText(LunaUF.db.profile.units["raid"][1].position.x)
+	LunaOptionsFrame.pages[10].yInput:SetText(LunaUF.db.profile.units["raid"][1].position.y)
 	LunaOptionsFrame.pages[10].enablerange:SetChecked(LunaUF.db.profile.units.raid.range.enabled)
 	LunaOptionsFrame.pages[10].raidrangealpha:SetValue(LunaUF.db.profile.units.raid.range.alpha)
 	LunaOptionsFrame.pages[10].enabletracker:SetChecked(LunaUF.db.profile.units.raid.squares.enabled)
@@ -1434,8 +1441,221 @@ function LunaUF:CreateOptionsMenu()
 		LunaOptionsFrame.pages[i].scaleslider:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].widthslider, "BOTTOMLEFT", 0, -30)
 		LunaOptionsFrame.pages[i].scaleslider:SetWidth(460)
 		
+		LunaOptionsFrame.pages[i].positionsHeader = LunaOptionsFrame.pages[i]:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+		LunaOptionsFrame.pages[i].positionsHeader:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].scaleslider, "BOTTOMLEFT", 0, -30)
+		LunaOptionsFrame.pages[i].positionsHeader:SetHeight(24)
+		LunaOptionsFrame.pages[i].positionsHeader:SetJustifyH("LEFT")
+		LunaOptionsFrame.pages[i].positionsHeader:SetTextColor(1,1,0)
+		LunaOptionsFrame.pages[i].positionsHeader:SetText(L["Position"])
+
+		LunaOptionsFrame.pages[i].xInput = CreateFrame("Editbox", "xInput"..LunaOptionsFrame.pages[i].id, LunaOptionsFrame.pages[i], "InputBoxTemplate")
+		LunaOptionsFrame.pages[i].xInput:SetHeight(20)
+		LunaOptionsFrame.pages[i].xInput:SetWidth(150)
+		LunaOptionsFrame.pages[i].xInput:SetAutoFocus(nil)
+		LunaOptionsFrame.pages[i].xInput:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].positionsHeader, "BOTTOMLEFT", 50, -30)
+		LunaOptionsFrame.pages[i].xInput:SetScript("OnEnterPressed", function()
+					local unit = this:GetParent().id
+					local value = tonumber(this:GetText())
+					local diff
+					this:ClearFocus()
+					if unit == "raid" then
+						val = LunaUF.db.profile.units["raid"][UIDropDownMenu_GetSelectedID(LunaOptionsFrame.pages[10].GrpSelect)].position
+						if UIDropDownMenu_GetSelectedID(LunaOptionsFrame.pages[10].GrpSelect) ~= 1 and LunaUF.db.profile.units.raid.interlock then
+							this:SetText(val.x)
+							return
+						end
+						unit = unit..UIDropDownMenu_GetSelectedID(LunaOptionsFrame.pages[10].GrpSelect)
+					else
+						val = LunaUF.db.profile.units[unit].position
+					end
+					if value then
+						diff = val.x - value
+						val.x = value
+					else
+						this:SetText(val.x)
+						return
+					end
+					local frame, scale
+					if LunaUF.Units.unitFrames[unit] then
+						frame = LunaUF.Units.unitFrames[unit]
+						scale = frame:GetScale() * UIParent:GetScale()
+					else
+						frame = LunaUF.Units.headerFrames[unit]
+						scale = 1
+					end
+					frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", val.x / scale, val.y / scale)
+					if unit == "raid1" and LunaUF.db.profile.units.raid.interlock then -- Group 2-9 moved because we move group 1 so save their position too
+						for i=2,9 do
+							LunaUF.db.profile.units.raid[i].position.x = LunaUF.db.profile.units.raid[i].position.x - diff
+						end
+					end
+				end)	
+
+		LunaOptionsFrame.pages[i].yInput = CreateFrame("Editbox", "yInput"..LunaOptionsFrame.pages[i].id, LunaOptionsFrame.pages[i], "InputBoxTemplate")
+		LunaOptionsFrame.pages[i].yInput:SetHeight(20)
+		LunaOptionsFrame.pages[i].yInput:SetWidth(150)
+		LunaOptionsFrame.pages[i].yInput:SetAutoFocus(nil)
+		LunaOptionsFrame.pages[i].yInput:SetPoint("LEFT", LunaOptionsFrame.pages[i].xInput, "RIGHT", 10, 0)
+		LunaOptionsFrame.pages[i].yInput:SetScript("OnEnterPressed", function()
+					local unit = this:GetParent().id
+					local value = tonumber(this:GetText())
+					local val, diff
+					this:ClearFocus()
+					if unit == "raid" then
+						val = LunaUF.db.profile.units["raid"][UIDropDownMenu_GetSelectedID(LunaOptionsFrame.pages[10].GrpSelect)].position
+						if UIDropDownMenu_GetSelectedID(LunaOptionsFrame.pages[10].GrpSelect) ~= 1 and LunaUF.db.profile.units.raid.interlock then
+							this:SetText(val.y)
+							return
+						end
+						unit = unit..UIDropDownMenu_GetSelectedID(LunaOptionsFrame.pages[10].GrpSelect)
+					else
+						val = LunaUF.db.profile.units[unit].position
+					end
+					if value then
+						diff = val.y - value
+						val.y = value
+					else
+						this:SetText(val.y)
+						return
+					end
+					local frame, scale
+					if LunaUF.Units.unitFrames[unit] then
+						frame = LunaUF.Units.unitFrames[unit]
+						scale = frame:GetScale() * UIParent:GetScale()
+					else
+						frame = LunaUF.Units.headerFrames[unit]
+						scale = 1
+					end
+					frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", val.x / scale, val.y / scale)
+					if unit == "raid1" and LunaUF.db.profile.units.raid.interlock then -- Group 2-9 moved because we move group 1 so save their position too
+						for i=2,9 do
+							LunaUF.db.profile.units.raid[i].position.y = LunaUF.db.profile.units.raid[i].position.y - diff
+						end
+					end
+				end)	
+				
+		LunaOptionsFrame.pages[i].ButtonUp = CreateFrame("Button", "ButtonUp"..LunaOptionsFrame.pages[i].id, LunaOptionsFrame.pages[i], "UIPanelButtonTemplate")
+		LunaOptionsFrame.pages[i].ButtonUp:SetPoint("BOTTOM", LunaOptionsFrame.pages[i].xInput, "TOPRIGHT", 2, 2)
+		LunaOptionsFrame.pages[i].ButtonUp:SetHeight(20)
+		LunaOptionsFrame.pages[i].ButtonUp:SetWidth(20)
+		LunaOptionsFrame.pages[i].ButtonUp:SetText("^")
+		LunaOptionsFrame.pages[i].ButtonUp:SetScript("OnClick", function()
+					local unit = this:GetParent().id
+					local val
+					if unit == "raid" then
+						if UIDropDownMenu_GetSelectedID(LunaOptionsFrame.pages[10].GrpSelect) ~= 1 and LunaUF.db.profile.units.raid.interlock then
+							return
+						end
+						val = LunaUF.db.profile.units["raid"][UIDropDownMenu_GetSelectedID(LunaOptionsFrame.pages[10].GrpSelect)].position
+						unit = unit..UIDropDownMenu_GetSelectedID(LunaOptionsFrame.pages[10].GrpSelect)
+					else
+						val = LunaUF.db.profile.units[unit].position
+					end
+					local frame, scale
+					if LunaUF.Units.unitFrames[unit] then
+						frame = LunaUF.Units.unitFrames[unit]
+						scale = frame:GetScale() * UIParent:GetScale()
+					else
+						frame = LunaUF.Units.headerFrames[unit]
+						scale = 1
+					end
+					val.y = val.y + 1
+					this:GetParent().yInput:SetText(val.y)
+					frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", val.x / scale, val.y / scale)
+		end)
+
+		LunaOptionsFrame.pages[i].ButtonDown = CreateFrame("Button", "ButtonDown"..LunaOptionsFrame.pages[i].id, LunaOptionsFrame.pages[i], "UIPanelButtonTemplate")
+		LunaOptionsFrame.pages[i].ButtonDown:SetPoint("TOP", LunaOptionsFrame.pages[i].xInput, "BOTTOMRIGHT", 2, -2)
+		LunaOptionsFrame.pages[i].ButtonDown:SetHeight(20)
+		LunaOptionsFrame.pages[i].ButtonDown:SetWidth(20)
+		LunaOptionsFrame.pages[i].ButtonDown:SetText("v")
+		LunaOptionsFrame.pages[i].ButtonDown:SetScript("OnClick", function()
+					local unit = this:GetParent().id
+					local val
+					if unit == "raid" then
+						if UIDropDownMenu_GetSelectedID(LunaOptionsFrame.pages[10].GrpSelect) ~= 1 and LunaUF.db.profile.units.raid.interlock then
+							return
+						end
+						val = LunaUF.db.profile.units["raid"][UIDropDownMenu_GetSelectedID(LunaOptionsFrame.pages[10].GrpSelect)].position
+						unit = unit..UIDropDownMenu_GetSelectedID(LunaOptionsFrame.pages[10].GrpSelect)
+					else
+						val = LunaUF.db.profile.units[unit].position
+					end
+					local frame, scale
+					if LunaUF.Units.unitFrames[unit] then
+						frame = LunaUF.Units.unitFrames[unit]
+						scale = frame:GetScale() * UIParent:GetScale()
+					else
+						frame = LunaUF.Units.headerFrames[unit]
+						scale = 1
+					end
+					val.y = val.y - 1
+					this:GetParent().yInput:SetText(val.y)
+					frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", val.x / scale, val.y / scale)
+		end)
+
+		LunaOptionsFrame.pages[i].ButtonLeft = CreateFrame("Button", "ButtonLeft"..LunaOptionsFrame.pages[i].id, LunaOptionsFrame.pages[i], "UIPanelButtonTemplate")
+		LunaOptionsFrame.pages[i].ButtonLeft:SetPoint("RIGHT", LunaOptionsFrame.pages[i].xInput, "LEFT", -6, 0)
+		LunaOptionsFrame.pages[i].ButtonLeft:SetHeight(20)
+		LunaOptionsFrame.pages[i].ButtonLeft:SetWidth(20)
+		LunaOptionsFrame.pages[i].ButtonLeft:SetText("<")
+		LunaOptionsFrame.pages[i].ButtonLeft:SetScript("OnClick", function()
+					local unit = this:GetParent().id
+					local val
+					if unit == "raid" then
+						if UIDropDownMenu_GetSelectedID(LunaOptionsFrame.pages[10].GrpSelect) ~= 1 and LunaUF.db.profile.units.raid.interlock then
+							return
+						end
+						val = LunaUF.db.profile.units["raid"][UIDropDownMenu_GetSelectedID(LunaOptionsFrame.pages[10].GrpSelect)].position
+						unit = unit..UIDropDownMenu_GetSelectedID(LunaOptionsFrame.pages[10].GrpSelect)
+					else
+						val = LunaUF.db.profile.units[unit].position
+					end
+					local frame, scale
+					if LunaUF.Units.unitFrames[unit] then
+						frame = LunaUF.Units.unitFrames[unit]
+						scale = frame:GetScale() * UIParent:GetScale()
+					else
+						frame = LunaUF.Units.headerFrames[unit]
+						scale = 1
+					end
+					val.x = val.x - 1
+					this:GetParent().xInput:SetText(val.x)
+					frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", val.x / scale, val.y / scale)
+		end)
+
+		LunaOptionsFrame.pages[i].ButtonRight = CreateFrame("Button", "ButtonRight"..LunaOptionsFrame.pages[i].id, LunaOptionsFrame.pages[i], "UIPanelButtonTemplate")
+		LunaOptionsFrame.pages[i].ButtonRight:SetPoint("LEFT", LunaOptionsFrame.pages[i].yInput, "RIGHT", 2, 0)
+		LunaOptionsFrame.pages[i].ButtonRight:SetHeight(20)
+		LunaOptionsFrame.pages[i].ButtonRight:SetWidth(20)
+		LunaOptionsFrame.pages[i].ButtonRight:SetText(">")
+		LunaOptionsFrame.pages[i].ButtonRight:SetScript("OnClick", function()
+					local unit = this:GetParent().id
+					local val
+					if unit == "raid" then
+						if UIDropDownMenu_GetSelectedID(LunaOptionsFrame.pages[10].GrpSelect) ~= 1 and LunaUF.db.profile.units.raid.interlock then
+							return
+						end
+						val = LunaUF.db.profile.units["raid"][UIDropDownMenu_GetSelectedID(LunaOptionsFrame.pages[10].GrpSelect)].position
+						unit = unit..UIDropDownMenu_GetSelectedID(LunaOptionsFrame.pages[10].GrpSelect)
+					else
+						val = LunaUF.db.profile.units[unit].position
+					end
+					local frame, scale
+					if LunaUF.Units.unitFrames[unit] then
+						frame = LunaUF.Units.unitFrames[unit]
+						scale = frame:GetScale() * UIParent:GetScale()
+					else
+						frame = LunaUF.Units.headerFrames[unit]
+						scale = 1
+					end
+					val.x = val.x + 1
+					this:GetParent().xInput:SetText(val.x)
+					frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", val.x / scale, val.y / scale)
+		end)		
+		
 		LunaOptionsFrame.pages[i].indicatorsHeader = LunaOptionsFrame.pages[i]:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-		LunaOptionsFrame.pages[i].indicatorsHeader:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].scaleslider, "BOTTOMLEFT", 0, -30)
+		LunaOptionsFrame.pages[i].indicatorsHeader:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].positionsHeader, "BOTTOMLEFT", 0, -80)
 		LunaOptionsFrame.pages[i].indicatorsHeader:SetHeight(24)
 		LunaOptionsFrame.pages[i].indicatorsHeader:SetJustifyH("LEFT")
 		LunaOptionsFrame.pages[i].indicatorsHeader:SetTextColor(1,1,0)
@@ -2693,6 +2913,31 @@ function LunaUF:CreateOptionsMenu()
 	LunaOptionsFrame.pages[7].growthDesc:SetPoint("BOTTOM", LunaOptionsFrame.pages[7].growth, "TOP")
 	LunaOptionsFrame.pages[7].growthDesc:SetText(L["Growth direction"])
 	
+	LunaOptionsFrame.pages[10].GrpSelDesc = LunaOptionsFrame.pages[10]:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+	LunaOptionsFrame.pages[10].GrpSelDesc:SetPoint("TOPLEFT", LunaOptionsFrame.pages[10].positionsHeader, "BOTTOMLEFT", 0, -10)
+	LunaOptionsFrame.pages[10].GrpSelDesc:SetText("GRP")
+	
+	LunaOptionsFrame.pages[10].GrpSelect = CreateFrame("Button", "GrpSelector", LunaOptionsFrame.pages[10], "UIDropDownMenuTemplate")
+	LunaOptionsFrame.pages[10].GrpSelect:SetPoint("TOPLEFT", LunaOptionsFrame.pages[10].GrpSelDesc, "TOPLEFT", 10 , 10)
+	UIDropDownMenu_SetWidth(40, LunaOptionsFrame.pages[10].GrpSelect)
+	UIDropDownMenu_JustifyText("RIGHT", LunaOptionsFrame.pages[10].GrpSelect)
+
+	UIDropDownMenu_Initialize(LunaOptionsFrame.pages[10].GrpSelect, function()
+		local info={}
+		for i=1, 9 do
+			info.text=tostring(i)
+			info.value=tostring(i)
+			info.func= function ()
+				UIDropDownMenu_SetSelectedID(LunaOptionsFrame.pages[10].GrpSelect, this:GetID())
+				LunaOptionsFrame.pages[10].xInput:SetText(LunaUF.db.profile.units["raid"][tonumber(this:GetText())].position.x)
+				LunaOptionsFrame.pages[10].yInput:SetText(LunaUF.db.profile.units["raid"][tonumber(this:GetText())].position.y)
+			end
+			info.checked = nil
+			info.checkable = nil
+			UIDropDownMenu_AddButton(info, 1)
+		end
+	end)
+	
 	LunaOptionsFrame.pages[10].rangedesc = LunaOptionsFrame.pages[10]:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
 	LunaOptionsFrame.pages[10].rangedesc:SetPoint("TOPLEFT", LunaOptionsFrame.pages[10].barorder, "BOTTOMLEFT", 0, -30)
 	LunaOptionsFrame.pages[10].rangedesc:SetHeight(24)
@@ -3040,6 +3285,12 @@ function LunaUF:CreateOptionsMenu()
 	LunaOptionsFrame.pages[10].interlock:SetScript("OnClick", function()
 		LunaUF.db.profile.units.raid.interlock = not LunaUF.db.profile.units.raid.interlock
 		LunaUF.Units:LoadRaidGroupHeader()
+		if LunaUF.db.profile.units.raid.interlock then -- Frames 2-9 just snapped to frame 1 so save their new position
+			for i=2,9 do
+				LunaUF.db.profile.units.raid[i].position.x = LunaUF.Units.headerFrames["raid"..i]:GetLeft()
+				LunaUF.db.profile.units.raid[i].position.y = (UIParent:GetHeight()/UIParent:GetScale()-LunaUF.Units.headerFrames["raid"..i]:GetTop()) * -1
+			end
+		end
 	end)
 	getglobal("InterlockRaidFramesText"):SetText(L["Interlock raidframes"])
 	

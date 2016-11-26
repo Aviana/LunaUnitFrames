@@ -305,6 +305,12 @@ local function StopMovingOrSizing()
 	this:StopMovingOrSizing()
 	LunaUF.db.profile.units[this.unitGroup].position.x = x * scale
 	LunaUF.db.profile.units[this.unitGroup].position.y = y * scale
+	for i=2,6 do
+		if LunaOptionsFrame.pages[i].id == this.unitGroup then
+			LunaOptionsFrame.pages[i].xInput:SetText(x)
+			LunaOptionsFrame.pages[i].yInput:SetText(y)
+		end
+	end
 end
 
 local function HeaderStartMoving()
@@ -317,19 +323,44 @@ end
 
 local function GroupHeaderStopMovingOrSizing()
 	this:GetParent():StopMovingOrSizing()
-	LunaUF.db.profile.units[this:GetParent().unitGroup].position.x = this:GetParent():GetLeft()
-	LunaUF.db.profile.units[this:GetParent().unitGroup].position.y = (UIParent:GetHeight()/UIParent:GetScale()-this:GetParent():GetTop()) * -1
+	local unit = this:GetParent().unitGroup
+	local x,y
+	x = this:GetParent():GetLeft()
+	y = (UIParent:GetHeight()/UIParent:GetScale()-this:GetParent():GetTop()) * -1
+	LunaUF.db.profile.units[this:GetParent().unitGroup].position.x = x
+	LunaUF.db.profile.units[this:GetParent().unitGroup].position.y = y
+	for i=7,9 do
+		if LunaOptionsFrame.pages[i].id == unit then
+			LunaOptionsFrame.pages[i].xInput:SetText(x)
+			LunaOptionsFrame.pages[i].yInput:SetText(y)
+		end
+	end
 end
 
 local function RaidHeaderStopMovingOrSizing()
+	local x,y
 	if LunaUF.db.profile.units.raid.interlock then
 		headerFrames.raid1:StopMovingOrSizing()
-		LunaUF.db.profile.units.raid[1].position.x = headerFrames.raid1:GetLeft()
-		LunaUF.db.profile.units.raid[1].position.y = (UIParent:GetHeight()/UIParent:GetScale()-headerFrames.raid1:GetTop()) * -1
+		for i=1,9 do
+			x = headerFrames["raid"..i]:GetLeft()
+			y = (UIParent:GetHeight()/UIParent:GetScale()-headerFrames["raid"..i]:GetTop()) * -1
+			LunaUF.db.profile.units.raid[i].position.x = x
+			LunaUF.db.profile.units.raid[i].position.y = y
+			if UIDropDownMenu_GetSelectedID(LunaOptionsFrame.pages[10].GrpSelect) == i then
+				LunaOptionsFrame.pages[10].xInput:SetText(x)
+				LunaOptionsFrame.pages[10].yInput:SetText(y)
+			end
+		end
 	else
 		this:GetParent():StopMovingOrSizing()
-		LunaUF.db.profile.units.raid[this:GetParent().id].position.x = this:GetParent():GetLeft()
-		LunaUF.db.profile.units.raid[this:GetParent().id].position.y = (UIParent:GetHeight()/UIParent:GetScale()-this:GetParent():GetTop()) * -1
+		x = this:GetParent():GetLeft()
+		y = (UIParent:GetHeight()/UIParent:GetScale()-this:GetParent():GetTop()) * -1
+		LunaUF.db.profile.units.raid[this:GetParent().id].position.x = x
+		LunaUF.db.profile.units.raid[this:GetParent().id].position.y = y
+		if UIDropDownMenu_GetSelectedID(LunaOptionsFrame.pages[10].GrpSelect) == this:GetParent().id then
+			LunaOptionsFrame.pages[10].xInput:SetText(x)
+			LunaOptionsFrame.pages[10].yInput:SetText(y)
+		end
 	end
 end
 

@@ -378,6 +378,7 @@ local function zhCN() return {
 ["rareelite"] = "稀有精英",
 ["Reckoning Stacks"] = "Reckoning Stacks",
 ["reckStacks"] = "Reckoning Stacks",
+["Position"] = "Position",
 }
 end
 
