@@ -379,6 +379,7 @@ local function frFR() return {
 ["rareelite"] = "rareelite",
 ["Reckoning Stacks"] = "Reckoning Stacks",
 ["reckStacks"] = "Reckoning Stacks",
+["Position"] = "Position",
 }
 end
 
