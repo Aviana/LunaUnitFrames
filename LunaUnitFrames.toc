@@ -1,10 +1,13 @@
 ## Interface: 11200
-## Title: Luna Unit Frames
+## Title: Luna Unit Frames |cff7fff7f-Ace2-|r
 ## Title-zhCN: LunaUF |cffffffff露娜框架|r |cff7fff7f-Ace2-|r
+## Title-deDE: Luna Unit Frames |cff7fff7f-Ace2-|r
 ## Notes: Lightweight Unit Frames in a modern look.
 ## Notes-zhCN: 轻量级的现代风框架
+## Notes-deDE: Einfache UnitFrames mit modernem Aussehen.
 ## Author: Avi
 ## Author-zhCN: 原作者Avi，中文协作者zerosnake0
+## Author-deDE: Avi
 ##
 ## Dependencies:
 ## SavedVariables: LunaDB, LunaBuffDB
