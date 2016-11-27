@@ -1,34 +1,21 @@
 local ReckStacks = {}
-LunaUF:RegisterModule(ReckStacks, "reckStacks", LunaUF.L["Reckoning Stacks"])
+local L = LunaUF.L
+LunaUF:RegisterModule(ReckStacks, "reckStacks", L["Reckoning Stacks"])
 local _,playerclass = UnitClass("player")
 local currStacks = 0
 local talentRank
 
-local events
+local events = {
+	CHAT_MSG_COMBAT_SELF_HITS = L["CHAT_MSG_COMBAT_SELF_HITS"],
+	CHAT_MSG_COMBAT_FRIENDLY_DEATH = L["CHAT_MSG_COMBAT_FRIENDLY_DEATH"],
+	
+	CHAT_MSG_COMBAT_CREATURE_VS_SELF_HITS = L["CHAT_MSG_COMBAT_CREATURE_VS_SELF_HITS"],
+	CHAT_MSG_COMBAT_HOSTILEPLAYER_HITS = L["CHAT_MSG_COMBAT_HOSTILEPLAYER_HITS"],
+	
+	CHAT_MSG_SPELL_CREATURE_VS_SELF_DAMAGE = L["CHAT_MSG_SPELL_CREATURE_VS_SELF_DAMAGE"],
+	CHAT_MSG_SPELL_HOSTILEPLAYER_DAMAGE = L["CHAT_MSG_SPELL_HOSTILEPLAYER_DAMAGE"],
+}
 
-if ( GetLocale() == "deDE" ) then
-	events = {
-		CHAT_MSG_COMBAT_SELF_HITS = "Ihr trefft .+",
-		CHAT_MSG_COMBAT_FRIENDLY_DEATH = "Ihr sterbt.",
-
-		CHAT_MSG_COMBAT_CREATURE_VS_SELF_HITS = ".+ trifft (%a+) kritisch: %d+ Schaden%.",
-		CHAT_MSG_COMBAT_HOSTILEPLAYER_HITS = ".+ trifft (Euch) kritisch: %d+ Schaden%.",
-
-		CHAT_MSG_SPELL_CREATURE_VS_SELF_DAMAGE = ".+s .+ trifft (%a+) kritisch: .+",
-		CHAT_MSG_SPELL_HOSTILEPLAYER_DAMAGE = ".+s .+ trifft (Euch) kritisch: .+",
-	}
-else
-	events = {
-		CHAT_MSG_COMBAT_SELF_HITS = "You c?[rh]it .+ for .+",
-		CHAT_MSG_COMBAT_FRIENDLY_DEATH = "You die.",
-		
-		CHAT_MSG_COMBAT_CREATURE_VS_SELF_HITS = ".+ crits (%a+) for .+",
-		CHAT_MSG_COMBAT_HOSTILEPLAYER_HITS = ".+ crits (you) for .+",
-		
-		CHAT_MSG_SPELL_CREATURE_VS_SELF_DAMAGE = ".+'s .+ crits (%a+) for .+",
-		CHAT_MSG_SPELL_HOSTILEPLAYER_DAMAGE = ".+'s .+ crits (you) for .+",
-	}
-end
 
 local function OnEvent()
 	if event == "CHARACTER_POINTS_CHANGED" then
