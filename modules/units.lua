@@ -244,6 +244,14 @@ local function ShowMenu()
 	end
 end
 
+local function CastSpellByName_IgnoreSelfCast(spell)
+	local sc = GetCVar("AutoSelfCast")
+	SetCVar("AutoSelfCast", "0")
+	-- make sure that this call doesn't fail, otherwise the CVar may not be restored
+	pcall(CastSpellByName, spell)
+	SetCVar("AutoSelfCast", sc)
+end
+
 local func = {}
 local function OnClick()
 	if Luna_Custom_ClickFunction and Luna_Custom_ClickFunction(arg1, this.unit) then
@@ -260,7 +268,7 @@ local function OnClick()
 			else
 				this:ShowMenu()
 			end
-		elseif action == L["target"] or SpellIsTargeting() then
+		elseif action == L["target"] then
 			if (SpellIsTargeting()) then
 				SpellTargetUnit(this.unit)
 			elseif (CursorHasItem()) then
@@ -273,23 +281,29 @@ local function OnClick()
 			if not func[action] then
 				func[action] = loadstring(action or "")
 			end
+			SpellStopTargeting()
 			if func[action] then
 				func[action]()
 			else
-				CastSpellByName(action)
+				CastSpellByName_IgnoreSelfCast(action)
+				SpellStopTargeting()
 			end
 		else
 			if not func[action] then
 				func[action] = loadstring(action or "")
 			end
+			SpellStopTargeting()
 			Units.pauseUpdates = true
+
 			TargetUnit(this.unit)
 			if func[action] then
 				func[action]()
 			else
-				CastSpellByName(action)
+				CastSpellByName_IgnoreSelfCast(action)
+				SpellStopTargeting()
 			end
 			TargetLastTarget()
+
 			Units.pauseUpdates = nil
 		end
 	end
