@@ -260,7 +260,7 @@ local function OnClick()
 			else
 				this:ShowMenu()
 			end
-		elseif action == L["target"] or SpellIsTargeting() then
+		elseif action == L["target"] then
 			if (SpellIsTargeting()) then
 				SpellTargetUnit(this.unit)
 			elseif (CursorHasItem()) then
@@ -273,23 +273,29 @@ local function OnClick()
 			if not func[action] then
 				func[action] = loadstring(action or "")
 			end
+			SpellStopTargeting()
 			if func[action] then
 				func[action]()
 			else
 				CastSpellByName(action)
+				SpellStopTargeting()
 			end
 		else
 			if not func[action] then
 				func[action] = loadstring(action or "")
 			end
+			SpellStopTargeting()
 			Units.pauseUpdates = true
+
 			TargetUnit(this.unit)
 			if func[action] then
 				func[action]()
 			else
 				CastSpellByName(action)
+				SpellStopTargeting()
 			end
 			TargetLastTarget()
+
 			Units.pauseUpdates = nil
 		end
 	end
