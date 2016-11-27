@@ -376,9 +376,9 @@ local function zhCN() return {
 ["content"] = "满足",
 ["worldboss"] = "首领",
 ["rareelite"] = "稀有精英",
-["Reckoning Stacks"] = "Reckoning Stacks",
-["reckStacks"] = "Reckoning Stacks",
-["Position"] = "Position",
+["Reckoning Stacks"] = "清算条",
+["reckStacks"] = "清算条",
+["Position"] = "位置",
 }
 end
 
