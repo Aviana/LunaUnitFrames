@@ -646,7 +646,8 @@ function Units:CreateUnit(a1, a2, a3, a4)
 
 	frame:SetFrameStrata("BACKGROUND")
 	frame:SetClampedToScreen(1)
-	frame:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up')
+	local click_action = LunaUF.db.profile.clickcasting.mouseDownClicks and "Down" or "Up"
+	frame:RegisterForClicks('LeftButton' .. click_action, 'RightButton' .. click_action, 'MiddleButton' .. click_action, 'Button4' .. click_action, 'Button5' .. click_action)
 	frame:SetScript("OnClick", OnClick)
 	frame:SetBackdrop(LunaUF.constants.backdrop)
 	frame:SetBackdropColor(LunaUF.db.profile.bgcolor.r,LunaUF.db.profile.bgcolor.g,LunaUF.db.profile.bgcolor.b,LunaUF.db.profile.bgalpha)
