@@ -777,6 +777,7 @@ function LunaUF:LoadOptions()
 	SetDropDownValue(LunaOptionsFrame.pages[10].growth,LunaUF.db.profile.units.raid.growth)
 	SetDropDownValue(LunaOptionsFrame.pages[10].mode,LunaUF.db.profile.units.raid.mode)
 	ToggleDropDownMenu(1,nil,LunaOptionsFrame.pages[10].mode)
+	LunaOptionsFrame.pages[11].mouseDownClicks:SetChecked(LunaUF.db.profile.clickcasting.mouseDownClicks)
 	LunaOptionsFrame.pages[11].Load()
 end
 
@@ -3441,8 +3442,21 @@ function LunaUF:CreateOptionsMenu()
 
 --------
 	
+	LunaOptionsFrame.pages[11].mouseDownClicks = CreateFrame("CheckButton", "MouseDownClicks", LunaOptionsFrame.pages[11], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[11].mouseDownClicks:SetPoint("TOPLEFT", LunaOptionsFrame.pages[11], "TOPLEFT", 20, -40)
+	LunaOptionsFrame.pages[11].mouseDownClicks:SetHeight(30)
+	LunaOptionsFrame.pages[11].mouseDownClicks:SetWidth(30)
+	LunaOptionsFrame.pages[11].mouseDownClicks:SetScript("OnClick", function()
+		LunaUF.db.profile.clickcasting.mouseDownClicks = not LunaUF.db.profile.clickcasting.mouseDownClicks
+		local click_action = LunaUF.db.profile.clickcasting.mouseDownClicks and "Down" or "Up"
+		for _,frame in pairs(LunaUF.Units.frameList) do
+			frame:RegisterForClicks('LeftButton' .. click_action, 'RightButton' .. click_action, 'MiddleButton' .. click_action, 'Button4' .. click_action, 'Button5' .. click_action)
+		end
+	end)
+	getglobal("MouseDownClicksText"):SetText(L["Cast on mouse down"])
+
 	LunaOptionsFrame.pages[11].Button = CreateFrame("Button", "ClickCastBindButton", LunaOptionsFrame.pages[11], "UIPanelButtonTemplate")
-	LunaOptionsFrame.pages[11].Button:SetPoint("TOPLEFT", LunaOptionsFrame.pages[11], "TOPLEFT", 20, -80)
+	LunaOptionsFrame.pages[11].Button:SetPoint("TOPLEFT", LunaOptionsFrame.pages[11].mouseDownClicks, "BOTTOMLEFT", 0, -30)
 	LunaOptionsFrame.pages[11].Button:SetHeight(20)
 	LunaOptionsFrame.pages[11].Button:SetWidth(180)
 	LunaOptionsFrame.pages[11].Button:SetText(L["Click me"])
@@ -3460,9 +3474,9 @@ function LunaUF:CreateOptionsMenu()
 	LunaOptionsFrame.pages[11].input:SetScript("OnEnterPressed", function()
 		this:ClearFocus()
 	end)
-	
+
 	LunaOptionsFrame.pages[11].Add = CreateFrame("Button", "ClickCastAddButton", LunaOptionsFrame.pages[11], "UIPanelButtonTemplate")
-	LunaOptionsFrame.pages[11].Add:SetPoint("CENTER", LunaOptionsFrame.pages[11], "TOP", 0, -120)
+	LunaOptionsFrame.pages[11].Add:SetPoint("CENTER", LunaOptionsFrame.pages[11], "TOP", 0, -140)
 	LunaOptionsFrame.pages[11].Add:SetHeight(20)
 	LunaOptionsFrame.pages[11].Add:SetWidth(90)
 	LunaOptionsFrame.pages[11].Add:SetText(L["Add"])
@@ -3473,7 +3487,6 @@ function LunaUF:CreateOptionsMenu()
 			LunaOptionsFrame.pages[11].Load()
 		end
 	end)
-
 	LunaOptionsFrame.pages[11].bindtexts = {}
 	LunaOptionsFrame.pages[11].actiontexts = {}
 	LunaOptionsFrame.pages[11].delbuttons = {}

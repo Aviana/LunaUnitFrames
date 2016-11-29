@@ -85,7 +85,7 @@ LunaUF.defaults = {
 			["Poison"] = {0, 0.6, 0},
 		},
 		clickcasting = {
-			onlyFrames = true,
+			mouseDownClicks = false,
 			bindings = {
 				[L["LeftButton"]] = L["target"],
 				[L["RightButton"]] = L["menu"],
