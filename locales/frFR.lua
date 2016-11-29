@@ -179,6 +179,7 @@ local function frFR() return {
 ["druidBar"] = "Druid Bar",
 ["totemBar"] = "Totem Bar",
 ["Click me"] = "Click me",
+["Cast on mouse down"] = "Cast on mouse down",
 ["Xpcolors"] = "Xpcolors",
 ["Add"] = "Add",
 ["Totem Bar"] = "Totem Bar",

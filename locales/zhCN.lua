@@ -179,6 +179,7 @@ local function zhCN() return {
 ["druidBar"] = "德鲁伊条",
 ["totemBar"] = "图腾条",
 ["Click me"] = "点我",
+["Cast on mouse down"] = "Cast on mouse down",
 ["Xpcolors"] = "经验颜色",
 ["Add"] = "增加",
 ["Totem Bar"] = "图腾条",

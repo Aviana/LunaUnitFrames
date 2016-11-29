@@ -182,6 +182,7 @@ local function deDE() return {
 ["druidBar"] = "Druiden Balken",
 ["totemBar"] = "Totem Balken",
 ["Click me"] = "Klick mich",
+["Cast on mouse down"] = "Wirken bei Taste runter",
 ["Xpcolors"] = "Erfahrungsfarben",
 ["Add"] = "Hinzufügen",
 ["Totem Bar"] = "Totem Balken",

@@ -1,7 +1,7 @@
 ## Interface: 11200
-## Title: Luna Unit Frames |cff7fff7f-Ace2-|r
+## Title: Luna Unit Frames
 ## Title-zhCN: LunaUF |cffffffff露娜框架|r |cff7fff7f-Ace2-|r
-## Title-deDE: Luna Unit Frames |cff7fff7f-Ace2-|r
+## Title-deDE: Luna Unit Frames
 ## Notes: Lightweight Unit Frames in a modern look.
 ## Notes-zhCN: 轻量级的现代风框架
 ## Notes-deDE: Einfache UnitFrames mit modernem Aussehen.
