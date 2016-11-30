@@ -356,6 +356,7 @@ local function deDE() return {
 [", (%a+)"] = ", (%a+)",
 ["Combat alpha"] = "Kampf alpha",
 ["Non combat alpha"] = "Nicht Kampf alpha",
+["Speedy Fade"] = "Schneller Wechsel",
 ["#invalidTag#"] = "#ung\195\188ltiges Etikett#",
 ["LeftButton"] = "Linker Knopf",
 ["RightButton"] = "Rechter Knopf",

@@ -353,6 +353,7 @@ local function zhCN() return {
 [", (%a+)"] = ", ([^,]+)",
 ["Combat alpha"] = "战斗透明度",
 ["Non combat alpha"] = "非战斗透明度",
+["Speedy Fade"] = "Speedy Fade",
 ["#invalidTag#"] = "#无效标签#",
 ["LeftButton"] = "鼠标左键",
 ["RightButton"] = "鼠标右键",

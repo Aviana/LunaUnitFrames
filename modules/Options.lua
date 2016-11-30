@@ -636,6 +636,7 @@ function LunaUF:LoadOptions()
 		LunaOptionsFrame.pages[i].enableFader:SetChecked(LunaUF.db.profile.units[unit].fader.enabled)
 		LunaOptionsFrame.pages[i].FaderCombatslider:SetValue(LunaUF.db.profile.units[unit].fader.combatAlpha)
 		LunaOptionsFrame.pages[i].FaderNonCombatslider:SetValue(LunaUF.db.profile.units[unit].fader.inactiveAlpha)
+		LunaOptionsFrame.pages[i].speedyFade:SetChecked(LunaUF.db.profile.units[unit].fader.speedyFade)
 		LunaOptionsFrame.pages[i].enableCtext:SetChecked(LunaUF.db.profile.units[unit].combatText.enabled)
 		LunaOptionsFrame.pages[i].ctextscaleslider:SetValue(LunaUF.db.profile.units[unit].combatText.size)
 		LunaOptionsFrame.pages[i].ctextXslider:SetValue(LunaUF.db.profile.units[unit].combatText.xoffset)
@@ -1719,10 +1720,25 @@ function LunaUF:CreateOptionsMenu()
 		LunaOptionsFrame.pages[i].FaderNonCombatslider:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].faderheader, "BOTTOMLEFT", 220, -50)
 		LunaOptionsFrame.pages[i].FaderNonCombatslider:SetWidth(200)
 		
+		LunaOptionsFrame.pages[i].speedyFade = CreateFrame("CheckButton", "Speedy"..LunaUF.unitList[i-1].."Fade", LunaOptionsFrame.pages[i], "UICheckButtonTemplate")
+		LunaOptionsFrame.pages[i].speedyFade:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].FaderCombatslider, "BOTTOMLEFT", 0, -25)
+		LunaOptionsFrame.pages[i].speedyFade:SetHeight(30)
+		LunaOptionsFrame.pages[i].speedyFade:SetWidth(30)
+		LunaOptionsFrame.pages[i].speedyFade:SetScript("OnClick", function()
+			local unit = this:GetParent().id
+			LunaUF.db.profile.units[unit].fader.speedyFade = not LunaUF.db.profile.units[unit].fader.speedyFade
+			for _,frame in pairs(LunaUF.Units.frameList) do
+				if frame.unitGroup == unit then
+					LunaUF.Units:SetupFrameModules(frame)
+				end
+			end
+		end)
+		getglobal("Speedy"..LunaUF.unitList[i-1].."FadeText"):SetText(L["Speedy Fade"])
+		
 		----
 		
 		LunaOptionsFrame.pages[i].ctextheader = LunaOptionsFrame.pages[i]:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-		LunaOptionsFrame.pages[i].ctextheader:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].faderheader, "BOTTOMLEFT", 0, -100)
+		LunaOptionsFrame.pages[i].ctextheader:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].faderheader, "BOTTOMLEFT", 0, -130)
 		LunaOptionsFrame.pages[i].ctextheader:SetHeight(24)
 		LunaOptionsFrame.pages[i].ctextheader:SetJustifyH("LEFT")
 		LunaOptionsFrame.pages[i].ctextheader:SetTextColor(1,1,0)

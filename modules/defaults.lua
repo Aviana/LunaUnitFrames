@@ -103,7 +103,7 @@ LunaUF.defaults = {
 				portrait = { enabled = true, type = "3D", side = "left", size = 6 },
 				auras = { enabled = false, AurasPerRow = 12, position = "BOTTOM", weaponbuffs = true, timertextenabled = true, timertextbigsize = 23,timertextsmallsize = 12, timerspinenabled = true },
 				highlight = { enabled = true, ontarget = false, ondebuff = true, onmouse = false },
-				fader = { enabled = false, inactiveAlpha = 0.2, combatAlpha = 1 },
+				fader = { enabled = false, inactiveAlpha = 0.2, combatAlpha = 1, speedyFade = false },
 				tags = {
 					enabled = true,
 					bartags = {
@@ -161,7 +161,7 @@ LunaUF.defaults = {
 				portrait = { enabled = true, type = "3D", side = "left", size = 6 },
 				auras = { enabled = false, AurasPerRow = 12, position = "BOTTOM" },
 				highlight = { enabled = true, ontarget = false, ondebuff = true, onmouse = false },
-				fader = { enabled = false, inactiveAlpha = 0.2, combatAlpha = 1 },
+				fader = { enabled = false, inactiveAlpha = 0.2, combatAlpha = 1, speedyFade = false },
 				tags = {
 					enabled = true,
 					bartags = {
@@ -208,7 +208,7 @@ LunaUF.defaults = {
 				portrait = { enabled = true, type = "3D", side = "right", size = 6 },
 				auras = { enabled = true, AurasPerRow = 12, position = "BOTTOM"},
 				highlight = { enabled = true, ontarget = false, ondebuff = true, onmouse = false },
-				fader = { enabled = false, inactiveAlpha = 0.2, combatAlpha = 1 },
+				fader = { enabled = false, inactiveAlpha = 0.2, combatAlpha = 1, speedyFade = false },
 				tags = {
 					enabled = true,
 					bartags = {
@@ -262,7 +262,7 @@ LunaUF.defaults = {
 				portrait = { enabled = true, type = "3D", side = "left", size = 6 },
 				auras = { enabled = false, AurasPerRow = 8, position = "BOTTOM" },
 				highlight = { enabled = true, ontarget = false, ondebuff = true, onmouse = false },
-				fader = { enabled = false, inactiveAlpha = 0.2, combatAlpha = 1 },
+				fader = { enabled = false, inactiveAlpha = 0.2, combatAlpha = 1, speedyFade = false },
 				combatText = { enabled = false, xoffset = 0, yoffset = 0, size = 2 },
 				tags = {
 					enabled = true,
@@ -315,7 +315,7 @@ LunaUF.defaults = {
 				portrait = { enabled = true, type = "3D", side = "left", size = 6 },
 				auras = { enabled = false, AurasPerRow = 8, position = "BOTTOM" },
 				highlight = { enabled = true, ontarget = false, ondebuff = true, onmouse = false },
-				fader = { enabled = false, inactiveAlpha = 0.2, combatAlpha = 1 },
+				fader = { enabled = false, inactiveAlpha = 0.2, combatAlpha = 1, speedyFade = false },
 				combatText = { enabled = false, xoffset = 0, yoffset = 0, size = 2 },
 				tags = {
 					enabled = true,
@@ -374,7 +374,7 @@ LunaUF.defaults = {
 				portrait = { enabled = true, type = "3D", side = "left", size = 6 },
 				auras = { enabled = true, AurasPerRow = 11, position = "BOTTOM" },
 				highlight = { enabled = true, ontarget = false, ondebuff = true, onmouse = false },
-				fader = { enabled = false, inactiveAlpha = 0.2, combatAlpha = 1 },
+				fader = { enabled = false, inactiveAlpha = 0.2, combatAlpha = 1, speedyFade = false },
 				tags = {
 					enabled = true,
 					bartags = {
@@ -436,7 +436,7 @@ LunaUF.defaults = {
 				incheal = { enabled = false, cap = 0.2 },
 				auras = { enabled = false, AurasPerRow = 8, position = "BOTTOM" },
 				highlight = { enabled = true, ontarget = false, ondebuff = true, onmouse = false },
-				fader = { enabled = false, inactiveAlpha = 0.2, combatAlpha = 1 },
+				fader = { enabled = false, inactiveAlpha = 0.2, combatAlpha = 1, speedyFade = false },
 				combatText = { enabled = false, xoffset = 0, yoffset = 0, size = 2 },
 				tags = {
 					enabled = true,
@@ -483,7 +483,7 @@ LunaUF.defaults = {
 				incheal = { enabled = false, cap = 0.2 },
 				auras = { enabled = false, AurasPerRow = 8, position = "BOTTOM" },
 				highlight = { enabled = true, ontarget = false, ondebuff = true, onmouse = false },
-				fader = { enabled = false, inactiveAlpha = 0.2, combatAlpha = 1 },
+				fader = { enabled = false, inactiveAlpha = 0.2, combatAlpha = 1, speedyFade = false },
 				combatText = { enabled = false, xoffset = 0, yoffset = 0, size = 2 },
 				tags = {
 					enabled = true,
@@ -530,7 +530,7 @@ LunaUF.defaults = {
 				portrait = { enabled = false, type = "3D", side = "left", size = 6 },
 				auras = { enabled = false, AurasPerRow = 6, position = "RIGHT" },
 				highlight = { enabled = true, ontarget = false, ondebuff = true, onmouse = false },
-				fader = { enabled = false, inactiveAlpha = 0.2, combatAlpha = 1 },
+				fader = { enabled = false, inactiveAlpha = 0.2, combatAlpha = 1, speedyFade = false },
 				tags = {
 					enabled = true,
 					bartags = {

@@ -321,8 +321,8 @@ local function StopMovingOrSizing()
 	LunaUF.db.profile.units[this.unitGroup].position.y = y * scale
 	for i=2,6 do
 		if LunaOptionsFrame.pages[i].id == this.unitGroup then
-			LunaOptionsFrame.pages[i].xInput:SetText(x)
-			LunaOptionsFrame.pages[i].yInput:SetText(y)
+			LunaOptionsFrame.pages[i].xInput:SetText(x * scale)
+			LunaOptionsFrame.pages[i].yInput:SetText(y * scale)
 		end
 	end
 end
