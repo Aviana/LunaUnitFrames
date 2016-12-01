@@ -8,7 +8,7 @@ Dependencies: AceLibrary, AceEvent-2.0
 ]]
 
 local MAJOR_VERSION = "FiveSecLib-1.0"
-local MINOR_VERSION = "$Revision: 10100 $"
+local MINOR_VERSION = "$Revision: 10110 $"
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
 if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end
@@ -17,7 +17,7 @@ if not AceLibrary:HasInstance("Babble-Spell-2.2") then error(MAJOR_VERSION .. " 
 
 local BS = AceLibrary("Babble-Spell-2.2")
 
-local FiveSecLib = CreateFrame("Frame")
+local FiveSecLib = {}
 
 ------------------------------------------------
 -- activate, enable, disable
@@ -35,11 +35,11 @@ end
 
 local function external(self, major, instance)
 	if major == "AceEvent-2.0" then
-		FiveSecLib.EventScheduler = instance
-		FiveSecLib.EventScheduler:embed(self)
+		self.EventScheduler = instance
+		self.EventScheduler:embed(self)
 		self:UnregisterAllEvents()
 		self:CancelAllScheduledEvents()
-		if FiveSecLib.EventScheduler:IsFullyInitialized() then
+		if self.EventScheduler:IsFullyInitialized() then
 			self:AceEvent_FullyInitialized()
 		else
 			self:RegisterEvent("AceEvent_FullyInitialized", "AceEvent_FullyInitialized", true)
@@ -61,9 +61,9 @@ end
 ------------------------------------------------
 
 function FiveSecLib:AceEvent_FullyInitialized()
-	self:RegisterEvent("SPELLCAST_INTERRUPTED", FiveSecLib.OnEvent)
-	self:RegisterEvent("SPELLCAST_FAILED", FiveSecLib.OnEvent)
-	self:RegisterEvent("SPELLCAST_STOP", FiveSecLib.OnEvent)
+	self:RegisterEvent("SPELLCAST_INTERRUPTED", "OnEvent")
+	self:RegisterEvent("SPELLCAST_FAILED", "OnEvent")
+	self:RegisterEvent("SPELLCAST_STOP", "OnEvent")
 	self:TriggerEvent("FiveSecLib_Enabled")
 end
 
@@ -76,7 +76,7 @@ local FiveSecLib_Spell = nil
 local FiveSecLibTip = CreateFrame("GameTooltip", "FiveSecLibTip", nil, "GameTooltipTemplate")
 FiveSecLibTip:SetOwner(WorldFrame, "ANCHOR_NONE")
 
-local function triggerFSR(spellName)
+function FiveSecLib:triggerFSR(spellName)
 	FiveSecLib_Spell = nil
 	local i = 1
 	while GetSpellName(i, BOOKTYPE_SPELL) do
@@ -86,7 +86,7 @@ local function triggerFSR(spellName)
 			FiveSecLibTip:SetSpell(i, BOOKTYPE_SPELL)
 			local mana = FiveSecLibTipTextLeft2:GetText()
 			if mana and string.find(mana,"(%d+) Mana") then
-				FiveSecLib.EventScheduler:TriggerEvent("fiveSec")
+				self.EventScheduler:TriggerEvent("fiveSec")
 			end
 			return
 		end
@@ -94,15 +94,15 @@ local function triggerFSR(spellName)
 	end
 end
 
-FiveSecLib.OnEvent = function()
+function FiveSecLib:OnEvent()
 	if (event == "SPELLCAST_INTERRUPTED" or event == "SPELLCAST_FAILED") and FiveSecLib_Spell then
 		if FiveSecLib_Spell ~= BS["Raptor Strike"] then
-			FiveSecLib.EventScheduler:CancelScheduledEvent("Trigger_fiveSec")
+			self.EventScheduler:CancelScheduledEvent("Trigger_fiveSec")
 			FiveSecLib_Spell = nil
 		end
 	elseif event == "SPELLCAST_STOP" and FiveSecLib_Spell then
 	--	triggerFSR(FiveSecLib_Spell)
-		FiveSecLib.EventScheduler:ScheduleEvent("Trigger_fiveSec", triggerFSR, 0.2, FiveSecLib_Spell)
+		self.EventScheduler:ScheduleEvent("Trigger_fiveSec", self.triggerFSR, 0.2, self, FiveSecLib_Spell)
 	end
 end
 
@@ -157,6 +157,5 @@ local function FiveSecLib_newCastShapeshiftForm(id)
 end
 CastShapeshiftForm = FiveSecLib_newCastShapeshiftForm
 
-FiveSecLib:SetScript("OnEvent", FiveSecLib.OnEvent)
-
 AceLibrary:Register(FiveSecLib, MAJOR_VERSION, MINOR_VERSION, activate, nil, external)
+FiveSecLib = nil

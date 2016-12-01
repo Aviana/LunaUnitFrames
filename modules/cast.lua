@@ -5,6 +5,10 @@ local BS = LunaUF.BS
 LunaUF:RegisterModule(Cast, "castBar", L["Cast bar"], true)
 
 local CasterDB = {}
+local berserkValue = 0
+local buffed = false
+local _,playerRace = UnitRace("player")
+local _,playerClass = UnitClass("player")
 
 local CHAT_PATTERNS = {
 	[L["(.+) gains (.+)."]] = "gains",
@@ -482,6 +486,14 @@ local function OnUpdatePlayer()
 	end
 end
 
+local function isBuffed()
+	for i=1, 32 do
+		if UnitBuff("player",i) == "Interface\\Icons\\Racial_Troll_Berserk" then
+			return true
+		end
+	end
+end
+
 local function OnEvent()
 	local frame = this:GetParent()
 	if event == "SPELLCAST_CHANNEL_START" then
@@ -529,6 +541,17 @@ local function OnEvent()
 		frame.castBar:SetValue(frame.castBar.startTime)
 		frame.castBar:SetScript("OnUpdate", OnUpdatePlayer)
 		Cast:FullUpdate(frame)
+	elseif event == "UNIT_AURA" then
+		local newBuffStatus = isBuffed()
+		if not buffed and newBuffStatus then
+			if((UnitHealth("player")/UnitHealthMax("player")) >= 0.40) then
+				berserkValue = (1.30 - (UnitHealth("player")/UnitHealthMax("player")))/3
+			else
+				berserkValue = 0.3
+			end
+		elseif buffed and not newBuffStatus then
+			berserkValue = 0.3
+		end
 	else
 		if frame.castBar.casting or event == "SPELLCAST_CHANNEL_STOP" then
 			frame.castBar.casting = false
@@ -540,8 +563,7 @@ local function OnEvent()
 end
 
 local function OnAimed(cast)
-	if cast == "Aimed Shot" then
-		local frame
+	if cast == BS["Aimed Shot"] then
 		local _,_, latency = GetNetStats()
 		local casttime = 3
 		for i=1,32 do
@@ -570,7 +592,7 @@ local function OnAimed(cast)
 				uframe.castBar.delaySum = 0	
 				uframe.castBar.Text:SetText(BS["Aimed Shot"])
 				uframe.castBar:SetMinMaxValues(uframe.castBar.startTime, uframe.castBar.maxValue)
-				uframe.castBar:SetValue(frame.castBar.startTime)
+				uframe.castBar:SetValue(uframe.castBar.startTime)
 				uframe.castBar:SetScript("OnUpdate", OnUpdatePlayer)
 				Cast:FullUpdate(uframe)
 			end
@@ -600,7 +622,10 @@ function Cast:OnEnable(frame)
 	frame.castBar:RegisterEvent("SPELLCAST_INTERRUPTED")
 	frame.castBar:RegisterEvent("SPELLCAST_START")
 	frame.castBar:RegisterEvent("SPELLCAST_STOP")
-	if not LunaUF:IsEventRegistered("CASTLIB_STARTCAST") then
+	if playerRace == "Troll" and playerClass == "HUNTER" then
+		frame.castBar:RegisterEvent("UNIT_AURA")
+	end
+	if not LunaUF:IsEventRegistered("CASTLIB_STARTCAST") and playerClass == "HUNTER" then
 		LunaUF:RegisterEvent("CASTLIB_STARTCAST", OnAimed)
 	end
 end

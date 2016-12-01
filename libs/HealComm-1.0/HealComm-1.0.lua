@@ -8,7 +8,7 @@ Dependencies: AceLibrary, AceEvent-2.0, RosterLib-2.0
 ]]
 
 local MAJOR_VERSION = "HealComm-1.0"
-local MINOR_VERSION = "$Revision: 11350 $"
+local MINOR_VERSION = "$Revision: 11360 $"
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
 if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end
@@ -16,7 +16,7 @@ if not AceLibrary:HasInstance("RosterLib-2.0") then error(MAJOR_VERSION .. " req
 if not AceLibrary:HasInstance("AceEvent-2.0") then error(MAJOR_VERSION .. " requires AceEvent-2.0") end
 
 local roster = AceLibrary("RosterLib-2.0")
-local HealComm = CreateFrame("Frame")
+local HealComm = {}
 
 ------------------------------------------------
 -- Locales
@@ -241,11 +241,11 @@ end
 
 local function external(self, major, instance)
 	if major == "AceEvent-2.0" then
-		HealComm.SpecialEventScheduler = instance
-		HealComm.SpecialEventScheduler:embed(self)
+		self.SpecialEventScheduler = instance
+		self.SpecialEventScheduler:embed(self)
 		self:UnregisterAllEvents()
 		self:CancelAllScheduledEvents()
-		if HealComm.SpecialEventScheduler:IsFullyInitialized() then
+		if self.SpecialEventScheduler:IsFullyInitialized() then
 			self:AceEvent_FullyInitialized()
 		else
 			self:RegisterEvent("AceEvent_FullyInitialized", "AceEvent_FullyInitialized", true)
@@ -268,14 +268,14 @@ end
 
 function HealComm:AceEvent_FullyInitialized()
 	self:TriggerEvent("HealComm_Enabled")
-	self:RegisterEvent("SPELLCAST_START", HealComm.OnEvent)
-	self:RegisterEvent("SPELLCAST_INTERRUPTED", HealComm.OnEvent)
-	self:RegisterEvent("SPELLCAST_FAILED", HealComm.OnEvent)
-	self:RegisterEvent("SPELLCAST_DELAYED", HealComm.OnEvent)
-	self:RegisterEvent("SPELLCAST_STOP", HealComm.OnEvent)
-	self:RegisterEvent("CHAT_MSG_ADDON", HealComm.OnEvent)
-	self:RegisterEvent("UNIT_AURA", HealComm.OnEvent)
-	self:RegisterEvent("UNIT_HEALTH" , HealComm.OnHealth)
+	self:RegisterEvent("SPELLCAST_START", "OnEvent")
+	self:RegisterEvent("SPELLCAST_INTERRUPTED", "OnEvent")
+	self:RegisterEvent("SPELLCAST_FAILED", "OnEvent")
+	self:RegisterEvent("SPELLCAST_DELAYED", "OnEvent")
+	self:RegisterEvent("SPELLCAST_STOP", "OnEvent")
+	self:RegisterEvent("CHAT_MSG_ADDON", "OnEvent")
+	self:RegisterEvent("UNIT_AURA", "OnEvent")
+	self:RegisterEvent("UNIT_HEALTH" , "OnHealth")
 end
 
 ------------------------------------------------
@@ -911,7 +911,7 @@ HealComm.Spells = {
 	};
 }
 
-HealComm.Resurrections = {
+local Resurrections = {
 	[L["Resurrection"]] = true;
 	[L["Rebirth"]] = true;
 	[L["Redemption"]] = true;
@@ -944,7 +944,7 @@ local healcomm_SpellCast = {}
 local healcommTip = CreateFrame("GameTooltip", "healcommTip", nil, "GameTooltipTemplate")
 healcommTip:SetOwner(WorldFrame, "ANCHOR_NONE")
 
-HealComm.Buffs = {
+local Buffs = {
 	[L["Power Infusion"]] = {amount = 0, mod = 0.2, icon = "Interface\\Icons\\Spell_Holy_PowerInfusion"};
 	[L["Divine Favor"]] = {amount = 0, mod = 0.5, icon = "Interface\\Icons\\Spell_Holy_Heal"};
 	[L["Nature Aligned"]] = {amount = 0, mod = 0.2, icon = "Interface\\Icons\\Spell_Nature_SpiritArmor"};
@@ -961,7 +961,7 @@ HealComm.Buffs = {
 	[L["The Eye of the Dead"]] = {amount = 450, mod = 0, icon = "Interface\\Icons\\Inv_Trinket_Naxxramas01"}
 }
 	
-HealComm.Debuffs = {
+local Debuffs = {
 	[L["Mortal Strike"]] = {amount = 0, mod = 0.5, icon = "Interface\\Icons\\Ability_Warrior_SavageBlow"};
 	[L["Wound Poison"]] = {amount = -135, mod = 0, icon = "Interface\\Icons\\Inv_Misc_Herb_16"};
 	[L["Curse of the Deadwood"]] = {amount = 0, mod = 0.5, icon = "Interface\\Icons\\Spell_Shadow_GatherShadows"};
@@ -993,9 +993,9 @@ local function GetBuffSpellPower()
 		end
 		healcommTip:SetUnitBuff("player", i)
 		local buffName = healcommTipTextLeft1:GetText()
-		if HealComm.Buffs[buffName] and HealComm.Buffs[buffName].icon == buffTexture then
-			Spellpower = (HealComm.Buffs[buffName].amount * buffApplications) + Spellpower
-			healmod = (HealComm.Buffs[buffName].mod * buffApplications) + healmod
+		if Buffs[buffName] and Buffs[buffName].icon == buffTexture then
+			Spellpower = (Buffs[buffName].amount * buffApplications) + Spellpower
+			healmod = (Buffs[buffName].mod * buffApplications) + healmod
 		end
 	end
 	return Spellpower, healmod
@@ -1042,113 +1042,113 @@ local function GetTargetSpellPower(spell)
 			break
 		end
 		local debuffName = healcommTipTextLeft1:GetText()
-		if HealComm.Debuffs[debuffName] then
-			targetpower = (HealComm.Debuffs[debuffName].amount * debuffApplications) + targetpower
-			targetmod = (1-(HealComm.Debuffs[debuffName].mod * debuffApplications)) * targetmod
+		if Debuffs[debuffName] then
+			targetpower = (Debuffs[debuffName].amount * debuffApplications) + targetpower
+			targetmod = (1-(Debuffs[debuffName].mod * debuffApplications)) * targetmod
 		end
 	end
 	return targetpower, targetmod
 end			
 
-function HealComm.OnHealth()
+function HealComm:OnHealth()
 	local name = UnitName(arg1)
-	if HealComm.pendingResurrections[name] then
-		for k,v in pairs(HealComm.pendingResurrections[name]) do
-			HealComm.pendingResurrections[name][k] = nil
+	if self.pendingResurrections[name] then
+		for k,v in pairs(self.pendingResurrections[name]) do
+			self.pendingResurrections[name][k] = nil
 		end
-		HealComm.SpecialEventScheduler:TriggerEvent("HealComm_Ressupdate", name)
+		self.SpecialEventScheduler:TriggerEvent("HealComm_Ressupdate", name)
 	end
 end
 			
-function HealComm.stopHeal(caster)
-	if HealComm.SpecialEventScheduler:IsEventScheduled("Healcomm_"..caster) then
-		HealComm.SpecialEventScheduler:CancelScheduledEvent("Healcomm_"..caster)
+function HealComm:stopHeal(caster)
+	if self.SpecialEventScheduler:IsEventScheduled("Healcomm_"..caster) then
+		self.SpecialEventScheduler:CancelScheduledEvent("Healcomm_"..caster)
 	end
-	if HealComm.Lookup[caster] then
-		HealComm.Heals[HealComm.Lookup[caster]][caster] = nil
-		HealComm.SpecialEventScheduler:TriggerEvent("HealComm_Healupdate", HealComm.Lookup[caster])
-		HealComm.Lookup[caster] = nil
-	end
-end
-
-function HealComm.startHeal(caster, target, size, casttime)
-	HealComm.SpecialEventScheduler:ScheduleEvent("Healcomm_"..caster, HealComm.stopHeal, (casttime/1000), caster)
-	if not HealComm.Heals[target] then
-		HealComm.Heals[target] = {}
-	end
-	if HealComm.Lookup[caster] then
-		HealComm.Heals[HealComm.Lookup[caster]][caster] = nil
-		HealComm.Lookup[caster] = nil
-	end
-	HealComm.Heals[target][caster] = {amount = size, ctime = (casttime/1000)+GetTime()}
-	HealComm.Lookup[caster] = target
-	HealComm.SpecialEventScheduler:TriggerEvent("HealComm_Healupdate", target)
-end
-
-function HealComm.delayHeal(caster, delay)
-	HealComm.SpecialEventScheduler:CancelScheduledEvent("Healcomm_"..caster)
-	if HealComm.Lookup[caster] and HealComm.Heals[HealComm.Lookup[caster]] then
-		HealComm.Heals[HealComm.Lookup[caster]][caster].ctime = HealComm.Heals[HealComm.Lookup[caster]][caster].ctime + (delay/1000)
-		HealComm.SpecialEventScheduler:ScheduleEvent("Healcomm_"..caster, HealComm.stopHeal, (HealComm.Heals[HealComm.Lookup[caster]][caster].ctime-GetTime()), caster)
+	if self.Lookup[caster] then
+		self.Heals[self.Lookup[caster]][caster] = nil
+		self.SpecialEventScheduler:TriggerEvent("HealComm_Healupdate", self.Lookup[caster])
+		self.Lookup[caster] = nil
 	end
 end
 
-function HealComm.startGrpHeal(caster, size, casttime, party1, party2, party3, party4, party5)
-	HealComm.SpecialEventScheduler:ScheduleEvent("Healcomm_"..caster, HealComm.stopGrpHeal, (casttime/1000), caster)
-	HealComm.GrpHeals[caster] = {amount = size, ctime = (casttime/1000)+GetTime(), targets = {party1, party2, party3, party4, party5}}
-	for i=1,getn(HealComm.GrpHeals[caster].targets) do
-		HealComm.SpecialEventScheduler:TriggerEvent("HealComm_Healupdate", HealComm.GrpHeals[caster].targets[i])
+function HealComm:startHeal(caster, target, size, casttime)
+	self.SpecialEventScheduler:ScheduleEvent("Healcomm_"..caster, self.stopHeal, (casttime/1000), self, caster)
+	if not self.Heals[target] then
+		self.Heals[target] = {}
+	end
+	if self.Lookup[caster] then
+		self.Heals[self.Lookup[caster]][caster] = nil
+		self.Lookup[caster] = nil
+	end
+	self.Heals[target][caster] = {amount = size, ctime = (casttime/1000)+GetTime()}
+	self.Lookup[caster] = target
+	self.SpecialEventScheduler:TriggerEvent("HealComm_Healupdate", target)
+end
+
+function HealComm:delayHeal(caster, delay)
+	self.SpecialEventScheduler:CancelScheduledEvent("Healcomm_"..caster)
+	if self.Lookup[caster] and self.Heals[self.Lookup[caster]] then
+		self.Heals[self.Lookup[caster]][caster].ctime = self.Heals[self.Lookup[caster]][caster].ctime + (delay/1000)
+		self.SpecialEventScheduler:ScheduleEvent("Healcomm_"..caster, self.stopHeal, (self.Heals[self.Lookup[caster]][caster].ctime-GetTime()), self, caster)
 	end
 end
 
-function HealComm.stopGrpHeal(caster)
-	if HealComm.SpecialEventScheduler:IsEventScheduled("Healcomm_"..caster) then
-		HealComm.SpecialEventScheduler:CancelScheduledEvent("Healcomm_"..caster)
+function HealComm:startGrpHeal(caster, size, casttime, party1, party2, party3, party4, party5)
+	self.SpecialEventScheduler:ScheduleEvent("Healcomm_"..caster, self.stopGrpHeal, (casttime/1000), self, caster)
+	self.GrpHeals[caster] = {amount = size, ctime = (casttime/1000)+GetTime(), targets = {party1, party2, party3, party4, party5}}
+	for i=1,getn(self.GrpHeals[caster].targets) do
+		self.SpecialEventScheduler:TriggerEvent("HealComm_Healupdate", self.GrpHeals[caster].targets[i])
+	end
+end
+
+function HealComm:stopGrpHeal(caster)
+	if self.SpecialEventScheduler:IsEventScheduled("Healcomm_"..caster) then
+		self.SpecialEventScheduler:CancelScheduledEvent("Healcomm_"..caster)
 	end
 	local targets
-	if HealComm.GrpHeals[caster] then
-		targets = HealComm.GrpHeals[caster].targets
+	if self.GrpHeals[caster] then
+		targets = self.GrpHeals[caster].targets
 	end
-	HealComm.GrpHeals[caster] = nil
+	self.GrpHeals[caster] = nil
 	if targets then
 		for i=1,getn(targets) do
-			HealComm.SpecialEventScheduler:TriggerEvent("HealComm_Healupdate", targets[i])
+			self.SpecialEventScheduler:TriggerEvent("HealComm_Healupdate", targets[i])
 		end
 	end
 end
 
-function HealComm.delayGrpHeal(caster, delay)
-	HealComm.SpecialEventScheduler:CancelScheduledEvent("Healcomm_"..caster)
-	if HealComm.GrpHeals[caster] then
-		HealComm.GrpHeals[caster].ctime = HealComm.GrpHeals[caster].ctime + (delay/1000)
-		HealComm.SpecialEventScheduler:ScheduleEvent("Healcomm_"..caster, HealComm.stopGrpHeal, (HealComm.GrpHeals[caster].ctime-GetTime()), caster)
+function HealComm:delayGrpHeal(caster, delay)
+	self.SpecialEventScheduler:CancelScheduledEvent("Healcomm_"..caster)
+	if self.GrpHeals[caster] then
+		self.GrpHeals[caster].ctime = self.GrpHeals[caster].ctime + (delay/1000)
+		self.SpecialEventScheduler:ScheduleEvent("Healcomm_"..caster, self.stopGrpHeal, (self.GrpHeals[caster].ctime-GetTime()), self, caster)
 	end
 end
 
-function HealComm.startResurrection(caster, target)
-	if not HealComm.pendingResurrections[target] then
-		HealComm.pendingResurrections[target] = {}
+function HealComm:startResurrection(caster, target)
+	if not self.pendingResurrections[target] then
+		self.pendingResurrections[target] = {}
 	end
-	HealComm.pendingResurrections[target][caster] = GetTime()+70
-	HealComm.SpecialEventScheduler:ScheduleEvent("Healcomm_"..caster..target, HealComm.RessExpire, 70, caster, target)
-	HealComm.SpecialEventScheduler:TriggerEvent("HealComm_Ressupdate", target)
+	self.pendingResurrections[target][caster] = GetTime()+70
+	self.SpecialEventScheduler:ScheduleEvent("Healcomm_"..caster..target, self.RessExpire, 70, self, caster, target)
+	self.SpecialEventScheduler:TriggerEvent("HealComm_Ressupdate", target)
 end
 
-function HealComm.cancelResurrection(caster)
-	for k,v in pairs(HealComm.pendingResurrections) do
+function HealComm:cancelResurrection(caster)
+	for k,v in pairs(self.pendingResurrections) do
 		if v[caster] and (v[caster]-GetTime()) > 60 then
-			HealComm.pendingResurrections[k][caster] = nil
-			HealComm.SpecialEventScheduler:TriggerEvent("HealComm_Ressupdate", k)
+			self.pendingResurrections[k][caster] = nil
+			self.SpecialEventScheduler:TriggerEvent("HealComm_Ressupdate", k)
 		end
 	end
 end
 
-function HealComm.RessExpire(caster, target)
-	HealComm.pendingResurrections[target][caster] = nil
-	HealComm.SpecialEventScheduler:TriggerEvent("HealComm_Ressupdate", target)
+function HealComm:RessExpire(caster, target)
+	self.pendingResurrections[target][caster] = nil
+	self.SpecialEventScheduler:TriggerEvent("HealComm_Ressupdate", target)
 end
 
-function HealComm.SendAddonMessage(msg)
+function HealComm:SendAddonMessage(msg)
 	local zone = GetRealZoneText()
 	if zone == L["Warsong Gulch"] or zone == L["Arathi Basin"] or zone == L["Alterac Valley"] then
 		SendAddonMessage("HealComm", msg, "BATTLEGROUND")
@@ -1157,18 +1157,18 @@ function HealComm.SendAddonMessage(msg)
 	end
 end
 
-HealComm.OnEvent = function()
+function HealComm:OnEvent()
 	if ( event == "SPELLCAST_START" ) then
-		if ( healcomm_SpellCast and healcomm_SpellCast[1] == arg1 and HealComm.Spells[arg1] ) then
+		if ( healcomm_SpellCast and healcomm_SpellCast[1] == arg1 and self.Spells[arg1] ) then
 			local Bonus = 0
 			if BonusScanner then
 				Bonus = tonumber(BonusScanner:GetBonus("HEAL"))
 			end
-			local buffpower, buffmod = GetBuffSpellPower()
+			local buffpower, buffmod = GetBuffSpellPower(self)
 			local targetpower, targetmod = healcomm_SpellCast[4], healcomm_SpellCast[5]
 			local Bonus = Bonus + buffpower
 			healcomm_spellIsCasting = arg1
-			local amount = ((math.floor(HealComm.Spells[healcomm_SpellCast[1]][tonumber(healcomm_SpellCast[2])](Bonus))+targetpower)*buffmod*targetmod)
+			local amount = ((math.floor(self.Spells[healcomm_SpellCast[1]][tonumber(healcomm_SpellCast[2])](Bonus))+targetpower)*buffmod*targetmod)
 			if arg1 == L["Prayer of Healing"] then
 				local targets = {UnitName("player")}
 				local targetsstring = UnitName("player").."/"
@@ -1178,27 +1178,27 @@ HealComm.OnEvent = function()
 						targetsstring = targetsstring..UnitName("party"..i).."/"
 					end
 				end
-				HealComm.SendAddonMessage("GrpHeal/"..amount.."/"..arg2.."/"..targetsstring)
-				HealComm.startGrpHeal(UnitName("player"), amount, arg2, targets[1], targets[2], targets[3], targets[4], targets[5])
+				self:SendAddonMessage("GrpHeal/"..amount.."/"..arg2.."/"..targetsstring)
+				self:startGrpHeal(UnitName("player"), amount, arg2, targets[1], targets[2], targets[3], targets[4], targets[5])
 			else
-				HealComm.SendAddonMessage("Heal/"..healcomm_SpellCast[3].."/"..amount.."/"..arg2.."/")
-				HealComm.startHeal(UnitName("player"), healcomm_SpellCast[3], amount, arg2)
+				self:SendAddonMessage("Heal/"..healcomm_SpellCast[3].."/"..amount.."/"..arg2.."/")
+				self:startHeal(UnitName("player"), healcomm_SpellCast[3], amount, arg2)
 			end
-		elseif ( healcomm_SpellCast and healcomm_SpellCast[1] == arg1 and HealComm.Resurrections[arg1] ) then
-			HealComm.SendAddonMessage("Resurrection/"..healcomm_SpellCast[3].."/start/")
+		elseif ( healcomm_SpellCast and healcomm_SpellCast[1] == arg1 and Resurrections[arg1] ) then
+			self:SendAddonMessage("Resurrection/"..healcomm_SpellCast[3].."/start/")
 			healcomm_spellIsCasting = arg1
-			HealComm.startResurrection(UnitName("player"), healcomm_SpellCast[3])
+			self:startResurrection(UnitName("player"), healcomm_SpellCast[3])
 		end
 		for _,val in pairs(healcomm_SpellCast) do
 			val = nil
 		end
-	elseif (event == "SPELLCAST_INTERRUPTED" or event == "SPELLCAST_FAILED") and HealComm.Spells[healcomm_spellIsCasting] then
+	elseif (event == "SPELLCAST_INTERRUPTED" or event == "SPELLCAST_FAILED") and self.Spells[healcomm_spellIsCasting] then
 		if healcomm_spellIsCasting == L["Prayer of Healing"] then
-			HealComm.SendAddonMessage("GrpHealstop")
-			HealComm.stopGrpHeal(UnitName("player"))
+			self:SendAddonMessage("GrpHealstop")
+			self:stopGrpHeal(UnitName("player"))
 		else
-			HealComm.SendAddonMessage("Healstop")
-			HealComm.stopHeal(UnitName("player"))
+			self:SendAddonMessage("Healstop")
+			self:stopHeal(UnitName("player"))
 		end
 		healcomm_spellIsCasting = nil
 		for _,val in pairs(healcomm_SpellCast) do
@@ -1206,22 +1206,22 @@ HealComm.OnEvent = function()
 		end
 		healcomm_RankRank = nil
 		healcomm_SpellSpell =  nil
-	elseif (event == "SPELLCAST_INTERRUPTED" or event == "SPELLCAST_FAILED") and HealComm.Resurrections[healcomm_spellIsCasting] then
-		HealComm.SendAddonMessage("Resurrection/stop/")
+	elseif (event == "SPELLCAST_INTERRUPTED" or event == "SPELLCAST_FAILED") and Resurrections[healcomm_spellIsCasting] then
+		self:SendAddonMessage("Resurrection/stop/")
 		healcomm_spellIsCasting = nil
 		for _,val in pairs(healcomm_SpellCast) do
 			val = nil
 		end
 		healcomm_RankRank = nil
 		healcomm_SpellSpell =  nil
-		HealComm.cancelResurrection(UnitName("player"))
+		self:cancelResurrection(UnitName("player"))
 	elseif event == "SPELLCAST_DELAYED" then
 		if healcomm_spellIsCasting == L["Prayer of Healing"] then
-			HealComm.SendAddonMessage("GrpHealdelay/"..arg1.."/")
-			HealComm.delayGrpHeal(UnitName("player"), arg1)
+			self:SendAddonMessage("GrpHealdelay/"..arg1.."/")
+			self:delayGrpHeal(UnitName("player"), arg1)
 		else
-			HealComm.SendAddonMessage("Healdelay/"..arg1.."/")
-			HealComm.delayHeal(UnitName("player"), arg1)
+			self:SendAddonMessage("Healdelay/"..arg1.."/")
+			self:delayHeal(UnitName("player"), arg1)
 		end
 	elseif event == "SPELLCAST_STOP" and healcomm_SpellCast then
 		local targetUnit = roster:GetUnitIDFromName(healcomm_SpellCast[3])
@@ -1236,16 +1236,16 @@ HealComm.OnEvent = function()
 		end
 		if healcomm_SpellCast and healcomm_SpellCast[1] == L["Renew"] then
 			local dur = getSetBonus() and 18 or 15
-			HealComm.SendAddonMessage("Renew/"..healcomm_SpellCast[3].."/"..dur.."/")
-			if not HealComm.Hots[healcomm_SpellCast[3]] then
-				HealComm.Hots[healcomm_SpellCast[3]] = {}
+			self:SendAddonMessage("Renew/"..healcomm_SpellCast[3].."/"..dur.."/")
+			if not self.Hots[healcomm_SpellCast[3]] then
+				self.Hots[healcomm_SpellCast[3]] = {}
 			end
-			if not HealComm.Hots[healcomm_SpellCast[3]]["Renew"] then
-				HealComm.Hots[healcomm_SpellCast[3]]["Renew"]= {}
+			if not self.Hots[healcomm_SpellCast[3]]["Renew"] then
+				self.Hots[healcomm_SpellCast[3]]["Renew"]= {}
 			end
-			HealComm.Hots[healcomm_SpellCast[3]]["Renew"].start = GetTime()
-			HealComm.Hots[healcomm_SpellCast[3]]["Renew"].dur = dur
-			HealComm.SpecialEventScheduler:TriggerEvent("HealComm_Hotupdate", targetUnit, "Renew")
+			self.Hots[healcomm_SpellCast[3]]["Renew"].start = GetTime()
+			self.Hots[healcomm_SpellCast[3]]["Renew"].dur = dur
+			self.SpecialEventScheduler:TriggerEvent("HealComm_Hotupdate", targetUnit, "Renew")
 			healcomm_spellIsCasting = nil
 			for _,val in pairs(healcomm_SpellCast) do
 				val = nil
@@ -1254,16 +1254,16 @@ HealComm.OnEvent = function()
 			healcomm_SpellSpell =  nil
 		elseif healcomm_SpellCast and healcomm_SpellCast[1] == L["Rejuvenation"] then
 			local dur = getSetBonus() and 15 or 12
-			HealComm.SendAddonMessage("Reju/"..healcomm_SpellCast[3].."/"..dur.."/")
-			if not HealComm.Hots[healcomm_SpellCast[3]] then
-				HealComm.Hots[healcomm_SpellCast[3]] = {}
+			self:SendAddonMessage("Reju/"..healcomm_SpellCast[3].."/"..dur.."/")
+			if not self.Hots[healcomm_SpellCast[3]] then
+				self.Hots[healcomm_SpellCast[3]] = {}
 			end
-			if not HealComm.Hots[healcomm_SpellCast[3]]["Reju"] then
-				HealComm.Hots[healcomm_SpellCast[3]]["Reju"]= {}
+			if not self.Hots[healcomm_SpellCast[3]]["Reju"] then
+				self.Hots[healcomm_SpellCast[3]]["Reju"]= {}
 			end
-			HealComm.Hots[healcomm_SpellCast[3]]["Reju"].start = GetTime()
-			HealComm.Hots[healcomm_SpellCast[3]]["Reju"].dur = dur
-			HealComm.SpecialEventScheduler:TriggerEvent("HealComm_Hotupdate", targetUnit, "Rejuvenation")
+			self.Hots[healcomm_SpellCast[3]]["Reju"].start = GetTime()
+			self.Hots[healcomm_SpellCast[3]]["Reju"].dur = dur
+			self.SpecialEventScheduler:TriggerEvent("HealComm_Hotupdate", targetUnit, "Rejuvenation")
 			healcomm_spellIsCasting = nil
 			for _,val in pairs(healcomm_SpellCast) do
 				val = nil
@@ -1272,16 +1272,16 @@ HealComm.OnEvent = function()
 			healcomm_SpellSpell =  nil
 		elseif healcomm_SpellCast and healcomm_SpellCast[1] == L["Regrowth"] then
 			local dur = 21
-			HealComm.SendAddonMessage("Regr/"..healcomm_SpellCast[3].."/"..dur.."/")
-			if not HealComm.Hots[healcomm_SpellCast[3]] then
-				HealComm.Hots[healcomm_SpellCast[3]] = {}
+			self:SendAddonMessage("Regr/"..healcomm_SpellCast[3].."/"..dur.."/")
+			if not self.Hots[healcomm_SpellCast[3]] then
+				self.Hots[healcomm_SpellCast[3]] = {}
 			end
-			if not HealComm.Hots[healcomm_SpellCast[3]]["Regr"] then
-				HealComm.Hots[healcomm_SpellCast[3]]["Regr"]= {}
+			if not self.Hots[healcomm_SpellCast[3]]["Regr"] then
+				self.Hots[healcomm_SpellCast[3]]["Regr"]= {}
 			end
-			HealComm.Hots[healcomm_SpellCast[3]]["Regr"].start = GetTime()
-			HealComm.Hots[healcomm_SpellCast[3]]["Regr"].dur = dur
-			HealComm.SpecialEventScheduler:TriggerEvent("HealComm_Hotupdate", targetUnit, "Regrowth")
+			self.Hots[healcomm_SpellCast[3]]["Regr"].start = GetTime()
+			self.Hots[healcomm_SpellCast[3]]["Regr"].dur = dur
+			self.SpecialEventScheduler:TriggerEvent("HealComm_Hotupdate", targetUnit, "Regrowth")
 			healcomm_spellIsCasting = nil
 			for _,val in pairs(healcomm_SpellCast) do
 				val = nil
@@ -1293,59 +1293,59 @@ HealComm.OnEvent = function()
 		if arg1 == "HealComm" and arg4 ~= UnitName("player") then
 			local result = strsplit(arg2,"/")
 			if result[1] == "Heal" then
-				HealComm.startHeal(arg4, result[2], result[3], result[4])
+				self:startHeal(arg4, result[2], result[3], result[4])
 			elseif arg2 == "Healstop" then
-				HealComm.stopHeal(arg4)
+				self:stopHeal(arg4)
 			elseif result[1] == "Healdelay" then
-				HealComm.delayHeal(arg4, result[2])
+				self:delayHeal(arg4, result[2])
 			elseif result[1] == "Resurrection" and result[2] == "stop" then
-				HealComm.cancelResurrection(arg4)
+				self:cancelResurrection(arg4)
 			elseif result[1] == "Resurrection" and result[3] == "start" then
-				HealComm.startResurrection(arg4, result[2])
+				self:startResurrection(arg4, result[2])
 			elseif result[1] == "GrpHeal" then
-				HealComm.startGrpHeal(arg4, result[2], result[3], result[4], result[5], result[6], result[7], result[8])
+				self:startGrpHeal(arg4, result[2], result[3], result[4], result[5], result[6], result[7], result[8])
 			elseif arg2 == "GrpHealstop" then
-				HealComm.stopGrpHeal(arg4)
+				self:stopGrpHeal(arg4)
 			elseif result[1] == "GrpHealdelay" then
-				HealComm.delayGrpHeal(arg4, result[2])
+				self:delayGrpHeal(arg4, result[2])
 			elseif result[1] == "Renew" then
-				if not HealComm.Hots[result[2]] then
-					HealComm.Hots[result[2]] = {}
+				if not self.Hots[result[2]] then
+					self.Hots[result[2]] = {}
 				end
-				if not HealComm.Hots[result[2]]["Renew"] then
-					HealComm.Hots[result[2]]["Renew"]= {}
+				if not self.Hots[result[2]]["Renew"] then
+					self.Hots[result[2]]["Renew"]= {}
 				end
-				HealComm.Hots[result[2]]["Renew"].dur = result[3]
-				HealComm.Hots[result[2]]["Renew"].start = GetTime()
+				self.Hots[result[2]]["Renew"].dur = result[3]
+				self.Hots[result[2]]["Renew"].start = GetTime()
 				local targetUnit = roster:GetUnitIDFromName(result[2])
-				HealComm.SpecialEventScheduler:TriggerEvent("HealComm_Hotupdate", targetUnit, "Renew")
+				self.SpecialEventScheduler:TriggerEvent("HealComm_Hotupdate", targetUnit, "Renew")
 			elseif result[1] == "Reju" then
-				if not HealComm.Hots[result[2]] then
-					HealComm.Hots[result[2]] = {}
+				if not self.Hots[result[2]] then
+					self.Hots[result[2]] = {}
 				end
-				if not HealComm.Hots[result[2]]["Reju"] then
-					HealComm.Hots[result[2]]["Reju"]= {}
+				if not self.Hots[result[2]]["Reju"] then
+					self.Hots[result[2]]["Reju"]= {}
 				end
-				HealComm.Hots[result[2]]["Reju"].dur = result[3]
-				HealComm.Hots[result[2]]["Reju"].start = GetTime()
+				self.Hots[result[2]]["Reju"].dur = result[3]
+				self.Hots[result[2]]["Reju"].start = GetTime()
 				local targetUnit = roster:GetUnitIDFromName(result[2])
-				HealComm.SpecialEventScheduler:TriggerEvent("HealComm_Hotupdate", targetUnit, "Rejuvenation")
+				self.SpecialEventScheduler:TriggerEvent("HealComm_Hotupdate", targetUnit, "Rejuvenation")
 			elseif result[1] == "Regr" then
-				if not HealComm.Hots[result[2]] then
-					HealComm.Hots[result[2]] = {}
+				if not self.Hots[result[2]] then
+					self.Hots[result[2]] = {}
 				end
-				if not HealComm.Hots[result[2]]["Regr"] then
-					HealComm.Hots[result[2]]["Regr"]= {}
+				if not self.Hots[result[2]]["Regr"] then
+					self.Hots[result[2]]["Regr"]= {}
 				end
-				HealComm.Hots[result[2]]["Regr"].dur = result[3]
-				HealComm.Hots[result[2]]["Regr"].start = GetTime()
+				self.Hots[result[2]]["Regr"].dur = result[3]
+				self.Hots[result[2]]["Regr"].start = GetTime()
 				local targetUnit = roster:GetUnitIDFromName(result[2])
-				HealComm.SpecialEventScheduler:TriggerEvent("HealComm_Hotupdate", targetUnit, "Regrowth")
+				self.SpecialEventScheduler:TriggerEvent("HealComm_Hotupdate", targetUnit, "Regrowth")
 			end
 		end
 	elseif event == "UNIT_AURA" then
 		local name = UnitName(arg1)
-		if HealComm.Hots[name] and (HealComm.Hots[name]["Regr"] or HealComm.Hots[name]["Reju"] or HealComm.Hots[name]["Renew"]) then
+		if self.Hots[name] and (self.Hots[name]["Regr"] or self.Hots[name]["Reju"] or self.Hots[name]["Renew"]) then
 			local regr,reju,renew
 			for i=1,32 do
 				if not UnitBuff(arg1,i) then
@@ -1358,16 +1358,16 @@ HealComm.OnEvent = function()
 				renew = renew or healcommTipTextLeft1:GetText() == L["Renew"]
 			end
 			if not regr then
-				HealComm.Hots[name]["Regr"] = nil
-				HealComm.SpecialEventScheduler:TriggerEvent("HealComm_Hotupdate", arg1, "Regrowth")
+				self.Hots[name]["Regr"] = nil
+				self.SpecialEventScheduler:TriggerEvent("HealComm_Hotupdate", arg1, "Regrowth")
 			end
 			if not reju then
-				HealComm.Hots[name]["Reju"] = nil
-				HealComm.SpecialEventScheduler:TriggerEvent("HealComm_Hotupdate", arg1, "Rejuvenation")
+				self.Hots[name]["Reju"] = nil
+				self.SpecialEventScheduler:TriggerEvent("HealComm_Hotupdate", arg1, "Rejuvenation")
 			end
 			if not renew then
-				HealComm.Hots[name]["Renew"] = nil
-				HealComm.SpecialEventScheduler:TriggerEvent("HealComm_Hotupdate", arg1, "Renew")
+				self.Hots[name]["Renew"] = nil
+				self.SpecialEventScheduler:TriggerEvent("HealComm_Hotupdate", arg1, "Renew")
 			end			
 		end
 	end
@@ -1377,7 +1377,7 @@ function HealComm:getRegrTime(unit)
 	if unit == UNKNOWNOBJECT or unit == UKNOWNBEING then
 		return
  	end
-	local dbUnit = HealComm.Hots[UnitName(unit)]
+	local dbUnit = self.Hots[UnitName(unit)]
 	if dbUnit and dbUnit["Regr"] and (dbUnit["Regr"].start + dbUnit["Regr"].dur) > GetTime() then
 		return dbUnit["Regr"].start, dbUnit["Regr"].dur
 	else
@@ -1389,7 +1389,7 @@ function HealComm:getRejuTime(unit)
 	if unit == UNKNOWNOBJECT or unit == UKNOWNBEING then
 		return
  	end
-	local dbUnit = HealComm.Hots[UnitName(unit)]
+	local dbUnit = self.Hots[UnitName(unit)]
 	if dbUnit and dbUnit["Reju"] and (dbUnit["Reju"].start + dbUnit["Reju"].dur) > GetTime() then
 		return dbUnit["Reju"].start, dbUnit["Reju"].dur
 	else
@@ -1401,7 +1401,7 @@ function HealComm:getRenewTime(unit)
 	if unit == UNKNOWNOBJECT or unit == UKNOWNBEING then
 		return
  	end
-	local dbUnit = HealComm.Hots[UnitName(unit)]
+	local dbUnit = self.Hots[UnitName(unit)]
 	if dbUnit and dbUnit["Renew"] and (dbUnit["Renew"].start + dbUnit["Renew"].dur) > GetTime() then
 		return dbUnit["Renew"].start, dbUnit["Renew"].dur
 	else
@@ -1414,12 +1414,12 @@ function HealComm:getHeal(unit)
 		return 0
  	end
 	local healamount = 0
-	if HealComm.Heals[unit] then
-		for k,v in HealComm.Heals[unit] do
+	if self.Heals[unit] then
+		for k,v in self.Heals[unit] do
 			healamount = healamount+v.amount
 		end
 	end
-	for k,v in pairs(HealComm.GrpHeals) do
+	for k,v in pairs(self.GrpHeals) do
 		for j,c in pairs(v.targets) do
 			if unit == c then
 				healamount = healamount+v.amount
@@ -1431,10 +1431,10 @@ end
 
 function HealComm:UnitisResurrecting(unit)
 	local resstime
-	if HealComm.pendingResurrections[unit] then
-		for k,v in pairs(HealComm.pendingResurrections[unit]) do
+	if self.pendingResurrections[unit] then
+		for k,v in pairs(self.pendingResurrections[unit]) do
 			if v < GetTime() then
-				HealComm.pendingResurrections[unit][k] = nil
+				self.pendingResurrections[unit][k] = nil
 			elseif not resstime or resstime > v then
 				resstime = v
 			end
@@ -1628,6 +1628,5 @@ function healcomm_ProcessSpellCast(spellName, rank, targetName)
 	end
 end
 
-HealComm:SetScript("OnEvent", HealComm.OnEvent)
-
 AceLibrary:Register(HealComm, MAJOR_VERSION, MINOR_VERSION, activate, nil, external)
+HealComm = nil
