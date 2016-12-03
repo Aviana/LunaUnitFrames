@@ -132,7 +132,6 @@ function DruidManaLib:GetShapeshiftCost()
 			DruidManaLibTip:SetSpell(i, 1);
 			local msg = DruidManaLibTipTextLeft2:GetText();
 			if msg then
-				ChatFrame1:AddMessage(msg)
 				local params;
 				if (locale == "frFR" or locale == "koKR") then
 					local index = strfind(msg, L[" "]);
