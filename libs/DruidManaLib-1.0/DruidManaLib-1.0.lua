@@ -93,17 +93,19 @@ end
 ------------------------------------------------
 
 function DruidManaLib:AceEvent_FullyInitialized()
-	self:RegisterEvent("UNIT_MANA", "OnEvent")
-	self:RegisterEvent("UNIT_MAXMANA", "OnEvent")
-	self:RegisterEvent("PLAYER_REGEN_ENABLED", "OnEvent")
-	self:RegisterEvent("PLAYER_REGEN_DISABLED", "OnEvent")
-	self:RegisterEvent("UNIT_INVENTORY_CHANGED", "OnEvent")
-	self:RegisterEvent("PLAYER_AURAS_CHANGED", "OnEvent")
-	self:RegisterEvent("UPDATE_SHAPESHIFT_FORMS", "OnEvent")
-	self:RegisterEvent("SPELLCAST_STOP", "OnEvent")
-	self:MaxManaScript()
-	DruidManaLibOnUpdateFrame:SetScript("OnUpdate", DruidManaLib_OnUpdate)
-	self:TriggerEvent("DruidManaLib_Enabled")
+	if playerClass and playerClass == "DRUID" then
+		self:RegisterEvent("UNIT_MANA", "OnEvent")
+		self:RegisterEvent("UNIT_MAXMANA", "OnEvent")
+		self:RegisterEvent("PLAYER_REGEN_ENABLED", "OnEvent")
+		self:RegisterEvent("PLAYER_REGEN_DISABLED", "OnEvent")
+		self:RegisterEvent("UNIT_INVENTORY_CHANGED", "OnEvent")
+		self:RegisterEvent("PLAYER_AURAS_CHANGED", "OnEvent")
+		self:RegisterEvent("UPDATE_SHAPESHIFT_FORMS", "OnEvent")
+		self:RegisterEvent("SPELLCAST_STOP", "OnEvent")
+		self:MaxManaScript()
+		DruidManaLibOnUpdateFrame:SetScript("OnUpdate", DruidManaLib_OnUpdate)
+		self:TriggerEvent("DruidManaLib_Enabled")
+	end
 end
 
 ------------------------------------------------
@@ -238,62 +240,55 @@ function DruidManaLib:ReflectionCheck()
 end
 
 function DruidManaLib:OnEvent()
-	if playerClass and playerClass == "DRUID" then
-		if event == "UNIT_MAXMANA" and arg1 == "player" then
-			self:MaxManaScript();
-		elseif event == "UNIT_INVENTORY_CHANGED" and arg1 == "player" then
-			self:MaxManaScript();
-		elseif event == "UNIT_MANA" and arg1 == "player" then
-			if UnitPowerType(arg1) == 0 then
-				curMana = UnitMana(arg1);
-				self.SpecialEventScheduler:TriggerEvent("DruidManaLib_Manaupdate")
-			elseif curMana < maxMana then
-				local add = self:ReflectionCheck();
-				curMana = curMana + add + extra;
-				if curMana > maxMana then curMana = maxMana; end
-			end
-			fullmanatimer = 0
-		elseif event == "PLAYER_AURAS_CHANGED" or event == "UPDATE_SHAPESHIFT_FORMS" then
-			if UnitPowerType("player") == 1 and not inform then
-				--Bear
-				inform = true
-				self:Subtract()
-			elseif UnitPowerType("player") == 3 and not inform then
-				--Cat
-				inform = true
-				self:Subtract()
-			elseif UnitPowerType("player") == 0 and inform then
-				inform = nil
-				curMana = UnitMana("player")
-				maxMana = UnitManaMax("player")
-				--player/aqua/travel
-			end
-		elseif (event == "SPELLCAST_STOP") then
-			if UnitPowerType("player") == 0 then
-				lowregentimer = 5
-				waitonce = nil
-			end
+	if event == "UNIT_MAXMANA" and arg1 == "player" then
+		self:MaxManaScript();
+	elseif event == "UNIT_INVENTORY_CHANGED" and arg1 == "player" then
+		self:MaxManaScript();
+	elseif event == "UNIT_MANA" and arg1 == "player" then
+		if UnitPowerType(arg1) == 0 then
+			curMana = UnitMana(arg1);
+			self.SpecialEventScheduler:TriggerEvent("DruidManaLib_Manaupdate")
+		elseif curMana < maxMana then
+			local add = self:ReflectionCheck();
+			curMana = curMana + add + extra;
+			self.SpecialEventScheduler:TriggerEvent("DruidManaLib_Manaupdate")
+			if curMana > maxMana then curMana = maxMana; end
+		end
+		fullmanatimer = 0
+	elseif event == "PLAYER_AURAS_CHANGED" or event == "UPDATE_SHAPESHIFT_FORMS" then
+		if UnitPowerType("player") == 1 and not inform then
+			--Bear
+			inform = true
+			self:Subtract()
+		elseif UnitPowerType("player") == 3 and not inform then
+			--Cat
+			inform = true
+			self:Subtract()
+		elseif UnitPowerType("player") == 0 and inform then
+			inform = nil
+			curMana = UnitMana("player")
+			maxMana = UnitManaMax("player")
+			self.SpecialEventScheduler:TriggerEvent("DruidManaLib_Manaupdate")
+			--player/aqua/travel
+		end
+	elseif (event == "SPELLCAST_STOP") then
+		if UnitPowerType("player") == 0 then
+			lowregentimer = 5
+			waitonce = nil
 		end
 	end
 end
 local timer = 0
 function DruidManaLib_OnUpdate()
 	timer = timer + arg1
-	if playerClass and playerClass == "DRUID" then
-		if lowregentimer > 0 then
-			lowregentimer = lowregentimer - arg1;
-			if lowregentimer <= 0 then lowregentimer = 0; end
-		end
-		if UnitPowerType("player") ~= 0 then
-			fullmanatimer = fullmanatimer + arg1;
-			if fullmanatimer > 6 and floor((curMana*100) / maxMana) > 90 then
-				curMana = maxMana;
-			end
-		end
+	if lowregentimer > 0 then
+		lowregentimer = lowregentimer - arg1;
+		if lowregentimer <= 0 then lowregentimer = 0; end
 	end
-	if timer > 2 then
-		timer = 0
-		if playerClass and playerClass == "DRUID" and UnitPowerType("player") ~= 0 then
+	if UnitPowerType("player") ~= 0 then
+		fullmanatimer = fullmanatimer + arg1;
+		if fullmanatimer > 6 and floor((curMana*100) / maxMana) > 90 then
+			curMana = maxMana;
 			local AceEvent = AceLibrary("AceEvent-2.0")
 			AceEvent:TriggerEvent("DruidManaLib_Manaupdate")
 		end
