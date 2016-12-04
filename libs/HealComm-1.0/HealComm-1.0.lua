@@ -8,7 +8,7 @@ Dependencies: AceLibrary, AceEvent-2.0, RosterLib-2.0
 ]]
 
 local MAJOR_VERSION = "HealComm-1.0"
-local MINOR_VERSION = "$Revision: 11360 $"
+local MINOR_VERSION = "$Revision: 11370 $"
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
 if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end
@@ -31,8 +31,8 @@ if( GetLocale() == "deDE" ) then
 	L["Healing Wave"] = "Welle der Heilung"
 	L["Lesser Healing Wave"] = "Geringe Welle der Heilung"
 	L["Chain Heal"] = "Kettenheilung"
-	L["Lesser Heal"] = "Geringe Heilung"
-	L["Heal"] = "Heilung"
+	L["Lesser Heal"] = "Geringes Heilen"
+	L["Heal"] = "Heilen"
 	L["Flash Heal"] = "Blitzheilung"
 	L["Greater Heal"] = "Große Heilung"
 	L["Prayer of Healing"] = "Gebet der Heilung"
@@ -809,17 +809,17 @@ HealComm.Spells = {
 		[1] = function (SpellPower)
 			local _,_,_,_,talentRank,_ = GetTalentInfo(3,12)
 			local gnMod = 2*talentRank/100 + 1
-			return (43*gnMod+((1.5/3.5) * SpellPower)*0.246)
+			return (43*gnMod+((1.5/3.5) * SpellPower * (1-((20-4)*0.0375))))
 		end;
 		[2] = function (SpellPower)
 			local _,_,_,_,talentRank,_ = GetTalentInfo(3,12)
 			local gnMod = 2*talentRank/100 + 1
-			return (101*gnMod+((2/3.5) * SpellPower)*0.487)
+			return (101*gnMod+((2/3.5) * SpellPower * (1-((20-13)*0.0375))))
 		end;
 		[3] = function (SpellPower)
 			local _,_,_,_,talentRank,_ = GetTalentInfo(3,12)
 			local gnMod = 2*talentRank/100 + 1
-			return (220*gnMod+((2.5/3.5) * SpellPower)*0.568)
+			return (220*gnMod+((2.5/3.5) * SpellPower))
 		end;
 		[4] = function (SpellPower)
 			local _,_,_,_,talentRank,_ = GetTalentInfo(3,12)
