@@ -166,8 +166,7 @@ local function ParseCombatMessage(eventstr, clString)
 	local unit
 	if type(eventstr) == "string" then
 		local _, _, unitname = string.find(clString, eventstr)
-		-- ?? why here the condition check is different from the below ??
-		if unitname then
+		if unitname and (unitname ~= L["you"] and unitname ~= L["You"]) then
 			unit = rosterLib:GetUnitIDFromName(unitname)
 			if unit then
 				roster[unit] = GetTime()
@@ -176,11 +175,7 @@ local function ParseCombatMessage(eventstr, clString)
 	elseif type(eventstr) == "table" then
 		for _,val in pairs(eventstr) do
 			local _, _, unitname = string.find(clString, val)
-			-- ?? why here the condition check is different from the above ??
-			-- unitname ~= L["you"] or unitname ~= L["You"] maybe always true
-			-- a bracket is also needed if that's what it means to be
-			-- if unitname and (unitname ~= L["you"] or unitname ~= L["You"]) then
-			if unitname and unitname ~= L["you"] or unitname ~= L["You"] then
+			if unitname and (unitname ~= L["you"] and unitname ~= L["You"]) then
 				unit = rosterLib:GetUnitIDFromName(unitname)
 				if unit then
 					roster[unit] = GetTime()
