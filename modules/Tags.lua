@@ -46,6 +46,8 @@ local function Hex(r, g, b)
 end
 
 local function feigncheck(unit)
+	local _,class = UnitClass(unit)
+	if class ~= "HUNTER" then return end
 	for i=1,32 do
 		if not UnitBuff(unit,i) then
 			return

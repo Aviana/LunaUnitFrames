@@ -216,7 +216,7 @@ end
 local function initPlayerDrop()
 	UnitPopup_ShowMenu(PlayerFrameDropDown, "SELF", "player")
 	if not (UnitInRaid("player") or GetNumPartyMembers() > 0) or UnitIsPartyLeader("player") and PlayerFrameDropDown.init then
-		UIDropDownMenu_AddButton({text = "Reset Instances", func = ResetInstances, notCheckable = 1}, 1)
+		UIDropDownMenu_AddButton({text = RESET_INSTANCES, func = ResetInstances, notCheckable = 1}, 1)
 		PlayerFrameDropDown.init = nil
 	end
 end
