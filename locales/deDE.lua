@@ -165,6 +165,7 @@ local function deDE() return {
 ["Invert"] = "Invertieren",
 ["Vertical"] = "Vertikal",
 ["hide"] = "Verstecken",
+["Icon"] = "Symbol",
 ["Healing prediction"] = "Heilungsvorhersage",
 ["Type"] = "Typ",
 ["Side"] = "Seite",

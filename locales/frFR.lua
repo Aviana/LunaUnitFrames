@@ -162,6 +162,7 @@ local function frFR() return {
 ["Invert"] = "Invert",
 ["Vertical"] = "Vertical",
 ["hide"] = "Hide",
+["Icon"] = "Icon",
 ["Healing prediction"] = "Healing prediction",
 ["Type"] = "Type",
 ["Side"] = "Side",

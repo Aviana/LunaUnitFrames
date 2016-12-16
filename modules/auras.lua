@@ -8,6 +8,7 @@ local currentBuffTable = {}
 local bufftimers = {}
 local debufftimers = {}
 local FrameUpdateNeeded
+local mainEnchant, offEnchant, longMain, longOff
 
 -- Thanks schaka! :D
 local function firstToUpper(str)
@@ -40,9 +41,20 @@ local function BuffFrameUpdate(frame, buildOnly)
 	local unit = auraframe:GetParent().unit
 	local isPlayer = auraframe:GetParent().unitGroup == "player"
 	local config = LunaUF.db.profile.units[auraframe:GetParent().unitGroup].auras
+	local hasMainHandEnchant, mainHandExpiration, mainHandCharges, hasOffHandEnchant, offHandExpiration, offHandCharges = GetWeaponEnchantInfo()
+	if not isPlayer then
+		hasMainHandEnchant = nil
+		hasOffHandEnchant = nil
+	end
 	local numBuffs = 0
 	if isPlayer then
 		while GetPlayerBuff(numBuffs, "HELPFUL") ~= -1 do
+			numBuffs = numBuffs + 1
+		end
+		if hasMainHandEnchant then
+			numBuffs = numBuffs + 1
+		end
+		if hasOffHandEnchant then
 			numBuffs = numBuffs + 1
 		end
 	else
@@ -101,6 +113,28 @@ local function BuffFrameUpdate(frame, buildOnly)
 				button.auraID = i
 			end
 			button:Show()
+		elseif hasMainHandEnchant then
+			button.icon:SetTexture(GetInventoryItemTexture("player", 16))
+			button.auraID = 16
+			button.filter = "TEMP"
+			if config.timerspinenabled then
+				CooldownFrame_SetTimer(button.cooldown, GetTime() - ((longMain and 3600 or 1800) - (mainHandExpiration/1000)), (longMain and 3600 or 1800), 1)
+			else
+				button.cooldown:Hide()
+			end
+			button:Show()
+			hasMainHandEnchant = nil
+		elseif hasOffHandEnchant then
+			button.icon:SetTexture(GetInventoryItemTexture("player", 17))
+			button.auraID = 17
+			button.filter = "TEMP"
+			if config.timerspinenabled then
+				CooldownFrame_SetTimer(button.cooldown, GetTime() - ((longOff and 3600 or 1800) - (offHandExpiration/1000)), (longOff and 3600 or 1800), 1)
+			else
+				button.cooldown:Hide()
+			end
+			button:Show()
+			hasOffHandEnchant = nil
 		else
 			if isPlayer then
 				button:SetScript("OnClick", nil)
@@ -185,36 +219,50 @@ local function OnEvent()
 	end
 end
 
+local function getTimeString(timeLeft)
+	local timeString = ""
+	local expiring
+	local timeL = timeLeft
+	if (timeL and timeL > 0) then
+		timeL = math.ceil(timeL);
+		expiring = (timeL < 10)
+		if (timeL > 3599) then
+			timeString = math.ceil(timeL / 3600).." h"
+		elseif (timeL > 59) then
+			timeString = math.ceil(timeL / 60).." m"
+		elseif not expiring then
+			timeString = timeL.." s"
+		else
+			timeString = timeL
+		end
+	end
+	return timeString, expiring
+end
+
 local function OnUpdate()
 	if not (this:GetParent().unitGroup == "player") then return end
 	local config = LunaUF.db.profile.units[this:GetParent().unitGroup].auras
 	local changed
+	local hasMainHandEnchant, mainHandExpiration, mainHandCharges, hasOffHandEnchant, offHandExpiration, offHandCharges = GetWeaponEnchantInfo()
+	if hasMainHandEnchant ~= mainEnchant or hasOffHandEnchant ~= offEnchant then
+		changed = 1
+		mainEnchant = hasMainHandEnchant
+		longMain = hasMainHandEnchant and mainHandExpiration > 1800000
+		offEnchant = hasOffHandEnchant
+		longOff = hasOffHandEnchant and offHandExpiration > 1800000
+	end
 	for i,button in ipairs(this.buffbuttons) do
-		local timeLeft = button.auraID and GetPlayerBuffTimeLeft(button.auraID) or 0
-		if bufftimers[i] and timeLeft > bufftimers[i] then
-			changed = 1
-		end
-		bufftimers[i] = timeLeft
-		if (button:IsVisible() and button.untilCancelled == 0) then
+		local timeLeft
+		if (button:IsVisible() and button.untilCancelled == 0 and button.filter ~= "TEMP") then
+			timeLeft = button.auraID and GetPlayerBuffTimeLeft(button.auraID) or 0
+			if bufftimers[i] and timeLeft > bufftimers[i] then
+				changed = 1
+			end
+			bufftimers[i] = timeLeft
 			if (config.timertextenabled) then
-				local timeString = ""
-				local centered
-				local timeL = timeLeft
-				if (timeL and timeL > 0) then
-					timeL = math.ceil(timeL);
-					centered = (timeL < 10)
-					if (timeL > 3599) then
-						timeString = math.ceil(timeL / 3600).." h"
-					elseif (timeL > 59) then
-						timeString = math.ceil(timeL / 60).." m"
-					elseif not centered then
-						timeString = timeL.." s"
-					else
-						timeString = timeL
-					end
-				end
+				local timeString, expiring = getTimeString(timeLeft)
 				button.timeFontstring:SetText(timeString)
-				if centered then
+				if expiring then
 					button.timeFontstring:SetFont(defaultFont, LunaUF.db.profile.units["player"].auras.timertextbigsize, "OUTLINE")
 				else
 					button.timeFontstring:SetFont(defaultFont, LunaUF.db.profile.units["player"].auras.timertextsmallsize, "OUTLINE")
@@ -222,6 +270,28 @@ local function OnUpdate()
 			else
 				button.timeFontstring:SetText("")
 			end
+		elseif button:IsVisible() and button.auraID == 16 and hasMainHandEnchant then
+			if (config.timertextenabled) then
+				local timeString, expiring = getTimeString(mainHandExpiration/1000)
+				button.timeFontstring:SetText(timeString)
+				if expiring then
+					button.timeFontstring:SetFont(defaultFont, LunaUF.db.profile.units["player"].auras.timertextbigsize, "OUTLINE")
+				else
+					button.timeFontstring:SetFont(defaultFont, LunaUF.db.profile.units["player"].auras.timertextsmallsize, "OUTLINE")
+				end
+			end
+			button.stack:SetText(mainHandCharges and mainHandCharges <= 1 and "" or mainHandCharges)
+		elseif button:IsVisible() and button.auraID == 17 and hasOffHandEnchant then
+			if (config.timertextenabled) then
+				local timeString, expiring = getTimeString(offHandExpiration/1000)
+				button.timeFontstring:SetText(timeString)
+				if expiring then
+					button.timeFontstring:SetFont(defaultFont, LunaUF.db.profile.units["player"].auras.timertextbigsize, "OUTLINE")
+				else
+					button.timeFontstring:SetFont(defaultFont, LunaUF.db.profile.units["player"].auras.timertextsmallsize, "OUTLINE")
+				end
+			end
+			button.stack:SetText(offHandCharges and offHandCharges <= 1 and "" or offHandCharges)
 		else
 			button.timeFontstring:SetText("")
 		end
@@ -234,24 +304,9 @@ local function OnUpdate()
 		debufftimers[i] = timeLeft
 		if (button:IsVisible() and button.untilCancelled == 0) then
 			if (config.timertextenabled) then
-				local timeString = ""
-				local centered
-				local timeL = timeLeft
-				if (timeL and timeL > 0) then
-					timeL = math.ceil(timeL);
-					centered = (timeL < 10)
-					if (timeL > 3599) then
-						timeString = math.ceil(timeL / 3600).." h"
-					elseif (timeL > 59) then
-						timeString = math.ceil(timeL / 60).." m"
-					elseif not centered then
-						timeString = timeL.." s"
-					else
-						timeString = timeL
-					end
-				end
+				local timeString, expiring = getTimeString(timeleft)
 				button.timeFontstring:SetText(timeString)
-				if centered then
+				if expiring then
 					button.timeFontstring:SetFont(defaultFont, LunaUF.db.profile.units["player"].auras.timertextbigsize, "OUTLINE")
 				else
 					button.timeFontstring:SetFont(defaultFont, LunaUF.db.profile.units["player"].auras.timertextsmallsize, "OUTLINE")
@@ -409,7 +464,6 @@ function Auras:FullUpdate(frame)
 	local framelength = frame:GetWidth()
 	local frameheight = frame:GetHeight()
 	local buttonsize = ((framelength-config.AurasPerRow-1)/config.AurasPerRow)
-	local row = 1
 	frame.auras:ClearAllPoints()
 	frame.auras:SetWidth(1)
 	frame.auras:SetHeight(1)

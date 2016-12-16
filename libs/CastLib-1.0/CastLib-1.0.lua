@@ -8,7 +8,7 @@ Dependencies: AceLibrary, AceEvent-2.0
 ]]
 
 local MAJOR_VERSION = "CastLib-1.0"
-local MINOR_VERSION = "$Revision: 10010 $"
+local MINOR_VERSION = "$Revision: 10020 $"
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
 if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end
@@ -139,10 +139,17 @@ function CastLib:OnEvent()
 	end
 end
 
+function CastLib:GetSpell()
+	return CastLib_Spell or CastLib_SpellCast_backup[1], CastLib_Rank or CastLib_SpellCast_backup[2]
+end
+
 local CastLib_oldCastSpell = CastSpell
 function CastLib_newCastSpell(spellId, spellbookTabNum)
 	-- Call the original function so there's no delay while we process
 	CastLib_oldCastSpell(spellId, spellbookTabNum)
+	if CastLib_Spell then
+		return
+	end
 	local spellName, rank = GetSpellName(spellId, spellbookTabNum)
 	_,_,rank = string.find(rank,"(%d+)")
 	if ( SpellIsTargeting() ) then
@@ -165,6 +172,9 @@ local CastLib_oldCastSpellByName = CastSpellByName
 function CastLib_newCastSpellByName(spellName, onSelf)
 	-- Call the original function
 	CastLib_oldCastSpellByName(spellName, onSelf)
+	if CastLib_Spell then
+		return
+	end
 	local _,_,rank = string.find(spellName,"(%d+)")
 	local _, _, spellName = string.find(spellName, "^([^%(]+)")
 	if not rank then
@@ -222,12 +232,16 @@ local CastLib_oldUseAction = UseAction
 function CastLib_newUseAction(slot, checkCursor, onSelf)
 	CastLibTip:ClearLines()
 	CastLibTip:SetAction(slot)
+	-- Call the original function
+	CastLib_oldUseAction(slot, checkCursor, onSelf)
+	
+	if CastLib_Spell then
+		return
+	end
 	local spellName = CastLibTipTextLeft1:GetText()
 	CastLib_Spell = spellName
 	CastLib_Slot = slot
 	
-	-- Call the original function
-	CastLib_oldUseAction(slot, checkCursor, onSelf)
 	-- Test to see if this is a macro
 	if ( GetActionText(slot) or not CastLib_Spell ) then
 		return

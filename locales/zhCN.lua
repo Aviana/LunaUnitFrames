@@ -162,6 +162,7 @@ local function zhCN() return {
 ["Invert"] = "反转颜色",
 ["Vertical"] = "垂直增长",
 ["hide"] = "隐藏",
+["Icon"] = "Icon",
 ["Healing prediction"] = "治疗预测",
 ["Type"] = "类型",
 ["Side"] = "位置",
