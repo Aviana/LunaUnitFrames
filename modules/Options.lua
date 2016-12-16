@@ -1,6 +1,6 @@
 local L = LunaUF.L
 local defaultFont = LunaUF.defaultFont
-local OptionsPageNames = {L["General"],L["Player"],L["Pet"],L["Target"],L["ToT"],L["ToToT"],L["Party"],L["Party Target"],L["Party Pet"],L["Raid"],L["Clickcasting"],L["Config Mode"],L["Reset Settings"]}
+local OptionsPageNames = {L["General"],L["Player"],L["Pet"],L["Target"],L["ToT"],L["ToToT"],L["Party"],L["Party Target"],L["Party Pet"],L["Raid"],L["Clickcasting"],L["Colors"],L["Config Mode"],L["Reset Settings"]}
 local shownFrame = 1
 local WithTags = {
 	["healthBar"] = true,
@@ -679,22 +679,7 @@ function LunaUF:LoadOptions()
 		LunaOptionsFrame.pages[i].tags.load(LunaOptionsFrame.pages[i].tags,LunaUF.db.profile.units[unit].tags.bartags)
 		LunaOptionsFrame.pages[i].barorder.load(LunaOptionsFrame.pages[i].barorder,LunaUF.db.profile.units[unit].barorder)
 	end
-	
-	for i,class in ipairs({"PRIEST","PALADIN","SHAMAN","WARRIOR","ROGUE","MAGE","WARLOCK","DRUID","HUNTER"}) do
-		LunaOptionsFrame.pages[1][class].load(LunaOptionsFrame.pages[1][class],LunaUF.db.profile.classColors[class])
-	end
-	for name,_ in pairs(LunaUF.db.profile.healthColors) do
-		LunaOptionsFrame.pages[1][name].load(LunaOptionsFrame.pages[1][name],LunaUF.db.profile.healthColors[name])
-	end
-	for name,_ in pairs(LunaUF.db.profile.powerColors) do
-		LunaOptionsFrame.pages[1][name].load(LunaOptionsFrame.pages[1][name],LunaUF.db.profile.powerColors[name])
-	end
-	for name,_ in pairs(LunaUF.db.profile.castColors) do
-		LunaOptionsFrame.pages[1][name].load(LunaOptionsFrame.pages[1][name],LunaUF.db.profile.castColors[name])
-	end
-	for name,_ in pairs(LunaUF.db.profile.xpColors) do
-		LunaOptionsFrame.pages[1][name].load(LunaOptionsFrame.pages[1][name],LunaUF.db.profile.xpColors[name])
-	end
+
 	SetDropDownValue(LunaOptionsFrame.pages[1].FontSelect,LunaUF.db.profile.font)
 	SetDropDownValue(LunaOptionsFrame.pages[1].TextureSelect,LunaUF.db.profile.texture)
 	SetDropDownValue(LunaOptionsFrame.pages[1].AuraBorderSelect,LunaUF.db.profile.auraborderType)
@@ -780,6 +765,21 @@ function LunaUF:LoadOptions()
 	ToggleDropDownMenu(1,nil,LunaOptionsFrame.pages[10].mode)
 	LunaOptionsFrame.pages[11].mouseDownClicks:SetChecked(LunaUF.db.profile.clickcasting.mouseDownClicks)
 	LunaOptionsFrame.pages[11].Load()
+	for i,class in ipairs({"PRIEST","PALADIN","SHAMAN","WARRIOR","ROGUE","MAGE","WARLOCK","DRUID","HUNTER"}) do
+		LunaOptionsFrame.pages[12][class].load(LunaOptionsFrame.pages[12][class],LunaUF.db.profile.classColors[class])
+	end
+	for name,_ in pairs(LunaUF.db.profile.healthColors) do
+		LunaOptionsFrame.pages[12][name].load(LunaOptionsFrame.pages[12][name],LunaUF.db.profile.healthColors[name])
+	end
+	for name,_ in pairs(LunaUF.db.profile.powerColors) do
+		LunaOptionsFrame.pages[12][name].load(LunaOptionsFrame.pages[12][name],LunaUF.db.profile.powerColors[name])
+	end
+	for name,_ in pairs(LunaUF.db.profile.castColors) do
+		LunaOptionsFrame.pages[12][name].load(LunaOptionsFrame.pages[12][name],LunaUF.db.profile.castColors[name])
+	end
+	for name,_ in pairs(LunaUF.db.profile.xpColors) do
+		LunaOptionsFrame.pages[12][name].load(LunaOptionsFrame.pages[12][name],LunaUF.db.profile.xpColors[name])
+	end
 end
 
 function LunaUF:CreateOptionsMenu()
@@ -898,7 +898,7 @@ function LunaUF:CreateOptionsMenu()
 	LunaOptionsFrame.ScrollFrames[1]:Show()
 
 	LunaOptionsFrame.Button0 = CreateFrame("Button", "LunaGeneralButton", LunaOptionsFrame, "UIPanelButtonTemplate")
-	LunaOptionsFrame.Button0:SetPoint("TOPLEFT", LunaOptionsFrame, "TOPLEFT", 20, -70)
+	LunaOptionsFrame.Button0:SetPoint("TOPLEFT", LunaOptionsFrame, "TOPLEFT", 20, -60)
 	LunaOptionsFrame.Button0:SetHeight(20)
 	LunaOptionsFrame.Button0:SetWidth(140)
 	LunaOptionsFrame.Button0:SetText(L["General"])
@@ -906,7 +906,7 @@ function LunaUF:CreateOptionsMenu()
 	LunaOptionsFrame.Button0.id = 1
 
 	LunaOptionsFrame.Button1 = CreateFrame("Button", "LunaPlayerButton", LunaOptionsFrame, "UIPanelButtonTemplate")
-	LunaOptionsFrame.Button1:SetPoint("TOPLEFT", LunaOptionsFrame.Button0, "BOTTOMLEFT", 0, -5)
+	LunaOptionsFrame.Button1:SetPoint("TOPLEFT", LunaOptionsFrame.Button0, "BOTTOMLEFT", 0, -2)
 	LunaOptionsFrame.Button1:SetHeight(20)
 	LunaOptionsFrame.Button1:SetWidth(140)
 	LunaOptionsFrame.Button1:SetText(L["Player"])
@@ -914,7 +914,7 @@ function LunaUF:CreateOptionsMenu()
 	LunaOptionsFrame.Button1.id = 2
 
 	LunaOptionsFrame.Button2 = CreateFrame("Button", "LunaPetButton", LunaOptionsFrame, "UIPanelButtonTemplate")
-	LunaOptionsFrame.Button2:SetPoint("TOPLEFT", LunaOptionsFrame.Button1, "BOTTOMLEFT", 0, -5)
+	LunaOptionsFrame.Button2:SetPoint("TOPLEFT", LunaOptionsFrame.Button1, "BOTTOMLEFT", 0, -2)
 	LunaOptionsFrame.Button2:SetHeight(20)
 	LunaOptionsFrame.Button2:SetWidth(140)
 	LunaOptionsFrame.Button2:SetText(L["Pet"])
@@ -922,7 +922,7 @@ function LunaUF:CreateOptionsMenu()
 	LunaOptionsFrame.Button2.id = 3
 
 	LunaOptionsFrame.Button3 = CreateFrame("Button", "LunaTargetButton", LunaOptionsFrame, "UIPanelButtonTemplate")
-	LunaOptionsFrame.Button3:SetPoint("TOPLEFT", LunaOptionsFrame.Button2, "BOTTOMLEFT", 0, -5)
+	LunaOptionsFrame.Button3:SetPoint("TOPLEFT", LunaOptionsFrame.Button2, "BOTTOMLEFT", 0, -2)
 	LunaOptionsFrame.Button3:SetHeight(20)
 	LunaOptionsFrame.Button3:SetWidth(140)
 	LunaOptionsFrame.Button3:SetText(L["Target"])
@@ -930,7 +930,7 @@ function LunaUF:CreateOptionsMenu()
 	LunaOptionsFrame.Button3.id = 4
 
 	LunaOptionsFrame.Button4 = CreateFrame("Button", "LunaToTButton", LunaOptionsFrame, "UIPanelButtonTemplate")
-	LunaOptionsFrame.Button4:SetPoint("TOPLEFT", LunaOptionsFrame.Button3, "BOTTOMLEFT", 0, -5)
+	LunaOptionsFrame.Button4:SetPoint("TOPLEFT", LunaOptionsFrame.Button3, "BOTTOMLEFT", 0, -2)
 	LunaOptionsFrame.Button4:SetHeight(20)
 	LunaOptionsFrame.Button4:SetWidth(140)
 	LunaOptionsFrame.Button4:SetText(L["ToT"])
@@ -938,7 +938,7 @@ function LunaUF:CreateOptionsMenu()
 	LunaOptionsFrame.Button4.id = 5
 
 	LunaOptionsFrame.Button5 = CreateFrame("Button", "LunaToToTButton", LunaOptionsFrame, "UIPanelButtonTemplate")
-	LunaOptionsFrame.Button5:SetPoint("TOPLEFT", LunaOptionsFrame.Button4, "BOTTOMLEFT", 0, -5)
+	LunaOptionsFrame.Button5:SetPoint("TOPLEFT", LunaOptionsFrame.Button4, "BOTTOMLEFT", 0, -2)
 	LunaOptionsFrame.Button5:SetHeight(20)
 	LunaOptionsFrame.Button5:SetWidth(140)
 	LunaOptionsFrame.Button5:SetText(L["ToToT"])
@@ -946,7 +946,7 @@ function LunaUF:CreateOptionsMenu()
 	LunaOptionsFrame.Button5.id = 6
 
 	LunaOptionsFrame.Button6 = CreateFrame("Button", "LunaPartyButton", LunaOptionsFrame, "UIPanelButtonTemplate")
-	LunaOptionsFrame.Button6:SetPoint("TOPLEFT", LunaOptionsFrame.Button5, "BOTTOMLEFT", 0, -5)
+	LunaOptionsFrame.Button6:SetPoint("TOPLEFT", LunaOptionsFrame.Button5, "BOTTOMLEFT", 0, -2)
 	LunaOptionsFrame.Button6:SetHeight(20)
 	LunaOptionsFrame.Button6:SetWidth(140)
 	LunaOptionsFrame.Button6:SetText(L["Party"])
@@ -954,7 +954,7 @@ function LunaUF:CreateOptionsMenu()
 	LunaOptionsFrame.Button6.id = 7
 
 	LunaOptionsFrame.Button7 = CreateFrame("Button", "LunaPartyTargetButton", LunaOptionsFrame, "UIPanelButtonTemplate")
-	LunaOptionsFrame.Button7:SetPoint("TOPLEFT", LunaOptionsFrame.Button6, "BOTTOMLEFT", 0, -5)
+	LunaOptionsFrame.Button7:SetPoint("TOPLEFT", LunaOptionsFrame.Button6, "BOTTOMLEFT", 0, -2)
 	LunaOptionsFrame.Button7:SetHeight(20)
 	LunaOptionsFrame.Button7:SetWidth(140)
 	LunaOptionsFrame.Button7:SetText(L["Party Target"])
@@ -962,7 +962,7 @@ function LunaUF:CreateOptionsMenu()
 	LunaOptionsFrame.Button7.id = 8
 
 	LunaOptionsFrame.Button8 = CreateFrame("Button", "LunaPartyPetButton", LunaOptionsFrame, "UIPanelButtonTemplate")
-	LunaOptionsFrame.Button8:SetPoint("TOPLEFT", LunaOptionsFrame.Button7, "BOTTOMLEFT", 0, -5)
+	LunaOptionsFrame.Button8:SetPoint("TOPLEFT", LunaOptionsFrame.Button7, "BOTTOMLEFT", 0, -2)
 	LunaOptionsFrame.Button8:SetHeight(20)
 	LunaOptionsFrame.Button8:SetWidth(140)
 	LunaOptionsFrame.Button8:SetText(L["Party Pet"])
@@ -970,7 +970,7 @@ function LunaUF:CreateOptionsMenu()
 	LunaOptionsFrame.Button8.id = 9
 
 	LunaOptionsFrame.Button9 = CreateFrame("Button", "LunaRaidButton", LunaOptionsFrame, "UIPanelButtonTemplate")
-	LunaOptionsFrame.Button9:SetPoint("TOPLEFT", LunaOptionsFrame.Button8, "BOTTOMLEFT", 0, -5)
+	LunaOptionsFrame.Button9:SetPoint("TOPLEFT", LunaOptionsFrame.Button8, "BOTTOMLEFT", 0, -2)
 	LunaOptionsFrame.Button9:SetHeight(20)
 	LunaOptionsFrame.Button9:SetWidth(140)
 	LunaOptionsFrame.Button9:SetText(L["Raid"])
@@ -978,19 +978,27 @@ function LunaUF:CreateOptionsMenu()
 	LunaOptionsFrame.Button9.id = 10
 
 	LunaOptionsFrame.Button10 = CreateFrame("Button", "LunaClickcastingButton", LunaOptionsFrame, "UIPanelButtonTemplate")
-	LunaOptionsFrame.Button10:SetPoint("TOPLEFT", LunaOptionsFrame.Button9, "BOTTOMLEFT", 0, -5)
+	LunaOptionsFrame.Button10:SetPoint("TOPLEFT", LunaOptionsFrame.Button9, "BOTTOMLEFT", 0, -2)
 	LunaOptionsFrame.Button10:SetHeight(20)
 	LunaOptionsFrame.Button10:SetWidth(140)
 	LunaOptionsFrame.Button10:SetText(L["Clickcasting"])
 	LunaOptionsFrame.Button10:SetScript("OnClick", OnPageSwitch)
 	LunaOptionsFrame.Button10.id = 11
 
-	LunaOptionsFrame.Button11 = CreateFrame("Button", "LunaConfigModeButton", LunaOptionsFrame, "UIPanelButtonTemplate")
-	LunaOptionsFrame.Button11:SetPoint("TOPLEFT", LunaOptionsFrame.Button10, "BOTTOMLEFT", 0, -10)
+	LunaOptionsFrame.Button11 = CreateFrame("Button", "LunaColorsButton", LunaOptionsFrame, "UIPanelButtonTemplate")
+	LunaOptionsFrame.Button11:SetPoint("TOPLEFT", LunaOptionsFrame.Button10, "BOTTOMLEFT", 0, -2)
 	LunaOptionsFrame.Button11:SetHeight(20)
 	LunaOptionsFrame.Button11:SetWidth(140)
-	LunaOptionsFrame.Button11:SetText(L["Config Mode"])
-	LunaOptionsFrame.Button11:SetScript("OnClick", function () 
+	LunaOptionsFrame.Button11:SetText(L["Colors"])
+	LunaOptionsFrame.Button11:SetScript("OnClick", OnPageSwitch)
+	LunaOptionsFrame.Button11.id = 12
+
+	LunaOptionsFrame.Button12 = CreateFrame("Button", "LunaConfigModeButton", LunaOptionsFrame, "UIPanelButtonTemplate")
+	LunaOptionsFrame.Button12:SetPoint("TOPLEFT", LunaOptionsFrame.Button11, "BOTTOMLEFT", 0, -10)
+	LunaOptionsFrame.Button12:SetHeight(20)
+	LunaOptionsFrame.Button12:SetWidth(140)
+	LunaOptionsFrame.Button12:SetText(L["Config Mode"])
+	LunaOptionsFrame.Button12:SetScript("OnClick", function ()
 		if LunaUF.db.profile.locked then
 			LunaUF:SystemMessage(L["Entering config mode."])
 			LunaUF.db.profile.locked = false
@@ -1000,100 +1008,19 @@ function LunaUF:CreateOptionsMenu()
 		end
 		LunaUF:LoadUnits()
 	end	)
-	LunaOptionsFrame.Button11.id = 12
-
-	LunaOptionsFrame.Button12 = CreateFrame("Button", "LunaResetSettingsButton", LunaOptionsFrame, "UIPanelButtonTemplate")
-	LunaOptionsFrame.Button12:SetPoint("TOPLEFT", LunaOptionsFrame.Button11, "BOTTOMLEFT", 0, -5)
-	LunaOptionsFrame.Button12:SetHeight(20)
-	LunaOptionsFrame.Button12:SetWidth(140)
-	LunaOptionsFrame.Button12:SetText(L["Reset Settings"])
-	LunaOptionsFrame.Button12:SetScript("OnClick", function ()
-		StaticPopup_Show("RESET_LUNA")
-	end )
 	LunaOptionsFrame.Button12.id = 13
 
-	LunaOptionsFrame.pages[1].cColorHeader = LunaOptionsFrame.pages[1]:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	LunaOptionsFrame.pages[1].cColorHeader:SetPoint("TOPLEFT", LunaOptionsFrame.pages[1], "TOPLEFT", 20, -40)
-	LunaOptionsFrame.pages[1].cColorHeader:SetHeight(24)
-	LunaOptionsFrame.pages[1].cColorHeader:SetJustifyH("LEFT")
-	LunaOptionsFrame.pages[1].cColorHeader:SetTextColor(1,1,0)
-	LunaOptionsFrame.pages[1].cColorHeader:SetText(L["Classcolors"])
-	
-	for i,class in ipairs({"PRIEST","PALADIN","SHAMAN","WARRIOR","ROGUE","MAGE","WARLOCK","DRUID","HUNTER"}) do
-		LunaOptionsFrame.pages[1][class] = CreateColorSelect(LunaOptionsFrame.pages[1], LunaUF.db.profile.classColors[class])
-		LunaOptionsFrame.pages[1][class]:SetPoint("TOPLEFT", LunaOptionsFrame.pages[1], "TOPLEFT", 20+(((i-(3*math.floor((i-1)/3)))-1)*120), -70-(math.floor((i-1)/3)*30))
-		LunaOptionsFrame.pages[1][class]:SetHeight(19)
-		LunaOptionsFrame.pages[1][class]:SetWidth(19)
-		LunaOptionsFrame.pages[1][class].text:SetText(L[class])
-	end
-	
-	LunaOptionsFrame.pages[1].hColorHeader = LunaOptionsFrame.pages[1]:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	LunaOptionsFrame.pages[1].hColorHeader:SetPoint("TOPLEFT", LunaOptionsFrame.pages[1], "TOPLEFT", 20, -170)
-	LunaOptionsFrame.pages[1].hColorHeader:SetHeight(24)
-	LunaOptionsFrame.pages[1].hColorHeader:SetJustifyH("LEFT")
-	LunaOptionsFrame.pages[1].hColorHeader:SetTextColor(1,1,0)
-	LunaOptionsFrame.pages[1].hColorHeader:SetText(L["Healthcolors"])
-	
-	local num = 1
-	for name,options in pairs(LunaUF.db.profile.healthColors) do
-		LunaOptionsFrame.pages[1][name] = CreateColorSelect(LunaOptionsFrame.pages[1], options)
-		LunaOptionsFrame.pages[1][name]:SetPoint("TOPLEFT", LunaOptionsFrame.pages[1], "TOPLEFT", 20+(((num-(4*math.floor((num-1)/4)))-1)*120), -200-(math.floor((num-1)/4)*30))
-		LunaOptionsFrame.pages[1][name]:SetHeight(19)
-		LunaOptionsFrame.pages[1][name]:SetWidth(19)
-		LunaOptionsFrame.pages[1][name].text:SetText(L[name])
-		num = num+1
-	end
-	
-	LunaOptionsFrame.pages[1].pColorHeader = LunaOptionsFrame.pages[1]:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	LunaOptionsFrame.pages[1].pColorHeader:SetPoint("TOPLEFT", LunaOptionsFrame.pages[1], "TOPLEFT", 20, -300)
-	LunaOptionsFrame.pages[1].pColorHeader:SetHeight(24)
-	LunaOptionsFrame.pages[1].pColorHeader:SetJustifyH("LEFT")
-	LunaOptionsFrame.pages[1].pColorHeader:SetTextColor(1,1,0)
-	LunaOptionsFrame.pages[1].pColorHeader:SetText(L["Powercolors"])
-	
-	local num = 1
-	for name,options in pairs(LunaUF.db.profile.powerColors) do
-		LunaOptionsFrame.pages[1][name] = CreateColorSelect(LunaOptionsFrame.pages[1], options)
-		LunaOptionsFrame.pages[1][name]:SetPoint("TOPLEFT", LunaOptionsFrame.pages[1], "TOPLEFT", 20+(((num-(3*math.floor((num-1)/3)))-1)*120), -330-(math.floor((num-1)/3)*30))
-		LunaOptionsFrame.pages[1][name]:SetHeight(19)
-		LunaOptionsFrame.pages[1][name]:SetWidth(19)
-		LunaOptionsFrame.pages[1][name].text:SetText(L[name])
-		num = num+1
-	end
-	
-	LunaOptionsFrame.pages[1].castColorHeader = LunaOptionsFrame.pages[1]:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	LunaOptionsFrame.pages[1].castColorHeader:SetPoint("TOPLEFT", LunaOptionsFrame.pages[1], "TOPLEFT", 20, -400)
-	LunaOptionsFrame.pages[1].castColorHeader:SetHeight(24)
-	LunaOptionsFrame.pages[1].castColorHeader:SetJustifyH("LEFT")
-	LunaOptionsFrame.pages[1].castColorHeader:SetTextColor(1,1,0)
-	LunaOptionsFrame.pages[1].castColorHeader:SetText(L["Castcolors"])
-	
-	local num = 1
-	for name,options in pairs(LunaUF.db.profile.castColors) do
-		LunaOptionsFrame.pages[1][name] = CreateColorSelect(LunaOptionsFrame.pages[1], options)
-		LunaOptionsFrame.pages[1][name]:SetPoint("TOPLEFT", LunaOptionsFrame.pages[1], "TOPLEFT", 20+(((num-(3*math.floor((num-1)/3)))-1)*120), -430-(math.floor((num-1)/3)*30))
-		LunaOptionsFrame.pages[1][name]:SetHeight(19)
-		LunaOptionsFrame.pages[1][name]:SetWidth(19)
-		LunaOptionsFrame.pages[1][name].text:SetText(L[name])
-		num = num+1
-	end
-	
-	LunaOptionsFrame.pages[1].xpColorHeader = LunaOptionsFrame.pages[1]:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	LunaOptionsFrame.pages[1].xpColorHeader:SetPoint("TOPLEFT", LunaOptionsFrame.pages[1], "TOPLEFT", 20, -450)
-	LunaOptionsFrame.pages[1].xpColorHeader:SetHeight(24)
-	LunaOptionsFrame.pages[1].xpColorHeader:SetJustifyH("LEFT")
-	LunaOptionsFrame.pages[1].xpColorHeader:SetTextColor(1,1,0)
-	LunaOptionsFrame.pages[1].xpColorHeader:SetText(L["Xpcolors"])
-	
-	local num = 1
-	for name,options in pairs(LunaUF.db.profile.xpColors) do
-		LunaOptionsFrame.pages[1][name] = CreateColorSelect(LunaOptionsFrame.pages[1], options)
-		LunaOptionsFrame.pages[1][name]:SetPoint("TOPLEFT", LunaOptionsFrame.pages[1], "TOPLEFT", 20+(((num-(3*math.floor((num-1)/3)))-1)*120), -480-(math.floor((num-1)/3)*30))
-		LunaOptionsFrame.pages[1][name]:SetHeight(19)
-		LunaOptionsFrame.pages[1][name]:SetWidth(19)
-		LunaOptionsFrame.pages[1][name].text:SetText(L[name])
-		num = num+1
-	end
+	LunaOptionsFrame.Button13 = CreateFrame("Button", "LunaResetSettingsButton", LunaOptionsFrame, "UIPanelButtonTemplate")
+	LunaOptionsFrame.Button13:SetPoint("TOPLEFT", LunaOptionsFrame.Button12, "BOTTOMLEFT", 0, -2)
+	LunaOptionsFrame.Button13:SetHeight(20)
+	LunaOptionsFrame.Button13:SetWidth(140)
+	LunaOptionsFrame.Button13:SetText(L["Reset Settings"])
+	LunaOptionsFrame.Button13:SetScript("OnClick", function ()
+		StaticPopup_Show("RESET_LUNA")
+	end )
+	LunaOptionsFrame.Button13.id = 14
+
+	-------- General
 
 	LunaOptionsFrame.pages[1].fontHeader = LunaOptionsFrame.pages[1]:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
 	LunaOptionsFrame.pages[1].fontHeader:SetPoint("TOPLEFT", LunaOptionsFrame.pages[1], "TOPLEFT", 20, -510)
@@ -3456,7 +3383,7 @@ function LunaUF:CreateOptionsMenu()
 	LunaOptionsFrame.pages[10].modeDesc:SetPoint("BOTTOM", LunaOptionsFrame.pages[10].mode, "TOP")
 	LunaOptionsFrame.pages[10].modeDesc:SetText(L["Mode"])
 
---------
+-------- Clickcasting
 	
 	LunaOptionsFrame.pages[11].mouseDownClicks = CreateFrame("CheckButton", "MouseDownClicks", LunaOptionsFrame.pages[11], "UICheckButtonTemplate")
 	LunaOptionsFrame.pages[11].mouseDownClicks:SetPoint("TOPLEFT", LunaOptionsFrame.pages[11], "TOPLEFT", 20, -40)
@@ -3546,6 +3473,94 @@ function LunaUF:CreateOptionsMenu()
 		end
 		LunaOptionsFrame.ScrollFrames[11]:SetScrollChild(LunaOptionsFrame.pages[11])
 	end
+
+	-------- Colors
+	local II = 12
+
+	LunaOptionsFrame.pages[II].cColorHeader = LunaOptionsFrame.pages[II]:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+	LunaOptionsFrame.pages[II].cColorHeader:SetPoint("TOPLEFT", LunaOptionsFrame.pages[II], "TOPLEFT", 20, -40)
+	LunaOptionsFrame.pages[II].cColorHeader:SetHeight(24)
+	LunaOptionsFrame.pages[II].cColorHeader:SetJustifyH("LEFT")
+	LunaOptionsFrame.pages[II].cColorHeader:SetTextColor(1,1,0)
+	LunaOptionsFrame.pages[II].cColorHeader:SetText(L["Classcolors"])
+
+	for i,class in ipairs({"PRIEST","PALADIN","SHAMAN","WARRIOR","ROGUE","MAGE","WARLOCK","DRUID","HUNTER"}) do
+		LunaOptionsFrame.pages[II][class] = CreateColorSelect(LunaOptionsFrame.pages[II], LunaUF.db.profile.classColors[class])
+		LunaOptionsFrame.pages[II][class]:SetPoint("TOPLEFT", LunaOptionsFrame.pages[II], "TOPLEFT", 20+(((i-(3*math.floor((i-1)/3)))-1)*120), -70-(math.floor((i-1)/3)*30))
+		LunaOptionsFrame.pages[II][class]:SetHeight(19)
+		LunaOptionsFrame.pages[II][class]:SetWidth(19)
+		LunaOptionsFrame.pages[II][class].text:SetText(L[class])
+	end
+
+	LunaOptionsFrame.pages[II].hColorHeader = LunaOptionsFrame.pages[II]:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+	LunaOptionsFrame.pages[II].hColorHeader:SetPoint("TOPLEFT", LunaOptionsFrame.pages[II], "TOPLEFT", 20, -170)
+	LunaOptionsFrame.pages[II].hColorHeader:SetHeight(24)
+	LunaOptionsFrame.pages[II].hColorHeader:SetJustifyH("LEFT")
+	LunaOptionsFrame.pages[II].hColorHeader:SetTextColor(1,1,0)
+	LunaOptionsFrame.pages[II].hColorHeader:SetText(L["Healthcolors"])
+
+	local num = 1
+	for name,options in pairs(LunaUF.db.profile.healthColors) do
+		LunaOptionsFrame.pages[II][name] = CreateColorSelect(LunaOptionsFrame.pages[II], options)
+		LunaOptionsFrame.pages[II][name]:SetPoint("TOPLEFT", LunaOptionsFrame.pages[II], "TOPLEFT", 20+(((num-(4*math.floor((num-1)/4)))-1)*120), -200-(math.floor((num-1)/4)*30))
+		LunaOptionsFrame.pages[II][name]:SetHeight(19)
+		LunaOptionsFrame.pages[II][name]:SetWidth(19)
+		LunaOptionsFrame.pages[II][name].text:SetText(L[name])
+		num = num+1
+	end
+
+	LunaOptionsFrame.pages[II].pColorHeader = LunaOptionsFrame.pages[II]:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+	LunaOptionsFrame.pages[II].pColorHeader:SetPoint("TOPLEFT", LunaOptionsFrame.pages[II], "TOPLEFT", 20, -300)
+	LunaOptionsFrame.pages[II].pColorHeader:SetHeight(24)
+	LunaOptionsFrame.pages[II].pColorHeader:SetJustifyH("LEFT")
+	LunaOptionsFrame.pages[II].pColorHeader:SetTextColor(1,1,0)
+	LunaOptionsFrame.pages[II].pColorHeader:SetText(L["Powercolors"])
+
+	local num = 1
+	for name,options in pairs(LunaUF.db.profile.powerColors) do
+		LunaOptionsFrame.pages[II][name] = CreateColorSelect(LunaOptionsFrame.pages[II], options)
+		LunaOptionsFrame.pages[II][name]:SetPoint("TOPLEFT", LunaOptionsFrame.pages[II], "TOPLEFT", 20+(((num-(3*math.floor((num-1)/3)))-1)*120), -330-(math.floor((num-1)/3)*30))
+		LunaOptionsFrame.pages[II][name]:SetHeight(19)
+		LunaOptionsFrame.pages[II][name]:SetWidth(19)
+		LunaOptionsFrame.pages[II][name].text:SetText(L[name])
+		num = num+1
+	end
+
+	LunaOptionsFrame.pages[II].castColorHeader = LunaOptionsFrame.pages[II]:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+	LunaOptionsFrame.pages[II].castColorHeader:SetPoint("TOPLEFT", LunaOptionsFrame.pages[II], "TOPLEFT", 20, -400)
+	LunaOptionsFrame.pages[II].castColorHeader:SetHeight(24)
+	LunaOptionsFrame.pages[II].castColorHeader:SetJustifyH("LEFT")
+	LunaOptionsFrame.pages[II].castColorHeader:SetTextColor(1,1,0)
+	LunaOptionsFrame.pages[II].castColorHeader:SetText(L["Castcolors"])
+
+	local num = 1
+	for name,options in pairs(LunaUF.db.profile.castColors) do
+		LunaOptionsFrame.pages[II][name] = CreateColorSelect(LunaOptionsFrame.pages[II], options)
+		LunaOptionsFrame.pages[II][name]:SetPoint("TOPLEFT", LunaOptionsFrame.pages[II], "TOPLEFT", 20+(((num-(3*math.floor((num-1)/3)))-1)*120), -430-(math.floor((num-1)/3)*30))
+		LunaOptionsFrame.pages[II][name]:SetHeight(19)
+		LunaOptionsFrame.pages[II][name]:SetWidth(19)
+		LunaOptionsFrame.pages[II][name].text:SetText(L[name])
+		num = num+1
+	end
+
+	LunaOptionsFrame.pages[II].xpColorHeader = LunaOptionsFrame.pages[II]:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+	LunaOptionsFrame.pages[II].xpColorHeader:SetPoint("TOPLEFT", LunaOptionsFrame.pages[II], "TOPLEFT", 20, -450)
+	LunaOptionsFrame.pages[II].xpColorHeader:SetHeight(24)
+	LunaOptionsFrame.pages[II].xpColorHeader:SetJustifyH("LEFT")
+	LunaOptionsFrame.pages[II].xpColorHeader:SetTextColor(1,1,0)
+	LunaOptionsFrame.pages[II].xpColorHeader:SetText(L["Xpcolors"])
+
+	local num = 1
+	for name,options in pairs(LunaUF.db.profile.xpColors) do
+		LunaOptionsFrame.pages[II][name] = CreateColorSelect(LunaOptionsFrame.pages[II], options)
+		LunaOptionsFrame.pages[II][name]:SetPoint("TOPLEFT", LunaOptionsFrame.pages[II], "TOPLEFT", 20+(((num-(3*math.floor((num-1)/3)))-1)*120), -480-(math.floor((num-1)/3)*30))
+		LunaOptionsFrame.pages[II][name]:SetHeight(19)
+		LunaOptionsFrame.pages[II][name]:SetWidth(19)
+		LunaOptionsFrame.pages[II][name].text:SetText(L[name])
+		num = num+1
+	end
+
+	-------- Help
 
 	LunaOptionsFrame.Helpframe = CreateFrame("ScrollFrame", nil, LunaOptionsFrame)
 	LunaOptionsFrame.Helpframe:SetHeight(400)

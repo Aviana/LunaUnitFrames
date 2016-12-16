@@ -25,6 +25,7 @@ local function frFR() return {
 ["Party Pet"] = "Party Pet",
 ["Raid"] = "Raid",
 ["Clickcasting"] = "Clickcasting",
+["Colors"] = "Colors",
 ["Reset Settings"] = "Reset Settings",
 ["Config Mode"] = "Config Mode",
 ["Current profile has been reset."] = "Current profile has been reset.",
