@@ -25,6 +25,7 @@ local function zhCN() return {
 ["Party Pet"] = "小队宠物",
 ["Raid"] = "团队",
 ["Clickcasting"] = "点击施法",
+["Colors"] = "Colors",
 ["Reset Settings"] = "重置设定",
 ["Config Mode"] = "设置模式",
 ["Current profile has been reset."] = "当前配置已被重置",

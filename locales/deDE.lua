@@ -28,6 +28,7 @@ local function deDE() return {
 ["Party Pet"] = "Gruppenbegleiter",
 ["Raid"] = "Schlachtzug",
 ["Clickcasting"] = "Klickwirken",
+["Colors"] = "Farben",
 ["Reset Settings"] = "Einstellungen zur\195\188cksetzen",
 ["Config Mode"] = "Einstellungsmodus",
 ["Current profile has been reset."] = "Aktuelles Profil wurde zur\195\188ckgesetzt.",
