@@ -17,6 +17,23 @@ StaticPopupDialogs["RESET_LUNA"] = {
 	hideOnEscape = 1
 };
 
+StaticPopupDialogs["RESET_LUNA_COLORS"] = {
+	text = L["Do you really want to reset all colors?"],
+	button1 = "Yes",
+	button2 = "No",
+	OnAccept = function()
+		LunaUF.db.profile.classColors	= LunaUF.defaults.profile.classColors
+		LunaUF.db.profile.healthColors	= LunaUF.defaults.profile.healthColors
+		LunaUF.db.profile.powerColors	= LunaUF.defaults.profile.powerColors
+		LunaUF.db.profile.castColors	= LunaUF.defaults.profile.castColors
+		LunaUF.db.profile.xpColors		= LunaUF.defaults.profile.xpColors
+		LunaUF:OnProfileEnable()
+	end,
+	timeout = 0,
+	whileDead = 1,
+	hideOnEscape = 1
+};
+
 -- Default Settings ------------------------------------------------------------------------
 LunaUF.defaults = {
 	profile = {
