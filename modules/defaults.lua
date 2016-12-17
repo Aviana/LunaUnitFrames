@@ -22,11 +22,11 @@ StaticPopupDialogs["RESET_LUNA_COLORS"] = {
 	button1 = "Yes",
 	button2 = "No",
 	OnAccept = function()
-		LunaUF.db.profile.classColors	= LunaUF.defaults.profile.classColors
-		LunaUF.db.profile.healthColors	= LunaUF.defaults.profile.healthColors
-		LunaUF.db.profile.powerColors	= LunaUF.defaults.profile.powerColors
-		LunaUF.db.profile.castColors	= LunaUF.defaults.profile.castColors
-		LunaUF.db.profile.xpColors		= LunaUF.defaults.profile.xpColors
+		LunaUF.db.profile.classColors	= LunaUF:deepcopy(LunaUF.defaults.profile.classColors)
+		LunaUF.db.profile.healthColors	= LunaUF:deepcopy(LunaUF.defaults.profile.healthColors)
+		LunaUF.db.profile.powerColors	= LunaUF:deepcopy(LunaUF.defaults.profile.powerColors)
+		LunaUF.db.profile.castColors	= LunaUF:deepcopy(LunaUF.defaults.profile.castColors)
+		LunaUF.db.profile.xpColors		= LunaUF:deepcopy(LunaUF.defaults.profile.xpColors)
 		LunaUF:OnProfileEnable()
 	end,
 	timeout = 0,

@@ -19,15 +19,15 @@ LunaUF.AllianceCheck = {
 	["NightElf"] = true,
 }
 
-local function deepcopy(orig)
+function LunaUF:deepcopy(orig)
     local orig_type = type(orig)
     local copy
     if orig_type == 'table' then
         copy = {}
         for orig_key, orig_value in next, orig, nil do
-            copy[deepcopy(orig_key)] = deepcopy(orig_value)
+            copy[LunaUF:deepcopy(orig_key)] = LunaUF:deepcopy(orig_value)
         end
-        setmetatable(copy, deepcopy(getmetatable(orig)))
+        setmetatable(copy, LunaUF:deepcopy(getmetatable(orig)))
     else -- number, string, boolean, etc
         copy = orig
     end
@@ -454,9 +454,9 @@ function LunaUF:InitBarorder()
 	for key,unitGroup in pairs(LunaUF.db.profile.units) do
 		if not unitGroup.barorder then
 			if LunaUF.constants.specialbarorder[key] then
-				unitGroup.barorder = deepcopy(LunaUF.constants.specialbarorder[key])
+				unitGroup.barorder = LunaUF:deepcopy(LunaUF.constants.specialbarorder[key])
 			else
-				unitGroup.barorder = deepcopy(LunaUF.constants.barorder)
+				unitGroup.barorder = LunaUF:deepcopy(LunaUF.constants.barorder)
 			end
 		elseif key == "player" and (getn(unitGroup.barorder.horizontal) + getn(unitGroup.barorder.vertical)) < 8 then
 			tinsert(unitGroup.barorder.horizontal, "reckStacks")
