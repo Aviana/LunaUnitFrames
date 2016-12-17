@@ -73,6 +73,6 @@ function Incheal:FullUpdate(frame)
 end
 
 function Incheal:SetBarTexture(frame,texture)
-	frame.incheal.healBar:SetStatusBarTexture(texture)
+	frame.incheal.healBar:SetStatusBarTexture("Interface\\Tooltips\\UI-Tooltip-Background")
 	frame.incheal.healBar:SetStatusBarColor(LunaUF.db.profile.healthColors.inc.r, LunaUF.db.profile.healthColors.inc.g, LunaUF.db.profile.healthColors.inc.b, 0.75)
 end
