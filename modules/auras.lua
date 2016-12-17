@@ -347,12 +347,10 @@ function Auras:OnEnable(frame)
 				button.cooldown:ClearAllPoints()
 				button.cooldown:SetHeight(36)
 				button.cooldown:SetWidth(36)
-				button.cooldown:SetFrameLevel(7)
 				button.cooldown.reverse = true
 				button.cooldown:Hide()
 				button.textFrame = CreateFrame("Frame", nil, button)
 				button.textFrame:SetAllPoints(button)
-				button.textFrame:SetFrameLevel(button.cooldown:GetFrameLevel() + 1);
 				button.timeFontstring = button.textFrame:CreateFontString(nil, "OVERLAY");
 				button.timeFontstring:SetJustifyH("CENTER")
 				button.timeFontstring:SetPoint("CENTER", button.textFrame, "CENTER",0,0)
@@ -386,12 +384,10 @@ function Auras:OnEnable(frame)
 				button.cooldown:ClearAllPoints()
 				button.cooldown:SetHeight(36)
 				button.cooldown:SetWidth(36)
-				button.cooldown:SetFrameLevel(7)
 				button.cooldown.reverse = true
 				button.cooldown:Hide()
 				button.textFrame = CreateFrame("Frame", nil, button)
 				button.textFrame:SetAllPoints(button)
-				button.textFrame:SetFrameLevel(button.cooldown:GetFrameLevel() + 1);
 				button.timeFontstring = button.textFrame:CreateFontString(nil, "OVERLAY");
 				button.timeFontstring:SetJustifyH("CENTER")
 				button.timeFontstring:SetPoint("CENTER", button.textFrame, "CENTER",0,0)

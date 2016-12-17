@@ -1,6 +1,6 @@
 --[[
 Name: HealComm-1.0
-Revision: $Rev: 11350 $
+Revision: $Rev: 11380 $
 Author(s): aviana
 Website: https://github.com/Aviana
 Description: A library to provide communication of heals and resurrections.
@@ -8,7 +8,7 @@ Dependencies: AceLibrary, AceEvent-2.0, RosterLib-2.0
 ]]
 
 local MAJOR_VERSION = "HealComm-1.0"
-local MINOR_VERSION = "$Revision: 11370 $"
+local MINOR_VERSION = "$Revision: 11380 $"
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
 if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end
@@ -76,6 +76,7 @@ if( GetLocale() == "deDE" ) then
 	L["Blood Fury"] = "Kochendes Blut"
 	L["Set: Increases the duration of your Rejuvenation spell by 3 sec."] = "Set: Erh\195\182ht die Dauer Eures Zaubers \'Verj\195\188ngung\' um 3 Sek."
 	L["Set: Increases the duration of your Renew spell by 3 sec."] = "Set: Erh\195\182ht die Dauer Eures Zaubers 'Erneuerung' um 3 Sek."
+	L["^Corpse of (.+)$"] = "^Leichnam von (.+)$"
 elseif ( GetLocale() == "frFR" ) then
 	L["Renew"] = "R\195\169novation"
 	L["Rejuvenation"] = "R\195\169cup\195\169ration"
@@ -129,6 +130,7 @@ elseif ( GetLocale() == "frFR" ) then
 	L["Blessing of Light"] = "B\195\169n\195\169diction de lumi\195\168re"
 	L["Set: Increases the duration of your Rejuvenation spell by 3 sec."] = "Set: Augmente la dur\195\169e de votre sort R\195\169cup\195\169ration de 3 s."
 	L["Set: Increases the duration of your Renew spell by 3 sec."] = "Set: Augmente la dur\195\169e de votre sort R\195\169novation de 3 s."
+	L["^Corpse of (.+)$"] = "^Cadavre |2 (.+)$"
 elseif GetLocale() == "zhCN" then
 	if AceLibrary:HasInstance("Babble-Spell-2.2") then
 		L.BS = AceLibrary("Babble-Spell-2.2")
@@ -150,6 +152,7 @@ elseif GetLocale() == "zhCN" then
 	L["Set: Increases the duration of your Renew spell by 3 sec."] = "套装：使你的恢复术的持续时间延长3秒。" -- T2.5
 	L["Totem of Life"] = "生命图腾"
 	L["Totem of Sustaining"] = "持久图腾"
+	L["^Corpse of (.+)$"] = "(.+)的尸体"
 else
 	L["Renew"] = "Renew"
 	L["Rejuvenation"] = "Rejuvenation"
@@ -203,6 +206,7 @@ else
 	L["Blood Fury"] = "Blood Fury"
 	L["Set: Increases the duration of your Rejuvenation spell by 3 sec."] = "Set: Increases the duration of your Rejuvenation spell by 3 sec."
 	L["Set: Increases the duration of your Renew spell by 3 sec."] = "Set: Increases the duration of your Renew spell by 3 sec."
+	L["^Corpse of (.+)$"] = "^Corpse of (.+)$"
 end
 	
 ------------------------------------------------
@@ -1443,6 +1447,26 @@ function HealComm:UnitisResurrecting(unit)
 	return resstime
 end
 
+function HealComm:getNumHeals(unit)
+	if unit == UNKNOWNOBJECT or unit == UKNOWNBEING then
+		return 0
+ 	end
+	local heals = 0
+	if self.Heals[unit] then
+		for _ in self.Heals[unit] do
+			heals = heals + 1
+		end
+	end
+	for _,v in pairs(self.GrpHeals) do
+		for _,c in pairs(v.targets) do
+			if unit == c then
+				heals = heals + 1
+			end
+		end
+	end
+	return heals
+end
+
 healcomm_oldCastSpell = CastSpell
 function healcomm_newCastSpell(spellId, spellbookTabNum)
 	-- Call the original function so there's no delay while we process
@@ -1517,7 +1541,7 @@ WorldFrame:SetScript("OnMouseDown", function()
 	if ( healcomm_SpellSpell and UnitName("mouseover") ) then
 		targetName = UnitName("mouseover")
 	elseif ( healcomm_SpellSpell and GameTooltipTextLeft1:IsVisible() ) then
-		local _, _, name = string.find(GameTooltipTextLeft1:GetText(), "^Corpse of (.+)$")
+		local _, _, name = string.find(GameTooltipTextLeft1:GetText(), L["^Corpse of (.+)$"])
 		if ( name ) then
 			targetName = name
 		end

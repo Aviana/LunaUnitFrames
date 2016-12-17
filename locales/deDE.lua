@@ -328,6 +328,7 @@ local function deDE() return {
 ["Returns missing mana even in druid form"] = "Gibt fehlendes Mana auch in Druidengestalt aus",
 ["Returns mana percentage even in druid form"] = "Gibt Mana Prozent auch in Druidengestalt aus",
 ["Value of incoming heal"] = "Wert der zu erwartenden Heilung",
+["Number of incoming heals"] = "Anzahl der kommenden Heilzauber",
 ["Red when in combat"] = "Rot wenn im Kampf",
 ["White for unflagged units, green for flagged friendlies and red for flagged enemies"] = "Wei\195\159 f\195\188r unmarkierte Einheiten, gr\195\188n f\195\188r markierte Freunde und Rot f\195\188r markierte Feinde",
 ["Red for enemies, yellow for neutrals, and green for friendlies"] = "Rot f\195\188r Feinde, gelb f\195\188r Neutrale und gr\195\188n f\195\188r Freunde",

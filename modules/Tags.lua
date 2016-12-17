@@ -190,6 +190,7 @@ local defaultTags = {
 									return ""
 								end
 							end;
+	["numheals"]			= function(unit) return HealComm:getNumHeals(UnitName(unit)) end;
 	["pvp"]					= function(unit) return UnitIsPVP(unit) and "PVP" or "" end;
 	["smarthealth"]			= function(unit)
 								local hp
@@ -686,8 +687,8 @@ local defaultTags = {
 								return Hex(eR * inverseModifier + sR * modifier, eG * inverseModifier + sG * modifier, eB * inverseModifier + sB * modifier)
 							end;
 	["color"]				= function(color)
-								if color then
-									return ("|cff"..color)
+								if color and strlen(color) == 6 then
+									return ("|cff"..color.."|h")
 								else
 									return L["#invalidTag#"]
 								end
@@ -711,15 +712,13 @@ function GetTagText(text,unit)
 	local result = text
 	startPos,endPos,tagtext = string.find(result,"%[([%w:]+)%]")
 	while tagtext do
-		if string.find(tagtext,"color:(%x%x%x%x%x%x)") then
-			startPos,endPos,tagtext = string.find(tagtext,"color:(%x%x%x%x%x%x)")
+		if defaultTags[tagtext] then
+			result = StringInsert(result,startPos,endPos,defaultTags[tagtext](unit))
+		elseif string.find(tagtext,"color:(%x%x%x%x%x%x)") then
+			_,_,tagtext = string.find(tagtext,"color:(%x%x%x%x%x%x)")
 			result = StringInsert(result,startPos,endPos,defaultTags["color"](tagtext))
 		else
-			if defaultTags[tagtext] then
-				result = StringInsert(result,startPos,endPos,defaultTags[tagtext](unit))
-			else
-				result = StringInsert(result,startPos,endPos,L["#invalidTag#"])
-			end
+			result = StringInsert(result,startPos,endPos,L["#invalidTag#"])
 		end
 		startPos,endPos,tagtext = string.find(result,"%[([%w:]+)%]")
 	end

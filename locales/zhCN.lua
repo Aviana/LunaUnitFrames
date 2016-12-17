@@ -325,6 +325,7 @@ local function zhCN() return {
 ["Returns missing mana even in druid form"] = "德鲁伊变形时显示缺失法力值",
 ["Returns mana percentage even in druid form"] = "德鲁伊变形时显示法力值百分比",
 ["Value of incoming heal"] = "即将收到的治疗量",
+["Number of incoming heals"] = "Number of incoming heals",
 ["Red when in combat"] = "战斗中显示为红色",
 ["White for unflagged units, green for flagged friendlies and red for flagged enemies"] = "非PvP单位白色，友方PvP单位绿色，敌方PvP单位红色",
 ["Red for enemies, yellow for neutrals, and green for friendlies"] = "敌方单位红色，中立单位黄色，友方单位绿色",
