@@ -1100,7 +1100,7 @@ function LunaUF:CreateOptionsMenu()
 
 	UIDropDownMenu_Initialize(LunaOptionsFrame.pages[1].AuraBorderSelect, function()
 		local info={}
-		for k,v in ipairs({L["none"],"dark","light","blizzard"}) do
+		for k,v in ipairs({L["none"],"black","dark","light","blizzard"}) do
 			info.text=v
 			info.value=v
 			info.func= function ()
