@@ -71,6 +71,7 @@ local function BuffFrameUpdate(frame, buildOnly)
 		local buffIndex, untilCancelled
 		if isPlayer then
 			buffIndex, untilCancelled = GetPlayerBuff(i - 1, "HELPFUL");
+			dtype = GetPlayerBuffDispelType(buffIndex);
 			texture = GetPlayerBuffTexture(buffIndex);
 			stacks = GetPlayerBuffApplications(buffIndex);
 		else
@@ -81,6 +82,11 @@ local function BuffFrameUpdate(frame, buildOnly)
 			button.stack:SetText(stacks == 1 and "" or stacks)
 			button.filter = "HELPFUL"
 			if isPlayer then
+				if config.bordercolor and dtype then
+					button.border:SetVertexColor(unpack(LunaUF.db.profile.magicColors[dtype]))
+				else
+					button.border:SetVertexColor(1,1,1)
+				end
 				button.untilCancelled = untilCancelled
 				button:SetScript("OnClick", BuffButtonClick)
 				button.auraID = buffIndex
@@ -117,6 +123,11 @@ local function BuffFrameUpdate(frame, buildOnly)
 			button.icon:SetTexture(GetInventoryItemTexture("player", 16))
 			button.auraID = 16
 			button.filter = "TEMP"
+			if config.bordercolor then
+				button.border:SetVertexColor(0.53,0.28,0.72)
+			else
+				button.border:SetVertexColor(1,1,1)
+			end
 			if config.timerspinenabled then
 				CooldownFrame_SetTimer(button.cooldown, GetTime() - ((longMain and 3600 or 1800) - (mainHandExpiration/1000)), (longMain and 3600 or 1800), 1)
 			else
@@ -128,6 +139,11 @@ local function BuffFrameUpdate(frame, buildOnly)
 			button.icon:SetTexture(GetInventoryItemTexture("player", 17))
 			button.auraID = 17
 			button.filter = "TEMP"
+			if config.bordercolor then
+				button.border:SetVertexColor(0.53,0.28,0.72)
+			else
+				button.border:SetVertexColor(1,1,1)
+			end
 			if config.timerspinenabled then
 				CooldownFrame_SetTimer(button.cooldown, GetTime() - ((longOff and 3600 or 1800) - (offHandExpiration/1000)), (longOff and 3600 or 1800), 1)
 			else
