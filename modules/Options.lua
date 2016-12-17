@@ -68,6 +68,7 @@ TagsDescs[L["HEALTH AND POWER TAGS"]] = {
 	["druid:missingpp"] = L["Returns missing mana even in druid form"],
 	["druid:perpp"] = L["Returns mana percentage even in druid form"],
 	["incheal"] = L["Value of incoming heal"],
+	["numheals"] = L["Number of incoming heals"],
 }
 TagsDescs[L["COLOR TAGS"]] = {
 	["color:combat"] = L["Red when in combat"],

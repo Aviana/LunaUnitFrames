@@ -190,6 +190,7 @@ local defaultTags = {
 									return ""
 								end
 							end;
+	["numheals"]			= function(unit) return HealComm:getNumHeals(UnitName(unit)) end;
 	["pvp"]					= function(unit) return UnitIsPVP(unit) and "PVP" or "" end;
 	["smarthealth"]			= function(unit)
 								local hp

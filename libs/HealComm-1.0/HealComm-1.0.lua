@@ -1447,6 +1447,26 @@ function HealComm:UnitisResurrecting(unit)
 	return resstime
 end
 
+function HealComm:getNumHeals(unit)
+	if unit == UNKNOWNOBJECT or unit == UKNOWNBEING then
+		return 0
+ 	end
+	local heals = 0
+	if self.Heals[unit] then
+		for _ in self.Heals[unit] do
+			heals = heals + 1
+		end
+	end
+	for _,v in pairs(self.GrpHeals) do
+		for _,c in pairs(v.targets) do
+			if unit == c then
+				heals = heals + 1
+			end
+		end
+	end
+	return heals
+end
+
 healcomm_oldCastSpell = CastSpell
 function healcomm_newCastSpell(spellId, spellbookTabNum)
 	-- Call the original function so there's no delay while we process

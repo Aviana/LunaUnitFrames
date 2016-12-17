@@ -325,6 +325,7 @@ local function frFR() return {
 ["Returns missing mana even in druid form"] = "Returns missing mana even in druid form",
 ["Returns mana percentage even in druid form"] = "Returns mana percentage even in druid form",
 ["Value of incoming heal"] = "Value of incoming heal",
+["Number of incoming heals"] = "Number of incoming heals",
 ["Red when in combat"] = "Red when in combat",
 ["White for unflagged units, green for flagged friendlies and red for flagged enemies"] = "White for unflagged units, green for flagged friendlies and red for flagged enemies",
 ["Red for enemies, yellow for neutrals, and green for friendlies"] = "Red for enemies, yellow for neutrals, and green for friendlies",
