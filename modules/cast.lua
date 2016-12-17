@@ -620,7 +620,8 @@ local function OnAimed(cast)
 			if uframe.castBar and LunaUF.db.profile.units[uframe.unitGroup].castBar.enabled and UnitIsUnit(uframe.unit,"player") then
 				uframe.castBar.maxValue = casttime + (latency/1000)
 				uframe.castBar.casting = true
-				uframe.castBar.delaySum = 0	
+				uframe.castBar.delaySum = 0
+				uframe.castBar.startTime = GetTime()
 				uframe.castBar.Text:SetText(BS["Aimed Shot"])
 				if LunaUF.db.profile.units[uframe.unitGroup].castBar.icon then
 					uframe.castBar.icon:SetTexture(BS:GetSpellIcon("Aimed Shot"))

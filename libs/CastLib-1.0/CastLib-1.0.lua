@@ -108,7 +108,7 @@ function CastLib:OnEvent()
 				
 			end
 			CastLib_SpellCast_backup = CastLib_SpellCast
-			CastLib_isCasting = 1
+			CastLib_isCasting = true
 --			ChatFrame1:AddMessage("Casting "..arg1)
 --			self.EventScheduler:TriggerEvent("CASTLIB_STARTCAST", arg1)
 		end
@@ -235,12 +235,17 @@ function CastLib_newUseAction(slot, checkCursor, onSelf)
 	-- Call the original function
 	CastLib_oldUseAction(slot, checkCursor, onSelf)
 	
+	CastLib_Slot = slot
+	if CastLib_Spell == AimedShot then
+		CastLib_ProcessSpellCast(CastLib_Spell, 6, UnitName("target"))
+		return
+	end
+	
 	if CastLib_Spell then
 		return
 	end
 	local spellName = CastLibTipTextLeft1:GetText()
 	CastLib_Spell = spellName
-	CastLib_Slot = slot
 	
 	-- Test to see if this is a macro
 	if ( GetActionText(slot) or not CastLib_Spell ) then
@@ -308,9 +313,13 @@ end
 TargetUnit = CastLib_newTargetUnit
 
 function CastLib_ProcessSpellCast(spellName, rank, targetName)
-	if spellName == AimedShot and (not CastLib_SpellCast or CastLib_SpellCast[1] ~= AimedShot) and IsCurrentAction(CastLib_Slot) then
-		local AceEvent = AceLibrary("AceEvent-2.0")
-		AceEvent:TriggerEvent("CASTLIB_STARTCAST", AimedShot)
+	if spellName == AimedShot then
+		CastLib_Spell = AimedShot
+		if not CastLib_isCasting and CastLib_Slot and IsCurrentAction(CastLib_Slot) then
+			CastLib_isCasting = true
+			local AceEvent = AceLibrary("AceEvent-2.0")
+			AceEvent:TriggerEvent("CASTLIB_STARTCAST", AimedShot)
+		end
 	end
 	CastLib_SpellCast = { spellName, rank, targetName }
 end

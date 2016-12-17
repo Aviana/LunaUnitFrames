@@ -23,7 +23,7 @@ local EnergyUpdate = function()
 	local powerType = UnitPowerType("player")
 	local frame = this:GetParent()
 	local time = GetTime()
-	local Position
+	local Position = 0
 	if powerType == 0 then
 		if timestamp then
 			if (time - timestamp) >= 5 then
