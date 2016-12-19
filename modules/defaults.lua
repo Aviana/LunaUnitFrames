@@ -2,10 +2,10 @@ local L = LunaUF.L
 
 LunaUF.defaultFont = "Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\"..L["DEFAULT_FONT"]..".ttf"
 
-StaticPopupDialogs["RESET_LUNA"] = {
+StaticPopupDialogs["RESET_LUNA_PROFILE"] = {
 	text = L["Do you really want to reset to default for your current profile?"],
-	button1 = "Yes",
-	button2 = "No",
+	button1 = L["OK"],
+	button2 = L["Cancel"],
 	OnAccept = function()
 		LunaUF:ResetDB("profile")
 		--Need To Reset the options Window here if its open
@@ -17,10 +17,28 @@ StaticPopupDialogs["RESET_LUNA"] = {
 	hideOnEscape = 1
 };
 
+StaticPopupDialogs["DELETE_LUNA_PROFILE"] = {
+	text = L["Do you really want to delete your current profile?"],
+	button1 = L["OK"],
+	button2 = L["Cancel"],
+	OnAccept = function()
+		local profile = UIDropDownMenu_GetSelectedValue(LunaOptionsFrame.pages[13].ProfileSelect)
+		UIDropDownMenu_SetSelectedValue(LunaOptionsFrame.pages[13].ProfileSelect, "Default")
+		UIDropDownMenu_SetText("Default", LunaOptionsFrame.pages[13].ProfileSelect)
+		LunaUF:SetProfile("Default")
+		LunaDB.profiles[profile] = nil
+		LunaOptionsFrame.pages[13].delete:Disable()
+		LunaUF:SystemMessage(LunaUF.L["The profile has been deleted and the default profile has been selected."])
+	end,
+	timeout = 0,
+	whileDead = 1,
+	hideOnEscape = 1
+};
+
 StaticPopupDialogs["RESET_LUNA_COLORS"] = {
 	text = L["Do you really want to reset all colors?"],
-	button1 = "Yes",
-	button2 = "No",
+	button1 = L["OK"],
+	button2 = L["Cancel"],
 	OnAccept = function()
 		LunaUF.db.profile.classColors	= LunaUF:deepcopy(LunaUF.defaults.profile.classColors)
 		LunaUF.db.profile.healthColors	= LunaUF:deepcopy(LunaUF.defaults.profile.healthColors)
