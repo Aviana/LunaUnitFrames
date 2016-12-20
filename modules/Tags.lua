@@ -85,6 +85,34 @@ local defaultTags = {
 									return tostring(count)
 								end
 							end;
+	["cnumtargeting"]		= function(unit)
+								local count = 0
+								if UnitInRaid("player") then
+									for i = 1, GetNumRaidMembers() do
+										if UnitIsUnit(unit, ("raid"..i.."target")) then
+											count = count + 1
+										end
+									end
+								else
+									if UnitIsUnit(unit, "target") then
+										count = 1
+									else
+										count = 0
+									end
+									for i=1, GetNumPartyMembers() do
+										if UnitIsUnit(unit, ("party"..i.."target")) then
+											count = count + 1
+										end
+									end
+								end
+								if count == 0 then
+									return Hex(1,0.5,0.5)..count..Hex(1,1,1)
+								elseif (count > 5) then
+									return Hex(0.5,1,0.5)..count..Hex(1,1,1)
+								else
+									return Hex(0.5,0.5,1)..count..Hex(1,1,1)
+								end
+							end;
 	["happiness"]			= function(unit)
 								if unit ~= "pet" then
 									return ""

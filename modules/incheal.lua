@@ -3,9 +3,9 @@ local Incheal = {}
 LunaUF:RegisterModule(Incheal, "incheal", LunaUF.L["Incheal"])
 local HealComm = LunaUF.HealComm
 
-local function OnHeal()
+local function OnHeal(target)
 	for _,frame in pairs(LunaUF.Units.frameList) do
-		if frame.incheal and LunaUF.db.profile.units[frame.unitGroup].incheal.enabled then
+		if frame.incheal and LunaUF.db.profile.units[frame.unitGroup].incheal.enabled and UnitName(frame.unit) == target then
 			Incheal:FullUpdate(frame)
 		end
 	end

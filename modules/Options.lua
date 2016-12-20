@@ -12,6 +12,7 @@ local TagsDescs = {}
 
 TagsDescs[L["INFO TAGS"]] = {
 	["numtargeting"] = L["Number of people in your group targeting this unit"],
+	["cnumtargeting"] = L["Colored version of numtargeting"],
 	["br"] = L["Adds a line break"],
 	["name"] = L["Returns plain name of the unit"],
 	["shortname"] = L["Returns the first 3 letters of the name"],
@@ -742,6 +743,7 @@ function LunaUF:LoadOptions()
 	LunaOptionsFrame.pages[10].hottracker:SetChecked(LunaUF.db.profile.units.raid.squares.hottracker)
 	LunaOptionsFrame.pages[10].innersizeslider:SetValue(LunaUF.db.profile.units.raid.squares.innersize)
 	LunaOptionsFrame.pages[10].colors:SetChecked(LunaUF.db.profile.units.raid.squares.colors)
+	LunaOptionsFrame.pages[10].buffinvert:SetChecked(LunaUF.db.profile.units.raid.squares.invertbuffs)
 	LunaOptionsFrame.pages[10].firstbuff:SetText(LunaUF.db.profile.units.raid.squares.buffs.names[1])
 	LunaOptionsFrame.pages[10].firstbuffcolor.load(LunaOptionsFrame.pages[10].firstbuffcolor,LunaUF.db.profile.units.raid.squares.buffs.colors[1])
 	LunaOptionsFrame.pages[10].secondbuff:SetText(LunaUF.db.profile.units.raid.squares.buffs.names[2])
@@ -3075,6 +3077,20 @@ function LunaUF:CreateOptionsMenu()
 	LunaOptionsFrame.pages[10].buffheader:SetPoint("TOP", LunaOptionsFrame.pages[10].colors, "BOTTOM", 20, -10)
 	LunaOptionsFrame.pages[10].buffheader:SetText(L["Buffs to track"])
 	
+	LunaOptionsFrame.pages[10].buffinvert = CreateFrame("CheckButton", "BuffInvert", LunaOptionsFrame.pages[10], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[10].buffinvert:SetPoint("LEFT", LunaOptionsFrame.pages[10].buffheader, "RIGHT", 50, 0)
+	LunaOptionsFrame.pages[10].buffinvert:SetHeight(15)
+	LunaOptionsFrame.pages[10].buffinvert:SetWidth(15)
+	LunaOptionsFrame.pages[10].buffinvert:SetScript("OnClick", function()
+		LunaUF.db.profile.units.raid.squares.invertbuffs = not LunaUF.db.profile.units.raid.squares.invertbuffs
+		for _,frame in pairs(LunaUF.Units.frameList) do
+			if frame.unitGroup == "raid" then
+				LunaUF.Units.FullUpdate(frame)
+			end
+		end
+	end)
+	getglobal("BuffInvertText"):SetText(L["Invert display"])
+	
 	local function Exit()
 		this:ClearFocus()
 	end
@@ -3085,7 +3101,7 @@ function LunaUF:CreateOptionsMenu()
 	LunaOptionsFrame.pages[10].firstbuff:SetAutoFocus(nil)
 	LunaOptionsFrame.pages[10].firstbuff:SetPoint("TOPLEFT", LunaOptionsFrame.pages[10].buffheader, "BOTTOMLEFT", 0, -10)
 	LunaOptionsFrame.pages[10].firstbuff:SetScript("OnTextChanged", function()
-		LunaUF.db.profile.units.raid.squares.buffs.names[1] = string.lower(this:GetText())
+		LunaUF.db.profile.units.raid.squares.buffs.names[1] = this:GetText()
 		for _,frame in pairs(LunaUF.Units.frameList) do
 			if frame.unitGroup == "raid" then
 				LunaUF.Units.FullUpdate(frame)
@@ -3107,7 +3123,7 @@ function LunaUF:CreateOptionsMenu()
 	LunaOptionsFrame.pages[10].secondbuff:SetAutoFocus(nil)
 	LunaOptionsFrame.pages[10].secondbuff:SetPoint("TOPLEFT", LunaOptionsFrame.pages[10].firstbuff, "BOTTOMLEFT", 0, -10)
 	LunaOptionsFrame.pages[10].secondbuff:SetScript("OnTextChanged", function()
-		LunaUF.db.profile.units.raid.squares.buffs.names[2] = string.lower(this:GetText())
+		LunaUF.db.profile.units.raid.squares.buffs.names[2] = this:GetText()
 		for _,frame in pairs(LunaUF.Units.frameList) do
 			if frame.unitGroup == "raid" then
 				LunaUF.Units.FullUpdate(frame)
@@ -3129,7 +3145,7 @@ function LunaUF:CreateOptionsMenu()
 	LunaOptionsFrame.pages[10].thirdbuff:SetAutoFocus(nil)
 	LunaOptionsFrame.pages[10].thirdbuff:SetPoint("TOPLEFT", LunaOptionsFrame.pages[10].secondbuff, "BOTTOMLEFT", 0, -10)
 	LunaOptionsFrame.pages[10].thirdbuff:SetScript("OnTextChanged", function()
-		LunaUF.db.profile.units.raid.squares.buffs.names[3] = string.lower(this:GetText())
+		LunaUF.db.profile.units.raid.squares.buffs.names[3] = this:GetText()
 		for _,frame in pairs(LunaUF.Units.frameList) do
 			if frame.unitGroup == "raid" then
 				LunaUF.Units.FullUpdate(frame)
