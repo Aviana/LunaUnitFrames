@@ -17,7 +17,7 @@ end
 
 local function OnTimer(unit)
 	for _,frame in pairs(LunaUF.Units.frameList) do
-		if frame.squares and UnitIsUnit(frame.unit,unit) then
+		if frame.squares and frame.unit and UnitIsUnit(frame.unit,unit) then
 			Squares:UpdateTimers(frame)
 		end
 	end
