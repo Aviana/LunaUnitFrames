@@ -262,6 +262,9 @@ local Spells = {
 		
 		-- Felhunter
 		[BS["Spell Lock"]] = {t=0.0, ni=1};
+		
+		-- Imp
+		[BS["Firebolt"]] = {t=2};
 
 	-- Warrior
 	[BS["Charge Stun"]] = {t=0};
