@@ -286,7 +286,9 @@ local function OnClick()
 				func[action]()
 			else
 				CastSpellByName_IgnoreSelfCast(action)
-				SpellStopTargeting()
+				if SpellIsTargeting() then
+					SpellStopTargeting()
+				end
 			end
 		else
 			if not func[action] then
@@ -300,7 +302,9 @@ local function OnClick()
 				func[action]()
 			else
 				CastSpellByName_IgnoreSelfCast(action)
-				SpellStopTargeting()
+				if SpellIsTargeting() then
+					SpellStopTargeting()
+				end
 			end
 			TargetLastTarget()
 

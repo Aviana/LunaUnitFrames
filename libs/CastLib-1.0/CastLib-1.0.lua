@@ -1,6 +1,6 @@
 --[[
 Name: CastLib-1.0
-Revision: $Rev: 10000 $
+Revision: $Rev: 10030 $
 Author(s): aviana
 Website: https://github.com/Aviana
 Description: A library to provide information about casts.
@@ -8,11 +8,12 @@ Dependencies: AceLibrary, AceEvent-2.0
 ]]
 
 local MAJOR_VERSION = "CastLib-1.0"
-local MINOR_VERSION = "$Revision: 10020 $"
+local MINOR_VERSION = "$Revision: 10030 $"
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
 if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end
 if not AceLibrary:HasInstance("AceEvent-2.0") then error(MAJOR_VERSION .. " requires AceEvent-2.0") end
+if not AceLibrary:HasInstance("AceHook-2.1") then error(MAJOR_VERSION .. " requires AceHook-2.1") end
 
 local CastLib = {}
 local AimedShot
@@ -37,6 +38,14 @@ local function activate(self, oldLib, oldDeactivate)
 	if oldLib then
 		oldLib:UnregisterAllEvents()
 		oldLib:CancelAllScheduledEvents()
+		self.SpellCast = oldLib.SpellCast
+		self.SpellCast_backup = oldLib.SpellCast_backup
+	end
+	if not self.SpellCast then
+		self.SpellCast = {}
+	end
+	if not self.SpellCast_backup then
+		self.SpellCast_backup = {}
 	end
 	if oldDeactivate then oldDeactivate(oldLib) end
 end
@@ -44,15 +53,24 @@ end
 
 local function external(self, major, instance)
 	if major == "AceEvent-2.0" then
-		self.EventScheduler = instance
-		self.EventScheduler:embed(self)
-		self:UnregisterAllEvents()
-		self:CancelAllScheduledEvents()
-		if self.EventScheduler:IsFullyInitialized() then
-			self:AceEvent_FullyInitialized()
-		else
-			self:RegisterEvent("AceEvent_FullyInitialized", "AceEvent_FullyInitialized", true)
-		end		
+		local AceEvent = instance
+		AceEvent:embed(self)
+		self:RegisterEvent("SPELLCAST_START")
+		self:RegisterEvent("SPELLCAST_INTERRUPTED", "SPELLCAST_FAILED")
+		self:RegisterEvent("SPELLCAST_FAILED")
+		self:RegisterEvent("SPELLCAST_STOP")
+		self:TriggerEvent("FiveSecLib_Enabled")
+	end
+	if major == "AceHook-2.1" then
+		local AceHook = instance
+		AceHook:embed(self)
+		self:Hook("CastSpell")
+		self:Hook("CastSpellByName")
+		self:HookScript(WorldFrame, "OnMouseDown")
+		self:Hook("UseAction")
+		self:Hook("SpellTargetUnit")
+		self:Hook("SpellStopTargeting")
+		self:Hook("TargetUnit")
 	end
 end
 
@@ -66,28 +84,8 @@ function CastLib:Disable()
 end
 
 ------------------------------------------------
--- Internal functions
-------------------------------------------------
-
-function CastLib:AceEvent_FullyInitialized()
-	self:TriggerEvent("CastLib_Enabled")
-	self:RegisterEvent("SPELLCAST_START", "OnEvent")
-	self:RegisterEvent("SPELLCAST_INTERRUPTED", "OnEvent")
-	self:RegisterEvent("SPELLCAST_FAILED", "OnEvent")
-	self:RegisterEvent("SPELLCAST_STOP", "OnEvent")
-end
-
-------------------------------------------------
 -- Addon Code
 ------------------------------------------------
-
-local CastLib_Slot
-local CastLib_Spell
-local CastLib_Rank
-local CastLib_Castname
-local CastLib_SpellCast
-local CastLib_SpellCast_backup
-local CastLib_isCasting
 
 local CastLibTip = CreateFrame("GameTooltip", "CastLibTip", nil, "GameTooltipTemplate")
 CastLibTip:SetOwner(WorldFrame, "ANCHOR_NONE")
@@ -100,53 +98,64 @@ function CastLib:instantCast(SpellCast)
 --	ChatFrame1:AddMessage(SpellCast[1].." was instant.")
 end
 
-function CastLib:OnEvent()
-	if ( event == "SPELLCAST_START" ) then
-		if ( CastLib_SpellCast and CastLib_SpellCast[1] == arg1 ) then
-			if self.EventScheduler:IsEventScheduled("CastLib_CastInstant") then
-				self.EventScheduler:CancelScheduledEvent("CastLib_CastInstant")
-				
-			end
-			CastLib_SpellCast_backup = CastLib_SpellCast
-			CastLib_isCasting = true
---			ChatFrame1:AddMessage("Casting "..arg1)
---			self.EventScheduler:TriggerEvent("CASTLIB_STARTCAST", arg1)
+function CastLib:SPELLCAST_START()
+	if ( self.SpellCast and self.SpellCast[1] == arg1 ) then
+		if self:IsEventScheduled("CastLib_CastInstant") then
+			self:CancelScheduledEvent("CastLib_CastInstant")
+			
 		end
-	elseif (event == "SPELLCAST_INTERRUPTED" or event == "SPELLCAST_FAILED") then
-		if self.EventScheduler:IsEventScheduled("CastLib_CastEnding") then
-			self.EventScheduler:CancelScheduledEvent("CastLib_CastEnding")
---			ChatFrame1:AddMessage(CastLib_SpellCast_backup[1].." didn't finish.")
-		end
-		CastLib_isCasting = nil
-		CastLib_SpellCast =  nil
-		CastLib_Rank = nil
-		CastLib_Spell =  nil
-	elseif event == "SPELLCAST_STOP" and CastLib_SpellCast then
-		if not CastLib_isCasting and CastLib_SpellCast then
-			if self.EventScheduler:IsEventScheduled("CastLib_CastEnding") then
-				self.EventScheduler:CancelScheduledEvent("CastLib_CastEnding")
---				ChatFrame1:AddMessage(CastLib_SpellCast_backup[1].." ended.")
+		self.SpellCast_backup[1] = self.SpellCast[1]
+		self.SpellCast_backup[2] = self.SpellCast[2]
+		self.SpellCast_backup[3] = self.SpellCast[3]
+		self.isCasting = true
+--		ChatFrame1:AddMessage("Casting "..arg1)
+--		self:TriggerEvent("CASTLIB_STARTCAST", arg1)
+	end
+end
+
+function CastLib:SPELLCAST_FAILED()
+	if self:IsEventScheduled("CastLib_CastEnding") then
+		self:CancelScheduledEvent("CastLib_CastEnding")
+--		ChatFrame1:AddMessage(self.SpellCast_backup[1].." didn't finish.")
+	end
+	self.isCasting = nil
+	for key in pairs(self.SpellCast) do
+		self.SpellCast[key] = nil
+	end
+	self.Rank = nil
+	CastLib_Spell =  nil
+end
+
+function CastLib:SPELLCAST_STOP()
+	if self.SpellCast then
+		if not self.isCasting and self.SpellCast then
+			if self:IsEventScheduled("CastLib_CastEnding") then
+				self:CancelScheduledEvent("CastLib_CastEnding")
+--				ChatFrame1:AddMessage(self.SpellCast_backup[1].." ended.")
 			end
-			self.EventScheduler:ScheduleEvent("CastLib_CastInstant", self.instantCast, 0.3, self, CastLib_SpellCast)
-			CastLib_SpellCast_backup = CastLib_SpellCast
+			self:ScheduleEvent("CastLib_CastInstant", self.instantCast, 0.3, self, self.SpellCast)
+			self.SpellCast_backup[1] = self.SpellCast[1]
+			self.SpellCast_backup[2] = self.SpellCast[2]
+			self.SpellCast_backup[3] = self.SpellCast[3]
 		else
-			CastLib_isCasting = nil
-			self.EventScheduler:ScheduleEvent("CastLib_CastEnding", self.stopCast, 0.3, self, CastLib_SpellCast_backup)
+			self.isCasting = nil
+			self:ScheduleEvent("CastLib_CastEnding", self.stopCast, 0.3, self, self.SpellCast_backup)
 		end
-		CastLib_SpellCast =  nil
-		CastLib_Rank = nil
+		for key in pairs(self.SpellCast) do
+			self.SpellCast[key] = nil
+		end
+		self.Rank = nil
 		CastLib_Spell =  nil
 	end
 end
 
 function CastLib:GetSpell()
-	return CastLib_Spell or CastLib_SpellCast_backup[1], CastLib_Rank or CastLib_SpellCast_backup[2]
+	return CastLib_Spell or self.SpellCast_backup[1], self.Rank or self.SpellCast_backup[2]
 end
 
-local CastLib_oldCastSpell = CastSpell
-function CastLib_newCastSpell(spellId, spellbookTabNum)
+function CastLib:CastSpell(spellId, spellbookTabNum)
 	-- Call the original function so there's no delay while we process
-	CastLib_oldCastSpell(spellId, spellbookTabNum)
+	self.hooks.CastSpell(spellId, spellbookTabNum)
 	if CastLib_Spell then
 		return
 	end
@@ -155,23 +164,21 @@ function CastLib_newCastSpell(spellId, spellbookTabNum)
 	if ( SpellIsTargeting() ) then
        -- Spell is waiting for a target
        CastLib_Spell = spellName
-	   CastLib_Rank = rank
+	   self.Rank = rank
 	elseif ( UnitIsVisible("target") and UnitIsConnected("target") and UnitCanAssist("player", "target") ) then
        -- Spell is being cast on the current target.  
        -- If ClearTarget() had been called, we'd be waiting target
 		if UnitIsPlayer("target") then
-			CastLib_ProcessSpellCast(spellName, rank, UnitName("target"))
+			self:ProcessSpellCast(spellName, rank, UnitName("target"))
 		end
 	else
-		CastLib_ProcessSpellCast(spellName, rank, UnitName("player"))
+		self:ProcessSpellCast(spellName, rank, UnitName("player"))
 	end
 end
-CastSpell = CastLib_newCastSpell
 
-local CastLib_oldCastSpellByName = CastSpellByName
-function CastLib_newCastSpellByName(spellName, onSelf)
+function CastLib:CastSpellByName(spellName, onSelf)
 	-- Call the original function
-	CastLib_oldCastSpellByName(spellName, onSelf)
+	self.hooks.CastSpellByName(spellName, onSelf)
 	if CastLib_Spell then
 		return
 	end
@@ -193,22 +200,20 @@ function CastLib_newCastSpellByName(spellName, onSelf)
 	if ( spellName ) then
 		if ( SpellIsTargeting() ) then
 			CastLib_Spell = spellName
-			CastLib_Rank = rank
+			self.Rank = rank
 		else
 			if UnitIsVisible("target") and UnitIsConnected("target") and UnitCanAssist("player", "target") and onSelf ~= 1 then
 				if UnitIsPlayer("target") then
-					CastLib_ProcessSpellCast(spellName, rank, UnitName("target"))
+					self:ProcessSpellCast(spellName, rank, UnitName("target"))
 				end
 			else
-				CastLib_ProcessSpellCast(spellName, rank, UnitName("player"))
+				self:ProcessSpellCast(spellName, rank, UnitName("player"))
 			end
 		end
 	end
 end
-CastSpellByName = CastLib_newCastSpellByName
 
-CastLib_oldWorldFrameOnMouseDown = WorldFrame:GetScript("OnMouseDown")
-WorldFrame:SetScript("OnMouseDown", function()
+function CastLib:OnMouseDown()
 	-- If we're waiting to target
 	local targetName
 	
@@ -220,24 +225,23 @@ WorldFrame:SetScript("OnMouseDown", function()
 			targetName = name
 		end
 	end
-	if ( CastLib_oldWorldFrameOnMouseDown ) then
-		CastLib_oldWorldFrameOnMouseDown()
+	if ( self.hooks.WorldFrameOnMouseDown ) then
+		self.hooks.WorldFrameOnMouseDown()
 	end
 	if ( CastLib_Spell and targetName ) then
-		CastLib_ProcessSpellCast(CastLib_Spell, CastLib_Rank, targetName)
+		self:ProcessSpellCast(CastLib_Spell, self.Rank, targetName)
 	end
-end)
+end
 
-local CastLib_oldUseAction = UseAction
-function CastLib_newUseAction(slot, checkCursor, onSelf)
+function CastLib:UseAction(slot, checkCursor, onSelf)
 	CastLibTip:ClearLines()
 	CastLibTip:SetAction(slot)
 	-- Call the original function
-	CastLib_oldUseAction(slot, checkCursor, onSelf)
+	self.hooks.UseAction(slot, checkCursor, onSelf)
 	
-	CastLib_Slot = slot
+	self.Slot = slot
 	if CastLib_Spell == AimedShot then
-		CastLib_ProcessSpellCast(CastLib_Spell, 6, UnitName("target"))
+		self:ProcessSpellCast(CastLib_Spell, 6, UnitName("target"))
 		return
 	end
 	
@@ -258,70 +262,65 @@ function CastLib_newUseAction(slot, checkCursor, onSelf)
 	if not rank then
 		rank = 1
 	end
-	CastLib_Rank = rank
+	self.Rank = rank
 	if ( SpellIsTargeting() ) then
 		-- Spell is waiting for a target
 		return
 	elseif ( UnitIsVisible("target") and UnitIsConnected("target") and UnitCanAssist("player", "target") and onSelf ~= 1) then
 		-- Spell is being cast on the current target
 		if UnitIsPlayer("target") then
-			CastLib_ProcessSpellCast(spellName, rank, UnitName("target"))
+			self:ProcessSpellCast(spellName, rank, UnitName("target"))
 		end
 	else
 		-- Spell is being cast on the player
-		CastLib_ProcessSpellCast(spellName, rank, UnitName("player"))
+		self:ProcessSpellCast(spellName, rank, UnitName("player"))
 	end
 end
-UseAction = CastLib_newUseAction
 
-local CastLib_oldSpellTargetUnit = SpellTargetUnit
-function CastLib_newSpellTargetUnit(unit)
+function CastLib:SpellTargetUnit(unit)
 	-- Call the original function
 	local shallTargetUnit
 	if ( SpellIsTargeting() ) then
 		shallTargetUnit = true
 	end
-	CastLib_oldSpellTargetUnit(unit)
+	self.hooks.SpellTargetUnit(unit)
 	if ( shallTargetUnit and CastLib_SpellSpell and not SpellIsTargeting() ) then
 		if UnitIsPlayer(unit) then
-			CastLib_ProcessSpellCast(CastLib_Spell, CastLib_Rank, UnitName(unit))
+			self:ProcessSpellCast(self.Spell, self.Rank, UnitName(unit))
 		end
-		CastLib_Spell = nil
-		CastLib_Rank = nil
+		self.Spell = nil
+		self.Rank = nil
 	end
 end
-SpellTargetUnit = CastLib_newSpellTargetUnit
 
-local CastLib_oldSpellStopTargeting = SpellStopTargeting
-function CastLib_newSpellStopTargeting()
-	CastLib_oldSpellStopTargeting()
-	CastLib_Spell = nil
-	CastLib_Rank = nil
+function CastLib:SpellStopTargeting()
+	self.hooks.SpellStopTargeting()
+	self.Spell = nil
+	self.Rank = nil
 end
-SpellStopTargeting = CastLib_newSpellStopTargeting
 
-local CastLib_oldTargetUnit = TargetUnit
-function CastLib_newTargetUnit(unit)
+function CastLib:TargetUnit(unit)
 	-- Look to see if we're currently waiting for a target internally
 	-- If we are, then well glean the target info here.
 	if ( CastLib_SpellSpell and UnitExists(unit) ) and UnitIsPlayer(unit) then
-		CastLib_ProcessSpellCast(CastLib_Spell, CastLib_Rank, UnitName(unit))
+		self:ProcessSpellCast(self.Spell, self.Rank, UnitName(unit))
 	end
 	-- Call the original function
-	CastLib_oldTargetUnit(unit)
+	self.hooks.TargetUnit(unit)
 end
-TargetUnit = CastLib_newTargetUnit
 
-function CastLib_ProcessSpellCast(spellName, rank, targetName)
+function CastLib:ProcessSpellCast(spellName, rank, targetName)
 	if spellName == AimedShot then
-		CastLib_Spell = AimedShot
-		if not CastLib_isCasting and CastLib_Slot and IsCurrentAction(CastLib_Slot) then
-			CastLib_isCasting = true
+		self.Spell = AimedShot
+		if not self.isCasting and self.Slot and IsCurrentAction(self.Slot) then
+			self.isCasting = true
 			local AceEvent = AceLibrary("AceEvent-2.0")
 			AceEvent:TriggerEvent("CASTLIB_STARTCAST", AimedShot)
 		end
 	end
-	CastLib_SpellCast = { spellName, rank, targetName }
+	self.SpellCast[1] = spellName
+	self.SpellCast[2] = rank
+	self.SpellCast[3] = targetName
 end
 
 AceLibrary:Register(CastLib, MAJOR_VERSION, MINOR_VERSION, activate, nil, external)

@@ -1,6 +1,6 @@
 --[[
 Name: FiveSecLib-1.0
-Revision: $Rev: 10000 $
+Revision: $Rev: 10120 $
 Author(s): aviana
 Website: https://github.com/Aviana
 Description: A library to provide feedback about the five second rule for casters.
@@ -8,12 +8,13 @@ Dependencies: AceLibrary, AceEvent-2.0
 ]]
 
 local MAJOR_VERSION = "FiveSecLib-1.0"
-local MINOR_VERSION = "$Revision: 10110 $"
+local MINOR_VERSION = "$Revision: 10120 $"
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
 if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end
 if not AceLibrary:HasInstance("AceEvent-2.0") then error(MAJOR_VERSION .. " requires AceEvent-2.0") end
 if not AceLibrary:HasInstance("Babble-Spell-2.2") then error(MAJOR_VERSION .. " requires Babble-Spell-2.2") end
+if not AceLibrary:HasInstance("AceHook-2.1") then error(MAJOR_VERSION .. " requires AceHook-2.1") end
 
 local BS = AceLibrary("Babble-Spell-2.2")
 
@@ -35,15 +36,21 @@ end
 
 local function external(self, major, instance)
 	if major == "AceEvent-2.0" then
-		self.EventScheduler = instance
-		self.EventScheduler:embed(self)
-		self:UnregisterAllEvents()
-		self:CancelAllScheduledEvents()
-		if self.EventScheduler:IsFullyInitialized() then
-			self:AceEvent_FullyInitialized()
-		else
-			self:RegisterEvent("AceEvent_FullyInitialized", "AceEvent_FullyInitialized", true)
-		end		
+		local AceEvent = instance
+		AceEvent:embed(self)
+		self:RegisterEvent("SPELLCAST_INTERRUPTED", "SPELLCAST_FAILED")
+		self:RegisterEvent("SPELLCAST_FAILED")
+		self:RegisterEvent("SPELLCAST_STOP")
+		self:TriggerEvent("FiveSecLib_Enabled")
+	end
+	if major == "AceHook-2.1" then
+		local AceHook = instance
+		AceHook:embed(self)
+		self:Hook("CastSpell")
+		self:Hook("CastSpellByName")
+		self:Hook("UseAction")
+		self:Hook("SpellStopTargeting")
+		self:Hook("CastShapeshiftForm")
 	end
 end
 
@@ -57,27 +64,14 @@ function FiveSecLib:Disable()
 end
 
 ------------------------------------------------
--- Internal functions
-------------------------------------------------
-
-function FiveSecLib:AceEvent_FullyInitialized()
-	self:RegisterEvent("SPELLCAST_INTERRUPTED", "OnEvent")
-	self:RegisterEvent("SPELLCAST_FAILED", "OnEvent")
-	self:RegisterEvent("SPELLCAST_STOP", "OnEvent")
-	self:TriggerEvent("FiveSecLib_Enabled")
-end
-
-------------------------------------------------
 -- Addon Code
 ------------------------------------------------
-
-local FiveSecLib_Spell = nil
 
 local FiveSecLibTip = CreateFrame("GameTooltip", "FiveSecLibTip", nil, "GameTooltipTemplate")
 FiveSecLibTip:SetOwner(WorldFrame, "ANCHOR_NONE")
 
 function FiveSecLib:triggerFSR(spellName)
-	FiveSecLib_Spell = nil
+	self.Spell = nil
 	local i = 1
 	while GetSpellName(i, BOOKTYPE_SPELL) do
 		local s, r = GetSpellName(i, BOOKTYPE_SPELL)
@@ -86,7 +80,7 @@ function FiveSecLib:triggerFSR(spellName)
 			FiveSecLibTip:SetSpell(i, BOOKTYPE_SPELL)
 			local mana = FiveSecLibTipTextLeft2:GetText()
 			if mana and string.find(mana,"(%d+) Mana") then
-				self.EventScheduler:TriggerEvent("fiveSec")
+				self:TriggerEvent("fiveSec")
 			end
 			return
 		end
@@ -94,68 +88,62 @@ function FiveSecLib:triggerFSR(spellName)
 	end
 end
 
-function FiveSecLib:OnEvent()
-	if (event == "SPELLCAST_INTERRUPTED" or event == "SPELLCAST_FAILED") and FiveSecLib_Spell then
-		if FiveSecLib_Spell ~= BS["Raptor Strike"] then
-			self.EventScheduler:CancelScheduledEvent("Trigger_fiveSec")
-			FiveSecLib_Spell = nil
+function FiveSecLib:SPELLCAST_FAILED()
+	if self.Spell then
+		if self.Spell ~= BS["Raptor Strike"] then
+			self:CancelScheduledEvent("Trigger_fiveSec")
+			self.Spell = nil
 		end
-	elseif event == "SPELLCAST_STOP" and FiveSecLib_Spell then
-	--	triggerFSR(FiveSecLib_Spell)
-		self.EventScheduler:ScheduleEvent("Trigger_fiveSec", self.triggerFSR, 0.2, self, FiveSecLib_Spell)
 	end
 end
 
-local FiveSecLib_oldCastSpell = CastSpell
-local function FiveSecLib_newCastSpell(spellId, spellbookTabNum)
+function FiveSecLib:SPELLCAST_STOP()
+	if self.Spell then
+	--	triggerFSR(self.Spell)
+		self:ScheduleEvent("Trigger_fiveSec", self.triggerFSR, 0.2, self, self.Spell)
+	end
+end
+
+function FiveSecLib:CastSpell(spellId, spellbookTabNum)
 	-- Call the original function so there's no delay while we process
-	FiveSecLib_oldCastSpell(spellId, spellbookTabNum)
-	FiveSecLib_Spell = GetSpellName(spellId, spellbookTabNum)
+	self.hooks.CastSpell(spellId, spellbookTabNum)
+	self.Spell = GetSpellName(spellId, spellbookTabNum)
 end
-CastSpell = FiveSecLib_newCastSpell
 
-local FiveSecLib_oldCastSpellByName = CastSpellByName
-local function FiveSecLib_newCastSpellByName(spellName, onSelf)
+function FiveSecLib:CastSpellByName(spell, onSelf)
 	-- Call the original function
-	FiveSecLib_oldCastSpellByName(spellName, onSelf)
-	local _, _, spellName = string.find(spellName, "^([^%(]+)")
+	self.hooks.CastSpellByName(spell, onSelf)
+	local _, _, spellName = string.find(spell, "^([^%(]+)")
 	if ( spellName ) then
-		FiveSecLib_Spell = spellName
+		self.Spell = spellName
 	end
 end
-CastSpellByName = FiveSecLib_newCastSpellByName
 
-local FiveSecLib_oldUseAction = UseAction
-local function FiveSecLib_newUseAction(slot, checkCursor, onSelf)
+function FiveSecLib:UseAction(slot, checkCursor, onSelf)
 	
 	FiveSecLibTip:ClearLines()
 	FiveSecLibTip:SetAction(slot)
 	local spellName = FiveSecLibTipTextLeft1:GetText()
 	-- Call the original function
-	FiveSecLib_oldUseAction(slot, checkCursor, onSelf)
+	self.hooks.UseAction(slot, checkCursor, onSelf)
 	-- Test to see if this is a macro
 	if ( GetActionText(slot) or not spellName ) then
 		return
 	end
-	FiveSecLib_Spell = spellName
+	self.Spell = spellName
 end
-UseAction = FiveSecLib_newUseAction
 
-local FiveSecLib_oldSpellStopTargeting = SpellStopTargeting
-local function FiveSecLib_newSpellStopTargeting()
-	FiveSecLib_oldSpellStopTargeting()
-	FiveSecLib_Spell = nil
+function FiveSecLib:SpellStopTargeting()
+	self.hooks.SpellStopTargeting()
+	self.Spell = nil
 end
-SpellStopTargeting = FiveSecLib_newSpellStopTargeting
 
-local FiveSecLib_oldCastShapeshiftForm = CastShapeshiftForm
-local function FiveSecLib_newCastShapeshiftForm(id)
-	FiveSecLib_oldCastShapeshiftForm(id)
+function FiveSecLib:CastShapeshiftForm(id)
+	self.hooks.CastShapeshiftForm(id)
 	FiveSecLibTip:ClearLines()
 	FiveSecLibTip:SetShapeshift(id)
-	FiveSecLib_Spell = FiveSecLibTipTextLeft1:GetText()
+	self.Spell = FiveSecLibTipTextLeft1:GetText()
 end
-CastShapeshiftForm = FiveSecLib_newCastShapeshiftForm
 
 AceLibrary:Register(FiveSecLib, MAJOR_VERSION, MINOR_VERSION, activate, nil, external)
 FiveSecLib = nil

@@ -1,6 +1,6 @@
 --[[
 Name: HealComm-1.0
-Revision: $Rev: 11400 $
+Revision: $Rev: 11410 $
 Author(s): aviana
 Website: https://github.com/Aviana
 Description: A library to provide communication of heals and resurrections.
@@ -8,7 +8,7 @@ Dependencies: AceLibrary, AceEvent-2.0, RosterLib-2.0
 ]]
 
 local MAJOR_VERSION = "HealComm-1.0"
-local MINOR_VERSION = "$Revision: 11400 $"
+local MINOR_VERSION = "$Revision: 11410 $"
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
 if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end
@@ -1190,8 +1190,8 @@ function HealComm:SPELLCAST_START()
 		healcomm_spellIsCasting = arg1
 		self:startResurrection(UnitName("player"), self.SpellCastInfo[3])
 	end
-	for _,val in pairs(self.SpellCastInfo) do
-		val = nil
+	for key in pairs(self.SpellCastInfo) do
+		self.SpellCastInfo[key] = nil
 	end
 end
 
@@ -1205,16 +1205,16 @@ function HealComm:SPELLCAST_FAILED()
 			self:stopHeal(UnitName("player"))
 		end
 		healcomm_spellIsCasting = nil
-		for _,val in pairs(self.SpellCastInfo) do
-			val = nil
+		for key in pairs(self.SpellCastInfo) do
+			self.SpellCastInfo[key] = nil
 		end
 		self.CurrentSpellRank = nil
 		self.CurrentSpellName =  nil
 	elseif Resurrections[healcomm_spellIsCasting] then
 		self:SendAddonMessage("Resurrection/stop/")
 		healcomm_spellIsCasting = nil
-		for _,val in pairs(self.SpellCastInfo) do
-			val = nil
+		for key in pairs(self.SpellCastInfo) do
+			self.SpellCastInfo[key] = nil
 		end
 		self.CurrentSpellRank = nil
 		self.CurrentSpellName =  nil
@@ -1237,8 +1237,8 @@ function HealComm:SPELLCAST_STOP()
 	local targetUnit = roster:GetUnitIDFromName(self.SpellCastInfo[3])
 	if not targetUnit then
 		healcomm_spellIsCasting = nil
-		for _,val in pairs(self.SpellCastInfo) do
-			val = nil
+		for key in pairs(self.SpellCastInfo) do
+			self.SpellCastInfo[key] = nil
 		end
 		self.CurrentSpellRank = nil
 		self.CurrentSpellName =  nil
@@ -1257,8 +1257,8 @@ function HealComm:SPELLCAST_STOP()
 		self.Hots[self.SpellCastInfo[3]]["Renew"].dur = dur
 		self:TriggerEvent("HealComm_Hotupdate", targetUnit, "Renew")
 		healcomm_spellIsCasting = nil
-		for _,val in pairs(self.SpellCastInfo) do
-			val = nil
+		for key in pairs(self.SpellCastInfo) do
+			self.SpellCastInfo[key] = nil
 		end
 		self.CurrentSpellRank = nil
 		self.CurrentSpellName =  nil
@@ -1275,8 +1275,8 @@ function HealComm:SPELLCAST_STOP()
 		self.Hots[self.SpellCastInfo[3]]["Reju"].dur = dur
 		self:TriggerEvent("HealComm_Hotupdate", targetUnit, "Rejuvenation")
 		healcomm_spellIsCasting = nil
-		for _,val in pairs(self.SpellCastInfo) do
-			val = nil
+		for key in pairs(self.SpellCastInfo) do
+			self.SpellCastInfo[key] = nil
 		end
 		self.CurrentSpellRank = nil
 		self.CurrentSpellName =  nil
@@ -1293,8 +1293,8 @@ function HealComm:SPELLCAST_STOP()
 		self.Hots[self.SpellCastInfo[3]]["Regr"].dur = dur
 		self:TriggerEvent("HealComm_Hotupdate", targetUnit, "Regrowth")
 		healcomm_spellIsCasting = nil
-		for _,val in pairs(self.SpellCastInfo) do
-			val = nil
+		for key in pairs(self.SpellCastInfo) do
+			self.SpellCastInfo[key] = nil
 		end
 		self.CurrentSpellRank = nil
 		self.CurrentSpellName =  nil
@@ -1491,11 +1491,9 @@ function HealComm:CastSpell(spellId, spellbookTabNum)
 		if UnitIsPlayer("target") then
 			self:ProcessSpellCast(spellName, rank, UnitName("target"))
 		else
-			self.SpellCastInfo[1] = nil
-			self.SpellCastInfo[2] = nil
-			self.SpellCastInfo[3] = nil
-			self.SpellCastInfo[4] = nil
-			self.SpellCastInfo[5] = nil
+			for key in pairs(self.SpellCastInfo) do
+				self.SpellCastInfo[key] = nil
+			end
 		end
 	else
 		self:ProcessSpellCast(spellName, rank, UnitName("player"))
@@ -1528,11 +1526,9 @@ function HealComm:CastSpellByName(spellName, onSelf)
 				if UnitIsPlayer("target") then
 					self:ProcessSpellCast(spellName, rank, UnitName("target"))
 				else
-					self.SpellCastInfo[1] = nil
-					self.SpellCastInfo[2] = nil
-					self.SpellCastInfo[3] = nil
-					self.SpellCastInfo[4] = nil
-					self.SpellCastInfo[5] = nil
+					for key in pairs(self.SpellCastInfo) do
+						self.SpellCastInfo[key] = nil
+					end
 				end
 			else
 				self:ProcessSpellCast(spellName, rank, UnitName("player"))
@@ -1589,11 +1585,9 @@ function HealComm:UseAction(slot, checkCursor, onSelf)
 		if UnitIsPlayer("target") then
 			self:ProcessSpellCast(spellName, rank, UnitName("target"))
 		else
-			self.SpellCastInfo[1] = nil
-			self.SpellCastInfo[2] = nil
-			self.SpellCastInfo[3] = nil
-			self.SpellCastInfo[4] = nil
-			self.SpellCastInfo[5] = nil
+			for key in pairs(self.SpellCastInfo) do
+				self.SpellCastInfo[key] = nil
+			end
 		end
 	else
 		-- Spell is being cast on the player
@@ -1611,11 +1605,9 @@ function HealComm:SpellTargetUnit(unit)
 		if UnitIsPlayer(unit) then
 			self:ProcessSpellCast(self.CurrentSpellName, self.CurrentSpellRank, UnitName(unit))
 		else
-			self.SpellCastInfo[1] = nil
-			self.SpellCastInfo[2] = nil
-			self.SpellCastInfo[3] = nil
-			self.SpellCastInfo[4] = nil
-			self.SpellCastInfo[5] = nil
+			for key in pairs(self.SpellCastInfo) do
+				self.SpellCastInfo[key] = nil
+			end
 		end
 		self.CurrentSpellName = nil
 		self.CurrentSpellRank = nil
@@ -1634,18 +1626,16 @@ function HealComm:TargetUnit(unit)
 	if ( self.CurrentSpellName and UnitExists(unit) ) and UnitIsPlayer(unit) then
 		self:ProcessSpellCast(self.CurrentSpellName, self.CurrentSpellRank, UnitName(unit))
 	else
-		self.SpellCastInfo[1] = nil
-		self.SpellCastInfo[2] = nil
-		self.SpellCastInfo[3] = nil
-		self.SpellCastInfo[4] = nil
-		self.SpellCastInfo[5] = nil
+		for key in pairs(self.SpellCastInfo) do
+			self.SpellCastInfo[key] = nil
+		end
 	end
 	self.hooks.TargetUnit(unit)
 end
 
 function HealComm:ProcessSpellCast(spellName, rank, targetName)
 	local unit = roster:GetUnitIDFromName(targetName)
-	if ( spellName and rank and targetName and unit ) then
+	if ( spellName and rank and targetName and unit) then
 		local power, mod = GetTargetSpellPower(spellName)
 		self.SpellCastInfo[1] = spellName
 		self.SpellCastInfo[2] = rank
