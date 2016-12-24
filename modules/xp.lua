@@ -17,6 +17,10 @@ local function OnLeave()
 	GameTooltip:Hide()
 end
 
+local function OnClick()
+	this:GetParent():Click(arg1)
+end
+
 -- Format 5000 into 5,000 Thanks Shadowed! :D
 local function formatNumber(number)
 	local found
@@ -30,9 +34,12 @@ end
 
 function XP:OnEnable(frame)
 	if( not frame.xpBar ) then
-		frame.xpBar = CreateFrame("Frame", nil, frame)
+		frame.xpBar = CreateFrame("Button", nil, frame)
 		frame.xpBar:SetScript("OnEnter", OnEnter)
 		frame.xpBar:SetScript("OnLeave", OnLeave)
+		frame.xpBar:SetScript("OnClick", OnClick)
+		local click_action = LunaUF.db.profile.clickcasting.mouseDownClicks and "Down" or "Up"
+		frame.xpBar:RegisterForClicks('LeftButton' .. click_action, 'RightButton' .. click_action, 'MiddleButton' .. click_action, 'Button4' .. click_action, 'Button5' .. click_action)
 		frame.xpBar:EnableMouse(true)
 		
 		frame.xpBar.xp = LunaUF.Units:CreateBar(frame.xpBar)
