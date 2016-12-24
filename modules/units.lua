@@ -254,6 +254,9 @@ end
 
 local func = {}
 local function OnClick()
+	if arg1 == "UNKNOWN" then
+		arg1 = LunaUF.clickedButton
+	end
 	if Luna_Custom_ClickFunction and Luna_Custom_ClickFunction(arg1, this.unit) then
 		return;
 	else

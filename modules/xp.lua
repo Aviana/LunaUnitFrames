@@ -18,6 +18,7 @@ local function OnLeave()
 end
 
 local function OnClick()
+	LunaUF.clickedButton = arg1
 	this:GetParent():Click(arg1)
 end
 
