@@ -544,7 +544,7 @@ local function OnEvent()
 		local spellName = CL:GetSpell()
 		frame.castBar.Text:SetText(spellName)
 		if LunaUF.db.profile.units[frame.unitGroup].castBar.icon then
-			frame.castBar.icon:SetTexture(BS:GetSpellIcon(spellName) or GetItemIconTexture(spellName))
+			frame.castBar.icon:SetTexture(BS:GetSpellIcon(spellName or "") or GetItemIconTexture(spellName))
 		end
 		frame.castBar:SetScript("OnUpdate", OnUpdatePlayer)
 		Cast:FullUpdate(frame)
