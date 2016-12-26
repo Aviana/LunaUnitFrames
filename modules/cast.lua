@@ -12,14 +12,14 @@ local _,playerRace = UnitRace("player")
 local _,playerClass = UnitClass("player")
 
 local CHAT_PATTERNS = {
-	[L["(.+) gains (.+)."]] = "gains",
-	[L["(.+) begins to cast (.+)."]] = "casts",
-	[L["(.+) begins to perform (.+)."]] = "performs",
-	[L["(.+) (.+) afflicted by (.+)."]] = "afflicted",
-	[L["Your (.+) hits (.+) for %d+\."]] = "hit",
-	[L["Your (.+) crits (.+) for %d+\."]] = "hit",
-	[L["%a+'s (.+) hits (.+) for %d+\."]] = "hit",
-	[L["%a+'s (.+) crits (.+) for %d+\."]] = "hit",
+	[string.gsub(AURAADDEDOTHERHELPFUL, "%%s", "(.+)")] = "gains", -- "(.+) gains (.+)."
+	[string.gsub(SPELLCASTOTHERSTART, "%%s", "(.+)")] = "casts", -- "(.+) begins to cast (.+)."
+	[string.gsub(SPELLPERFORMOTHERSTART, "%%s", "(.+)")] = "performs", -- "(.+) begins to perform (.+)."
+	[string.gsub(AURAADDEDOTHERHARMFUL, "%%s", "(.+)")] = "afflicted", -- "(.+) is afflicted by (.+)."
+	[string.gsub(string.gsub(SPELLLOGSELFOTHER,"%%d","%%d+"),"%%s","(.+)")] = "hit", -- "Your (.+) hits (.+) for %d+\."
+	[string.gsub(string.gsub(SPELLLOGCRITSELFOTHER,"%%d","%%d+"),"%%s","(.+)")] = "hit", -- "Your (.+) crits (.+) for %d+\."
+	[string.gsub(string.gsub(string.gsub(SPELLLOGOTHEROTHER,"%%a", "%%a+"), "%%s", "(.+)"), "%%d", "%%d+")] = "hit", -- "%a+'s (.+) hits (.+) for %d+\."
+	[string.gsub(string.gsub(string.gsub(SPELLLOGCRITOTHEROTHER,"%%a", "%%a+"), "%%s", "(.+)"), "%%d", "%%d+")] = "hit", -- "%a+'s (.+) crits (.+) for %d+\."
 }
 
 local Spells = {
@@ -374,14 +374,21 @@ end
 local function ProcessData(mob, spell, special)
 	local castime
 	if (Raids[mob] and Raids[spell]) or (Raids[spell] and not Spells[spell]) then
-		castime = Raids[spell].t
-		-- Spell might have the same name but a different cast time on another mob, ie. Onyxia/Nefarian on Bellowing Roar
-		if Raids[spell].r then
-			if (mob == Raids[spell].r) then
-				castime = Raids[spell].a
+		if special ~= "hit" then
+			castime = Raids[spell].t
+			-- Spell might have the same name but a different cast time on another mob, ie. Onyxia/Nefarian on Bellowing Roar
+			if Raids[spell].r then
+				if (mob == Raids[spell].r) then
+					castime = Raids[spell].a
+				end
+			end
+			TriggerCast(mob, spell, castime)
+		elseif Interrupts[spell] then
+			if CasterDB[mob] and CasterDB[mob].ct and CasterDB[mob].ct > 0 then
+				TriggerCastStop(mob, spell)
+				return
 			end
 		end
-		TriggerCast(mob, spell, castime)
 	else
 		if Spells[spell] and special ~= "hit" then
 			if special == "afflicted" then

@@ -37,14 +37,6 @@ local function zhCN() return {
 ["Indicators"] = "指示器",
 ["(%a+) is now the loot master."] = "(.+)现在负责拾取并分配所有战利品",
 ["Cast bar"] = "施法条",
-["(.+) gains (.+)."] = "(.+)获得了(.+)的效果。", -- AURAADDEDOTHERHELPFUL
-["(.+) begins to cast (.+)."] = "(.+)开始施放(.+)。", -- SPELLCASTOTHERSTART
-["(.+) begins to perform (.+)."] = "(.+)开始施展(.+)。", -- SPELLPERFORMOTHERSTART
-["(.+) (.+) afflicted by (.+)."] = "(.+)受到了(.+)效果的影响。", -- AURAADDEDOTHERHARMFUL
-["Your (.+) hits (.+) for %d+\."] = "你的(.+)对(.+)造成了%d+点伤害。", -- SPELLLOGCRITSELFOTHER
-["Your (.+) crits (.+) for %d+\."] = "你的(.+)对(.+)造成%d+的致命一击伤害。", -- SPELLLOGCRITSELFOTHER
-["%a+'s (.+) hits (.+) for %d+\."] = ".+的(.+)击中(.+)造成%d+点伤害。", -- SPELLLOGOTHEROTHER
-["%a+'s (.+) crits (.+) for %d+\."] = ".+的(.+)对(.+)造成%d+点致命一击伤害。", -- SPELLLOGCRITOTHEROTHER
 ["Hearthstone"] = "炉石",
 ["Rough Copper Bomb"] = "劣质铜壳炸弹",
 ["Large Copper Bomb"] = "大型铜壳炸弹",

@@ -40,14 +40,6 @@ local function deDE() return {
 ["Indicators"] = "Indikatoren",
 ["(%a+) is now the loot master."] = "(%a+) ist jetzt der Pl\195\188ndermeister.",
 ["Cast bar"] = "Wirkungsleiste",
-["(.+) gains (.+)."] = "(.+) bekommt (.+).",
-["(.+) begins to cast (.+)."] = "(.+) beginnt (.+) zu wirken.",
-["(.+) begins to perform (.+)."] = "(.+) beginnt (.+) auszuf\195\188hren.",
-["(.+) (.+) afflicted by (.+)."] = "(.+) (.+) ist von (.+) betroffen.",
-["Your (.+) hits (.+) for %d+\."] = "(.+) von Euch trifft (.+) f\195\188r %d+ Schaden\.", --"%1$s von Euch trifft %2$s für %3$d Schaden."
-["Your (.+) crits (.+) for %d+\."] = "(.+) trifft (.+) kritisch: %d+ Schaden\.", --"%1$s trifft %2$s kritisch: %3$d Schaden."
-["%a+'s (.+) hits (.+) for %d+\."] = "%a+s (.+) trifft (.+) %a*%s?f\195\188r %d+ Schaden\.", --"%1$ss %2$s trifft %3$s für %4$d Schaden."
-["%a+'s (.+) crits (.+) for %d+\."] = "%a+s (.+) trifft (.+) kritisch f\195\188r %d+ Schaden\.", --"%ss %s trifft %s kritisch für %d Schaden."
 ["Hearthstone"] = "Ruhestein",
 ["Rough Copper Bomb"] = "Raue Kupferbombe",
 ["Large Copper Bomb"] = "Gro\195\159e Kupferbombe",
