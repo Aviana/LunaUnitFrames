@@ -259,7 +259,7 @@ local function external(self, major, instance)
 		self:RegisterEvent("CHAT_MSG_ADDON")
 		self:RegisterEvent("UNIT_AURA")
 		self:RegisterEvent("UNIT_HEALTH")
-		self:RegisterEvent("PLAYER_ENTERING_WORLD")
+		self:RegisterEvent("PLAYER_LOGIN")
 		self:TriggerEvent("HealComm_Enabled")
 	end
 	if major == "AceHook-2.1" then
@@ -268,7 +268,7 @@ local function external(self, major, instance)
 	end
 end
 
-function HealComm:PLAYER_ENTERING_WORLD()
+function HealComm:PLAYER_LOGIN()
 	self:HookScript(WorldFrame, "OnMouseDown", "OnMouseDown")
 	self:Hook("CastSpell")
 	self:Hook("CastSpellByName")
@@ -1195,6 +1195,11 @@ function HealComm:SPELLCAST_START()
 end
 
 function HealComm:SPELLCAST_FAILED()
+	
+	if self:IsEventScheduled("TriggerRegrowthHot") then
+		self:CancelScheduledEvent("TriggerRegrowthHot")
+	end
+	
 	if self.Spells[self.spellIsCasting] then
 		if self.spellIsCasting == L["Prayer of Healing"] then
 			self:SendAddonMessage("GrpHealstop")
@@ -1225,9 +1230,23 @@ function HealComm:SPELLCAST_DELAYED()
 	end
 end
 
+function HealComm:TriggerRegrowthHot()
+	local dur = 21
+	self:SendAddonMessage("Regr/"..self.savetarget.."/"..dur.."/")
+	if not self.Hots[self.savetarget] then
+		self.Hots[self.savetarget] = {}
+	end
+	if not self.Hots[self.savetarget]["Regr"] then
+		self.Hots[self.savetarget]["Regr"]= {}
+	end
+	self.Hots[self.savetarget]["Regr"].start = GetTime()
+	self.Hots[self.savetarget]["Regr"].dur = dur
+	self:TriggerEvent("HealComm_Hotupdate", roster:GetUnitIDFromName(self.savetarget), "Regrowth")
+end
+
 function HealComm:SPELLCAST_STOP()
 	if not self.SpellCastInfo then return end
-	local targetUnit = roster:GetUnitIDFromName(self.SpellCastInfo[3]) or "mouseover"
+	local targetUnit = roster:GetUnitIDFromName(self.SpellCastInfo[3])
 	if targetUnit then
 		if self.SpellCastInfo[1] == L["Renew"] then
 			local dur = getSetBonus() and 18 or 15
@@ -1254,17 +1273,8 @@ function HealComm:SPELLCAST_STOP()
 			self.Hots[self.SpellCastInfo[3]]["Reju"].dur = dur
 			self:TriggerEvent("HealComm_Hotupdate", targetUnit, "Rejuvenation")
 		elseif self.SpellCastInfo[1] == L["Regrowth"] then
-			local dur = 21
-			self:SendAddonMessage("Regr/"..self.SpellCastInfo[3].."/"..dur.."/")
-			if not self.Hots[self.SpellCastInfo[3]] then
-				self.Hots[self.SpellCastInfo[3]] = {}
-			end
-			if not self.Hots[self.SpellCastInfo[3]]["Regr"] then
-				self.Hots[self.SpellCastInfo[3]]["Regr"]= {}
-			end
-			self.Hots[self.SpellCastInfo[3]]["Regr"].start = GetTime()
-			self.Hots[self.SpellCastInfo[3]]["Regr"].dur = dur
-			self:TriggerEvent("HealComm_Hotupdate", targetUnit, "Regrowth")
+			self.savetarget = self.SpellCastInfo[3]
+			self:ScheduleEvent("TriggerRegrowthHot", self.TriggerRegrowthHot, 0.3, self)
 		end
 	end
 	self.spellIsCasting = nil
