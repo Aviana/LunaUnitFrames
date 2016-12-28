@@ -320,7 +320,7 @@ local function OnUpdate()
 		debufftimers[i] = timeLeft
 		if (button:IsVisible() and button.untilCancelled == 0) then
 			if (config.timertextenabled) then
-				local timeString, expiring = getTimeString(timeleft)
+				local timeString, expiring = getTimeString(timeLeft)
 				button.timeFontstring:SetText(timeString)
 				if expiring then
 					button.timeFontstring:SetFont(defaultFont, LunaUF.db.profile.units["player"].auras.timertextbigsize, "OUTLINE")
