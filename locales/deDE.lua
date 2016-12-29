@@ -20,6 +20,7 @@ local function deDE() return {
 ["General"] = "Allgemein",
 ["Player"] = "Spieler",
 ["Pet"] = "Begleiter",
+["Pet Target"] = "Begleiterziel",
 ["Target"] = "Ziel",
 ["ToT"] = "ZdZ",
 ["ToToT"] = "ZdZdZ",

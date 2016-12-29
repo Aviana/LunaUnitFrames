@@ -17,6 +17,7 @@ local function enUS() return {
 ["General"] = "General",
 ["Player"] = "Player",
 ["Pet"] = "Pet",
+["Pet Target"] = "Pet Target",
 ["Target"] = "Target",
 ["ToT"] = "ToT",
 ["ToToT"] = "ToToT",

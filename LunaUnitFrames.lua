@@ -7,7 +7,7 @@ LunaUF.BS = AceLibrary("Babble-Spell-2.2")
 LunaUF.Banzai = AceLibrary("Banzai-1.0")
 LunaUF.HealComm = AceLibrary("HealComm-1.0")
 LunaUF.DruidManaLib = AceLibrary("DruidManaLib-1.0")
-LunaUF.unitList = {"player", "pet", "target", "targettarget", "targettargettarget", "party", "partytarget", "partypet", "raid"}
+LunaUF.unitList = {"player", "pet", "pettarget", "target", "targettarget", "targettargettarget", "party", "partytarget", "partypet", "raid"}
 LunaUF.ScanTip = CreateFrame("GameTooltip", "LunaScanTip", nil, "GameTooltipTemplate")
 LunaUF.ScanTip:SetOwner(WorldFrame, "ANCHOR_NONE")
 LunaUF.modules = {}
@@ -334,6 +334,16 @@ LunaUF.constants = {
 			vertical = {
 			},
 		},
+		["pettarget"] = {
+			horizontal = {
+				[1] = "portrait",
+				[2] = "healthBar",
+				[3] = "powerBar",
+				[4] = "castBar",
+			},
+			vertical = {
+			},
+		},
 		["target"] = {
 			horizontal = {
 				[1] = "portrait",
@@ -404,6 +414,7 @@ function LunaUF:OnInitialize()
 	----------------------------------------------------------------------------------------
 	
 	self:RegisterDefaults("profile", self.defaults.profile)
+	self:BackwardCompatibility()
 	self:InitBarorder()
 	self:HideBlizzard()
 	self:LoadUnits()
@@ -415,6 +426,14 @@ function LunaUF:OnInitialize()
 	end
 end
 
+--Backward Compatibility ------------------------------------------------------------------
+function LunaUF:BackwardCompatibility()
+	if not LunaUF.db.profile.units.pettarget then
+		LunaUF.db.profile.units.pettarget = LunaUF:deepcopy(LunaUF.defaults.profile.units.pettarget)
+	end
+end
+--------------------------------------------------------------------------------------------
+
 --System Message Output --------------------------------------------------------------------
 function LunaUF:SystemMessage(msg)
 	DEFAULT_CHAT_FRAME:AddMessage("|cFF2150C2LunaUnitFrames|cFFFFFFFF: "..msg)
@@ -423,6 +442,7 @@ end
 
 --On Profile changed------------------------------------------------------------------------
 function LunaUF:OnProfileEnable()
+	self:BackwardCompatibility()
 	self:InitBarorder()
 	self:HideBlizzard()
 	self:LoadUnits()

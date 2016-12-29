@@ -17,6 +17,7 @@ local function zhCN() return {
 ["General"] = "常用",
 ["Player"] = "玩家",
 ["Pet"] = "宠物",
+["Pet Target"] = "Pet Target",
 ["Target"] = "目标",
 ["ToT"] = "目标的目标",
 ["ToToT"] = "目标的目标的目标",
