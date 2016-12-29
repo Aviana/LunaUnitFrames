@@ -88,6 +88,7 @@ local function enUS() return {
 ["yellow"] = "yellow",
 ["inc"] = "incheal",
 ["enemyUnattack"] = "unattackable",
+["enemyCivilian"] = "civilian",
 ["hostile"] = "hostile",
 ["friendly"] = "friendly",
 ["neutral"] = "neutral",

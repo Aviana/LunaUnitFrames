@@ -414,7 +414,6 @@ function LunaUF:OnInitialize()
 	----------------------------------------------------------------------------------------
 	
 	self:RegisterDefaults("profile", self.defaults.profile)
-	self:BackwardCompatibility()
 	self:InitBarorder()
 	self:HideBlizzard()
 	self:LoadUnits()
@@ -426,14 +425,6 @@ function LunaUF:OnInitialize()
 	end
 end
 
---Backward Compatibility ------------------------------------------------------------------
-function LunaUF:BackwardCompatibility()
-	if not LunaUF.db.profile.units.pettarget then
-		LunaUF.db.profile.units.pettarget = LunaUF:deepcopy(LunaUF.defaults.profile.units.pettarget)
-	end
-end
---------------------------------------------------------------------------------------------
-
 --System Message Output --------------------------------------------------------------------
 function LunaUF:SystemMessage(msg)
 	DEFAULT_CHAT_FRAME:AddMessage("|cFF2150C2LunaUnitFrames|cFFFFFFFF: "..msg)
@@ -442,7 +433,6 @@ end
 
 --On Profile changed------------------------------------------------------------------------
 function LunaUF:OnProfileEnable()
-	self:BackwardCompatibility()
 	self:InitBarorder()
 	self:HideBlizzard()
 	self:LoadUnits()

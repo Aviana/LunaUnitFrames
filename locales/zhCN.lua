@@ -88,6 +88,7 @@ local function zhCN() return {
 ["yellow"] = "黄",
 ["inc"] = "接受治疗",
 ["enemyUnattack"] = "不能攻击",
+["enemyCivilian"] = "civilian",
 ["hostile"] = "敌对",
 ["friendly"] = "友善",
 ["neutral"] = "中立",

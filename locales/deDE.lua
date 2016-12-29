@@ -91,6 +91,7 @@ local function deDE() return {
 ["yellow"] = "gelb",
 ["inc"] = "Heilvorhersage",
 ["enemyUnattack"] = "unangreifbar",
+["enemyCivilian"] = "zivilistisch",
 ["hostile"] = "feindlich",
 ["friendly"] = "freundlich",
 ["neutral"] = "neutral",
