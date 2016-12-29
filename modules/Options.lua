@@ -238,7 +238,7 @@ local function CreateIndicatorOptionsFrame(parent, indicators)
 		
 		frame[name].xslider = CreateFrame("Slider", "XSlider"..parent.id..name, frame, "OptionsSliderTemplate")
 		frame[name].xslider.config = config
-		frame[name].xslider:SetMinMaxValues(-40,40)
+		frame[name].xslider:SetMinMaxValues(-50,50)
 		frame[name].xslider:SetValueStep(1)
 		frame[name].xslider:SetScript("OnValueChanged", function()
 			local config = this.config
@@ -255,7 +255,7 @@ local function CreateIndicatorOptionsFrame(parent, indicators)
 		
 		frame[name].yslider = CreateFrame("Slider", "YSlider"..parent.id..name, frame, "OptionsSliderTemplate")
 		frame[name].yslider.config = config
-		frame[name].yslider:SetMinMaxValues(-40,40)
+		frame[name].yslider:SetMinMaxValues(-50,50)
 		frame[name].yslider:SetValueStep(1)
 		frame[name].yslider:SetScript("OnValueChanged", function()
 			local config = this.config
