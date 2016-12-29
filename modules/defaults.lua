@@ -237,7 +237,7 @@ LunaUF.defaults = {
 				},
 			},
 			pettarget = {
-				enabled = true,
+				enabled = false,
 				healthBar = { enabled = true, colorType = "class", reactionType="npc", size = 6 },
 				powerBar = { enabled = true, size = 4 },
 				portrait = { enabled = true, type = "3D", side = "left", size = 6 },
