@@ -139,16 +139,18 @@ local function UnitWatchOnEvent()
 		for _, type in pairs(LunaUF.unitList) do
 			LunaUF.Units:InitializeFrame(type)
 		end
-		SendAddonMessage("LUF", (LunaUF.db.profile.version or LunaUF.Version), "GUILD")
-		SendAddonMessage("LUF", (LunaUF.db.profile.version or LunaUF.Version), "RAID")
+		if (LunaUF.db.profile.version or 0 > LunaUF.Version) then
+			SendAddonMessage("LUF", LunaUF.db.profile.version, "GUILD")
+			SendAddonMessage("LUF", LunaUF.db.profile.version, "RAID")
+		else
+			SendAddonMessage("LUF", LunaUF.Version, "GUILD")
+			SendAddonMessage("LUF", LunaUF.Version, "RAID")
+		end
 	elseif event == "CHAT_MSG_ADDON" and arg1 == "LUF" then
 		if tonumber(arg2) > (LunaUF.db.profile.version or LunaUF.Version) then
 			LunaUF.db.profile.version = tonumber(arg2)
 			LunaOptionsFrame.version:SetTextColor(1,0,0)
 			LunaOptionsFrame.version:SetText("V."..LunaUF.Version.." Beta (Outdated)")
-		end
-		if LunaOptions.version > LunaUnitFrames.version then
-
 		end
 	end
 end
@@ -244,14 +246,6 @@ local function ShowMenu()
 	end
 end
 
-local function CastSpellByName_IgnoreSelfCast(spell)
-	local sc = GetCVar("AutoSelfCast")
-	SetCVar("AutoSelfCast", "0")
-	-- make sure that this call doesn't fail, otherwise the CVar may not be restored
-	pcall(CastSpellByName, spell)
-	SetCVar("AutoSelfCast", sc)
-end
-
 local func = {}
 local function OnClick()
 	if arg1 == "UNKNOWN" then
@@ -279,39 +273,39 @@ local function OnClick()
 			else
 				TargetUnit(this.unit)
 			end
-			return
-		elseif UnitIsUnit("target", this.unit) then
-			if not func[action] then
-				func[action] = loadstring(action or "")
-			end
-			SpellStopTargeting()
-			if func[action] then
-				func[action]()
-			else
-				CastSpellByName_IgnoreSelfCast(action)
-				if SpellIsTargeting() then
-					SpellStopTargeting()
-				end
-			end
 		else
 			if not func[action] then
 				func[action] = loadstring(action or "")
 			end
 			SpellStopTargeting()
-			Units.pauseUpdates = true
-
-			TargetUnit(this.unit)
-			if func[action] then
-				func[action]()
+			if UnitIsUnit("target", this.unit) then
+				if func[action] then
+					func[action]()
+				else
+					LunaUF:CastSpellByName_IgnoreSelfCast(action)
+				end
+			elseif UnitIsUnit("player", this.unit) and not func[action] then
+				CastSpellByName(action, 1)
 			else
-				CastSpellByName_IgnoreSelfCast(action)
-				if SpellIsTargeting() then
-					SpellStopTargeting()
+				if UnitCanAttack("player", this.unit) or LunaUF:isDualSpell(action) then
+					Units.pauseUpdates = true
+					TargetUnit(this.unit)
+					LunaUF:CastSpellByName_IgnoreSelfCast(action)
+					TargetLastTarget()
+					Units.pauseUpdates = nil
+				else
+					if UnitCanAttack("player", "target") then
+						LunaUF:CastSpellByName_IgnoreSelfCast(action)
+						SpellTargetUnit(this.unit)
+					else
+						Units.pauseUpdates = true
+						TargetUnit(this.unit)
+						LunaUF:CastSpellByName_IgnoreSelfCast(action)
+						TargetLastTarget()
+						Units.pauseUpdates = nil
+					end
 				end
 			end
-			TargetLastTarget()
-
-			Units.pauseUpdates = nil
 		end
 	end
 end

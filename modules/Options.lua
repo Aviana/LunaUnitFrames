@@ -823,9 +823,14 @@ function LunaUF:CreateOptionsMenu()
 	LunaOptionsFrame.version:SetShadowColor(0, 0, 0)
 	LunaOptionsFrame.version:SetShadowOffset(0.8, -0.8)
 
-	LunaOptionsFrame.version:SetTextColor(1,1,1)
-	LunaOptionsFrame.version:SetText("V."..LunaUF.Version.." Beta")
-
+	if LunaUF.db.profile.version or 0 > LunaUF.Version then
+		LunaOptionsFrame.version:SetTextColor(1,0,0)
+		LunaOptionsFrame.version:SetText("V."..LunaUF.Version.." Beta (Outdated)")
+	else
+		LunaOptionsFrame.version:SetTextColor(1,1,1)
+		LunaOptionsFrame.version:SetText("V."..LunaUF.Version.." Beta")
+	end
+	
 	LunaOptionsFrame.help = CreateFrame("Button", nil, LunaOptionsFrame)
 	LunaOptionsFrame.help:SetHeight(14)
 	LunaOptionsFrame.help:SetWidth(14)
