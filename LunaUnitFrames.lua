@@ -61,21 +61,21 @@ function SlashCmdList.LUFMO(msg, editbox)
 			CastSpellByName(msg, 1)
 		else
 			if UnitCanAttack("player", "mouseover") or LunaUF:isDualSpell(msg) then
-				Units.pauseUpdates = true
+				LunaUF.Units.pauseUpdates = true
 				TargetUnit("mouseover")
 				LunaUF:CastSpellByName_IgnoreSelfCast(msg)
 				TargetLastTarget()
-				Units.pauseUpdates = nil
+				LunaUF.Units.pauseUpdates = nil
 			else
 				if UnitCanAttack("player", "target") then
 					LunaUF:CastSpellByName_IgnoreSelfCast(msg)
 					SpellTargetUnit("mouseover")
 				else
-					Units.pauseUpdates = true
+					LunaUF.Units.pauseUpdates = true
 					TargetUnit("mouseover")
 					LunaUF:CastSpellByName_IgnoreSelfCast(msg)
 					TargetLastTarget()
-					Units.pauseUpdates = nil
+					LunaUF.Units.pauseUpdates = nil
 				end
 			end
 		end
@@ -93,21 +93,21 @@ function SlashCmdList.LUFMO(msg, editbox)
 			CastSpellByName(msg, 1)
 		else
 			if UnitCanAttack("player", unit) or LunaUF:isDualSpell(msg) then
-				Units.pauseUpdates = true
+				LunaUF.Units.pauseUpdates = true
 				TargetUnit(unit)
 				LunaUF:CastSpellByName_IgnoreSelfCast(msg)
 				TargetLastTarget()
-				Units.pauseUpdates = nil
+				LunaUF.Units.pauseUpdates = nil
 			else
 				if UnitCanAttack("player", "target") then
 					LunaUF:CastSpellByName_IgnoreSelfCast(msg)
 					SpellTargetUnit(unit)
 				else
-					Units.pauseUpdates = true
+					LunaUF.Units.pauseUpdates = true
 					TargetUnit(unit)
 					LunaUF:CastSpellByName_IgnoreSelfCast(msg)
 					TargetLastTarget()
-					Units.pauseUpdates = nil
+					LunaUF.Units.pauseUpdates = nil
 				end
 			end
 		end
