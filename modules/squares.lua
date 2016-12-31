@@ -227,11 +227,15 @@ function Squares:UpdateAuras(frame)
 		ScanTip:SetUnitDebuff(frame.unit,i)
 		buffname = LunaScanTipTextLeft1:GetText() or ""
 
-		texture,_,disptype = UnitDebuff(frame.unit,i,config.dispellabledebuffs)
-		if disptype and config.enabledebuffs and num <= 3 then
+		texture,_,disptype = UnitDebuff(frame.unit,i,config.owndispdebuffs)
+		if texture and config.enabledebuffs and (not config.dispellabledebuffs or disptype) and num <= 3 then
 			if config.colors then
-				local r,g,b = unpack(LunaUF.db.profile.magicColors[disptype])
-				frame.squares.debuffs[num].texture:SetTexture(r,g,b)
+				if disptype then
+					local r,g,b = unpack(LunaUF.db.profile.magicColors[disptype])
+					frame.squares.debuffs[num].texture:SetTexture(r,g,b)
+				else
+					frame.squares.debuffs[num].texture:SetTexture(0,0,0)
+				end
 			else
 				frame.squares.debuffs[num].texture:SetTexture(texture)
 			end

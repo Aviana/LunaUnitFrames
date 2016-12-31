@@ -217,6 +217,7 @@ local function enUS() return {
 ["Shield Bash - Silenced"] = "Shield Bash - Silenced",
 ["Energy / mp5 ticker"] = "Energy / mp5 ticker",
 ["Auratracker"] = "Auratracker",
+["Enable debuffs"] = "Enable debuffs",
 ["Show dispellable debuffs"] = "Show dispellable debuffs",
 ["Only debuffs you can dispel"] = "Only debuffs you can dispel",
 ["Show aggro"] = "Show aggro",

@@ -220,6 +220,7 @@ local function deDE() return {
 ["Shield Bash - Silenced"] = "Schildhieb - zum Schweigen gebracht",
 ["Energy / mp5 ticker"] = "Energie / MP5 Ticker",
 ["Auratracker"] = "Auraverfolger",
+["Enable debuffs"] = "Aktiviere Schw\195\164chezauber",
 ["Show dispellable debuffs"] = "Zeige entfernbare Schw\195\164chezauber",
 ["Only debuffs you can dispel"] = "Zeige nur Schw\195\164chezauber die du entfernen kannst",
 ["Show aggro"] = "Zeige Aggressivit\195\164t",

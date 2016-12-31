@@ -217,6 +217,7 @@ local function zhCN() return {
 ["Shield Bash - Silenced"] = "盾击 - 沉默",
 ["Energy / mp5 ticker"] = "能量/5秒回蓝计时",
 ["Auratracker"] = "光环追踪",
+["Enable debuffs"] = "Enable debuffs",
 ["Show dispellable debuffs"] = "显示可驱散减益",
 ["Only debuffs you can dispel"] = "仅你可驱散的减益",
 ["Show aggro"] = "显示仇恨目标",

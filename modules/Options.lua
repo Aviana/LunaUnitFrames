@@ -737,7 +737,8 @@ function LunaUF:LoadOptions()
 	LunaOptionsFrame.pages[10].enabletracker:SetChecked(LunaUF.db.profile.units.raid.squares.enabled)
 	LunaOptionsFrame.pages[10].outersizeslider:SetValue(LunaUF.db.profile.units.raid.squares.outersize)
 	LunaOptionsFrame.pages[10].enabledebuffs:SetChecked(LunaUF.db.profile.units.raid.squares.enabledebuffs)
-	LunaOptionsFrame.pages[10].owndebuffs:SetChecked(LunaUF.db.profile.units.raid.squares.dispellabledebuffs)
+	LunaOptionsFrame.pages[10].dispdebuffs:SetChecked(LunaUF.db.profile.units.raid.squares.dispellabledebuffs)
+	LunaOptionsFrame.pages[10].owndebuffs:SetChecked(LunaUF.db.profile.units.raid.squares.owndispdebuffs)
 	LunaOptionsFrame.pages[10].aggro:SetChecked(LunaUF.db.profile.units.raid.squares.aggro)
 	LunaOptionsFrame.pages[10].aggrocolor.load(LunaOptionsFrame.pages[10].aggrocolor,LunaUF.db.profile.units.raid.squares.aggrocolor)
 	LunaOptionsFrame.pages[10].hottracker:SetChecked(LunaUF.db.profile.units.raid.squares.hottracker)
@@ -2999,14 +3000,28 @@ function LunaUF:CreateOptionsMenu()
 			end
 		end
 	end)
-	getglobal("EnableDebuffsText"):SetText(L["Show dispellable debuffs"])
+	getglobal("EnableDebuffsText"):SetText(L["Enable debuffs"])
+	
+	LunaOptionsFrame.pages[10].dispdebuffs = CreateFrame("CheckButton", "EnableDispDebuffs", LunaOptionsFrame.pages[10], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[10].dispdebuffs:SetPoint("TOPLEFT", LunaOptionsFrame.pages[10].enabletracker, "BOTTOMLEFT", 200, -10)
+	LunaOptionsFrame.pages[10].dispdebuffs:SetHeight(30)
+	LunaOptionsFrame.pages[10].dispdebuffs:SetWidth(30)
+	LunaOptionsFrame.pages[10].dispdebuffs:SetScript("OnClick", function()
+		LunaUF.db.profile.units.raid.squares.dispellabledebuffs = not LunaUF.db.profile.units.raid.squares.dispellabledebuffs
+		for _,frame in pairs(LunaUF.Units.frameList) do
+			if frame.unitGroup == "raid" then
+				LunaUF.Units.FullUpdate(frame)
+			end
+		end
+	end)
+	getglobal("EnableDispDebuffsText"):SetText(L["Show dispellable debuffs"])
 	
 	LunaOptionsFrame.pages[10].owndebuffs = CreateFrame("CheckButton", "EnableOwnDebuffs", LunaOptionsFrame.pages[10], "UICheckButtonTemplate")
-	LunaOptionsFrame.pages[10].owndebuffs:SetPoint("TOPLEFT", LunaOptionsFrame.pages[10].enabletracker, "BOTTOMLEFT", 200, -10)
+	LunaOptionsFrame.pages[10].owndebuffs:SetPoint("TOPLEFT", LunaOptionsFrame.pages[10].enabletracker, "BOTTOMLEFT", 200, -40)
 	LunaOptionsFrame.pages[10].owndebuffs:SetHeight(30)
 	LunaOptionsFrame.pages[10].owndebuffs:SetWidth(30)
 	LunaOptionsFrame.pages[10].owndebuffs:SetScript("OnClick", function()
-		LunaUF.db.profile.units.raid.squares.dispellabledebuffs = not LunaUF.db.profile.units.raid.squares.dispellabledebuffs
+		LunaUF.db.profile.units.raid.squares.owndispdebuffs = not LunaUF.db.profile.units.raid.squares.owndispdebuffs
 		for _,frame in pairs(LunaUF.Units.frameList) do
 			if frame.unitGroup == "raid" then
 				LunaUF.Units.FullUpdate(frame)
@@ -3016,7 +3031,7 @@ function LunaUF:CreateOptionsMenu()
 	getglobal("EnableOwnDebuffsText"):SetText(L["Only debuffs you can dispel"])
 	
 	LunaOptionsFrame.pages[10].aggro = CreateFrame("CheckButton", "EnableAggro", LunaOptionsFrame.pages[10], "UICheckButtonTemplate")
-	LunaOptionsFrame.pages[10].aggro:SetPoint("TOPLEFT", LunaOptionsFrame.pages[10].enabledebuffs, "BOTTOMLEFT", 0, -10)
+	LunaOptionsFrame.pages[10].aggro:SetPoint("TOPLEFT", LunaOptionsFrame.pages[10].enabledebuffs, "BOTTOMLEFT", 0, -50)
 	LunaOptionsFrame.pages[10].aggro:SetHeight(30)
 	LunaOptionsFrame.pages[10].aggro:SetWidth(30)
 	LunaOptionsFrame.pages[10].aggro:SetScript("OnClick", function()

@@ -606,6 +606,7 @@ LunaUF.defaults = {
 					innersize = 20,
 					enabledebuffs = true,
 					dispellabledebuffs = false,
+					owndispdebuffs = false,
 					aggro = true,
 					aggrocolor = {r=1,g=0,b=0},
 					hottracker = true,
