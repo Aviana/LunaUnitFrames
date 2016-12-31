@@ -259,16 +259,16 @@ local function OnClick()
 		if not action then
 			return
 		elseif action == L["menu"] then
-			if (SpellIsTargeting()) then
+			if SpellIsTargeting() then
 				SpellStopTargeting()
 				return;
 			else
 				this:ShowMenu()
 			end
 		elseif action == L["target"] then
-			if (SpellIsTargeting()) then
+			if SpellIsTargeting() then
 				SpellTargetUnit(this.unit)
-			elseif (CursorHasItem()) then
+			elseif CursorHasItem() then
 				DropItemOnUnit(this.unit)
 			else
 				TargetUnit(this.unit)
@@ -305,6 +305,9 @@ local function OnClick()
 						Units.pauseUpdates = nil
 					end
 				end
+			end
+			if SpellIsTargeting() then
+				SpellStopTargeting()
 			end
 		end
 	end

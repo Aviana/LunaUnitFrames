@@ -79,6 +79,9 @@ function SlashCmdList.LUFMO(msg, editbox)
 				end
 			end
 		end
+		if SpellIsTargeting() then
+			SpellStopTargeting()
+		end
 		return
 	end
 	if GetMouseFocus().unit then
@@ -110,6 +113,9 @@ function SlashCmdList.LUFMO(msg, editbox)
 					LunaUF.Units.pauseUpdates = nil
 				end
 			end
+		end
+		if SpellIsTargeting() then
+			SpellStopTargeting()
 		end
 	else 
 		if func then
