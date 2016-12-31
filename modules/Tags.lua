@@ -423,7 +423,7 @@ local defaultTags = {
 								return Hex(color)
 							end;
 	["name"]                = function(unit) return UnitName(unit) or "" end;
-	["shortname"]			= function(unit) return strsub(UnitName(unit),1,3) or "" end;
+	["shortname"]			= function(unit) return UnitName(unit) and strsub(UnitName(unit),1,3) or "" end;
 	["ignore"]				= function(unit)
 								if not UnitIsPlayer(unit) then
 									return ""
