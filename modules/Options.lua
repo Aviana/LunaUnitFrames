@@ -672,8 +672,10 @@ function LunaUF:LoadOptions()
 		LunaOptionsFrame.pages[i].casticon:SetChecked(LunaUF.db.profile.units[unit].castBar.icon)
 		LunaOptionsFrame.pages[i].castvertical:SetChecked(LunaUF.db.profile.units[unit].castBar.vertical)
 		LunaOptionsFrame.pages[i].castsizeslider:SetValue(LunaUF.db.profile.units[unit].castBar.size)
-		LunaOptionsFrame.pages[i].enableheal:SetChecked(LunaUF.db.profile.units[unit].incheal.enabled)
-		LunaOptionsFrame.pages[i].healsizeslider:SetValue(LunaUF.db.profile.units[unit].incheal.cap*100)
+		if LunaOptionsFrame.pages[i].enableheal then
+			LunaOptionsFrame.pages[i].enableheal:SetChecked(LunaUF.db.profile.units[unit].incheal.enabled)
+			LunaOptionsFrame.pages[i].healsizeslider:SetValue(LunaUF.db.profile.units[unit].incheal.cap*100)
+		end
 		LunaOptionsFrame.pages[i].enableauras:SetChecked(LunaUF.db.profile.units[unit].auras.enabled)
 		LunaOptionsFrame.pages[i].enablebordercolor:SetChecked(LunaUF.db.profile.units[unit].auras.bordercolor)
 		SetDropDownValue(LunaOptionsFrame.pages[i].auraposition,LunaUF.db.profile.units[unit].auras.position)
@@ -2205,46 +2207,48 @@ function LunaUF:CreateOptionsMenu()
 		LunaOptionsFrame.pages[i].castsizeslider:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].castheader, "BOTTOMLEFT", 280, -10)
 		LunaOptionsFrame.pages[i].castsizeslider:SetWidth(190)
 
-		LunaOptionsFrame.pages[i].healheader = LunaOptionsFrame.pages[i]:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-		LunaOptionsFrame.pages[i].healheader:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].castheader, "BOTTOMLEFT", 0, -90)
-		LunaOptionsFrame.pages[i].healheader:SetHeight(24)
-		LunaOptionsFrame.pages[i].healheader:SetJustifyH("LEFT")
-		LunaOptionsFrame.pages[i].healheader:SetTextColor(1,1,0)
-		LunaOptionsFrame.pages[i].healheader:SetText(L["Healing prediction"])
+		if LunaUF.unitList[i-1] ~= "pettarget" then
+			LunaOptionsFrame.pages[i].healheader = LunaOptionsFrame.pages[i]:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+			LunaOptionsFrame.pages[i].healheader:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].castheader, "BOTTOMLEFT", 0, -90)
+			LunaOptionsFrame.pages[i].healheader:SetHeight(24)
+			LunaOptionsFrame.pages[i].healheader:SetJustifyH("LEFT")
+			LunaOptionsFrame.pages[i].healheader:SetTextColor(1,1,0)
+			LunaOptionsFrame.pages[i].healheader:SetText(L["Healing prediction"])
 
-		LunaOptionsFrame.pages[i].enableheal = CreateFrame("CheckButton", "Enable"..LunaUF.unitList[i-1].."Heal", LunaOptionsFrame.pages[i], "UICheckButtonTemplate")
-		LunaOptionsFrame.pages[i].enableheal:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].healheader, "BOTTOMLEFT", 0, -10)
-		LunaOptionsFrame.pages[i].enableheal:SetHeight(30)
-		LunaOptionsFrame.pages[i].enableheal:SetWidth(30)
-		LunaOptionsFrame.pages[i].enableheal:SetScript("OnClick", function()
-			local unit = this:GetParent().id
-			LunaUF.db.profile.units[unit].incheal.enabled = not LunaUF.db.profile.units[unit].incheal.enabled
-			for _,frame in pairs(LunaUF.Units.frameList) do
-				if frame.unitGroup == unit then
-					LunaUF.Units:SetupFrameModules(frame)
+			LunaOptionsFrame.pages[i].enableheal = CreateFrame("CheckButton", "Enable"..LunaUF.unitList[i-1].."Heal", LunaOptionsFrame.pages[i], "UICheckButtonTemplate")
+			LunaOptionsFrame.pages[i].enableheal:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].healheader, "BOTTOMLEFT", 0, -10)
+			LunaOptionsFrame.pages[i].enableheal:SetHeight(30)
+			LunaOptionsFrame.pages[i].enableheal:SetWidth(30)
+			LunaOptionsFrame.pages[i].enableheal:SetScript("OnClick", function()
+				local unit = this:GetParent().id
+				LunaUF.db.profile.units[unit].incheal.enabled = not LunaUF.db.profile.units[unit].incheal.enabled
+				for _,frame in pairs(LunaUF.Units.frameList) do
+					if frame.unitGroup == unit then
+						LunaUF.Units:SetupFrameModules(frame)
+					end
 				end
-			end
-		end)
-		getglobal("Enable"..LunaUF.unitList[i-1].."Heal".."Text"):SetText(L["Enable"])
+			end)
+			getglobal("Enable"..LunaUF.unitList[i-1].."Heal".."Text"):SetText(L["Enable"])
 
-		LunaOptionsFrame.pages[i].healsizeslider = CreateFrame("Slider", "HealSizeSlider"..LunaUF.unitList[i-1], LunaOptionsFrame.pages[i], "OptionsSliderTemplate")
-		LunaOptionsFrame.pages[i].healsizeslider:SetMinMaxValues(0,20)
-		LunaOptionsFrame.pages[i].healsizeslider:SetValueStep(1)
-		LunaOptionsFrame.pages[i].healsizeslider:SetScript("OnValueChanged", function()
-			local unit = this:GetParent().id
-			LunaUF.db.profile.units[unit].incheal.cap = math.floor(this:GetValue())/100
-			getglobal("HealSizeSlider"..unit.."Text"):SetText(L["Size"]..": "..(LunaUF.db.profile.units[unit].incheal.cap*100))
-			for _,frame in pairs(LunaUF.Units.frameList) do
-				if frame.unitGroup == unit then
-					LunaUF.Units.FullUpdate(frame)
+			LunaOptionsFrame.pages[i].healsizeslider = CreateFrame("Slider", "HealSizeSlider"..LunaUF.unitList[i-1], LunaOptionsFrame.pages[i], "OptionsSliderTemplate")
+			LunaOptionsFrame.pages[i].healsizeslider:SetMinMaxValues(0,20)
+			LunaOptionsFrame.pages[i].healsizeslider:SetValueStep(1)
+			LunaOptionsFrame.pages[i].healsizeslider:SetScript("OnValueChanged", function()
+				local unit = this:GetParent().id
+				LunaUF.db.profile.units[unit].incheal.cap = math.floor(this:GetValue())/100
+				getglobal("HealSizeSlider"..unit.."Text"):SetText(L["Size"]..": "..(LunaUF.db.profile.units[unit].incheal.cap*100))
+				for _,frame in pairs(LunaUF.Units.frameList) do
+					if frame.unitGroup == unit then
+						LunaUF.Units.FullUpdate(frame)
+					end
 				end
-			end
-		end)
-		LunaOptionsFrame.pages[i].healsizeslider:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].healheader, "BOTTOMLEFT", 280, -10)
-		LunaOptionsFrame.pages[i].healsizeslider:SetWidth(190)
+			end)
+			LunaOptionsFrame.pages[i].healsizeslider:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].healheader, "BOTTOMLEFT", 280, -10)
+			LunaOptionsFrame.pages[i].healsizeslider:SetWidth(190)
+		end
 
 		LunaOptionsFrame.pages[i].auraheader = LunaOptionsFrame.pages[i]:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-		LunaOptionsFrame.pages[i].auraheader:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].healheader, "BOTTOMLEFT", 0, -60)
+		LunaOptionsFrame.pages[i].auraheader:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].healheader or LunaOptionsFrame.pages[i].castheader, "BOTTOMLEFT", 0, LunaOptionsFrame.pages[i].healheader and -60 or -90)
 		LunaOptionsFrame.pages[i].auraheader:SetHeight(24)
 		LunaOptionsFrame.pages[i].auraheader:SetJustifyH("LEFT")
 		LunaOptionsFrame.pages[i].auraheader:SetTextColor(1,1,0)

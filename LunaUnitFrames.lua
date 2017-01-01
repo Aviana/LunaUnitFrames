@@ -241,16 +241,6 @@ LunaUF.constants = {
 			vertical = {
 			},
 		},
-		["pettarget"] = {
-			horizontal = {
-				[1] = "portrait",
-				[2] = "healthBar",
-				[3] = "powerBar",
-				[4] = "castBar",
-			},
-			vertical = {
-			},
-		},
 		["target"] = {
 			horizontal = {
 				[1] = "portrait",
