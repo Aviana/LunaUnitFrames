@@ -253,6 +253,7 @@ function CastLib:UseAction(slot, checkCursor, onSelf)
 	
 	-- Test to see if this is a macro
 	if ( GetActionText(slot) or not CastLib_Spell ) then
+		CastLib_Spell = ""
 		return
 	end
 	local rank = CastLibTipTextRight1:GetText()

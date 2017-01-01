@@ -1199,7 +1199,7 @@ function HealComm:SPELLCAST_FAILED()
 	if self:IsEventScheduled("TriggerRegrowthHot") then
 		self:CancelScheduledEvent("TriggerRegrowthHot")
 	end
-	
+
 	if self.Spells[self.spellIsCasting] then
 		if self.spellIsCasting == L["Prayer of Healing"] then
 			self:SendAddonMessage("GrpHealstop")
@@ -1277,7 +1277,6 @@ function HealComm:SPELLCAST_STOP()
 			self:ScheduleEvent("TriggerRegrowthHot", self.TriggerRegrowthHot, 0.3, self)
 		end
 	end
-	self.spellIsCasting = nil
 	self.CurrentSpellRank = nil
 	self.CurrentSpellName =  nil
 	for key in pairs(self.SpellCastInfo) do
