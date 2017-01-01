@@ -72,7 +72,7 @@ local function UpdatePVP(enabled, indicator, unit)
 				local _,race = UnitRace(unit)
 				alliance = LunaUF.AllianceCheck[race]
 				horde = not LunaUF.AllianceCheck[race]
-				neutral = not alliance and not horde
+				neutral = (not alliance) and (not horde)
 			end
 		end
 	end
