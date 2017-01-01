@@ -616,6 +616,14 @@ local defaultTags = {
 									return ""
 								end
 							end;
+	["loyalty"]				= function(unit)
+								local loyalty = GetPetLoyalty()
+								if loyalty then
+									return loyalty
+								else
+									return ""
+								end
+							end;
 	["healerhealth"]		= function(unit)
 								if UnitIsGhost(unit) then
 									return L["Ghost"]

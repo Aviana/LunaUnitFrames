@@ -93,6 +93,7 @@ LunaUF.defaults = {
 			yellow = {r = 0.93, g = 0.93, b = 0.0},
 			inc = {r = 0, g = 1, b = 0},
 			enemyUnattack = {r = 0.60, g = 0.20, b = 0.20},
+			enemyCivilian = {r = 1, g = 0.90, b = 0.90},
 			hostile = {r = 0.90, g = 0.0, b = 0.0},
 			friendly = {r = 0.20, g = 0.90, b = 0.20},
 			neutral = {r = 0.93, g = 0.93, b = 0.0},
@@ -241,6 +242,63 @@ LunaUF.defaults = {
 				size = {
 					x = 240,
 					y = 30,
+				},
+			},
+			pettarget = {
+				enabled = false,
+				healthBar = { enabled = true, colorType = "class", reactionType="npc", size = 6 },
+				powerBar = { enabled = true, size = 4 },
+				emptyBar = { enabled = false, size = 3 },
+				portrait = { enabled = true, type = "3D", side = "left", size = 6 },
+				auras = { enabled = false, AurasPerRow = 8, position = "BOTTOM" },
+				highlight = { enabled = true, ontarget = false, ondebuff = true, onmouse = false, alpha = 0.6 },
+				fader = { enabled = false, inactiveAlpha = 0.2, combatAlpha = 1, speedyFade = false },
+				combatText = { enabled = false, xoffset = 0, yoffset = 0, size = 2 },
+				tags = {
+					enabled = true,
+					bartags = {
+						healthBar = {
+							size = 10,
+							["left"] = "[name]",
+							["right"] = "[ssmarthealth]",
+						},
+						powerBar = {
+							size = 10,
+							["left"] = "[levelcolor][level][shortclassification] [classcolor][smartclass]",
+							["right"] = "[spp]/[smaxpp]",
+						},
+						castBar = {
+							size = 10,
+						},
+						emptyBar = {
+							size = 10,
+						},
+					},
+				},
+				incheal = { enabled = false, cap = 0.2 },
+				indicators = {
+					enabled = true,
+					icons = {
+						raidTarget = { enabled = true, anchorPoint = "CENTER", size = 20, x = 0, y = 0 },
+						class = { enabled = true, anchorPoint = "BOTTOMLEFT", size = 16, x = 0, y = 0 },
+						elite = { enabled = false, anchorPoint = "LEFT", size = 74, x = 14, y = 0 },
+						masterLoot = { enabled = true, anchorPoint = "TOPLEFT", size = 12, x = 16, y = 0 },
+						leader = { enabled = true, anchorPoint = "TOPLEFT", size = 14, x = 2, y = 0 },
+						pvp = { enabled = true, anchorPoint = "TOPRIGHT", size = 30, x = 5, y = -25 },
+						pvprank = { enabled = true, anchorPoint = "BOTTOMLEFT", size = 8, x = 0, y = 0 },
+						status = { enabled = true, anchorPoint = "BOTTOMLEFT", size = 16, x = 20, y = -2 },
+						rezz = { enabled = false, anchorPoint = "LEFT", size = 20, x = 20, y = 0 },
+					},
+				},
+				castBar = { enabled = true, size = 3, hide = true },
+				scale = 1,
+				position = {
+					x = 360,
+					y = -105,
+				},
+				size = {
+					x = 150,
+					y = 40,
 				},
 			},
 			target = {

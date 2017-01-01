@@ -153,7 +153,11 @@ function Health:UpdateColor(frame)
 			elseif( reaction == 4 ) then
 				color = LunaUF.db.profile.healthColors.neutral
 			elseif( reaction < 4 ) then
-				color = LunaUF.db.profile.healthColors.hostile
+				if( UnitIsCivilian(unit) ) then
+					color = LunaUF.db.profile.healthColors.enemyCivilian
+				else
+					color = LunaUF.db.profile.healthColors.hostile
+				end
 			end
 		end
 	elseif( LunaUF.db.profile.units[frame.unitGroup].healthBar.colorType == "class" and ( UnitIsPlayer(unit) or UnitCreatureFamily(unit) ) ) then

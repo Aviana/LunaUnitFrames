@@ -7,7 +7,7 @@ LunaUF.BS = AceLibrary("Babble-Spell-2.2")
 LunaUF.Banzai = AceLibrary("Banzai-1.0")
 LunaUF.HealComm = AceLibrary("HealComm-1.0")
 LunaUF.DruidManaLib = AceLibrary("DruidManaLib-1.0")
-LunaUF.unitList = {"player", "pet", "target", "targettarget", "targettargettarget", "party", "partytarget", "partypet", "raid"}
+LunaUF.unitList = {"player", "pet", "pettarget", "target", "targettarget", "targettargettarget", "party", "partytarget", "partypet", "raid"}
 LunaUF.ScanTip = CreateFrame("GameTooltip", "LunaScanTip", nil, "GameTooltipTemplate")
 LunaUF.ScanTip:SetOwner(WorldFrame, "ANCHOR_NONE")
 LunaUF.modules = {}
@@ -237,6 +237,16 @@ LunaUF.constants = {
 				[4] = "castBar",
 				[5] = "xpBar",
 				[6] = "emptyBar",
+			},
+			vertical = {
+			},
+		},
+		["pettarget"] = {
+			horizontal = {
+				[1] = "portrait",
+				[2] = "healthBar",
+				[3] = "powerBar",
+				[4] = "castBar",
 			},
 			vertical = {
 			},

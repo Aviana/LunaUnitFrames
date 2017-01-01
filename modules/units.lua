@@ -364,9 +364,9 @@ local function RaidHeaderStopMovingOrSizing()
 			y = (UIParent:GetHeight()/UIParent:GetScale()-headerFrames["raid"..i]:GetTop()) * -1
 			LunaUF.db.profile.units.raid[i].position.x = x
 			LunaUF.db.profile.units.raid[i].position.y = y
-			if UIDropDownMenu_GetSelectedID(LunaOptionsFrame.pages[10].GrpSelect) == i then
-				LunaOptionsFrame.pages[10].xInput:SetText(x)
-				LunaOptionsFrame.pages[10].yInput:SetText(y)
+			if UIDropDownMenu_GetSelectedID(LunaOptionsFrame.pages[11].GrpSelect) == i then
+				LunaOptionsFrame.pages[11].xInput:SetText(x)
+				LunaOptionsFrame.pages[11].yInput:SetText(y)
 			end
 		end
 	else
@@ -375,9 +375,9 @@ local function RaidHeaderStopMovingOrSizing()
 		y = (UIParent:GetHeight()/UIParent:GetScale()-this:GetParent():GetTop()) * -1
 		LunaUF.db.profile.units.raid[this:GetParent().id].position.x = x
 		LunaUF.db.profile.units.raid[this:GetParent().id].position.y = y
-		if UIDropDownMenu_GetSelectedID(LunaOptionsFrame.pages[10].GrpSelect) == this:GetParent().id then
-			LunaOptionsFrame.pages[10].xInput:SetText(x)
-			LunaOptionsFrame.pages[10].yInput:SetText(y)
+		if UIDropDownMenu_GetSelectedID(LunaOptionsFrame.pages[11].GrpSelect) == this:GetParent().id then
+			LunaOptionsFrame.pages[11].xInput:SetText(x)
+			LunaOptionsFrame.pages[11].yInput:SetText(y)
 		end
 	end
 end
@@ -672,7 +672,7 @@ function Units:LoadUnit(unit)
 		frame.parentunit = unit
 		frame.UnitExists = UnitExists
 		unitFrames[unit] = frame
-		if unit == "targettarget" or unit == "targettargettarget" then
+		if unit == "pettarget" or unit == "targettarget" or unit == "targettargettarget" then
 			table.insert(childframeList,frame)
 		end
 	end
