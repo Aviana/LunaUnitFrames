@@ -296,6 +296,7 @@ local function frFR() return {
 ["Current subgroup of the raid"] = "Current subgroup of the raid",
 ["(c) when in combat"] = "(c) when in combat",
 ["(c)"] = "(c)",
+["Loyalty level of your pet"] = "Loyalty level of your pet",
 ["The same as \"healerhealth\" but displays name on full health"] = "The same as \"healerhealth\" but displays name on full health",
 ["Returns the same as \"smart:healmishp\" on friendly units and hp/maxhp on enemies"] = "Returns the same as \"smart:healmishp\" on friendly units and hp/maxhp on enemies",
 ["Returns missing hp with healing factored in. Shows status when needed (\"Dead\", \"Offline\", \"Ghost\")"] = "Returns missing hp with healing factored in. Shows status when needed (\"Dead\", \"Offline\", \"Ghost\")",

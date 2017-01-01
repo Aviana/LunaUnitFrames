@@ -298,6 +298,7 @@ local function deDE() return {
 ["Current subgroup of the raid"] = "Momentane Gruppe des Schlachtzuges",
 ["(c) when in combat"] = "(c) wenn im Kampf",
 ["(c)"] = "(c)",
+["Loyalty level of your pet"] = "Loyalität Ihres Begleiters",
 ["The same as \"healerhealth\" but displays name on full health"] = "Das Selbe wie \"healerhealth\" aber zeigt Namen bei voller Gesundheit",
 ["Returns the same as \"smart:healmishp\" on friendly units and hp/maxhp on enemies"] = "Gibt das Selbe wie \"smart:healmishp\" zurück bei freundlichen Einheiten und GP/MAXGP bei Feinden",
 ["Returns missing hp with healing factored in. Shows status when needed (\"Dead\", \"Offline\", \"Ghost\")"] = "Gibt fehlende Gesundheit mit Heilung zur\195\188ck. Zeigt Status wenn notwendig (\"Tot\", \"Nicht verbunden\", \"Geist\")",
