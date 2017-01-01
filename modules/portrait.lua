@@ -20,7 +20,7 @@ for i=1, 40 do
 end
 
 local function OnEvent()
-	if validunits[arg1] and UnitIsUnit(arg1,this:GetParent().unit) then
+	if (validunits[arg1] and UnitIsUnit(arg1,this:GetParent().unit)) or (event == "PLAYER_TARGET_CHANGED" and this:GetParent().unit == "target") then
 		Portrait:Update(this:GetParent())
 	end
 end
@@ -63,6 +63,7 @@ function Portrait:OnEnable(frame)
 	end
 	frame.portrait:RegisterEvent("UNIT_PORTRAIT_UPDATE")
 	frame.portrait:RegisterEvent("UNIT_MODEL_CHANGED")
+	frame.portrait:RegisterEvent("PLAYER_TARGET_CHANGED")
 	frame.portrait:SetScript("OnEvent", OnEvent)
 end
 
