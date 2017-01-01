@@ -5,7 +5,7 @@ local HealComm = LunaUF.HealComm
 
 local function OnHeal(target)
 	for _,frame in pairs(LunaUF.Units.frameList) do
-		if frame.incheal and LunaUF.db.profile.units[frame.unitGroup].incheal.enabled and UnitName(frame.unit) == target then
+		if frame.incheal and LunaUF.db.profile.units[frame.unitGroup].incheal.enabled and UnitName(frame.unit) == target and (UnitInRaid(frame.unit) or UnitInParty(frame.unit) or UnitIsUnit("player",frame.unit)) then
 			Incheal:FullUpdate(frame)
 		end
 	end
