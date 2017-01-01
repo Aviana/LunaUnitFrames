@@ -126,102 +126,6 @@ function SlashCmdList.LUFMO(msg, editbox)
 	end
 end
 
---[[
-
-			if not func[action] then
-				func[action] = loadstring(action or "")
-			end
-			SpellStopTargeting()
-			if UnitIsUnit("target", this.unit) then
-				if func[action] then
-					func[action]()
-				else
-					CastSpellByName_IgnoreSelfCast(action)
-				end
-			else
-				if UnitCanAttack("player", this.unit) then
-					Units.pauseUpdates = true
-					TargetUnit(this.unit)
-					CastSpellByName_IgnoreSelfCast(action)
-					TargetLastTarget()
-					Units.pauseUpdates = nil
-				else
-					if UnitCanAttack("player", "target") then
-						CastSpellByName_IgnoreSelfCast(action)
-						SpellTargetUnit(this.unit)
-					else
-						Units.pauseUpdates = true
-						TargetUnit(this.unit)
-						CastSpellByName_IgnoreSelfCast(action)
-						TargetLastTarget()
-						Units.pauseUpdates = nil
-					end
-				end
-			end
-
-
-local function OnClick()
-	if arg1 == "UNKNOWN" then
-		arg1 = LunaUF.clickedButton
-	end
-	if Luna_Custom_ClickFunction and Luna_Custom_ClickFunction(arg1, this.unit) then
-		return;
-	else
-		local button = (IsControlKeyDown() and "Ctrl-" or "") .. (IsShiftKeyDown() and "Shift-" or "") .. (IsAltKeyDown() and "Alt-" or "") .. L[arg1]
-		local action = LunaUF.db.profile.clickcasting.bindings[button]
-		if not action then
-			return
-		elseif action == L["menu"] then
-			if (SpellIsTargeting()) then
-				SpellStopTargeting()
-				return;
-			else
-				this:ShowMenu()
-			end
-		elseif action == L["target"] then
-			if (SpellIsTargeting()) then
-				SpellTargetUnit(this.unit)
-			elseif (CursorHasItem()) then
-				DropItemOnUnit(this.unit)
-			else
-				TargetUnit(this.unit)
-			end
-		else
-			if not func[action] then
-				func[action] = loadstring(action or "")
-			end
-			SpellStopTargeting()
-			if UnitIsUnit("target", this.unit) then
-				if func[action] then
-					func[action]()
-				else
-					CastSpellByName_IgnoreSelfCast(action)
-				end
-			else
-				if UnitCanAttack("player", this.unit) then
-					Units.pauseUpdates = true
-					TargetUnit(this.unit)
-					CastSpellByName_IgnoreSelfCast(action)
-					TargetLastTarget()
-					Units.pauseUpdates = nil
-				else
-					if UnitCanAttack("player", "target") then
-						CastSpellByName_IgnoreSelfCast(action)
-						SpellTargetUnit(this.unit)
-					else
-						Units.pauseUpdates = true
-						TargetUnit(this.unit)
-						CastSpellByName_IgnoreSelfCast(action)
-						TargetLastTarget()
-						Units.pauseUpdates = nil
-					end
-				end
-			end
-		end
-	end
-end
---]]
-
 function lufmo(msg)
 	SlashCmdList.LUFMO(msg)
 end
@@ -304,6 +208,7 @@ LunaUF.constants = {
 			[2] = "healthBar",
 			[3] = "powerBar",
 			[4] = "castBar",
+			[5] = "emptyBar",
 		},
 		vertical = {
 		},
@@ -315,10 +220,11 @@ LunaUF.constants = {
 				[2] = "healthBar",
 				[3] = "powerBar",
 				[4] = "castBar",
-				[5] = "druidBar",
-				[6] = "totemBar",
-				[7] = "reckStacks",
-				[8] = "xpBar",
+				[5] = "emptyBar",
+				[6] = "druidBar",
+				[7] = "totemBar",
+				[8] = "reckStacks",
+				[9] = "xpBar",
 			},
 			vertical = {
 			},
@@ -330,6 +236,7 @@ LunaUF.constants = {
 				[3] = "powerBar",
 				[4] = "castBar",
 				[5] = "xpBar",
+				[6] = "emptyBar",
 			},
 			vertical = {
 			},
@@ -341,6 +248,7 @@ LunaUF.constants = {
 				[3] = "powerBar",
 				[4] = "castBar",
 				[5] = "comboPoints",
+				[6] = "emptyBar",
 			},
 			vertical = {
 			},
@@ -349,6 +257,7 @@ LunaUF.constants = {
 			horizontal = {
 				[1] = "portrait",
 				[2] = "castBar",
+				[3] = "emptyBar",
 			},
 			vertical = {
 				[1] = "healthBar",
@@ -590,14 +499,12 @@ end
 
 function LunaUF:InitBarorder()
 	for key,unitGroup in pairs(LunaUF.db.profile.units) do
-		if not unitGroup.barorder then
+		if not unitGroup.barorder or (LunaUF.constants.specialbarorder[key] and (getn(unitGroup.barorder.horizontal) + getn(unitGroup.barorder.vertical)) < (getn(LunaUF.constants.specialbarorder[key].horizontal) + getn(LunaUF.constants.specialbarorder[key].vertical)) or (getn(unitGroup.barorder.horizontal) + getn(unitGroup.barorder.vertical)) < (getn(LunaUF.constants.barorder.horizontal) + getn(LunaUF.constants.barorder.vertical)) ) then
 			if LunaUF.constants.specialbarorder[key] then
 				unitGroup.barorder = LunaUF:deepcopy(LunaUF.constants.specialbarorder[key])
 			else
 				unitGroup.barorder = LunaUF:deepcopy(LunaUF.constants.barorder)
 			end
-		elseif key == "player" and (getn(unitGroup.barorder.horizontal) + getn(unitGroup.barorder.vertical)) < 8 then
-			tinsert(unitGroup.barorder.horizontal, "reckStacks")
 		end
 	end
 end

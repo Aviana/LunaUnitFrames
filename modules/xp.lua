@@ -48,9 +48,12 @@ function XP:OnEnable(frame)
 		frame.xpBar.xp:SetPoint("BOTTOMRIGHT", frame.xpBar)
 				
 		if( frame.unitGroup == "player" ) then
+			frame.xpBar.unit = "player"
 			frame.xpBar.rep = LunaUF.Units:CreateBar(frame.xpBar)
 			frame.xpBar.rep:SetPoint("TOPLEFT", frame.xpBar)
 			frame.xpBar.rep:SetPoint("TOPRIGHT", frame.xpBar)
+		else
+			frame.xpBar.unit = "pet"
 		end
 		
 		frame.xpBar.rested = CreateFrame("StatusBar", nil, frame.xpBar.xp)

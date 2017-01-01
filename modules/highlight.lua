@@ -73,7 +73,7 @@ function Highlight:FullUpdate(frame)
 			else
 				r,g,b = 1,1,1
 			end
-			local alpha = frame.highlight.mouseover and config.onmouse and targeted and 0.8 or 0.6
+			local alpha = (frame.highlight.mouseover and config.onmouse and targeted and 0.2 or 0) + config.alpha
 			frame.highlight.texture:SetVertexColor(r,g,b,alpha)
 			frame.highlight:Show()
 		else
