@@ -55,20 +55,42 @@ local function UpdateHappiness(enabled, indicator)
 end
 
 local function UpdatePVP(enabled, indicator, unit)
-	if not enabled then
-		indicator:Hide()
-	else
-		local _,race = UnitRace(unit)
+	local horde		= false
+	local alliance	= false
+	local neutral	= false
+
+	if enabled then
 		if UnitIsPVPFreeForAll(unit) then
-			indicator:SetTexture("Interface\\TargetingFrame\\UI-PVP-FFA")
-			indicator:Show()
-		elseif (UnitIsPVP(unit) and UnitFactionGroup(unit)) or not LunaUF.db.profile.locked then
-			--LunaUF.AllianceCheck
-			indicator:SetTexture(LunaUF.AllianceCheck[race] and "Interface\\TargetingFrame\\UI-PVP-Alliance" or "Interface\\TargetingFrame\\UI-PVP-Horde")
-			indicator:Show()
-		else
-			indicator:Hide()
+			neutral = true
+		elseif UnitIsPVP(unit) or not LunaUF.db.profile.locked then
+			local faction = UnitFactionGroup(unit)
+			if faction then
+				horde		= (faction == "Horde")
+				alliance	= (faction == "Alliance")
+				neutral		= (faction == "Neutral")
+			else
+				local _,race = UnitRace(unit)
+				alliance = LunaUF.AllianceCheck[race]
+				horde = not LunaUF.AllianceCheck[race]
+				neutral = (not alliance) and (not horde)
+			end
 		end
+	end
+
+	local texture = nil
+	if horde then
+		texture = "Interface\\TargetingFrame\\UI-PVP-Horde"
+	elseif alliance then
+		texture = "Interface\\TargetingFrame\\UI-PVP-Alliance"
+	elseif neutral then
+		texture = "Interface\\TargetingFrame\\UI-PVP-FFA"
+	end
+
+	if texture then
+		indicator:SetTexture(texture)
+		indicator:Show()
+	else
+		indicator:Hide()
 	end
 end
 
