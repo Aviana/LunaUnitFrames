@@ -155,19 +155,15 @@ AceLibrary:Register(UseManaAce, MAJOR_VERSION, MINOR_VERSION, activate, nil, ext
 ------------------------------------------------
 
 function UseManaModule:OnEnable(frame)
-	print("OnEnable")
 	if not self.UseManaAce then
 		self.UseManaAce = UseManaAce
 	end
 	if frame.unit == "player" then 
-		print("player")
 		PlayerFrame = frame
 		if not frame.usemana then
-			print("create usemana")
 			frame.usemana = CreateFrame("Frame", nil, frame.powerBar)
 		end
 		if not frame.usemana.manaBar then
-			print("create manaBar")
 			frame.usemana.manaBar = CreateFrame("StatusBar", nil, frame.powerBar)
 			frame.usemana.manaBar:SetMinMaxValues(0,1)
 			frame.usemana.manaBar:SetValue(1)
@@ -184,7 +180,6 @@ function UseManaModule:OnEnable(frame)
 end
 
 function UseManaModule:OnDisable(frame)
-	print("OnDisable")
 	if frame.usemana then
 		frame.usemana.manaBar:Hide()
 	end
