@@ -62,13 +62,20 @@ local function OnEvent()
 end
 
 local function updatePower()
+	-- Modified to enable functionality. Appeared to be inactive or bugged
 	local currentPower = UnitMana(this.parent.unit)
-	if( currentPower == this.currentPower ) then return end
-	if this.ticker and (not this.ticker.startTime or UnitMana("player") > this.currentPower) then
+	local prevPower = this.currentPower or 0
+	if( currentPower == prevPower ) then return end
+	if this.ticker and (not this.ticker.startTime or UnitMana("player") > prevPower) then
 		this.ticker.startTime = GetTime()
 	end
 	this.currentPower = currentPower
 	this:SetValue(currentPower)
+	
+	-- Aditions for usemana module
+	if this.parent.unit == "player" then
+		LunaUF.modules.usemana:FullUpdate(this.parent)
+	end
 end
 
 function Power:OnEnable(frame)
@@ -173,9 +180,12 @@ function Power:Update(frame)
 		frame.powerBar.hidden = nil
 		LunaUF.Units:PositionWidgets(frame)
 	end
-	frame.powerBar.currentPower = UnitMana(frame.unit)
+	-- Removed to fix updatePower()
+	-- frame.powerBar.currentPower = UnitMana(frame.unit)
 	frame.powerBar:SetMinMaxValues(0, UnitManaMax(frame.unit))
-	frame.powerBar:SetValue(UnitIsDeadOrGhost(frame.unit) and 0 or not UnitIsConnected(frame.unit) and 0 or frame.powerBar.currentPower)
+	-- Modified to fix updatePower()
+	-- frame.powerBar:SetValue(UnitIsDeadOrGhost(frame.unit) and 0 or not UnitIsConnected(frame.unit) and 0 or frame.powerBar.currentPower)
+	frame.powerBar:SetValue(UnitIsDeadOrGhost(frame.unit) and 0 or not UnitIsConnected(frame.unit) and 0 or UnitMana(frame.unit))
 end
 
 function Power:FullUpdate(frame)

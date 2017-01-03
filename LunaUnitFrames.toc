@@ -71,5 +71,6 @@ modules\fader.lua
 modules\squares.lua
 modules\reckstacks.lua
 modules\emptyBar.lua
+modules\usemana.lua
 
 modules\options.lua

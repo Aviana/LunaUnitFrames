@@ -100,6 +100,7 @@ LunaUF.defaults = {
 			offline = {r = 0.50, g = 0.50, b = 0.50}
 		},
 		powerColors = {
+			MANAUSAGE = {r = 0.50, g = 0.70, b = 1.00}, 
 			MANA = {r = 0.30, g = 0.50, b = 0.85}, 
 			RAGE = {r = 0.90, g = 0.20, b = 0.30},
 			FOCUS = {r = 1.0, g = 0.85, b = 0}, 
@@ -168,6 +169,7 @@ LunaUF.defaults = {
 				},
 				combatText = { enabled = true, xoffset = -100, yoffset = 0, size = 2 },
 				incheal = { enabled = true, cap = 0.2 },
+				usemana = { enabled = true },
 				indicators = {
 					enabled = true,
 					icons = {
