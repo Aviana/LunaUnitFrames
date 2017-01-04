@@ -230,6 +230,7 @@ LunaUF.defaults = {
 					enabled = true,
 					icons = {
 						happiness = {enabled = true, anchorPoint = "BOTTOMRIGHT", size = 14, x = 0, y = 0},
+						status = { enabled = true, anchorPoint = "BOTTOMLEFT", size = 16, x = 20, y = -2 },
 					},
 				},
 				castBar = { enabled = false, size = 3, hide = true },
