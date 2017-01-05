@@ -145,7 +145,6 @@ function Power:OnEnable(frame)
 			frame.powerBar.ticker:SetFrameLevel(7)
 			
 			frame.powerBar.manaUsage = CreateFrame("Frame", nil, frame.powerBar)
-			frame.powerBar.manaUsage.Mana = 0
 			frame.powerBar.manaUsage.bar = CreateFrame("StatusBar", nil, frame.powerBar)
 			frame.powerBar.manaUsage.bar:SetMinMaxValues(0,1)
 			frame.powerBar.manaUsage.bar:SetValue(1)

@@ -2448,7 +2448,7 @@ function LunaUF:CreateOptionsMenu()
 	end)
 	getglobal("TickerplayerPowerText"):SetText(L["Energy / mp5 ticker"])
 	
-	LunaOptionsFrame.pages[page].manausage = CreateFrame("CheckButton", "ManaUsage", LunaOptionsFrame.pages[2], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[page].manausage = CreateFrame("CheckButton", "ManaUsage", LunaOptionsFrame.pages[page], "UICheckButtonTemplate")
 	LunaOptionsFrame.pages[page].manausage:SetPoint("TOPLEFT", LunaOptionsFrame.pages[page].powerheader, "BOTTOMLEFT", 320, -50)
 	LunaOptionsFrame.pages[page].manausage:SetHeight(30)
 	LunaOptionsFrame.pages[page].manausage:SetWidth(30)
