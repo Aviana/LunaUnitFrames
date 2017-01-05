@@ -35,7 +35,6 @@ local function frFR() return {
 ["Tags"] = "Tags",
 ["Range"] = "Range",
 ["Incheal"] = "Incheal",
-["UseMana"] = "TODO: Learn French",
 ["Combo points"] = "Combo points",
 ["Indicators"] = "Indicators",
 ["(%a+) is now the loot master."] = "(%a+) is now the loot master.",

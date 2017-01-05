@@ -133,7 +133,7 @@ LunaUF.defaults = {
 			player = {
 				enabled = true,
 				healthBar = { enabled = true, colorType = "class", reactionType="npc", size = 6, invert = false, vertical = false },
-				powerBar = { enabled = true, size = 4, invert = false },
+				powerBar = { enabled = true, size = 4, invert = false, manaUsage = true },
 				totemBar = { enabled = true, size = 2, hide=true },
 				druidBar = { enabled = true, size = 2 },
 				reckStacks = { enabled = true, size = 1, growth = "RIGHT", hide = true },
@@ -169,7 +169,6 @@ LunaUF.defaults = {
 				},
 				combatText = { enabled = true, xoffset = -100, yoffset = 0, size = 2 },
 				incheal = { enabled = true, cap = 0.2 },
-				usemana = { enabled = true },
 				indicators = {
 					enabled = true,
 					icons = {

@@ -38,7 +38,6 @@ local function deDE() return {
 ["Tags"] = "Etiketten",
 ["Range"] = "Reichweite",
 ["Incheal"] = "Heilvorhersage",
-["UseMana"] = "TODO: Learn German",
 ["Combo points"] = "Kombopunkte",
 ["Indicators"] = "Indikatoren",
 ["(%a+) is now the loot master."] = "(%a+) ist jetzt der Pl\195\188ndermeister.",

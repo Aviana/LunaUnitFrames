@@ -713,7 +713,7 @@ function LunaUF:LoadOptions()
 	LunaOptionsFrame.pages[page].rangecl:SetChecked(LunaUF.db.profile.RangeCLparsing)
 	local page = 2
 	LunaOptionsFrame.pages[page].ticker:SetChecked(LunaUF.db.profile.units.player.powerBar.ticker)
-	LunaOptionsFrame.pages[page].usemana:SetChecked(LunaUF.db.profile.units.player.usemana.enabled)
+	LunaOptionsFrame.pages[page].manausage:SetChecked(LunaUF.db.profile.units.player.powerBar.manaUsage)
 	LunaOptionsFrame.pages[page].enabletotem:SetChecked(LunaUF.db.profile.units.player.totemBar.enabled)
 	LunaOptionsFrame.pages[page].totemhide:SetChecked(LunaUF.db.profile.units.player.totemBar.hide)
 	LunaOptionsFrame.pages[page].totemsizeslider:SetValue(LunaUF.db.profile.units.player.totemBar.size)
@@ -2448,18 +2448,12 @@ function LunaUF:CreateOptionsMenu()
 	end)
 	getglobal("TickerplayerPowerText"):SetText(L["Energy / mp5 ticker"])
 	
-	LunaOptionsFrame.pages[page].usemana = CreateFrame("CheckButton", "ManaUsage", LunaOptionsFrame.pages[2], "UICheckButtonTemplate")
-	LunaOptionsFrame.pages[page].usemana:SetPoint("TOPLEFT", LunaOptionsFrame.pages[page].powerheader, "BOTTOMLEFT", 320, -50)
-	LunaOptionsFrame.pages[page].usemana:SetHeight(30)
-	LunaOptionsFrame.pages[page].usemana:SetWidth(30)
-	LunaOptionsFrame.pages[page].usemana:SetScript("OnClick", function()
-		local unit = this:GetParent().id
-		LunaUF.db.profile.units[unit].usemana.enabled = not LunaUF.db.profile.units[unit].usemana.enabled
-		if LunaUF.db.profile.units[unit].usemana.enabled then
-			LunaUF.modules.usemana:OnEnable(LunaUF.Units.unitFrames.player)
-		else
-			LunaUF.modules.usemana:OnDisable(LunaUF.Units.unitFrames.player)
-		end
+	LunaOptionsFrame.pages[page].manausage = CreateFrame("CheckButton", "ManaUsage", LunaOptionsFrame.pages[2], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[page].manausage:SetPoint("TOPLEFT", LunaOptionsFrame.pages[page].powerheader, "BOTTOMLEFT", 320, -50)
+	LunaOptionsFrame.pages[page].manausage:SetHeight(30)
+	LunaOptionsFrame.pages[page].manausage:SetWidth(30)
+	LunaOptionsFrame.pages[page].manausage:SetScript("OnClick", function()
+		LunaUF.db.profile.units.player.powerBar.manaUsage = not LunaUF.db.profile.units.player.powerBar.manaUsage
 	end)
 	getglobal("ManaUsageText"):SetText(L["Show Mana Usage"])
 

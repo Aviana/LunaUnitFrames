@@ -40,6 +40,7 @@ libs\CastLib-1.0\CastLib-1.0.lua
 libs\Deformat-2.0\Deformat-2.0.lua
 libs\Gratuity-2.0\Gratuity-2.0.lua
 libs\Compost-2.0\Compost-2.0.lua
+libs\SpellBook-1.0\SpellBook-1.0.lua
 
 LunaUnitFrames.lua
 
@@ -71,6 +72,5 @@ modules\fader.lua
 modules\squares.lua
 modules\reckstacks.lua
 modules\emptyBar.lua
-modules\usemana.lua
 
 modules\options.lua

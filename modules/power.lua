@@ -54,11 +54,51 @@ local function OnEvent()
 	if event == "UNIT_DISPLAYPOWER" then
 		Power:UpdateColor(this:GetParent())
 	else
-		if this.ticker and (not this.ticker.startTime or UnitMana("player") > this.currentPower) then
+		if this.ticker and (not this.ticker.startTime or UnitMana("player") > (this.currentPower or 0)) then
 			this.ticker.startTime = GetTime()
 		end
 	end
 	Power:Update(this:GetParent())
+end
+
+function UpdateManaUsage()
+	if not playerFrame or not playerFrame.powerBar.manaUsage then return end
+	
+	if not LunaUF.SpellBook then
+		LunaUF.SpellBook = AceLibrary("SpellBook-1.0")
+	end
+	
+	local manavalue = LunaUF.SpellBook.Mana
+	local lazyBar = playerFrame.powerBar.manaUsage.bar
+	
+	if not LunaUF.db.profile.units.player.powerBar.manaUsage or manavalue == 0 then
+		lazyBar:Hide()
+		return 
+	end
+	
+	local currMana, maxMana = UnitMana("player"), UnitManaMax("player")
+	local barHeight, barWidth = playerFrame.powerBar:GetHeight(), playerFrame.powerBar:GetWidth()
+	local manaHeight = barHeight * (currMana / maxMana)
+	local manaWidth = barWidth * (currMana / maxMana)
+	
+	lazyBar:Show()
+	lazyBar:ClearAllPoints()
+	
+	if LunaUF.db.profile.units.player.powerBar.vertical then
+	
+		local useHeight = barHeight * (manavalue / maxMana)
+		lazyBar:SetHeight(useHeight)
+		lazyBar:SetWidth(barWidth)
+		lazyBar:SetPoint("BOTTOMLEFT", playerFrame.powerBar, "BOTTOMLEFT", 0, manaHeight - useHeight)
+		
+	else
+	
+		local useWidth = barWidth * (manavalue / maxMana)
+		lazyBar:SetWidth(useWidth)
+		lazyBar:SetHeight(barHeight)
+		lazyBar:SetPoint("TOPLEFT", playerFrame.powerBar, "TOPLEFT", manaWidth - useWidth, 0)
+		
+	end
 end
 
 local function updatePower()
@@ -72,9 +112,9 @@ local function updatePower()
 	this.currentPower = currentPower
 	this:SetValue(currentPower)
 	
-	-- Aditions for usemana module
+	-- Additions for Mana Usage Indicator
 	if this.parent.unit == "player" then
-		LunaUF.modules.usemana:FullUpdate(this.parent)
+		UpdateManaUsage()
 	end
 end
 
@@ -102,6 +142,17 @@ function Power:OnEnable(frame)
 			frame.powerBar.ticker.texture:SetTexture(1, 1, 1)
 			frame.powerBar.ticker:SetPoint("CENTER", frame.powerBar, "CENTER")
 			frame.powerBar.ticker.startTime = GetTime()
+			frame.powerBar.ticker:SetFrameLevel(7)
+			
+			frame.powerBar.manaUsage = CreateFrame("Frame", nil, frame.powerBar)
+			frame.powerBar.manaUsage.Mana = 0
+			frame.powerBar.manaUsage.bar = CreateFrame("StatusBar", nil, frame.powerBar)
+			frame.powerBar.manaUsage.bar:SetMinMaxValues(0,1)
+			frame.powerBar.manaUsage.bar:SetValue(1)
+			for _,fontstring in pairs(frame.fontstrings["powerBar"]) do
+				fontstring:SetParent(frame.powerBar.manaUsage)
+			end
+			
 			playerFrame = frame
 		end
 	else
@@ -125,6 +176,13 @@ function Power:OnEnable(frame)
 			LunaUF:RegisterEvent("fiveSec", reset)
 		end
 	end
+	
+	if frame.powerBar.manaUsage then
+		if not LunaUF:IsEventRegistered("SpellBook_SpellUpdate") then
+			LunaUF:RegisterEvent("SpellBook_SpellUpdate", UpdateManaUsage)
+		end
+	end
+	
 end
 
 function Power:OnDisable(frame)
@@ -226,5 +284,9 @@ function Power:SetBarTexture(frame,texture)
 	if frame.powerBar then
 		frame.powerBar:SetStatusBarTexture(texture)
 		frame.powerBar.background:SetTexture(texture)
+		if frame.powerBar.manaUsage then
+			frame.powerBar.manaUsage.bar:SetStatusBarTexture("Interface\\Tooltips\\UI-Tooltip-Background")
+			frame.powerBar.manaUsage.bar:SetStatusBarColor(LunaUF.db.profile.powerColors.MANAUSAGE.r, LunaUF.db.profile.powerColors.MANAUSAGE.g, LunaUF.db.profile.powerColors.MANAUSAGE.b, 0.9)
+		end
 	end
 end

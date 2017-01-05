@@ -35,7 +35,6 @@ local function zhCN() return {
 ["Tags"] = "标签",
 ["Range"] = "范围",
 ["Incheal"] = "接受治疗",
-["UseMana"] = "TODO: Learn Chinese",
 ["Combo points"] = "连击点数",
 ["Indicators"] = "指示器",
 ["(%a+) is now the loot master."] = "(.+)现在负责拾取并分配所有战利品",
