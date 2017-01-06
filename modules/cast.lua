@@ -12,14 +12,14 @@ local _,playerRace = UnitRace("player")
 local _,playerClass = UnitClass("player")
 
 local CHAT_PATTERNS = {
-	[string.gsub(AURAADDEDOTHERHELPFUL, "%%s", "(.+)")] = "gains", -- "(.+) gains (.+)."
-	[string.gsub(SPELLCASTOTHERSTART, "%%s", "(.+)")] = "casts", -- "(.+) begins to cast (.+)."
-	[string.gsub(SPELLPERFORMOTHERSTART, "%%s", "(.+)")] = "performs", -- "(.+) begins to perform (.+)."
-	[string.gsub(AURAADDEDOTHERHARMFUL, "%%s", "(.+)")] = "afflicted", -- "(.+) is afflicted by (.+)."
-	[string.gsub(string.gsub(SPELLLOGSELFOTHER,"%%d","%%d+"),"%%s","(.+)")] = "hit", -- "Your (.+) hits (.+) for %d+\."
-	[string.gsub(string.gsub(SPELLLOGCRITSELFOTHER,"%%d","%%d+"),"%%s","(.+)")] = "hit", -- "Your (.+) crits (.+) for %d+\."
-	[string.gsub(string.gsub(string.gsub(SPELLLOGOTHEROTHER,"%%a", "%%a+"), "%%s", "(.+)"), "%%d", "%%d+")] = "hit", -- "%a+'s (.+) hits (.+) for %d+\."
-	[string.gsub(string.gsub(string.gsub(SPELLLOGCRITOTHEROTHER,"%%a", "%%a+"), "%%s", "(.+)"), "%%d", "%%d+")] = "hit", -- "%a+'s (.+) crits (.+) for %d+\."
+	[string.gsub(string.gsub(AURAADDEDOTHERHELPFUL,"%d%$",""), "%%s", "(.+)")] = "gains", -- "(.+) gains (.+)."
+	[string.gsub(string.gsub(SPELLCASTOTHERSTART,"%d%$",""), "%%s", "(.+)")] = "casts", -- "(.+) begins to cast (.+)."
+	[string.gsub(string.gsub(SPELLPERFORMOTHERSTART,"%d%$",""), "%%s", "(.+)")] = "performs", -- "(.+) begins to perform (.+)."
+	[string.gsub(string.gsub(AURAADDEDOTHERHARMFUL,"%d%$",""), "%%s", "(.+)")] = "afflicted", -- "(.+) is afflicted by (.+)."
+	[string.gsub(string.gsub(string.gsub(SPELLLOGSELFOTHER,"%d%$",""),"%%d","%%d+"),"%%s","(.+)")] = "hit", -- "Your (.+) hits (.+) for %d+\."
+	[string.gsub(string.gsub(string.gsub(SPELLLOGCRITSELFOTHER,"%d%$",""),"%%d","%%d+"),"%%s","(.+)")] = "hit", -- "Your (.+) crits (.+) for %d+\."
+	[string.gsub(string.gsub(string.gsub(SPELLLOGOTHEROTHER,"%d%$",""), "%%s", "(.+)"), "%%d", "%%d+")] = "hit", -- "%a+'s (.+) hits (.+) for %d+\."
+	[string.gsub(string.gsub(string.gsub(SPELLLOGCRITOTHEROTHER,"%d%$",""), "%%s", "(.+)"), "%%d", "%%d+")] = "hit", -- "%a+'s (.+) crits (.+) for %d+\."
 }
 
 local Spells = {
@@ -411,9 +411,9 @@ local function ProcessData(mob, spell, special)
 				end
 			end
 			TriggerCast(mob, spell, castime)
-		elseif Interrupts[spell] then
-			if CasterDB[mob] and CasterDB[mob].ct and CasterDB[mob].ct > 0 then
-				TriggerCastStop(mob, spell)
+		elseif Interrupts[mob] then -- for these, the two things are parsed in reverse order
+			if CasterDB[spell] and CasterDB[spell].ct and CasterDB[spell].ct > 0 then
+				TriggerCastStop(spell, mob)
 				return
 			end
 		end
