@@ -214,6 +214,9 @@ function Power:UpdateColor(frame)
 			frame.powerBar.ticker:Hide()
 		end
 	end
+	if frame.powerBar.manaUsage then
+		frame.powerBar.manaUsage.bar:SetStatusBarColor(LunaUF.db.profile.powerColors.MANAUSAGE.r, LunaUF.db.profile.powerColors.MANAUSAGE.g, LunaUF.db.profile.powerColors.MANAUSAGE.b, 0.9)
+	end
 end
 
 function Power:Update(frame)
@@ -279,7 +282,6 @@ function Power:SetBarTexture(frame,texture)
 		frame.powerBar.background:SetTexture(texture)
 		if frame.powerBar.manaUsage then
 			frame.powerBar.manaUsage.bar:SetStatusBarTexture("Interface\\Tooltips\\UI-Tooltip-Background")
-			frame.powerBar.manaUsage.bar:SetStatusBarColor(LunaUF.db.profile.powerColors.MANAUSAGE.r, LunaUF.db.profile.powerColors.MANAUSAGE.g, LunaUF.db.profile.powerColors.MANAUSAGE.b, 0.9)
 		end
 	end
 end

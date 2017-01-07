@@ -36,7 +36,7 @@ function LunaUF:deepcopy(orig)
 end
 
 function LunaUF:CastSpellByName_IgnoreSelfCast(spell, onPlayer)
-	if type(spell == "function") then
+	if type(spell) == "function" then
 		spell()
 		return
 	end
