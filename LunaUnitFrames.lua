@@ -6,6 +6,7 @@ LunaUF.Version = 2130
 LunaUF.BS = AceLibrary("Babble-Spell-2.2")
 LunaUF.Banzai = AceLibrary("Banzai-1.0")
 LunaUF.HealComm = AceLibrary("HealComm-1.0")
+LunaUF.SpellBook = AceLibrary("SpellBook-1.0")
 LunaUF.DruidManaLib = AceLibrary("DruidManaLib-1.0")
 LunaUF.unitList = {"player", "pet", "pettarget", "target", "targettarget", "targettargettarget", "party", "partytarget", "partypet", "raid"}
 LunaUF.ScanTip = CreateFrame("GameTooltip", "LunaScanTip", nil, "GameTooltipTemplate")
