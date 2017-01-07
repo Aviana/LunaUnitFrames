@@ -713,6 +713,7 @@ function LunaUF:LoadOptions()
 	LunaOptionsFrame.pages[page].rangecl:SetChecked(LunaUF.db.profile.RangeCLparsing)
 	local page = 2
 	LunaOptionsFrame.pages[page].ticker:SetChecked(LunaUF.db.profile.units.player.powerBar.ticker)
+	LunaOptionsFrame.pages[page].manausage:SetChecked(LunaUF.db.profile.units.player.powerBar.manaUsage)
 	LunaOptionsFrame.pages[page].enabletotem:SetChecked(LunaUF.db.profile.units.player.totemBar.enabled)
 	LunaOptionsFrame.pages[page].totemhide:SetChecked(LunaUF.db.profile.units.player.totemBar.hide)
 	LunaOptionsFrame.pages[page].totemsizeslider:SetValue(LunaUF.db.profile.units.player.totemBar.size)
@@ -2446,6 +2447,21 @@ function LunaUF:CreateOptionsMenu()
 		end
 	end)
 	getglobal("TickerplayerPowerText"):SetText(L["Energy / mp5 ticker"])
+
+	LunaOptionsFrame.pages[page].manausage = CreateFrame("CheckButton", "ManaUsage", LunaOptionsFrame.pages[page], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[page].manausage:SetPoint("TOPLEFT", LunaOptionsFrame.pages[page].powerheader, "BOTTOMLEFT", 320, -50)
+	LunaOptionsFrame.pages[page].manausage:SetHeight(30)
+	LunaOptionsFrame.pages[page].manausage:SetWidth(30)
+	LunaOptionsFrame.pages[page].manausage:SetScript("OnClick", function()
+		local unit = this:GetParent().id
+		LunaUF.db.profile.units.player.powerBar.manaUsage = not LunaUF.db.profile.units.player.powerBar.manaUsage
+		for _,frame in pairs(LunaUF.Units.frameList) do
+			if frame.unitGroup == unit then
+				LunaUF.Units.FullUpdate(frame)
+			end
+		end
+	end)
+	getglobal("ManaUsageText"):SetText(L["Show Mana Usage"])
 
 	LunaOptionsFrame.pages[page].totemheader = LunaOptionsFrame.pages[page]:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
 	LunaOptionsFrame.pages[page].totemheader:SetPoint("TOPLEFT", LunaOptionsFrame.pages[page].barorder, "BOTTOMLEFT", 0, -30)

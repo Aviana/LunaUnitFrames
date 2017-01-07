@@ -2,7 +2,7 @@ local LunaUF = LunaUF
 local Cast = CreateFrame("Frame")
 local L = LunaUF.L
 local BS = LunaUF.BS
-local CL = AceLibrary("CastLib-1.0")
+local CL = LunaUF.CL
 LunaUF:RegisterModule(Cast, "castBar", L["Cast bar"], true)
 
 local CasterDB = {}

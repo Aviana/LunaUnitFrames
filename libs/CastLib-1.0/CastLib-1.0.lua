@@ -59,7 +59,7 @@ local function external(self, major, instance)
 		self:RegisterEvent("SPELLCAST_INTERRUPTED", "SPELLCAST_FAILED")
 		self:RegisterEvent("SPELLCAST_FAILED")
 		self:RegisterEvent("SPELLCAST_STOP")
-		self:TriggerEvent("FiveSecLib_Enabled")
+		self:TriggerEvent("CastLib_Enabled")
 	end
 	if major == "AceHook-2.1" then
 		local AceHook = instance
@@ -110,10 +110,19 @@ function CastLib:SPELLCAST_START()
 		self.isCasting = true
 --		ChatFrame1:AddMessage("Casting "..arg1)
 --		self:TriggerEvent("CASTLIB_STARTCAST", arg1)
+		local _,_,manaVal = string.find(CastLibTipTextLeft2:GetText() or "","(%d+)")
+		if manaVal then
+			self.Mana = tonumber(manaVal)
+		else
+			self.Mana = 0
+		end
+		self:TriggerEvent("CASTLIB_MANAUSAGE", self.Mana)
 	end
+	CastLibTip:ClearLines()
 end
 
 function CastLib:SPELLCAST_FAILED()
+	CastLibTip:ClearLines()
 	if self:IsEventScheduled("CastLib_CastEnding") then
 		self:CancelScheduledEvent("CastLib_CastEnding")
 --		ChatFrame1:AddMessage(self.SpellCast_backup[1].." didn't finish.")
@@ -124,9 +133,12 @@ function CastLib:SPELLCAST_FAILED()
 	end
 	self.Rank = nil
 	CastLib_Spell =  nil
+	self.Mana = 0
+	self:TriggerEvent("CASTLIB_MANAUSAGE", self.Mana)
 end
 
 function CastLib:SPELLCAST_STOP()
+	CastLibTip:ClearLines()
 	if self.SpellCast then
 		if not self.isCasting and self.SpellCast then
 			if self:IsEventScheduled("CastLib_CastEnding") then
@@ -146,11 +158,17 @@ function CastLib:SPELLCAST_STOP()
 		end
 		self.Rank = nil
 		CastLib_Spell =  nil
+		self.Mana = 0
+		self:TriggerEvent("CASTLIB_MANAUSAGE", self.Mana)
 	end
 end
 
 function CastLib:GetSpell()
 	return CastLib_Spell or self.SpellCast_backup[1], self.Rank or self.SpellCast_backup[2]
+end
+
+function CastLib:GetManaUse()
+	return self.Mana
 end
 
 function CastLib:CastSpell(spellId, spellbookTabNum)
@@ -159,6 +177,7 @@ function CastLib:CastSpell(spellId, spellbookTabNum)
 	if CastLib_Spell then
 		return
 	end
+	CastLibTip:SetSpell(spellId, spellbookTabNum)
 	local spellName, rank = GetSpellName(spellId, spellbookTabNum)
 	_,_,rank = string.find(rank,"(%d+)")
 	if ( SpellIsTargeting() ) then
@@ -179,9 +198,11 @@ end
 function CastLib:CastSpellByName(spellName, onSelf)
 	-- Call the original function
 	self.hooks.CastSpellByName(spellName, onSelf)
+
 	if CastLib_Spell then
 		return
 	end
+	
 	local _,_,rank = string.find(spellName,"(%d+)")
 	local _, _, spellName = string.find(spellName, "^([^%(]+)")
 	if not rank then
@@ -189,6 +210,7 @@ function CastLib:CastSpellByName(spellName, onSelf)
 		while GetSpellName(i, BOOKTYPE_SPELL) do
 			local s, r = GetSpellName(i, BOOKTYPE_SPELL)
 			if s == spellName then
+				CastLibTip:SetSpell(i, BOOKTYPE_SPELL)
 				rank = r
 			end
 			i = i+1
@@ -197,6 +219,7 @@ function CastLib:CastSpellByName(spellName, onSelf)
 			_,_,rank = string.find(rank,"(%d+)")
 		end
 	end
+	
 	if ( spellName ) then
 		if ( SpellIsTargeting() ) then
 			CastLib_Spell = spellName
@@ -234,8 +257,14 @@ function CastLib:OnMouseDown()
 end
 
 function CastLib:UseAction(slot, checkCursor, onSelf)
-	CastLibTip:ClearLines()
-	CastLibTip:SetAction(slot)
+	local spellName
+	
+	-- Test to see if this is a macro
+	if not GetActionText(slot) then
+		CastLibTip:SetAction(slot)
+		spellName = CastLibTipTextLeft1:GetText()
+		CastLib_Spell = spellName
+	end
 	-- Call the original function
 	self.hooks.UseAction(slot, checkCursor, onSelf)
 	
@@ -245,17 +274,11 @@ function CastLib:UseAction(slot, checkCursor, onSelf)
 		return
 	end
 	
-	if CastLib_Spell then
-		return
-	end
-	local spellName = CastLibTipTextLeft1:GetText()
-	CastLib_Spell = spellName
-	
 	-- Test to see if this is a macro
-	if ( GetActionText(slot) or not CastLib_Spell ) then
-		CastLib_Spell = ""
+	if not CastLib_Spell then
 		return
 	end
+	
 	local rank = CastLibTipTextRight1:GetText()
 	if rank then
 		_,_,rank = string.find(rank,"(%d+)")
@@ -298,6 +321,7 @@ function CastLib:SpellStopTargeting()
 	self.hooks.SpellStopTargeting()
 	self.Spell = nil
 	self.Rank = nil
+	CastLibTip:ClearLines()
 end
 
 function CastLib:TargetUnit(unit)

@@ -100,7 +100,7 @@ end
 function FiveSecLib:SPELLCAST_STOP()
 	if self.Spell then
 	--	triggerFSR(self.Spell)
-		self:ScheduleEvent("Trigger_fiveSec", self.triggerFSR, 0.2, self, self.Spell)
+		self:ScheduleEvent("Trigger_fiveSec", self.triggerFSR, 0.3, self, self.Spell)
 	end
 end
 
@@ -120,14 +120,16 @@ function FiveSecLib:CastSpellByName(spell, onSelf)
 end
 
 function FiveSecLib:UseAction(slot, checkCursor, onSelf)
-	
-	FiveSecLibTip:ClearLines()
-	FiveSecLibTip:SetAction(slot)
-	local spellName = FiveSecLibTipTextLeft1:GetText()
+	local spellName
+	if not GetActionText(slot) then
+		FiveSecLibTip:ClearLines()
+		FiveSecLibTip:SetAction(slot)
+		spellName = FiveSecLibTipTextLeft1:GetText()
+	end
 	-- Call the original function
 	self.hooks.UseAction(slot, checkCursor, onSelf)
 	-- Test to see if this is a macro
-	if ( GetActionText(slot) or not spellName ) then
+	if ( not spellName ) then
 		return
 	end
 	self.Spell = spellName
