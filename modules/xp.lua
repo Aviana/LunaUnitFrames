@@ -103,17 +103,17 @@ function XP:UpdateRep(frame)
 end
 
 function XP:UpdateXP(frame)
-	-- At the level cap so swap to reputation bar (or hide it)
-	if( UnitLevel(frame.unit) == MAX_PLAYER_LEVEL ) then
-		frame.xpBar.xp:Hide()
-		return
-	end
-	
 	local current, max
 	if( frame.unitGroup == "player" ) then
 		current, max = UnitXP(frame.unit), UnitXPMax(frame.unit)
 	else
 		current, max = GetPetExperience()
+	end
+
+	-- At the level cap so swap to reputation bar (or hide it)
+	if( UnitLevel(frame.unit) == MAX_PLAYER_LEVEL or max <= 0 ) then
+		frame.xpBar.xp:Hide()
+		return
 	end
 	
 	local min = math.min(0, current)

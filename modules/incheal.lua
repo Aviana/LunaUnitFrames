@@ -18,6 +18,7 @@ function Incheal:OnEnable(frame)
 		frame.incheal.healBar:SetMinMaxValues(0,1)
 		frame.incheal.healBar:SetValue(1)
 		frame.incheal.healBar:SetFrameLevel(5)
+		frame.incheal.healBar:SetStatusBarTexture("Interface\\Tooltips\\UI-Tooltip-Background")
 	end
 	if not LunaUF:IsEventRegistered("HealComm_Healupdate") then
 		LunaUF:RegisterEvent("HealComm_Healupdate", OnHeal)
@@ -36,6 +37,7 @@ function Incheal:FullUpdate(frame)
 	local healvalue = HealComm:getHeal(UnitName(frame.unit))
 	local healBar = frame.incheal.healBar
 	local health, maxHealth = UnitHealth(frame.unit), UnitHealthMax(frame.unit)
+	healBar:SetStatusBarColor(LunaUF.db.profile.healthColors.inc.r, LunaUF.db.profile.healthColors.inc.g, LunaUF.db.profile.healthColors.inc.b, 0.75)
 	if healvalue == 0 then
 		healBar:Hide()
 		return
@@ -70,9 +72,4 @@ function Incheal:FullUpdate(frame)
 		healBar:SetHeight(frameHeight)
 		healBar:SetPoint("TOPLEFT", frame.healthBar, "TOPLEFT", healthWidth, 0)
 	end
-end
-
-function Incheal:SetBarTexture(frame,texture)
-	frame.incheal.healBar:SetStatusBarTexture("Interface\\Tooltips\\UI-Tooltip-Background")
-	frame.incheal.healBar:SetStatusBarColor(LunaUF.db.profile.healthColors.inc.r, LunaUF.db.profile.healthColors.inc.g, LunaUF.db.profile.healthColors.inc.b, 0.75)
 end

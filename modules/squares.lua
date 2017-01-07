@@ -16,6 +16,7 @@ local function OnEvent()
 end
 
 local function OnTimer(unit)
+	if not unit then return end
 	for _,frame in pairs(LunaUF.Units.frameList) do
 		if frame.squares and frame.unit and UnitIsUnit(frame.unit,unit) then
 			Squares:UpdateTimers(frame)

@@ -1,6 +1,6 @@
 --[[
 Name: HealComm-1.0
-Revision: $Rev: 11420 $
+Revision: $Rev: 11430 $
 Author(s): aviana
 Website: https://github.com/Aviana
 Description: A library to provide communication of heals and resurrections.
@@ -8,7 +8,7 @@ Dependencies: AceLibrary, AceEvent-2.0, RosterLib-2.0
 ]]
 
 local MAJOR_VERSION = "HealComm-1.0"
-local MINOR_VERSION = "$Revision: 11420 $"
+local MINOR_VERSION = "$Revision: 11430 $"
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
 if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end
@@ -949,7 +949,7 @@ end
 local healcommTip = CreateFrame("GameTooltip", "healcommTip", nil, "GameTooltipTemplate")
 healcommTip:SetOwner(WorldFrame, "ANCHOR_NONE")
 
-local Buffs = {
+HealComm.Buffs = {
 	[L["Power Infusion"]] = {amount = 0, mod = 0.2, icon = "Interface\\Icons\\Spell_Holy_PowerInfusion"};
 	[L["Divine Favor"]] = {amount = 0, mod = 0.5, icon = "Interface\\Icons\\Spell_Holy_Heal"};
 	[L["Nature Aligned"]] = {amount = 0, mod = 0.2, icon = "Interface\\Icons\\Spell_Nature_SpiritArmor"};
@@ -966,7 +966,7 @@ local Buffs = {
 	[L["The Eye of the Dead"]] = {amount = 450, mod = 0, icon = "Interface\\Icons\\Inv_Trinket_Naxxramas01"}
 }
 	
-local Debuffs = {
+HealComm.Debuffs = {
 	[L["Mortal Strike"]] = {amount = 0, mod = 0.5, icon = "Interface\\Icons\\Ability_Warrior_SavageBlow"};
 	[L["Wound Poison"]] = {amount = -135, mod = 0, icon = "Interface\\Icons\\Inv_Misc_Herb_16"};
 	[L["Curse of the Deadwood"]] = {amount = 0, mod = 0.5, icon = "Interface\\Icons\\Spell_Shadow_GatherShadows"};
@@ -988,7 +988,7 @@ local function getSetBonus()
 	end
 end
 	
-local function GetBuffSpellPower()
+function HealComm:GetBuffSpellPower()
 	local Spellpower = 0
 	local healmod = 1
 	for i=1, 16 do
@@ -998,15 +998,15 @@ local function GetBuffSpellPower()
 		end
 		healcommTip:SetUnitBuff("player", i)
 		local buffName = healcommTipTextLeft1:GetText()
-		if Buffs[buffName] and Buffs[buffName].icon == buffTexture then
-			Spellpower = (Buffs[buffName].amount * buffApplications) + Spellpower
-			healmod = (Buffs[buffName].mod * buffApplications) + healmod
+		if self.Buffs[buffName] and self.Buffs[buffName].icon == buffTexture then
+			Spellpower = (self.Buffs[buffName].amount * buffApplications) + Spellpower
+			healmod = (self.Buffs[buffName].mod * buffApplications) + healmod
 		end
 	end
 	return Spellpower, healmod
 end
 
-local function GetTargetSpellPower(spell)
+function HealComm:GetTargetSpellPower(spell)
 	local targetpower = 0
 	local targetmod = 1
 	local buffTexture, buffApplications
@@ -1047,9 +1047,9 @@ local function GetTargetSpellPower(spell)
 			break
 		end
 		local debuffName = healcommTipTextLeft1:GetText()
-		if Debuffs[debuffName] then
-			targetpower = (Debuffs[debuffName].amount * debuffApplications) + targetpower
-			targetmod = (1-(Debuffs[debuffName].mod * debuffApplications)) * targetmod
+		if self.Debuffs[debuffName] then
+			targetpower = (self.Debuffs[debuffName].amount * debuffApplications) + targetpower
+			targetmod = (1-(self.Debuffs[debuffName].mod * debuffApplications)) * targetmod
 		end
 	end
 	return targetpower, targetmod
@@ -1168,7 +1168,7 @@ function HealComm:SPELLCAST_START()
 		if BonusScanner then
 			Bonus = tonumber(BonusScanner:GetBonus("HEAL"))
 		end
-		local buffpower, buffmod = GetBuffSpellPower(self)
+		local buffpower, buffmod = self:GetBuffSpellPower()
 		local targetpower, targetmod = self.SpellCastInfo[4], self.SpellCastInfo[5]
 		local Bonus = Bonus + buffpower
 		local amount = ((math.floor(self.Spells[self.SpellCastInfo[1]][tonumber(self.SpellCastInfo[2])](Bonus))+targetpower)*buffmod*targetmod)
@@ -1601,7 +1601,7 @@ function HealComm:TargetUnit(unit)
 end
 
 function HealComm:ProcessSpellCast(spellName, rank, targetName)
-	local power, mod = GetTargetSpellPower(spellName)
+	local power, mod = self:GetTargetSpellPower(spellName)
 	self.SpellCastInfo[1] = self.SpellCastInfo[1] or spellName
 	self.SpellCastInfo[2] = self.SpellCastInfo[2] or rank
 	self.SpellCastInfo[3] = self.SpellCastInfo[3] or targetName

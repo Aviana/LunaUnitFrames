@@ -394,6 +394,9 @@ local function SetupGroupHeader(groupType)
 	end
 	local point = LunaUF.constants.AnchorPoint[config.growth]
 	local framesneeded = config.enabled and ((LunaUF.db.profile.locked and GetNumPartyMembers() or 4) + (config.player and 1 or 0)) or 0
+	if framesneeded == 1 and config.player then
+		framesneeded = 0
+	end
 	for i=getn(header.frames)+1, framesneeded do
 		header.frames[i] = Units:CreateUnit("Button", "LUFUnit"..unitGroup..i, header)
 		header.frames[i]:SetScript("OnDragStop", GroupHeaderStopMovingOrSizing)
