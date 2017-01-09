@@ -287,7 +287,7 @@ local function OnClick()
 					TargetLastTarget()
 					Units.pauseUpdates = nil
 				else
-					if UnitCanAttack("player", "target") then
+					if UnitCanAttack("player", "target") and not func then
 						LunaUF:CastSpellByName_IgnoreSelfCast(func or action)
 						SpellTargetUnit(this.unit)
 					else

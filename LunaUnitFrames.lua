@@ -99,7 +99,7 @@ function SlashCmdList.LUFMO(msg, editbox)
 				TargetLastTarget()
 				LunaUF.Units.pauseUpdates = nil
 			else
-				if UnitCanAttack("player", "target") then
+				if UnitCanAttack("player", "target") and not func then
 					LunaUF:CastSpellByName_IgnoreSelfCast(func or msg)
 					SpellTargetUnit(unit)
 				else
