@@ -568,7 +568,7 @@ local function OnEvent()
 		if arg1 then
 			frame.castBar.delaySum = (frame.castBar.delaySum or 0) + (arg1 / 1000)
 			local statusMin, statusMax = frame.castBar.bar:GetMinMaxValues()
-			frame.castBar.bar:SetMinMaxValues(statusMin, (statusMax + frame.castBar.delaySum))
+			frame.castBar.bar:SetMinMaxValues(statusMin, (statusMax + (arg1 / 1000)))
 		end
 	elseif event == "SPELLCAST_START" then
 		frame.castBar.maxValue = (arg2 / 1000)
