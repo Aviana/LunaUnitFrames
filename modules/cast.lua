@@ -359,7 +359,7 @@ function TriggerCast(mob, spell, castime)
 end
 
 function TriggerCastStop(mob, spell)
-	if CasterDB[mob] and CasterDB[mob].sp and Spells[spell] and not (Spells[spell].ni and Spells[CasterDB[mob].sp].ni) then
+	if CasterDB[mob] and CasterDB[mob].sp and Spells[spell] and not (Spells[spell].ni and Spells[CasterDB[mob].sp] and Spells[CasterDB[mob].sp].ni) then
 		if (CasterDB[mob].start + (CasterDB[mob].ct or 0)) > GetTime() then
 			CasterDB[mob].ct = 0
 			for _,frame in pairs(LunaUF.Units.frameList) do

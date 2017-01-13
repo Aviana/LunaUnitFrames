@@ -275,7 +275,7 @@ function LunaUF:OnInitialize()
 			name = L["cmd_reset"],
 			desc = L["Resets your current settings."],
 			func = function ()
-					StaticPopup_Show ("RESET_LUNA")
+					StaticPopup_Show ("RESET_LUNA_PROFILE")
 				end,
 		},
 		[L["cmd_config"]] = {
