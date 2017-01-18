@@ -65,6 +65,7 @@ LunaUF.defaults = {
 			party = false,
 		},
 		locked = true,
+		showOptions = false,
 		font = L["DEFAULT_FONT"],
 		texture = "Luna",
 		auraborderType = "dark",

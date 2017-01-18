@@ -828,7 +828,15 @@ function LunaUF:CreateOptionsMenu()
 	LunaOptionsFrame:RegisterForDrag("LeftButton")
 	LunaOptionsFrame:SetScript("OnDragStart", StartMoving)
 	LunaOptionsFrame:SetScript("OnDragStop", StopMovingOrSizing)
-	LunaOptionsFrame:Hide()
+	LunaOptionsFrame:SetScript("OnShow", function()
+		LunaUF.db.profile.showOptions = true
+	end)
+	LunaOptionsFrame:SetScript("OnHide", function()
+		LunaUF.db.profile.showOptions = false
+	end)
+	if not LunaUF.db.profile.showOptions then
+		LunaOptionsFrame:Hide()
+	end
 
 	LunaOptionsFrame.CloseButton = CreateFrame("Button", "LunaOptionsCloseButton", LunaOptionsFrame,"UIPanelCloseButton")
 	LunaOptionsFrame.CloseButton:SetPoint("TOPRIGHT", LunaOptionsFrame, "TOPRIGHT", 0, 0)
