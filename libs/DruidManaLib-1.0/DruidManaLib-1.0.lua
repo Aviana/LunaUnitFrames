@@ -130,7 +130,7 @@ function DruidManaLib:GetShapeshiftCost()
 	local spelltexture
 	for i = 1, c+d, 1 do
 		spelltexture = GetSpellTexture(i, BOOKTYPE_SPELL);
-		if spelltexture and spelltexture == "Interface\\Icons\\Ability_Druid_CatForm" then
+		if spelltexture and spelltexture == "Interface\\Icons\\Ability_Racial_BearForm" then
 			DruidManaLibTip:SetSpell(i, 1);
 			local msg = DruidManaLibTipTextLeft2:GetText();
 			if msg then
