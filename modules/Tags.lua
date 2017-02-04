@@ -139,6 +139,16 @@ local defaultTags = {
 									return ""
 								end
 							end;
+	["range"]				= function(unit)
+								local range = LunaUF.modules.range:GetRange(unit)
+								if range == 10 then
+									return "0-10"
+								elseif range == 30 then
+									return "10-30"
+								else
+									return ">30"
+								end
+							end;
 	["race"]				= function(unit)
 								local race = UnitRace(unit)
 								if race then

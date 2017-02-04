@@ -1537,17 +1537,14 @@ function HealComm:UseAction(slot, checkCursor, onSelf)
 	healcommTip:SetAction(slot)
 	local spellName = healcommTipTextLeft1:GetText()
 	
-	-- Test to see if this is a macro
-	if not GetActionText(slot) then
-		self.CurrentSpellName = spellName
-	end
-	
 	self.hooks.UseAction(slot, checkCursor, onSelf)
 	
 	-- Test to see if this is a macro
-	if ( not self.CurrentSpellName ) then
+	if GetActionText(slot) then
 		return
 	end
+	
+	self.CurrentSpellName = spellName
 	local rank = healcommTipTextRight1:GetText()
 	if rank then
 		_,_,rank = string.find(rank,"(%d+)")

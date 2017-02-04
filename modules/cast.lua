@@ -546,7 +546,7 @@ local function OnEvent()
 		frame.castBar.bar:SetMinMaxValues(0, frame.castBar.maxValue)
 		frame.castBar.bar:SetValue(frame.castBar.maxValue)
 		frame.castBar.casting = false
-		frame.castBar.channeling = 1
+		frame.castBar.channeling = true
 		frame.castBar.delaySum = 0
 		local spellName = CL:GetSpell()
 		frame.castBar.Text:SetText(spellName)
@@ -574,7 +574,8 @@ local function OnEvent()
 		frame.castBar.maxValue = (arg2 / 1000)
 		frame.castBar.startTime = GetTime()
 		frame.castBar.casting = true
-		frame.castBar.delaySum = 0	
+		frame.castBar.channeling = false
+		frame.castBar.delaySum = 0
 		frame.castBar.Text:SetText(arg1)
 		if LunaUF.db.profile.units[frame.unitGroup].castBar.icon then
 			frame.castBar.icon:SetTexture(BS:GetSpellIcon(arg1) or GetItemIconTexture(arg1))
@@ -597,12 +598,11 @@ local function OnEvent()
 			buffed = nil
 		end
 	else
-		if frame.castBar.casting or event == "SPELLCAST_CHANNEL_STOP" then
-			frame.castBar.casting = false
-			frame.castBar.channeling = false
-			frame.castBar:SetScript("OnUpdate", nil)
-			Cast:FullUpdate(frame)
-		end
+		if (event == "SPELLCAST_CHANNEL_STOP" and not frame.castBar.channeling) then return end
+		frame.castBar.casting = false
+		frame.castBar.channeling = false
+		frame.castBar:SetScript("OnUpdate", nil)
+		Cast:FullUpdate(frame)
 	end
 end
 
@@ -631,6 +631,7 @@ local function OnAimed(cast)
 			if uframe.castBar and LunaUF.db.profile.units[uframe.unitGroup].castBar.enabled and UnitIsUnit(uframe.unit,"player") then
 				uframe.castBar.maxValue = casttime + (latency/1000)
 				uframe.castBar.casting = true
+				uframe.castBar.channeling = false
 				uframe.castBar.delaySum = 0
 				uframe.castBar.startTime = GetTime()
 				uframe.castBar.Text:SetText(BS["Aimed Shot"])

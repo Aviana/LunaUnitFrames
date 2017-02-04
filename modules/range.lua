@@ -1,10 +1,14 @@
 local Range = {}
+AceLibrary("AceHook-2.1"):embed(Range)
 local L = LunaUF.L
+local BS = LunaUF.BS
+local ScanTip = LunaUF.ScanTip
 local rosterLib = AceLibrary("RosterLib-2.0")
 LunaUF:RegisterModule(Range, "range", L["Range"])
 local Continent,Zone,ZoneName
 local roster = {}
 local ZoneWatch = CreateFrame("Frame")
+local _, playerClass = UnitClass("player")
 
 -- Big thx to Renew & Astrolabe
 local MapScales = {
@@ -72,6 +76,30 @@ local MapScales = {
 	}
 }
 
+local HealSpells = {
+    ["DRUID"] = {
+		[BS["Healing Touch"]] = true,
+		[BS["Regrowth"]] = true,
+		[BS["Rejuvenation"]] = true,
+	},
+    ["PALADIN"] = {
+		[BS["Flash of Light"]] = true,
+		[BS["Holy Light"]] = true,
+	},
+    ["PRIEST"] = {
+		[BS["Flash Heal"]] = true,
+		[BS["Lesser Heal"]] = true,
+		[BS["Heal"]] = true,
+		[BS["Greater Heal"]] = true,
+		[BS["Renew"]] = true,
+	},
+    ["SHAMAN"] = {
+		[BS["Chain Heal"]] = true,
+		[BS["Lesser Healing Wave"]] = true,
+		[BS["Healing Wave"]] = true,
+	},
+}
+
 -- This table needs to be localized, of course
 local events
 
@@ -127,41 +155,6 @@ else
 	}
 end
 
-local function GetRange(UnitID)
-    if UnitExists(UnitID) and UnitIsVisible(UnitID) then
-		local _,instance = IsInInstance()
-
-		if CheckInteractDistance(UnitID, 1) then
-			return 10
-		elseif CheckInteractDistance(UnitID, 3) then
-			return 10
-		elseif CheckInteractDistance(UnitID, 4) then
-			return 30
-		elseif (instance == "none" or instance == "pvp") and not WorldMapFrame:IsVisible() then
-			local px, py, ux, uy, distance
-			SetMapToCurrentZone()
-			px, py = GetPlayerMapPosition("player")
-			ux, uy = GetPlayerMapPosition(UnitID)
-			if Zone ~= 0 and Continent ~= 0 then
-				distance = sqrt(((px - ux)/MapScales[Continent][Zone].x)^2 + ((py - uy)/MapScales[Continent][Zone].y)^2)
-			else
-				local xDelta, yDelta;
-				px, py = px*MapScales[Continent][Zone].x, py*MapScales[Continent][Zone].y
-				ux, uy = ux*MapScales[Continent][Zone].x, uy*MapScales[Continent][Zone].y
-				xDelta = (ux - px)
-				yDelta = (uy - py)
-				distance = sqrt(xDelta*xDelta + yDelta*yDelta)
-			end
-			return distance
-		elseif LunaUF.db.profile.RangeCLparsing and (GetTime() - (roster[UnitID] or 0)) < 2 then
-			return 38
-		else
-			return 45
-		end
-    end
-	return 100
-end
-
 local function ParseCombatMessage(eventstr, clString)
 	local unit
 	if type(eventstr) == "string" then
@@ -209,6 +202,104 @@ ZoneWatch:SetScript("OnEvent", OnEvent)
 ZoneWatch:RegisterEvent("ZONE_CHANGED_NEW_AREA")
 for i in pairs(events) do ZoneWatch:RegisterEvent(i) end
 
+function Range:GetRange(UnitID)
+    if UnitExists(UnitID) and UnitIsVisible(UnitID) then
+		local _,instance = IsInInstance()
+
+		if CheckInteractDistance(UnitID, 1) then
+			return 10
+		elseif CheckInteractDistance(UnitID, 3) then
+			return 10
+		elseif CheckInteractDistance(UnitID, 4) then
+			return 30
+		elseif (instance == "none" or instance == "pvp") and not WorldMapFrame:IsVisible() then
+			local px, py, ux, uy, distance
+			SetMapToCurrentZone()
+			px, py = GetPlayerMapPosition("player")
+			ux, uy = GetPlayerMapPosition(UnitID)
+			if Zone ~= 0 and Continent ~= 0 then
+				distance = sqrt(((px - ux)/MapScales[Continent][Zone].x)^2 + ((py - uy)/MapScales[Continent][Zone].y)^2)
+			else
+				local xDelta, yDelta;
+				px, py = px*MapScales[Continent][Zone].x, py*MapScales[Continent][Zone].y
+				ux, uy = ux*MapScales[Continent][Zone].x, uy*MapScales[Continent][Zone].y
+				xDelta = (ux - px)
+				yDelta = (uy - py)
+				distance = sqrt(xDelta*xDelta + yDelta*yDelta)
+			end
+			return distance
+		elseif (GetTime() - (roster[UnitID] or 0)) < 4 then
+			return 40
+		else
+			return 45
+		end
+    end
+	return 100
+end
+
+function Range:ScanRoster()
+	if not SpellIsTargeting() then return end
+	-- We have a valid 40y spell on the cursor so we can now easily check the range.
+	for i=1,40 do
+		local unit = "raid"..i
+		if not UnitExists(unit) then
+			break
+		end
+		if SpellCanTargetUnit(unit) then
+			roster[unit] = GetTime()
+		end
+		unit = "raidpet"..i
+		if UnitExists(unit) and SpellCanTargetUnit(unit) then
+			roster[unit] = GetTime()
+		end
+	end
+	for i=1,4 do
+		local unit = "party"..i
+		if not UnitExists(unit) then
+			break
+		end
+		if SpellCanTargetUnit(unit) then
+			roster[unit] = GetTime()
+		end
+		unit = "partypet"..i
+		if UnitExists(unit) and SpellCanTargetUnit(unit) then
+			roster[unit] = GetTime()
+		end
+	end
+end
+
+function Range:CastSpell(spellId, spellbookTabNum)
+	self.hooks.CastSpell(spellId, spellbookTabNum)
+	if SpellIsTargeting() then
+		local spell = GetSpellName(spellId, spellbookTabNum)
+		if HealSpells[playerClass] and HealSpells[playerClass][spell] then
+			self:ScanRoster()
+		end
+	end
+end
+
+function Range:CastSpellByName(spellName, onSelf)
+	self.hooks.CastSpellByName(spellName, onSelf)
+	if SpellIsTargeting() then
+		local _,_,spell = string.find(spellName, "^([^%(]+)")
+		if HealSpells[playerClass] and HealSpells[playerClass][spell] then
+			self:ScanRoster()
+		end
+	end
+end
+
+function Range:UseAction(slot, checkCursor, onSelf)
+	self.hooks.UseAction(slot, checkCursor, onSelf)
+	if not GetActionText(slot) and SpellIsTargeting() then
+		ScanTip:ClearLines()
+		ScanTip:SetAction(slot)
+		local spell = LunaScanTipTextLeft1:GetText()
+		if HealSpells[playerClass] and HealSpells[playerClass][spell] then
+			self:ScanRoster()
+		end
+	end
+end
+
 function Range:OnEnable(frame)
 	if not frame.range then
 		frame.range = CreateFrame("Frame", nil, frame)
@@ -226,10 +317,16 @@ end
 function Range:FullUpdate(frame)
 	if frame.DisableRangeAlpha or (GetTime() - frame.range.lastUpdate) < (LunaUF.db.profile.RangePolRate or 1.5) then return end
 	frame.range.lastUpdate = GetTime()
-	local range = GetRange(frame.unit)
-	if range <= 38 then
+	local range = self:GetRange(frame.unit)
+	if range <= 40 then
 		frame:SetAlpha(LunaUF.db.profile.units[frame.unitGroup].fader.enabled and LunaUF.db.profile.units[frame.unitGroup].fader.combatAlpha or 1)
 	else
 		frame:SetAlpha(LunaUF.db.profile.units[frame.unitGroup].range.alpha)
 	end
+end
+
+if HealSpells[playerClass] then -- only hook on healing classes
+	Range:Hook("CastSpell")
+	Range:Hook("CastSpellByName")
+	Range:Hook("UseAction")
 end

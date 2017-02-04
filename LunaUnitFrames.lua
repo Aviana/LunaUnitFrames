@@ -48,79 +48,72 @@ function LunaUF:CastSpellByName_IgnoreSelfCast(spell, onPlayer)
 end
 
 function LunaUF:isDualSpell(spell)
-	return strfind(spell,LunaUF.BS["Holy Shock"]) or strfind(spell, LunaUF.BS["Mind Vision"]) or strfind(spell, LunaUF.BS["Dispel Magic"])
+	return strfind(spell,self.BS["Holy Shock"]) or strfind(spell, self.BS["Mind Vision"]) or strfind(spell, self.BS["Dispel Magic"])
+end
+
+function LunaUF:Mouseover(action)
+	local func = loadstring(action or "")
+	SpellStopTargeting()
+	local unit = LunaUF.db.profile.mouseover and UnitExists("mouseover") and "mouseover" or GetMouseFocus().unit
+	if not unit then return end
+	if UnitCanAttack("player", unit) or self:isDualSpell(action) then
+		if UnitIsUnit("target", unit) then
+			self:CastSpellByName_IgnoreSelfCast(func or action)
+		else
+			self.Units.pauseUpdates = true
+			TargetUnit(unit)
+			self:CastSpellByName_IgnoreSelfCast(func or action)
+			TargetLastTarget()
+			self.Units.pauseUpdates = nil
+		end
+	else
+		if UnitExists("target") then
+			if UnitIsUnit("target",unit) then
+				if func then
+					func()
+				else
+					self.Units.pauseUpdates = true
+					ClearTarget()
+					self:CastSpellByName_IgnoreSelfCast(action)
+					SpellTargetUnit(unit)
+					TargetLastTarget()
+					self.Units.pauseUpdates = nil
+				end
+			else
+				if func then
+					func()
+				else
+					self.Units.pauseUpdates = true
+					ClearTarget()
+					self:CastSpellByName_IgnoreSelfCast(action)
+					SpellTargetUnit(unit)
+					TargetLastTarget()
+					self.Units.pauseUpdates = nil
+				end
+			end
+		else
+			if func then
+				self.Units.pauseUpdates = true
+				TargetUnit(unit)
+				func()
+				ClearTarget()
+				self.Units.pauseUpdates = nil
+			else
+				self:CastSpellByName_IgnoreSelfCast(action)
+				SpellTargetUnit(unit)
+			end
+		end
+	end
+	if func then
+		func()
+	else
+		CastSpellByName(action)
+	end
 end
 
 SLASH_LUFMO1, SLASH_LUFMO2 = "/lunamo", "/lunamouseover"
 function SlashCmdList.LUFMO(msg, editbox)
-	local func = loadstring(msg)
-	SpellStopTargeting()
-	if LunaUF.db.profile.mouseover and UnitExists("mouseover") then
-		if UnitIsUnit("target", "mouseover") then
-			LunaUF:CastSpellByName_IgnoreSelfCast(func or msg)
-		elseif UnitIsUnit("player", "mouseover") and not func then
-			CastSpellByName(msg, 1)
-		else
-			if UnitCanAttack("player", "mouseover") or LunaUF:isDualSpell(msg) then
-				LunaUF.Units.pauseUpdates = true
-				TargetUnit("mouseover")
-				LunaUF:CastSpellByName_IgnoreSelfCast(func or msg)
-				TargetLastTarget()
-				LunaUF.Units.pauseUpdates = nil
-			else
-				if UnitCanAttack("player", "target") then
-					LunaUF:CastSpellByName_IgnoreSelfCast(func or msg)
-					SpellTargetUnit("mouseover")
-				else
-					LunaUF.Units.pauseUpdates = true
-					TargetUnit("mouseover")
-					LunaUF:CastSpellByName_IgnoreSelfCast(func or msg)
-					TargetLastTarget()
-					LunaUF.Units.pauseUpdates = nil
-				end
-			end
-		end
-		if SpellIsTargeting() then
-			SpellStopTargeting()
-		end
-		return
-	end
-	if GetMouseFocus().unit then
-		local unit = GetMouseFocus().unit
-		if UnitIsUnit("target", unit) then
-			LunaUF:CastSpellByName_IgnoreSelfCast(func or msg)
-		elseif UnitIsUnit("player", unit) and not func then
-			CastSpellByName(msg, 1)
-		else
-			if UnitCanAttack("player", unit) or LunaUF:isDualSpell(msg) then
-				LunaUF.Units.pauseUpdates = true
-				TargetUnit(unit)
-				LunaUF:CastSpellByName_IgnoreSelfCast(func or msg)
-				TargetLastTarget()
-				LunaUF.Units.pauseUpdates = nil
-			else
-				if UnitCanAttack("player", "target") and not func then
-					LunaUF:CastSpellByName_IgnoreSelfCast(func or msg)
-					SpellTargetUnit(unit)
-				else
-					LunaUF.Units.pauseUpdates = true
-					TargetUnit(unit)
-					LunaUF:CastSpellByName_IgnoreSelfCast(func or msg)
-					TargetLastTarget()
-					LunaUF.Units.pauseUpdates = nil
-				end
-			end
-		end
-		if SpellIsTargeting() then
-			SpellStopTargeting()
-		end
-	else
-		if func then
-			func()
-		else
-			CastSpellByName(msg)
-		end
-	end
+	LunaUF:Mouseover(msg)
 end
 
 function lufmo(msg)

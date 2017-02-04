@@ -1351,12 +1351,12 @@ function LunaUF:CreateOptionsMenu()
 					local diff
 					this:ClearFocus()
 					if unit == "raid" then
-						val = LunaUF.db.profile.units["raid"][UIDropDownMenu_GetSelectedID(LunaOptionsFrame.pages[11].GrpSelect)].position
-						if UIDropDownMenu_GetSelectedID(LunaOptionsFrame.pages[11].GrpSelect) ~= 1 and LunaUF.db.profile.units.raid.interlock then
+						val = LunaUF.db.profile.units["raid"][UIDropDownMenu_GetSelectedID(this:GetParent().GrpSelect)].position
+						if UIDropDownMenu_GetSelectedID(this:GetParent().GrpSelect) ~= 1 and LunaUF.db.profile.units.raid.interlock then
 							this:SetText(val.x)
 							return
 						end
-						unit = unit..UIDropDownMenu_GetSelectedID(LunaOptionsFrame.pages[11].GrpSelect)
+						unit = unit..UIDropDownMenu_GetSelectedID(this:GetParent().GrpSelect)
 					else
 						val = LunaUF.db.profile.units[unit].position
 					end
@@ -1394,12 +1394,12 @@ function LunaUF:CreateOptionsMenu()
 					local val, diff
 					this:ClearFocus()
 					if unit == "raid" then
-						val = LunaUF.db.profile.units["raid"][UIDropDownMenu_GetSelectedID(LunaOptionsFrame.pages[11].GrpSelect)].position
-						if UIDropDownMenu_GetSelectedID(LunaOptionsFrame.pages[11].GrpSelect) ~= 1 and LunaUF.db.profile.units.raid.interlock then
+						val = LunaUF.db.profile.units["raid"][UIDropDownMenu_GetSelectedID(this:GetParent().GrpSelect)].position
+						if UIDropDownMenu_GetSelectedID(this:GetParent().GrpSelect) ~= 1 and LunaUF.db.profile.units.raid.interlock then
 							this:SetText(val.y)
 							return
 						end
-						unit = unit..UIDropDownMenu_GetSelectedID(LunaOptionsFrame.pages[11].GrpSelect)
+						unit = unit..UIDropDownMenu_GetSelectedID(this:GetParent().GrpSelect)
 					else
 						val = LunaUF.db.profile.units[unit].position
 					end
@@ -1435,11 +1435,11 @@ function LunaUF:CreateOptionsMenu()
 					local unit = this:GetParent().id
 					local val
 					if unit == "raid" then
-						if UIDropDownMenu_GetSelectedID(LunaOptionsFrame.pages[11].GrpSelect) ~= 1 and LunaUF.db.profile.units.raid.interlock then
+						if UIDropDownMenu_GetSelectedID(this:GetParent().GrpSelect) ~= 1 and LunaUF.db.profile.units.raid.interlock then
 							return
 						end
-						val = LunaUF.db.profile.units["raid"][UIDropDownMenu_GetSelectedID(LunaOptionsFrame.pages[11].GrpSelect)].position
-						unit = unit..UIDropDownMenu_GetSelectedID(LunaOptionsFrame.pages[11].GrpSelect)
+						val = LunaUF.db.profile.units["raid"][UIDropDownMenu_GetSelectedID(this:GetParent().GrpSelect)].position
+						unit = unit..UIDropDownMenu_GetSelectedID(this:GetParent().GrpSelect)
 					else
 						val = LunaUF.db.profile.units[unit].position
 					end
@@ -1465,11 +1465,11 @@ function LunaUF:CreateOptionsMenu()
 					local unit = this:GetParent().id
 					local val
 					if unit == "raid" then
-						if UIDropDownMenu_GetSelectedID(LunaOptionsFrame.pages[11].GrpSelect) ~= 1 and LunaUF.db.profile.units.raid.interlock then
+						if UIDropDownMenu_GetSelectedID(this:GetParent().GrpSelect) ~= 1 and LunaUF.db.profile.units.raid.interlock then
 							return
 						end
-						val = LunaUF.db.profile.units["raid"][UIDropDownMenu_GetSelectedID(LunaOptionsFrame.pages[11].GrpSelect)].position
-						unit = unit..UIDropDownMenu_GetSelectedID(LunaOptionsFrame.pages[11].GrpSelect)
+						val = LunaUF.db.profile.units["raid"][UIDropDownMenu_GetSelectedID(this:GetParent().GrpSelect)].position
+						unit = unit..UIDropDownMenu_GetSelectedID(this:GetParent().GrpSelect)
 					else
 						val = LunaUF.db.profile.units[unit].position
 					end
@@ -1495,11 +1495,11 @@ function LunaUF:CreateOptionsMenu()
 					local unit = this:GetParent().id
 					local val
 					if unit == "raid" then
-						if UIDropDownMenu_GetSelectedID(LunaOptionsFrame.pages[11].GrpSelect) ~= 1 and LunaUF.db.profile.units.raid.interlock then
+						if UIDropDownMenu_GetSelectedID(this:GetParent().GrpSelect) ~= 1 and LunaUF.db.profile.units.raid.interlock then
 							return
 						end
-						val = LunaUF.db.profile.units["raid"][UIDropDownMenu_GetSelectedID(LunaOptionsFrame.pages[11].GrpSelect)].position
-						unit = unit..UIDropDownMenu_GetSelectedID(LunaOptionsFrame.pages[11].GrpSelect)
+						val = LunaUF.db.profile.units["raid"][UIDropDownMenu_GetSelectedID(this:GetParent().GrpSelect)].position
+						unit = unit..UIDropDownMenu_GetSelectedID(this:GetParent().GrpSelect)
 					else
 						val = LunaUF.db.profile.units[unit].position
 					end
@@ -1525,11 +1525,11 @@ function LunaUF:CreateOptionsMenu()
 					local unit = this:GetParent().id
 					local val
 					if unit == "raid" then
-						if UIDropDownMenu_GetSelectedID(LunaOptionsFrame.pages[11].GrpSelect) ~= 1 and LunaUF.db.profile.units.raid.interlock then
+						if UIDropDownMenu_GetSelectedID(this:GetParent().GrpSelect) ~= 1 and LunaUF.db.profile.units.raid.interlock then
 							return
 						end
-						val = LunaUF.db.profile.units["raid"][UIDropDownMenu_GetSelectedID(LunaOptionsFrame.pages[11].GrpSelect)].position
-						unit = unit..UIDropDownMenu_GetSelectedID(LunaOptionsFrame.pages[11].GrpSelect)
+						val = LunaUF.db.profile.units["raid"][UIDropDownMenu_GetSelectedID(this:GetParent().GrpSelect)].position
+						unit = unit..UIDropDownMenu_GetSelectedID(this:GetParent().GrpSelect)
 					else
 						val = LunaUF.db.profile.units[unit].position
 					end

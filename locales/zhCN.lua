@@ -1,6 +1,6 @@
 local function zhCN() return {
-["FONT_LIST"] = {"微软雅黑"},
-["DEFAULT_FONT"] = "微软雅黑",
+["FONT_LIST"] = {"HDZB_35"},
+["DEFAULT_FONT"] = "HDZB_35",
 ["Loaded. The ride never ends!"] = "已加载，旅途永无止尽！",
 ["Mobhealth2/Mobinfo2 found. Please consider MobHealth3 for a better experience."] = "发现Mobhealth2/Mobinfo2插件，您可以考虑使用MobHealth3以获得更好的体验",
 ["Test"] = "测试",

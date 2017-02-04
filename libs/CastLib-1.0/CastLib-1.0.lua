@@ -198,10 +198,6 @@ end
 function CastLib:CastSpellByName(spellName, onSelf)
 	-- Call the original function
 	self.hooks.CastSpellByName(spellName, onSelf)
-
-	if CastLib_Spell then
-		return
-	end
 	
 	local _,_,rank = string.find(spellName,"(%d+)")
 	local _, _, spellName = string.find(spellName, "^([^%(]+)")
@@ -258,6 +254,7 @@ end
 
 function CastLib:UseAction(slot, checkCursor, onSelf)
 	local spellName
+	self.Slot = slot
 	
 	-- Test to see if this is a macro
 	if not GetActionText(slot) then
@@ -268,14 +265,13 @@ function CastLib:UseAction(slot, checkCursor, onSelf)
 	-- Call the original function
 	self.hooks.UseAction(slot, checkCursor, onSelf)
 	
-	self.Slot = slot
-	if CastLib_Spell == AimedShot then
+	if CastLib_Spell == AimedShot and not GetActionText(slot) then
 		self:ProcessSpellCast(CastLib_Spell, 6, UnitName("target"))
 		return
 	end
 	
 	-- Test to see if this is a macro
-	if not CastLib_Spell then
+	if GetActionText(slot) then
 		return
 	end
 	

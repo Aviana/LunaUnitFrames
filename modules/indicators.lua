@@ -332,11 +332,7 @@ local function AceOnEvent(arg1)
 	end
 	for _,frame in pairs(LunaUF.Units.frameList) do
 		if frame.indicators and frame.indicators.masterLoot then
-			if frame.unit and UnitName(frame.unit) == lootmaster then
-				frame.indicators.masterLoot:Show()
-			else
-				frame.indicators.masterLoot:Hide()
-			end
+			UpdateMasterLoot(LunaUF.db.profile.units[frame.unitGroup].indicators.icons.masterLoot.enabled, frame.indicators.masterLoot, frame.unit)
 		end
 	end
 end

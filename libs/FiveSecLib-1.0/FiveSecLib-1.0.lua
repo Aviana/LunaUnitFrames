@@ -129,7 +129,7 @@ function FiveSecLib:UseAction(slot, checkCursor, onSelf)
 	-- Call the original function
 	self.hooks.UseAction(slot, checkCursor, onSelf)
 	-- Test to see if this is a macro
-	if ( not spellName ) then
+	if GetActionText(slot) then
 		return
 	end
 	self.Spell = spellName

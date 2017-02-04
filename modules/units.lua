@@ -273,35 +273,7 @@ local function OnClick()
 				TargetUnit(this.unit)
 			end
 		else
-			local func = loadstring(action or "")
-			SpellStopTargeting()
-			if UnitIsUnit("target", this.unit) then
-				LunaUF:CastSpellByName_IgnoreSelfCast(func or action)
-			elseif UnitIsUnit("player", this.unit) and not func then
-				CastSpellByName(action, 1)
-			else
-				if UnitCanAttack("player", this.unit) or LunaUF:isDualSpell(action) then
-					Units.pauseUpdates = true
-					TargetUnit(this.unit)
-					LunaUF:CastSpellByName_IgnoreSelfCast(func or action)
-					TargetLastTarget()
-					Units.pauseUpdates = nil
-				else
-					if UnitCanAttack("player", "target") and not func then
-						LunaUF:CastSpellByName_IgnoreSelfCast(func or action)
-						SpellTargetUnit(this.unit)
-					else
-						Units.pauseUpdates = true
-						TargetUnit(this.unit)
-						LunaUF:CastSpellByName_IgnoreSelfCast(func or action)
-						TargetLastTarget()
-						Units.pauseUpdates = nil
-					end
-				end
-			end
-			if SpellIsTargeting() then
-				SpellStopTargeting()
-			end
+			LunaUF:Mouseover(action)
 		end
 	end
 end
@@ -530,13 +502,17 @@ local function SetupRaidHeader(passedHeader)
 	if header.id == 9 and framesneeded > 0 then
 		if UnitInRaid("player") then
 			for unitid,_ in pairs(RaidPetRoster) do
-				table.insert(RaidRoster,{UnitName(unitid),unitid})
+				if UnitName(unitid) then
+					table.insert(RaidRoster,{UnitName(unitid),unitid})
+				end
 			end
 		elseif GetNumPartyMembers() > 0 then
 			for unitid,_ in pairs(PartyPetRoster) do
-				table.insert(RaidRoster,{UnitName(unitid),unitid})
+				if UnitName(unitid) then
+					table.insert(RaidRoster,{UnitName(unitid),unitid})
+				end
 			end
-		elseif PetExists then
+		elseif PetExists and UnitName("pet") then
 			table.insert(RaidRoster,{UnitName("pet"),"pet"})
 		end
 		if framesneeded > getn(RaidRoster) then
