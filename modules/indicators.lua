@@ -127,7 +127,7 @@ local function UpdateElite(enabled, indicator, unit, unitGroup)
 	else
 		local classification = UnitClassification(unit)
 		local texture
-		if classification == "elite" or classification == "rareelite" or not LunaUF.db.profile.locked then
+		if classification == "elite" or classification == "rareelite" or classification == "worldboss" or not LunaUF.db.profile.locked then
 			texture = "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\UI-DialogBox-Gold-Dragon"
 		elseif classification == "rare" then
 			texture = "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\UI-DialogBox-Silver-Dragon"
