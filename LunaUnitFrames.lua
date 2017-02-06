@@ -55,59 +55,61 @@ function LunaUF:Mouseover(action)
 	local func = loadstring(action or "")
 	SpellStopTargeting()
 	local unit = LunaUF.db.profile.mouseover and UnitExists("mouseover") and "mouseover" or GetMouseFocus().unit
-	if not unit then return end
-	if UnitCanAttack("player", unit) or self:isDualSpell(action) then
-		if UnitIsUnit("target", unit) then
-			self:CastSpellByName_IgnoreSelfCast(func or action)
-		else
-			self.Units.pauseUpdates = true
-			TargetUnit(unit)
-			self:CastSpellByName_IgnoreSelfCast(func or action)
-			TargetLastTarget()
-			self.Units.pauseUpdates = nil
-		end
-	else
-		if UnitExists("target") then
-			if UnitIsUnit("target",unit) then
-				if func then
-					func()
-				else
-					self.Units.pauseUpdates = true
-					ClearTarget()
-					self:CastSpellByName_IgnoreSelfCast(action)
-					SpellTargetUnit(unit)
-					TargetLastTarget()
-					self.Units.pauseUpdates = nil
-				end
+	if unit then
+		if UnitCanAttack("player", unit) or self:isDualSpell(action) then
+			if UnitIsUnit("target", unit) then
+				self:CastSpellByName_IgnoreSelfCast(func or action)
 			else
-				if func then
-					func()
-				else
-					self.Units.pauseUpdates = true
-					ClearTarget()
-					self:CastSpellByName_IgnoreSelfCast(action)
-					SpellTargetUnit(unit)
-					TargetLastTarget()
-					self.Units.pauseUpdates = nil
-				end
-			end
-		else
-			if func then
 				self.Units.pauseUpdates = true
 				TargetUnit(unit)
-				func()
-				ClearTarget()
+				self:CastSpellByName_IgnoreSelfCast(func or action)
+				TargetLastTarget()
 				self.Units.pauseUpdates = nil
+			end
+		else
+			if UnitExists("target") then
+				if UnitIsUnit("target",unit) then
+					if func then
+						func()
+					else
+						self.Units.pauseUpdates = true
+						ClearTarget()
+						self:CastSpellByName_IgnoreSelfCast(action)
+						SpellTargetUnit(unit)
+						TargetLastTarget()
+						self.Units.pauseUpdates = nil
+					end
+				else
+					if func then
+						func()
+					else
+						self.Units.pauseUpdates = true
+						ClearTarget()
+						self:CastSpellByName_IgnoreSelfCast(action)
+						SpellTargetUnit(unit)
+						TargetLastTarget()
+						self.Units.pauseUpdates = nil
+					end
+				end
 			else
-				self:CastSpellByName_IgnoreSelfCast(action)
-				SpellTargetUnit(unit)
+				if func then
+					self.Units.pauseUpdates = true
+					TargetUnit(unit)
+					func()
+					ClearTarget()
+					self.Units.pauseUpdates = nil
+				else
+					self:CastSpellByName_IgnoreSelfCast(action)
+					SpellTargetUnit(unit)
+				end
 			end
 		end
-	end
-	if func then
-		func()
 	else
-		CastSpellByName(action)
+		if func then
+			func()
+		else
+			CastSpellByName(action)
+		end
 	end
 end
 
