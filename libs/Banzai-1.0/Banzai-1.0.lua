@@ -128,7 +128,7 @@ function lib:UpdateAggroList()
 				-- Unit lost aggro
 				self:TriggerEvent("Banzai_UnitLostAggro", unit.unitid)
 				if unit.name == playerName then
-					self:TriggerEvent("Banzai_PlayerLostAggro", unit.unitid)
+					self:TriggerEvent("Banzai_PlayerLostAggro")
 				end
 			end
 		end
