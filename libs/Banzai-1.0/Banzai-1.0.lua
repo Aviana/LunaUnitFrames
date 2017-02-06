@@ -1,6 +1,6 @@
 --[[
 Name: Banzai-1.0
-Revision: $Rev: 14544 $
+Revision: $Rev: 15000 $
 Author(s): Rabbit (rabbit.magtheridon@gmail.com), maia
 Documentation: http://www.wowace.com/index.php/Banzai-1.0_API_Documentation
 SVN: http://svn.wowace.com/root/trunk/BanzaiLib/Banzai-1.0
@@ -13,7 +13,7 @@ Dependencies: AceLibrary, AceEvent-2.0, RosterLib-2.0
 -------------------------------------------------------------------------------
 
 local MAJOR_VERSION = "Banzai-1.0"
-local MINOR_VERSION = "$Revision: 14544 $"
+local MINOR_VERSION = "$Revision: 15000 $"
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
 if not AceLibrary:HasInstance("RosterLib-2.0") then error(MAJOR_VERSION .. " requires RosterLib-2.0.") end
@@ -95,41 +95,36 @@ end
 function lib:UpdateAggroList()
 	local oldBanzai = acquire()
 
-	for i, unit in pairs(roster) do
+	for _, unit in pairs(roster) do
 		oldBanzai[unit.unitid] = unit.banzai
 
 		-- deduct aggro for all, increase it later for everyone with aggro
-		if not unit.banzaiModifier then unit.banzaiModifier = 0 end
-		unit.banzaiModifier = math.max(0, unit.banzaiModifier - 5)
+		unit.banzaiModifier = math.max(0, (unit.banzaiModifier or 0) - 5)
 
 		-- check for aggro
 		local targetId = unit.unitid .. "target"
-		local targetName = UnitName(targetId .. "target")
-		if roster[targetName] and UnitCanAttack("player", targetId) and UnitCanAttack(targetId, "player") then
-			if not roster[targetName].banzaiModifier then roster[targetName].banzaiModifier = 0 end
-			roster[targetName].banzaiModifier = roster[targetName].banzaiModifier + 10
-			if not roster[targetName].banzaiTarget then roster[targetName].banzaiTarget = acquire() end
-			table.insert(roster[targetName].banzaiTarget, targetId)
+		local rosterUnit = roster[UnitName(targetId .. "target")]
+		if rosterUnit and UnitCanAttack("player", targetId) and UnitCanAttack(targetId, "player") then
+			rosterUnit.banzaiModifier = (rosterUnit.banzaiModifier or 0) + 10
 		end
 
 		-- cleanup
-		unit.banzaiModifier = math.max(0, unit.banzaiModifier)
-		unit.banzaiModifier = math.min(25, unit.banzaiModifier)
+		unit.banzaiModifier = math.min(20, unit.banzaiModifier)
 
 		-- set aggro
 		unit.banzai = (unit.banzaiModifier > 15)
 	end
 
-	for i, unit in pairs(roster) do
+	for _, unit in pairs(roster) do
 		if oldBanzai[unit.unitid] ~= nil and oldBanzai[unit.unitid] ~= unit.banzai then
 			-- Aggro status has changed.
-			if unit.banzai == true and unit.banzaiTarget then
+			if unit.banzai == true then
 				-- Unit has aggro
-				self:TriggerEvent("Banzai_UnitGainedAggro", unit.unitid, unit.banzaiTarget)
+				self:TriggerEvent("Banzai_UnitGainedAggro", unit.unitid)
 				if unit.name == playerName then
-					self:TriggerEvent("Banzai_PlayerGainedAggro", unit.banzaiTarget)
+					self:TriggerEvent("Banzai_PlayerGainedAggro")
 				end
-			elseif unit.banzai == false then
+			else
 				-- Unit lost aggro
 				self:TriggerEvent("Banzai_UnitLostAggro", unit.unitid)
 				if unit.name == playerName then
@@ -137,8 +132,6 @@ function lib:UpdateAggroList()
 				end
 			end
 		end
-		reclaim(unit.banzaiTarget)
-		unit.banzaiTarget = nil
 	end
 
 	reclaim(oldBanzai)
