@@ -3124,7 +3124,7 @@ function LunaUF:CreateOptionsMenu()
 	getglobal("EnableColorsTrackerText"):SetText(L["Use colors instead of icons"])
 
 	LunaOptionsFrame.pages[page].buffheader = LunaOptionsFrame.pages[page]:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-	LunaOptionsFrame.pages[page].buffheader:SetPoint("TOP", LunaOptionsFrame.pages[page].colors, "BOTTOM", 20, -10)
+	LunaOptionsFrame.pages[page].buffheader:SetPoint("TOPLEFT", LunaOptionsFrame.pages[page].colors, "BOTTOMLEFT", 0, -20)
 	LunaOptionsFrame.pages[page].buffheader:SetText(L["Buffs to track"])
 
 	LunaOptionsFrame.pages[page].buffinvert = CreateFrame("CheckButton", "BuffInvert", LunaOptionsFrame.pages[page], "UICheckButtonTemplate")
