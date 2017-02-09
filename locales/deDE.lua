@@ -354,6 +354,7 @@ local function deDE() return {
 ["you"] = "Euch",
 ["You"] = "Euch",
 ["Enable Combatlog based Range"] = "Schalte Kampflog-basierte Entfernungsmessung ein",
+["Globally disable castbars of others"] = "Schalte fremde Wirkungsleisten global ab",
 ["Combat alpha"] = "Kampf-Alpha",
 ["Non combat alpha"] = "Nicht-Kampf-Alpha",
 ["Speedy Fade"] = "Schneller Wechsel",

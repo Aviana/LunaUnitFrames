@@ -351,6 +351,7 @@ local function zhCN() return {
 ["you"] = "你",
 ["You"] = "你",
 ["Enable Combatlog based Range"] = "启用基于战斗记录的范围",
+["Globally disable castbars of others"] = "Globally disable castbars of others",
 ["Combat alpha"] = "战斗透明度",
 ["Non combat alpha"] = "非战斗透明度",
 ["Speedy Fade"] = "Speedy Fade",

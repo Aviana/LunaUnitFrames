@@ -421,7 +421,7 @@ local function ProcessData(mob, spell, special)
 end
 
 local function OnChatEvent()
-	if (arg1 ~= nil) then
+	if (arg1 ~= nil and not LunaUF.db.profile.enemyCastbars) then
 		for pattern, data_type in pairs(CHAT_PATTERNS) do
 			for mob, spell in string.gfind(arg1, pattern) do
 				ProcessData(mob, spell, data_type)

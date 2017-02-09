@@ -711,6 +711,7 @@ function LunaUF:LoadOptions()
 	LunaOptionsFrame.pages[page].mouseovercheck:SetChecked(LunaUF.db.profile.mouseover)
 	LunaOptionsFrame.pages[page].rangepolling:SetValue(LunaUF.db.profile.RangePolRate or 1.5)
 	LunaOptionsFrame.pages[page].rangecl:SetChecked(LunaUF.db.profile.RangeCLparsing)
+	LunaOptionsFrame.pages[page].ecast:SetChecked(LunaUF.db.profile.enemyCastbars)
 	local page = 2
 	LunaOptionsFrame.pages[page].ticker:SetChecked(LunaUF.db.profile.units.player.powerBar.ticker)
 	LunaOptionsFrame.pages[page].manausage:SetChecked(LunaUF.db.profile.units.player.powerBar.manaUsage)
@@ -1282,6 +1283,22 @@ function LunaUF:CreateOptionsMenu()
 		LunaUF.db.profile.RangeCLparsing = not LunaUF.db.profile.RangeCLparsing
 	end)
 	getglobal("RangeCombatLogText"):SetText(L["Enable Combatlog based Range"])
+	
+	LunaOptionsFrame.pages[page].enemyCastbar = LunaOptionsFrame.pages[page]:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+	LunaOptionsFrame.pages[page].enemyCastbar:SetPoint("TOPLEFT", LunaOptionsFrame.pages[page], "TOPLEFT", 20, -610)
+	LunaOptionsFrame.pages[page].enemyCastbar:SetHeight(24)
+	LunaOptionsFrame.pages[page].enemyCastbar:SetJustifyH("LEFT")
+	LunaOptionsFrame.pages[page].enemyCastbar:SetTextColor(1,1,0)
+	LunaOptionsFrame.pages[page].enemyCastbar:SetText(L["Cast bar"])
+	
+	LunaOptionsFrame.pages[page].ecast = CreateFrame("CheckButton", "LunaEnemyCastBars", LunaOptionsFrame.pages[page], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[page].ecast:SetPoint("TOPLEFT", LunaOptionsFrame.pages[page], "TOPLEFT", 20, -640)
+	LunaOptionsFrame.pages[page].ecast:SetHeight(30)
+	LunaOptionsFrame.pages[page].ecast:SetWidth(30)
+	LunaOptionsFrame.pages[page].ecast:SetScript("OnClick", function()
+		LunaUF.db.profile.enemyCastbars = not LunaUF.db.profile.enemyCastbars
+	end)
+	getglobal("LunaEnemyCastBarsText"):SetText(L["Globally disable castbars of others"])
 
 	for i=2, 11 do
 		LunaOptionsFrame.pages[i].id = LunaUF.unitList[i-1]

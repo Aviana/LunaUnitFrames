@@ -352,6 +352,7 @@ local function frFR() return {
 ["you"] = "you",
 ["You"] = "You",
 ["Enable Combatlog based Range"] = "Enable Combatlog based Range",
+["Globally disable castbars of others"] = "Globally disable castbars of others",
 ["Combat alpha"] = "Combat alpha",
 ["Non combat alpha"] = "Non combat alpha",
 ["Speedy Fade"] = "Speedy Fade",
