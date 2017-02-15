@@ -677,6 +677,8 @@ function LunaUF:LoadOptions()
 			LunaOptionsFrame.pages[i].healsizeslider:SetValue(LunaUF.db.profile.units[unit].incheal.cap*100)
 		end
 		LunaOptionsFrame.pages[i].enableauras:SetChecked(LunaUF.db.profile.units[unit].auras.enabled)
+		LunaOptionsFrame.pages[i].enableaurabuffs:SetChecked(LunaUF.db.profile.units[unit].auras.buffs.enabled)
+		LunaOptionsFrame.pages[i].enableauradebuffs:SetChecked(LunaUF.db.profile.units[unit].auras.debuffs.enabled)
 		LunaOptionsFrame.pages[i].enablebordercolor:SetChecked(LunaUF.db.profile.units[unit].auras.bordercolor)
 		SetDropDownValue(LunaOptionsFrame.pages[i].auraposition,LunaUF.db.profile.units[unit].auras.position)
 		LunaOptionsFrame.pages[i].aurasizeslider:SetValue(17-LunaUF.db.profile.units[unit].auras.AurasPerRow)
@@ -2294,7 +2296,37 @@ function LunaUF:CreateOptionsMenu()
 			end
 		end)
 		getglobal("Enable"..LunaUF.unitList[i-1].."Auras".."Text"):SetText(L["Enable"])
-
+				
+		LunaOptionsFrame.pages[i].enableaurabuffs = CreateFrame("CheckButton", "Enable"..LunaUF.unitList[i-1].."Aurabuffs", LunaOptionsFrame.pages[i], "UICheckButtonTemplate")
+		LunaOptionsFrame.pages[i].enableaurabuffs:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].auraheader, "BOTTOMLEFT", 140, -50)
+		LunaOptionsFrame.pages[i].enableaurabuffs:SetHeight(30)
+		LunaOptionsFrame.pages[i].enableaurabuffs:SetWidth(30)
+		LunaOptionsFrame.pages[i].enableaurabuffs:SetScript("OnClick", function()
+			local unit = this:GetParent().id
+			LunaUF.db.profile.units[unit].auras.buffs.enabled = not LunaUF.db.profile.units[unit].auras.buffs.enabled
+			for _,frame in pairs(LunaUF.Units.frameList) do
+				if frame.unitGroup == unit then
+					LunaUF.Units.FullUpdate(frame)
+				end
+			end
+		end)
+		getglobal("Enable"..LunaUF.unitList[i-1].."Aurabuffs".."Text"):SetText(L["Buffs"])
+		
+		LunaOptionsFrame.pages[i].enableauradebuffs = CreateFrame("CheckButton", "Enable"..LunaUF.unitList[i-1].."Auradebuffs", LunaOptionsFrame.pages[i], "UICheckButtonTemplate")
+		LunaOptionsFrame.pages[i].enableauradebuffs:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].auraheader, "BOTTOMLEFT", 200, -50)
+		LunaOptionsFrame.pages[i].enableauradebuffs:SetHeight(30)
+		LunaOptionsFrame.pages[i].enableauradebuffs:SetWidth(30)
+		LunaOptionsFrame.pages[i].enableauradebuffs:SetScript("OnClick", function()
+			local unit = this:GetParent().id
+			LunaUF.db.profile.units[unit].auras.debuffs.enabled = not LunaUF.db.profile.units[unit].auras.debuffs.enabled
+			for _,frame in pairs(LunaUF.Units.frameList) do
+				if frame.unitGroup == unit then
+					LunaUF.Units.FullUpdate(frame)
+				end
+			end
+		end)
+		getglobal("Enable"..LunaUF.unitList[i-1].."Auradebuffs".."Text"):SetText(L["Debuffs"])
+		
 		LunaOptionsFrame.pages[i].auraposition = CreateFrame("Button", "AuraPosition"..LunaUF.unitList[i-1], LunaOptionsFrame.pages[i], "UIDropDownMenuTemplate")
 		LunaOptionsFrame.pages[i].auraposition:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].auraheader, "BOTTOMLEFT", 60 , -10)
 		UIDropDownMenu_SetWidth(80, LunaOptionsFrame.pages[i].auraposition)
