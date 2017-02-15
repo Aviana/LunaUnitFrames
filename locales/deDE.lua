@@ -144,6 +144,7 @@ local function deDE() return {
 ["Background alpha"] = "Hintergrund alpha",
 ["Blizzard frames"] = "Blizzard Einheiten",
 ["Buffs"] = "St\195\164rkungszauber",
+["Debuffs"] = "Debuffs",
 ["Weaponbuffs"] = "Waffenst\195\164rkungszauber",
 ["Enable"] = "Einschalten",
 ["Height"] = "H\195\182he",

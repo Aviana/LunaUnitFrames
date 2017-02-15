@@ -141,6 +141,7 @@ local function zhCN() return {
 ["Background alpha"] = "背景透明度",
 ["Blizzard frames"] = "暴雪框架",
 ["Buffs"] = "增益",
+["Debuffs"] = "Debuffs",
 ["Weaponbuffs"] = "武器增益",
 ["Enable"] = "启用",
 ["Height"] = "高度",
