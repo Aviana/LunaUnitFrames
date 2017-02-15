@@ -142,6 +142,7 @@ local function zhCN() return {
 ["Blizzard frames"] = "暴雪框架",
 ["Buffs"] = "增益",
 ["Debuffs"] = "Debuffs",
+["BOTH"] = "Both",
 ["Weaponbuffs"] = "武器增益",
 ["Enable"] = "启用",
 ["Height"] = "高度",

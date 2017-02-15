@@ -145,6 +145,7 @@ local function deDE() return {
 ["Blizzard frames"] = "Blizzard Einheiten",
 ["Buffs"] = "St\195\164rkungszauber",
 ["Debuffs"] = "Debuffs",
+["BOTH"] = "Both",
 ["Weaponbuffs"] = "Waffenst\195\164rkungszauber",
 ["Enable"] = "Einschalten",
 ["Height"] = "H\195\182he",

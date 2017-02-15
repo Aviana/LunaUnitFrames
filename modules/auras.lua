@@ -64,15 +64,15 @@ local function BuffFrameUpdate(frame, buildOnly)
 	end
 	local rows = math.ceil(numBuffs/config.AurasPerRow)
 	local height
-	if not config.buffs.enabled then		
-		height = rows*auraframe.debuffbuttons[1]:GetHeight()+rows
+	if config.buffs=="DEBUFFS" then		
+		height = rows*auraframe.buffbuttons[1]:GetHeight()+rows		
 	else
-		height = rows*auraframe.buffbuttons[1]:GetHeight()+rows
+		height = rows*auraframe.debuffbuttons[1]:GetHeight()+rows
 	end
 	auraframe:SetHeight(height == 0 and 1 or height)
 	local texture, stacks, dtype
 	local currentEventTime = GetTime()
-	if config.buffs.enabled then
+	if config.buffs=="BUFFS" or config.buffs=="BOTH" then
 		for i,button in ipairs(auraframe.buffbuttons) do
 			local buffIndex, untilCancelled
 			if isPlayer then
@@ -165,7 +165,7 @@ local function BuffFrameUpdate(frame, buildOnly)
 			end
 		end
 	end
-	if config.debuffs.enabled then
+	if config.buffs=="BOTH" or config.buffs=="DEBUFFS" then
 		for i,button in ipairs(auraframe.debuffbuttons) do
 			local buffIndex, untilCancelled
 			if isPlayer then
@@ -492,7 +492,7 @@ function Auras:FullUpdate(frame)
 	if config.position == "TOP" then
 		frame.auras:SetPoint("BOTTOMLEFT", frame, "TOPLEFT", 0, 3)
 		for i,button in ipairs(frame.auras.buffbuttons) do
-			if config.buffs.enabled then
+			if config.buffs=="BUFFS" or config.buffs=="BOTH" then
 				button:ClearAllPoints()
 				button:SetHeight(buttonsize)
 				button:SetWidth(buttonsize)
@@ -512,14 +512,14 @@ function Auras:FullUpdate(frame)
 			end
 		end
 		for i,button in ipairs(frame.auras.debuffbuttons) do
-			if config.debuffs.enabled then
+			if config.buffs=="BOTH" or config.buffs=="DEBUFFS" then
 				button:ClearAllPoints()
 				button:SetHeight(buttonsize)
 				button:SetWidth(buttonsize)
 				button.border:SetHeight(buttonsize+1)
 				button.border:SetWidth(buttonsize+1)
 				button.stack:SetText(i)
-				if not config.buffs.enabled then
+				if config.buffs=="DEBUFFS" then
 					button:SetPoint("BOTTOMLEFT", frame.auras, "BOTTOMLEFT", (i-1)*(buttonsize+1)-((math.ceil(i/config.AurasPerRow)-1)*(config.AurasPerRow)*(buttonsize+1)), (math.ceil(i/config.AurasPerRow)-1)*(buttonsize+1))
 				else
 					button:SetPoint("BOTTOMLEFT", frame.auras, "TOPLEFT", (i-1)*(buttonsize+1)-((math.ceil(i/config.AurasPerRow)-1)*(config.AurasPerRow)*(buttonsize+1)), (math.ceil(i/config.AurasPerRow)-1)*(buttonsize+1))
@@ -538,7 +538,7 @@ function Auras:FullUpdate(frame)
 	elseif config.position == "LEFT" then
 		frame.auras:SetPoint("TOPRIGHT", frame, "TOPLEFT", -3, 0)
 		for i,button in ipairs(frame.auras.buffbuttons) do
-			if config.buffs.enabled then
+			if config.buffs=="BUFFS" or config.buffs=="BOTH" then
 				button:ClearAllPoints()
 				button:SetHeight(buttonsize)
 				button:SetWidth(buttonsize)
@@ -558,14 +558,14 @@ function Auras:FullUpdate(frame)
 			end
 		end
 		for i,button in ipairs(frame.auras.debuffbuttons) do
-			if config.debuffs.enabled then
+			if config.buffs=="BOTH" or config.buffs=="DEBUFFS" then
 				button:ClearAllPoints()
 				button:SetHeight(buttonsize)
 				button:SetWidth(buttonsize)
 				button.border:SetHeight(buttonsize+1)
 				button.border:SetWidth(buttonsize+1)
 				button.stack:SetText(i)
-				if not config.buffs.enabled then
+				if config.buffs=="DEBUFFS" then
 					button:SetPoint("TOPRIGHT", frame.auras, "TOPRIGHT", -((i-1)*(buttonsize+1)-((math.ceil(i/config.AurasPerRow)-1)*(config.AurasPerRow)*(buttonsize+1))), -(math.ceil(i/config.AurasPerRow)-1)*(buttonsize+1))
 				else
 					button:SetPoint("TOPRIGHT", frame.auras, "BOTTOMRIGHT", -((i-1)*(buttonsize+1)-((math.ceil(i/config.AurasPerRow)-1)*(config.AurasPerRow)*(buttonsize+1))), -(math.ceil(i/config.AurasPerRow)-1)*(buttonsize+1))
@@ -588,7 +588,7 @@ function Auras:FullUpdate(frame)
 			frame.auras:SetPoint("TOPLEFT", frame, "TOPRIGHT", 3, 0)
 		end
 		for i,button in ipairs(frame.auras.buffbuttons) do
-			if config.buffs.enabled then
+			if config.buffs=="BUFFS" or config.buffs=="BOTH" then
 				button:ClearAllPoints()
 				button:SetHeight(buttonsize)
 				button:SetWidth(buttonsize)
@@ -608,14 +608,14 @@ function Auras:FullUpdate(frame)
 			end
 		end
 		for i,button in ipairs(frame.auras.debuffbuttons) do
-			if config.debuffs.enabled then
+			if config.buffs=="BOTH" or config.buffs=="DEBUFFS" then
 				button:ClearAllPoints()
 				button:SetHeight(buttonsize)
 				button:SetWidth(buttonsize)
 				button.border:SetHeight(buttonsize+1)
 				button.border:SetWidth(buttonsize+1)
 				button.stack:SetText(i)
-				if not config.buffs.enabled then
+				if config.buffs=="DEBUFFS" then
 					button:SetPoint("TOPLEFT", frame.auras, "TOPLEFT", (i-1)*(buttonsize+1)-((math.ceil(i/config.AurasPerRow)-1)*(config.AurasPerRow)*(buttonsize+1)), -(math.ceil(i/config.AurasPerRow)-1)*(buttonsize+1))
 				else
 					button:SetPoint("TOPLEFT", frame.auras, "BOTTOMLEFT", (i-1)*(buttonsize+1)-((math.ceil(i/config.AurasPerRow)-1)*(config.AurasPerRow)*(buttonsize+1)), -(math.ceil(i/config.AurasPerRow)-1)*(buttonsize+1))

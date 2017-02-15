@@ -142,6 +142,7 @@ local function enUS() return {
 ["Blizzard frames"] = "Blizzard frames",
 ["Buffs"] = "Buffs",
 ["Debuffs"] = "Debuffs",
+["BOTH"] = "Both",
 ["Weaponbuffs"] = "Weaponbuffs",
 ["Enable"] = "Enable",
 ["Height"] = "Height",
