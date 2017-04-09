@@ -169,15 +169,8 @@ local function GetLootMaster()
 		else
 			return lootmaster
 		end
-		else if lootmethod == "group" then
-			if pid == 0 then
-				return GetUnitName(pid == 0 and "player")
-			elseif pid == nil then
-				return nil
-			else
-				return GetUnitName("party"..pid)
-			end
-		end
+	else if lootmethod == "group" and pid then
+		return GetUnitName((pid == 0 and "player") or "party"..pid)
 	end
 end
 
