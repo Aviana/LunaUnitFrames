@@ -1,6 +1,6 @@
 --[[
 Name: RosterLib-2.0
-Revision: $Revision: 16213 $
+Revision: $Revision: 17213 $
 X-ReleaseDate: $Date: 2006-08-10 08:55:29 +0200 (Thu, 10 Aug 2006) $
 Author: Maia (maia.proudmoore@gmail.com)
 Website: http://wiki.wowace.com/index.php/RosterLib-2.0
@@ -11,7 +11,7 @@ Dependencies: AceLibrary, AceOO-2.0, AceEvent-2.0
 ]]
 
 local MAJOR_VERSION = "RosterLib-2.0"
-local MINOR_VERSION = "$Revision: 16213 $"
+local MINOR_VERSION = "$Revision: 17213 $"
 
 if not AceLibrary then error(vmajor .. " requires AceLibrary.") end
 if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end
@@ -279,8 +279,8 @@ function RosterLib:CreateOrUpdateUnit(unitid)
 			_,roster[name].class = UnitClass(unitid)
 		end
 		-- subgroup and rank
-		if GetNumRaidMembers() > 0 then
-			local _,_,num = string.find(unitid, "(%d+)")
+		local _,_,num = string.find(unitid, "(%d+)")
+		if GetNumRaidMembers() > 0 and num then
 			_,roster[name].rank,roster[name].subgroup = GetRaidRosterInfo(num)
 		else
 			roster[name].subgroup = 1
