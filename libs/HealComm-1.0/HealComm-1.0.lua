@@ -1,6 +1,6 @@
 --[[
 Name: HealComm-1.0
-Revision: $Rev: 11500 $
+Revision: $Rev: 11600 $
 Author(s): aviana
 Website: https://github.com/Aviana
 Description: A library to provide communication of heals and resurrections.
@@ -8,7 +8,7 @@ Dependencies: AceLibrary, AceEvent-2.0, RosterLib-2.0
 ]]
 
 local MAJOR_VERSION = "HealComm-1.0"
-local MINOR_VERSION = "$Revision: 11500 $"
+local MINOR_VERSION = "$Revision: 11600 $"
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
 if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end
@@ -991,7 +991,7 @@ end
 function HealComm:GetBuffSpellPower()
 	local Spellpower = 0
 	local healmod = 1
-	for i=1, 16 do
+	for i=1, 32 do
 		local buffTexture, buffApplications = UnitBuff("player", i)
 		if not buffTexture then
 			return Spellpower, healmod
@@ -1011,7 +1011,7 @@ function HealComm:GetUnitSpellPower(unit)
 	local targetmod = 1
 	local buffTexture, buffApplications
 	local debuffTexture, debuffApplications
-	for i=1, 16 do
+	for i=1, 32 do
 		if UnitIsVisible(unit) and UnitIsConnected(unit) and UnitCanAssist("player", unit) then
 			buffTexture, buffApplications = UnitBuff(unit, i)
 			healcommTip:SetUnitBuff("target", i)
@@ -1505,7 +1505,7 @@ function HealComm:CastSpellByName(spellName, onSelf)
 		self.CurrentSpellName = spellName
 		self.CurrentSpellRank = rank
 		
-		if not SpellIsTargeting() then
+		if not SpellIsTargeting() and GetCVar("AutoSelfCast") == "1" then
 			if UnitIsVisible("target") and UnitIsConnected("target") and UnitCanAssist("player", "target") and onSelf ~= 1 then
 				if UnitIsPlayer("target") then
 					self:ProcessSpellCast("target")
@@ -1525,7 +1525,7 @@ function HealComm:OnMouseDown(object)
 			unit = roster:GetUnitIDFromName(name)
 		end
 	end
-	if ( self.CurrentSpellName and SpellIsTargeting() ) then
+	if ( self.CurrentSpellName and SpellIsTargeting() and UnitExists(unit) ) then
 		self:ProcessSpellCast(unit)
 	end
 	if ( self.hooks[object]["OnMouseDown"] ) then

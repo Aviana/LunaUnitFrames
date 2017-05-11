@@ -49,7 +49,7 @@ function LunaUF:CastSpellByName_IgnoreSelfCast(spell, onPlayer)
 end
 
 function LunaUF:isDualSpell(spell)
-	return strfind(spell,self.BS["Holy Shock"]) or strfind(spell, self.BS["Mind Vision"]) or strfind(spell, self.BS["Dispel Magic"])
+	return strfind(spell,self.BS["Holy Shock"]) or strfind(spell, self.BS["Mind Vision"]) or strfind(spell, self.BS["Dispel Magic"]) or strfind(spell, self.BS["Devour Magic"])
 end
 
 function LunaUF:Mouseover(action)

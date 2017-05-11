@@ -2,7 +2,7 @@ local Combat = {}
 LunaUF:RegisterModule(Combat, "combatText", LunaUF.L["Combat text"])
 
 local function OnEvent()
-	if arg1 == this:GetParent().unit then
+	if UnitIsUnit(arg1,this:GetParent().unit) then
 		CombatFeedback_OnCombatEvent(arg2, arg3, arg4, arg5)
 	end
 end

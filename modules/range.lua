@@ -304,7 +304,7 @@ function Range:OnEnable(frame)
 	if not frame.range then
 		frame.range = CreateFrame("Frame", nil, frame)
 	end
-	frame.range.lastUpdate = GetTime()
+	frame.range.lastUpdate = GetTime() - 5
 	frame.range:SetScript("OnUpdate", OnUpdate)
 end
 
