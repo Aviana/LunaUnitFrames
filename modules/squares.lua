@@ -256,7 +256,7 @@ function Squares:UpdateAuras(frame)
 	i = 1
 	for k,v in pairs(debuffs) do
 		if config.colors then
-			frame.squares.trackdebuffs[i].texture:SetTexture(config.debuffs[k].colors.r,config.debuffs.colors[k].g,config.debuffs.colors[k].b)
+			frame.squares.trackdebuffs[i].texture:SetTexture(config.debuffs.colors[k].r,config.debuffs.colors[k].g,config.debuffs.colors[k].b)
 		else
 			frame.squares.trackdebuffs[i].texture:SetTexture(v)
 		end
