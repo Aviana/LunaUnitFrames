@@ -208,7 +208,7 @@ function Squares:UpdateAuras(frame)
 
 			if invert then
 				if not buffs[k] then
-					if config.colors then
+					if config.buffcolors then
 						frame.squares.buffs[i].texture:SetTexture(config.buffs.colors[k].r,config.buffs.colors[k].g,config.buffs.colors[k].b)
 					else
 						frame.squares.buffs[i].texture:SetTexture(BS:GetSpellIcon(v))
@@ -218,7 +218,7 @@ function Squares:UpdateAuras(frame)
 				end
 			else
 				if buffs[k] then
-					if config.colors then
+					if config.buffcolors then
 						frame.squares.buffs[i].texture:SetTexture(config.buffs.colors[k].r,config.buffs.colors[k].g,config.buffs.colors[k].b)
 					else
 						frame.squares.buffs[i].texture:SetTexture(buffs[k])
@@ -238,7 +238,7 @@ function Squares:UpdateAuras(frame)
 
 		texture,_,disptype = UnitDebuff(frame.unit,i,config.owndispdebuffs)
 		if texture and config.enabledebuffs and (not config.dispellabledebuffs or disptype) and num <= 3 then
-			if config.colors then
+			if config.debuffcolors then
 				if disptype then
 					local r,g,b = unpack(LunaUF.db.profile.magicColors[disptype])
 					frame.squares.debuffs[num].texture:SetTexture(r,g,b)
@@ -263,7 +263,7 @@ function Squares:UpdateAuras(frame)
 	end
 	i = 1
 	for k,v in pairs(debuffs) do
-		if config.colors then
+		if config.debuffcolors then
 			frame.squares.trackdebuffs[i].texture:SetTexture(config.debuffs.colors[k].r,config.debuffs.colors[k].g,config.debuffs.colors[k].b)
 		else
 			frame.squares.trackdebuffs[i].texture:SetTexture(v)

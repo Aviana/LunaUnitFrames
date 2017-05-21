@@ -758,7 +758,8 @@ function LunaUF:LoadOptions()
 	LunaOptionsFrame.pages[page].aggrocolor.load(LunaOptionsFrame.pages[page].aggrocolor,LunaUF.db.profile.units.raid.squares.aggrocolor)
 	LunaOptionsFrame.pages[page].hottracker:SetChecked(LunaUF.db.profile.units.raid.squares.hottracker)
 	LunaOptionsFrame.pages[page].innersizeslider:SetValue(LunaUF.db.profile.units.raid.squares.innersize)
-	LunaOptionsFrame.pages[page].colors:SetChecked(LunaUF.db.profile.units.raid.squares.colors)
+	LunaOptionsFrame.pages[page].buffcolors:SetChecked(LunaUF.db.profile.units.raid.squares.buffcolors)
+	LunaOptionsFrame.pages[page].debuffcolors:SetChecked(LunaUF.db.profile.units.raid.squares.debuffcolors)
 	LunaOptionsFrame.pages[page].firstbuffinvert:SetChecked(LunaUF.db.profile.units.raid.squares.invertfirstbuff)
 	LunaOptionsFrame.pages[page].secondbuffinvert:SetChecked(LunaUF.db.profile.units.raid.squares.invertsecondbuff)
 	LunaOptionsFrame.pages[page].thirdbuffinvert:SetChecked(LunaUF.db.profile.units.raid.squares.invertthirdbuff)
@@ -3128,22 +3129,36 @@ function LunaUF:CreateOptionsMenu()
 	LunaOptionsFrame.pages[page].innersizeslider:SetPoint("TOPLEFT", LunaOptionsFrame.pages[page].hottracker, "TOPLEFT", 200, 0)
 	LunaOptionsFrame.pages[page].innersizeslider:SetWidth(230)
 
-	LunaOptionsFrame.pages[page].colors = CreateFrame("CheckButton", "EnableColorsTracker", LunaOptionsFrame.pages[page], "UICheckButtonTemplate")
-	LunaOptionsFrame.pages[page].colors:SetPoint("TOPLEFT", LunaOptionsFrame.pages[page].hottracker, "BOTTOMLEFT", 0, -10)
-	LunaOptionsFrame.pages[page].colors:SetHeight(30)
-	LunaOptionsFrame.pages[page].colors:SetWidth(30)
-	LunaOptionsFrame.pages[page].colors:SetScript("OnClick", function()
-		LunaUF.db.profile.units.raid.squares.colors = not LunaUF.db.profile.units.raid.squares.colors
+	LunaOptionsFrame.pages[page].buffcolors = CreateFrame("CheckButton", "EnableBuffColorsTracker", LunaOptionsFrame.pages[page], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[page].buffcolors:SetPoint("TOPLEFT", LunaOptionsFrame.pages[page].hottracker, "BOTTOMLEFT", 0, -10)
+	LunaOptionsFrame.pages[page].buffcolors:SetHeight(30)
+	LunaOptionsFrame.pages[page].buffcolors:SetWidth(30)
+	LunaOptionsFrame.pages[page].buffcolors:SetScript("OnClick", function()
+		LunaUF.db.profile.units.raid.squares.buffcolors = not LunaUF.db.profile.units.raid.squares.buffcolors
 		for _,frame in pairs(LunaUF.Units.frameList) do
 			if frame.unitGroup == "raid" then
 				LunaUF.Units.FullUpdate(frame)
 			end
 		end
 	end)
-	getglobal("EnableColorsTrackerText"):SetText(L["Use colors instead of icons"])
+	getglobal("EnableBuffColorsTrackerText"):SetText(L["Colors instead of icons for buffs"])
+
+	LunaOptionsFrame.pages[page].debuffcolors = CreateFrame("CheckButton", "EnableDebuffColorsTracker", LunaOptionsFrame.pages[page], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[page].debuffcolors:SetPoint("TOPLEFT", LunaOptionsFrame.pages[page].hottracker, "BOTTOMLEFT", 200, -10)
+	LunaOptionsFrame.pages[page].debuffcolors:SetHeight(30)
+	LunaOptionsFrame.pages[page].debuffcolors:SetWidth(30)
+	LunaOptionsFrame.pages[page].debuffcolors:SetScript("OnClick", function()
+		LunaUF.db.profile.units.raid.squares.debuffcolors = not LunaUF.db.profile.units.raid.squares.debuffcolors
+		for _,frame in pairs(LunaUF.Units.frameList) do
+			if frame.unitGroup == "raid" then
+				LunaUF.Units.FullUpdate(frame)
+			end
+		end
+	end)
+	getglobal("EnableDebuffColorsTrackerText"):SetText(L["Colors instead of icons for debuffs"])
 
 	LunaOptionsFrame.pages[page].buffheader = LunaOptionsFrame.pages[page]:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-	LunaOptionsFrame.pages[page].buffheader:SetPoint("TOPLEFT", LunaOptionsFrame.pages[page].colors, "BOTTOMLEFT", 0, -20)
+	LunaOptionsFrame.pages[page].buffheader:SetPoint("TOPLEFT", LunaOptionsFrame.pages[page].buffcolors, "BOTTOMLEFT", 0, -20)
 	LunaOptionsFrame.pages[page].buffheader:SetText(L["Buffs to track"])
 
 	local function Exit()
