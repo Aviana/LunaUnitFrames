@@ -705,7 +705,9 @@ LunaUF.defaults = {
 					aggrocolor = {r=1,g=0,b=0},
 					hottracker = true,
 					colors = false,
-					invertbuffs = false,
+					invertfirstbuff = false,
+					invertsecondbuff = false,
+					invertthirdbuff = false,
 					buffs = {
 						names = {
 							[1] = "",

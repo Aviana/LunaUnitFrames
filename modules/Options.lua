@@ -759,7 +759,9 @@ function LunaUF:LoadOptions()
 	LunaOptionsFrame.pages[page].hottracker:SetChecked(LunaUF.db.profile.units.raid.squares.hottracker)
 	LunaOptionsFrame.pages[page].innersizeslider:SetValue(LunaUF.db.profile.units.raid.squares.innersize)
 	LunaOptionsFrame.pages[page].colors:SetChecked(LunaUF.db.profile.units.raid.squares.colors)
-	LunaOptionsFrame.pages[page].buffinvert:SetChecked(LunaUF.db.profile.units.raid.squares.invertbuffs)
+	LunaOptionsFrame.pages[page].firstbuffinvert:SetChecked(LunaUF.db.profile.units.raid.squares.invertfirstbuff)
+	LunaOptionsFrame.pages[page].secondbuffinvert:SetChecked(LunaUF.db.profile.units.raid.squares.invertsecondbuff)
+	LunaOptionsFrame.pages[page].thirdbuffinvert:SetChecked(LunaUF.db.profile.units.raid.squares.invertthirdbuff)
 	LunaOptionsFrame.pages[page].firstbuff:SetText(LunaUF.db.profile.units.raid.squares.buffs.names[1])
 	LunaOptionsFrame.pages[page].firstbuffcolor.load(LunaOptionsFrame.pages[page].firstbuffcolor,LunaUF.db.profile.units.raid.squares.buffs.colors[1])
 	LunaOptionsFrame.pages[page].secondbuff:SetText(LunaUF.db.profile.units.raid.squares.buffs.names[2])
@@ -3144,20 +3146,6 @@ function LunaUF:CreateOptionsMenu()
 	LunaOptionsFrame.pages[page].buffheader:SetPoint("TOPLEFT", LunaOptionsFrame.pages[page].colors, "BOTTOMLEFT", 0, -20)
 	LunaOptionsFrame.pages[page].buffheader:SetText(L["Buffs to track"])
 
-	LunaOptionsFrame.pages[page].buffinvert = CreateFrame("CheckButton", "BuffInvert", LunaOptionsFrame.pages[page], "UICheckButtonTemplate")
-	LunaOptionsFrame.pages[page].buffinvert:SetPoint("LEFT", LunaOptionsFrame.pages[page].buffheader, "RIGHT", 50, 0)
-	LunaOptionsFrame.pages[page].buffinvert:SetHeight(15)
-	LunaOptionsFrame.pages[page].buffinvert:SetWidth(15)
-	LunaOptionsFrame.pages[page].buffinvert:SetScript("OnClick", function()
-		LunaUF.db.profile.units.raid.squares.invertbuffs = not LunaUF.db.profile.units.raid.squares.invertbuffs
-		for _,frame in pairs(LunaUF.Units.frameList) do
-			if frame.unitGroup == "raid" then
-				LunaUF.Units.FullUpdate(frame)
-			end
-		end
-	end)
-	getglobal("BuffInvertText"):SetText(L["Invert display"])
-
 	local function Exit()
 		this:ClearFocus()
 	end
@@ -3184,6 +3172,20 @@ function LunaUF:CreateOptionsMenu()
 	LunaOptionsFrame.pages[page].firstbuffcolor:SetWidth(19)
 	LunaOptionsFrame.pages[page].firstbuffcolor.text:SetText(L["Buffcolor"])
 
+	LunaOptionsFrame.pages[page].firstbuffinvert = CreateFrame("CheckButton", "FirstBuffInvert", LunaOptionsFrame.pages[page], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[page].firstbuffinvert:SetPoint("LEFT", LunaOptionsFrame.pages[page].firstbuffcolor, "RIGHT", 70, 0)
+	LunaOptionsFrame.pages[page].firstbuffinvert:SetHeight(15)
+	LunaOptionsFrame.pages[page].firstbuffinvert:SetWidth(15)
+	LunaOptionsFrame.pages[page].firstbuffinvert:SetScript("OnClick", function()
+		LunaUF.db.profile.units.raid.squares.invertfirstbuff = not LunaUF.db.profile.units.raid.squares.invertfirstbuff
+		for _,frame in pairs(LunaUF.Units.frameList) do
+			if frame.unitGroup == "raid" then
+				LunaUF.Units.FullUpdate(frame)
+			end
+		end
+	end)
+	getglobal("FirstBuffInvertText"):SetText(L["Invert display"])
+
 	LunaOptionsFrame.pages[page].secondbuff = CreateFrame("Editbox", "SecondBuffInput", LunaOptionsFrame.pages[page], "InputBoxTemplate")
 	LunaOptionsFrame.pages[page].secondbuff:SetHeight(20)
 	LunaOptionsFrame.pages[page].secondbuff:SetWidth(200)
@@ -3206,6 +3208,20 @@ function LunaUF:CreateOptionsMenu()
 	LunaOptionsFrame.pages[page].secondbuffcolor:SetWidth(19)
 	LunaOptionsFrame.pages[page].secondbuffcolor.text:SetText(L["Buffcolor"])
 
+	LunaOptionsFrame.pages[page].secondbuffinvert = CreateFrame("CheckButton", "SecondBuffInvert", LunaOptionsFrame.pages[page], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[page].secondbuffinvert:SetPoint("LEFT", LunaOptionsFrame.pages[page].secondbuffcolor, "RIGHT", 70, 0)
+	LunaOptionsFrame.pages[page].secondbuffinvert:SetHeight(15)
+	LunaOptionsFrame.pages[page].secondbuffinvert:SetWidth(15)
+	LunaOptionsFrame.pages[page].secondbuffinvert:SetScript("OnClick", function()
+		LunaUF.db.profile.units.raid.squares.invertsecondbuff = not LunaUF.db.profile.units.raid.squares.invertsecondbuff
+		for _,frame in pairs(LunaUF.Units.frameList) do
+			if frame.unitGroup == "raid" then
+				LunaUF.Units.FullUpdate(frame)
+			end
+		end
+	end)
+	getglobal("SecondBuffInvertText"):SetText(L["Invert display"])
+
 	LunaOptionsFrame.pages[page].thirdbuff = CreateFrame("Editbox", "ThirdBuffInput", LunaOptionsFrame.pages[page], "InputBoxTemplate")
 	LunaOptionsFrame.pages[page].thirdbuff:SetHeight(20)
 	LunaOptionsFrame.pages[page].thirdbuff:SetWidth(200)
@@ -3227,6 +3243,20 @@ function LunaUF:CreateOptionsMenu()
 	LunaOptionsFrame.pages[page].thirdbuffcolor:SetHeight(19)
 	LunaOptionsFrame.pages[page].thirdbuffcolor:SetWidth(19)
 	LunaOptionsFrame.pages[page].thirdbuffcolor.text:SetText(L["Buffcolor"])
+
+	LunaOptionsFrame.pages[page].thirdbuffinvert = CreateFrame("CheckButton", "ThirdBuffInvert", LunaOptionsFrame.pages[page], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[page].thirdbuffinvert:SetPoint("LEFT", LunaOptionsFrame.pages[page].thirdbuffcolor, "RIGHT", 70, 0)
+	LunaOptionsFrame.pages[page].thirdbuffinvert:SetHeight(15)
+	LunaOptionsFrame.pages[page].thirdbuffinvert:SetWidth(15)
+	LunaOptionsFrame.pages[page].thirdbuffinvert:SetScript("OnClick", function()
+		LunaUF.db.profile.units.raid.squares.invertthirdbuff = not LunaUF.db.profile.units.raid.squares.invertthirdbuff
+		for _,frame in pairs(LunaUF.Units.frameList) do
+			if frame.unitGroup == "raid" then
+				LunaUF.Units.FullUpdate(frame)
+			end
+		end
+	end)
+	getglobal("ThirdBuffInvertText"):SetText(L["Invert display"])
 
 	LunaOptionsFrame.pages[page].debuffheader = LunaOptionsFrame.pages[page]:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
 	LunaOptionsFrame.pages[page].debuffheader:SetPoint("TOPLEFT", LunaOptionsFrame.pages[page].thirdbuff, "BOTTOMLEFT", 0, -10)

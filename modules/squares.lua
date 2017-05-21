@@ -197,31 +197,39 @@ function Squares:UpdateAuras(frame)
 		
 		i = i + 1
 	end
+
 	i = 1
-	if not LunaUF.db.profile.units.raid.squares.invertbuffs then
-		for k,v in pairs(buffs) do
-			if config.colors then
-				frame.squares.buffs[i].texture:SetTexture(config.buffs.colors[k].r,config.buffs.colors[k].g,config.buffs.colors[k].b)
-			else
-				frame.squares.buffs[i].texture:SetTexture(v)
-			end
-			frame.squares.buffs[i]:Show()
-			i = i + 1
-		end
-	else
-		for k,v in pairs(config.buffs.names) do
-			if not buffs[k] and v ~= "" then
-				if config.colors then
-					frame.squares.buffs[i].texture:SetTexture(config.buffs.colors[k].r,config.buffs.colors[k].g,config.buffs.colors[k].b)
-				else
-					frame.squares.buffs[i].texture:SetTexture(BS:GetSpellIcon(v))
+	for k,v in pairs(config.buffs.names) do
+		if v ~= "" then
+			local invert = false
+			if k == 1 and LunaUF.db.profile.units.raid.squares.invertfirstbuff then invert = true end
+			if k == 2 and LunaUF.db.profile.units.raid.squares.invertsecondbuff then invert = true end
+			if k == 3 and LunaUF.db.profile.units.raid.squares.invertthirdbuff then invert = true end
+
+			if invert then
+				if not buffs[k] then
+					if config.colors then
+						frame.squares.buffs[i].texture:SetTexture(config.buffs.colors[k].r,config.buffs.colors[k].g,config.buffs.colors[k].b)
+					else
+						frame.squares.buffs[i].texture:SetTexture(BS:GetSpellIcon(v))
+					end
+					frame.squares.buffs[i]:Show()
+					i = i + 1
 				end
-				frame.squares.buffs[i]:Show()
-				i = i + 1
+			else
+				if buffs[k] then
+					if config.colors then
+						frame.squares.buffs[i].texture:SetTexture(config.buffs.colors[k].r,config.buffs.colors[k].g,config.buffs.colors[k].b)
+					else
+						frame.squares.buffs[i].texture:SetTexture(buffs[k])
+					end
+					frame.squares.buffs[i]:Show()
+					i = i + 1
+				end
 			end
 		end
 	end
-	
+
 	i = 1
 	while UnitDebuff(frame.unit,i) do
 		ScanTip:ClearLines()
