@@ -344,7 +344,6 @@ function Range:FullUpdate(frame)
 			end
 		end
 	end
-	-- SendChatMessage(LunaUF.db.profile.units.raid.healththreshold.outOfRangeAlpha, "EMOTE")
 
 end
 
