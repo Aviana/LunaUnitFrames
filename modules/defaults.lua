@@ -677,6 +677,7 @@ LunaUF.defaults = {
 					},
 				},
 				range = { enabled = true, alpha = 0.5 },
+				healththreshold = {	enabled = false,	threshold = 0.8, inRangeAboveAlpha = 0.8, outOfRangeBelowAlpha = 0.4, inRangeBelowAlpha = 1	},
 				combatText = { enabled = false, xoffset = 0, yoffset = 0, size = 2 },
 				incheal = { enabled = true, cap = 0 },
 				indicators = {
