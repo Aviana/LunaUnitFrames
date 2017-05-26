@@ -3040,7 +3040,7 @@ function LunaUF:CreateOptionsMenu()
   	LunaOptionsFrame.pages[page].inrangebelowthresholdslider:SetMinMaxValues(0.1,1)
   	LunaOptionsFrame.pages[page].inrangebelowthresholdslider:SetValueStep(0.1)
   	LunaOptionsFrame.pages[page].inrangebelowthresholdslider:SetScript("OnValueChanged", function()
-  	  LunaUF.db.profile.units.raid.healththreshold.inRangeBelowAlpha = math.floor(this:GetValue()*10)/10
+  	  LunaUF.db.profile.units.raid.healththreshold.inRangeBelowAlpha = math.floor(this:GetValue()*10+.5)/10
   	  getglobal("InRangeBelowThresholdText"):SetText(L["In Range and Below Limit"].." "..L["Alpha"]..": "..LunaUF.db.profile.units.raid.healththreshold.inRangeBelowAlpha)
   	end)
   	LunaOptionsFrame.pages[page].inrangebelowthresholdslider:SetPoint("TOPLEFT", LunaOptionsFrame.pages[page].healththresholdslider, "BOTTOMLEFT", 0, -30)
@@ -3051,7 +3051,7 @@ function LunaUF:CreateOptionsMenu()
   	LunaOptionsFrame.pages[page].inrangeabovethresholdslider:SetMinMaxValues(0.1,1)
   	LunaOptionsFrame.pages[page].inrangeabovethresholdslider:SetValueStep(0.1)
   	LunaOptionsFrame.pages[page].inrangeabovethresholdslider:SetScript("OnValueChanged", function()
-  	  LunaUF.db.profile.units.raid.healththreshold.inRangeAboveAlpha = math.floor(this:GetValue()*10)/10
+  	  LunaUF.db.profile.units.raid.healththreshold.inRangeAboveAlpha = math.floor(this:GetValue()*10+.5)/10
   	  getglobal("InRangeAboveThresholdText"):SetText(L["In Range and Above Limit"].." "..L["Alpha"]..": "..LunaUF.db.profile.units.raid.healththreshold.inRangeAboveAlpha)
   	end)
   	LunaOptionsFrame.pages[page].inrangeabovethresholdslider:SetPoint("TOPLEFT", LunaOptionsFrame.pages[page].inrangebelowthresholdslider, "BOTTOMLEFT", 0, -30)
@@ -3063,7 +3063,7 @@ function LunaUF:CreateOptionsMenu()
   	LunaOptionsFrame.pages[page].outrangebelowthresholdslider:SetMinMaxValues(0.1,1)
   	LunaOptionsFrame.pages[page].outrangebelowthresholdslider:SetValueStep(0.1)
   	LunaOptionsFrame.pages[page].outrangebelowthresholdslider:SetScript("OnValueChanged", function()
-  	  LunaUF.db.profile.units.raid.healththreshold.outOfRangeBelowAlpha = math.floor(this:GetValue()*10)/10
+  	  LunaUF.db.profile.units.raid.healththreshold.outOfRangeBelowAlpha = math.floor(this:GetValue()*10+.5)/10
   	  getglobal("OutRangeBelowThresholdText"):SetText(L["Out of Range and Below Limit"].." "..L["Alpha"]..": "..LunaUF.db.profile.units.raid.healththreshold.outOfRangeBelowAlpha)
   	end)
   	LunaOptionsFrame.pages[page].outrangebelowthresholdslider:SetPoint("TOPLEFT", LunaOptionsFrame.pages[page].inrangeabovethresholdslider, "BOTTOMLEFT", 0, -30)
