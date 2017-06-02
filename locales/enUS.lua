@@ -71,6 +71,7 @@ local function enUS() return {
 ["Shadow Flame"] = "Shadow Flame",
 ["Wing Buffet"] = "Wing Buffet",
 ["Bellowing Roar"] = "Bellowing Roar",
+["Unstable Concoction"] = "Unstable Concoction",
 ["Intense Pain"] = "Intense Pain",
 ["Combat text"] = "Combat text",
 ["PRIEST"] = "Priest",
