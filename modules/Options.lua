@@ -863,9 +863,9 @@ function LunaUF:CreateOptionsMenu()
 	if LunaUF.db.profile.version or 0 > LunaUF.Version then
 		LunaOptionsFrame.version:SetTextColor(1,0,0)
 		LunaOptionsFrame.version:SetText("V."..LunaUF.Version.." Beta (Outdated)")
-	else		
-		LunaOptionsFrame.version:SetTextColor(1,1,1)		
-		LunaOptionsFrame.version:SetText("V."..LunaUF.Version.." Beta")		
+	else
+		LunaOptionsFrame.version:SetTextColor(1,1,1)
+		LunaOptionsFrame.version:SetText("V."..LunaUF.Version.." Beta")
 	end
 
 	LunaOptionsFrame.help = CreateFrame("Button", nil, LunaOptionsFrame)
@@ -1034,7 +1034,7 @@ function LunaUF:CreateOptionsMenu()
 
 	UIDropDownMenu_Initialize(LunaOptionsFrame.pages[page].TextureSelect, function()
 		local info={}
-		for k,v in ipairs({"Aluminium","Armory","BantoBar","Bars","Button","Charcoal","Cilo","Dabs","Diagonal","Fifths","Fourths","Glamour","Glamour2","Glamour3","Glamour4","Glamour5","Glamour6","Glamour7","Glaze","Gloss","Healbot","Luna","Lyfe","Otravi","Perl2","Ruben","Skewed","Smooth","Striped","Wisps"}) do
+		for k,v in ipairs({"Minimalist","Aluminium","Armory","BantoBar","Bars","Button","Charcoal","Cilo","Dabs","Diagonal","Fifths","Fourths","Glamour","Glamour2","Glamour3","Glamour4","Glamour5","Glamour6","Glamour7","Glaze","Gloss","Healbot","Luna","Lyfe","Otravi","Perl2","Ruben","Skewed","Smooth","Striped","Wisps"}) do
 			info.text=v
 			info.value=v
 			info.func= function ()
@@ -2118,7 +2118,7 @@ function LunaUF:CreateOptionsMenu()
 		LunaOptionsFrame.pages[i].emptyheader:SetJustifyH("LEFT")
 		LunaOptionsFrame.pages[i].emptyheader:SetTextColor(1,1,0)
 		LunaOptionsFrame.pages[i].emptyheader:SetText(L["Empty Bar"])
-		
+
 		LunaOptionsFrame.pages[i].enableempty = CreateFrame("CheckButton", "Enable"..LunaUF.unitList[i-1].."Empty", LunaOptionsFrame.pages[i], "UICheckButtonTemplate")
 		LunaOptionsFrame.pages[i].enableempty:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].emptyheader, "BOTTOMLEFT", 0, -10)
 		LunaOptionsFrame.pages[i].enableempty:SetHeight(30)
@@ -2133,7 +2133,7 @@ function LunaUF:CreateOptionsMenu()
 			end
 		end)
 		getglobal("Enable"..LunaUF.unitList[i-1].."EmptyText"):SetText(L["Enable"])
-		
+
 		LunaOptionsFrame.pages[i].emptysizeslider = CreateFrame("Slider", "EmptySizeSlider"..LunaUF.unitList[i-1], LunaOptionsFrame.pages[i], "OptionsSliderTemplate")
 		LunaOptionsFrame.pages[i].emptysizeslider:SetMinMaxValues(1,10)
 		LunaOptionsFrame.pages[i].emptysizeslider:SetValueStep(1)
