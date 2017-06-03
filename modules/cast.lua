@@ -301,6 +301,9 @@ local Raids = {
 		[L["Gehennas"]] = true;
 		[L["Gothik the Harvester"]] = true;
 		[BS["Shadow Bolt"]] = {t=1, r=L["Gehennas"], a=0.5};
+		
+		-- Zul'Gurub
+		[L["Unstable Concoction"]] = {t=3.0};
 }
 
 local NonAfflictions = {

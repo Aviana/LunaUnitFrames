@@ -71,6 +71,7 @@ local function zhCN() return {
 ["Shadow Flame"] = "暗影烈焰", --22539, Firemaw/Ebonroc/Flamegor/Nefarian, 费尔默/埃博诺克/弗莱格尔/奈法利安
 ["Wing Buffet"] = "龙翼打击", --23339, Firemaw/Ebonroc/Flamegor, 费尔默/埃博诺克/弗莱格尔
 ["Bellowing Roar"] = "低沉咆哮", --18431, Onyxia, 奥妮克希亚, 22686, Nefarian, 奈法利安
+["Unstable Concoction"] = "不稳定化合物",
 ["Intense Pain"] = "剧烈痛楚", --22478, Zevrim Thornhoof, 瑟雷姆·刺蹄, 厄运之槌
 ["Combat text"] = "战斗信息",
 ["PRIEST"] = "牧师",
