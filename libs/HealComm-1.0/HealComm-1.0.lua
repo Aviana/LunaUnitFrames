@@ -1,6 +1,6 @@
 --[[
 Name: HealComm-1.0
-Revision: $Rev: 11600 $
+Revision: $Rev: 11610 $
 Author(s): aviana
 Website: https://github.com/Aviana
 Description: A library to provide communication of heals and resurrections.
@@ -8,7 +8,7 @@ Dependencies: AceLibrary, AceEvent-2.0, RosterLib-2.0
 ]]
 
 local MAJOR_VERSION = "HealComm-1.0"
-local MINOR_VERSION = "$Revision: 11600 $"
+local MINOR_VERSION = "$Revision: 11610 $"
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
 if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end
@@ -980,7 +980,8 @@ HealComm.Debuffs = {
 	
 local function getSetBonus()
 	healcommTip:SetInventoryItem("player", 1)
-	local text = getglobal("healcommTipTextLeft"..healcommTip:NumLines()):GetText()
+	local text = "healcommTipTextLeft"..(healcommTip:NumLines() or 1)
+	text = getglobal(text):GetText()
 	if text == L["Set: Increases the duration of your Rejuvenation spell by 3 sec."] or text == L["Set: Increases the duration of your Renew spell by 3 sec."] then
 		return true
 	else
