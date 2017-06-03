@@ -142,6 +142,8 @@ local function enUS() return {
 ["Background alpha"] = "Background alpha",
 ["Blizzard frames"] = "Blizzard frames",
 ["Buffs"] = "Buffs",
+["Debuffs"] = "Debuffs",
+["BOTH"] = "Both",
 ["Weaponbuffs"] = "Weaponbuffs",
 ["Enable"] = "Enable",
 ["Height"] = "Height",

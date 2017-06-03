@@ -63,154 +63,163 @@ local function BuffFrameUpdate(frame, buildOnly)
 		end
 	end
 	local rows = math.ceil(numBuffs/config.AurasPerRow)
-	local height = rows*auraframe.buffbuttons[1]:GetHeight()+rows
+	local height
+	if config.buffs=="DEBUFFS" then		
+		height = rows*auraframe.buffbuttons[1]:GetHeight()+rows		
+	else
+		height = rows*auraframe.debuffbuttons[1]:GetHeight()+rows
+	end
 	auraframe:SetHeight(height == 0 and 1 or height)
 	local texture, stacks, dtype
 	local currentEventTime = GetTime()
-	for i,button in ipairs(auraframe.buffbuttons) do
-		local buffIndex, untilCancelled
-		if isPlayer then
-			buffIndex, untilCancelled = GetPlayerBuff(i - 1, "HELPFUL");
-			dtype = GetPlayerBuffDispelType(buffIndex);
-			texture = GetPlayerBuffTexture(buffIndex);
-			stacks = GetPlayerBuffApplications(buffIndex);
-		else
-			texture,stacks = UnitBuff(unit,i)
-		end
-		if texture then
-			button.icon:SetTexture(texture)
-			button.stack:SetText(stacks == 1 and "" or stacks)
-			button.filter = "HELPFUL"
+	if config.buffs=="BUFFS" or config.buffs=="BOTH" then
+		for i,button in ipairs(auraframe.buffbuttons) do
+			local buffIndex, untilCancelled
 			if isPlayer then
-				if config.bordercolor and dtype then
+				buffIndex, untilCancelled = GetPlayerBuff(i - 1, "HELPFUL");
+				dtype = GetPlayerBuffDispelType(buffIndex);
+				texture = GetPlayerBuffTexture(buffIndex);
+				stacks = GetPlayerBuffApplications(buffIndex);
+			else
+				texture,stacks = UnitBuff(unit,i)
+			end
+			if texture then
+				button.icon:SetTexture(texture)
+				button.stack:SetText(stacks == 1 and "" or stacks)
+				button.filter = "HELPFUL"
+				if isPlayer then
+					if config.bordercolor and dtype then
+						button.border:SetVertexColor(unpack(LunaUF.db.profile.magicColors[dtype]))
+					else
+						button.border:SetVertexColor(1,1,1)
+					end
+					button.untilCancelled = untilCancelled
+					button:SetScript("OnClick", BuffButtonClick)
+					button.auraID = buffIndex
+					if not buildOnly and untilCancelled == 0 then
+						local timeLeft = GetPlayerBuffTimeLeft(buffIndex)
+						LunaUF.ScanTip:ClearLines()
+						LunaUF.ScanTip:SetPlayerBuff(buffIndex)
+						local buffName = LunaScanTipTextLeft1:GetText()
+						if timeLeft and timeLeft > 0 then
+							currentBuffTable[buffName] = currentEventTime
+							if not LunaBuffDB[LunaBuffDBPlayerString][buffName] or timeLeft > LunaBuffDB[LunaBuffDBPlayerString][buffName] then
+								LunaBuffDB[LunaBuffDBPlayerString][buffName] = math.ceil(timeLeft)
+							end
+						end
+						if config.timerspinenabled then
+							if timeLeft > 0 then
+								CooldownFrame_SetTimer(button.cooldown, GetTime() - (LunaBuffDB[LunaBuffDBPlayerString][buffName] - timeLeft), LunaBuffDB[LunaBuffDBPlayerString][buffName], 1)
+							else
+								CooldownFrame_SetTimer(button.cooldown, 0, timeLeft, 0)
+							end
+							button.cooldown:Show();
+						else
+							button.cooldown:Hide();
+						end
+					else
+						button.cooldown:Hide();
+					end
+				else
+					button:SetScript("OnClick", nil)
+					button.auraID = i
+				end
+				button:Show()
+			elseif hasMainHandEnchant then
+				button.icon:SetTexture(GetInventoryItemTexture("player", 16))
+				button.auraID = 16
+				button.filter = "TEMP"
+				if config.bordercolor then
+					button.border:SetVertexColor(0.53,0.28,0.72)
+				else
+					button.border:SetVertexColor(1,1,1)
+				end
+				if config.timerspinenabled then
+					CooldownFrame_SetTimer(button.cooldown, GetTime() - ((longMain and 3600 or 1800) - (mainHandExpiration/1000)), (longMain and 3600 or 1800), 1)
+				else
+					button.cooldown:Hide()
+				end
+				button:Show()
+				hasMainHandEnchant = nil
+			elseif hasOffHandEnchant then
+				button.icon:SetTexture(GetInventoryItemTexture("player", 17))
+				button.auraID = 17
+				button.filter = "TEMP"
+				if config.bordercolor then
+					button.border:SetVertexColor(0.53,0.28,0.72)
+				else
+					button.border:SetVertexColor(1,1,1)
+				end
+				if config.timerspinenabled then
+					CooldownFrame_SetTimer(button.cooldown, GetTime() - ((longOff and 3600 or 1800) - (offHandExpiration/1000)), (longOff and 3600 or 1800), 1)
+				else
+					button.cooldown:Hide()
+				end
+				button:Show()
+				hasOffHandEnchant = nil
+			else
+				if isPlayer then
+					button:SetScript("OnClick", nil)
+				end
+				button:Hide()
+			end
+		end
+	end
+	if config.buffs=="BOTH" or config.buffs=="DEBUFFS" then
+		for i,button in ipairs(auraframe.debuffbuttons) do
+			local buffIndex, untilCancelled
+			if isPlayer then
+				buffIndex, untilCancelled = GetPlayerBuff(i - 1, "HARMFUL");
+				texture = GetPlayerBuffTexture(buffIndex);
+				stacks = GetPlayerBuffApplications(buffIndex);
+				dtype = GetPlayerBuffDispelType(buffIndex)
+			else
+				texture,stacks,dtype = UnitDebuff(unit,i)
+			end
+			if texture then
+				button.icon:SetTexture(texture)
+				button.stack:SetText(stacks == 1 and "" or stacks)
+				button.filter = "HARMFUL"
+				if dtype and config.bordercolor then
 					button.border:SetVertexColor(unpack(LunaUF.db.profile.magicColors[dtype]))
 				else
 					button.border:SetVertexColor(1,1,1)
 				end
-				button.untilCancelled = untilCancelled
-				button:SetScript("OnClick", BuffButtonClick)
-				button.auraID = buffIndex
-				if not buildOnly and untilCancelled == 0 then
-					local timeLeft = GetPlayerBuffTimeLeft(buffIndex)
-					LunaUF.ScanTip:ClearLines()
-					LunaUF.ScanTip:SetPlayerBuff(buffIndex)
-					local buffName = LunaScanTipTextLeft1:GetText()
-					if timeLeft and timeLeft > 0 then
-						currentBuffTable[buffName] = currentEventTime
-						if not LunaBuffDB[LunaBuffDBPlayerString][buffName] or timeLeft > LunaBuffDB[LunaBuffDBPlayerString][buffName] then
-							LunaBuffDB[LunaBuffDBPlayerString][buffName] = math.ceil(timeLeft)
-						end
-					end
-					if config.timerspinenabled then
-						if timeLeft > 0 then
-							CooldownFrame_SetTimer(button.cooldown, GetTime() - (LunaBuffDB[LunaBuffDBPlayerString][buffName] - timeLeft), LunaBuffDB[LunaBuffDBPlayerString][buffName], 1)
-						else
-							CooldownFrame_SetTimer(button.cooldown, 0, timeLeft, 0)
-						end
-						button.cooldown:Show();
-					else
-						button.cooldown:Hide();
-					end
-				else
-					button.cooldown:Hide();
-				end
-			else
-				button:SetScript("OnClick", nil)
-				button.auraID = i
-			end
-			button:Show()
-		elseif hasMainHandEnchant then
-			button.icon:SetTexture(GetInventoryItemTexture("player", 16))
-			button.auraID = 16
-			button.filter = "TEMP"
-			if config.bordercolor then
-				button.border:SetVertexColor(0.53,0.28,0.72)
-			else
-				button.border:SetVertexColor(1,1,1)
-			end
-			if config.timerspinenabled then
-				CooldownFrame_SetTimer(button.cooldown, GetTime() - ((longMain and 3600 or 1800) - (mainHandExpiration/1000)), (longMain and 3600 or 1800), 1)
-			else
-				button.cooldown:Hide()
-			end
-			button:Show()
-			hasMainHandEnchant = nil
-		elseif hasOffHandEnchant then
-			button.icon:SetTexture(GetInventoryItemTexture("player", 17))
-			button.auraID = 17
-			button.filter = "TEMP"
-			if config.bordercolor then
-				button.border:SetVertexColor(0.53,0.28,0.72)
-			else
-				button.border:SetVertexColor(1,1,1)
-			end
-			if config.timerspinenabled then
-				CooldownFrame_SetTimer(button.cooldown, GetTime() - ((longOff and 3600 or 1800) - (offHandExpiration/1000)), (longOff and 3600 or 1800), 1)
-			else
-				button.cooldown:Hide()
-			end
-			button:Show()
-			hasOffHandEnchant = nil
-		else
-			if isPlayer then
-				button:SetScript("OnClick", nil)
-			end
-			button:Hide()
-		end
-	end
-	for i,button in ipairs(auraframe.debuffbuttons) do
-		local buffIndex, untilCancelled
-		if isPlayer then
-			buffIndex, untilCancelled = GetPlayerBuff(i - 1, "HARMFUL");
-			texture = GetPlayerBuffTexture(buffIndex);
-			stacks = GetPlayerBuffApplications(buffIndex);
-			dtype = GetPlayerBuffDispelType(buffIndex)
-		else
-			texture,stacks,dtype = UnitDebuff(unit,i)
-		end
-		if texture then
-			button.icon:SetTexture(texture)
-			button.stack:SetText(stacks == 1 and "" or stacks)
-			button.filter = "HARMFUL"
-			if dtype and config.bordercolor then
-				button.border:SetVertexColor(unpack(LunaUF.db.profile.magicColors[dtype]))
-			else
-				button.border:SetVertexColor(1,1,1)
-			end
-			if isPlayer then
-				button.untilCancelled = untilCancelled
-				button.auraID = buffIndex
-				if not buildOnly and untilCancelled == 0 then
-					local timeLeft = GetPlayerBuffTimeLeft(buffIndex)
-					LunaUF.ScanTip:ClearLines()
-					LunaUF.ScanTip:SetPlayerBuff(buffIndex)
-					local buffName = LunaScanTipTextLeft1:GetText()
-					if timeLeft and timeLeft > 0 then
-						currentBuffTable[buffName] = currentEventTime
-						if not LunaBuffDB[LunaBuffDBPlayerString][buffName] or timeLeft > LunaBuffDB[LunaBuffDBPlayerString][buffName] then
-							LunaBuffDB[LunaBuffDBPlayerString][buffName] = math.ceil(timeLeft)
+				if isPlayer then
+					button.untilCancelled = untilCancelled
+					button.auraID = buffIndex
+					if not buildOnly and untilCancelled == 0 then
+						local timeLeft = GetPlayerBuffTimeLeft(buffIndex)
+						LunaUF.ScanTip:ClearLines()
+						LunaUF.ScanTip:SetPlayerBuff(buffIndex)
+						local buffName = LunaScanTipTextLeft1:GetText()
+						if timeLeft and timeLeft > 0 then
 							currentBuffTable[buffName] = currentEventTime
+							if not LunaBuffDB[LunaBuffDBPlayerString][buffName] or timeLeft > LunaBuffDB[LunaBuffDBPlayerString][buffName] then
+								LunaBuffDB[LunaBuffDBPlayerString][buffName] = math.ceil(timeLeft)
+								currentBuffTable[buffName] = currentEventTime
+							end
 						end
-					end
-					if (config.timerspinenabled) then
-						if timeLeft > 0 then
-							CooldownFrame_SetTimer(button.cooldown, GetTime() - (LunaBuffDB[LunaBuffDBPlayerString][buffName] - timeLeft), LunaBuffDB[LunaBuffDBPlayerString][buffName] , 1)
+						if (config.timerspinenabled) then
+							if timeLeft > 0 then
+								CooldownFrame_SetTimer(button.cooldown, GetTime() - (LunaBuffDB[LunaBuffDBPlayerString][buffName] - timeLeft), LunaBuffDB[LunaBuffDBPlayerString][buffName] , 1)
+							else
+								CooldownFrame_SetTimer(button.cooldown, 0, timeLeft, 0)
+							end
+							button.cooldown:Show();
 						else
-							CooldownFrame_SetTimer(button.cooldown, 0, timeLeft, 0)
+							button.cooldown:Hide();
 						end
-						button.cooldown:Show();
 					else
 						button.cooldown:Hide();
 					end
 				else
-					button.cooldown:Hide();
+					button.auraID = i
 				end
+				button:Show()
 			else
-				button.auraID = i
+				button:Hide()
 			end
-			button:Show()
-		else
-			button:Hide()
 		end
 	end
 	if isPlayer and not buildOnly then
@@ -342,6 +351,7 @@ end
 
 function Auras:OnEnable(frame)
 	local isPlayer = frame.unitGroup == "player"
+	local config = LunaUF.db.profile.units[frame.unitGroup].auras
 	if not LunaBuffDB then
 		LunaBuffDB = {}
 	end
@@ -482,69 +492,93 @@ function Auras:FullUpdate(frame)
 	if config.position == "TOP" then
 		frame.auras:SetPoint("BOTTOMLEFT", frame, "TOPLEFT", 0, 3)
 		for i,button in ipairs(frame.auras.buffbuttons) do
-			button:ClearAllPoints()
-			button:SetHeight(buttonsize)
-			button:SetWidth(buttonsize)
-			button.border:SetHeight(buttonsize+1)
-			button.border:SetWidth(buttonsize+1)
-			button.stack:SetText(i)
-			button:SetPoint("BOTTOMLEFT", frame.auras, "BOTTOMLEFT", (i-1)*(buttonsize+1)-((math.ceil(i/config.AurasPerRow)-1)*(config.AurasPerRow)*(buttonsize+1)), (math.ceil(i/config.AurasPerRow)-1)*(buttonsize+1))
-			if button.cooldown then
-				button.cooldown:SetPoint("TOPLEFT", button, "TOPLEFT", 0, 0)
-				button.cooldown:SetScale((button:GetWidth() + 0.7)/36)
-			end
-			if button.timeFontstring then
-				button.timeFontstring:SetFont(defaultFont, LunaUF.db.profile.units["player"].auras.timertextsmallsize, "OUTLINE")
+			if config.buffs=="BUFFS" or config.buffs=="BOTH" then
+				button:ClearAllPoints()
+				button:SetHeight(buttonsize)
+				button:SetWidth(buttonsize)
+				button.border:SetHeight(buttonsize+1)
+				button.border:SetWidth(buttonsize+1)
+				button.stack:SetText(i)
+				button:SetPoint("BOTTOMLEFT", frame.auras, "BOTTOMLEFT", (i-1)*(buttonsize+1)-((math.ceil(i/config.AurasPerRow)-1)*(config.AurasPerRow)*(buttonsize+1)), (math.ceil(i/config.AurasPerRow)-1)*(buttonsize+1))
+				if button.cooldown then
+					button.cooldown:SetPoint("TOPLEFT", button, "TOPLEFT", 0, 0)
+					button.cooldown:SetScale((button:GetWidth() + 0.7)/36)
+				end
+				if button.timeFontstring then
+					button.timeFontstring:SetFont(defaultFont, LunaUF.db.profile.units["player"].auras.timertextsmallsize, "OUTLINE")
+				end
+			else
+				button:Hide()
 			end
 		end
 		for i,button in ipairs(frame.auras.debuffbuttons) do
-			button:ClearAllPoints()
-			button:SetHeight(buttonsize)
-			button:SetWidth(buttonsize)
-			button.border:SetHeight(buttonsize+1)
-			button.border:SetWidth(buttonsize+1)
-			button.stack:SetText(i)
-			button:SetPoint("BOTTOMLEFT", frame.auras, "TOPLEFT", (i-1)*(buttonsize+1)-((math.ceil(i/config.AurasPerRow)-1)*(config.AurasPerRow)*(buttonsize+1)), (math.ceil(i/config.AurasPerRow)-1)*(buttonsize+1))
-			if button.cooldown then
-				button.cooldown:SetPoint("TOPLEFT", button, "TOPLEFT", 0, 0)
-				button.cooldown:SetScale((button:GetWidth() + 0.7)/36)
-			end
-			if button.timeFontstring then
-				button.timeFontstring:SetFont(defaultFont, LunaUF.db.profile.units["player"].auras.timertextsmallsize, "OUTLINE")
+			if config.buffs=="BOTH" or config.buffs=="DEBUFFS" then
+				button:ClearAllPoints()
+				button:SetHeight(buttonsize)
+				button:SetWidth(buttonsize)
+				button.border:SetHeight(buttonsize+1)
+				button.border:SetWidth(buttonsize+1)
+				button.stack:SetText(i)
+				if config.buffs=="DEBUFFS" then
+					button:SetPoint("BOTTOMLEFT", frame.auras, "BOTTOMLEFT", (i-1)*(buttonsize+1)-((math.ceil(i/config.AurasPerRow)-1)*(config.AurasPerRow)*(buttonsize+1)), (math.ceil(i/config.AurasPerRow)-1)*(buttonsize+1))
+				else
+					button:SetPoint("BOTTOMLEFT", frame.auras, "TOPLEFT", (i-1)*(buttonsize+1)-((math.ceil(i/config.AurasPerRow)-1)*(config.AurasPerRow)*(buttonsize+1)), (math.ceil(i/config.AurasPerRow)-1)*(buttonsize+1))
+				end
+				if button.cooldown then
+					button.cooldown:SetPoint("TOPLEFT", button, "TOPLEFT", 0, 0)
+					button.cooldown:SetScale((button:GetWidth() + 0.7)/36)
+				end
+				if button.timeFontstring then
+					button.timeFontstring:SetFont(defaultFont, LunaUF.db.profile.units["player"].auras.timertextsmallsize, "OUTLINE")
+				end
+			else
+				button:Hide()
 			end
 		end
 	elseif config.position == "LEFT" then
 		frame.auras:SetPoint("TOPRIGHT", frame, "TOPLEFT", -3, 0)
 		for i,button in ipairs(frame.auras.buffbuttons) do
-			button:ClearAllPoints()
-			button:SetHeight(buttonsize)
-			button:SetWidth(buttonsize)
-			button.border:SetHeight(buttonsize+1)
-			button.border:SetWidth(buttonsize+1)
-			button.stack:SetText(i)
-			button:SetPoint("TOPRIGHT", frame.auras, "TOPRIGHT", -((i-1)*(buttonsize+1)-((math.ceil(i/config.AurasPerRow)-1)*(config.AurasPerRow)*(buttonsize+1))), -(math.ceil(i/config.AurasPerRow)-1)*(buttonsize+1))
-			if button.cooldown then
-				button.cooldown:SetPoint("TOPLEFT", button, "TOPLEFT", 0, 0)
-				button.cooldown:SetScale((button:GetWidth() + 0.7)/36)
-			end
-			if button.timeFontstring then
-				button.timeFontstring:SetFont(defaultFont, LunaUF.db.profile.units["player"].auras.timertextsmallsize, "OUTLINE")
+			if config.buffs=="BUFFS" or config.buffs=="BOTH" then
+				button:ClearAllPoints()
+				button:SetHeight(buttonsize)
+				button:SetWidth(buttonsize)
+				button.border:SetHeight(buttonsize+1)
+				button.border:SetWidth(buttonsize+1)
+				button.stack:SetText(i)
+				button:SetPoint("TOPRIGHT", frame.auras, "TOPRIGHT", -((i-1)*(buttonsize+1)-((math.ceil(i/config.AurasPerRow)-1)*(config.AurasPerRow)*(buttonsize+1))), -(math.ceil(i/config.AurasPerRow)-1)*(buttonsize+1))
+				if button.cooldown then
+					button.cooldown:SetPoint("TOPLEFT", button, "TOPLEFT", 0, 0)
+					button.cooldown:SetScale((button:GetWidth() + 0.7)/36)
+				end
+				if button.timeFontstring then
+					button.timeFontstring:SetFont(defaultFont, LunaUF.db.profile.units["player"].auras.timertextsmallsize, "OUTLINE")
+				end
+			else
+				button:Hide()
 			end
 		end
 		for i,button in ipairs(frame.auras.debuffbuttons) do
-			button:ClearAllPoints()
-			button:SetHeight(buttonsize)
-			button:SetWidth(buttonsize)
-			button.border:SetHeight(buttonsize+1)
-			button.border:SetWidth(buttonsize+1)
-			button.stack:SetText(i)
-			button:SetPoint("TOPRIGHT", frame.auras, "BOTTOMRIGHT", -((i-1)*(buttonsize+1)-((math.ceil(i/config.AurasPerRow)-1)*(config.AurasPerRow)*(buttonsize+1))), -(math.ceil(i/config.AurasPerRow)-1)*(buttonsize+1))
-			if button.cooldown then
-				button.cooldown:SetPoint("TOPLEFT", button, "TOPLEFT", 0, 0)
-				button.cooldown:SetScale((button:GetWidth() + 0.7)/36)
-			end
-			if button.timeFontstring then
-				button.timeFontstring:SetFont(defaultFont, LunaUF.db.profile.units["player"].auras.timertextsmallsize, "OUTLINE")
+			if config.buffs=="BOTH" or config.buffs=="DEBUFFS" then
+				button:ClearAllPoints()
+				button:SetHeight(buttonsize)
+				button:SetWidth(buttonsize)
+				button.border:SetHeight(buttonsize+1)
+				button.border:SetWidth(buttonsize+1)
+				button.stack:SetText(i)
+				if config.buffs=="DEBUFFS" then
+					button:SetPoint("TOPRIGHT", frame.auras, "TOPRIGHT", -((i-1)*(buttonsize+1)-((math.ceil(i/config.AurasPerRow)-1)*(config.AurasPerRow)*(buttonsize+1))), -(math.ceil(i/config.AurasPerRow)-1)*(buttonsize+1))
+				else
+					button:SetPoint("TOPRIGHT", frame.auras, "BOTTOMRIGHT", -((i-1)*(buttonsize+1)-((math.ceil(i/config.AurasPerRow)-1)*(config.AurasPerRow)*(buttonsize+1))), -(math.ceil(i/config.AurasPerRow)-1)*(buttonsize+1))
+				end
+				if button.cooldown then
+					button.cooldown:SetPoint("TOPLEFT", button, "TOPLEFT", 0, 0)
+					button.cooldown:SetScale((button:GetWidth() + 0.7)/36)
+				end
+				if button.timeFontstring then
+					button.timeFontstring:SetFont(defaultFont, LunaUF.db.profile.units["player"].auras.timertextsmallsize, "OUTLINE")
+				end
+			else
+				button:Hide()
 			end
 		end
 	else
@@ -554,35 +588,48 @@ function Auras:FullUpdate(frame)
 			frame.auras:SetPoint("TOPLEFT", frame, "TOPRIGHT", 3, 0)
 		end
 		for i,button in ipairs(frame.auras.buffbuttons) do
-			button:ClearAllPoints()
-			button:SetHeight(buttonsize)
-			button:SetWidth(buttonsize)
-			button.border:SetHeight(buttonsize+1)
-			button.border:SetWidth(buttonsize+1)
-			button.stack:SetText(i)
-			button:SetPoint("TOPLEFT", frame.auras, "TOPLEFT", (i-1)*(buttonsize+1)-((math.ceil(i/config.AurasPerRow)-1)*(config.AurasPerRow)*(buttonsize+1)), -(math.ceil(i/config.AurasPerRow)-1)*(buttonsize+1))
-			if button.cooldown then
-				button.cooldown:SetPoint("TOPLEFT", button, "TOPLEFT", 0, 0)
-				button.cooldown:SetScale((button:GetWidth() + 0.7)/36)
-			end
-			if button.timeFontstring then
-				button.timeFontstring:SetFont(defaultFont, LunaUF.db.profile.units["player"].auras.timertextsmallsize, "OUTLINE")
+			if config.buffs=="BUFFS" or config.buffs=="BOTH" then
+				button:ClearAllPoints()
+				button:SetHeight(buttonsize)
+				button:SetWidth(buttonsize)
+				button.border:SetHeight(buttonsize+1)
+				button.border:SetWidth(buttonsize+1)
+				button.stack:SetText(i)
+				button:SetPoint("TOPLEFT", frame.auras, "TOPLEFT", (i-1)*(buttonsize+1)-((math.ceil(i/config.AurasPerRow)-1)*(config.AurasPerRow)*(buttonsize+1)), -(math.ceil(i/config.AurasPerRow)-1)*(buttonsize+1))
+				if button.cooldown then
+					button.cooldown:SetPoint("TOPLEFT", button, "TOPLEFT", 0, 0)
+					button.cooldown:SetScale((button:GetWidth() + 0.7)/36)
+				end
+				if button.timeFontstring then
+					button.timeFontstring:SetFont(defaultFont, LunaUF.db.profile.units["player"].auras.timertextsmallsize, "OUTLINE")
+				end
+			else
+				button:Hide()
 			end
 		end
 		for i,button in ipairs(frame.auras.debuffbuttons) do
-			button:ClearAllPoints()
-			button:SetHeight(buttonsize)
-			button:SetWidth(buttonsize)
-			button.border:SetHeight(buttonsize+1)
-			button.border:SetWidth(buttonsize+1)
-			button.stack:SetText(i)
-			button:SetPoint("TOPLEFT", frame.auras, "BOTTOMLEFT", (i-1)*(buttonsize+1)-((math.ceil(i/config.AurasPerRow)-1)*(config.AurasPerRow)*(buttonsize+1)), -(math.ceil(i/config.AurasPerRow)-1)*(buttonsize+1))
-			if button.cooldown then
-				button.cooldown:SetPoint("TOPLEFT", button, "TOPLEFT", 0, 0)
-				button.cooldown:SetScale((button:GetWidth() + 0.7)/36)
-			end
-			if button.timeFontstring then
-				button.timeFontstring:SetFont(defaultFont, LunaUF.db.profile.units["player"].auras.timertextsmallsize, "OUTLINE")
+			if config.buffs=="BOTH" or config.buffs=="DEBUFFS" then
+				button:ClearAllPoints()
+				button:SetHeight(buttonsize)
+				button:SetWidth(buttonsize)
+				button.border:SetHeight(buttonsize+1)
+				button.border:SetWidth(buttonsize+1)
+				button.stack:SetText(i)
+				if config.buffs=="DEBUFFS" then
+					button:SetPoint("TOPLEFT", frame.auras, "TOPLEFT", (i-1)*(buttonsize+1)-((math.ceil(i/config.AurasPerRow)-1)*(config.AurasPerRow)*(buttonsize+1)), -(math.ceil(i/config.AurasPerRow)-1)*(buttonsize+1))
+				else
+					button:SetPoint("TOPLEFT", frame.auras, "BOTTOMLEFT", (i-1)*(buttonsize+1)-((math.ceil(i/config.AurasPerRow)-1)*(config.AurasPerRow)*(buttonsize+1)), -(math.ceil(i/config.AurasPerRow)-1)*(buttonsize+1))
+				end
+				
+				if button.cooldown then
+					button.cooldown:SetPoint("TOPLEFT", button, "TOPLEFT", 0, 0)
+					button.cooldown:SetScale((button:GetWidth() + 0.7)/36)
+				end
+				if button.timeFontstring then
+					button.timeFontstring:SetFont(defaultFont, LunaUF.db.profile.units["player"].auras.timertextsmallsize, "OUTLINE")
+				end
+			else
+				button:Hide()
 			end
 		end
 	end
