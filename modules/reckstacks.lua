@@ -27,7 +27,7 @@ local function OnEvent()
 		else
 			return
 		end
-	elseif talentRank == 5 and currStacks < 5 and string.find(arg1, events[event]) then
+	elseif talentRank == 5 and currStacks < 4 and string.find(arg1, events[event]) then
 		currStacks = currStacks + 1
 		ReckStacks:Update(this:GetParent())
 	end
@@ -38,7 +38,7 @@ function ReckStacks:OnEnable(frame)
 	if not frame.reckStacks then
 		frame.reckStacks = CreateFrame("Frame", nil, frame)
 		frame.reckStacks.blocks = {}
-		for id=1, 5 do
+		for id=1, 4 do
 			frame.reckStacks.blocks[id] = frame.reckStacks.blocks[id] or frame.reckStacks:CreateTexture(nil, "OVERLAY")
 		end
 	end
@@ -80,8 +80,8 @@ function ReckStacks:Update(frame)
 end
 
 function ReckStacks:FullUpdate(frame)
-	local blockWidth = (frame.reckStacks:GetWidth() - 4) / 5
-	for id=1, 5 do
+	local blockWidth = (frame.reckStacks:GetWidth() - 3) / 4
+	for id=1, 4 do
 		local texture = frame.reckStacks.blocks[id]
 		texture:SetHeight(frame.reckStacks:GetHeight())
 		texture:SetWidth(blockWidth)
