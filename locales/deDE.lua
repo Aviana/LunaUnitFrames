@@ -74,7 +74,7 @@ local function deDE() return {
 ["Shadow Flame"] = "Schattenflamme",
 ["Wing Buffet"] = "Fl\195\188gelsto\195\159",
 ["Bellowing Roar"] = "Dr\195\182hnendes Gebr\195\188ll",
-["Unstable Concoction"] = "Unstable Concoction",
+["Unstable Concoction"] = "Instabile Substanz",
 ["Intense Pain"] = "Starke Schmerzen",
 ["Combat text"] = "Kampf Text",
 ["PRIEST"] = "Priester",
