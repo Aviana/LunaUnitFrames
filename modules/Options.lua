@@ -749,6 +749,15 @@ function LunaUF:LoadOptions()
 	LunaOptionsFrame.pages[page].yInput:SetText(LunaUF.db.profile.units["raid"][1].position.y)
 	LunaOptionsFrame.pages[page].enablerange:SetChecked(LunaUF.db.profile.units.raid.range.enabled)
 	LunaOptionsFrame.pages[page].raidrangealpha:SetValue(LunaUF.db.profile.units.raid.range.alpha)
+
+--healthAlphas
+	LunaOptionsFrame.pages[page].healthAlphas:SetChecked(LunaUF.db.profile.units.raid.healththreshold.enabled)
+	LunaOptionsFrame.pages[page].healththresholdslider:SetValue(LunaUF.db.profile.units.raid.healththreshold.threshold)
+	
+	LunaOptionsFrame.pages[page].inrangebelowthresholdslider:SetValue(LunaUF.db.profile.units.raid.healththreshold.inRangeBelowAlpha)
+	LunaOptionsFrame.pages[page].inrangeabovethresholdslider:SetValue(LunaUF.db.profile.units.raid.healththreshold.inRangeAboveAlpha)
+	LunaOptionsFrame.pages[page].outrangebelowthresholdslider:SetValue(LunaUF.db.profile.units.raid.healththreshold.outOfRangeBelowAlpha)
+--
 	LunaOptionsFrame.pages[page].enabletracker:SetChecked(LunaUF.db.profile.units.raid.squares.enabled)
 	LunaOptionsFrame.pages[page].outersizeslider:SetValue(LunaUF.db.profile.units.raid.squares.outersize)
 	LunaOptionsFrame.pages[page].enabledebuffs:SetChecked(LunaUF.db.profile.units.raid.squares.enabledebuffs)
@@ -2989,6 +2998,7 @@ function LunaUF:CreateOptionsMenu()
 	end)
 	getglobal("EnableraidRangeText"):SetText(L["Enable"])
 
+
 	LunaOptionsFrame.pages[page].raidrangealpha = CreateFrame("Slider", "AlphaSliderraidRange", LunaOptionsFrame.pages[page], "OptionsSliderTemplate")
 	LunaOptionsFrame.pages[page].raidrangealpha:SetMinMaxValues(0.1,1)
 	LunaOptionsFrame.pages[page].raidrangealpha:SetValueStep(0.1)
@@ -2999,8 +3009,74 @@ function LunaUF:CreateOptionsMenu()
 	LunaOptionsFrame.pages[page].raidrangealpha:SetPoint("TOPLEFT", LunaOptionsFrame.pages[page].enablerange, "TOPLEFT", 200, 0)
 	LunaOptionsFrame.pages[page].raidrangealpha:SetWidth(190)
 
+	LunaOptionsFrame.pages[page].healthAlphasdesc = LunaOptionsFrame.pages[page]:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+	LunaOptionsFrame.pages[page].healthAlphasdesc:SetPoint("TOPLEFT", LunaOptionsFrame.pages[page].enablerange, "BOTTOMLEFT", 0, -30)
+	LunaOptionsFrame.pages[page].healthAlphasdesc:SetHeight(24)
+	LunaOptionsFrame.pages[page].healthAlphasdesc:SetJustifyH("LEFT")
+	LunaOptionsFrame.pages[page].healthAlphasdesc:SetTextColor(1,1,0)
+	LunaOptionsFrame.pages[page].healthAlphasdesc:SetText(L["Low Health Indicator"])
+
+	LunaOptionsFrame.pages[page].healthAlphas = CreateFrame("CheckButton", "EnableHealthAlphas", LunaOptionsFrame.pages[page], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[page].healthAlphas:SetPoint("TOPLEFT", LunaOptionsFrame.pages[page].healthAlphasdesc, "BOTTOMLEFT", 0, -10)
+	LunaOptionsFrame.pages[page].healthAlphas:SetHeight(30)
+	LunaOptionsFrame.pages[page].healthAlphas:SetWidth(30)
+	LunaOptionsFrame.pages[page].healthAlphas:SetScript("OnClick", function()
+		LunaUF.db.profile.units.raid.healththreshold.enabled = not LunaUF.db.profile.units.raid.healththreshold.enabled
+		for _,frame in pairs(LunaUF.Units.frameList) do
+			if frame.unitGroup == "raid" then
+				LunaUF.Units:SetupFrameModules(frame)
+			end
+		end
+	end)
+	getglobal("EnableHealthAlphasText"):SetText(L["Enable"])
+
+     --Health Threshold slider
+	LunaOptionsFrame.pages[page].healththresholdslider = CreateFrame("Slider", "HealthThresholdTracker", LunaOptionsFrame.pages[page], "OptionsSliderTemplate")
+	LunaOptionsFrame.pages[page].healththresholdslider:SetMinMaxValues(0.1,1)
+	LunaOptionsFrame.pages[page].healththresholdslider:SetValueStep(0.1)
+	LunaOptionsFrame.pages[page].healththresholdslider:SetScript("OnValueChanged", function()
+		LunaUF.db.profile.units.raid.healththreshold.threshold = math.floor(this:GetValue()*10+.5)/10
+		local lowhealthtext = LunaUF.db.profile.units.raid.healththreshold.threshold*100
+		getglobal("HealthThresholdTrackerText"):SetText(L["Low Health Limit"]..": "..lowhealthtext.."%")
+	end) 
+	LunaOptionsFrame.pages[page].healththresholdslider:SetPoint("TOPLEFT", LunaOptionsFrame.pages[page].healthAlphas, "BOTTOMLEFT", 0, -10)
+	LunaOptionsFrame.pages[page].healththresholdslider:SetWidth(460)
+
+    --In Range and Below Threshold Alpha slider
+  	LunaOptionsFrame.pages[page].inrangebelowthresholdslider = CreateFrame("Slider", "InRangeBelowThreshold", LunaOptionsFrame.pages[page], "OptionsSliderTemplate")
+  	LunaOptionsFrame.pages[page].inrangebelowthresholdslider:SetMinMaxValues(0.1,1)
+  	LunaOptionsFrame.pages[page].inrangebelowthresholdslider:SetValueStep(0.1)
+  	LunaOptionsFrame.pages[page].inrangebelowthresholdslider:SetScript("OnValueChanged", function()
+  	  LunaUF.db.profile.units.raid.healththreshold.inRangeBelowAlpha = math.floor(this:GetValue()*10)/10
+  	  getglobal("InRangeBelowThresholdText"):SetText(L["In Range and Below Limit"].." "..L["Alpha"]..": "..LunaUF.db.profile.units.raid.healththreshold.inRangeBelowAlpha)
+  	end)
+  	LunaOptionsFrame.pages[page].inrangebelowthresholdslider:SetPoint("TOPLEFT", LunaOptionsFrame.pages[page].healththresholdslider, "BOTTOMLEFT", 0, -30)
+  	LunaOptionsFrame.pages[page].inrangebelowthresholdslider:SetWidth(460)
+  
+	--In Range and Above Threshold Alpha slider
+  	LunaOptionsFrame.pages[page].inrangeabovethresholdslider = CreateFrame("Slider", "InRangeAboveThreshold", LunaOptionsFrame.pages[page], "OptionsSliderTemplate")
+  	LunaOptionsFrame.pages[page].inrangeabovethresholdslider:SetMinMaxValues(0.1,1)
+  	LunaOptionsFrame.pages[page].inrangeabovethresholdslider:SetValueStep(0.1)
+  	LunaOptionsFrame.pages[page].inrangeabovethresholdslider:SetScript("OnValueChanged", function()
+  	  LunaUF.db.profile.units.raid.healththreshold.inRangeAboveAlpha = math.floor(this:GetValue()*10)/10
+  	  getglobal("InRangeAboveThresholdText"):SetText(L["In Range and Above Limit"].." "..L["Alpha"]..": "..LunaUF.db.profile.units.raid.healththreshold.inRangeAboveAlpha)
+  	end)
+  	LunaOptionsFrame.pages[page].inrangeabovethresholdslider:SetPoint("TOPLEFT", LunaOptionsFrame.pages[page].inrangebelowthresholdslider, "BOTTOMLEFT", 0, -30)
+  	LunaOptionsFrame.pages[page].inrangeabovethresholdslider:SetWidth(460)
+ 
+ 	--Out of Range and Below Threshold Alpha slider
+ 	LunaOptionsFrame.pages[page].outrangebelowthresholdslider = CreateFrame("Slider", "OutRangeBelowThreshold", LunaOptionsFrame.pages[page], "OptionsSliderTemplate")
+ 	LunaOptionsFrame.pages[page].outrangebelowthresholdslider:SetMinMaxValues(0.1,1)
+ 	LunaOptionsFrame.pages[page].outrangebelowthresholdslider:SetValueStep(0.1)
+ 	LunaOptionsFrame.pages[page].outrangebelowthresholdslider:SetScript("OnValueChanged", function()
+ 	  LunaUF.db.profile.units.raid.healththreshold.outOfRangeBelowAlpha = math.floor(this:GetValue()*10)/10
+ 	  getglobal("OutRangeBelowThresholdText"):SetText(L["Out of Range and Below Limit"].." "..L["Alpha"]..": "..LunaUF.db.profile.units.raid.healththreshold.outOfRangeBelowAlpha)
+ 	end)
+ 	LunaOptionsFrame.pages[page].outrangebelowthresholdslider:SetPoint("TOPLEFT", LunaOptionsFrame.pages[page].inrangeabovethresholdslider, "BOTTOMLEFT", 0, -30)
+ 	LunaOptionsFrame.pages[page].outrangebelowthresholdslider:SetWidth(460)
+
 	LunaOptionsFrame.pages[page].trackerDesc = LunaOptionsFrame.pages[page]:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	LunaOptionsFrame.pages[page].trackerDesc:SetPoint("TOPLEFT", LunaOptionsFrame.pages[page].enablerange, "BOTTOMLEFT", 0, -30)
+	LunaOptionsFrame.pages[page].trackerDesc:SetPoint("TOPLEFT", LunaOptionsFrame.pages[page].outrangebelowthresholdslider, "BOTTOMLEFT", 0, -30)
 	LunaOptionsFrame.pages[page].trackerDesc:SetHeight(24)
 	LunaOptionsFrame.pages[page].trackerDesc:SetJustifyH("LEFT")
 	LunaOptionsFrame.pages[page].trackerDesc:SetTextColor(1,1,0)
