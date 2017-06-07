@@ -318,11 +318,32 @@ function Range:FullUpdate(frame)
 	if frame.DisableRangeAlpha or (GetTime() - frame.range.lastUpdate) < (LunaUF.db.profile.RangePolRate or 1.5) then return end
 	frame.range.lastUpdate = GetTime()
 	local range = self:GetRange(frame.unit)
-	if range <= 40 then
-		frame:SetAlpha(LunaUF.db.profile.units[frame.unitGroup].fader.enabled and LunaUF.db.profile.units[frame.unitGroup].fader.combatAlpha or 1)
-	else
-		frame:SetAlpha(LunaUF.db.profile.units[frame.unitGroup].range.alpha)
+
+	local healththreshold = LunaUF.db.profile.units.raid.healththreshold
+	if (not healththreshold.enabled) then
+		if range <= 40 then
+			frame:SetAlpha(LunaUF.db.profile.units[frame.unitGroup].fader.enabled and LunaUF.db.profile.units[frame.unitGroup].fader.combatAlpha or 1)
+		else
+			frame:SetAlpha(LunaUF.db.profile.units[frame.unitGroup].range.alpha)
+		end
+	else -- TODO Remove dependency on the Range module for healththreshold.
+		local percent = UnitHealth(frame.unit) / UnitHealthMax(frame.unit)
+		if (range <= 40) then
+			if (percent <= healththreshold.threshold) then				
+				frame:SetAlpha(healththreshold.inRangeBelowAlpha)
+			else
+				frame:SetAlpha(healththreshold.inRangeAboveAlpha)
+			end
+		else
+			if (percent <= healththreshold.threshold) then
+				frame:SetAlpha(healththreshold.outOfRangeBelowAlpha)
+			else
+				frame:SetAlpha(LunaUF.db.profile.units[frame.unitGroup].range.alpha)
+			end
+		end
 	end
+
+
 end
 
 if HealSpells[playerClass] then -- only hook on healing classes
