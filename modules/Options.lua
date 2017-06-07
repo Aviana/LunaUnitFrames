@@ -2975,20 +2975,19 @@ function LunaUF:CreateOptionsMenu()
 	LunaOptionsFrame.pages[page].reckheader:SetTextColor(1,1,0)
 	LunaOptionsFrame.pages[page].reckheader:SetText(L["Reckoning Stacks"])
 
-	LunaOptionsFrame.pages[page].enablereck = CreateFrame("CheckButton", "EnabletargetCombo", LunaOptionsFrame.pages[page], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[page].enablereck = CreateFrame("CheckButton", "EnableReckStacks", LunaOptionsFrame.pages[page], "UICheckButtonTemplate")
 	LunaOptionsFrame.pages[page].enablereck:SetPoint("TOPLEFT", LunaOptionsFrame.pages[page].reckheader, "BOTTOMLEFT", 0, -10)
 	LunaOptionsFrame.pages[page].enablereck:SetHeight(30)
 	LunaOptionsFrame.pages[page].enablereck:SetWidth(30)
 	LunaOptionsFrame.pages[page].enablereck:SetScript("OnClick", function()
-		local unit = this:GetParent().id
-		LunaUF.db.profile.units[unit].reckStacks.enabled = not LunaUF.db.profile.units[unit].reckStacks.enabled
+		LunaUF.db.profile.units.player.reckStacks.enabled = not LunaUF.db.profile.units.player.reckStacks.enabled
 		for _,frame in pairs(LunaUF.Units.frameList) do
-			if frame.unitGroup == unit then
+			if frame.unitGroup == "player" then
 				LunaUF.Units:SetupFrameModules(frame)
 			end
 		end
 	end)
-	getglobal("EnabletargetCombo".."Text"):SetText(L["Enable"])
+	getglobal("EnableReckStacksText"):SetText(L["Enable"])
 
 	LunaOptionsFrame.pages[page].reckgrowth = CreateFrame("Button", "ReckGrowth", LunaOptionsFrame.pages[page], "UIDropDownMenuTemplate")
 	LunaOptionsFrame.pages[page].reckgrowth:SetPoint("TOPLEFT", LunaOptionsFrame.pages[page].reckheader, "BOTTOMLEFT", 60 , -10)

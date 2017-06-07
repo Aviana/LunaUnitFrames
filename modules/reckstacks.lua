@@ -18,7 +18,7 @@ local events = {
 
 
 local function OnEvent()
-	if event == "CHARACTER_POINTS_CHANGED" then
+	if event == "CHARACTER_POINTS_CHANGED" or event == "PLAYER_ALIVE" then
 		_,_,_,_,talentRank = GetTalentInfo(2,13)
 	elseif event == "CHAT_MSG_COMBAT_SELF_HITS" or (event == "CHAT_MSG_COMBAT_FRIENDLY_DEATH" and arg1 == events[event]) then
 		if currStacks > 0 then
@@ -45,6 +45,7 @@ function ReckStacks:OnEnable(frame)
 	_,_,_,_,talentRank = GetTalentInfo(2,13)
 	for i in pairs(events) do frame.reckStacks:RegisterEvent(i) end
 	frame.reckStacks:RegisterEvent("CHARACTER_POINTS_CHANGED")
+	frame.reckStacks:RegisterEvent("PLAYER_ALIVE")
 	frame.reckStacks:SetScript("OnEvent", OnEvent)
 end
 
