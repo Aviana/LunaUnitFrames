@@ -108,7 +108,7 @@ function LunaUF:Mouseover(action)
 		if func then
 			func()
 		else
-			CastSpellByName(action)
+			CastSpellByName(action,1)
 		end
 	end
 end
