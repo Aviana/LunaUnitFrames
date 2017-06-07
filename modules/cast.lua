@@ -651,6 +651,25 @@ local function OnAimed(cast)
 				Cast:FullUpdate(uframe)
 			end
 		end
+	elseif cast == BS["Multi-Shot"] then
+		local _,_, latency = GetNetStats()
+		for _,uframe in pairs(LunaUF.Units.frameList) do
+			if uframe.castBar and LunaUF.db.profile.units[uframe.unitGroup].castBar.enabled and UnitIsUnit(uframe.unit,"player") then
+				uframe.castBar.maxValue = 0.5 + (latency/1000)
+				uframe.castBar.casting = true
+				uframe.castBar.channeling = false
+				uframe.castBar.delaySum = 0
+				uframe.castBar.startTime = GetTime()
+				uframe.castBar.Text:SetText(BS["Multi-Shot"])
+				if LunaUF.db.profile.units[uframe.unitGroup].castBar.icon then
+					uframe.castBar.icon:SetTexture(BS:GetSpellIcon("Multi-Shot"))
+				end
+				uframe.castBar.bar:SetMinMaxValues(0, uframe.castBar.maxValue)
+				uframe.castBar.bar:SetValue(0)
+				uframe.castBar:SetScript("OnUpdate", OnUpdatePlayer)
+				Cast:FullUpdate(uframe)
+			end
+		end
 	end
 end
 

@@ -16,17 +16,21 @@ if not AceLibrary:HasInstance("AceEvent-2.0") then error(MAJOR_VERSION .. " requ
 if not AceLibrary:HasInstance("AceHook-2.1") then error(MAJOR_VERSION .. " requires AceHook-2.1") end
 
 local CastLib = {}
-local AimedShot
+local AimedShot, Multishot
 local locale = GetLocale()
 
 if locale == "deDE" then
 	AimedShot = "Gezielter Schuss"
+	Multishot = "Mehrfachschuss"
 elseif locale == "frFR" then
 	AimedShot = "Vis\195\169e"
+	Multishot = "Fl\195\168ches multiples"
 elseif locale == "zhCN" then
 	AimedShot = "瞄准射击"
+	Multishot = "多重射擊"
 else
 	AimedShot = "Aimed Shot"
+	Multishot = "Multi-Shot"
 end
 
 ------------------------------------------------
@@ -268,6 +272,9 @@ function CastLib:UseAction(slot, checkCursor, onSelf)
 	if CastLib_Spell == AimedShot and not GetActionText(slot) then
 		self:ProcessSpellCast(CastLib_Spell, 6, UnitName("target"))
 		return
+	elseif CastLib_Spell == Multishot and not GetActionText(slot) then
+		self:ProcessSpellCast(CastLib_Spell, 4, UnitName("target"))
+		return
 	end
 	
 	-- Test to see if this is a macro
@@ -337,6 +344,13 @@ function CastLib:ProcessSpellCast(spellName, rank, targetName)
 			self.isCasting = true
 			local AceEvent = AceLibrary("AceEvent-2.0")
 			AceEvent:TriggerEvent("CASTLIB_STARTCAST", AimedShot)
+		end
+	elseif spellName == Multishot then
+		self.Spell = Multishot
+		if not self.isCasting and self.Slot and IsCurrentAction(self.Slot) then
+			self.isCasting = true
+			local AceEvent = AceLibrary("AceEvent-2.0")
+			AceEvent:TriggerEvent("CASTLIB_STARTCAST", Multishot)
 		end
 	end
 	self.SpellCast[1] = spellName
