@@ -221,6 +221,7 @@ local function zhCN() return {
 ["Counterspell - Silenced"] = "法术反制 - 沉默",
 ["Kick - Silenced"] = "脚踢 - 沉默",
 ["Shield Bash - Silenced"] = "盾击 - 沉默",
+["Eye Beam"] = "眼棱",
 ["Energy / mp5 ticker"] = "能量/5秒回蓝计时",
 ["Show Mana Usage"] = "Show Mana Usage",
 ["Auratracker"] = "光环追踪",
@@ -240,6 +241,7 @@ local function zhCN() return {
 ["Feign Death"] = "假死",
 ["Dead"] = "死亡",
 ["Size"] = "大小",
+["Big Size"] = "Big Size",
 ["Partyoptions"] = "小队选项",
 ["Show party in raid"] = "在团队中显示小队",
 ["Player in party"] = "在小队中显示玩家",
@@ -422,7 +424,11 @@ local function zhCN() return {
 ["CHAT_MSG_COMBAT_CREATURE_VS_SELF_HITS"] = ".+击中(.+)造成.+伤害。",
 ["CHAT_MSG_COMBAT_HOSTILEPLAYER_HITS"] = ".+的致命一击对(你)造成.+伤害。",
 ["CHAT_MSG_SPELL_CREATURE_VS_SELF_DAMAGE"] = ".+的.+击中(.+)造成.+伤害",
-["CHAT_MSG_SPELL_HOSTILEPLAYER_DAMAGE"] = ".+的.+致命一击对(.+)造成.+伤害"
+["CHAT_MSG_SPELL_HOSTILEPLAYER_DAMAGE"] = ".+的.+致命一击对(.+)造成.+伤害",
+["魔法"] = "Magic",
+["诅咒"] = "Curse",
+["中毒"] = "Poison",
+["疾病"] = "Disease",
 }
 end
 

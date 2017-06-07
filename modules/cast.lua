@@ -63,7 +63,6 @@ local Spells = {
 	[L["Corrosive Acid"]] = {2};
 	[L["Dominate Mind"]] = {2};
 	[L["Demon Portal"]] = {0.5};
-	[L["Eye Beam"]] = {2};
 	
 
 		-- First Aid
@@ -104,6 +103,7 @@ local Spells = {
 	
 	-- Hunter
 	[BS["Aimed Shot"]] = {t=3.0};
+	[BS["Multi-Shot"]] = {t=0.5};
 	[BS["Scare Beast"]] = {t=1.5};
 	[BS["Dismiss Pet"]] = {t=5.0};
 	[BS["Revive Pet"]] = {t=10.0};
@@ -284,6 +284,9 @@ local Raids = {
 
 		-- 20 Man Trash
 		[L["Explode"]] = {t=6.0};
+
+		-- 40 Man C'thun
+		[L["Eye Beam"]] = {t=2};
 
 	-- Blackwing Lair
 			
@@ -486,6 +489,7 @@ local function OnUpdatePlayer()
 		if (elapsed == frame.castBar.maxValue) then
 			frame.castBar.channeling = nil
 			frame.castBar:SetScript("OnUpdate", nil)
+			Cast:FullUpdate(frame)
 			return
 		end
 		frame.castBar.bar:SetValue(frame.castBar.maxValue - elapsed)

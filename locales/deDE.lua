@@ -224,6 +224,7 @@ local function deDE() return {
 ["Counterspell - Silenced"] = "Gegenzauber - zum Schweigen gebracht",
 ["Kick - Silenced"] = "Tritt - zum Schweigen gebracht",
 ["Shield Bash - Silenced"] = "Schildhieb - zum Schweigen gebracht",
+["Eye Beam"] = "Augenstrahl",
 ["Energy / mp5 ticker"] = "Energie / MP5 Ticker",
 ["Show Mana Usage"] = "Zeige Mananutzung",
 ["Auratracker"] = "Auraverfolger",
@@ -243,6 +244,7 @@ local function deDE() return {
 ["Feign Death"] = "Totstellen",
 ["Dead"] = "Tot",
 ["Size"] = "Gr\195\182\195\159e",
+["Big Size"] = "Gro\195\159e Gr\195\182\195\159e",
 ["Partyoptions"] = "Gruppenoptionen",
 ["Show party in raid"] = "Zeige Gruppe im Schlachtzug",
 ["Player in party"] = "Spieler in Gruppe",
@@ -426,6 +428,10 @@ local function deDE() return {
 ["CHAT_MSG_COMBAT_HOSTILEPLAYER_HITS"] = ".+ trifft (Euch) kritisch: %d+ Schaden%.",
 ["CHAT_MSG_SPELL_CREATURE_VS_SELF_DAMAGE"] = ".+s .+ trifft (%a+) kritisch: .+",
 ["CHAT_MSG_SPELL_HOSTILEPLAYER_DAMAGE"] = ".+s .+ trifft (Euch) kritisch: .+",
+["Magie"] = "Magic",
+["Fluch"] = "Curse",
+["Gift"] = "Poison",
+["Krankheit"] = "Disease",
 }
 end
 

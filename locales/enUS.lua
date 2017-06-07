@@ -142,6 +142,7 @@ local function enUS() return {
 ["Background alpha"] = "Background alpha",
 ["Blizzard frames"] = "Blizzard frames",
 ["Buffs"] = "Buffs",
+["Debuffs"] = "Debuffs",
 ["Weaponbuffs"] = "Weaponbuffs",
 ["Enable"] = "Enable",
 ["Height"] = "Height",
@@ -221,6 +222,7 @@ local function enUS() return {
 ["Counterspell - Silenced"] = "Counterspell - Silenced",
 ["Kick - Silenced"] = "Kick - Silenced",
 ["Shield Bash - Silenced"] = "Shield Bash - Silenced",
+["Eye Beam"] = "Eye Beam",
 ["Energy / mp5 ticker"] = "Energy / mp5 ticker",
 ["Show Mana Usage"] = "Show Mana Usage",
 ["Auratracker"] = "Auratracker",
@@ -240,6 +242,7 @@ local function enUS() return {
 ["Feign Death"] = "Feign Death",
 ["Dead"] = "Dead",
 ["Size"] = "Size",
+["Big Size"] = "Big Size",
 ["Partyoptions"] = "Partyoptions",
 ["Show party in raid"] = "Show party in raid",
 ["Player in party"] = "Player in party",
@@ -423,6 +426,10 @@ local function enUS() return {
 ["CHAT_MSG_COMBAT_HOSTILEPLAYER_HITS"] = ".+ crits (you) for .+",
 ["CHAT_MSG_SPELL_CREATURE_VS_SELF_DAMAGE"] = ".+'s .+ crits (%a+) for .+",
 ["CHAT_MSG_SPELL_HOSTILEPLAYER_DAMAGE"] = ".+'s .+ crits (you) for .+",
+["Magic"] = "Magic",
+["Curse"] = "Curse",
+["Poison"] = "Poison",
+["Disease"] = "Disease",
 }
 end
 
