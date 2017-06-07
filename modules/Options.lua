@@ -889,10 +889,10 @@ function LunaUF:CreateOptionsMenu()
 
 	if LunaUF.db.profile.version or 0 > LunaUF.Version then
 		LunaOptionsFrame.version:SetTextColor(1,0,0)
-		LunaOptionsFrame.version:SetText("V."..LunaUF.Version.." Beta (Outdated)")
+		LunaOptionsFrame.version:SetText("V."..LunaUF.Version.." (Outdated)")
 	else		
 		LunaOptionsFrame.version:SetTextColor(1,1,1)		
-		LunaOptionsFrame.version:SetText("V."..LunaUF.Version.." Beta")		
+		LunaOptionsFrame.version:SetText("V."..LunaUF.Version)		
 	end
 
 	LunaOptionsFrame.help = CreateFrame("Button", nil, LunaOptionsFrame)
