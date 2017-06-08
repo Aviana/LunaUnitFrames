@@ -146,7 +146,9 @@ local function frFR() return {
 ["Alpha"] = "Alpha",
 ["Background alpha"] = "Background alpha",
 ["Blizzard frames"] = "Blizzard frames",
+["Emphasize"] = "Emphasize",
 ["Buffs"] = "Buffs",
+["Debuffs"] = "Debuffs",
 ["Weaponbuffs"] = "Weaponbuffs",
 ["Enable"] = "Enable",
 ["Height"] = "Height",
@@ -432,10 +434,6 @@ local function frFR() return {
 ["CHAT_MSG_COMBAT_HOSTILEPLAYER_HITS"] = ".+ crits (you) for .+",
 ["CHAT_MSG_SPELL_CREATURE_VS_SELF_DAMAGE"] = ".+'s .+ crits (%a+) for .+",
 ["CHAT_MSG_SPELL_HOSTILEPLAYER_DAMAGE"] = ".+'s .+ crits (you) for .+",
-["Magie"] = "Magic",
-["Mal\195\169diction"] = "Curse",
-["Poison"] = "Poison",
-["Maladie"] = "Disease",
 }
 end
 

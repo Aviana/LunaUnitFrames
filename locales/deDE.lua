@@ -149,7 +149,9 @@ local function deDE() return {
 ["Alpha"] = "Alpha",
 ["Background alpha"] = "Hintergrund alpha",
 ["Blizzard frames"] = "Blizzard Einheiten",
+["Emphasize"] = "Hervorheben",
 ["Buffs"] = "St\195\164rkungszauber",
+["Debuffs"] = "Schw\195\164chezauber",
 ["Weaponbuffs"] = "Waffenst\195\164rkungszauber",
 ["Enable"] = "Einschalten",
 ["Height"] = "H\195\182he",
@@ -434,10 +436,6 @@ local function deDE() return {
 ["CHAT_MSG_COMBAT_HOSTILEPLAYER_HITS"] = ".+ trifft (Euch) kritisch: %d+ Schaden%.",
 ["CHAT_MSG_SPELL_CREATURE_VS_SELF_DAMAGE"] = ".+s .+ trifft (%a+) kritisch: .+",
 ["CHAT_MSG_SPELL_HOSTILEPLAYER_DAMAGE"] = ".+s .+ trifft (Euch) kritisch: .+",
-["Magie"] = "Magic",
-["Fluch"] = "Curse",
-["Gift"] = "Poison",
-["Krankheit"] = "Disease",
 }
 end
 

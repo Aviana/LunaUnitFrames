@@ -2502,7 +2502,7 @@ function LunaUF:CreateOptionsMenu()
 		
 		LunaOptionsFrame.pages[i].EmphasizeDesc = LunaOptionsFrame.pages[i]:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
 		LunaOptionsFrame.pages[i].EmphasizeDesc:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].enablebordercolor, "BOTTOMLEFT", 200, 0)
-		LunaOptionsFrame.pages[i].EmphasizeDesc:SetText("Emphasize")
+		LunaOptionsFrame.pages[i].EmphasizeDesc:SetText(L["Emphasize"])
 		
 		LunaOptionsFrame.pages[i].EmphasizeBuffsInput = CreateFrame("Editbox", "EmphasizeBuffsInput"..i, LunaOptionsFrame.pages[i], "InputBoxTemplate")
 		LunaOptionsFrame.pages[i].EmphasizeBuffsInput:SetHeight(20)

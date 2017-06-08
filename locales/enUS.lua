@@ -146,6 +146,7 @@ local function enUS() return {
 ["Alpha"] = "Alpha",
 ["Background alpha"] = "Background alpha",
 ["Blizzard frames"] = "Blizzard frames",
+["Emphasize"] = "Emphasize",
 ["Buffs"] = "Buffs",
 ["Debuffs"] = "Debuffs",
 ["Weaponbuffs"] = "Weaponbuffs",
@@ -432,10 +433,6 @@ local function enUS() return {
 ["CHAT_MSG_COMBAT_HOSTILEPLAYER_HITS"] = ".+ crits (you) for .+",
 ["CHAT_MSG_SPELL_CREATURE_VS_SELF_DAMAGE"] = ".+'s .+ crits (%a+) for .+",
 ["CHAT_MSG_SPELL_HOSTILEPLAYER_DAMAGE"] = ".+'s .+ crits (you) for .+",
-["Magic"] = "Magic",
-["Curse"] = "Curse",
-["Poison"] = "Poison",
-["Disease"] = "Disease",
 }
 end
 

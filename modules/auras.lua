@@ -8,6 +8,30 @@ LunaUF:RegisterModule(Auras, "auras", L["Auras"])
 
 local mainEnchant, offEnchant, mainDur, offDur
 
+local revTranslation = {}
+if( GetLocale() == "deDE" ) then
+	revTranslation["Magie"] = "Magic"
+	revTranslation["Fluch"] = "Curse"
+	revTranslation["Gift"] = "Poison"
+	revTranslation["Krankheit"] = "Disease"
+elseif ( GetLocale() == "frFR" ) then
+	revTranslation["Magie"] = "Magic"
+	revTranslation["Mal\195\169diction"] = "Curse"
+	revTranslation["Poison"] = "Poison"
+	revTranslation["Maladie"] = "Disease"
+elseif GetLocale() == "zhCN" then
+	revTranslation["魔法"] = "Magic"
+	revTranslation["诅咒"] = "Curse"
+	revTranslation["中毒"] = "Poison"
+	revTranslation["疾病"] = "Disease"
+else
+	revTranslation["Magic"] = "Magic"
+	revTranslation["Curse"] = "Curse"
+	revTranslation["Poison"] = "Poison"
+	revTranslation["Disease"] = "Disease"
+end
+
+
 -- Thanks schaka! :D
 local function firstToUpper(str)
 	if (str~=nil) then
@@ -302,7 +326,7 @@ function Auras:UpdateFrames(frame)
 				ScanTip:ClearLines()
 				ScanTip:SetUnitBuff(frame.unit,i)
 				dtype = LunaAuraScanTipTextRight1:IsVisible() and LunaAuraScanTipTextRight1:GetText()
-				dtype = dtype and L[dtype]
+				dtype = dtype and revTranslation[dtype]
 				buffName = LunaAuraScanTipTextLeft1:GetText()
 			end
 			if buffName and config.emphasizeAuras.buffs[buffName] then
