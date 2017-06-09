@@ -1,6 +1,6 @@
 --[[
 Name: HealComm-1.0
-Revision: $Rev: 11610 $
+Revision: $Rev: 11620 $
 Author(s): aviana
 Website: https://github.com/Aviana
 Description: A library to provide communication of heals and resurrections.
@@ -8,7 +8,7 @@ Dependencies: AceLibrary, AceEvent-2.0, RosterLib-2.0
 ]]
 
 local MAJOR_VERSION = "HealComm-1.0"
-local MINOR_VERSION = "$Revision: 11610 $"
+local MINOR_VERSION = "$Revision: 11620 $"
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
 if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end
@@ -1523,7 +1523,7 @@ function HealComm:CastSpellByName(spellName, onSelf)
 		self.CurrentSpellName = spellName
 		self.CurrentSpellRank = rank
 		
-		if not SpellIsTargeting() and GetCVar("AutoSelfCast") == "1" then
+		if not SpellIsTargeting() then
 			if UnitIsVisible("target") and UnitIsConnected("target") and UnitCanAssist("player", "target") and onSelf ~= 1 then
 				if UnitIsPlayer("target") then
 					self:ProcessSpellCast("target")
