@@ -462,6 +462,14 @@ function Auras:UpdateFrames(frame)
 			buffName = LunaAuraScanTipTextLeft1:GetText()
 		else
 			texture, stacks, dtype = UnitDebuff(frame.unit,i)
+			ScanTip:ClearLines()
+			ScanTip:SetUnitDebuff(frame.unit,i)
+			buffName = LunaAuraScanTipTextLeft1:GetText()
+		end
+		if buffName and config.emphasizeAuras.debuffs[buffName] then
+			button.large = true
+		else
+			button.large = nil
 		end
 		if not LunaUF.db.profile.locked then
 			texture = "Interface\\Icons\\Spell_ChargeNegative"
