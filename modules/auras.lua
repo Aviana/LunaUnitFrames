@@ -758,7 +758,7 @@ function Auras:UpdateLayout(frame)
 				frameheight = frameheight + 2 + rowheight
 				rowheight = buttonsize
 			else
-				button:SetPoint("TOPLEFT", lastButton, "TOPRIGHT", 2, 0)
+				button:SetPoint("BOTTOMLEFT", lastButton, "BOTTOMRIGHT", 2, 0)
 				rowlenght = rowlenght + buttonsize + 2
 				rowheight = math.max(rowheight, buttonsize)
 			end
