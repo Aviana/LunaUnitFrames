@@ -518,9 +518,7 @@ local defaultTags = {
 								end
 							end;
 	["group"]				= function(unit)
-								if UnitInParty(unit) and GetNumPartyMembers() > 0 then
-									return 1
-								elseif GetNumRaidMembers() > 0 then
+								if GetNumRaidMembers() > 0 then
 									local name = UnitName(unit)
 									for i=1, GetNumRaidMembers() do
 										local raidName, _, group = GetRaidRosterInfo(i)
@@ -528,6 +526,9 @@ local defaultTags = {
 											return group
 										end
 									end
+								elseif UnitInParty(unit) and GetNumPartyMembers() > 0 then
+									return 1
+								
 								end
 								return ""
 							end;
