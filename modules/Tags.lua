@@ -531,6 +531,7 @@ local defaultTags = {
 								
 								end
 								return ""
+							end;
 	["color:aggro"]			= function(unit)
 								local aggro = banzai:GetUnitAggroByUnitId(unit)
 								if aggro then
