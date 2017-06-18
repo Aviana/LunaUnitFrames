@@ -199,6 +199,8 @@ local function zhCN() return {
 ["Status tracker"] = "状态追踪器",
 ["High Priestess Mar'li"] = "高阶祭司玛尔里",
 ["Gehennas"] = "基赫纳斯",
+["Flamewaker Elite"] = "火妖精英",
+["Flamewaker Priest"] = "火妖祭司",
 ["Great Heal"] = "强效治疗术", --25807, Princess Yauj, 亚尔基公主
 ["Sweep"] = "横扫", --26103, Ouro, 奥罗
 ["Sand Blast"] = "沙尘爆裂", --26102, Ouro, 奥罗

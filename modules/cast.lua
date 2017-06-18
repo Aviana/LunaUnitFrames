@@ -40,7 +40,7 @@ local Spells = {
 	[L["Arcane Bomb"]] = {t=1, ni=1};
 	[L["Sleep"]] = {t=1.5, ni=1};
 	[L["Reckless Charge"]] = {t=0};
-	[L["Dark Mending"]] = {t=2};
+	[L["Dark Mending"]] = {t=3.5};
 	[L["Intense Pain"]] = {t=1};
 	[BS["Sacrifice"]] = {t=1};
 	[L["Great Heal"]] = {t=2};
@@ -304,6 +304,10 @@ local Raids = {
 		[L["Gehennas"]] = true;
 		[L["Gothik the Harvester"]] = true;
 		[BS["Shadow Bolt"]] = {t=1, r=L["Gehennas"], a=0.5};
+		[L["Flamewaker Elite"]] = true;
+		[BS["Fireball"]] = {t=3, r=L["Flamewaker Elite"], a=1};
+		[L["Flamewaker Priest"]] = true;
+		[L["Dark Mending"]] = {t=3.5, r=L["Flamewaker Priest"], a=2};
 		
 		-- Zul'Gurub
 		[L["Unstable Concoction"]] = {t=3.0};

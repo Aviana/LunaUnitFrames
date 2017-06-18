@@ -202,6 +202,8 @@ local function deDE() return {
 ["Status tracker"] = "Statusverfolger",
 ["High Priestess Mar'li"] = "Hohepriesterin Mar'li",
 ["Gehennas"] = "Gehennas",
+["Flamewaker Elite"] = "Elite der Flammensch\195\188rer",
+["Flamewaker Priest"] = "Priester der Flammensch\195\188rer",
 ["Great Heal"] = "Große Heilung", --Princess Yauj
 ["Sweep"] = "Feger", --Ouro
 ["Sand Blast"] = "Sandb\195\182e", --Ouro

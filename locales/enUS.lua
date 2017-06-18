@@ -199,6 +199,8 @@ local function enUS() return {
 ["Status tracker"] = "Status tracker",
 ["High Priestess Mar'li"] = "High Priestess Mar'li",
 ["Gehennas"] = "Gehennas",
+["Flamewaker Elite"] = "Flamewaker Elite",
+["Flamewaker Priest"] = "Flamewaker Priest",
 ["Great Heal"] = "Great Heal", --Princess Yauj
 ["Sweep"] = "Sweep", --Ouro
 ["Sand Blast"] = "Sand Blast", --Ouro
