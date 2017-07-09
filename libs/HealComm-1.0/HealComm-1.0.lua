@@ -1024,15 +1024,16 @@ function HealComm:GetBuffSpellPower()
 	return Spellpower, healmod
 end
 
-function HealComm:GetUnitSpellPower(unit)
+function HealComm:GetUnitSpellPower(unit, spell)
 	local targetpower = 0
 	local targetmod = 1
 	local buffTexture, buffApplications
 	local debuffTexture, debuffApplications
+	local buffName
 	for i=1, 32 do
 		if UnitIsVisible(unit) and UnitIsConnected(unit) and UnitCanAssist("player", unit) then
 			buffTexture, buffApplications = UnitBuff(unit, i)
-			healcommTip:SetUnitBuff("target", i)
+			healcommTip:SetUnitBuff(unit, i)
 		else
 			buffTexture, buffApplications = UnitBuff("player", i)
 			healcommTip:SetUnitBuff("player", i)
@@ -1040,7 +1041,7 @@ function HealComm:GetUnitSpellPower(unit)
 		if not buffTexture then
 			break
 		end
-		local buffName = healcommTipTextLeft1:GetText()
+		buffName = healcommTipTextLeft1:GetText()
 		if buffName == L["Blessing of Light"] then
 			local HLBonus, FoLBonus = strmatch(healcommTipTextLeft2:GetText(),"(%d+).-(%d+)")
 			if (spell == L["Flash of Light"]) then
@@ -1614,7 +1615,7 @@ function HealComm:TargetUnit(unit)
 end
 
 function HealComm:ProcessSpellCast(unit)
-	local power, mod = self:GetUnitSpellPower(unit)
+	local power, mod = self:GetUnitSpellPower(unit, self.CurrentSpellName)
 	self.SpellCastInfo[1] = self.CurrentSpellName
 	self.SpellCastInfo[2] = self.CurrentSpellRank
 	self.SpellCastInfo[3] = UnitName(unit)
