@@ -484,9 +484,9 @@ local function SetupRaidHeader(passedHeader)
 			framesneeded = 0
 		end
 	elseif config.mode == "GROUP" then
-		framesneeded = not LunaUF.db.profile.locked and 5 or RAID_SUBGROUP_LISTS and getn(RAID_SUBGROUP_LISTS[header.id]) or 0
+		framesneeded = not LunaUF.db.profile.locked and 5 or RAID_SUBGROUP_LISTS and RAID_SUBGROUP_LISTS[header.id] and getn(RAID_SUBGROUP_LISTS[header.id]) or 0
 	else
-		framesneeded = not LunaUF.db.profile.locked and 5 or RAID_SUBGROUP_LISTS and getn(RAID_SUBGROUP_LISTS[LunaUF.constants.RaidClassMapping[header.id]]) or 0
+		framesneeded = not LunaUF.db.profile.locked and 5 or RAID_SUBGROUP_LISTS and RAID_SUBGROUP_LISTS[LunaUF.constants.RaidClassMapping[header.id]] and getn(RAID_SUBGROUP_LISTS[LunaUF.constants.RaidClassMapping[header.id]]) or 0
 	end
 	if not UnitInRaid("player") and header.id == 1 and LunaUF.db.profile.locked then
 		if config.showalways or (config.showparty and GetNumPartyMembers() > 0) then
