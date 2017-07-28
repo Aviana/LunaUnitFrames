@@ -55,7 +55,7 @@ end
 function LunaUF:Mouseover(action)
 	local func = loadstring(action or "")
 	SpellStopTargeting()
-	local unit = (LunaUF.db.profile.mouseover and UnitExists("mouseover") and "mouseover") or GetMouseFocus().unit
+	local unit = (LunaUF.db.profile.mouseover and UnitExists("mouseover") and "mouseover") or (GetMouseFocus() and GetMouseFocus().unit)
 	local rosterUnit = unit and self.roster:GetUnitIDFromUnit(unit)
 	unit = rosterUnit or unit
 	if unit then
