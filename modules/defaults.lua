@@ -104,7 +104,7 @@ LunaUF.defaults = {
 			MANAUSAGE = {r = 0.50, g = 0.70, b = 1.00},
 			MANA = {r = 0.30, g = 0.50, b = 0.85}, 
 			RAGE = {r = 0.90, g = 0.20, b = 0.30},
-			FOCUS = {r = 1.0, g = 0.85, b = 0}, 
+			FOCUS = {r = 1.0, g = 0.50, b = 0.25},  
 			ENERGY = {r = 1.0, g = 0.85, b = 0.10}, 
 			HAPPINESS = {r = 0.50, g = 0.90, b = 0.70},
 		},
