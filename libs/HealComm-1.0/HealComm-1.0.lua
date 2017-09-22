@@ -1,6 +1,6 @@
 --[[
 Name: HealComm-1.0
-Revision: $Rev: 11630 $
+Revision: $Rev: 11640 $
 Author(s): aviana
 Website: https://github.com/Aviana
 Description: A library to provide communication of heals and resurrections.
@@ -8,7 +8,7 @@ Dependencies: AceLibrary, AceEvent-2.0, RosterLib-2.0
 ]]
 
 local MAJOR_VERSION = "HealComm-1.0"
-local MINOR_VERSION = "$Revision: 11630 $"
+local MINOR_VERSION = "$Revision: 11640 $"
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
 if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end
@@ -998,7 +998,12 @@ HealComm.Debuffs = {
 local function getSetBonus()
 	healcommTip:SetInventoryItem("player", 1)
 	local text = "healcommTipTextLeft"..(healcommTip:NumLines() or 1)
-	text = getglobal(text):GetText()
+	local text = getglobal(text)
+	if text then
+		text = text:GetText()
+	else
+		return nil
+	end
 	if text == L["Set: Increases the duration of your Rejuvenation spell by 3 sec."] or text == L["Set: Increases the duration of your Renew spell by 3 sec."] then
 		return true
 	else
@@ -1507,18 +1512,27 @@ function HealComm:CastSpellByName(spellName, onSelf)
 	
 	local _,_,rank = string.find(spellName,"(%d+)")
 	local _, _, spellName = string.find(spellName, "^([^%(]+)")
-	if not rank then
-		local i = 1
-		while GetSpellName(i, BOOKTYPE_SPELL) do
-			local s, r = GetSpellName(i, BOOKTYPE_SPELL)
-			if s == spellName then
-				rank = r
+	spellName = string.lower(spellName)
+	local i = 1
+	while GetSpellName(i, BOOKTYPE_SPELL) do
+		local s, r = GetSpellName(i, BOOKTYPE_SPELL)
+		if string.lower(s) == spellName then
+			spellName = s
+			if rank then
+				break
+			else
+				while s == spellName do
+					rank = r
+					i = i+1
+					s, r = GetSpellName(i, BOOKTYPE_SPELL)
+				end
+				break
 			end
-			i = i+1
 		end
-		if rank then
-			_,_,rank = string.find(rank,"(%d+)")
-		end
+		i = i+1
+	end
+	if rank then
+		_,_,rank = string.find(rank,"(%d+)")
 	end
 	if spellName then
 		self.CurrentSpellName = spellName

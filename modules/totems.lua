@@ -159,14 +159,23 @@ local TotemDB = {
 }
 
 local function OnEvent()
-	if SpellCast and TotemDB[SpellCast[1]] then
-		local totem = this.totems[TotemDB[SpellCast[1]]["type"]]
-		local dur = TotemDB[SpellCast[1]]["dur"]
-		dur = dur[tonumber(SpellCast[2])] or dur[1]
-		totem.timer = dur + 0.5
-		totem:SetMinMaxValues(0,dur)
-		totem.active = true
+	if (event == "UNIT_HEALTH" and arg1 == "player" and UnitHealth("player") == 0) or event == "PLAYER_ENTERING_WORLD" then
+		for k,totem in pairs(this.totems) do
+			totem.active = nil
+			totem.timer = 0
+		end
+		SpellCast = {}
 		Totems:FullUpdate(this:GetParent())
+	else
+		if SpellCast and TotemDB[SpellCast[1]] then
+			local totem = this.totems[TotemDB[SpellCast[1]]["type"]]
+			local dur = TotemDB[SpellCast[1]]["dur"]
+			dur = dur[tonumber(SpellCast[2])] or dur[1]
+			totem.timer = dur + 0.5
+			totem:SetMinMaxValues(0,dur)
+			totem.active = true
+			Totems:FullUpdate(this:GetParent())
+		end
 	end
 end
 
@@ -197,7 +206,7 @@ local function newCastSpell(spellId, spellbookTabNum)
 	oldCastSpell(spellId, spellbookTabNum)
 	local spellName, rank = GetSpellName(spellId, spellbookTabNum)
 	_,_,rank = string.find(rank,"(%d+)")
-	ProcessSpellCast(spellName, rank)
+	ProcessSpellCast(spellName, rank or 1)
 end
 CastSpell = newCastSpell
 
@@ -230,18 +239,18 @@ local oldUseAction = UseAction
 local function newUseAction(a1, a2, a3)
 	tooltip:ClearLines()
 	tooltip:SetAction(a1)
-	local spellName = LunaScanTipTextLeft1:GetText() or ""
+	local spellName = LunaScanTipTextLeft1:GetText()
 	-- Call the original function
 	oldUseAction(a1, a2, a3)
 	-- Test to see if this is a macro
 	if ( GetActionText(a1) or not spellName ) then
 		return
 	end
-	local rank = LunaScanTipTextRight1:GetText() or ""
+	local rank = LunaScanTipTextRight1:GetText()
 	if rank then
 		_,_,rank = string.find(rank,"(%d+)")
 	else
-		rank = "1"
+		rank = 1
 	end
 	ProcessSpellCast(spellName, rank)
 end
@@ -265,6 +274,8 @@ function Totems:OnEnable(frame)
 	frame.totemBar:SetScript("OnUpdate", OnUpdate)
 	frame.totemBar:SetScript("OnEvent", OnEvent)
 	frame.totemBar:RegisterEvent("SPELLCAST_STOP")
+	frame.totemBar:RegisterEvent("UNIT_HEALTH")
+	frame.totemBar:RegisterEvent("PLAYER_ENTERING_WORLD")
 end
 
 function Totems:OnDisable(frame)
