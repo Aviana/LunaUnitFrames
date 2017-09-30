@@ -4,6 +4,7 @@ local BS = LunaUF.BS
 local _,playerclass = UnitClass("player")
 local tooltip = LunaUF.ScanTip
 local SpellCast = {}
+local isCasting
 LunaUF:RegisterModule(Totems, "totemBar", L["Totem Bar"], true)
 
 local totemcolors = {
@@ -164,9 +165,11 @@ local function OnEvent()
 			totem.active = nil
 			totem.timer = 0
 		end
-		SpellCast = {}
+		SpellCast[1] = nil
+		SpellCast[2] = nil
 		Totems:FullUpdate(this:GetParent())
 	else
+		isCasting = false
 		if SpellCast and TotemDB[SpellCast[1]] then
 			local totem = this.totems[TotemDB[SpellCast[1]]["type"]]
 			local dur = TotemDB[SpellCast[1]]["dur"]
@@ -193,8 +196,23 @@ local function OnUpdate()
 	end
 end
 
+local function gcdCheck()
+	local _,_,offset,numSpells = GetSpellTabInfo(GetNumSpellTabs())
+	local numAllSpell = offset + numSpells;
+	local gcd
+	for i=1,numAllSpell do
+		local name = GetSpellName(i,"BOOKTYPE_SPELL");
+		if ( name == BS["Lightning Bolt"] ) then
+			_,gcd = GetSpellCooldown(i,"BOOKTYPE_SPELL")
+			break
+		end
+	end
+	return (gcd == 1.5)
+end
+
 local function ProcessSpellCast(spellName, rank)
-	if (spellName and rank) then
+	if (spellName and rank) and not isCasting then
+		isCasting = true
 		SpellCast[1] = spellName
 		SpellCast[2] = rank
 	end
@@ -202,8 +220,10 @@ end
 
 local oldCastSpell = CastSpell
 local function newCastSpell(spellId, spellbookTabNum)
+	local gcd = gcdCheck()
 	-- Call the original function so there's no delay while we process
 	oldCastSpell(spellId, spellbookTabNum)
+	if gcd then return end
 	local spellName, rank = GetSpellName(spellId, spellbookTabNum)
 	_,_,rank = string.find(rank,"(%d+)")
 	ProcessSpellCast(spellName, rank or 1)
@@ -212,8 +232,10 @@ CastSpell = newCastSpell
 
 local oldCastSpellByName = CastSpellByName
 local function newCastSpellByName(spellName, onSelf)
+	local gcd = gcdCheck()
 	-- Call the original function
 	oldCastSpellByName(spellName, onSelf)
+	if gcd then return end
 	local _,_,rank = string.find(spellName,"(%d+)")
 	local _, _, spellName = string.find(spellName, "^([^%(]+)")
 	if not rank then
@@ -237,11 +259,13 @@ CastSpellByName = newCastSpellByName
 
 local oldUseAction = UseAction
 local function newUseAction(a1, a2, a3)
+	local gcd = gcdCheck()
 	tooltip:ClearLines()
 	tooltip:SetAction(a1)
 	local spellName = LunaScanTipTextLeft1:GetText()
 	-- Call the original function
 	oldUseAction(a1, a2, a3)
+	if gcd then return end
 	-- Test to see if this is a macro
 	if ( GetActionText(a1) or not spellName ) then
 		return
