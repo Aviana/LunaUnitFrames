@@ -438,6 +438,8 @@ local function deDE() return {
 ["CHAT_MSG_COMBAT_HOSTILEPLAYER_HITS"] = ".+ trifft (Euch) kritisch: %d+ Schaden%.",
 ["CHAT_MSG_SPELL_CREATURE_VS_SELF_DAMAGE"] = ".+s .+ trifft (%a+) kritisch: .+",
 ["CHAT_MSG_SPELL_HOSTILEPLAYER_DAMAGE"] = ".+s .+ trifft (Euch) kritisch: .+",
+["Shadow Wing Lair"] = "Schattenschwingenunterschlupf",
+["Halls of Strife"] = "Hallen des Zwists",
 }
 end
 

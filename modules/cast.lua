@@ -11,15 +11,32 @@ local buffed = false
 local _,playerRace = UnitRace("player")
 local _,playerClass = UnitClass("player")
 
+local DisabledZones = {
+	[L["Shadow Wing Lair"]] = true,
+	[L["Halls of Strife"]] = true,
+}
+
 local CHAT_PATTERNS = {
-	[string.gsub(string.gsub(AURAADDEDOTHERHELPFUL,"%d%$",""), "%%s", "(.+)")] = "gains", -- "(.+) gains (.+)."
-	[string.gsub(string.gsub(SPELLCASTOTHERSTART,"%d%$",""), "%%s", "(.+)")] = "casts", -- "(.+) begins to cast (.+)."
-	[string.gsub(string.gsub(SPELLPERFORMOTHERSTART,"%d%$",""), "%%s", "(.+)")] = "performs", -- "(.+) begins to perform (.+)."
-	[string.gsub(string.gsub(AURAADDEDOTHERHARMFUL,"%d%$",""), "%%s", "(.+)")] = "afflicted", -- "(.+) is afflicted by (.+)."
-	[string.gsub(string.gsub(string.gsub(SPELLLOGSELFOTHER,"%d%$",""),"%%d","%%d+"),"%%s","(.+)")] = "hit", -- "Your (.+) hits (.+) for %d+\."
-	[string.gsub(string.gsub(string.gsub(SPELLLOGCRITSELFOTHER,"%d%$",""),"%%d","%%d+"),"%%s","(.+)")] = "hit", -- "Your (.+) crits (.+) for %d+\."
-	[string.gsub(string.gsub(string.gsub(SPELLLOGOTHEROTHER,"%d%$",""), "%%s", "(.+)"), "%%d", "%%d+")] = "hit", -- "%a+'s (.+) hits (.+) for %d+\."
-	[string.gsub(string.gsub(string.gsub(SPELLLOGCRITOTHEROTHER,"%d%$",""), "%%s", "(.+)"), "%%d", "%%d+")] = "hit", -- "%a+'s (.+) crits (.+) for %d+\."
+	["gains"] = {
+				[1] = string.gsub(string.gsub(AURAADDEDOTHERHELPFUL,"%d%$",""), "%%s", "(.+)"),
+				},								-- "(.+) gains (.+)."
+	["casts"] = {
+				[1] = string.gsub(string.gsub(SPELLCASTOTHERSTART,"%d%$",""), "%%s", "(.+)"), -- "(.+) begins to cast (.+)."
+				[2] = string.gsub(string.gsub(SPELLPERFORMOTHERSTART,"%d%$",""), "%%s", "(.+)"), -- "(.+) begins to perform (.+)."
+				},
+	["afflicted"] = {
+				[1] = string.gsub(string.gsub(AURAADDEDOTHERHARMFUL,"%d%$",""), "%%s", "(.+)") -- "(.+) is afflicted by (.+)."
+				},
+	["selfinterrupt"] = {
+				[1] = string.gsub(string.gsub(string.gsub(SPELLLOGSELFOTHER,"%d%$",""),"%%d","%%d+"),"%%s","(.+)"), -- "Your (.+) hits (.+) for %d+\."
+				[2] = string.gsub(string.gsub(string.gsub(SPELLLOGCRITSELFOTHER,"%d%$",""),"%%d","%%d+"),"%%s","(.+)"), -- "Your (.+) crits (.+) for %d+\."
+				--[3] = string.gsub(string.gsub(SPELLINTERRUPTSELFOTHER,"%d%$",""), "%%s", "(.+)"), -- "You interrupt %s's %s."
+				},
+	["interrupt"] = {
+				[1] = string.gsub(string.gsub(string.gsub(SPELLLOGOTHEROTHER,"%d%$",""), "%%s", "(.+)"), "%%d", "%%d+"), -- "%a+'s (.+) hits (.+) for %d+\."
+				[2] = string.gsub(string.gsub(string.gsub(SPELLLOGCRITOTHEROTHER,"%d%$",""), "%%s", "(.+)"), "%%d", "%%d+"), -- "%a+'s (.+) crits (.+) for %d+\."
+				--[3] = string.gsub(string.gsub(SPELLINTERRUPTOTHEROTHER,"%d%$",""), "%%s", "(.+)"), -- "%s interrupts %s's %s."
+				},
 }
 
 local Spells = {
@@ -323,7 +340,7 @@ local NonAfflictions = {
 	[BS["Immolate"]] = true;
 	[BS["Corruption"]] = true;
 	[BS["Regrowth"]] = true;
-	[BS["Mind Control"]] = true;
+--	[BS["Mind Control"]] = true;
 	[BS["Holy Fire"]] = true;
 	[BS["Greater Heal"]] = true;
 }
@@ -335,25 +352,9 @@ local Interrupts = {
 	[BS["Earth Shock"]] = true;
 }
 
-Cast:RegisterEvent("CHAT_MSG_SPELL_SELF_DAMAGE");
-Cast:RegisterEvent("CHAT_MSG_SPELL_HOSTILEPLAYER_DAMAGE");
-Cast:RegisterEvent("CHAT_MSG_SPELL_HOSTILEPLAYER_BUFF");
-Cast:RegisterEvent("CHAT_MSG_SPELL_FRIENDLYPLAYER_DAMAGE");
-Cast:RegisterEvent("CHAT_MSG_SPELL_FRIENDLYPLAYER_BUFF");
-Cast:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_BUFFS");
-Cast:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_BUFFS");
-Cast:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_DAMAGE");
-Cast:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE");
-Cast:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE");
-Cast:RegisterEvent("CHAT_MSG_SPELL_PARTY_DAMAGE");
-Cast:RegisterEvent("CHAT_MSG_SPELL_PARTY_BUFF");
-Cast:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE");
-Cast:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_PARTY_BUFFS");
-Cast:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_CREATURE_DAMAGE");
-Cast:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_CREATURE_BUFFS");
-Cast:RegisterEvent("CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE");
+Cast:RegisterEvent("MINIMAP_ZONE_CHANGED")
 
-function TriggerCast(mob, spell, castime)
+local function TriggerCast(mob, spell, castime)
 	if CasterDB[mob] then
 		CasterDB[mob].sp = spell
 		CasterDB[mob].start = GetTime()
@@ -368,7 +369,7 @@ function TriggerCast(mob, spell, castime)
 	end
 end
 
-function TriggerCastStop(mob, spell)
+local function TriggerCastStop(mob, spell)
 	if CasterDB[mob] and CasterDB[mob].sp and Spells[spell] and not (Spells[spell].ni and Spells[CasterDB[mob].sp] and Spells[CasterDB[mob].sp].ni) then
 		if (CasterDB[mob].start + (CasterDB[mob].ct or 0)) > GetTime() then
 			CasterDB[mob].ct = 0
@@ -430,13 +431,63 @@ local function ProcessData(mob, spell, special)
 	end
 end
 
-local function OnChatEvent()
-	if (arg1 ~= nil and not LunaUF.db.profile.enemyCastbars) then
-		for pattern, data_type in pairs(CHAT_PATTERNS) do
-			for mob, spell in string.gfind(arg1, pattern) do
-				ProcessData(mob, spell, data_type)
-				return
-			end
+function Cast:CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_BUFFS(arg1)
+	if LunaUF.db.profile.enemyCastbars then return end
+	for _, pattern in pairs(CHAT_PATTERNS["gains"]) do
+		for mob, spell in string.gfind(arg1, pattern) do
+			ProcessData(mob, spell, "gains")
+			return
+		end
+	end
+end
+Cast.CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_BUFFS = Cast.CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_BUFFS
+Cast.CHAT_MSG_SPELL_PERIODIC_PARTY_BUFFS = Cast.CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_BUFFS
+
+function Cast:CHAT_MSG_SPELL_HOSTILEPLAYER_BUFF(arg1)
+	if LunaUF.db.profile.enemyCastbars then return end
+	-- casts/performs
+	for _, pattern in pairs(CHAT_PATTERNS["casts"]) do
+		for mob, spell in string.gfind(arg1, pattern) do
+			ProcessData(mob, spell, "casts")
+			return
+		end
+	end
+	for _, pattern in pairs(CHAT_PATTERNS["interrupt"]) do
+		for mob, spell in string.gfind(arg1, pattern) do
+			ProcessData(mob, spell, "hit")
+			return
+		end
+	end
+end
+Cast.CHAT_MSG_SPELL_FRIENDLYPLAYER_BUFF = Cast.CHAT_MSG_SPELL_HOSTILEPLAYER_BUFF
+Cast.CHAT_MSG_SPELL_PARTY_BUFF = Cast.CHAT_MSG_SPELL_HOSTILEPLAYER_BUFF
+Cast.CHAT_MSG_SPELL_CREATURE_VS_CREATURE_BUFF = Cast.CHAT_MSG_SPELL_HOSTILEPLAYER_BUFF
+Cast.CHAT_MSG_SPELL_CREATURE_VS_PARTY_BUFF = Cast.CHAT_MSG_SPELL_HOSTILEPLAYER_BUFF
+Cast.CHAT_MSG_SPELL_CREATURE_VS_SELF_BUFF = Cast.CHAT_MSG_SPELL_HOSTILEPLAYER_BUFF
+Cast.CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE = Cast.CHAT_MSG_SPELL_HOSTILEPLAYER_BUFF
+Cast.CHAT_MSG_SPELL_HOSTILEPLAYER_DAMAGE = Cast.CHAT_MSG_SPELL_HOSTILEPLAYER_BUFF
+Cast.CHAT_MSG_SPELL_FRIENDLYPLAYER_DAMAGE = Cast.CHAT_MSG_SPELL_HOSTILEPLAYER_BUFF
+Cast.CHAT_MSG_SPELL_PARTY_DAMAGE = Cast.CHAT_MSG_SPELL_HOSTILEPLAYER_BUFF
+
+function Cast:CHAT_MSG_SPELL_PERIODIC_CREATURE_DAMAGE(arg1)
+	if LunaUF.db.profile.enemyCastbars then return end
+	for _, pattern in pairs(CHAT_PATTERNS["afflicted"]) do
+		for mob, spell in string.gfind(arg1, pattern) do
+			ProcessData(mob, spell, "afflicted")
+			return
+		end
+	end
+end
+Cast.CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_DAMAGE = Cast.CHAT_MSG_SPELL_PERIODIC_CREATURE_DAMAGE
+Cast.CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE = Cast.CHAT_MSG_SPELL_PERIODIC_CREATURE_DAMAGE
+Cast.CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE = Cast.CHAT_MSG_SPELL_PERIODIC_CREATURE_DAMAGE
+
+function Cast:CHAT_MSG_SPELL_SELF_DAMAGE(arg1)
+	if LunaUF.db.profile.enemyCastbars then return end
+	for _, pattern in pairs(CHAT_PATTERNS["selfinterrupt"]) do
+		for mob, spell in string.gfind(arg1, pattern) do
+			ProcessData(mob, spell, "hit")
+			return
 		end
 	end
 end
@@ -834,4 +885,32 @@ function Cast:SetBarTexture(frame,texture)
 	frame.castBar.bar:SetStatusBarColor(LunaUF.db.profile.castColors.cast.r, LunaUF.db.profile.castColors.cast.g, LunaUF.db.profile.castColors.cast.b)
 end
 
-Cast:SetScript("OnEvent", OnChatEvent)
+function Cast:MINIMAP_ZONE_CHANGED()
+	if DisabledZones[GetMinimapZoneText()] then
+		Cast:UnregisterEvent("CHAT_MSG_SPELL_HOSTILEPLAYER_DAMAGE")
+		Cast:UnregisterEvent("CHAT_MSG_SPELL_FRIENDLYPLAYER_DAMAGE")
+		Cast:UnregisterEvent("CHAT_MSG_SPELL_PARTY_DAMAGE")
+	else
+		Cast:RegisterEvent("CHAT_MSG_SPELL_HOSTILEPLAYER_DAMAGE")
+		Cast:RegisterEvent("CHAT_MSG_SPELL_FRIENDLYPLAYER_DAMAGE")
+		Cast:RegisterEvent("CHAT_MSG_SPELL_PARTY_DAMAGE")
+	end
+end
+
+Cast:RegisterEvent("CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE")
+Cast:RegisterEvent("CHAT_MSG_SPELL_FRIENDLYPLAYER_BUFF")
+Cast:RegisterEvent("CHAT_MSG_SPELL_HOSTILEPLAYER_BUFF")
+Cast:RegisterEvent("CHAT_MSG_SPELL_SELF_DAMAGE")
+Cast:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_CREATURE_DAMAGE")
+Cast:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_BUFFS")
+Cast:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_BUFFS")
+Cast:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_DAMAGE")
+Cast:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE")
+Cast:RegisterEvent("CHAT_MSG_SPELL_PARTY_BUFF")
+Cast:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE")
+Cast:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_PARTY_BUFFS")
+Cast:RegisterEvent("CHAT_MSG_SPELL_CREATURE_VS_SELF_BUFF")
+Cast:RegisterEvent("CHAT_MSG_SPELL_CREATURE_VS_PARTY_BUFF")
+Cast:RegisterEvent("CHAT_MSG_SPELL_CREATURE_VS_CREATURE_BUFF")
+Cast:MINIMAP_ZONE_CHANGED()
+Cast:SetScript("OnEvent", function() this[event](this, arg1) end)

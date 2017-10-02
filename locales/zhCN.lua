@@ -435,6 +435,8 @@ local function zhCN() return {
 ["CHAT_MSG_COMBAT_HOSTILEPLAYER_HITS"] = ".+的致命一击对(你)造成.+伤害。",
 ["CHAT_MSG_SPELL_CREATURE_VS_SELF_DAMAGE"] = ".+的.+击中(.+)造成.+伤害",
 ["CHAT_MSG_SPELL_HOSTILEPLAYER_DAMAGE"] = ".+的.+致命一击对(.+)造成.+伤害",
+["Shadow Wing Lair"] = "影翼巢穴",
+["Halls of Strife"] = "征战大厅",
 }
 end
 

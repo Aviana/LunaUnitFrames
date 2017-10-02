@@ -435,6 +435,8 @@ local function enUS() return {
 ["CHAT_MSG_COMBAT_HOSTILEPLAYER_HITS"] = ".+ crits (you) for .+",
 ["CHAT_MSG_SPELL_CREATURE_VS_SELF_DAMAGE"] = ".+'s .+ crits (%a+) for .+",
 ["CHAT_MSG_SPELL_HOSTILEPLAYER_DAMAGE"] = ".+'s .+ crits (you) for .+",
+["Shadow Wing Lair"] = "Shadow Wing Lair",
+["Halls of Strife"] = "Halls of Strife",
 }
 end
 
