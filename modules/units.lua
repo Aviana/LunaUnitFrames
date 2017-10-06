@@ -123,10 +123,6 @@ local function UnitWatchOnEvent()
 			end
 		elseif frame:IsShown() and LunaUF.db.profile.locked then
 			frame:Hide()
-			frame = unitFrames.targettarget
-			frame:Hide()
-			frame = unitFrames.targettargettarget
-			frame:Hide()
 		end
 	elseif event == "UNIT_PET" and arg1 == "player" then
 		if unitFrames["pet"] then
