@@ -269,7 +269,7 @@ local function external(self, major, instance)
 		local AceEvent = instance
 		AceEvent:embed(self)
 		self:RegisterEvent("SPELLCAST_START")
-		self:RegisterEvent("SPELLCAST_INTERRUPTED", "SPELLCAST_FAILED")
+		self:RegisterEvent("SPELLCAST_INTERRUPTED")
 		self:RegisterEvent("SPELLCAST_FAILED")
 		self:RegisterEvent("SPELLCAST_DELAYED")
 		self:RegisterEvent("SPELLCAST_STOP")
@@ -1218,7 +1218,7 @@ function HealComm:SPELLCAST_START()
 	self.spellIsCasting = arg1
 end
 
-function HealComm:SPELLCAST_FAILED()
+function HealComm:SPELLCAST_INTERRUPTED()
 	if self:IsEventScheduled("TriggerRegrowthHot") then
 		self:CancelScheduledEvent("TriggerRegrowthHot")
 	end
@@ -1235,6 +1235,15 @@ function HealComm:SPELLCAST_FAILED()
 		self:SendAddonMessage("Resurrection/stop/")
 		self:cancelResurrection(UnitName("player"))
 	end
+	self.CurrentSpellRank = nil
+	self.CurrentSpellName =  nil
+	self.spellIsCasting = nil
+	for key in pairs(self.SpellCastInfo) do
+		self.SpellCastInfo[key] = nil
+	end
+end
+
+function HealComm:SPELLCAST_FAILED()
 	self.CurrentSpellRank = nil
 	self.CurrentSpellName =  nil
 	self.spellIsCasting = nil
@@ -1604,6 +1613,7 @@ function HealComm:SpellTargetUnit(unit)
 		shallTargetUnit = true
 	end
 	self.hooks.SpellTargetUnit(unit)
+	
 	if ( shallTargetUnit and self.CurrentSpellName and not SpellIsTargeting() ) then
 		if UnitIsPlayer(unit) then
 			self:ProcessSpellCast(unit)
@@ -1630,11 +1640,11 @@ end
 
 function HealComm:ProcessSpellCast(unit)
 	local power, mod = self:GetUnitSpellPower(unit, self.CurrentSpellName)
-	self.SpellCastInfo[1] = self.CurrentSpellName
-	self.SpellCastInfo[2] = self.CurrentSpellRank
-	self.SpellCastInfo[3] = UnitName(unit)
-	self.SpellCastInfo[4] = power
-	self.SpellCastInfo[5] = mod
+	self.SpellCastInfo[1] = (self.SpellCastInfo[1] or self.CurrentSpellName)
+	self.SpellCastInfo[2] = (self.SpellCastInfo[2] or self.CurrentSpellRank)
+	self.SpellCastInfo[3] = (self.SpellCastInfo[3] or UnitName(unit))
+	self.SpellCastInfo[4] = (self.SpellCastInfo[4] or power)
+	self.SpellCastInfo[5] = (self.SpellCastInfo[5] or mod)
 end
 
 AceLibrary:Register(HealComm, MAJOR_VERSION, MINOR_VERSION, activate, nil, external)
