@@ -1,6 +1,6 @@
 --[[
 Name: HealComm-1.0
-Revision: $Rev: 11640 $
+Revision: $Rev: 11660 $
 Author(s): aviana
 Website: https://github.com/Aviana
 Description: A library to provide communication of heals and resurrections.
@@ -8,7 +8,7 @@ Dependencies: AceLibrary, AceEvent-2.0, RosterLib-2.0
 ]]
 
 local MAJOR_VERSION = "HealComm-1.0"
-local MINOR_VERSION = "$Revision: 11640 $"
+local MINOR_VERSION = "$Revision: 11660 $"
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
 if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end
@@ -1500,6 +1500,8 @@ function HealComm:CastSpell(spellId, spellbookTabNum)
 	local spellName, rank = GetSpellName(spellId, spellbookTabNum)
 	_,_,rank = string.find(rank,"(%d+)")
 	
+	if not self.Spells[spellName] then return end
+	
 	self.CurrentSpellName = spellName
 	self.CurrentSpellRank = rank
 	if not SpellIsTargeting() then
@@ -1544,6 +1546,7 @@ function HealComm:CastSpellByName(spellName, onSelf)
 		_,_,rank = string.find(rank,"(%d+)")
 	end
 	if spellName then
+		if not self.Spells[spellName] then return end
 		self.CurrentSpellName = spellName
 		self.CurrentSpellRank = rank
 		
@@ -1583,7 +1586,7 @@ function HealComm:UseAction(slot, checkCursor, onSelf)
 	self.hooks.UseAction(slot, checkCursor, onSelf)
 	
 	-- Test to see if this is a macro
-	if GetActionText(slot) or (self.CurrentSpellName and not SpellIsTargeting()) then
+	if GetActionText(slot) or (self.CurrentSpellName and not SpellIsTargeting()) or not self.Spells[spellName] then
 		return
 	end
 	
