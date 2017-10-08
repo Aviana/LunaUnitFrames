@@ -2371,7 +2371,7 @@ function LunaUF:CreateOptionsMenu()
 		LunaOptionsFrame.pages[i].BuffPosDesc:SetText(L["Side"])
 
 		LunaOptionsFrame.pages[i].buffsizeslider = CreateFrame("Slider", "BuffSizeSlider"..LunaUF.unitList[i-1], LunaOptionsFrame.pages[i], "OptionsSliderTemplate")
-		LunaOptionsFrame.pages[i].buffsizeslider:SetMinMaxValues(10,40)
+		LunaOptionsFrame.pages[i].buffsizeslider:SetMinMaxValues(10,50)
 		LunaOptionsFrame.pages[i].buffsizeslider:SetValueStep(1)
 		LunaOptionsFrame.pages[i].buffsizeslider:SetScript("OnValueChanged", function()
 			local unit = this:GetParent().id
@@ -2454,7 +2454,7 @@ function LunaUF:CreateOptionsMenu()
 		LunaOptionsFrame.pages[i].DebuffPosDesc:SetText(L["Side"])
 
 		LunaOptionsFrame.pages[i].debuffsizeslider = CreateFrame("Slider", "DebuffSizeSlider"..LunaUF.unitList[i-1], LunaOptionsFrame.pages[i], "OptionsSliderTemplate")
-		LunaOptionsFrame.pages[i].debuffsizeslider:SetMinMaxValues(10,40)
+		LunaOptionsFrame.pages[i].debuffsizeslider:SetMinMaxValues(10,50)
 		LunaOptionsFrame.pages[i].debuffsizeslider:SetValueStep(1)
 		LunaOptionsFrame.pages[i].debuffsizeslider:SetScript("OnValueChanged", function()
 			local unit = this:GetParent().id
