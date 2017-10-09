@@ -1,5 +1,6 @@
 local Range = {}
 AceLibrary("AceHook-2.1"):embed(Range)
+AceLibrary("AceEvent-2.0"):embed(Range)
 local L = LunaUF.L
 local BS = LunaUF.BS
 local ScanTip = LunaUF.ScanTip
@@ -78,25 +79,25 @@ local MapScales = {
 
 local HealSpells = {
     ["DRUID"] = {
-		[BS["Healing Touch"]] = true,
-		[BS["Regrowth"]] = true,
-		[BS["Rejuvenation"]] = true,
+		[string.lower(BS["Healing Touch"])] = true,
+		[string.lower(BS["Regrowth"])] = true,
+		[string.lower(BS["Rejuvenation"])] = true,
 	},
     ["PALADIN"] = {
-		[BS["Flash of Light"]] = true,
-		[BS["Holy Light"]] = true,
+		[string.lower(BS["Flash of Light"])] = true,
+		[string.lower(BS["Holy Light"])] = true,
 	},
     ["PRIEST"] = {
-		[BS["Flash Heal"]] = true,
-		[BS["Lesser Heal"]] = true,
-		[BS["Heal"]] = true,
-		[BS["Greater Heal"]] = true,
-		[BS["Renew"]] = true,
+		[string.lower(BS["Flash Heal"])] = true,
+		[string.lower(BS["Lesser Heal"])] = true,
+		[string.lower(BS["Heal"])] = true,
+		[string.lower(BS["Greater Heal"])] = true,
+		[string.lower(BS["Renew"])] = true,
 	},
     ["SHAMAN"] = {
-		[BS["Chain Heal"]] = true,
-		[BS["Lesser Healing Wave"]] = true,
-		[BS["Healing Wave"]] = true,
+		[string.lower(BS["Chain Heal"])] = true,
+		[string.lower(BS["Lesser Healing Wave"])] = true,
+		[string.lower(BS["Healing Wave"])] = true,
 	},
 }
 
@@ -273,6 +274,9 @@ function Range:CastSpell(spellId, spellbookTabNum)
 	if SpellIsTargeting() then
 		local spell = GetSpellName(spellId, spellbookTabNum)
 		if HealSpells[playerClass] and HealSpells[playerClass][spell] then
+			if not self:IsEventScheduled("ScanRoster") then
+				self:ScheduleRepeatingEvent("ScanRoster", self.ScanRoster, 2)
+			end
 			self:ScanRoster()
 		end
 	end
@@ -282,7 +286,11 @@ function Range:CastSpellByName(spellName, onSelf)
 	self.hooks.CastSpellByName(spellName, onSelf)
 	if SpellIsTargeting() then
 		local _,_,spell = string.find(spellName, "^([^%(]+)")
+		spell = string.lower(spell)
 		if HealSpells[playerClass] and HealSpells[playerClass][spell] then
+			if not self:IsEventScheduled("ScanRoster") then
+				self:ScheduleRepeatingEvent("ScanRoster", self.ScanRoster, 2)
+			end
 			self:ScanRoster()
 		end
 	end
@@ -295,8 +303,17 @@ function Range:UseAction(slot, checkCursor, onSelf)
 		ScanTip:SetAction(slot)
 		local spell = LunaScanTipTextLeft1:GetText()
 		if HealSpells[playerClass] and HealSpells[playerClass][spell] then
+			if not self:IsEventScheduled("ScanRoster") then
+				self:ScheduleRepeatingEvent("ScanRoster", self.ScanRoster, 2)
+			end
 			self:ScanRoster()
 		end
+	end
+end
+
+function Range:SpellStopTargeting()
+	if self:IsEventScheduled("ScanRoster") then
+		self:CancelScheduledEvent("ScanRoster")
 	end
 end
 
@@ -350,4 +367,5 @@ if HealSpells[playerClass] then -- only hook on healing classes
 	Range:Hook("CastSpell")
 	Range:Hook("CastSpellByName")
 	Range:Hook("UseAction")
+	Range:Hook("SpellStopTargeting")
 end
