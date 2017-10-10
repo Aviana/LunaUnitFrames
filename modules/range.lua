@@ -273,6 +273,7 @@ function Range:CastSpell(spellId, spellbookTabNum)
 	self.hooks.CastSpell(spellId, spellbookTabNum)
 	if SpellIsTargeting() then
 		local spell = GetSpellName(spellId, spellbookTabNum)
+		spell = string.lower(spell)
 		if HealSpells[playerClass] and HealSpells[playerClass][spell] then
 			if not self:IsEventScheduled("ScanRoster") then
 				self:ScheduleRepeatingEvent("ScanRoster", self.ScanRoster, 2)
@@ -302,6 +303,7 @@ function Range:UseAction(slot, checkCursor, onSelf)
 		ScanTip:ClearLines()
 		ScanTip:SetAction(slot)
 		local spell = LunaScanTipTextLeft1:GetText()
+		spell = string.lower(spell)
 		if HealSpells[playerClass] and HealSpells[playerClass][spell] then
 			if not self:IsEventScheduled("ScanRoster") then
 				self:ScheduleRepeatingEvent("ScanRoster", self.ScanRoster, 2)
@@ -312,6 +314,7 @@ function Range:UseAction(slot, checkCursor, onSelf)
 end
 
 function Range:SpellStopTargeting()
+	self.hooks.SpellStopTargeting()
 	if self:IsEventScheduled("ScanRoster") then
 		self:CancelScheduledEvent("ScanRoster")
 	end
