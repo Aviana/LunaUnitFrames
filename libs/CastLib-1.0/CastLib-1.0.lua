@@ -16,22 +16,8 @@ if not AceLibrary:HasInstance("AceEvent-2.0") then error(MAJOR_VERSION .. " requ
 if not AceLibrary:HasInstance("AceHook-2.1") then error(MAJOR_VERSION .. " requires AceHook-2.1") end
 
 local CastLib = {}
-local AimedShot, Multishot
-local locale = GetLocale()
-
-if locale == "deDE" then
-	AimedShot = "Gezielter Schuss"
-	Multishot = "Mehrfachschuss"
-elseif locale == "frFR" then
-	AimedShot = "Vis\195\169e"
-	Multishot = "Fl\195\168ches multiples"
-elseif locale == "zhCN" then
-	AimedShot = "瞄准射击"
-	Multishot = "多重射擊"
-else
-	AimedShot = "Aimed Shot"
-	Multishot = "Multi-Shot"
-end
+local AimedShot = AceLibrary("Babble-Spell-2.2")["Aimed Shot"]
+local Multishot = AceLibrary("Babble-Spell-2.2")["Multi-Shot"]
 
 ------------------------------------------------
 -- activate, enable, disable

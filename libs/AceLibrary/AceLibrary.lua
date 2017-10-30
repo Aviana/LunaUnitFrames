@@ -1,25 +1,25 @@
 --[[
-Name: AceLibrary
-Revision: $Rev: 17638 $
-Developed by: The Ace Development Team (http://www.wowace.com/index.php/The_Ace_Development_Team)
-Inspired By: Iriel (iriel@vigilance-committee.org)
-             Tekkub (tekkub@gmail.com)
-             Revision: $Rev: 17638 $
-Website: http://www.wowace.com/
-Documentation: http://www.wowace.com/index.php/AceLibrary
-SVN: http://svn.wowace.com/root/trunk/Ace2/AceLibrary
-Description: Versioning library to handle other library instances, upgrading,
-             and proper access.
-             It also provides a base for libraries to work off of, providing
-             proper error tools. It is handy because all the errors occur in the
-             file that called it, not in the library file itself.
-Dependencies: None
+	Name: AceLibrary
+	Revision: $Rev: 17722 $
+	Developed by: The Ace Development Team (http://www.wowace.com/index.php/The_Ace_Development_Team)
+	Inspired By: Iriel (iriel@vigilance-committee.org)
+	Tekkub (tekkub@gmail.com)
+	Revision: $Rev: 17722 $
+	Website: http://www.wowace.com/
+	Documentation: http://www.wowace.com/index.php/AceLibrary
+	SVN: http://svn.wowace.com/root/trunk/Ace2/AceLibrary
+	Description: Versioning library to handle other library instances, upgrading,
+	and proper access.
+	It also provides a base for libraries to work off of, providing
+	proper error tools. It is handy because all the errors occur in the
+	file that called it, not in the library file itself.
+	Dependencies: None
 ]]
 
 local ACELIBRARY_MAJOR = "AceLibrary"
-local ACELIBRARY_MINOR = "$Revision: 17638 $"
+local ACELIBRARY_MINOR = "$Revision: 17722 $"
 
-if loadstring("return function(...) return ... end") and AceLibrary:HasInstance(ACELIBRARY_MINOR) then return end -- lua51 check
+if loadstring("return function(...) return ... end") and AceLibrary and AceLibrary:HasInstance(ACELIBRARY_MAJOR) then return end -- lua51 check
 local table_setn
 do
 	local version = GetBuildInfo()
@@ -36,6 +36,11 @@ local string_gfind = string.gmatch or string.gfind
 local _G = getfenv(0)
 local previous = _G[ACELIBRARY_MAJOR]
 if previous and not previous:IsNewVersion(ACELIBRARY_MAJOR, ACELIBRARY_MINOR) then return end
+
+local function safecall(func,a1,a2,a3,a4,a5,a6,a7,a8,a9,a10)
+    local success, err = pcall(func,a1,a2,a3,a4,a5,a6,a7,a8,a9,a10)
+    if not success then geterrorhandler()(err) end
+end
 
 -- @table AceLibrary
 -- @brief System to handle all versioning of libraries.
@@ -578,20 +583,20 @@ function AceLibrary:Register(newInstance, major, minor, activateFunc, deactivate
 		end
 		addToPositions(instance, major)
 		if activateFunc then
-			activateFunc(instance, nil, nil) -- no old version, so explicit nil
+			safecall(activateFunc, instance, nil, nil) -- no old version, so explicit nil
 		end
 
 		if externalFunc then
 			for k,data in pairs(self.libs) do
 				if k ~= major then
-					externalFunc(instance, k, data.instance)
+					safecall(externalFunc, instance, k, data.instance)
 				end
 			end
 		end
 
 		for k,data in pairs(self.libs) do
 			if k ~= major and data.externalFunc then
-				data.externalFunc(data.instance, major, instance)
+				safecall(data.externalFunc, data.instance, major, instance)
 			end
 		end
 		if major == "AceEvent-2.0" then
@@ -670,16 +675,16 @@ function AceLibrary:Register(newInstance, major, minor, activateFunc, deactivate
 		end
 	end
 	if activateFunc then
-		activateFunc(instance, oldInstance, oldDeactivateFunc)
+		safecall(activateFunc, instance, oldInstance, oldDeactivateFunc)
 	else
-		oldDeactivateFunc(oldInstance)
+		safecall(oldDeactivateFunc, oldInstance)
 	end
 	del(oldInstance)
 
 	if externalFunc then
 		for k,data in pairs(self.libs) do
 			if k ~= major then
-				externalFunc(instance, k, data.instance)
+				safecall(externalFunc, instance, k, data.instance)
 			end
 		end
 	end

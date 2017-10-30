@@ -1,13 +1,13 @@
 --[[
-Name: AceOO-2.0
-Revision: $Rev: 17638 $
-Developed by: The Ace Development Team (http://www.wowace.com/index.php/The_Ace_Development_Team)
-Inspired By: Ace 1.x by Turan (turan@gryphon.com)
-Website: http://www.wowace.com/
-Documentation: http://www.wowace.com/index.php/AceOO-2.0
-SVN: http://svn.wowace.com/root/trunk/Ace2/AceOO-2.0
-Description: Library to provide an object-orientation framework.
-Dependencies: AceLibrary
+	Name: AceOO-2.0
+	Revision: $Rev: 17638 $
+	Developed by: The Ace Development Team (http://www.wowace.com/index.php/The_Ace_Development_Team)
+	Inspired By: Ace 1.x by Turan (turan@gryphon.com)
+	Website: http://www.wowace.com/
+	Documentation: http://www.wowace.com/index.php/AceOO-2.0
+	SVN: http://svn.wowace.com/root/trunk/Ace2/AceOO-2.0
+	Description: Library to provide an object-orientation framework.
+	Dependencies: AceLibrary
 ]]
 
 local MAJOR_VERSION = "AceOO-2.0"
@@ -75,39 +75,31 @@ end
 --					or when it is called directly (__call metamethod).
 local Factory
 do
-	local function new(obj, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12,
-							a13, a14, a15, a16, a17, a18, a19, a20)
-		local t = {}
-		local uid = getuid(t)
-		local l = getlibrary
-		obj:init(t, l(a1), l(a2), l(a3), l(a4), l(a5), l(a6), l(a7),
-					l(a8), l(a9), l(a10), l(a11), l(a12), l(a13),
-					l(a14), l(a15), l(a16), l(a17), l(a18), l(a19),
-					l(a20))
-		t.uid = uid
-		return t
+	local function new(obj, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20)
+	local t = {}
+	local uid = getuid(t)
+	local l = getlibrary
+	obj:init(t, l(a1), l(a2), l(a3), l(a4), l(a5), l(a6), l(a7),
+		l(a8), l(a9), l(a10), l(a11), l(a12), l(a13),
+		l(a14), l(a15), l(a16), l(a17), l(a18), l(a19), l(a20))
+	t.uid = uid
+	return t
 	end
 	
-	local function createnew(self, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10,
-									a11, a12, a13, a14, a15, a16, a17, a18,
-									a19, a20)
-		local o = self.prototype
-		local l = getlibrary
-		return new(o, l(a1), l(a2), l(a3), l(a4), l(a5), l(a6), l(a7),
-						l(a8), l(a9), l(a10), l(a11), l(a12), l(a13),
-						l(a14), l(a15), l(a16), l(a17), l(a18), l(a19),
-						l(a20))
+	local function createnew(self, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20)
+	local o = self.prototype
+	local l = getlibrary
+	return new(o, l(a1), l(a2), l(a3), l(a4), l(a5), l(a6), l(a7),
+		l(a8), l(a9), l(a10), l(a11), l(a12), l(a13),
+		l(a14), l(a15), l(a16), l(a17), l(a18), l(a19), l(a20))
 	end
-
-	function Factory(obj, newobj, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10,
-									a11, a12, a13, a14, a15, a16, a17, a18,
-									a19, a20)
-		local t = new(obj, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12,
-							a13, a14, a15, a16, a17, a18, a19, a20)
-		t.prototype = newobj
-		t.new = createnew
-		getmetatable(t).__call = t.new
-		return t
+	
+	function Factory(obj, newobj, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20)
+	local t = new(obj, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20)
+	t.prototype = newobj
+	t.new = createnew
+	getmetatable(t).__call = t.new
+	return t
 	end
 end
 
@@ -265,7 +257,7 @@ local function inherits(object, parent)
 				break
 			end
 		end
-		
+
 		local isInterface = false
 		local curr = parent.class
 		while true do
@@ -333,7 +325,7 @@ local class_new
 do
 	Class = Factory(Object, setmetatable({}, {__index = Object}), Object)
 	Class.super = Object
-	
+
 	local function protostring(t)
 		return '<' .. tostring(t.class) .. ' prototype>'
 	end
@@ -438,185 +430,175 @@ do
 			AceOO:error("cannot concatenate two incompatible objects")
 		end
 	end
-	function class_new(self, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12,
-						a13, a14, a15, a16, a17, a18, a19, a20)
-		if self.virtual then
-			AceOO:error("Cannot instantiate a virtual class.")
-		end
+	function class_new(self, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20)
+	if self.virtual then
+		AceOO:error("Cannot instantiate a virtual class.")
+	end
+	
+	local o = self.prototype
+	local newobj = {}
+	if o.class and o.class.instancemeta then
+		setmetatable(newobj, o.class.instancemeta)
+	else
+		Object:init(newobj, o)
+	end
+	
+	if self.interfaces and not self.interfacesVerified then
+		-- Verify the interfaces
 		
-		local o = self.prototype
-		local newobj = {}
-		if o.class and o.class.instancemeta then
-			setmetatable(newobj, o.class.instancemeta)
-		else
-			Object:init(newobj, o)
-		end
-		
-		if self.interfaces and not self.interfacesVerified then
-			-- Verify the interfaces
-			
-			for interface in pairs(self.interfaces) do
-				for field,kind in pairs(interface.interface) do
-					if tostring(type(newobj[field])) ~= kind then
-						AceOO:error("Class did not satisfy all interfaces. %q is required to be a %s. It is a %s", field, kind, tostring(type(newobj[field])))
-					end
+		for interface in pairs(self.interfaces) do
+			for field,kind in pairs(interface.interface) do
+				if tostring(type(newobj[field])) ~= kind then
+					AceOO:error("Class did not satisfy all interfaces. %q is required to be a %s. It is a %s", field, kind, tostring(type(newobj[field])))
 				end
 			end
-			self.interfacesVerified = true
 		end
-		local tmp = initStatus
-		initStatus = newobj
-		newobj:init(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12,
-						a13, a14, a15, a16, a17, a18, a19, a20)
-		if initStatus then
-			initStatus = tmp
-			AceOO:error("Initialization not completed, be sure to call the superclass's init method.")
-			return
-		end
+		self.interfacesVerified = true
+	end
+	local tmp = initStatus
+	initStatus = newobj
+	newobj:init(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20)
+	if initStatus then
 		initStatus = tmp
-		return newobj
+		AceOO:error("Initialization not completed, be sure to call the superclass's init method.")
+		return
+	end
+	initStatus = tmp
+	return newobj
 	end
 	local classmeta = {
 		__tostring = objtostring,
-		__call = function(self, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12,
-						a13, a14, a15, a16, a17, a18, a19, a20)
-			return self:new(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12,
-						a13, a14, a15, a16, a17, a18, a19, a20)
+		__call = function(self, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20)
+		return self:new(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20)
 		end,
 	}
-	function Class:init(newclass, parent, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-											a10, a11, a12, a13, a14, a15, a16,
-											a17, a18, a19, a20)
-		parent = parent or self
-		
-		local total
-		
-		if parent.class then
-			total = {
-				parent, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-						a10, a11, a12, a13, a14, a15, a16,
-						a17, a18, a19, a20
-			}
-			parent = self
+	function Class:init(newclass, parent, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20)
+	parent = parent or self
+	
+	local total
+	
+	if parent.class then
+		total = {
+			parent, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20
+		}
+		parent = self
+	else
+		total = {
+			a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20
+		}
+	end
+	if not inherits(parent, Class) then
+		AceOO:error("Classes must inherit from a proper class")
+	end
+	if parent.sealed then
+		AceOO:error("Cannot inherit from a sealed class")
+	end
+	for i,v in ipairs(total) do
+		if inherits(v, Mixin) and v.class then
+			if not newclass.mixins then
+				newclass.mixins = {}
+			end
+			if newclass.mixins[v] then
+				AceOO:error("Cannot explicitly inherit from the same mixin twice")
+			end
+			newclass.mixins[v] = true
+		elseif inherits(v, Interface) and v.class then
+			if not newclass.interfaces then
+				newclass.interfaces = {}
+			end
+			if newclass.interfaces[v] then
+				AceOO:error("Cannot explicitly inherit from the same interface twice")
+			end
+			newclass.interfaces[v] = true
 		else
-			total = {
-				a1, a2, a3, a4, a5, a6, a7, a8, a9,
-				a10, a11, a12, a13, a14, a15, a16,
-				a17, a18, a19, a20
-			}
+			AceOO:error("Classes can only inherit from one or zero classes and any number of mixins or interfaces")
 		end
-		if not inherits(parent, Class) then
-			AceOO:error("Classes must inherit from a proper class")
+	end
+	if parent.interfaces then
+		if newclass.interfaces then
+			for interface in pairs(parent.interfaces) do
+				newclass.interfaces[interface] = true
+			end
+		else
+			newclass.interfaces = parent.interfaces
 		end
-		if parent.sealed then
-			AceOO:error("Cannot inherit from a sealed class")
+	end
+	for k in pairs(total) do
+		total[k] = nil
+	end
+	table_setn(total, 0)
+	
+	newclass.super = parent
+	
+	newclass.prototype = setmetatable(total, {
+		__index = parent.prototype,
+		__tostring = protostring,
+	})
+	total = nil
+	
+	newclass.instancemeta = {
+		__index = newclass.prototype,
+		__tostring = classobjectstring,
+		__eq = classobjectequal,
+		__lt = classobjectlessthan,
+		__le = classobjectlessthanequal,
+		__add = classobjectadd,
+		__sub = classobjectsub,
+		__unm = classobjectunm,
+		__mul = classobjectmul,
+		__div = classobjectdiv,
+		__pow = classobjectpow,
+		__concat = classobjectconcat,
+	}
+	
+	setmetatable(newclass, classmeta)
+	
+	newclass.new = class_new
+	
+	if newclass.mixins then
+		-- Fold in the mixins
+		local err, msg
+		for mixin in pairs(newclass.mixins) do
+			local ret
+			autoEmbed = true
+			ret, msg = pcall(mixin.embed, mixin, newclass.prototype)
+			autoEmbed = false
+			if not ret then
+				err = true
+				break
+			end
 		end
-		for i,v in ipairs(total) do
-			if inherits(v, Mixin) and v.class then
-				if not newclass.mixins then
-					newclass.mixins = {}
-				end
-				if newclass.mixins[v] then
-					AceOO:error("Cannot explicitly inherit from the same mixin twice")
-				end
-				newclass.mixins[v] = true
-			elseif inherits(v, Interface) and v.class then
+		
+		if err then
+			local pt = newclass.prototype
+			for k,v in pairs(pt) do
+				pt[k] = nil
+			end
+			
+			-- method conflict
+			AceOO:error(msg)
+		end
+	end
+	
+	newclass.prototype.class = newclass
+	
+	if newclass.interfaces then
+		for interface in pairs(newclass.interfaces) do
+			traverseInterfaces(interface, newclass.interfaces)
+		end
+	end
+	if newclass.mixins then
+		for mixin in pairs(newclass.mixins) do
+			if mixin.interfaces then
 				if not newclass.interfaces then
 					newclass.interfaces = {}
 				end
-				if newclass.interfaces[v] then
-					AceOO:error("Cannot explicitly inherit from the same interface twice")
-				end
-				newclass.interfaces[v] = true
-			else
-				AceOO:error("Classes can only inherit from one or zero classes and any number of mixins or interfaces")
-			end
-		end
-		if parent.interfaces then
-			if newclass.interfaces then
-				for interface in pairs(parent.interfaces) do
+				for interface in pairs(mixin.interfaces) do
 					newclass.interfaces[interface] = true
 				end
-			else
-				newclass.interfaces = parent.interfaces
 			end
 		end
-		for k in pairs(total) do
-			total[k] = nil
-		end
-		table_setn(total, 0)
-		
-		newclass.super = parent
-		
-		newclass.prototype = setmetatable(total, {
-			__index = parent.prototype,
-			__tostring = protostring,
-		})
-		total = nil
-		
-		newclass.instancemeta = {
-			__index = newclass.prototype,
-			__tostring = classobjectstring,
-			__eq = classobjectequal,
-			__lt = classobjectlessthan,
-			__le = classobjectlessthanequal,
-			__add = classobjectadd,
-			__sub = classobjectsub,
-			__unm = classobjectunm,
-			__mul = classobjectmul,
-			__div = classobjectdiv,
-			__pow = classobjectpow,
-			__concat = classobjectconcat,
-		}
-		
-		setmetatable(newclass, classmeta)
-		
-		newclass.new = class_new
-		
-		if newclass.mixins then
-			-- Fold in the mixins
-			local err, msg
-			for mixin in pairs(newclass.mixins) do
-				local ret
-				autoEmbed = true
-				ret, msg = pcall(mixin.embed, mixin, newclass.prototype)
-				autoEmbed = false
-				if not ret then
-					err = true
-					break
-				end
-			end
-	
-			if err then
-				local pt = newclass.prototype
-				for k,v in pairs(pt) do
-					pt[k] = nil
-				end
-	
-				-- method conflict
-				AceOO:error(msg)
-			end
-		end
-		
-		newclass.prototype.class = newclass
-		
-		if newclass.interfaces then
-			for interface in pairs(newclass.interfaces) do
-				traverseInterfaces(interface, newclass.interfaces)
-			end
-		end
-		if newclass.mixins then
-			for mixin in pairs(newclass.mixins) do
-				if mixin.interfaces then
-					if not newclass.interfaces then
-						newclass.interfaces = {}
-					end
-					for interface in pairs(mixin.interfaces) do
-						newclass.interfaces[interface] = true
-					end
-				end
-			end
-		end
+	end
 	end
 	function Class:ToString()
 		if type(self.GetLibraryVersion) == "function" then
@@ -656,14 +638,12 @@ end
 -- @brief	A factory for creating classes.	Rarely used directly.
 local ClassFactory = Factory(Object, Class, Object)
 
-function Class:new(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11,
-					a12, a13, a14, a15, a16, a17, a18, a19, a20)
-	local x = ClassFactory:new(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11,
-							a12, a13, a14, a15, a16, a17, a18, a19, a20)
-	if AceOO.classes then
-		AceOO.classes[x] = true
-	end
-	return x
+function Class:new(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20)
+local x = ClassFactory:new(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20)
+if AceOO.classes then
+	AceOO.classes[x] = true
+end
+return x
 end
 getmetatable(Class).__call = Class.new
 
@@ -755,66 +735,64 @@ do
 		end
 	end
 	
-	function Mixin.prototype:init(export, a1, a2, a3, a4, a5, a6, a7, a8, a9,
-											a10, a11, a12, a13, a14, a15, a16,
-											a17, a18, a19, a20)
-		AceOO:argCheck(export, 2, "table")
-		for k,v in pairs(export) do
-			if type(k) ~= "number" then
-				AceOO:error("All keys to argument #2 must be numbers.")
-			elseif type(v) ~= "string" then
-				AceOO:error("All values to argument #2 must be strings.")
+	function Mixin.prototype:init(export, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20)
+	AceOO:argCheck(export, 2, "table")
+	for k,v in pairs(export) do
+		if type(k) ~= "number" then
+			AceOO:error("All keys to argument #2 must be numbers.")
+		elseif type(v) ~= "string" then
+			AceOO:error("All values to argument #2 must be strings.")
+		end
+	end
+	local num = table.getn(export)
+	for i = 1, num do
+		local v = export[i]
+		export[i] = nil
+		export[v] = true
+	end
+	table_setn(export, 0)
+	local interfaces
+	if a1 then
+		local l = getlibrary
+		interfaces = { l(a1), l(a2), l(a3), l(a4), l(a5), l(a6),
+			l(a7), l(a8), l(a9), l(a10), l(a11), l(a12), l(a13),
+			l(a14), l(a15), l(a16), l(a17), l(a18), l(a19), l(a20) }
+		for _,v in ipairs(interfaces) do
+			if not v.class or not inherits(v, Interface) then
+				AceOO:error("Mixins can inherit only from interfaces")
 			end
 		end
-		local num = table.getn(export)
+		local num = table.getn(interfaces)
 		for i = 1, num do
-			local v = export[i]
-			export[i] = nil
-			export[v] = true
+			local v = interfaces[i]
+			interfaces[i] = nil
+			interfaces[v] = true
 		end
-		table_setn(export, 0)
-		local interfaces
-		if a1 then
-			local l = getlibrary
-			interfaces = { l(a1), l(a2), l(a3), l(a4), l(a5), l(a6), l(a7), l(a8),
-				l(a9), l(a10), l(a11), l(a12), l(a13), l(a14), l(a15), l(a16),
-				l(a17), l(a18), l(a19), l(a20) }
-			for _,v in ipairs(interfaces) do
-				if not v.class or not inherits(v, Interface) then
-					AceOO:error("Mixins can inherit only from interfaces")
-				end
-			end
-			local num = table.getn(interfaces)
-			for i = 1, num do
-				local v = interfaces[i]
-				interfaces[i] = nil
-				interfaces[v] = true
-			end
-			table_setn(interfaces, 0)
-			for interface in pairs(interfaces) do
-				traverseInterfaces(interface, interfaces)
-			end
-			for interface in pairs(interfaces) do
-				for field,kind in pairs(interface.interface) do
-					if kind ~= "nil" then
-						local good = false
-						for bit in pairs(export) do
-							if bit == field then
-								good = true
-								break
-							end
+		table_setn(interfaces, 0)
+		for interface in pairs(interfaces) do
+			traverseInterfaces(interface, interfaces)
+		end
+		for interface in pairs(interfaces) do
+			for field,kind in pairs(interface.interface) do
+				if kind ~= "nil" then
+					local good = false
+					for bit in pairs(export) do
+						if bit == field then
+							good = true
+							break
 						end
-						if not good then
-							AceOO:error("Mixin does not fully accommodate field %q", field)
-						end
+					end
+					if not good then
+						AceOO:error("Mixin does not fully accommodate field %q", field)
 					end
 				end
 			end
 		end
-		self.super = Mixin.prototype
-		Mixin.super.prototype.init(self)
-		self.export = export
-		self.interfaces = interfaces
+	end
+	self.super = Mixin.prototype
+	Mixin.super.prototype.init(self)
+	self.export = export
+	self.interfaces = interfaces
 	end
 end
 
@@ -898,69 +876,68 @@ do
 		end
 	end
 	local t
-	local function getcomplexuid(sc, m1, m2, m3, m4, m5, m6, m7, m8, m9,
-		m10, m11, m12, m13, m14, m15, m16, m17, m18, m19, m20)
-		if not t then t = {} end
-		if sc then if sc.uid then table.insert(t, sc.uid) else AceOO:error("%s is not an appropriate class/mixin", ts(sc)) end
+	local function getcomplexuid(sc, m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13, m14, m15, m16, m17, m18, m19, m20)
+	if not t then t = {} end
+	if sc then if sc.uid then table.insert(t, sc.uid) else AceOO:error("%s is not an appropriate class/mixin", ts(sc)) end
 		if m1 then if m1.uid then table.insert(t, m1.uid) else AceOO:error("%s is not an appropriate mixin", ts(m1)) end
-		if m2 then if m2.uid then table.insert(t, m2.uid) else AceOO:error("%s is not an appropriate mixin", ts(m2)) end
-		if m3 then if m3.uid then table.insert(t, m3.uid) else AceOO:error("%s is not an appropriate mixin", ts(m3)) end
-		if m4 then if m4.uid then table.insert(t, m4.uid) else AceOO:error("%s is not an appropriate mixin", ts(m4)) end
-		if m5 then if m5.uid then table.insert(t, m5.uid) else AceOO:error("%s is not an appropriate mixin", ts(m5)) end
-		if m6 then if m6.uid then table.insert(t, m6.uid) else AceOO:error("%s is not an appropriate mixin", ts(m6)) end
-		if m7 then if m7.uid then table.insert(t, m7.uid) else AceOO:error("%s is not an appropriate mixin", ts(m7)) end
-		if m8 then if m8.uid then table.insert(t, m8.uid) else AceOO:error("%s is not an appropriate mixin", ts(m8)) end
-		if m9 then if m9.uid then table.insert(t, m9.uid) else AceOO:error("%s is not an appropriate mixin", ts(m9)) end
-		if m10 then if m10.uid then table.insert(t, m10.uid) else AceOO:error("%s is not an appropriate mixin", ts(m10)) end
-		if m11 then if m11.uid then table.insert(t, m11.uid) else AceOO:error("%s is not an appropriate mixin", ts(m11)) end
-		if m12 then if m12.uid then table.insert(t, m12.uid) else AceOO:error("%s is not an appropriate mixin", ts(m12)) end
-		if m13 then if m13.uid then table.insert(t, m13.uid) else AceOO:error("%s is not an appropriate mixin", ts(m13)) end
-		if m14 then if m14.uid then table.insert(t, m14.uid) else AceOO:error("%s is not an appropriate mixin", ts(m14)) end
-		if m15 then if m15.uid then table.insert(t, m15.uid) else AceOO:error("%s is not an appropriate mixin", ts(m15)) end
-		if m16 then if m16.uid then table.insert(t, m16.uid) else AceOO:error("%s is not an appropriate mixin", ts(m16)) end
-		if m17 then if m17.uid then table.insert(t, m17.uid) else AceOO:error("%s is not an appropriate mixin", ts(m17)) end
-		if m18 then if m18.uid then table.insert(t, m18.uid) else AceOO:error("%s is not an appropriate mixin", ts(m18)) end
-		if m19 then if m19.uid then table.insert(t, m19.uid) else AceOO:error("%s is not an appropriate mixin", ts(m19)) end
-		if m20 then if m20.uid then table.insert(t, m20.uid) else AceOO:error("%s is not an appropriate mixin", ts(m20)) end
-		end end end end end end end end end end end end end end end end end end end end end
-		table.sort(t)
-		local uid = table.concat(t, '')
-		for k in pairs(t) do t[k] = nil end
-		table_setn(t, 0)
-		return uid
+			if m2 then if m2.uid then table.insert(t, m2.uid) else AceOO:error("%s is not an appropriate mixin", ts(m2)) end
+				if m3 then if m3.uid then table.insert(t, m3.uid) else AceOO:error("%s is not an appropriate mixin", ts(m3)) end
+					if m4 then if m4.uid then table.insert(t, m4.uid) else AceOO:error("%s is not an appropriate mixin", ts(m4)) end
+						if m5 then if m5.uid then table.insert(t, m5.uid) else AceOO:error("%s is not an appropriate mixin", ts(m5)) end
+							if m6 then if m6.uid then table.insert(t, m6.uid) else AceOO:error("%s is not an appropriate mixin", ts(m6)) end
+								if m7 then if m7.uid then table.insert(t, m7.uid) else AceOO:error("%s is not an appropriate mixin", ts(m7)) end
+									if m8 then if m8.uid then table.insert(t, m8.uid) else AceOO:error("%s is not an appropriate mixin", ts(m8)) end
+										if m9 then if m9.uid then table.insert(t, m9.uid) else AceOO:error("%s is not an appropriate mixin", ts(m9)) end
+											if m10 then if m10.uid then table.insert(t, m10.uid) else AceOO:error("%s is not an appropriate mixin", ts(m10)) end
+												if m11 then if m11.uid then table.insert(t, m11.uid) else AceOO:error("%s is not an appropriate mixin", ts(m11)) end
+													if m12 then if m12.uid then table.insert(t, m12.uid) else AceOO:error("%s is not an appropriate mixin", ts(m12)) end
+														if m13 then if m13.uid then table.insert(t, m13.uid) else AceOO:error("%s is not an appropriate mixin", ts(m13)) end
+															if m14 then if m14.uid then table.insert(t, m14.uid) else AceOO:error("%s is not an appropriate mixin", ts(m14)) end
+																if m15 then if m15.uid then table.insert(t, m15.uid) else AceOO:error("%s is not an appropriate mixin", ts(m15)) end
+																	if m16 then if m16.uid then table.insert(t, m16.uid) else AceOO:error("%s is not an appropriate mixin", ts(m16)) end
+																		if m17 then if m17.uid then table.insert(t, m17.uid) else AceOO:error("%s is not an appropriate mixin", ts(m17)) end
+																			if m18 then if m18.uid then table.insert(t, m18.uid) else AceOO:error("%s is not an appropriate mixin", ts(m18)) end
+																				if m19 then if m19.uid then table.insert(t, m19.uid) else AceOO:error("%s is not an appropriate mixin", ts(m19)) end
+																					if m20 then if m20.uid then table.insert(t, m20.uid) else AceOO:error("%s is not an appropriate mixin", ts(m20)) end
+																					end end end end end end end end end end end end end end end end end end end end end
+																					table.sort(t)
+																					local uid = table.concat(t, '')
+																					for k in pairs(t) do t[k] = nil end
+																					table_setn(t, 0)
+																					return uid
 	end
 	local classmeta
-	function Classpool(sc, m1, m2, m3, m4, m5, m6, m7, m8, m9,
-		m10, m11, m12, m13, m14, m15, m16,
-		m17, m18, m19, m20)
-		local l = getlibrary
-		sc, m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13, m14, m15, m16, m17, m18, m19, m20 = l(sc), l(m1), l(m2), l(m3), l(m4), l(m5), l(m6), l(m7), l(m8), l(m9), l(m10), l(m11), l(m12), l(m13), l(m14), l(m15), l(m16), l(m17), l(m18), l(m19), l(m20)
-		if sc and sc.class then
-			sc, m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13, m14, m15, m16, m17, m18, m19, m20 = Class, sc, m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13, m14, m15, m16, m17, m18, m19
-		end
-		sc = sc or Class
-		local key = getcomplexuid(sc, m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13, m14, m15, m16, m17, m18, m19, m20)
-		if not pool[key] then
-			local class = Class(sc, m1, m2, m3, m4, m5, m6, m7, m8, m9,
-			m10, m11, m12, m13, m14, m15, m16, m17,
-			m18, m19, m20)
-			if not classmeta then
-				classmeta = {}
-				local mt = getmetatable(class)
-				for k,v in pairs(mt) do
-					classmeta[k] = v
-				end
-				classmeta.__newindex = newindex
+	function Classpool(sc, m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13, m14, m15, m16, m17, m18, m19, m20)
+	local l = getlibrary
+	sc, m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13, m14, m15, m16, m17,
+	m18, m19, m20 = l(sc), l(m1), l(m2), l(m3), l(m4), l(m5), l(m6), l(m7), l(m8), l(m9),
+	l(m10), l(m11), l(m12), l(m13), l(m14), l(m15), l(m16), l(m17), l(m18), l(m19), l(m20)
+	if sc and sc.class then
+		sc, m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13,
+		m14, m15, m16, m17, m18, m19, m20 = Class, sc, m1, m2, m3, m4,
+		m5, m6, m7, m8, m9, m10, m11, m12, m13, m14, m15, m16, m17, m18, m19
+	end
+	sc = sc or Class
+	local key = getcomplexuid(sc, m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13, m14, m15, m16, m17, m18, m19, m20)
+	if not pool[key] then
+		local class = Class(sc, m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13, m14, m15, m16, m17, m18, m19, m20)
+		if not classmeta then
+			classmeta = {}
+			local mt = getmetatable(class)
+			for k,v in pairs(mt) do
+				classmeta[k] = v
 			end
-			-- Prevent the user from adding methods to this class.
-			-- NOTE: I'm not preventing modifications of existing class members,
-			-- but it's likely that only a truly malicious user will be doing so.
-			class.sealed = true
-			setmetatable(class, classmeta)
-			getmetatable(class.prototype).__newindex = protonewindex
-			pool[key] = class
+			classmeta.__newindex = newindex
 		end
-		return pool[key]
+		-- Prevent the user from adding methods to this class.
+		-- NOTE: I'm not preventing modifications of existing class members,
+		-- but it's likely that only a truly malicious user will be doing so.
+		class.sealed = true
+		setmetatable(class, classmeta)
+		getmetatable(class.prototype).__newindex = protonewindex
+		pool[key] = class
+	end
+	return pool[key]
 	end
 end
 
