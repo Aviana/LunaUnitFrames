@@ -3,6 +3,7 @@
 ## Title-zhCN: LunaUF |cffffffff露娜框架|r |cff7fff7f-Ace2-|r
 ## Title-deDE: Luna Unit Frames
 ## Notes: Lightweight Unit Frames in a modern look.
+## Notes-ruRU: Легкие панели в современном стиле.
 ## Notes-zhCN: 轻量级的现代风框架
 ## Notes-deDE: Einfache UnitFrames mit modernem Aussehen.
 ## Author: Avi
@@ -40,6 +41,7 @@ libs\Compost-2.0\Compost-2.0.lua
 libs\ItemBonusLib-1.0\Locales\enUS.lua
 libs\ItemBonusLib-1.0\Locales\frFR.lua
 libs\ItemBonusLib-1.0\Locales\deDE.lua
+libs\ItemBonusLib-1.0\Locales\ruRU.lua
 libs\ItemBonusLib-1.0\ItemBonusLib-1.0.lua
 libs\HealComm-1.0\HealComm-1.0.lua
 libs\DruidManaLib-1.0\DruidManaLib-1.0.lua
