@@ -1,18 +1,18 @@
 --[[
-Name: AceEvent-2.0
-Revision: $Rev: 17638 $
-Developed by: The Ace Development Team (http://www.wowace.com/index.php/The_Ace_Development_Team)
-Inspired By: Ace 1.x by Turan (turan@gryphon.com)
-Website: http://www.wowace.com/
-Documentation: http://www.wowace.com/index.php/AceEvent-2.0
-SVN: http://svn.wowace.com/root/trunk/Ace2/AceEvent-2.0
-Description: Mixin to allow for event handling, scheduling, and inter-addon
-             communication.
-Dependencies: AceLibrary, AceOO-2.0
+	Name: AceEvent-2.0
+	Revision: $Rev: 17803 $
+	Developed by: The Ace Development Team (http://www.wowace.com/index.php/The_Ace_Development_Team)
+	Inspired By: Ace 1.x by Turan (turan@gryphon.com)
+	Website: http://www.wowace.com/
+	Documentation: http://www.wowace.com/index.php/AceEvent-2.0
+	SVN: http://svn.wowace.com/root/trunk/Ace2/AceEvent-2.0
+	Description: Mixin to allow for event handling, scheduling, and inter-addon
+	communication.
+	Dependencies: AceLibrary, AceOO-2.0
 ]]
 
 local MAJOR_VERSION = "AceEvent-2.0"
-local MINOR_VERSION = "$Revision: 17638 $"
+local MINOR_VERSION = "$Revision: 17803 $"
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
 if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end
@@ -23,22 +23,22 @@ if not AceLibrary:HasInstance("AceOO-2.0") then error(MAJOR_VERSION .. " require
 local AceOO = AceLibrary:GetInstance("AceOO-2.0")
 local Mixin = AceOO.Mixin
 local AceEvent = Mixin {
-						"RegisterEvent",
-						"RegisterAllEvents",
-						"UnregisterEvent",
-						"UnregisterAllEvents",
-						"TriggerEvent",
-						"ScheduleEvent",
-						"ScheduleRepeatingEvent",
-						"CancelScheduledEvent",
-						"CancelAllScheduledEvents",
-						"IsEventRegistered",
-						"IsEventScheduled",
-						"RegisterBucketEvent",
-						"UnregisterBucketEvent",
-						"UnregisterAllBucketEvents",
-						"IsBucketEventRegistered",
-					   }
+	"RegisterEvent",
+	"RegisterAllEvents",
+	"UnregisterEvent",
+	"UnregisterAllEvents",
+	"TriggerEvent",
+	"ScheduleEvent",
+	"ScheduleRepeatingEvent",
+	"CancelScheduledEvent",
+	"CancelAllScheduledEvents",
+	"IsEventRegistered",
+	"IsEventScheduled",
+	"RegisterBucketEvent",
+	"UnregisterBucketEvent",
+	"UnregisterAllBucketEvents",
+	"IsBucketEventRegistered",
+}
 
 local table_setn
 do
@@ -953,10 +953,13 @@ function AceEvent:activate(oldLib, oldDeactivate)
 		end)
 		self:RegisterEvent("LANGUAGE_LIST_CHANGED", function()
 			if self.registry["MEETINGSTONE_CHANGED"] and self.registry["MEETINGSTONE_CHANGED"][self] then
+				registeringFromAceEvent = true
 				self:UnregisterEvent("MEETINGSTONE_CHANGED")
 				self:RegisterEvent("MINIMAP_ZONE_CHANGED", f, true)
+				registeringFromAceEvent = nil
 			end
 		end)
+		self:ScheduleEvent("AceEvent_FullyInitialized", func, 10)
 		registeringFromAceEvent = nil
 	end
 

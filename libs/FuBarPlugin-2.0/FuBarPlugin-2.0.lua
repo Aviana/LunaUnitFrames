@@ -1,12 +1,12 @@
 --[[
-Name: FuBarPlugin-2.0
-Revision: $Rev: 16321 $
-Author: Cameron Kenneth Knight (ckknight@gmail.com)
-Website: http://wiki.wowace.com/index.php/FuBarPlugin-2.0
-Documentation: http://wiki.wowace.com/index.php/FuBarPlugin-2.0
-SVN: svn://svn.wowace.com/root/branches/FuBar/FuBarPlugin-2.0/FuBarPlugin-2.0/
-Description: Plugin for FuBar.
-Dependencies: AceLibrary, AceOO-2.0, AceEvent-2.0, Tablet-2.0, Dewdrop-2.0
+	Name: FuBarPlugin-2.0
+	Revision: $Rev: 16321 $
+	Author: Cameron Kenneth Knight (ckknight@gmail.com)
+	Website: http://wiki.wowace.com/index.php/FuBarPlugin-2.0
+	Documentation: http://wiki.wowace.com/index.php/FuBarPlugin-2.0
+	SVN: svn://svn.wowace.com/root/branches/FuBar/FuBarPlugin-2.0/FuBarPlugin-2.0/
+	Description: Plugin for FuBar.
+	Dependencies: AceLibrary, AceOO-2.0, AceEvent-2.0, Tablet-2.0, Dewdrop-2.0
 ]]
 
 local MAJOR_VERSION = "FuBarPlugin-2.0"
@@ -26,28 +26,28 @@ local Dewdrop = AceLibrary:HasInstance("Dewdrop-2.0") and AceLibrary("Dewdrop-2.
 local epsilon = 1e-5
 local _G = getfenv(0)
 
-local SHOW_ICON = "Show icon"
-local SHOW_ICON_DESC = "Show the plugins icon on the panel."
-local SHOW_TEXT = "Show text"
-local SHOW_TEXT_DESC = "Show the plugins text on the panel."
-local SHOW_COLORED_TEXT = "Show colored text"
-local SHOW_COLORED_TEXT_DESC = "Allow the plugin to color its text."
-local DETACH_TOOLTIP = "Detach tooltip"
-local DETACH_TOOLTIP_DESC = "Detach the tooltip from the panel."
-local LOCK_TOOLTIP = "Lock tooltip"
-local LOCK_TOOLTIP_DESC = "Lock the tooltips position. When the tooltip is locked, you must use Alt to access it with your mouse."
-local POSITION = "Position"
-local POSITION_DESC = "Position the plugin on the panel."
-local POSITION_LEFT = "Left"
-local POSITION_RIGHT = "Right"
-local POSITION_CENTER = "Center"
-local ATTACH_TO_MINIMAP = "Attach to minimap"
-local ATTACH_TO_MINIMAP_DESC = "Attach the plugin to the minimap instead of the panel."
-local HIDE_FUBAR_PLUGIN = "Hide plugin"
-local HIDE_FUBAR_PLUGIN_CMD = "Hidden"
-local HIDE_FUBAR_PLUGIN_DESC = "Hide the plugin from the panel or minimap, leaving the addon running."
-
-if GetLocale() == "koKR" then
+if GetLocale() == "ruRU" then
+	SHOW_ICON = "Показать иконку"
+	SHOW_ICON_DESC = "Показать иконку плагина на панели."
+	SHOW_TEXT = "Показать текст"
+	SHOW_TEXT_DESC = "Показать текст плагина на панели."
+	SHOW_COLORED_TEXT = "Показать цветной текст"
+	SHOW_COLORED_TEXT_DESC = "Всегда окрашивать плагину этот текст."
+	DETACH_TOOLTIP = "Отделить меню"
+	DETACH_TOOLTIP_DESC = "Отделить окно меню от панели."
+	LOCK_TOOLTIP = "Закрепить меню"
+	LOCK_TOOLTIP_DESC = "Закрепить окно меню. Когда меню закрепленно, вы можете использовать Alt+ЛКМ."
+	POSITION = "Положение"
+	POSITION_DESC = "Положение плагина на панели."
+	POSITION_LEFT = "Слева"
+	POSITION_RIGHT = "Справа"
+	POSITION_CENTER = "По центру"
+	ATTACH_TO_MINIMAP = "Прикрепить к мини-карте"
+	ATTACH_TO_MINIMAP_DESC = "Прикрепить плагин к мини-карте."
+	HIDE_FUBAR_PLUGIN = "Скрыть плагин"
+	HIDE_FUBAR_PLUGIN_CMD = "Hidden"
+	HIDE_FUBAR_PLUGIN_DESC = "Скрыть плагин с панели или мини-карты."
+elseif GetLocale() == "koKR" then
 	SHOW_ICON = "아이콘 표시"
 	SHOW_ICON_DESC = "패널에 플러그인 아이콘을 표시합니다."
 	SHOW_TEXT = "텍스트 표시"
@@ -152,52 +152,73 @@ elseif GetLocale() == "zhTW" then
 	HIDE_FUBAR_PLUGIN = "隱藏FuBar插件"
 	HIDE_FUBAR_PLUGIN_CMD = "Hidden"
 	HIDE_FUBAR_PLUGIN_DESC = "在面板上隱藏該插件."
+else
+	SHOW_ICON = "Show icon"
+	SHOW_ICON_DESC = "Show the plugins icon on the panel."
+	SHOW_TEXT = "Show text"
+	SHOW_TEXT_DESC = "Show the plugins text on the panel."
+	SHOW_COLORED_TEXT = "Show colored text"
+	SHOW_COLORED_TEXT_DESC = "Allow the plugin to color its text."
+	DETACH_TOOLTIP = "Detach tooltip"
+	DETACH_TOOLTIP_DESC = "Detach the tooltip from the panel."
+	LOCK_TOOLTIP = "Lock tooltip"
+	LOCK_TOOLTIP_DESC = "Lock the tooltips position. When the tooltip is locked, you must use Alt to access it with your mouse."
+	POSITION = "Position"
+	POSITION_DESC = "Position the plugin on the panel."
+	POSITION_LEFT = "Left"
+	POSITION_RIGHT = "Right"
+	POSITION_CENTER = "Center"
+	ATTACH_TO_MINIMAP = "Attach to minimap"
+	ATTACH_TO_MINIMAP_DESC = "Attach the plugin to the minimap instead of the panel."
+	HIDE_FUBAR_PLUGIN = "Hide plugin"
+	HIDE_FUBAR_PLUGIN_CMD = "Hidden"
+	HIDE_FUBAR_PLUGIN_DESC = "Hide the plugin from the panel or minimap, leaving the addon running."
 end
 
 local FuBarPlugin = AceLibrary("AceOO-2.0").Mixin {
-													"GetTitle",
-													"GetName",
-													"GetCategory",
-													"SetFontSize",
-													"GetFrame",
-													"Show",
-													"Hide",
-													"GetPanel",
-													"IsTextColored",
-													"ToggleTextColored",
-													"IsMinimapAttached",
-													"ToggleMinimapAttached",
-													"Update",
-													"UpdateDisplay",
-													"UpdateData",
-													"UpdateText",
-													"UpdateTooltip",
-													"SetIcon",
-													"GetIcon",
-													"CheckWidth",
-													"SetText",
-													"GetText",
-													"IsIconShown",
-													"ToggleIconShown",
-													"ShowIcon",
-													"HideIcon",
-													"IsTextShown",
-													"ToggleTextShown",
-													"ShowText",
-													"HideText",
-													"IsTooltipDetached",
-													"ToggleTooltipDetached",
-													"DetachTooltip",
-													"ReattachTooltip",
-													"GetDefaultPosition",
-													"SetPanel",
-													"IsLoadOnDemand",
-													"IsDisabled",
-													"CreateBasicPluginFrame",
-													"CreatePluginChildFrame",
-													"OpenMenu",
-													"AddImpliedMenuOptions",
-												  }
+	"GetTitle",
+	"GetName",
+	"GetCategory",
+	"SetFontSize",
+	"GetFrame",
+	"Show",
+	"Hide",
+	"GetPanel",
+	"IsTextColored",
+	"ToggleTextColored",
+	"IsMinimapAttached",
+	"ToggleMinimapAttached",
+	"Update",
+	"UpdateDisplay",
+	"UpdateData",
+	"UpdateText",
+	"UpdateTooltip",
+	"SetIcon",
+	"GetIcon",
+	"CheckWidth",
+	"SetText",
+	"GetText",
+	"IsIconShown",
+	"ToggleIconShown",
+	"ShowIcon",
+	"HideIcon",
+	"IsTextShown",
+	"ToggleTextShown",
+	"ShowText",
+	"HideText",
+	"IsTooltipDetached",
+	"ToggleTooltipDetached",
+	"DetachTooltip",
+	"ReattachTooltip",
+	"GetDefaultPosition",
+	"SetPanel",
+	"IsLoadOnDemand",
+	"IsDisabled",
+	"CreateBasicPluginFrame",
+	"CreatePluginChildFrame",
+	"OpenMenu",
+	"AddImpliedMenuOptions",
+}
 
 local good = nil
 local function CheckFuBar()
@@ -1261,7 +1282,7 @@ function MinimapContainer:AddPlugin(plugin)
 		icon:SetHeight(20)
 		icon:SetPoint("TOPLEFT", frame, "TOPLEFT", 7, -5)
 		local overlay = frame:CreateTexture(frame:GetName() .. "Overlay","OVERLAY")
-overlay:SetTexture("Interface\\Minimap\\MiniMap-TrackingBorder")
+		overlay:SetTexture("Interface\\Minimap\\MiniMap-TrackingBorder")
 		overlay:SetWidth(53)
 		overlay:SetHeight(53)
 		overlay:SetPoint("TOPLEFT",frame,"TOPLEFT")
