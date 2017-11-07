@@ -1,6 +1,6 @@
 --[[
 	Name: FuBarPlugin-2.0
-	Revision: $Rev: 16321 $
+	Revision: $Rev: 16340 $
 	Author: Cameron Kenneth Knight (ckknight@gmail.com)
 	Website: http://wiki.wowace.com/index.php/FuBarPlugin-2.0
 	Documentation: http://wiki.wowace.com/index.php/FuBarPlugin-2.0
@@ -11,7 +11,7 @@
 
 local MAJOR_VERSION = "FuBarPlugin-2.0"
 local MINIMAPCONTAINER_MAJOR_VERSION = "FuBarPlugin-MinimapContainer-2.0"
-local MINOR_VERSION = "$Revision: 16321 $"
+local MINOR_VERSION = "$Revision: 16340 $"
 
 -- This ensures the code is only executed if the libary doesn't already exist, or is a newer version
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary.") end

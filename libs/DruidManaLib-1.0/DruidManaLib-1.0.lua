@@ -1,6 +1,6 @@
 --[[
 Name: DruidManaLib-1.0
-Revision: $Rev: 10000 $
+Revision: $Rev: 10220 $
 Author(s): aviana
 Website: https://github.com/Aviana
 Description: A library to provide mana values while in shape shift.
@@ -8,7 +8,7 @@ Dependencies: AceLibrary, AceEvent-2.0
 ]]
 
 local MAJOR_VERSION = "DruidManaLib-1.0"
-local MINOR_VERSION = "$Revision: 10210 $"
+local MINOR_VERSION = "$Revision: 10220 $"
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
 if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end

@@ -1,6 +1,6 @@
 --[[
 Name: CastLib-1.0
-Revision: $Rev: 10030 $
+Revision: $Rev: 10040 $
 Author(s): aviana
 Website: https://github.com/Aviana
 Description: A library to provide information about casts.
@@ -8,12 +8,13 @@ Dependencies: AceLibrary, AceEvent-2.0
 ]]
 
 local MAJOR_VERSION = "CastLib-1.0"
-local MINOR_VERSION = "$Revision: 10030 $"
+local MINOR_VERSION = "$Revision: 10040 $"
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
 if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end
 if not AceLibrary:HasInstance("AceEvent-2.0") then error(MAJOR_VERSION .. " requires AceEvent-2.0") end
 if not AceLibrary:HasInstance("AceHook-2.1") then error(MAJOR_VERSION .. " requires AceHook-2.1") end
+if not AceLibrary:HasInstance("Babble-Spell-2.2") then error(MAJOR_VERSION .. " requires Babble-Spell-2.2") end
 
 local CastLib = {}
 local AimedShot = AceLibrary("Babble-Spell-2.2")["Aimed Shot"]
