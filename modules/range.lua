@@ -3,6 +3,7 @@ AceLibrary("AceHook-2.1"):embed(Range)
 AceLibrary("AceEvent-2.0"):embed(Range)
 local L = LunaUF.L
 local BS = LunaUF.BS
+local BZ = AceLibrary("Babble-Zone-2.2")
 local ScanTip = LunaUF.ScanTip
 local rosterLib = AceLibrary("RosterLib-2.0")
 LunaUF:RegisterModule(Range, "range", L["Range"])
@@ -17,9 +18,9 @@ local MapScales = {
 
 	[-1] = { -- Battlegrounds
 		[0] = {x=0.0000000001,y=0.0000000001}, -- dummy
-		[L["Alterac Valley"]] = {x=0.00025277584791183,y=0.0003791834626879}, -- Alterac Valley
-		[L["Arathi Basin"]] = {x=0.00060996413230886,y=0.00091460134301867}, -- Arathi Basin
-		[L["Warsong Gulch"]] = {x=0.000934666820934484,y=0.0013986080884933}, -- Warsong Gulch
+		[BZ["Alterac Valley"]] = {x=0.00025277584791183,y=0.0003791834626879}, -- Alterac Valley
+		[BZ["Arathi Basin"]] = {x=0.00060996413230886,y=0.00091460134301867}, -- Arathi Basin
+		[BZ["Warsong Gulch"]] = {x=0.000934666820934484,y=0.0013986080884933}, -- Warsong Gulch
 	},
 
 	[1] = { -- Kalimdor
@@ -75,6 +76,61 @@ local MapScales = {
 		[24] = {x=0.00030591232436044,y=0.00045816733368805},-- Westfall
 		[25] = {x=0.00025879591703415,y=0.00038863212934562}, -- Wetlands
 	}
+}
+
+local ZonemapzhCN = {
+	[1] = {
+		[0] = 0,
+		[1] = 21,
+		[2] = 5,
+		[3] = 18,
+		[4] = 15,
+		[5] = 12,
+		[6] = 20,
+		[7] = 7,
+		[8] = 13,
+		[9] = 10,
+		[10] = 6,
+		[11] = 16,
+		[12] = 1,
+		[13] = 14,
+		[14] = 2,
+		[15] = 11,
+		[16] = 9,
+		[17] = 17,
+		[18] = 8,
+		[19] = 4,
+		[20] = 20,
+		[21] = 3,
+	},
+	[2] = {
+		[0] = 0,
+		[1] = 9,
+		[2] = 7,
+		[3] = 1,
+		[4] = 11,
+		[5] = 22,
+		[6] = 19,
+		[7] = 21,
+		[8] = 8,
+		[9] = 17,
+		[10] = 13,
+		[11] = 25,
+		[12] = 15,
+		[13] = 5,
+		[14] = 10,
+		[15] = 18,
+		[16] = 3,
+		[17] = 23,
+		[18] = 24,
+		[19] = 4,
+		[20] = 14,
+		[21] = 20,
+		[22] = 6,
+		[23] = 12,
+		[24] = 16,
+		[25] = 2,
+	},
 }
 
 local HealSpells = {
@@ -189,8 +245,11 @@ local function OnEvent()
 		SetMapToCurrentZone()
 		Continent = GetCurrentMapContinent()
 		Zone = GetCurrentMapZone()
+		if GetLocale() == "zhCN" then
+			Zone = ZonemapzhCN[Continent][Zone]
+		end
 		ZoneName = GetZoneText()
-		if ZoneName == L["Warsong Gulch"] or ZoneName == L["Arathi Basin"] or ZoneName == L["Alterac Valley"] then
+		if ZoneName == BZ["Warsong Gulch"] or ZoneName == BZ["Arathi Basin"] or ZoneName == BZ["Alterac Valley"] then
 			Zone = ZoneName
 		end
 	elseif LunaUF.db.profile.RangeCLparsing and events[event] then
