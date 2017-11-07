@@ -1363,7 +1363,7 @@ end
 function HealComm:CastSpellByName(spellName, onSelf)
 	self.hooks.CastSpellByName(spellName, onSelf)
 	
-	if self.CurrentSpellName and not SpellIsTargeting() or GetCVar("AutoSelfCast") == "0" and not SpellIsTargeting() then return end
+	if (self.CurrentSpellName and not SpellIsTargeting()) or (GetCVar("AutoSelfCast") == "0" and not SpellIsTargeting() and not (UnitExists("target") and UnitCanAssist("player", "target"))) then return end
 	
 	local _,_,rank = string.find(spellName,"(%d+)")
 	local _, _, spellName = string.find(spellName, "^([^%(]+)")
