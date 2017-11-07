@@ -813,6 +813,11 @@ function Cast:FullUpdate(frame)
 		elseif frame.castBar.casting or frame.castBar.channeling then
 			frame.castBar.icon:SetTexture(BS:GetSpellIcon(frame.castBar.Text:GetText() or "") or GetItemIconTexture(frame.castBar.Text:GetText() or ""))
 		end
+		if frame.castBar.casting then
+			frame.castBar.bar:SetStatusBarColor(LunaUF.db.profile.castColors.cast.r, LunaUF.db.profile.castColors.cast.g, LunaUF.db.profile.castColors.cast.b)
+		elseif frame.castBar.channeling then
+			frame.castBar.bar:SetStatusBarColor(LunaUF.db.profile.castColors.channel.r, LunaUF.db.profile.castColors.channel.g, LunaUF.db.profile.castColors.channel.b)
+		end
 		if UnitIsUnit(frame.unit,"player") then
 			frame.castBar:SetScript("OnEvent", OnEvent)
 			if (frame.castBar.casting or frame.castBar.channeling) then
@@ -882,7 +887,6 @@ end
 
 function Cast:SetBarTexture(frame,texture)
 	frame.castBar.bar:SetStatusBarTexture(texture)
-	frame.castBar.bar:SetStatusBarColor(LunaUF.db.profile.castColors.cast.r, LunaUF.db.profile.castColors.cast.g, LunaUF.db.profile.castColors.cast.b)
 end
 
 function Cast:MINIMAP_ZONE_CHANGED()
