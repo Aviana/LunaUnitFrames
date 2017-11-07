@@ -1,13 +1,13 @@
 --[[
-Name: AceDebug-2.0
-Revision: $Rev: 17638 $
-Developed by: The Ace Development Team (http://www.wowace.com/index.php/The_Ace_Development_Team)
-Inspired By: Ace 1.x by Turan (turan@gryphon.com)
-Website: http://www.wowace.com/
-Documentation: http://www.wowace.com/index.php/AceDebug-2.0
-SVN: http://svn.wowace.com/root/trunk/Ace2/AceDebug-2.0
-Description: Mixin to allow for simple debugging capabilities.
-Dependencies: AceLibrary, AceOO-2.0
+	Name: AceDebug-2.0
+	Revision: $Rev: 17638 $
+	Developed by: The Ace Development Team (http://www.wowace.com/index.php/The_Ace_Development_Team)
+	Inspired By: Ace 1.x by Turan (turan@gryphon.com)
+	Website: http://www.wowace.com/
+	Documentation: http://www.wowace.com/index.php/AceDebug-2.0
+	SVN: http://svn.wowace.com/root/trunk/Ace2/AceDebug-2.0
+	Description: Mixin to allow for simple debugging capabilities.
+	Dependencies: AceLibrary, AceOO-2.0
 ]]
 
 local MAJOR_VERSION = "AceDebug-2.0"
@@ -36,6 +36,9 @@ elseif GetLocale() == "zhTW" then
 elseif GetLocale() == "zhCN" then
 	DEBUGGING = "\232\176\131\232\175\149"
 	TOGGLE_DEBUGGING = "\229\144\175\231\148\168/\231\166\129\231\148\168 \232\176\131\232\175\149"
+elseif GetLocale() == "ruRU" then
+	DEBUGGING = "Отладка"
+	TOGGLE_DEBUGGING = "Вкл./Выкл. отладку для этого аддона."
 else -- enUS
 	DEBUGGING = "Debugging"
 	TOGGLE_DEBUGGING = "Enable/disable debugging"
@@ -138,10 +141,10 @@ function AceDebug:SetDebugLevel(level)
     if not level then
         self.debuglevel = nil
         return
-    end
+	end
     if level < 1 or level > 3 then
         AceDebug:error("Bad argument #1 to `SetDebugLevel`, must be a number 1-3")
-    end
+	end
     self.debuglevel = level
 end
 
@@ -154,7 +157,7 @@ function AceDebug:CustomLevelDebug(level, r, g, b, frame, delay, a1, a2, a3, a4,
     AceDebug:argCheck(level, 1, "number")
     if level < 1 or level > 3 then
         AceDebug:error("Bad argument #1 to `LevelDebug`, must be a number 1-3")
-    end
+	end
     if level > self.debuglevel then return end
 
 	local output = string.format("|cff7fff7f(DEBUG) %s:[%s.%3d]|r",  tostring(self), date("%H:%M:%S"), math_mod(GetTime(), 1) * 1000)
@@ -212,7 +215,7 @@ function AceDebug:LevelDebug(level, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11
     AceDebug:argCheck(level, 1, "number")
     if level < 1 or level > 3 then
         AceDebug:error("Bad argument #1 to `LevelDebug`, must be a number 1-3")
-    end
+	end
     if level > self.debuglevel then return end
 
 	AceDebug.CustomLevelDebug(self, level, nil, nil, nil, nil, nil, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20)

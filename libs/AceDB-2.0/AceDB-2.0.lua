@@ -1,14 +1,14 @@
 --[[
-Name: AceDB-2.0
-Revision: $Rev: 17797 $
-Developed by: The Ace Development Team (http://www.wowace.com/index.php/The_Ace_Development_Team)
-Inspired By: Ace 1.x by Turan (turan@gryphon.com)
-Website: http://www.wowace.com/
-Documentation: http://www.wowace.com/index.php/AceDB-2.0
-SVN: http://svn.wowace.com/root/trunk/Ace2/AceDB-2.0
-Description: Mixin to allow for fast, clean, and featureful saved variable
-             access.
-Dependencies: AceLibrary, AceOO-2.0, AceEvent-2.0
+	Name: AceDB-2.0
+	Revision: $Rev: 17797 $
+	Developed by: The Ace Development Team (http://www.wowace.com/index.php/The_Ace_Development_Team)
+	Inspired By: Ace 1.x by Turan (turan@gryphon.com)
+	Website: http://www.wowace.com/
+	Documentation: http://www.wowace.com/index.php/AceDB-2.0
+	SVN: http://svn.wowace.com/root/trunk/Ace2/AceDB-2.0
+	Description: Mixin to allow for fast, clean, and featureful saved variable
+	access.
+	Dependencies: AceLibrary, AceOO-2.0, AceEvent-2.0
 ]]
 
 local MAJOR_VERSION = "AceDB-2.0"
@@ -132,6 +132,27 @@ elseif GetLocale() == "zhCN" then
 	CHARACTER = "\229\173\151\231\172\166: "
 	REALM = "\229\159\159: "
 	CLASS = "\233\128\137\228\187\182\231\177\187: "
+elseif GetLocale() == "ruRU" then
+	ACTIVE = "Активный"
+	ENABLED = "Включён"
+	STATE = "Состояние"
+	TOGGLE_ACTIVE = "Отключить/Запустить аддон."
+	MAP_ACTIVESUSPENDED = { [true] = "|cff00ff00Активный|r", [false] = "|cffff0000Приостановленный|r" }
+	SET_PROFILE = "Установить профиль для этого аддона."
+	SET_PROFILE_USAGE = "{чар || класс || сервер || <название профиля>}"
+	PROFILE = "Профиль"
+	PLAYER_OF_REALM = "%s из %s"
+	CHOOSE_PROFILE_DESC = "Выберите профиль."
+	CHOOSE_PROFILE_GUI = "Выбор"
+	COPY_PROFILE_DESC = "Cкопировать настройки из другого профиля."
+	COPY_PROFILE_GUI = "Скопировать из"
+	OTHER_PROFILE_DESC = "Выбрать другой профиль."
+	OTHER_PROFILE_GUI = "Другое"
+	OTHER_PROFILE_USAGE = "<название профиля>"
+
+	CHARACTER = "Персонаж: "
+	REALM = "Сервер: "
+	CLASS = "Класс: "
 else -- enUS
 	ACTIVE = "Active"
 	ENABLED = "Enabled"
@@ -159,15 +180,15 @@ local AceOO = AceLibrary("AceOO-2.0")
 local AceEvent
 local Mixin = AceOO.Mixin
 local AceDB = Mixin {
-						"RegisterDB",
-						"RegisterDefaults",
-						"ResetDB",
-						"SetProfile",
-						"GetProfile",
-						"ToggleActive",
-						"IsActive",
-						"AcquireDBNamespace",
-					}
+	"RegisterDB",
+	"RegisterDefaults",
+	"ResetDB",
+	"SetProfile",
+	"GetProfile",
+	"ToggleActive",
+	"IsActive",
+	"AcquireDBNamespace",
+}
 local Dewdrop = AceLibrary:HasInstance("Dewdrop-2.0") and AceLibrary("Dewdrop-2.0")
 
 local _G = getfenv(0)
