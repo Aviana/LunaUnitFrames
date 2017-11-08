@@ -245,7 +245,7 @@ local function OnEvent()
 		SetMapToCurrentZone()
 		Continent = GetCurrentMapContinent()
 		Zone = GetCurrentMapZone()
-		if GetLocale() == "zhCN" then
+		if GetLocale() == "zhCN" and Continent > 0 then
 			Zone = ZonemapzhCN[Continent][Zone]
 		end
 		ZoneName = GetZoneText()
