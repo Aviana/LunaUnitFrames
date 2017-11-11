@@ -1,6 +1,6 @@
 --[[
 Name: HealComm-1.0
-Revision: $Rev: 11700 $
+Revision: $Rev: 11710 $
 Author(s): aviana
 Website: https://github.com/Aviana
 Description: A library to provide communication of heals and resurrections.
@@ -791,6 +791,11 @@ local Resurrections = {
 	[BS["Ancestral Spirit"]] = true;
 }
 
+local Hots = {
+	[BS["Renew"]] = true;
+	[BS["Rejuvenation"]] = true;
+}
+
 local function strsplit(pString, pPattern)
 	local Table = {}
 	local fpat = "(.-)" .. pPattern
@@ -1344,8 +1349,8 @@ function HealComm:CastSpell(spellId, spellbookTabNum)
 	local spellName, rank = GetSpellName(spellId, spellbookTabNum)
 	_,_,rank = string.find(rank,"(%d+)")
 	
-	if not (self.Spells[spellName] or Resurrections[spellName]) then return end
-	
+	if not (self.Spells[spellName] or Resurrections[spellName] or Hots[spellName]) then return end
+
 	self.CurrentSpellName = spellName
 	self.CurrentSpellRank = rank
 	if not SpellIsTargeting() then
@@ -1390,7 +1395,7 @@ function HealComm:CastSpellByName(spellName, onSelf)
 		_,_,rank = string.find(rank,"(%d+)")
 	end
 	if spellName then
-		if not (self.Spells[spellName] or Resurrections[spellName]) then return end
+		if not (self.Spells[spellName] or Resurrections[spellName] or Hots[spellName]) then return end
 		self.CurrentSpellName = spellName
 		self.CurrentSpellRank = rank
 		
@@ -1430,7 +1435,7 @@ function HealComm:UseAction(slot, checkCursor, onSelf)
 	self.hooks.UseAction(slot, checkCursor, onSelf)
 	
 	-- Test to see if this is a macro
-	if GetActionText(slot) or (self.CurrentSpellName and not SpellIsTargeting()) or not (self.Spells[spellName] or Resurrections[spellName]) then
+	if GetActionText(slot) or (self.CurrentSpellName and not SpellIsTargeting()) or not (self.Spells[spellName] or Resurrections[spellName] or Hots[spellName]) then
 		return
 	end
 	
