@@ -100,6 +100,9 @@ function XP:UpdateRep(frame)
 	frame.xpBar.rep:SetStatusBarColor(color.r, color.g, color.b, LunaUF.db.profile.bars.alpha)
 	frame.xpBar.rep.background:SetVertexColor(color.r, color.g, color.b, LunaUF.db.profile.bars.backgroundAlpha)
 	frame.xpBar.rep:Show()
+	if frame == GameTooltip.owner then
+		GameTooltip:SetText(frame.xpBar.rep.tooltip)
+	end
 end
 
 function XP:UpdateXP(frame)
@@ -129,6 +132,9 @@ function XP:UpdateXP(frame)
 	else
 		frame.xpBar.rested:Hide()
 		frame.xpBar.xp.tooltip = string.format(L["Level"].." %s - %s: %s/%s (%.2f%% "..L["done"]..")", UnitLevel(frame.unit), UnitLevel(frame.unit) + 1, formatNumber(current), formatNumber(max), (current / max) * 100)
+	end
+	if frame == GameTooltip.owner then
+		GameTooltip:SetText(frame.xpBar.xp.tooltip)
 	end
 end
 
