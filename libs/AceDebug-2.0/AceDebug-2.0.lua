@@ -1,6 +1,6 @@
 --[[
 	Name: AceDebug-2.0
-	Revision: $Rev: 17640 $
+	Revision: $Rev: 99999 $
 	Developed by: The Ace Development Team (http://www.wowace.com/index.php/The_Ace_Development_Team)
 	Inspired By: Ace 1.x by Turan (turan@gryphon.com)
 	Website: http://www.wowace.com/
@@ -11,7 +11,7 @@
 ]]
 
 local MAJOR_VERSION = "AceDebug-2.0"
-local MINOR_VERSION = "$Revision: 17640 $"
+local MINOR_VERSION = "$Revision: 99999 $"
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
 if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end

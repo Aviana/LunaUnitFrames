@@ -1,6 +1,6 @@
 --[[
 	Name: Babble-Spell-2.2
-	Revision: $Rev: 25188 $
+	Revision: $Rev: 99999 $
 	Author(s): ckknight (ckknight@gmail.com)
 	Website: http://ckknight.wowinterface.com/
 	Documentation: http://wiki.wowace.com/index.php/Babble-Spell-2.2
@@ -10,7 +10,7 @@
 ]]
 
 local MAJOR_VERSION = "Babble-Spell-2.2"
-local MINOR_VERSION = tonumber(string.sub("$Revision: 25188 $", 12, -3))
+local MINOR_VERSION = tonumber(string.sub("$Revision: 99999 $", 12, -3))
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
 if not AceLibrary:HasInstance("AceLocale-2.2") then error(MAJOR_VERSION .. " requires AceLocale-2.2") end

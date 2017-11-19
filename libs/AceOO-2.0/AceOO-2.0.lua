@@ -1,6 +1,6 @@
 --[[
 	Name: AceOO-2.0
-	Revision: $Rev: 17638 $
+	Revision: $Rev: 99999 $
 	Developed by: The Ace Development Team (http://www.wowace.com/index.php/The_Ace_Development_Team)
 	Inspired By: Ace 1.x by Turan (turan@gryphon.com)
 	Website: http://www.wowace.com/
@@ -11,7 +11,7 @@
 ]]
 
 local MAJOR_VERSION = "AceOO-2.0"
-local MINOR_VERSION = "$Revision: 17638 $"
+local MINOR_VERSION = "$Revision: 99999 $"
 
 -- This ensures the code is only executed if the libary doesn't already exist, or is a newer version
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary.") end
