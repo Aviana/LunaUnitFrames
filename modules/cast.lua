@@ -363,7 +363,7 @@ local function TriggerCast(mob, spell, castime)
 		CasterDB[mob] = {sp = spell, start = GetTime(), ct = castime}
 	end
 	for _,frame in pairs(LunaUF.Units.frameList) do
-		if frame.castBar and LunaUF.db.profile.units[frame.unitGroup].castBar.enabled and not UnitIsUnit(frame.unit,"player") then
+		if frame.unit and frame.castBar and LunaUF.db.profile.units[frame.unitGroup].castBar.enabled and mob == UnitName(frame.unit) then
 			Cast:FullUpdate(frame)
 		end
 	end
@@ -374,7 +374,7 @@ local function TriggerCastStop(mob, spell)
 		if (CasterDB[mob].start + (CasterDB[mob].ct or 0)) > GetTime() then
 			CasterDB[mob].ct = 0
 			for _,frame in pairs(LunaUF.Units.frameList) do
-				if frame.castBar and LunaUF.db.profile.units[frame.unitGroup].castBar.enabled and not UnitIsUnit(frame.unit,"player") then
+				if frame.unit and frame.castBar and LunaUF.db.profile.units[frame.unitGroup].castBar.enabled and mob == UnitName(frame.unit) then
 					Cast:FullUpdate(frame)
 				end
 			end
