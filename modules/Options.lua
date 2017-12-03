@@ -4402,11 +4402,11 @@ function LunaUF:CreateOptionsMenu()
 			LunaOptionsFrame.helpframescrollchild.texts[count]:SetText("\124cffffff00".."["..k.."]\124cffffffff: "..v)
 			LunaOptionsFrame.helpframescrollchild.texts[count]:SetJustifyH("LEFT")
 			LunaOptionsFrame.helpframescrollchild.texts[count]:SetJustifyV("TOP")
-			if LunaOptionsFrame.helpframescrollchild.texts[count]:GetStringWidth() > 281 then
-				LunaOptionsFrame.helpframescrollchild.texts[count]:SetHeight(22)
-			else
-				LunaOptionsFrame.helpframescrollchild.texts[count]:SetHeight(11)
-			end
+-- 			if LunaOptionsFrame.helpframescrollchild.texts[count]:GetStringWidth() > 281 then
+-- 				LunaOptionsFrame.helpframescrollchild.texts[count]:SetHeight(22)
+-- 			else
+-- 				LunaOptionsFrame.helpframescrollchild.texts[count]:SetHeight(11)
+-- 			end
 			LunaOptionsFrame.helpframescrollchild.texts[count]:SetWidth(280)
 			if not first then
 				LunaOptionsFrame.helpframescrollchild.texts[count]:SetPoint("TOP", prevframe, "BOTTOM")
