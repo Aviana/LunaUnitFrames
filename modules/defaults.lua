@@ -68,6 +68,7 @@ LunaUF.defaults = {
 		showOptions = false,
 		font = L["DEFAULT_FONT"],
 		texture = "Luna",
+		stretchtex = true,
 		auraborderType = "dark",
 		tooltips = true,
 		tooltipCombat = false,

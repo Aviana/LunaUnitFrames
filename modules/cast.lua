@@ -534,7 +534,11 @@ local function OnUpdatePlayer()
 	
 	if (frame.castBar.casting) then
 		if (elapsed > (frame.castBar.maxValue + frame.castBar.delaySum) ) then
+			frame.castBar.casting = nil
 			elapsed = frame.castBar.maxValue
+			frame.castBar:SetScript("OnUpdate", nil)
+			Cast:FullUpdate(frame)
+			return
 		end
 		frame.castBar.bar:SetValue(elapsed)
 	elseif (frame.castBar.channeling) then
@@ -661,6 +665,7 @@ local function OnEvent()
 		end
 	else
 		if (event == "SPELLCAST_CHANNEL_STOP" and not frame.castBar.channeling) then return end
+		if (event == "SPELLCAST_FAILED" and frame.castBar.channeling) then return end
 		frame.castBar.casting = false
 		frame.castBar.channeling = false
 		frame.castBar:SetScript("OnUpdate", nil)
@@ -732,16 +737,30 @@ local function OnSizeChanged(frame)
 	local castBar = frame or this
 	local height = castBar:GetHeight()
 	local width = castBar:GetWidth()
-	if LunaUF.db.profile.units[castBar:GetParent().unitGroup].castBar.icon then
+	local config = LunaUF.db.profile.units[castBar:GetParent().unitGroup].castBar
+	if config.icon then
 		castBar.icon:ClearAllPoints()
-		if LunaUF.db.profile.units[castBar:GetParent().unitGroup].castBar.vertical then
-			castBar.icon:SetPoint("TOP", castBar.bar, "BOTTOM")
+		castBar.bar:ClearAllPoints()
+		if config.vertical then
+			if config.reverse then
+				castBar.icon:SetPoint("TOP", castBar, "TOP")
+				castBar.bar:SetPoint("BOTTOM", castBar, "BOTTOM")
+			else
+				castBar.icon:SetPoint("BOTTOM", castBar, "BOTTOM")
+				castBar.bar:SetPoint("TOP", castBar, "TOP")
+			end
 			castBar.icon:SetHeight(width)
 			castBar.icon:SetWidth(width)
 			castBar.bar:SetHeight(height-width)
 			castBar.bar:SetWidth(width)
 		else
-			castBar.icon:SetPoint("RIGHT", castBar.bar, "LEFT")
+			if config.reverse then
+				castBar.icon:SetPoint("RIGHT", castBar, "RIGHT")
+				castBar.bar:SetPoint("LEFT", castBar, "LEFT")
+			else
+				castBar.icon:SetPoint("LEFT", castBar, "LEFT")
+				castBar.bar:SetPoint("RIGHT", castBar, "RIGHT")
+			end
 			castBar.icon:SetHeight(height)
 			castBar.icon:SetWidth(height)
 			castBar.bar:SetHeight(height)
@@ -756,8 +775,8 @@ end
 function Cast:OnEnable(frame)
 	if not frame.castBar then
 		frame.castBar = CreateFrame("Frame", nil, frame)
-		frame.castBar.bar = LunaUF.Units:CreateBar(frame)
-		frame.castBar.bar:SetPoint("TOPRIGHT", frame.castBar, "TOPRIGHT")
+		frame.castBar.bar = LunaUF.Units:CreateBar(frame.castBar)
+		frame.castBar.bar:SetAllPoints(frame.castBar)
 		frame.castBar.icon = frame.castBar:CreateTexture(nil, "ARTWORK")
 		frame.castBar.Text = frame.castBar.bar:CreateFontString(nil, "ARTWORK")
 		frame.castBar.Text:SetAllPoints(frame.castBar.bar)
@@ -807,6 +826,7 @@ function Cast:FullUpdate(frame)
 	else
 		frame.castBar.bar:SetOrientation("HORIZONTAL")
 	end
+	frame.castBar.bar:SetReverse(LunaUF.db.profile.units[frame.unitGroup].castBar.reverse)
 	if frame.castBar and LunaUF.db.profile.units[frame.unitGroup].castBar.enabled and unitname then
 		if not LunaUF.db.profile.units[frame.unitGroup].castBar.icon then
 			frame.castBar.icon:SetTexture(nil)
@@ -887,6 +907,7 @@ end
 
 function Cast:SetBarTexture(frame,texture)
 	frame.castBar.bar:SetStatusBarTexture(texture)
+	frame.castBar.bar:SetStretchTexture(LunaUF.db.profile.stretchtex)
 end
 
 function Cast:MINIMAP_ZONE_CHANGED()

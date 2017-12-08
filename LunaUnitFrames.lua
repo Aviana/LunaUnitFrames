@@ -21,6 +21,188 @@ LunaUF.AllianceCheck = {
 	["NightElf"] = true,
 }
 
+local function BarGetMinMaxValues(self)
+	return self.minV, self.maxV
+end
+
+local function BarGetOrientation(self)
+	return self.orientation
+end
+
+local function BarGetStatusBarColor(self)
+	return self.texture:GetVertexColor()
+end
+
+local function BarGetStatusBarTexture(self)
+	return self.texture
+end
+
+local function BarGetValue(self)
+	return self.value
+end
+
+local function BarSetMinMaxValues(self, minV, maxV)
+	self.minV = minV
+	if self.value < minV then
+		self.value = minV
+	end
+	self.maxV = maxV
+	if self.value > maxV then
+		self.value = maxV
+	end
+	self:Refresh()
+end
+
+local function BarSetOrientation(self, orientation)
+	if string.upper(orientation) == "HORIZONTAL" or string.upper(orientation) == "VERTICAL" then
+		if self.orientation ~= orientation then
+			self.orientation = orientation
+			self:Refresh()
+		end
+	end
+end
+
+local function BarSetStatusBarColor(self, r, g, b, alpha)
+	if r and g and b then
+		if type(r) == "number" and type(g) == "number" and type(b) == "number" then
+			if r >= 0 and r <= 1 and g >= 0 and g <= 1 and b >= 0 and b <= 1 then
+				if alpha and type(alpha) == "number" and alpha >= 0 and alpha <= 1 then
+					self.texture:SetVertexColor(r, g, b, alpha)
+				else
+					self.texture:SetVertexColor(r, g, b)
+				end
+				self:Refresh()
+			end
+		end
+	end
+end
+
+local function BarSetStatusBarTexture(self, texture, layer)
+	local validLayers = {
+		["BACKGROUND"] = true,
+		["BORDER"] = true,
+		["ARTWORK"] = true,
+		["OVERLAY"] = true,
+		["HIGHLIGHT"] = true,
+	}
+	if texture then
+		local changed
+		if type(texture) == "string" then
+			self.texture:SetTexture(texture)
+			changed = true
+		elseif texture:GetTexture() then
+			self.texture:SetTexture(texture:GetTexture())
+			changed = true
+		end
+		if changed and layer and validLayers[string.upper(layer)] then
+			self.texture:SetDrawLayer(layer)
+		end
+	end
+end
+
+local function BarSetValue(self, value)
+	if value <= self.maxV and value >= self.minV then
+		self.value = value
+		self:Refresh()
+	end
+end
+
+local function BarSetReverse(self, value)
+	if value and not self.reverse then
+		self.reverse = true
+		self:Refresh()
+	elseif not value and self.reverse then
+		self.reverse = nil
+		self:Refresh()
+	end
+end
+
+local function BarSetStretchTexture(self, value)
+	if value then
+		self.stretch = true
+	else
+		self.stretch = nil
+	end
+	self:Refresh()
+end
+
+local function BarRefresh(self)
+	self = self or this
+
+	if self.value == self.minV then
+		self.texture:Hide()
+		return
+	else
+		self.texture:Show()
+	end
+
+	self.texture:ClearAllPoints()
+	if self.reverse then
+		if self.orientation == "HORIZONTAL" then
+			self.texture:SetHeight(self:GetHeight())
+			self.texture:SetWidth(self:GetWidth()*(self.value/self.maxV))
+			self.texture:SetPoint("RIGHT", self, "RIGHT")
+			if not self.stretch then
+				self.texture:SetTexCoord(1-(self.value/self.maxV), 1, 0, 1)
+			end
+		else
+			self.texture:SetHeight(self:GetHeight()*(self.value/self.maxV))
+			self.texture:SetWidth(self:GetWidth())
+			self.texture:SetPoint("TOP", self, "TOP")
+			if not self.stretch then
+				self.texture:SetTexCoord(0, 1, 0, (self.value/self.maxV))
+			end
+		end
+	else
+		if self.orientation == "HORIZONTAL" then
+			self.texture:SetHeight(self:GetHeight())
+			self.texture:SetWidth(self:GetWidth()*(self.value/self.maxV))
+			self.texture:SetPoint("LEFT", self, "LEFT")
+			if not self.stretch then
+				self.texture:SetTexCoord(0, (self.value/self.maxV), 0, 1)
+			end
+		else
+			self.texture:SetHeight(self:GetHeight()*(self.value/self.maxV))
+			self.texture:SetWidth(self:GetWidth())
+			self.texture:SetPoint("BOTTOM", self, "BOTTOM")
+			if not self.stretch then
+				self.texture:SetTexCoord(0, 1, 1-(self.value/self.maxV), 1)
+			end
+		end
+	end
+	if self.stretch then
+		self.texture:SetTexCoord(0, 1, 0, 1)
+	end
+end
+
+function LunaUF:CreateBar(name, parent)
+	local frame = CreateFrame("Frame", name, parent)
+	frame.texture = frame:CreateTexture()
+	
+	frame.minV = 0
+	frame.maxV = 1
+	frame.value = 1
+	frame.orientation = "HORIZONTAL"
+	
+	frame.GetMinMaxValues = BarGetMinMaxValues
+	frame.GetOrientation = BarGetOrientation
+	frame.GetStatusBarColor = BarGetStatusBarColor
+	frame.GetStatusBarTexture = BarGetStatusBarTexture
+	frame.GetValue = BarGetValue
+	frame.SetMinMaxValues = BarSetMinMaxValues
+	frame.SetOrientation = BarSetOrientation
+	frame.SetStatusBarColor = BarSetStatusBarColor
+	frame.SetStatusBarTexture = BarSetStatusBarTexture
+	frame.SetValue = BarSetValue
+	frame.SetReverse = BarSetReverse
+	frame.SetStretchTexture = BarSetStretchTexture
+	frame.Refresh = BarRefresh
+	
+	frame:SetScript("OnSizeChanged", BarRefresh)
+	--frame:SetScript("OnHide", function () this:SetValue(0) end)
+	return frame
+end
+
 function LunaUF:deepcopy(orig)
     local orig_type = type(orig)
     local copy

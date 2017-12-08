@@ -90,10 +90,12 @@ function CastLib:instantCast(SpellCast)
 end
 
 function CastLib:SPELLCAST_START()
+	if self:IsEventScheduled("CastLib_NotACast") then
+		self:CancelScheduledEvent("CastLib_NotACast")
+	end
 	if ( self.SpellCast and self.SpellCast[1] == arg1 ) then
 		if self:IsEventScheduled("CastLib_CastInstant") then
 			self:CancelScheduledEvent("CastLib_CastInstant")
-			
 		end
 		self.SpellCast_backup[1] = self.SpellCast[1]
 		self.SpellCast_backup[2] = self.SpellCast[2]
@@ -112,6 +114,13 @@ function CastLib:SPELLCAST_START()
 	CastLibTip:ClearLines()
 end
 
+function CastLib:SPELLCAST_CHANNEL_START()
+	if self:IsEventScheduled("CastLib_NotACast") then
+		self:CancelScheduledEvent("CastLib_NotACast")
+	end
+	self.Spell = nil
+end
+
 function CastLib:SPELLCAST_FAILED()
 	CastLibTip:ClearLines()
 	if self:IsEventScheduled("CastLib_CastEnding") then
@@ -123,7 +132,7 @@ function CastLib:SPELLCAST_FAILED()
 		self.SpellCast[key] = nil
 	end
 	self.Rank = nil
-	CastLib_Spell =  nil
+	self.Spell =  nil
 	self.Mana = 0
 	self:TriggerEvent("CASTLIB_MANAUSAGE", self.Mana)
 end
@@ -147,15 +156,14 @@ function CastLib:SPELLCAST_STOP()
 		for key in pairs(self.SpellCast) do
 			self.SpellCast[key] = nil
 		end
-		self.Rank = nil
-		CastLib_Spell =  nil
+		self.Spell = nil
 		self.Mana = 0
 		self:TriggerEvent("CASTLIB_MANAUSAGE", self.Mana)
 	end
 end
 
 function CastLib:GetSpell()
-	return CastLib_Spell or self.SpellCast_backup[1], self.Rank or self.SpellCast_backup[2]
+	return self.Spell or self.SpellCast_backup[1] or self.Channel, self.Rank or self.SpellCast_backup[2]
 end
 
 function CastLib:GetManaUse()
@@ -165,19 +173,20 @@ end
 function CastLib:CastSpell(spellId, spellbookTabNum)
 	-- Call the original function so there's no delay while we process
 	self.hooks.CastSpell(spellId, spellbookTabNum)
-	if CastLib_Spell then
+	if self.Spell then
 		return
 	end
 	CastLibTip:SetSpell(spellId, spellbookTabNum)
 	local spellName, rank = GetSpellName(spellId, spellbookTabNum)
 	_,_,rank = string.find(rank,"(%d+)")
+	self.Channel = spellName
+	self.Rank = rank
 	if ( SpellIsTargeting() ) then
-       -- Spell is waiting for a target
-       CastLib_Spell = spellName
-	   self.Rank = rank
+		-- Spell is waiting for a target
+		self.Spell = spellName
 	elseif ( UnitIsVisible("target") and UnitIsConnected("target") and UnitCanAssist("player", "target") ) then
-       -- Spell is being cast on the current target.  
-       -- If ClearTarget() had been called, we'd be waiting target
+		-- Spell is being cast on the current target.  
+		-- If ClearTarget() had been called, we'd be waiting target
 		if UnitIsPlayer("target") then
 			self:ProcessSpellCast(spellName, rank, UnitName("target"))
 		end
@@ -209,7 +218,8 @@ function CastLib:CastSpellByName(spellName, onSelf)
 	
 	if ( spellName ) then
 		if ( SpellIsTargeting() ) then
-			CastLib_Spell = spellName
+			self.Spell = spellName
+			self.Channel = spellName
 			self.Rank = rank
 		else
 			if UnitIsVisible("target") and UnitIsConnected("target") and UnitCanAssist("player", "target") and onSelf ~= 1 then
@@ -227,9 +237,9 @@ function CastLib:OnMouseDown()
 	-- If we're waiting to target
 	local targetName
 	
-	if ( CastLib_Spell and UnitName("mouseover") ) then
+	if ( self.Spell and UnitName("mouseover") ) then
 		targetName = UnitName("mouseover")
-	elseif ( CastLib_SpellSpell and GameTooltipTextLeft1:IsVisible() ) then
+	elseif ( self.Spell and GameTooltipTextLeft1:IsVisible() ) then
 		local _, _, name = string.find(GameTooltipTextLeft1:GetText(), "^Corpse of (.+)$")
 		if ( name ) then
 			targetName = name
@@ -238,8 +248,8 @@ function CastLib:OnMouseDown()
 	if ( self.hooks.WorldFrameOnMouseDown ) then
 		self.hooks.WorldFrameOnMouseDown()
 	end
-	if ( CastLib_Spell and targetName ) then
-		self:ProcessSpellCast(CastLib_Spell, self.Rank, targetName)
+	if ( self.Spell and targetName ) then
+		self:ProcessSpellCast(self.Spell, self.Rank, targetName)
 	end
 end
 
@@ -251,16 +261,19 @@ function CastLib:UseAction(slot, checkCursor, onSelf)
 	if not GetActionText(slot) then
 		CastLibTip:SetAction(slot)
 		spellName = CastLibTipTextLeft1:GetText()
-		CastLib_Spell = spellName
+		self.Spell = spellName
+		self.Channel = spellName
 	end
 	-- Call the original function
 	self.hooks.UseAction(slot, checkCursor, onSelf)
 	
-	if CastLib_Spell == AimedShot and not GetActionText(slot) then
-		self:ProcessSpellCast(CastLib_Spell, 6, UnitName("target"))
+	self:ScheduleEvent("CastLib_NotACast", self.SPELLCAST_STOP, 0.3, self)
+	
+	if self.Spell == AimedShot and not GetActionText(slot) then
+		self:ProcessSpellCast(self.Spell, 6, UnitName("target"))
 		return
-	elseif CastLib_Spell == Multishot and not GetActionText(slot) then
-		self:ProcessSpellCast(CastLib_Spell, 4, UnitName("target"))
+	elseif self.Spell == Multishot and not GetActionText(slot) then
+		self:ProcessSpellCast(self.Spell, 4, UnitName("target"))
 		return
 	end
 	
@@ -298,7 +311,7 @@ function CastLib:SpellTargetUnit(unit)
 		shallTargetUnit = true
 	end
 	self.hooks.SpellTargetUnit(unit)
-	if ( shallTargetUnit and CastLib_SpellSpell and not SpellIsTargeting() ) then
+	if ( shallTargetUnit and self.Spell and not SpellIsTargeting() ) then
 		if UnitIsPlayer(unit) then
 			self:ProcessSpellCast(self.Spell, self.Rank, UnitName(unit))
 		end
@@ -317,7 +330,7 @@ end
 function CastLib:TargetUnit(unit)
 	-- Look to see if we're currently waiting for a target internally
 	-- If we are, then well glean the target info here.
-	if ( CastLib_SpellSpell and UnitExists(unit) ) and UnitIsPlayer(unit) then
+	if ( self.Spell and UnitExists(unit) ) and UnitIsPlayer(unit) then
 		self:ProcessSpellCast(self.Spell, self.Rank, UnitName(unit))
 	end
 	-- Call the original function

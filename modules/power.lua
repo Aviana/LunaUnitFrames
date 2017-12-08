@@ -248,6 +248,7 @@ function Power:FullUpdate(frame)
 	else
 		frame.powerBar:SetOrientation("HORIZONTAL")
 	end
+	frame.powerBar:SetReverse(LunaUF.db.profile.units[frame.unitGroup].powerBar.reverse)
 	for align,fontstring in pairs(frame.fontstrings["powerBar"]) do
 		fontstring:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\"..LunaUF.db.profile.font..".ttf", LunaUF.db.profile.units[frame.unitGroup].tags.bartags["powerBar"].size)
 		fontstring:ClearAllPoints()
@@ -279,6 +280,7 @@ end
 function Power:SetBarTexture(frame,texture)
 	if frame.powerBar then
 		frame.powerBar:SetStatusBarTexture(texture)
+		frame.powerBar:SetStretchTexture(LunaUF.db.profile.stretchtex)
 		frame.powerBar.background:SetTexture(texture)
 		if frame.powerBar.manaUsage then
 			frame.powerBar.manaUsage.bar:SetStatusBarTexture("Interface\\Tooltips\\UI-Tooltip-Background")

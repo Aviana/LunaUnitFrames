@@ -879,7 +879,7 @@ end
 
 -- Small helper function for creating bars with
 function Units:CreateBar(parent)
-	local bar = CreateFrame("StatusBar", nil, parent)
+	local bar = LunaUF:CreateBar(nil, parent)
 	bar:SetFrameLevel(parent.topFrameLevel or 5)
 	bar.parent = parent
 

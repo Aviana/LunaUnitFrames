@@ -211,6 +211,7 @@ function Health:FullUpdate(frame)
 	else
 		frame.healthBar:SetOrientation("HORIZONTAL")
 	end
+	frame.healthBar:SetReverse(LunaUF.db.profile.units[frame.unitGroup].healthBar.reverse)
 	for align,fontstring in pairs(frame.fontstrings["healthBar"]) do
 		fontstring:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\"..LunaUF.db.profile.font..".ttf", LunaUF.db.profile.units[frame.unitGroup].tags.bartags["healthBar"].size)
 		fontstring:ClearAllPoints()
@@ -234,5 +235,6 @@ function Health:SetBarTexture(frame,texture)
 	if frame.healthBar then
 		frame.healthBar:SetStatusBarTexture(texture)
 		frame.healthBar.background:SetTexture(texture)
+		frame.healthBar:SetStretchTexture(LunaUF.db.profile.stretchtex)
 	end
 end

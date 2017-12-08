@@ -103,6 +103,7 @@ end
 function Druid:SetBarTexture(frame,texture)
 	if frame.druidBar then
 		frame.druidBar:SetStatusBarTexture(texture)
+		frame.druidBar:SetStretchTexture(LunaUF.db.profile.stretchtex)
 		frame.druidBar.background:SetTexture(texture)
 	end
 end

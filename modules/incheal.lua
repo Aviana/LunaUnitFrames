@@ -58,7 +58,11 @@ function Incheal:FullUpdate(frame)
 		end
 		healBar:SetHeight(incHeight)
 		healBar:SetWidth(frameWidth)
-		healBar:SetPoint("BOTTOMLEFT", frame.healthBar, "BOTTOMLEFT", 0, healthHeight)
+		if LunaUF.db.profile.units[frame.unitGroup].healthBar.reverse then
+			healBar:SetPoint("TOPLEFT", frame.healthBar, "TOPLEFT", 0, (healthHeight * -1))
+		else
+			healBar:SetPoint("BOTTOMLEFT", frame.healthBar, "BOTTOMLEFT", 0, healthHeight)
+		end
 	else
 		local incWidth = frameWidth * (healvalue / maxHealth)
 		if (healthWidth + incWidth) > (frameWidth * (LunaUF.db.profile.units[frame.unitGroup].incheal.cap + 1)) then
@@ -70,6 +74,10 @@ function Incheal:FullUpdate(frame)
 		end
 		healBar:SetWidth(incWidth)
 		healBar:SetHeight(frameHeight)
-		healBar:SetPoint("TOPLEFT", frame.healthBar, "TOPLEFT", healthWidth, 0)
+		if LunaUF.db.profile.units[frame.unitGroup].healthBar.reverse then
+			healBar:SetPoint("TOPRIGHT", frame.healthBar, "TOPRIGHT", (healthWidth * -1), 0)
+		else
+			healBar:SetPoint("TOPLEFT", frame.healthBar, "TOPLEFT", healthWidth, 0)
+		end
 	end
 end
