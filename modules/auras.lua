@@ -157,9 +157,9 @@ function Auras:OnEnable(frame)
 			end
 
 			button.stack = button:CreateFontString(nil, "OVERLAY")
-			button.stack:SetFont(defaultFont, 10, "OUTLINE")
 			button.stack:SetShadowColor(0, 0, 0, 1.0)
 			button.stack:SetShadowOffset(0.50, -0.50)
+			button.stack:SetFont(defaultFont, 10, "OUTLINE")
 			button.stack:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT")
 			button.stack:SetJustifyV("BOTTOM")
 			button.stack:SetJustifyH("RIGHT")
@@ -192,9 +192,9 @@ function Auras:OnEnable(frame)
 			end
 
 			button.stack = button:CreateFontString(nil, "OVERLAY")
-			button.stack:SetFont(defaultFont, 10, "OUTLINE")
 			button.stack:SetShadowColor(0, 0, 0, 1.0)
 			button.stack:SetShadowOffset(0.50, -0.50)
+			button.stack:SetFont(defaultFont, 10, "OUTLINE")
 			button.stack:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT")
 			button.stack:SetJustifyV("BOTTOM")
 			button.stack:SetJustifyH("RIGHT")
@@ -579,6 +579,7 @@ function Auras:UpdateLayout(frame)
 			button:ClearAllPoints()
 			button:SetHeight(buttonsize)
 			button:SetWidth(buttonsize)
+			button.stack:SetFont(defaultFont, (10*(buttonsize/18)), "OUTLINE")
 			button.border:SetHeight(buttonsize+2)
 			button.border:SetWidth(buttonsize+2)
 			if i == 1 then
@@ -588,7 +589,7 @@ function Auras:UpdateLayout(frame)
 				firstButton = button
 			elseif (rowlenght + buttonsize + 2) > framelength then
 				rowlenght = buttonsize
-				button:SetPoint("TOPLEFT", firstButton, "BOTTOMLEFT", 0, (-2-((rowheight > config.buffsize and not (firstButton:GetHeight() > config.buffsize) and config.enlargedbuffsize) or 0)))
+				button:SetPoint("TOPLEFT", firstButton, "TOPLEFT", 0, (-2-rowheight))
 				firstButton = button
 				frameheight = frameheight + 2 + rowheight
 				rowheight = buttonsize
@@ -611,6 +612,7 @@ function Auras:UpdateLayout(frame)
 			button:ClearAllPoints()
 			button:SetHeight(buttonsize)
 			button:SetWidth(buttonsize)
+			button.stack:SetFont(defaultFont, (10*(buttonsize/18)), "OUTLINE")
 			button.border:SetHeight(buttonsize+2)
 			button.border:SetWidth(buttonsize+2)
 			if i == 1 then
@@ -620,7 +622,7 @@ function Auras:UpdateLayout(frame)
 				firstButton = button
 			elseif (rowlenght + buttonsize + 2) > framelength then
 				rowlenght = buttonsize
-				button:SetPoint("BOTTOMLEFT", firstButton, "TOPLEFT", 0, (2+((rowheight > config.buffsize and not (firstButton:GetHeight() > config.buffsize) and config.enlargedbuffsize) or 0)))
+				button:SetPoint("BOTTOMLEFT", firstButton, "BOTTOMLEFT", 0, (2+rowheight))
 				firstButton = button
 				frameheight = frameheight + 2 + rowheight
 				rowheight = buttonsize
@@ -643,6 +645,7 @@ function Auras:UpdateLayout(frame)
 			button:ClearAllPoints()
 			button:SetHeight(buttonsize)
 			button:SetWidth(buttonsize)
+			button.stack:SetFont(defaultFont, (10*(buttonsize/18)), "OUTLINE")
 			button.border:SetHeight(buttonsize+2)
 			button.border:SetWidth(buttonsize+2)
 			if i == 1 then
@@ -652,7 +655,7 @@ function Auras:UpdateLayout(frame)
 				firstButton = button
 			elseif (rowlenght + buttonsize + 2) > framelength then
 				rowlenght = buttonsize
-				button:SetPoint("BOTTOMRIGHT", firstButton, "TOPRIGHT", 0, (2+((rowheight > config.buffsize and not (firstButton:GetHeight() > config.buffsize) and config.enlargedbuffsize) or 0)))
+				button:SetPoint("BOTTOMRIGHT", firstButton, "BOTTOMRIGHT", 0, (2+rowheight))
 				firstButton = button
 				frameheight = frameheight + 2 + rowheight
 				rowheight = buttonsize
@@ -675,6 +678,7 @@ function Auras:UpdateLayout(frame)
 			button:ClearAllPoints()
 			button:SetHeight(buttonsize)
 			button:SetWidth(buttonsize)
+			button.stack:SetFont(defaultFont, (10*(buttonsize/18)), "OUTLINE")
 			button.border:SetHeight(buttonsize+2)
 			button.border:SetWidth(buttonsize+2)
 			if i == 1 then
@@ -684,7 +688,7 @@ function Auras:UpdateLayout(frame)
 				firstButton = button
 			elseif (rowlenght + buttonsize + 2) > framelength then
 				rowlenght = buttonsize
-				button:SetPoint("BOTTOMLEFT", firstButton, "TOPLEFT", 0, (2+((rowheight > config.buffsize and not (firstButton:GetHeight() > config.buffsize) and config.enlargedbuffsize) or 0)))
+				button:SetPoint("BOTTOMLEFT", firstButton, "BOTTOMLEFT", 0, (2+rowheight))
 				firstButton = button
 				frameheight = frameheight + 2 + rowheight
 				rowheight = buttonsize
@@ -712,6 +716,7 @@ function Auras:UpdateLayout(frame)
 			button:ClearAllPoints()
 			button:SetHeight(buttonsize)
 			button:SetWidth(buttonsize)
+			button.stack:SetFont(defaultFont, (10*(buttonsize/18)), "OUTLINE")
 			button.border:SetHeight(buttonsize+2)
 			button.border:SetWidth(buttonsize+2)
 			if i == 1 then
@@ -721,7 +726,7 @@ function Auras:UpdateLayout(frame)
 				firstButton = button
 			elseif (rowlenght + buttonsize + 2) > framelength then
 				rowlenght = buttonsize
-				button:SetPoint("TOPLEFT", firstButton, "BOTTOMLEFT", 0, (-2-((rowheight > config.debuffsize and not (firstButton:GetHeight() > config.debuffsize) and config.enlargeddebuffsize) or 0)))
+				button:SetPoint("TOPLEFT", firstButton, "TOPLEFT", 0, (-2-rowheight))
 				firstButton = button
 				frameheight = frameheight + 2 + rowheight
 				rowheight = buttonsize
@@ -744,6 +749,7 @@ function Auras:UpdateLayout(frame)
 			button:ClearAllPoints()
 			button:SetHeight(buttonsize)
 			button:SetWidth(buttonsize)
+			button.stack:SetFont(defaultFont, (10*(buttonsize/18)), "OUTLINE")
 			button.border:SetHeight(buttonsize+2)
 			button.border:SetWidth(buttonsize+2)
 			if i == 1 then
@@ -753,7 +759,7 @@ function Auras:UpdateLayout(frame)
 				firstButton = button
 			elseif (rowlenght + buttonsize + 2) > framelength then
 				rowlenght = buttonsize
-				button:SetPoint("BOTTOMLEFT", firstButton, "TOPLEFT", 0, (2+((rowheight > config.debuffsize and not (firstButton:GetHeight() > config.debuffsize) and config.enlargeddebuffsize) or 0)))
+				button:SetPoint("BOTTOMLEFT", firstButton, "BOTTOMLEFT", 0, (2+rowheight))
 				firstButton = button
 				frameheight = frameheight + 2 + rowheight
 				rowheight = buttonsize
@@ -776,6 +782,7 @@ function Auras:UpdateLayout(frame)
 			button:ClearAllPoints()
 			button:SetHeight(buttonsize)
 			button:SetWidth(buttonsize)
+			button.stack:SetFont(defaultFont, (10*(buttonsize/18)), "OUTLINE")
 			button.border:SetHeight(buttonsize+2)
 			button.border:SetWidth(buttonsize+2)
 			if i == 1 then
@@ -785,7 +792,7 @@ function Auras:UpdateLayout(frame)
 				firstButton = button
 			elseif (rowlenght + buttonsize + 2) > framelength then
 				rowlenght = buttonsize
-				button:SetPoint("TOPRIGHT", firstButton, "BOTTOMRIGHT", 0, (-2-((rowheight > config.debuffsize and not (firstButton:GetHeight() > config.debuffsize) and config.enlargeddebuffsize) or 0)))
+				button:SetPoint("TOPRIGHT", firstButton, "TOPRIGHT", 0, (-2-rowheight))
 				firstButton = button
 				frameheight = frameheight + 2 + rowheight
 				rowheight = buttonsize
@@ -808,6 +815,7 @@ function Auras:UpdateLayout(frame)
 			button:ClearAllPoints()
 			button:SetHeight(buttonsize)
 			button:SetWidth(buttonsize)
+			button.stack:SetFont(defaultFont, (10*(buttonsize/18)), "OUTLINE")
 			button.border:SetHeight(buttonsize+2)
 			button.border:SetWidth(buttonsize+2)
 			if i == 1 then
@@ -817,7 +825,7 @@ function Auras:UpdateLayout(frame)
 				firstButton = button
 			elseif (rowlenght + buttonsize + 2) > framelength then
 				rowlenght = buttonsize
-				button:SetPoint("TOPLEFT", firstButton, "BOTTOMLEFT", 0, (-2-((rowheight > config.debuffsize and not (firstButton:GetHeight() > config.debuffsize) and config.enlargeddebuffsize) or 0)))
+				button:SetPoint("TOPLEFT", firstButton, "TOPLEFT", 0, (-2-rowheight))
 				firstButton = button
 				frameheight = frameheight + 2 + rowheight
 				rowheight = buttonsize
