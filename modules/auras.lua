@@ -311,7 +311,6 @@ function Auras:UpdateFrames(frame)
 	local hasMainHandEnchant, mainHandExpiration, mainHandCharges, hasOffHandEnchant, offHandExpiration, offHandCharges = GetWeaponEnchantInfo()
 	for i,button in ipairs(frame.auras.buffbuttons.buttons) do
 		if i < 33 then
-			button.large = nil
 			if frame.unitGroup == "player" then
 				buffIndex, untilCancelled = GetPlayerBuff(i - 1, "HELPFUL")
 				dtype = GetPlayerBuffDispelType(buffIndex)
@@ -450,7 +449,6 @@ function Auras:UpdateFrames(frame)
 		end
 	end
 	for i,button in ipairs(frame.auras.debuffbuttons.buttons) do
-		button.large = nil
 		if frame.unitGroup == "player" then
 			buffIndex, untilCancelled = GetPlayerBuff(i - 1, "HARMFUL")
 			dtype = GetPlayerBuffDispelType(buffIndex)

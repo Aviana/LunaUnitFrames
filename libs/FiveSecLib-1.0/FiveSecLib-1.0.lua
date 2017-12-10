@@ -1,6 +1,6 @@
 --[[
 Name: FiveSecLib-1.0
-Revision: $Rev: 10120 $
+Revision: $Rev: 10130 $
 Author(s): aviana
 Website: https://github.com/Aviana
 Description: A library to provide feedback about the five second rule for casters.
@@ -8,17 +8,29 @@ Dependencies: AceLibrary, AceEvent-2.0
 ]]
 
 local MAJOR_VERSION = "FiveSecLib-1.0"
-local MINOR_VERSION = "$Revision: 10120 $"
+local MINOR_VERSION = "$Revision: 10130 $"
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
 if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end
 if not AceLibrary:HasInstance("AceEvent-2.0") then error(MAJOR_VERSION .. " requires AceEvent-2.0") end
-if not AceLibrary:HasInstance("Babble-Spell-2.2") then error(MAJOR_VERSION .. " requires Babble-Spell-2.2") end
 if not AceLibrary:HasInstance("AceHook-2.1") then error(MAJOR_VERSION .. " requires AceHook-2.1") end
 
-local BS = AceLibrary("Babble-Spell-2.2")
-
 local FiveSecLib = {}
+
+local L = {}
+if( GetLocale() == "deDE" ) then
+	L["(%d+) Mana"] = "(%d+) Mana"
+	L["Raptor Strike"] = "Raptorstoß"
+elseif ( GetLocale() == "frFR" ) then
+	L["(%d+) Mana"] = "(%d+) Mana"
+	L["Raptor Strike"] = "Attaque du raptor"
+elseif GetLocale() == "zhCN" then
+	L["(%d+) Mana"] = "(%d+) 法力"
+	L["Raptor Strike"] = "猛禽一击"
+else
+	L["(%d+) Mana"] = "(%d+) Mana"
+	L["Raptor Strike"] = "Raptor Strike"
+end
 
 ------------------------------------------------
 -- activate, enable, disable
@@ -70,69 +82,72 @@ end
 local FiveSecLibTip = CreateFrame("GameTooltip", "FiveSecLibTip", nil, "GameTooltipTemplate")
 FiveSecLibTip:SetOwner(WorldFrame, "ANCHOR_NONE")
 
-function FiveSecLib:triggerFSR(spellName)
-	self.Spell = nil
-	local i = 1
-	while GetSpellName(i, BOOKTYPE_SPELL) do
-		local s, r = GetSpellName(i, BOOKTYPE_SPELL)
-		if s == spellName then
-			FiveSecLibTip:ClearLines()
-			FiveSecLibTip:SetSpell(i, BOOKTYPE_SPELL)
-			local mana = FiveSecLibTipTextLeft2:GetText()
-			if mana and string.find(mana,"(%d+) Mana") then
-				self:TriggerEvent("fiveSec")
-			end
-			return
-		end
-		i = i+1
-	end
+function FiveSecLib:triggerFSR()
+	ChatFrame1:AddMessage("triggerFSR")
+	self:TriggerEvent("fiveSec")
+	self.prevSpell = nil
 end
 
 function FiveSecLib:SPELLCAST_FAILED()
-	if self.Spell then
-		if self.Spell ~= BS["Raptor Strike"] then
-			self:CancelScheduledEvent("Trigger_fiveSec")
-			self.Spell = nil
-		end
+	ChatFrame1:AddMessage("SPELLCAST_FAILED")
+	if self.prevSpell ~= L["Raptor Strike"] then
+		self:CancelScheduledEvent("Trigger_fiveSec")
+		self.Spell = nil
+		self.Mana = nil
 	end
 end
 
 function FiveSecLib:SPELLCAST_STOP()
-	if self.Spell then
-	--	triggerFSR(self.Spell)
-		self:ScheduleEvent("Trigger_fiveSec", self.triggerFSR, 0.3, self, self.Spell)
+	ChatFrame1:AddMessage("SPELLCAST_STOP")
+	if self.Spell and self.Mana then
+		self:ScheduleEvent("Trigger_fiveSec", self.triggerFSR, 0.1, self)
+		self.prevSpell = self.Spell
 	end
+	self.Spell = nil
+	self.Mana = nil
 end
 
 function FiveSecLib:CastSpell(spellId, spellbookTabNum)
 	-- Call the original function so there's no delay while we process
 	self.hooks.CastSpell(spellId, spellbookTabNum)
+	if self.Spell then return end
+	FiveSecLibTip:ClearLines()
+	FiveSecLibTip:SetSpell(spellId, spellbookTabNum)
+	_,_,self.Mana = string.find(FiveSecLibTipTextLeft2:GetText(),L["(%d+) Mana"])
 	self.Spell = GetSpellName(spellId, spellbookTabNum)
+	ChatFrame1:AddMessage("CastSpell")
 end
 
 function FiveSecLib:CastSpellByName(spell, onSelf)
 	-- Call the original function
 	self.hooks.CastSpellByName(spell, onSelf)
 	local _, _, spellName = string.find(spell, "^([^%(]+)")
-	if ( spellName ) then
-		self.Spell = spellName
+	spellName = string.lower(spellName)
+	local i = 1
+	while GetSpellName(i, BOOKTYPE_SPELL) do
+		local s = GetSpellName(i, BOOKTYPE_SPELL)
+		if string.lower(s) == spellName then
+			self.Spell = GetSpellName(i, BOOKTYPE_SPELL)
+			FiveSecLibTip:ClearLines()
+			FiveSecLibTip:SetSpell(i, BOOKTYPE_SPELL)
+			_,_,self.Mana = string.find(FiveSecLibTipTextLeft2:GetText(),L["(%d+) Mana"])
+			break
+		end
+		i = i+1
 	end
+	ChatFrame1:AddMessage("CastSpellByName")
 end
 
 function FiveSecLib:UseAction(slot, checkCursor, onSelf)
-	local spellName
-	if not GetActionText(slot) then
+	if not GetActionText(slot) and not self.Spell then
 		FiveSecLibTip:ClearLines()
 		FiveSecLibTip:SetAction(slot)
-		spellName = FiveSecLibTipTextLeft1:GetText()
+		self.Spell = FiveSecLibTipTextLeft1:GetText()
+		_,_,self.Mana = string.find(FiveSecLibTipTextLeft2:GetText(),L["(%d+) Mana"])
 	end
 	-- Call the original function
 	self.hooks.UseAction(slot, checkCursor, onSelf)
-	-- Test to see if this is a macro
-	if GetActionText(slot) then
-		return
-	end
-	self.Spell = spellName
+	ChatFrame1:AddMessage("UseAction")
 end
 
 function FiveSecLib:SpellStopTargeting()
