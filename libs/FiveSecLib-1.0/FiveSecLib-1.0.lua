@@ -110,7 +110,8 @@ function FiveSecLib:CastSpell(spellId, spellbookTabNum)
 	if self.Spell then return end
 	FiveSecLibTip:ClearLines()
 	FiveSecLibTip:SetSpell(spellId, spellbookTabNum)
-	_,_,self.Mana = string.find(FiveSecLibTipTextLeft2:GetText(),L["(%d+) Mana"])
+	local mana = FiveSecLibTipTextLeft2:GetText()
+	_,_,self.Mana = string.find(mana or "",L["(%d+) Mana"])
 	self.Spell = GetSpellName(spellId, spellbookTabNum)
 end
 
@@ -126,7 +127,8 @@ function FiveSecLib:CastSpellByName(spell, onSelf)
 			self.Spell = GetSpellName(i, BOOKTYPE_SPELL)
 			FiveSecLibTip:ClearLines()
 			FiveSecLibTip:SetSpell(i, BOOKTYPE_SPELL)
-			_,_,self.Mana = string.find(FiveSecLibTipTextLeft2:GetText(),L["(%d+) Mana"])
+			local mana = FiveSecLibTipTextLeft2:GetText()
+			_,_,self.Mana = mana and string.find((mana or ""),L["(%d+) Mana"])
 			break
 		end
 		i = i+1
@@ -138,7 +140,8 @@ function FiveSecLib:UseAction(slot, checkCursor, onSelf)
 		FiveSecLibTip:ClearLines()
 		FiveSecLibTip:SetAction(slot)
 		self.Spell = FiveSecLibTipTextLeft1:GetText()
-		_,_,self.Mana = string.find(FiveSecLibTipTextLeft2:GetText(),L["(%d+) Mana"])
+		local mana = FiveSecLibTipTextLeft2:GetText()
+		_,_,self.Mana = mana and string.find((mana or ""),L["(%d+) Mana"])
 	end
 	-- Call the original function
 	self.hooks.UseAction(slot, checkCursor, onSelf)
