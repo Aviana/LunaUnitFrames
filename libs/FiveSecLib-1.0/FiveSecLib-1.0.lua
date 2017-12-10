@@ -83,13 +83,11 @@ local FiveSecLibTip = CreateFrame("GameTooltip", "FiveSecLibTip", nil, "GameTool
 FiveSecLibTip:SetOwner(WorldFrame, "ANCHOR_NONE")
 
 function FiveSecLib:triggerFSR()
-	ChatFrame1:AddMessage("triggerFSR")
 	self:TriggerEvent("fiveSec")
 	self.prevSpell = nil
 end
 
 function FiveSecLib:SPELLCAST_FAILED()
-	ChatFrame1:AddMessage("SPELLCAST_FAILED")
 	if self.prevSpell ~= L["Raptor Strike"] then
 		self:CancelScheduledEvent("Trigger_fiveSec")
 		self.Spell = nil
@@ -98,7 +96,6 @@ function FiveSecLib:SPELLCAST_FAILED()
 end
 
 function FiveSecLib:SPELLCAST_STOP()
-	ChatFrame1:AddMessage("SPELLCAST_STOP")
 	if self.Spell and self.Mana then
 		self:ScheduleEvent("Trigger_fiveSec", self.triggerFSR, 0.1, self)
 		self.prevSpell = self.Spell
@@ -115,7 +112,6 @@ function FiveSecLib:CastSpell(spellId, spellbookTabNum)
 	FiveSecLibTip:SetSpell(spellId, spellbookTabNum)
 	_,_,self.Mana = string.find(FiveSecLibTipTextLeft2:GetText(),L["(%d+) Mana"])
 	self.Spell = GetSpellName(spellId, spellbookTabNum)
-	ChatFrame1:AddMessage("CastSpell")
 end
 
 function FiveSecLib:CastSpellByName(spell, onSelf)
@@ -135,7 +131,6 @@ function FiveSecLib:CastSpellByName(spell, onSelf)
 		end
 		i = i+1
 	end
-	ChatFrame1:AddMessage("CastSpellByName")
 end
 
 function FiveSecLib:UseAction(slot, checkCursor, onSelf)
@@ -147,7 +142,6 @@ function FiveSecLib:UseAction(slot, checkCursor, onSelf)
 	end
 	-- Call the original function
 	self.hooks.UseAction(slot, checkCursor, onSelf)
-	ChatFrame1:AddMessage("UseAction")
 end
 
 function FiveSecLib:SpellStopTargeting()
