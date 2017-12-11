@@ -1,6 +1,6 @@
 --[[
 Name: FiveSecLib-1.0
-Revision: $Rev: 10130 $
+Revision: $Rev: 10140 $
 Author(s): aviana
 Website: https://github.com/Aviana
 Description: A library to provide feedback about the five second rule for casters.
@@ -8,7 +8,7 @@ Dependencies: AceLibrary, AceEvent-2.0
 ]]
 
 local MAJOR_VERSION = "FiveSecLib-1.0"
-local MINOR_VERSION = "$Revision: 10130 $"
+local MINOR_VERSION = "$Revision: 10140 $"
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
 if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end
@@ -111,7 +111,7 @@ function FiveSecLib:CastSpell(spellId, spellbookTabNum)
 	FiveSecLibTip:ClearLines()
 	FiveSecLibTip:SetSpell(spellId, spellbookTabNum)
 	local mana = FiveSecLibTipTextLeft2:GetText()
-	_,_,self.Mana = string.find(mana or "",L["(%d+) Mana"])
+	_,_,self.Mana = string.find((mana or "") or "",L["(%d+) Mana"])
 	self.Spell = GetSpellName(spellId, spellbookTabNum)
 end
 
@@ -128,7 +128,7 @@ function FiveSecLib:CastSpellByName(spell, onSelf)
 			FiveSecLibTip:ClearLines()
 			FiveSecLibTip:SetSpell(i, BOOKTYPE_SPELL)
 			local mana = FiveSecLibTipTextLeft2:GetText()
-			_,_,self.Mana = mana and string.find((mana or ""),L["(%d+) Mana"])
+			_,_,self.Mana = string.find((mana or ""),L["(%d+) Mana"])
 			break
 		end
 		i = i+1
@@ -141,7 +141,7 @@ function FiveSecLib:UseAction(slot, checkCursor, onSelf)
 		FiveSecLibTip:SetAction(slot)
 		self.Spell = FiveSecLibTipTextLeft1:GetText()
 		local mana = FiveSecLibTipTextLeft2:GetText()
-		_,_,self.Mana = mana and string.find((mana or ""),L["(%d+) Mana"])
+		_,_,self.Mana = string.find((mana or ""),L["(%d+) Mana"])
 	end
 	-- Call the original function
 	self.hooks.UseAction(slot, checkCursor, onSelf)
