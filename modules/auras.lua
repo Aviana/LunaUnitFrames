@@ -585,15 +585,15 @@ function Auras:UpdateLayout(frame)
 				rowlenght = buttonsize
 				rowheight = buttonsize
 				firstButton = button
-			elseif (rowlenght + buttonsize + 2) > framelength then
+			elseif (rowlenght + buttonsize + config.padding) > framelength then
 				rowlenght = buttonsize
-				button:SetPoint("TOPLEFT", firstButton, "TOPLEFT", 0, (-2-rowheight))
+				button:SetPoint("TOPLEFT", firstButton, "TOPLEFT", 0, (-(config.padding)-rowheight))
 				firstButton = button
-				frameheight = frameheight + 2 + rowheight
+				frameheight = frameheight + config.padding + rowheight
 				rowheight = buttonsize
 			else
-				button:SetPoint("TOPLEFT", lastButton, "TOPRIGHT", 2, 0)
-				rowlenght = rowlenght + buttonsize + 2
+				button:SetPoint("TOPLEFT", lastButton, "TOPRIGHT", config.padding, 0)
+				rowlenght = rowlenght + buttonsize + config.padding
 				rowheight = math.max(rowheight, buttonsize)
 			end
 			lastButton = button
@@ -618,15 +618,15 @@ function Auras:UpdateLayout(frame)
 				rowlenght = buttonsize
 				rowheight = buttonsize
 				firstButton = button
-			elseif (rowlenght + buttonsize + 2) > framelength then
+			elseif (rowlenght + buttonsize + config.padding) > framelength then
 				rowlenght = buttonsize
-				button:SetPoint("BOTTOMLEFT", firstButton, "BOTTOMLEFT", 0, (2+rowheight))
+				button:SetPoint("BOTTOMLEFT", firstButton, "BOTTOMLEFT", 0, (config.padding+rowheight))
 				firstButton = button
-				frameheight = frameheight + 2 + rowheight
+				frameheight = frameheight + config.padding + rowheight
 				rowheight = buttonsize
 			else
-				button:SetPoint("BOTTOMLEFT", lastButton, "BOTTOMRIGHT", 2, 0)
-				rowlenght = rowlenght + buttonsize + 2
+				button:SetPoint("BOTTOMLEFT", lastButton, "BOTTOMRIGHT", config.padding, 0)
+				rowlenght = rowlenght + buttonsize + config.padding
 				rowheight = math.max(rowheight, buttonsize)
 			end
 			lastButton = button
@@ -651,15 +651,15 @@ function Auras:UpdateLayout(frame)
 				rowlenght = buttonsize
 				rowheight = buttonsize
 				firstButton = button
-			elseif (rowlenght + buttonsize + 2) > framelength then
+			elseif (rowlenght + buttonsize + config.padding) > framelength then
 				rowlenght = buttonsize
-				button:SetPoint("BOTTOMRIGHT", firstButton, "BOTTOMRIGHT", 0, (2+rowheight))
+				button:SetPoint("BOTTOMRIGHT", firstButton, "BOTTOMRIGHT", 0, (config.padding+rowheight))
 				firstButton = button
-				frameheight = frameheight + 2 + rowheight
+				frameheight = frameheight + config.padding + rowheight
 				rowheight = buttonsize
 			else
-				button:SetPoint("BOTTOMRIGHT", lastButton, "BOTTOMLEFT", -2, 0)
-				rowlenght = rowlenght + buttonsize + 2
+				button:SetPoint("BOTTOMRIGHT", lastButton, "BOTTOMLEFT", -(config.padding), 0)
+				rowlenght = rowlenght + buttonsize + config.padding
 				rowheight = math.max(rowheight, buttonsize)
 			end
 			lastButton = button
@@ -684,15 +684,15 @@ function Auras:UpdateLayout(frame)
 				rowlenght = buttonsize
 				rowheight = buttonsize
 				firstButton = button
-			elseif (rowlenght + buttonsize + 2) > framelength then
+			elseif (rowlenght + buttonsize + config.padding) > framelength then
 				rowlenght = buttonsize
-				button:SetPoint("BOTTOMLEFT", firstButton, "BOTTOMLEFT", 0, (2+rowheight))
+				button:SetPoint("BOTTOMLEFT", firstButton, "BOTTOMLEFT", 0, (config.padding+rowheight))
 				firstButton = button
-				frameheight = frameheight + 2 + rowheight
+				frameheight = frameheight + config.padding + rowheight
 				rowheight = buttonsize
 			else
-				button:SetPoint("BOTTOMLEFT", lastButton, "BOTTOMRIGHT", 2, 0)
-				rowlenght = rowlenght + buttonsize + 2
+				button:SetPoint("BOTTOMLEFT", lastButton, "BOTTOMRIGHT", config.padding, 0)
+				rowlenght = rowlenght + buttonsize + config.padding
 				rowheight = math.max(rowheight, buttonsize)
 			end
 			lastButton = button
@@ -722,15 +722,15 @@ function Auras:UpdateLayout(frame)
 				rowlenght = buttonsize
 				rowheight = buttonsize
 				firstButton = button
-			elseif (rowlenght + buttonsize + 2) > framelength then
+			elseif (rowlenght + buttonsize + config.padding) > framelength then
 				rowlenght = buttonsize
-				button:SetPoint("TOPLEFT", firstButton, "TOPLEFT", 0, (-2-rowheight))
+				button:SetPoint("TOPLEFT", firstButton, "TOPLEFT", 0, (-(config.padding)-rowheight))
 				firstButton = button
-				frameheight = frameheight + 2 + rowheight
+				frameheight = frameheight + config.padding + rowheight
 				rowheight = buttonsize
 			else
-				button:SetPoint("TOPLEFT", lastButton, "TOPRIGHT", 2, 0)
-				rowlenght = rowlenght + buttonsize + 2
+				button:SetPoint("TOPLEFT", lastButton, "TOPRIGHT", config.padding, 0)
+				rowlenght = rowlenght + buttonsize + config.padding
 				rowheight = math.max(rowheight, buttonsize)
 			end
 			lastButton = button
@@ -755,15 +755,15 @@ function Auras:UpdateLayout(frame)
 				rowlenght = buttonsize
 				rowheight = buttonsize
 				firstButton = button
-			elseif (rowlenght + buttonsize + 2) > framelength then
+			elseif (rowlenght + buttonsize + config.padding) > framelength then
 				rowlenght = buttonsize
-				button:SetPoint("BOTTOMLEFT", firstButton, "BOTTOMLEFT", 0, (2+rowheight))
+				button:SetPoint("BOTTOMLEFT", firstButton, "BOTTOMLEFT", 0, (config.padding+rowheight))
 				firstButton = button
-				frameheight = frameheight + 2 + rowheight
+				frameheight = frameheight + config.padding + rowheight
 				rowheight = buttonsize
 			else
-				button:SetPoint("BOTTOMLEFT", lastButton, "BOTTOMRIGHT", 2, 0)
-				rowlenght = rowlenght + buttonsize + 2
+				button:SetPoint("BOTTOMLEFT", lastButton, "BOTTOMRIGHT", config.padding, 0)
+				rowlenght = rowlenght + buttonsize + config.padding
 				rowheight = math.max(rowheight, buttonsize)
 			end
 			lastButton = button
@@ -788,15 +788,15 @@ function Auras:UpdateLayout(frame)
 				rowlenght = buttonsize
 				rowheight = buttonsize
 				firstButton = button
-			elseif (rowlenght + buttonsize + 2) > framelength then
+			elseif (rowlenght + buttonsize + config.padding) > framelength then
 				rowlenght = buttonsize
-				button:SetPoint("TOPRIGHT", firstButton, "TOPRIGHT", 0, (-2-rowheight))
+				button:SetPoint("TOPRIGHT", firstButton, "TOPRIGHT", 0, (-(config.padding)-rowheight))
 				firstButton = button
-				frameheight = frameheight + 2 + rowheight
+				frameheight = frameheight + config.padding + rowheight
 				rowheight = buttonsize
 			else
-				button:SetPoint("TOPRIGHT", lastButton, "TOPLEFT", -2, 0)
-				rowlenght = rowlenght + buttonsize + 2
+				button:SetPoint("TOPRIGHT", lastButton, "TOPLEFT", -(config.padding), 0)
+				rowlenght = rowlenght + buttonsize + config.padding
 				rowheight = math.max(rowheight, buttonsize)
 			end
 			lastButton = button
@@ -821,15 +821,15 @@ function Auras:UpdateLayout(frame)
 				rowlenght = buttonsize
 				rowheight = buttonsize
 				firstButton = button
-			elseif (rowlenght + buttonsize + 2) > framelength then
+			elseif (rowlenght + buttonsize + config.padding) > framelength then
 				rowlenght = buttonsize
-				button:SetPoint("TOPLEFT", firstButton, "TOPLEFT", 0, (-2-rowheight))
+				button:SetPoint("TOPLEFT", firstButton, "TOPLEFT", 0, (-(config.padding)-rowheight))
 				firstButton = button
-				frameheight = frameheight + 2 + rowheight
+				frameheight = frameheight + config.padding + rowheight
 				rowheight = buttonsize
 			else
-				button:SetPoint("TOPLEFT", lastButton, "TOPRIGHT", 2, 0)
-				rowlenght = rowlenght + buttonsize + 2
+				button:SetPoint("TOPLEFT", lastButton, "TOPRIGHT", config.padding, 0)
+				rowlenght = rowlenght + buttonsize + config.padding
 				rowheight = math.max(rowheight, buttonsize)
 			end
 			lastButton = button

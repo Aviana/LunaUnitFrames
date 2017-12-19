@@ -157,6 +157,7 @@ LunaUF.defaults = {
 					timertextbigsize = 18,
 					timertextsmallsize = 12,
 					timerspinenabled = true,
+					padding = 2,
 					emphasizeAuras = {
 						buffs = {
 						},
@@ -171,16 +172,25 @@ LunaUF.defaults = {
 					bartags = {
 						healthBar = {
 							size = 10,
+							leftsize = 100,
+							rightsize = 100,
+							middlesize = 100,
 							["left"] = "[name]",
 							["right"] = "[smarthealth]",
 						},
 						powerBar = {
 							size = 10,
+							leftsize = 100,
+							rightsize = 100,
+							middlesize = 100,
 							["left"] = "[levelcolor][level][shortclassification] [classcolor][smartclass]",
 							["right"] = "[pp]/[maxpp]",
 						},
 						druidBar = {
 							size = 10,
+							leftsize = 100,
+							rightsize = 100,
+							middlesize = 100,
 							["center"] = "[druid:pp]/[druid:maxpp]",
 						},
 						castBar = {
@@ -188,6 +198,9 @@ LunaUF.defaults = {
 						},
 						emptyBar = {
 							size = 10,
+							leftsize = 100,
+							rightsize = 100,
+							middlesize = 100,
 						},
 					},
 				},
@@ -236,6 +249,7 @@ LunaUF.defaults = {
 					buffpos = "BOTTOM",
 					debuffpos = "BOTTOM",
 					bordercolor = false,
+					padding = 2,
 					emphasizeAuras = {
 						buffs = {
 						},
@@ -250,11 +264,17 @@ LunaUF.defaults = {
 					bartags = {
 						healthBar = {
 							size = 10,
+							leftsize = 100,
+							rightsize = 100,
+							middlesize = 100,
 							["left"] = "[name]",
 							["right"] = "[ssmarthealth]",
 						},
 						powerBar = {
 							size = 10,
+							leftsize = 100,
+							rightsize = 100,
+							middlesize = 100,
 							["left"] = "[levelcolor][level][shortclassification] [classcolor][smartclass]",
 							["right"] = "[spp]/[smaxpp]",
 						},
@@ -263,6 +283,9 @@ LunaUF.defaults = {
 						},
 						emptyBar = {
 							size = 10,
+							leftsize = 100,
+							rightsize = 100,
+							middlesize = 100,
 						},
 					},
 				},
@@ -304,6 +327,7 @@ LunaUF.defaults = {
 					buffpos = "BOTTOM",
 					debuffpos = "BOTTOM",
 					bordercolor = false,
+					padding = 2,
 					emphasizeAuras = {
 						buffs = {
 						},
@@ -319,11 +343,17 @@ LunaUF.defaults = {
 					bartags = {
 						healthBar = {
 							size = 10,
+							leftsize = 100,
+							rightsize = 100,
+							middlesize = 100,
 							["left"] = "[abbrev:name]",
 							["right"] = "[ssmarthealth]",
 						},
 						powerBar = {
 							size = 10,
+							leftsize = 100,
+							rightsize = 100,
+							middlesize = 100,
 							["left"] = "[levelcolor][level][shortclassification] [classcolor][smartclass]",
 							["right"] = "[spp]/[smaxpp]",
 						},
@@ -332,6 +362,9 @@ LunaUF.defaults = {
 						},
 						emptyBar = {
 							size = 10,
+							leftsize = 100,
+							rightsize = 100,
+							middlesize = 100,
 						},
 					},
 				},
@@ -376,6 +409,7 @@ LunaUF.defaults = {
 					buffpos = "BOTTOM",
 					debuffpos = "BOTTOM",
 					bordercolor = false,
+					padding = 2,
 					emphasizeAuras = {
 						buffs = {
 						},
@@ -390,11 +424,17 @@ LunaUF.defaults = {
 					bartags = {
 						healthBar = {
 							size = 10,
+							leftsize = 100,
+							rightsize = 100,
+							middlesize = 100,
 							["left"] = "[name]",
 							["right"] = "[perhp]%[br][ssmarthealth]",
 						},
 						powerBar = {
 							size = 10,
+							leftsize = 100,
+							rightsize = 100,
+							middlesize = 100,
 							["left"] = "[levelcolor][level][shortclassification] [classcolor][smartclass]",
 							["right"] = "[spp]/[smaxpp]",
 						},
@@ -403,6 +443,9 @@ LunaUF.defaults = {
 						},
 						emptyBar = {
 							size = 10,
+							leftsize = 100,
+							rightsize = 100,
+							middlesize = 100,
 						},
 					},
 				},
@@ -451,6 +494,7 @@ LunaUF.defaults = {
 					buffpos = "BOTTOM",
 					debuffpos = "BOTTOM",
 					bordercolor = false,
+					padding = 2,
 					emphasizeAuras = {
 						buffs = {
 						},
@@ -466,11 +510,17 @@ LunaUF.defaults = {
 					bartags = {
 						healthBar = {
 							size = 10,
+							leftsize = 100,
+							rightsize = 100,
+							middlesize = 100,
 							["left"] = "[name]",
 							["right"] = "[ssmarthealth]",
 						},
 						powerBar = {
 							size = 10,
+							leftsize = 100,
+							rightsize = 100,
+							middlesize = 100,
 							["left"] = "[levelcolor][level][shortclassification] [classcolor][smartclass]",
 							["right"] = "[spp]/[smaxpp]",
 						},
@@ -479,6 +529,9 @@ LunaUF.defaults = {
 						},
 						emptyBar = {
 							size = 10,
+							leftsize = 100,
+							rightsize = 100,
+							middlesize = 100,
 						},
 					},
 				},
@@ -525,6 +578,7 @@ LunaUF.defaults = {
 					buffpos = "BOTTOM",
 					debuffpos = "BOTTOM",
 					bordercolor = false,
+					padding = 2,
 					emphasizeAuras = {
 						buffs = {
 						},
@@ -540,11 +594,17 @@ LunaUF.defaults = {
 					bartags = {
 						healthBar = {
 							size = 10,
+							leftsize = 100,
+							rightsize = 100,
+							middlesize = 100,
 							["left"] = "[name]",
 							["right"] = "[ssmarthealth]",
 						},
 						powerBar = {
 							size = 10,
+							leftsize = 100,
+							rightsize = 100,
+							middlesize = 100,
 							["left"] = "[levelcolor][level][shortclassification] [classcolor][smartclass]",
 							["right"] = "[spp]/[smaxpp]",
 						},
@@ -553,6 +613,9 @@ LunaUF.defaults = {
 						},
 						emptyBar = {
 							size = 10,
+							leftsize = 100,
+							rightsize = 100,
+							middlesize = 100,
 						},
 					},
 				},
@@ -605,6 +668,7 @@ LunaUF.defaults = {
 					buffpos = "BOTTOM",
 					debuffpos = "BOTTOM",
 					bordercolor = false,
+					padding = 2,
 					emphasizeAuras = {
 						buffs = {
 						},
@@ -619,11 +683,17 @@ LunaUF.defaults = {
 					bartags = {
 						healthBar = {
 							size = 10,
+							leftsize = 100,
+							rightsize = 100,
+							middlesize = 100,
 							["left"] = "[name]",
 							["right"] = "[smarthealth]",
 						},
 						powerBar = {
 							size = 10,
+							leftsize = 100,
+							rightsize = 100,
+							middlesize = 100,
 							["left"] = "[levelcolor][level][shortclassification] [classcolor][smartclass]",
 							["right"] = "[pp]/[maxpp]",
 						},
@@ -632,6 +702,9 @@ LunaUF.defaults = {
 						},
 						emptyBar = {
 							size = 10,
+							leftsize = 100,
+							rightsize = 100,
+							middlesize = 100,
 						},
 					},
 				},
@@ -688,6 +761,7 @@ LunaUF.defaults = {
 					buffpos = "BOTTOM",
 					debuffpos = "BOTTOM",
 					bordercolor = false,
+					padding = 2,
 					emphasizeAuras = {
 						buffs = {
 						},
@@ -703,11 +777,17 @@ LunaUF.defaults = {
 					bartags = {
 						healthBar = {
 							size = 10,
+							leftsize = 100,
+							rightsize = 100,
+							middlesize = 100,
 							["left"] = "[name]",
 							["right"] = "[ssmarthealth]",
 						},
 						powerBar = {
 							size = 10,
+							leftsize = 100,
+							rightsize = 100,
+							middlesize = 100,
 							["left"] = "",
 							["right"] = "",
 						},
@@ -716,6 +796,9 @@ LunaUF.defaults = {
 						},
 						emptyBar = {
 							size = 10,
+							leftsize = 100,
+							rightsize = 100,
+							middlesize = 100,
 						},
 					},
 				},
@@ -756,6 +839,7 @@ LunaUF.defaults = {
 					buffpos = "BOTTOM",
 					debuffpos = "BOTTOM",
 					bordercolor = false,
+					padding = 2,
 					emphasizeAuras = {
 						buffs = {
 						},
@@ -771,11 +855,17 @@ LunaUF.defaults = {
 					bartags = {
 						healthBar = {
 							size = 10,
+							leftsize = 100,
+							rightsize = 100,
+							middlesize = 100,
 							["left"] = "[name]",
 							["right"] = "[ssmarthealth]",
 						},
 						powerBar = {
 							size = 10,
+							leftsize = 100,
+							rightsize = 100,
+							middlesize = 100,
 							["left"] = "",
 							["right"] = "",
 						},
@@ -784,6 +874,9 @@ LunaUF.defaults = {
 						},
 						emptyBar = {
 							size = 10,
+							leftsize = 100,
+							rightsize = 100,
+							middlesize = 100,
 						},
 					},
 				},
@@ -824,6 +917,7 @@ LunaUF.defaults = {
 					buffpos = "BOTTOM",
 					debuffpos = "BOTTOM",
 					bordercolor = false,
+					padding = 2,
 					emphasizeAuras = {
 						buffs = {
 						},
@@ -838,10 +932,16 @@ LunaUF.defaults = {
 					bartags = {
 						healthBar = {
 							size = 10,
+							leftsize = 100,
+							rightsize = 100,
+							middlesize = 100,
 							["center"] = "[name][br][healerhealth]",
 						},
 						powerBar = {
 							size = 10,
+							leftsize = 100,
+							rightsize = 100,
+							middlesize = 100,
 							["center"] = "",
 						},
 						castBar = {
@@ -849,6 +949,9 @@ LunaUF.defaults = {
 						},
 						emptyBar = {
 							size = 10,
+							leftsize = 100,
+							rightsize = 100,
+							middlesize = 100,
 						},
 					},
 				},

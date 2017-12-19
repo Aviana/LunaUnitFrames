@@ -70,6 +70,7 @@ function Druid:UpdateColor(frame)
 end
 
 function Druid:FullUpdate(frame)
+	local tags = LunaUF.db.profile.units[frame.unitGroup].tags.bartags.druidBar
 	if UnitPowerType(frame.unit) == 0 and not frame.druidBar.hidden then
 		frame.druidBar.hidden = true
 		LunaUF.Units:PositionWidgets(frame)
@@ -84,18 +85,18 @@ function Druid:FullUpdate(frame)
 		frame.druidBar:SetOrientation("HORIZONTAL")
 	end
 	for align,fontstring in pairs(frame.fontstrings.druidBar) do
-		fontstring:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\"..LunaUF.db.profile.font..".ttf", LunaUF.db.profile.units[frame.unitGroup].tags.bartags["druidBar"].size)
+		fontstring:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\"..LunaUF.db.profile.font..".ttf", tags.size)
 		fontstring:ClearAllPoints()
 		fontstring:SetHeight(frame.druidBar:GetHeight())
 		if align == "left" then
 			fontstring:SetPoint("TOPLEFT", frame.druidBar, "TOPLEFT", 2, 0)
-			fontstring:SetWidth(frame.druidBar:GetWidth()/2)
+			fontstring:SetWidth((frame.druidBar:GetWidth()-4)*(tags.leftsize/100))
 		elseif align == "center" then
 			fontstring:SetAllPoints(frame.druidBar)
-			fontstring:SetWidth(frame.druidBar:GetWidth())
+			fontstring:SetWidth(frame.druidBar:GetWidth()*(tags.middlesize/100))
 		else
 			fontstring:SetPoint("TOPRIGHT", frame.druidBar, "TOPRIGHT", -2 , 0)
-			fontstring:SetWidth(frame.druidBar:GetWidth()/2)
+			fontstring:SetWidth((frame.druidBar:GetWidth()-4)*(tags.rightsize/100))
 		end
 	end
 end

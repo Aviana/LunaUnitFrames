@@ -25,19 +25,20 @@ function emptyBar:OnDisable(frame)
 end
 
 function emptyBar:FullUpdate(frame)
+	local tags = LunaUF.db.profile.units[frame.unitGroup].tags.bartags.emptyBar
 	for align,fontstring in pairs(frame.fontstrings["emptyBar"]) do
-		fontstring:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\"..LunaUF.db.profile.font..".ttf", LunaUF.db.profile.units[frame.unitGroup].tags.bartags["emptyBar"].size)
+		fontstring:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\"..LunaUF.db.profile.font..".ttf", tags.size)
 		fontstring:ClearAllPoints()
 		fontstring:SetHeight(frame.emptyBar:GetHeight())
 		if align == "left" then
 			fontstring:SetPoint("TOPLEFT", frame.emptyBar, "TOPLEFT", 2, 0)
-			fontstring:SetWidth(frame.emptyBar:GetWidth()-4)
+			fontstring:SetWidth((frame.emptyBar:GetWidth()-4)*(tags.leftsize/100))
 		elseif align == "center" then
 			fontstring:SetAllPoints(frame.emptyBar)
-			fontstring:SetWidth(frame.emptyBar:GetWidth())
+			fontstring:SetWidth(frame.emptyBar:GetWidth()*(tags.middlesize/100))
 		else
 			fontstring:SetPoint("TOPRIGHT", frame.emptyBar, "TOPRIGHT", -2 , 0)
-			fontstring:SetWidth(frame.emptyBar:GetWidth()-4)
+			fontstring:SetWidth((frame.emptyBar:GetWidth()-4)*(tags.rightsize/100))
 		end
 	end
 end

@@ -254,6 +254,7 @@ local function zhCN() return {
 ["Dead"] = "死亡",
 ["Size"] = "大小",
 ["Big Size"] = "大尺寸",
+["Limit"] = "限制",
 ["Partyoptions"] = "小队选项",
 ["Show party in raid"] = "在团队中显示小队",
 ["Player in party"] = "在小队中显示玩家",

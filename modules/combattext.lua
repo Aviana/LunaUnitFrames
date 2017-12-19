@@ -40,4 +40,12 @@ function Combat:FullUpdate(frame)
 	frame.combatText:ClearAllPoints()
 	frame.combatText:SetScale(config.size)
 	frame.combatText:SetPoint("CENTER", frame, "CENTER", config.xoffset/config.size, config.yoffset/config.size)
+	if not LunaUF.db.profile.locked then
+		frame.combatText:SetScript("OnUpdate", nil)
+		frame.combatText.feedbackText:Show()
+		frame.combatText.feedbackText:SetAlpha(1)
+		frame.combatText.feedbackText:SetText("1337")
+	else
+		frame.combatText:SetScript("OnUpdate", CombatFeedback_OnUpdate)
+	end
 end

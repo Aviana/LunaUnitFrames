@@ -243,6 +243,7 @@ function Power:Update(frame)
 end
 
 function Power:FullUpdate(frame)
+	local tags = LunaUF.db.profile.units[frame.unitGroup].tags.bartags.powerBar
 	if LunaUF.db.profile.units[frame.unitGroup].powerBar.vertical then
 		frame.powerBar:SetOrientation("VERTICAL")
 	else
@@ -250,18 +251,18 @@ function Power:FullUpdate(frame)
 	end
 	frame.powerBar:SetReverse(LunaUF.db.profile.units[frame.unitGroup].powerBar.reverse)
 	for align,fontstring in pairs(frame.fontstrings["powerBar"]) do
-		fontstring:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\"..LunaUF.db.profile.font..".ttf", LunaUF.db.profile.units[frame.unitGroup].tags.bartags["powerBar"].size)
+		fontstring:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\"..LunaUF.db.profile.font..".ttf", tags.size)
 		fontstring:ClearAllPoints()
 		fontstring:SetHeight(frame.powerBar:GetHeight())
 		if align == "left" then
 			fontstring:SetPoint("TOPLEFT", frame.powerBar, "TOPLEFT", 2, 0)
-			fontstring:SetWidth(frame.powerBar:GetWidth()-4)
+			fontstring:SetWidth((frame.powerBar:GetWidth()-4)*(tags.leftsize/100))
 		elseif align == "center" then
 			fontstring:SetAllPoints(frame.powerBar)
-			fontstring:SetWidth(frame.powerBar:GetWidth())
+			fontstring:SetWidth(frame.powerBar:GetWidth()*(tags.middlesize/100))
 		else
 			fontstring:SetPoint("TOPRIGHT", frame.powerBar, "TOPRIGHT", -2 , 0)
-			fontstring:SetWidth(frame.powerBar:GetWidth()-4)
+			fontstring:SetWidth((frame.powerBar:GetWidth()-4)*(tags.rightsize/100))
 		end
 	end
 	if frame.powerBar.ticker then
