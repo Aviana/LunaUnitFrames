@@ -1,6 +1,6 @@
 --[[
 Name: HealComm-1.0
-Revision: $Rev: 11711 $
+Revision: $Rev: 11712 $
 Author(s): aviana
 Website: https://github.com/Aviana
 Description: A library to provide communication of heals and resurrections.
@@ -8,7 +8,7 @@ Dependencies: AceLibrary, AceEvent-2.0, RosterLib-2.0, ItemBonusLib-1.0
 ]]
 
 local MAJOR_VERSION = "HealComm-1.0"
-local MINOR_VERSION = "$Revision: 11711 $"
+local MINOR_VERSION = "$Revision: 11712 $"
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
 if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end
@@ -1243,7 +1243,7 @@ function HealComm:startHeal(caster, target, size, casttime)
 		self.Heals[self.Lookup[caster]][caster] = nil
 		self.Lookup[caster] = nil
 	end
-	self.Heals[target][caster] = {amount = size, ctime = (casttime/1000)+GetTime()}
+	self.Heals[target][caster] = {amount = math.floor(size), ctime = (casttime/1000)+GetTime()}
 	self.Lookup[caster] = target
 	self:TriggerEvent("HealComm_Healupdate", target)
 end
@@ -1258,7 +1258,7 @@ end
 
 function HealComm:startGrpHeal(caster, size, casttime, party1, party2, party3, party4, party5)
 	self:ScheduleEvent("Healcomm_"..caster, self.stopGrpHeal, (casttime/1000), self, caster)
-	self.GrpHeals[caster] = {amount = size, ctime = (casttime/1000)+GetTime(), targets = {party1, party2, party3, party4, party5}}
+	self.GrpHeals[caster] = {amount = math.floor(size), ctime = (casttime/1000)+GetTime(), targets = {party1, party2, party3, party4, party5}}
 	for i=1,getn(self.GrpHeals[caster].targets) do
 		self:TriggerEvent("HealComm_Healupdate", self.GrpHeals[caster].targets[i])
 	end
