@@ -1,6 +1,6 @@
 --[[
 Name: FiveSecLib-1.0
-Revision: $Rev: 10140 $
+Revision: $Rev: 10141 $
 Author(s): aviana
 Website: https://github.com/Aviana
 Description: A library to provide feedback about the five second rule for casters.
@@ -8,7 +8,7 @@ Dependencies: AceLibrary, AceEvent-2.0
 ]]
 
 local MAJOR_VERSION = "FiveSecLib-1.0"
-local MINOR_VERSION = "$Revision: 10140 $"
+local MINOR_VERSION = "$Revision: 10141 $"
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
 if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end
@@ -27,6 +27,9 @@ elseif ( GetLocale() == "frFR" ) then
 elseif GetLocale() == "zhCN" then
 	L["(%d+) Mana"] = "(%d+) 法力"
 	L["Raptor Strike"] = "猛禽一击"
+elseif GetLocale() == "ruRU" then
+	L["(%d+) Mana"] = "(%d+) Мана"
+	L["Raptor Strike"] = "Удар ящера"
 else
 	L["(%d+) Mana"] = "(%d+) Mana"
 	L["Raptor Strike"] = "Raptor Strike"

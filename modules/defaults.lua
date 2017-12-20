@@ -726,6 +726,9 @@ LunaUF.defaults = {
 					},
 				},
 				castBar = { enabled = true, size = 3, hide = true },
+				squares = {
+					enabled = false,
+				},
 				scale = 1,
 				position = {
 					x = 120,

@@ -1,6 +1,6 @@
 --[[
 Name: CastLib-1.0
-Revision: $Rev: 10040 $
+Revision: $Rev: 10041 $
 Author(s): aviana
 Website: https://github.com/Aviana
 Description: A library to provide information about casts.
@@ -8,17 +8,37 @@ Dependencies: AceLibrary, AceEvent-2.0
 ]]
 
 local MAJOR_VERSION = "CastLib-1.0"
-local MINOR_VERSION = "$Revision: 10040 $"
+local MINOR_VERSION = "$Revision: 10041 $"
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
 if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end
 if not AceLibrary:HasInstance("AceEvent-2.0") then error(MAJOR_VERSION .. " requires AceEvent-2.0") end
 if not AceLibrary:HasInstance("AceHook-2.1") then error(MAJOR_VERSION .. " requires AceHook-2.1") end
-if not AceLibrary:HasInstance("Babble-Spell-2.2") then error(MAJOR_VERSION .. " requires Babble-Spell-2.2") end
 
 local CastLib = {}
-local AimedShot = AceLibrary("Babble-Spell-2.2")["Aimed Shot"]
-local Multishot = AceLibrary("Babble-Spell-2.2")["Multi-Shot"]
+
+local L = {}
+if( GetLocale() == "deDE" ) then
+	L["(%d+) Mana"] = "(%d+) Mana"
+	L["Aimed Shot"] = "Gezielter Schuss"
+	L["Multi-Shot"] = "Mehrfachschuss"
+elseif ( GetLocale() == "frFR" ) then
+	L["(%d+) Mana"] = "(%d+) Mana"
+	L["Aimed Shot"] = "Vis\195\169e"
+	L["Multi-Shot"] = "Fl\195\168ches multiples"
+elseif GetLocale() == "zhCN" then
+	L["(%d+) Mana"] = "(%d+) 法力"
+	L["Aimed Shot"] = "瞄准射击"
+	L["Multi-Shot"] = "多重射击"
+elseif GetLocale() == "ruRU" then
+	L["(%d+) Mana"] = "(%d+) Мана"
+	L["Aimed Shot"] = "Прицельный выстрел"
+	L["Multi-Shot"] = "Залп"
+else
+	L["(%d+) Mana"] = "(%d+) Mana"
+	L["Aimed Shot"] = "Aimed Shot"
+	L["Multi-Shot"] = "Multi-Shot"
+end
 
 ------------------------------------------------
 -- activate, enable, disable
@@ -103,7 +123,7 @@ function CastLib:SPELLCAST_START()
 		self.isCasting = true
 --		ChatFrame1:AddMessage("Casting "..arg1)
 --		self:TriggerEvent("CASTLIB_STARTCAST", arg1)
-		local _,_,manaVal = string.find(CastLibTipTextLeft2:GetText() or "","(%d+)")
+		local _,_,manaVal = string.find(CastLibTipTextLeft2:GetText() or "",L["(%d+) Mana"])
 		if manaVal then
 			self.Mana = tonumber(manaVal)
 		else
@@ -269,10 +289,10 @@ function CastLib:UseAction(slot, checkCursor, onSelf)
 	
 	self:ScheduleEvent("CastLib_NotACast", self.SPELLCAST_STOP, 0.3, self)
 	
-	if self.Spell == AimedShot and not GetActionText(slot) then
+	if self.Spell == L["Aimed Shot"] and not GetActionText(slot) then
 		self:ProcessSpellCast(self.Spell, 6, UnitName("target"))
 		return
-	elseif self.Spell == Multishot and not GetActionText(slot) then
+	elseif self.Spell == L["Multi-Shot"] and not GetActionText(slot) then
 		self:ProcessSpellCast(self.Spell, 4, UnitName("target"))
 		return
 	end
@@ -338,19 +358,19 @@ function CastLib:TargetUnit(unit)
 end
 
 function CastLib:ProcessSpellCast(spellName, rank, targetName)
-	if spellName == AimedShot then
-		self.Spell = AimedShot
+	if spellName == L["Aimed Shot"] then
+		self.Spell = L["Aimed Shot"]
 		if not self.isCasting and self.Slot and IsCurrentAction(self.Slot) then
 			self.isCasting = true
 			local AceEvent = AceLibrary("AceEvent-2.0")
-			AceEvent:TriggerEvent("CASTLIB_STARTCAST", AimedShot)
+			AceEvent:TriggerEvent("CASTLIB_STARTCAST", L["Aimed Shot"])
 		end
-	elseif spellName == Multishot then
-		self.Spell = Multishot
+	elseif spellName == L["Multi-Shot"] then
+		self.Spell = L["Multi-Shot"]
 		if not self.isCasting and self.Slot and IsCurrentAction(self.Slot) then
 			self.isCasting = true
 			local AceEvent = AceLibrary("AceEvent-2.0")
-			AceEvent:TriggerEvent("CASTLIB_STARTCAST", Multishot)
+			AceEvent:TriggerEvent("CASTLIB_STARTCAST", L["Multi-Shot"])
 		end
 	end
 	self.SpellCast[1] = spellName

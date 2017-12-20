@@ -3353,6 +3353,20 @@ function LunaUF:CreateOptionsMenu()
 	end)
 	getglobal("EnablePlayerpartyText"):SetText(L["Player in party"])
 
+	LunaOptionsFrame.pages[page].auratracker = CreateFrame("CheckButton", "EnablePartyAuratracker", LunaOptionsFrame.pages[page], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[page].auratracker:SetPoint("LEFT", LunaOptionsFrame.pages[page].playerparty, "RIGHT", 120, 0)
+	LunaOptionsFrame.pages[page].auratracker:SetHeight(30)
+	LunaOptionsFrame.pages[page].auratracker:SetWidth(30)
+	LunaOptionsFrame.pages[page].auratracker:SetScript("OnClick", function()
+		LunaUF.db.profile.units.party.squares.enabled = not LunaUF.db.profile.units.party.squares.enabled
+		for _,frame in pairs(LunaUF.Units.frameList) do
+			if frame.unitGroup == "party" then
+				LunaUF.Units:SetupFrameModules(frame)
+			end
+		end
+	end)
+	getglobal("EnablePartyAuratrackerText"):SetText(L["Auratracker"])
+
 	LunaOptionsFrame.pages[page].partypadding = CreateFrame("Slider", "PartyPaddingSlider", LunaOptionsFrame.pages[page], "OptionsSliderTemplate")
 	LunaOptionsFrame.pages[page].partypadding:SetMinMaxValues(1,100)
 	LunaOptionsFrame.pages[page].partypadding:SetValueStep(1)
