@@ -285,7 +285,7 @@ local function enUS() return {
 ["Big font size"] = "Big font size",
 ["Enable Timer Spin"] = "Enable Timer Spin",
 ["Returns plain name of the unit"] = "Returns plain name of the unit",
-["Returns the first 3 letters of the name"] = "Returns the first 3 letters of the name",
+["Returns the first x letters of the name (1-12)"] = "Returns the first x letters of the name (1-12)",
 ["Returns shortened names (Marshall Williams = M. Williams)"] = "Returns shortened names (Marshall Williams = M. Williams)",
 ["Guildname"] = "Guildname",
 ["Current level, returns ?? for bosses and players too high"] = "Current level, returns ?? for bosses and players too high",

@@ -10,7 +10,7 @@ TagsDescs[L["INFO TAGS"]] = {
 	["cnumtargeting"] = L["Colored version of numtargeting"],
 	["br"] = L["Adds a line break"],
 	["name"] = L["Returns plain name of the unit"],
-	["shortname"] = L["Returns the first 3 letters of the name"],
+	["shortname:x"] = L["Returns the first x letters of the name (1-12)"],
 	["abbrev:name"] = L["Returns shortened names (Marshall Williams = M. Williams)"],
 	["guild"] = L["Guildname"],
 	["level"] = L["Current level, returns ?? for bosses and players too high"],
