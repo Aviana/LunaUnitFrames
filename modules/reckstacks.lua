@@ -7,6 +7,7 @@ local talentRank
 
 local events = {
 	CHAT_MSG_COMBAT_SELF_HITS = L["CHAT_MSG_COMBAT_SELF_HITS"],
+	CHAT_MSG_COMBAT_SELF_MISSES = true,
 	CHAT_MSG_COMBAT_FRIENDLY_DEATH = L["CHAT_MSG_COMBAT_FRIENDLY_DEATH"],
 	
 	CHAT_MSG_COMBAT_CREATURE_VS_SELF_HITS = L["CHAT_MSG_COMBAT_CREATURE_VS_SELF_HITS"],
@@ -20,7 +21,7 @@ local events = {
 local function OnEvent()
 	if event == "CHARACTER_POINTS_CHANGED" or event == "PLAYER_ALIVE" then
 		_,_,_,_,talentRank = GetTalentInfo(2,13)
-	elseif event == "CHAT_MSG_COMBAT_SELF_HITS" or (event == "CHAT_MSG_COMBAT_FRIENDLY_DEATH" and arg1 == events[event]) then
+	elseif (event == "CHAT_MSG_COMBAT_SELF_HITS" and (string.find(arg1,L["CHAT_MSG_COMBAT_SELF_HITS"]) or string.find(arg1,L["CHAT_MSG_COMBAT_SELF_CRITS"]))) or (event == "CHAT_MSG_COMBAT_FRIENDLY_DEATH" and arg1 == events[event]) or event == "CHAT_MSG_COMBAT_SELF_MISSES" then
 		if currStacks > 0 then
 			currStacks = 0
 			ReckStacks:Update(this:GetParent())
