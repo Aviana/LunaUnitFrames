@@ -433,7 +433,12 @@ local defaultTags = {
 								return Hex(color)
 							end;
 	["name"]                = function(unit) return UnitName(unit) or "" end;
-	["shortname"]			= function(unit) return UnitName(unit) and strsub(UnitName(unit),1,3) or "" end;
+	["shortname"]			= function(unit, length)
+								if length == nil then
+									length = 3
+								end
+								return UnitName(unit) and strsub(UnitName(unit),1,math.max(math.min(length, 12), 1)) or ""
+							end;
 	["ignore"]				= function(unit)
 								if not UnitIsPlayer(unit) then
 									return ""
@@ -764,6 +769,9 @@ function GetTagText(text,unit)
 		elseif string.find(tagtext,"color:(%x%x%x%x%x%x)") then
 			_,_,tagtext = string.find(tagtext,"color:(%x%x%x%x%x%x)")
 			result = StringInsert(result,startPos,endPos,defaultTags["color"](tagtext))
+		elseif string.find(tagtext,"shortname:(%d+)") then
+			_,_,tagtext = string.find(tagtext,"shortname:(%d+)")
+			result = StringInsert(result,startPos,endPos,defaultTags["shortname"](unit, tagtext))
 		else
 			result = StringInsert(result,startPos,endPos,L["#invalidTag#"])
 		end

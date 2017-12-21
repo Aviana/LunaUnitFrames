@@ -285,7 +285,7 @@ local function zhCN() return {
 ["Big font size"] = "大字体",
 ["Enable Timer Spin"] = "启用倒计时旋转",
 ["Returns plain name of the unit"] = "单位全名",
-["Returns the first 3 letters of the name"] = "名字的前三个字符",
+["Returns the first x letters of the name (1-12)"] = "名字的前三个字符",
 ["Returns shortened names (Marshall Williams = M. Williams)"] = "名字缩写 (Marshall Williams = M. Williams)",
 ["Guildname"] = "公会名",
 ["Current level, returns ?? for bosses and players too high"] = "当前等级，Boss和高等级玩家显示??",
