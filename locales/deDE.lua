@@ -288,7 +288,7 @@ local function deDE() return {
 ["Big font size"] = "Gro\195\159e Schriftgr\195\182\195\159e",
 ["Enable Timer Spin"] = "Drehende Zeitmesser einschalten",
 ["Returns plain name of the unit"] = "Gibt vollen Namen der Einheit aus",
-["Returns the first x letters of the name (1-12)"] = "Gibt die ersten drei Buchstaben des Namens aus",
+["Returns the first x letters of the name (1-12)"] = "Gibt die ersten x Buchstaben des Namens aus",
 ["Returns shortened names (Marshall Williams = M. Williams)"] = "Gibt gek\195\188rzte Namen aus (Meister R\195\182hrich = M. R\195\182hrich)",
 ["Guildname"] = "Gildenname",
 ["Current level, returns ?? for bosses and players too high"] = "Momentane Stufe, gibt ?? f\195\188r Bosse und zu hohe Spieler aus",
