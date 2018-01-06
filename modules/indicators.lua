@@ -378,7 +378,11 @@ function Indicators:OnEnable(frame)
 		frame.indicators.timeElapsed = 0
 		frame.indicators:SetFrameLevel(5)
 		for name in pairs(LunaUF.db.profile.units[frame.unitGroup].indicators.icons) do
-			frame.indicators[name] = frame.indicators:CreateTexture(nil, "OVERLAY")
+			if name == "elite" then
+				frame.indicators[name] = frame.indicators:CreateTexture(nil, "ARTWORK")
+			else
+				frame.indicators[name] = frame.indicators:CreateTexture(nil, "OVERLAY")
+			end
 			frame.indicators[name]:SetTexture(self.list[name][1])
 			if self.list[name][2] then
 				frame.indicators:RegisterEvent(self.list[name][2])
