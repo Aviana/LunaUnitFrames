@@ -328,6 +328,11 @@ local function CreateTagEditFrame(parent, tagconfig)
 			frame[barname].left.config = tags
 			frame[barname].left:SetScript("OnTextChanged" , function()
 				this.config.left = this:GetText()
+				for _,v in pairs(LunaUF.Units.frameList) do
+					if this:GetParent().parent.id == v.unitGroup then
+						LunaUF.Units.FullUpdate(v)
+					end
+				end
 			end)
 			frame[barname].left:SetScript("OnEnterPressed", function()
 				this:ClearFocus()
@@ -361,6 +366,11 @@ local function CreateTagEditFrame(parent, tagconfig)
 			frame[barname].right.config = tags
 			frame[barname].right:SetScript("OnTextChanged" , function()
 				this.config.right = this:GetText()
+				for _,v in pairs(LunaUF.Units.frameList) do
+					if this:GetParent().parent.id == v.unitGroup then
+						LunaUF.Units.FullUpdate(v)
+					end
+				end
 			end)
 			frame[barname].right:SetScript("OnEnterPressed", function()
 				this:ClearFocus()
@@ -394,6 +404,11 @@ local function CreateTagEditFrame(parent, tagconfig)
 			frame[barname].middle.config = tags
 			frame[barname].middle:SetScript("OnTextChanged" , function()
 				this.config.center = this:GetText()
+				for _,v in pairs(LunaUF.Units.frameList) do
+					if this:GetParent().parent.id == v.unitGroup then
+						LunaUF.Units.FullUpdate(v)
+					end
+				end
 			end)
 			frame[barname].middle:SetScript("OnEnterPressed", function()
 				this:ClearFocus()
@@ -788,7 +803,7 @@ function LunaUF:LoadOptions()
 	LunaOptionsFrame.pages[page].rangepolling:SetValue(LunaUF.db.profile.RangePolRate or 1.5)
 	LunaOptionsFrame.pages[page].rangecl:SetChecked(LunaUF.db.profile.RangeCLparsing)
 	LunaOptionsFrame.pages[page].ecast:SetChecked(LunaUF.db.profile.enemyCastbars)
-	local page = 2
+	page = 2
 	LunaOptionsFrame.pages[page].ticker:SetChecked(LunaUF.db.profile.units.player.powerBar.ticker)
 	LunaOptionsFrame.pages[page].manausage:SetChecked(LunaUF.db.profile.units.player.powerBar.manaUsage)
 	LunaOptionsFrame.pages[page].enabletotem:SetChecked(LunaUF.db.profile.units.player.totemBar.enabled)
@@ -802,15 +817,15 @@ function LunaUF:LoadOptions()
 	SetDropDownValue(LunaOptionsFrame.pages[page].reckgrowth,LunaUF.db.profile.units.player.reckStacks.growth)
 	LunaOptionsFrame.pages[page].hidereck:SetChecked(LunaUF.db.profile.units.player.reckStacks.hide)
 	LunaOptionsFrame.pages[page].recksizeslider:SetValue(LunaUF.db.profile.units.player.reckStacks.size)
-	local page = 3
+	page = 3
 	LunaOptionsFrame.pages[page].enablexp:SetChecked(LunaUF.db.profile.units.pet.xpBar.enabled)
 	LunaOptionsFrame.pages[page].xpsizeslider:SetValue(LunaUF.db.profile.units.pet.xpBar.size)
-	local page = 5
+	page = 5
 	LunaOptionsFrame.pages[page].enablecombo:SetChecked(LunaUF.db.profile.units.target.comboPoints.enabled)
 	SetDropDownValue(LunaOptionsFrame.pages[page].combogrowth,LunaUF.db.profile.units.target.comboPoints.growth)
 	LunaOptionsFrame.pages[page].hidecombo:SetChecked(LunaUF.db.profile.units.target.comboPoints.hide)
 	LunaOptionsFrame.pages[page].combosizeslider:SetValue(LunaUF.db.profile.units.target.comboPoints.size)
-	local page = 8
+	page = 8
 	LunaOptionsFrame.pages[page].enablerange:SetChecked(LunaUF.db.profile.units.party.range.enabled)
 	LunaOptionsFrame.pages[page].partyrangealpha:SetValue(LunaUF.db.profile.units.party.range.alpha)
 	LunaOptionsFrame.pages[page].inraid:SetChecked(LunaUF.db.profile.units.party.inraid)
@@ -819,7 +834,7 @@ function LunaUF:LoadOptions()
 	SetDropDownValue(LunaOptionsFrame.pages[page].sortby,LunaUF.db.profile.units.party.sortby)
 	SetDropDownValue(LunaOptionsFrame.pages[page].orderby,LunaUF.db.profile.units.party.order)
 	SetDropDownValue(LunaOptionsFrame.pages[page].growth,LunaUF.db.profile.units.party.growth)
-	local page = 11
+	page = 11
 	SetDropDownValue(LunaOptionsFrame.pages[page].GrpSelect, "1")
 	LunaOptionsFrame.pages[page].xInput:SetText(LunaUF.db.profile.units["raid"][1].position.x)
 	LunaOptionsFrame.pages[page].yInput:SetText(LunaUF.db.profile.units["raid"][1].position.y)
@@ -872,10 +887,10 @@ function LunaUF:LoadOptions()
 	SetDropDownValue(LunaOptionsFrame.pages[page].growth,LunaUF.db.profile.units.raid.growth)
 	SetDropDownValue(LunaOptionsFrame.pages[page].mode,LunaUF.db.profile.units.raid.mode)
 	ToggleDropDownMenu(1,nil,LunaOptionsFrame.pages[page].mode)
-	local page = 12
+	page = 12
 	LunaOptionsFrame.pages[page].mouseDownClicks:SetChecked(LunaUF.db.profile.clickcasting.mouseDownClicks)
 	LunaOptionsFrame.pages[page].Load()
-	local page = 13
+	page = 13
 	for i,class in ipairs({"PRIEST","PALADIN","SHAMAN","WARRIOR","ROGUE","MAGE","WARLOCK","DRUID","HUNTER"}) do
 		LunaOptionsFrame.pages[page][class].load(LunaOptionsFrame.pages[page][class],LunaUF.db.profile.classColors[class])
 	end

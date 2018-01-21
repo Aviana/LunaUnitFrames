@@ -750,34 +750,17 @@ local defaultTags = {
 							end;
 }
 
-function StringInsert(text,startPos,endPos,inserttext)
-	if startPos > 1 then
-		return strsub(text,1,startPos-1) .. inserttext .. strsub(text,endPos+1)
-	else
-		return inserttext .. strsub(text,endPos+1)
-	end
-end
-
-function GetTagText(text,unit)
-	if not text or text == "" then return text or "" end
-	local tag, tagtext, startPos, endPos
-	local result = text
-	startPos,endPos,tagtext = string.find(result,"%[([%w:]+)%]")
-	while tagtext do
-		if defaultTags[tagtext] then
-			result = StringInsert(result,startPos,endPos,defaultTags[tagtext](unit))
-		elseif string.find(tagtext,"color:(%x%x%x%x%x%x)") then
-			_,_,tagtext = string.find(tagtext,"color:(%x%x%x%x%x%x)")
-			result = StringInsert(result,startPos,endPos,defaultTags["color"](tagtext))
-		elseif string.find(tagtext,"shortname:(%d+)") then
-			_,_,tagtext = string.find(tagtext,"shortname:(%d+)")
-			result = StringInsert(result,startPos,endPos,defaultTags["shortname"](unit, tagtext))
+function GetTagText(fontstring)
+	local stringText = ""
+	local array = fontstring.Parts
+	for i=1,getn(array) do
+		if type(array[i]) == "string" then
+			stringText = stringText .. array[i]
 		else
-			result = StringInsert(result,startPos,endPos,L["#invalidTag#"])
+			stringText = stringText .. array[i][0](array[i][1],array[i][2])
 		end
-		startPos,endPos,tagtext = string.find(result,"%[([%w:]+)%]")
 	end
-	return result
+	return stringText
 end
 
 local function OnUpdate()
@@ -785,7 +768,7 @@ local function OnUpdate()
 	local bartags = LunaUF.db.profile.units[frame.unitGroup].tags.bartags
 	for barname,barfontstrings in pairs(frame.fontstrings) do
 		for align,fontstring in pairs(barfontstrings) do
-			fontstring:SetText(GetTagText(bartags[barname][align], frame.unit))
+			fontstring:SetText(GetTagText(fontstring))
 		end
 	end
 end
@@ -797,6 +780,9 @@ function Tags:OnEnable(frame)
 	frame.tags:SetScript("OnUpdate", OnUpdate)
 	for barname,barfontstrings in pairs(frame.fontstrings) do
 		for align,fontstring in pairs(barfontstrings) do
+			if not fontstring.Parts then
+				fontstring.Parts = {}
+			end
 			fontstring:Show()
 		end
 	end
@@ -807,9 +793,77 @@ function Tags:OnDisable(frame)
 		frame.tags:SetScript("OnUpdate", nil)
 		for barname,barfontstrings in pairs(frame.fontstrings) do
 			for align,fontstring in pairs(barfontstrings) do
+				fontstring:SetText("")
 				fontstring:Hide()
 			end
 		end
+	end
+end
+
+function Tags:SplitTags(fontstring,tagline,unit)
+	local currTag, tagArg, startPos, endPos
+	local PartNr = 1
+	local text = tagline
+	
+	-- Empty the Table
+	for k in pairs(fontstring.Parts) do
+		fontstring.Parts[k] = nil
+	end
+	
+	if text == "" then return end
+	
+	startPos,endPos,currTag = string.find(text,"%[([%w:]+)%]")
+	if not currTag then
+		-- We only have static text in the fontstring
+		fontstring.Parts[PartNr] = text
+		return
+	end
+	while currTag do
+		if defaultTags[currTag] then
+			if startPos > 1 then
+				fontstring.Parts[PartNr] = string.sub(text,1,startPos-1)
+				PartNr = PartNr + 1
+			end
+			fontstring.Parts[PartNr] = {
+				[0] = defaultTags[currTag],
+				[1] = unit,
+			}
+			PartNr = PartNr + 1
+			text = string.sub(text,endPos+1)
+		elseif string.find(currTag,"color:(%x%x%x%x%x%x)") then
+			_,_,tagArg = string.find(currTag,"color:(%x%x%x%x%x%x)")
+			if startPos > 1 then
+				fontstring.Parts[PartNr] = string.sub(text,1,startPos-1)
+				PartNr = PartNr + 1
+			end
+			fontstring.Parts[PartNr] = {
+				[0] = defaultTags["color"],
+				[1] = tagArg,
+			}
+			PartNr = PartNr + 1
+			text = string.sub(text,endPos+1)
+		elseif string.find(currTag,"shortname:(%d+)") then
+			_,_,tagArg = string.find(currTag,"shortname:(%d+)")
+			if startPos > 1 then
+				fontstring.Parts[PartNr] = string.sub(text,1,startPos-1)
+				PartNr = PartNr + 1
+			end
+			fontstring.Parts[PartNr] = {
+				[0] = defaultTags["shortname"],
+				[1] = unit,
+				[2] = tagArg,
+			}
+			PartNr = PartNr + 1
+			text = string.sub(text,endPos+1)
+		else
+			fontstring.Parts[PartNr] = L["#invalidTag#"]
+			PartNr = PartNr + 1
+			text = string.sub(text,endPos+1)
+		end
+		startPos,endPos,currTag = string.find(text,"%[([%w:]+)%]")
+	end
+	if text ~= "" then
+		fontstring.Parts[PartNr] = text
 	end
 end
 
@@ -817,7 +871,8 @@ function Tags:FullUpdate(frame)
 	local bartags = LunaUF.db.profile.units[frame.unitGroup].tags.bartags
 	for barname,barfontstrings in pairs(frame.fontstrings) do
 		for align,fontstring in pairs(barfontstrings) do
-			fontstring:SetText(GetTagText(bartags[barname][align], frame.unit))
+			-- Split into functions and store
+			self:SplitTags(fontstring,bartags[barname][align],frame.unit)
 		end
 	end
 end
