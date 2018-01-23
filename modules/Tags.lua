@@ -803,7 +803,7 @@ end
 function Tags:SplitTags(fontstring,tagline,unit)
 	local currTag, tagArg, startPos, endPos
 	local PartNr = 1
-	local text = tagline
+	local text = tagline or ""
 	
 	-- Empty the Table
 	for k in pairs(fontstring.Parts) do
