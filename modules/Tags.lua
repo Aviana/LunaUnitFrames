@@ -753,6 +753,7 @@ local defaultTags = {
 function GetTagText(fontstring)
 	local stringText = ""
 	local array = fontstring.Parts
+	if not array then return "" end
 	for i=1,getn(array) do
 		if type(array[i]) == "string" then
 			stringText = stringText .. array[i]
@@ -780,9 +781,6 @@ function Tags:OnEnable(frame)
 	frame.tags:SetScript("OnUpdate", OnUpdate)
 	for barname,barfontstrings in pairs(frame.fontstrings) do
 		for align,fontstring in pairs(barfontstrings) do
-			if not fontstring.Parts then
-				fontstring.Parts = {}
-			end
 			fontstring:Show()
 		end
 	end
@@ -806,8 +804,12 @@ function Tags:SplitTags(fontstring,tagline,unit)
 	local text = tagline or ""
 	
 	-- Empty the Table
-	for k in pairs(fontstring.Parts) do
-		fontstring.Parts[k] = nil
+	if not fontstring.Parts then
+		fontstring.Parts = {}
+	else
+		for k in pairs(fontstring.Parts) do
+			fontstring.Parts[k] = nil
+		end
 	end
 	
 	if text == "" then return end
