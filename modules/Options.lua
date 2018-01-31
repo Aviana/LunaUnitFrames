@@ -714,6 +714,14 @@ function LunaUF:LoadOptions()
 			LunaOptionsFrame.pages[i].yInput:SetText(LunaUF.db.profile.units[unit].position.y)
 		end
 		LunaOptionsFrame.pages[i].indicators.load(LunaOptionsFrame.pages[i].indicators,LunaUF.db.profile.units[unit].indicators.icons)
+		LunaOptionsFrame.pages[i].enableBorders:SetChecked(LunaUF.db.profile.units[unit].borders.enabled)
+		SetDropDownValue(LunaOptionsFrame.pages[i].bordersMode,LunaUF.db.profile.units[unit].borders.mode)
+		LunaOptionsFrame.pages[i].dispelOption:SetChecked(LunaUF.db.profile.units[unit].borders.owndispdebuffs)
+		if LunaUF.db.profile.units[unit].borders.mode == "dispel" then
+			LunaOptionsFrame.pages[i].dispelOption:Enable()
+		else
+			LunaOptionsFrame.pages[i].dispelOption:Disable()
+		end
 		LunaOptionsFrame.pages[i].enableFader:SetChecked(LunaUF.db.profile.units[unit].fader.enabled)
 		LunaOptionsFrame.pages[i].FaderCombatslider:SetValue(LunaUF.db.profile.units[unit].fader.combatAlpha)
 		LunaOptionsFrame.pages[i].FaderNonCombatslider:SetValue(LunaUF.db.profile.units[unit].fader.inactiveAlpha)
@@ -1688,8 +1696,77 @@ function LunaUF:CreateOptionsMenu()
 		LunaOptionsFrame.pages[i].indicators = CreateIndicatorOptionsFrame(LunaOptionsFrame.pages[i], LunaUF.db.profile.units[LunaUF.unitList[i-1]].indicators.icons)
 		LunaOptionsFrame.pages[i].indicators:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].indicatorsHeader, "BOTTOMLEFT", 0, 20)
 
+		LunaOptionsFrame.pages[i].bordersHeader = LunaOptionsFrame.pages[i]:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+		LunaOptionsFrame.pages[i].bordersHeader:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].indicators, "BOTTOMLEFT", 0, 0)
+		LunaOptionsFrame.pages[i].bordersHeader:SetHeight(24)
+		LunaOptionsFrame.pages[i].bordersHeader:SetJustifyH("LEFT")
+		LunaOptionsFrame.pages[i].bordersHeader:SetTextColor(1,1,0)
+		LunaOptionsFrame.pages[i].bordersHeader:SetText(L["Borders"])
+
+		LunaOptionsFrame.pages[i].enableBorders = CreateFrame("CheckButton", "Enable"..LunaUF.unitList[i-1].."Borders", LunaOptionsFrame.pages[i], "UICheckButtonTemplate")
+		LunaOptionsFrame.pages[i].enableBorders:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].bordersHeader, "BOTTOMLEFT", 0, -10)
+		LunaOptionsFrame.pages[i].enableBorders:SetHeight(30)
+		LunaOptionsFrame.pages[i].enableBorders:SetWidth(30)
+		LunaOptionsFrame.pages[i].enableBorders:SetScript("OnClick", function()
+			local unit = this:GetParent().id
+			LunaUF.db.profile.units[unit].borders.enabled = not LunaUF.db.profile.units[unit].borders.enabled
+			for _,frame in pairs(LunaUF.Units.frameList) do
+				if frame.unitGroup == unit then
+					LunaUF.Units:SetupFrameModules(frame)
+				end
+			end
+		end)
+		getglobal("Enable"..LunaUF.unitList[i-1].."BordersText"):SetText(L["Enable"])
+
+		LunaOptionsFrame.pages[i].bordersMode = CreateFrame("Button", "BordersMode"..LunaUF.unitList[i-1], LunaOptionsFrame.pages[i], "UIDropDownMenuTemplate")
+		LunaOptionsFrame.pages[i].bordersMode:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].bordersHeader, "BOTTOMLEFT", 0 , -50)
+		UIDropDownMenu_SetWidth(150, LunaOptionsFrame.pages[i].bordersMode)
+		UIDropDownMenu_JustifyText("LEFT", LunaOptionsFrame.pages[i].bordersMode)
+
+		UIDropDownMenu_Initialize(LunaOptionsFrame.pages[i].bordersMode, function()
+			local info={}
+			for k,v in pairs({["aggro"] = L["Show aggro"],["dispel"] = L["On dispellable debuff"],["track"] = L["Debuffs to track"]}) do
+				info.text= v
+				info.value= k
+				info.func= function ()
+					local dropdown = getglobal(UIDROPDOWNMENU_OPEN_MENU)
+					local unit = dropdown:GetParent().id
+					UIDropDownMenu_SetSelectedValue(dropdown, this.value)
+					LunaUF.db.profile.units[unit].borders.mode = UIDropDownMenu_GetSelectedValue(dropdown)
+					if this.value == "dispel" then
+						dropdown:GetParent().dispelOption:Enable()
+					else
+						dropdown:GetParent().dispelOption:Disable()
+					end
+					for _,frame in pairs(LunaUF.Units.frameList) do
+						if frame.unitGroup == unit then
+							LunaUF.Units:SetupFrameModules(frame)
+						end
+					end
+				end
+				info.checked = nil
+				info.checkable = nil
+				UIDropDownMenu_AddButton(info, 1)
+			end
+		end)
+
+		LunaOptionsFrame.pages[i].dispelOption = CreateFrame("CheckButton", "Enable"..LunaUF.unitList[i-1].."BordersDisp", LunaOptionsFrame.pages[i], "UICheckButtonTemplate")
+		LunaOptionsFrame.pages[i].dispelOption:SetPoint("LEFT", LunaOptionsFrame.pages[i].bordersMode, "RIGHT", 20, 0)
+		LunaOptionsFrame.pages[i].dispelOption:SetHeight(30)
+		LunaOptionsFrame.pages[i].dispelOption:SetWidth(30)
+		LunaOptionsFrame.pages[i].dispelOption:SetScript("OnClick", function()
+			local unit = this:GetParent().id
+			LunaUF.db.profile.units[unit].borders.owndispdebuffs = not LunaUF.db.profile.units[unit].borders.owndispdebuffs
+			for _,frame in pairs(LunaUF.Units.frameList) do
+				if frame.unitGroup == unit then
+					LunaUF.Units:SetupFrameModules(frame)
+				end
+			end
+		end)
+		getglobal("Enable"..LunaUF.unitList[i-1].."BordersDispText"):SetText(L["Only debuffs you can dispel"])
+
 		LunaOptionsFrame.pages[i].faderheader = LunaOptionsFrame.pages[i]:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-		LunaOptionsFrame.pages[i].faderheader:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].indicators, "BOTTOMLEFT", 0, 0)
+		LunaOptionsFrame.pages[i].faderheader:SetPoint("TOPLEFT", LunaOptionsFrame.pages[i].bordersHeader, "BOTTOMLEFT", 0, -90)
 		LunaOptionsFrame.pages[i].faderheader:SetHeight(24)
 		LunaOptionsFrame.pages[i].faderheader:SetJustifyH("LEFT")
 		LunaOptionsFrame.pages[i].faderheader:SetTextColor(1,1,0)

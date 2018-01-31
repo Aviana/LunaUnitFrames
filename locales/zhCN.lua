@@ -37,6 +37,7 @@ local function zhCN() return {
 ["Incheal"] = "接受治疗",
 ["Combo points"] = "连击点数",
 ["Indicators"] = "指示器",
+["Borders"] = "	边",
 ["(%a+) is now the loot master."] = "(.+)现在负责拾取并分配所有战利品",
 ["Cast bar"] = "施法条",
 ["Hearthstone"] = "炉石",

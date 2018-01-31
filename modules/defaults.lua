@@ -220,6 +220,10 @@ LunaUF.defaults = {
 						rezz = { enabled = true, anchorPoint = "LEFT", size = 20, x = 20, y = 0 },
 					},
 				},
+				borders = {
+					enabled = false,
+					mode = "dispel",
+				},
 				castBar = { enabled = true, size = 3, hide = true },
 				xpBar = { enabled = true, size = 2 },
 				scale = 1, 
@@ -297,6 +301,10 @@ LunaUF.defaults = {
 						happiness = {enabled = true, anchorPoint = "BOTTOMRIGHT", size = 14, x = 0, y = 0},
 						status = { enabled = true, anchorPoint = "BOTTOMLEFT", size = 16, x = 20, y = -2 },
 					},
+				},
+				borders = {
+					enabled = false,
+					mode = "dispel",
 				},
 				castBar = { enabled = false, size = 3, hide = true },
 				xpBar = { enabled = true, size = 1 },
@@ -379,6 +387,10 @@ LunaUF.defaults = {
 						pvprank = { enabled = false, anchorPoint = "BOTTOMLEFT", size = 8, x = 0, y = 0 },
 						status = { enabled = false, anchorPoint = "BOTTOMLEFT", size = 16, x = 20, y = -2 },
 					},
+				},
+				borders = {
+					enabled = false,
+					mode = "dispel",
 				},
 				castBar = { enabled = true, size = 3, hide = true },
 				scale = 1,
@@ -466,6 +478,10 @@ LunaUF.defaults = {
 						rezz = { enabled = true, anchorPoint = "RIGHT", size = 20, x = -20, y = 0 },
 					},
 				},
+				borders = {
+					enabled = false,
+					mode = "dispel",
+				},
 				castBar = { enabled = true, size = 3, hide = true },
 				scale = 1,
 				position = {
@@ -550,6 +566,10 @@ LunaUF.defaults = {
 						rezz = { enabled = false, anchorPoint = "LEFT", size = 20, x = 20, y = 0 },
 					},
 				},
+				borders = {
+					enabled = false,
+					mode = "dispel",
+				},
 				castBar = { enabled = true, size = 3, hide = true },
 				scale = 1,
 				position = {
@@ -633,6 +653,10 @@ LunaUF.defaults = {
 						status = { enabled = true, anchorPoint = "BOTTOMLEFT", size = 16, x = 20, y = -2 },
 						rezz = { enabled = false, anchorPoint = "LEFT", size = 20, x = 20, y = 0 },
 					},
+				},
+				borders = {
+					enabled = false,
+					mode = "dispel",
 				},
 				castBar = { enabled = true, size = 3, hide = true },
 				scale = 1,
@@ -725,6 +749,10 @@ LunaUF.defaults = {
 						rezz = { enabled = true, anchorPoint = "LEFT", size = 20, x = 20, y = 0 },
 					},
 				},
+				borders = {
+					enabled = false,
+					mode = "dispel",
+				},
 				castBar = { enabled = true, size = 3, hide = true },
 				squares = {
 					enabled = false,
@@ -746,6 +774,10 @@ LunaUF.defaults = {
 					icons = {
 						raidTarget = { enabled = true, anchorPoint = "CENTER", size = 20, x = 0, y = 0 },
 					},
+				},
+				borders = {
+					enabled = false,
+					mode = "dispel",
 				},
 				portrait = { enabled = false, type = "3D", side = "left", size = 6 },
 				healthBar = { enabled = true, colorType = "class", reactionType="npc", size = 6, },
@@ -824,6 +856,10 @@ LunaUF.defaults = {
 						rezz = { enabled = false, anchorPoint = "CENTER", size = 20, x = 0, y = 0 },
 						pvprank = { enabled = false, anchorPoint = "BOTTOMLEFT", size = 8, x = 0, y = 0 },
 					},
+				},
+				borders = {
+					enabled = false,
+					mode = "dispel",
 				},
 				portrait = { enabled = false, type = "3D", side = "left", size = 6 },
 				healthBar = { enabled = true, colorType = "class", reactionType="npc", size = 6 },
@@ -975,6 +1011,10 @@ LunaUF.defaults = {
 						ready = { enabled = false, anchorPoint = "LEFT", size = 24, x = 35, y = 0 },
 						rezz = { enabled = true, anchorPoint = "TOPRIGHT", size = 20, x = -8, y = -9 },
 					},
+				},
+				borders = {
+					enabled = false,
+					mode = "dispel",
 				},
 				castBar = { enabled = false, size = 3, hide = true },
 				squares = {

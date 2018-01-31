@@ -37,6 +37,7 @@ local function frFR() return {
 ["Incheal"] = "Incheal",
 ["Combo points"] = "Combo points",
 ["Indicators"] = "Indicators",
+["Borders"] = "Borders",
 ["(%a+) is now the loot master."] = "(%a+) is now the loot master.",
 ["Cast bar"] = "Cast bar",
 ["Hearthstone"] = "Hearthstone",

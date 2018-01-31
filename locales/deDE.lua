@@ -40,6 +40,7 @@ local function deDE() return {
 ["Incheal"] = "Heilvorhersage",
 ["Combo points"] = "Kombopunkte",
 ["Indicators"] = "Indikatoren",
+["Borders"] = "Kanten",
 ["(%a+) is now the loot master."] = "(%a+) ist jetzt der Pl\195\188ndermeister.",
 ["Cast bar"] = "Wirkungsleiste",
 ["Hearthstone"] = "Ruhestein",

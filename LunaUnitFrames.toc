@@ -78,5 +78,6 @@ modules\fader.lua
 modules\squares.lua
 modules\reckstacks.lua
 modules\emptyBar.lua
+modules\borders.lua
 
 modules\options.lua

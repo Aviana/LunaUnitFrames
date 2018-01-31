@@ -26,8 +26,9 @@ end
 
 local function OnAggro(unit)
 	for _,frame in pairs(LunaUF.Units.frameList) do
-		if frame.squares and UnitIsUnit(frame.unit,unit) then
+		if frame.unit and UnitIsUnit(frame.unit,unit) then
 			Squares:UpdateAggro(frame)
+			LunaUF.modules.borders:OnAggro(frame)
 		end
 	end
 end
@@ -141,10 +142,12 @@ end
 
 function Squares:UpdateAggro(frame)
 	local aggro = banzai:GetUnitAggroByUnitId(frame.unit)
-	if aggro and LunaUF.db.profile.units.raid.squares.aggro then
-		frame.squares.aggro:Show()
-	else
-		frame.squares.aggro:Hide()
+	if frame.squares then
+		if aggro and LunaUF.db.profile.units.raid.squares.aggro then
+			frame.squares.aggro:Show()
+		else
+			frame.squares.aggro:Hide()
+		end
 	end
 end
 
