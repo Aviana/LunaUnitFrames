@@ -11,15 +11,16 @@ local function OnEvent()
 	end
 end
 
-local function getGradientColor(unit)
+local function getGradientColor(unit, startColor)
 	local percent = UnitHealth(unit) / UnitHealthMax(unit)
-	if( percent >= 1 ) then return LunaUF.db.profile.healthColors.green.r, LunaUF.db.profile.healthColors.green.g, LunaUF.db.profile.healthColors.green.b end
-	if( percent == 0 ) then return LunaUF.db.profile.healthColors.red.r, LunaUF.db.profile.healthColors.red.g, LunaUF.db.profile.healthColors.red.b end
-	
+
+	if( percent >= 1 ) then return startColor end
+	if( percent == 0 ) then return LunaUF.db.profile.healthColors.red end
+
 	local sR, sG, sB, eR, eG, eB = 0, 0, 0, 0, 0, 0
 	local modifier, inverseModifier = percent * 2, 0
 	if( percent > 0.50 ) then
-		sR, sG, sB = LunaUF.db.profile.healthColors.green.r, LunaUF.db.profile.healthColors.green.g, LunaUF.db.profile.healthColors.green.b
+		sR, sG, sB = startColor.r, startColor.g, startColor.b
 		eR, eG, eB = LunaUF.db.profile.healthColors.yellow.r, LunaUF.db.profile.healthColors.yellow.g, LunaUF.db.profile.healthColors.yellow.b
 
 		modifier = modifier - 1
@@ -27,12 +28,20 @@ local function getGradientColor(unit)
 		sR, sG, sB = LunaUF.db.profile.healthColors.yellow.r, LunaUF.db.profile.healthColors.yellow.g, LunaUF.db.profile.healthColors.yellow.b
 		eR, eG, eB = LunaUF.db.profile.healthColors.red.r, LunaUF.db.profile.healthColors.red.g, LunaUF.db.profile.healthColors.red.b
 	end
-	
+
 	inverseModifier = 1 - modifier
-	return eR * inverseModifier + sR * modifier, eG * inverseModifier + sG * modifier, eB * inverseModifier + sB * modifier
+	return { r = eR * inverseModifier + sR * modifier,
+		 g = eG * inverseModifier + sG * modifier,
+		 b = eB * inverseModifier + sB * modifier }
 end
 
 Health.getGradientColor = getGradientColor
+
+local function classColor(unit)
+	local _, tempclass = UnitClass(unit)
+	local class = UnitCreatureFamily(unit) or tempclass
+	return class and LunaUF.db.profile.classColors[class]
+end
 
 -- Not doing full health update, because other checks can lag behind without much issue
 local function updateTimer()
@@ -50,10 +59,18 @@ local function updateTimer()
 	if LunaUF.db.profile.units[frame.unitGroup].incheal.enabled and frame.incheal then
 		LunaUF.modules.incheal:FullUpdate(frame)
 	end
-	
+
 	-- The target is not offline, and we have a health percentage so update the gradient
 	if( not this.wasOffline and this.hasPercent ) then
-		Health:SetBarColor(this, LunaUF.db.profile.units[frame.unitGroup].healthBar.invert, getGradientColor(frame.unit))
+		local color
+		if ( LunaUF.db.profile.units[frame.unitGroup].healthBar.classGradient and
+		     ( UnitIsPlayer(frame.unit) or UnitCreatureFamily(frame.unit) ) ) then
+			color = classColor(frame.unit)
+		end
+
+		color = getGradientColor(frame.unit, color or LunaUF.db.profile.healthColors.green)
+
+		Health:SetBarColor(this, LunaUF.db.profile.units[frame.unitGroup].healthBar.invert, color)
 	end
 end
 
@@ -75,15 +92,15 @@ function Health:OnEnable(frame)
 	else
 		frame.healthBar:Show()
 	end
-	
+
 	frame.healthBar:RegisterEvent("UNIT_FACTION")
 	frame.healthBar:RegisterEvent("UNIT_HEALTH")
 	frame.healthBar:RegisterEvent("UNIT_MAXHEALTH")
-	
+
 	if( UnitIsUnit(frame.unit,"pet") ) then
 		frame.healthBar:RegisterEvent("UNIT_HAPPINESS")
 	end
-	
+
 	frame.healthBar:SetScript("OnEvent", OnEvent)
 	frame.healthBar:SetScript("OnUpdate", updateTimer)
 end
@@ -97,7 +114,8 @@ function Health:OnDisable(frame)
 	end
 end
 
-function Health:SetBarColor(bar, invert, r, g, b)
+function Health:SetBarColor(bar, invert, color)
+	local r, g, b = color.r, color.g, color.b
 	if( not invert ) then
 		bar:SetStatusBarColor(r, g, b, LunaUF.db.profile.bars.alpha)
 		if( not bar.background.overrideColor ) then
@@ -117,16 +135,16 @@ function Health:UpdateColor(frame)
 	frame.healthBar.hasReaction = nil
 	frame.healthBar.hasPercent = nil
 	frame.healthBar.wasOffline = nil
-	
+
 	local color
 	local unit = frame.unit
 	local reactionType = LunaUF.db.profile.units[frame.unitGroup].healthBar.reactionType
 	if( not UnitIsConnected(unit) ) then
 		frame.healthBar.wasOffline = true
-		self:SetBarColor(frame.healthBar, LunaUF.db.profile.units[frame.unitGroup].healthBar.invert, LunaUF.db.profile.healthColors.offline.r, LunaUF.db.profile.healthColors.offline.g, LunaUF.db.profile.healthColors.offline.b)
+		self:SetBarColor(frame.healthBar, LunaUF.db.profile.units[frame.unitGroup].healthBar.invert, LunaUF.db.profile.healthColors.offline)
 		return
 	elseif( LunaUF.db.profile.units[frame.unitGroup].healthBar.colorAggro and UnitThreatSituation(frame.unit) == 3 ) then
-		self:SetBarColor(frame.healthBar, LunaUF.db.profile.units[frame.unitGroup].healthBar.invert, LunaUF.db.profile.healthColors.hostile.r, LunaUF.db.profile.healthColors.hostile.g, LunaUF.db.profile.healthColors.hostile.b)
+		self:SetBarColor(frame.healthBar, LunaUF.db.profile.units[frame.unitGroup].healthBar.invert, LunaUF.db.profile.healthColors.hostile)
 		return
 	elseif( not UnitIsTappedByPlayer(unit) and UnitIsTapped(unit) and UnitCanAttack("player", unit) ) then
 		color = LunaUF.db.profile.healthColors.tapped
@@ -161,45 +179,50 @@ function Health:UpdateColor(frame)
 			end
 		end
 	elseif( LunaUF.db.profile.units[frame.unitGroup].healthBar.colorType == "class" and ( UnitIsPlayer(unit) or UnitCreatureFamily(unit) ) ) then
-		local _,tempclass = UnitClass(frame.unit)
-		local class = UnitCreatureFamily(frame.unit) or tempclass
-		color = class and LunaUF.db.profile.classColors[class]
+		color = classColor(frame.unit)
 	elseif( LunaUF.db.profile.units[frame.unitGroup].healthBar.colorType == "static" ) then
 		color = LunaUF.db.profile.healthColors.static
 	end
-	
-	if( color ) then
-		self:SetBarColor(frame.healthBar, LunaUF.db.profile.units[frame.unitGroup].healthBar.invert, color.r, color.g, color.b)
-	else
+
+	if not color or LunaUF.db.profile.units[frame.unitGroup].healthBar.classGradient then
+		color = getGradientColor(unit, color or LunaUF.db.profile.healthColors.green)
 		frame.healthBar.hasPercent = true
-		self:SetBarColor(frame.healthBar, LunaUF.db.profile.units[frame.unitGroup].healthBar.invert, getGradientColor(unit))
 	end
+
+	self:SetBarColor(frame.healthBar, LunaUF.db.profile.units[frame.unitGroup].healthBar.invert, color)
 end
 
 function Health:Update(frame)
 	frame.isOffline = not UnitIsConnected(frame.unit)
 	frame.isDead = UnitIsDeadOrGhost(frame.unit) or (UnitHealth(frame.unit) == 1 and not UnitIsVisible(frame.unit))
 	frame.healthBar:SetMinMaxValues(0, UnitHealthMax(frame.unit))
-	
+
 	if frame.isOffline or frame.isDead then
 		frame.healthBar:SetValue((frame.isOffline and UnitHealthMax(frame.unit)) or (frame.isDead and 0))
 	else
 		frame.healthBar:SetValue(UnitHealth(frame.unit))
 	end
-	
+
 	-- Unit is offline, fill bar up + grey it
 	if( frame.isOffline ) then
 		frame.healthBar.wasOffline = true
-		self:SetBarColor(frame.healthBar, LunaUF.db.profile.units[frame.unitGroup].healthBar.invert, LunaUF.db.profile.healthColors.offline.r, LunaUF.db.profile.healthColors.offline.g, LunaUF.db.profile.healthColors.offline.b)
-	-- The unit was offline, but they no longer are so we need to do a forced color update
+		self:SetBarColor(frame.healthBar, LunaUF.db.profile.units[frame.unitGroup].healthBar.invert, LunaUF.db.profile.healthColors.offline)
+		-- The unit was offline, but they no longer are so we need to do a forced color update
 	elseif( frame.healthBar.wasOffline ) then
 		frame.healthBar.wasOffline = nil
 		self:UpdateColor(frame)
-	-- Color health by percentage
+		-- Color health by percentage
 	elseif( frame.healthBar.hasPercent ) then
-		self:SetBarColor(frame.healthBar, LunaUF.db.profile.units[frame.unitGroup].healthBar.invert, getGradientColor(frame.unit))
+		local color
+		if ( LunaUF.db.profile.units[frame.unitGroup].healthBar.classGradient and
+		     ( UnitIsPlayer(frame.unit) or UnitCreatureFamily(frame.unit) ) ) then
+			color = classColor(frame.unit)
+		end
+
+		color = getGradientColor(frame.unit, color or LunaUF.db.profile.healthColors.green)
+		self:SetBarColor(frame.healthBar, LunaUF.db.profile.units[frame.unitGroup].healthBar.invert, color)
 	end
-	
+
 	if LunaUF.db.profile.units[frame.unitGroup].incheal.enabled and frame.incheal then
 		LunaUF.modules.incheal:FullUpdate(frame)
 	end
@@ -213,6 +236,7 @@ function Health:FullUpdate(frame)
 		frame.healthBar:SetOrientation("HORIZONTAL")
 	end
 	frame.healthBar:SetReverse(LunaUF.db.profile.units[frame.unitGroup].healthBar.reverse)
+	frame.healthBar.hasPercent = LunaUF.db.profile.units[frame.unitGroup].healthBar.classGradient
 	for align,fontstring in pairs(frame.fontstrings["healthBar"]) do
 		fontstring:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\"..LunaUF.db.profile.font..".ttf", tags.size)
 		fontstring:ClearAllPoints()

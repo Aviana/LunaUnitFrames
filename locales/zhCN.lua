@@ -126,6 +126,7 @@ local function zhCN() return {
 ["CENTER"] = "居中",
 ["raidTarget"] = "团队目标",
 ["class"] = "职业",
+["Class Gradient"] = "Class Gradient",
 ["masterLoot"] = "队长分配",
 ["leader"] = "队长标志",
 ["elite"] = "精英",
