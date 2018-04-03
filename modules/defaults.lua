@@ -103,10 +103,10 @@ LunaUF.defaults = {
 		},
 		powerColors = {
 			MANAUSAGE = {r = 0.50, g = 0.70, b = 1.00},
-			MANA = {r = 0.30, g = 0.50, b = 0.85}, 
+			MANA = {r = 0.30, g = 0.50, b = 0.85},
 			RAGE = {r = 0.90, g = 0.20, b = 0.30},
-			FOCUS = {r = 1.0, g = 0.50, b = 0.25},  
-			ENERGY = {r = 1.0, g = 0.85, b = 0.10}, 
+			FOCUS = {r = 1.0, g = 0.50, b = 0.25},
+			ENERGY = {r = 1.0, g = 0.85, b = 0.10},
 			HAPPINESS = {r = 0.50, g = 0.90, b = 0.70},
 		},
 		castColors = {
@@ -129,12 +129,12 @@ LunaUF.defaults = {
 				[L["LeftButton"]] = L["target"],
 				[L["RightButton"]] = L["menu"],
 			},
-		
+
 		},
 		units = {
 			player = {
 				enabled = true,
-				healthBar = { enabled = true, colorType = "class", reactionType="npc", size = 6, invert = false, vertical = false },
+				healthBar = { enabled = true, classGradient = false, colorType = "class", reactionType="npc", size = 6, invert = false, vertical = false },
 				powerBar = { enabled = true, size = 4, invert = false, manaUsage = false },
 				totemBar = { enabled = true, size = 2, hide=true },
 				druidBar = { enabled = true, size = 2 },
@@ -226,7 +226,7 @@ LunaUF.defaults = {
 				},
 				castBar = { enabled = true, size = 3, hide = true },
 				xpBar = { enabled = true, size = 2 },
-				scale = 1, 
+				scale = 1,
 				position = {
 					x = 10,
 					y = -15,
@@ -238,7 +238,7 @@ LunaUF.defaults = {
 			},
 			pet = {
 				enabled = true,
-				healthBar = {enabled = true, colorType = "none", reactionType = "happiness", size = 6 },
+				healthBar = {enabled = true, classGradient = false, colorType = "none", reactionType = "happiness", size = 6 },
 				powerBar = { enabled = true, size = 4 },
 				emptyBar = { enabled = false, size = 3 },
 				portrait = { enabled = true, type = "3D", side = "left", size = 6 },
@@ -320,7 +320,7 @@ LunaUF.defaults = {
 			},
 			pettarget = {
 				enabled = false,
-				healthBar = { enabled = true, colorType = "class", reactionType="npc", size = 6 },
+				healthBar = { enabled = true, classGradient = false, colorType = "class", reactionType="npc", size = 6 },
 				powerBar = { enabled = true, size = 4 },
 				emptyBar = { enabled = false, size = 3 },
 				portrait = { enabled = false, type = "3D", side = "left", size = 6 },
@@ -405,7 +405,7 @@ LunaUF.defaults = {
 			},
 			target = {
 				enabled = true,
-				healthBar = { enabled = true, colorType = "class", reactionType="npc", size = 6 },
+				healthBar = { enabled = true, classGradient = false, colorType = "class", reactionType="npc", size = 6 },
 				powerBar = { enabled = true, size = 4 },
 				comboPoints = { enabled = true, size = 1, growth = "LEFT", hide = true },
 				emptyBar = { enabled = false, size = 3 },
@@ -495,7 +495,7 @@ LunaUF.defaults = {
 			},
 			targettarget = {
 				enabled = true,
-				healthBar = { enabled = true, colorType = "class", reactionType="npc", size = 6 },
+				healthBar = { enabled = true, classGradient = false, colorType = "class", reactionType="npc", size = 6 },
 				powerBar = { enabled = true, size = 4 },
 				emptyBar = { enabled = false, size = 3 },
 				portrait = { enabled = true, type = "3D", side = "left", size = 6 },
@@ -583,7 +583,7 @@ LunaUF.defaults = {
 			},
 			targettargettarget = {
 				enabled = true,
-				healthBar = { enabled = true, colorType = "class", reactionType="npc", size = 6 },
+				healthBar = { enabled = true, classGradient = false, colorType = "class", reactionType="npc", size = 6 },
 				powerBar = { enabled = true, size = 4 },
 				emptyBar = { enabled = false, size = 3 },
 				portrait = { enabled = true, type = "3D", side = "left", size = 6 },
@@ -677,7 +677,7 @@ LunaUF.defaults = {
 				growth = "DOWN",
 				player = false,
 				inraid = true,
-				healthBar = { enabled = true, colorType = "class", reactionType="npc", size = 6 },
+				healthBar = { enabled = true, classGradient = true, colorType = "class", reactionType="npc", size = 6 },
 				powerBar = { enabled = true, size = 4 },
 				emptyBar = { enabled = false, size = 3 },
 				portrait = { enabled = true, type = "3D", side = "left", size = 6 },
@@ -780,7 +780,7 @@ LunaUF.defaults = {
 					mode = "dispel",
 				},
 				portrait = { enabled = false, type = "3D", side = "left", size = 6 },
-				healthBar = { enabled = true, colorType = "class", reactionType="npc", size = 6, },
+				healthBar = { enabled = true, classGradient = true, colorType = "class", reactionType="npc", size = 6, },
 				powerBar = { enabled = false, size = 4 },
 				emptyBar = { enabled = false, size = 3 },
 				castBar = { enabled = false, size = 3, hide = true },
@@ -862,7 +862,7 @@ LunaUF.defaults = {
 					mode = "dispel",
 				},
 				portrait = { enabled = false, type = "3D", side = "left", size = 6 },
-				healthBar = { enabled = true, colorType = "class", reactionType="npc", size = 6 },
+				healthBar = { enabled = true, classGradient = false, colorType = "class", reactionType="npc", size = 6 },
 				powerBar = { enabled = false, size = 4 },
 				castBar = { enabled = false, size = 3, hide = true },
 				emptyBar = { enabled = false, size = 3 },
@@ -941,11 +941,11 @@ LunaUF.defaults = {
 				interlock = false,
 				interlockgrowth = "RIGHT",
 				petgrp = false,
-				healthBar = { enabled = true, colorType = "class", reactionType="npc", size = 10, vertical = true },
+				healthBar = { enabled = true, classGradient = true, colorType = "class", reactionType="npc", size = 10, vertical = true },
 				powerBar = { enabled = true, vertical = true, size = 1 },
 				emptyBar = { enabled = false, size = 3 },
 				portrait = { enabled = false, type = "3D", side = "left", size = 6 },
-				auras = { 
+				auras = {
 					enabled = false,
 					buffs = false,
 					debuffs = false,
