@@ -918,6 +918,8 @@ function LunaUF:LoadOptions()
 	for name,_ in pairs(LunaUF.db.profile.xpColors) do
 		LunaOptionsFrame.pages[page][name].load(LunaOptionsFrame.pages[page][name],LunaUF.db.profile.xpColors[name])
 	end
+	page = 14
+	LunaOptionsFrame.pages[page].enableSwitch:SetChecked(LunaDB.ProfileSwitcher)
 end
 
 function LunaUF:CreateOptionsButton(id, name, text, anchorFrame, anchorLoc, x, y)
@@ -4487,6 +4489,10 @@ function LunaUF:CreateOptionsMenu()
 	LunaOptionsFrame.pages[page].growthDesc:SetPoint("BOTTOM", LunaOptionsFrame.pages[page].CopySelect, "TOP")
 	LunaOptionsFrame.pages[page].growthDesc:SetText(L["Copy Settings for new Profile from *"])
 
+	LunaOptionsFrame.pages[page].hint = LunaOptionsFrame.pages[page]:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+	LunaOptionsFrame.pages[page].hint:SetPoint("TOP", LunaOptionsFrame.pages[page].CopySelect, "BOTTOM")
+	LunaOptionsFrame.pages[page].hint:SetText(L["* Copying from the active profile is not possible"])
+
 	LunaOptionsFrame.pages[page].SelectProfileHeader = LunaOptionsFrame.pages[page]:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
 	LunaOptionsFrame.pages[page].SelectProfileHeader:SetPoint("TOPLEFT", LunaOptionsFrame.pages[page].NewProfileHeader, "TOPLEFT", 0, -80)
 	LunaOptionsFrame.pages[page].SelectProfileHeader:SetHeight(24)
@@ -4573,9 +4579,47 @@ function LunaUF:CreateOptionsMenu()
 		LunaOptionsFrame.pages[page].delete:Enable()
 	end
 
-	LunaOptionsFrame.pages[page].hint = LunaOptionsFrame.pages[page]:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-	LunaOptionsFrame.pages[page].hint:SetPoint("TOPLEFT", LunaOptionsFrame.pages[page].delete, "BOTTOMLEFT", 0, -40)
-	LunaOptionsFrame.pages[page].hint:SetText(L["* Copying from the active profile is not possible"])
+	LunaOptionsFrame.pages[page].ProfileSwitcherHeader = LunaOptionsFrame.pages[page]:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+	LunaOptionsFrame.pages[page].ProfileSwitcherHeader:SetPoint("TOPLEFT", LunaOptionsFrame.pages[page].delete, "TOPLEFT", 0, -50)
+	LunaOptionsFrame.pages[page].ProfileSwitcherHeader:SetHeight(24)
+	LunaOptionsFrame.pages[page].ProfileSwitcherHeader:SetJustifyH("LEFT")
+	LunaOptionsFrame.pages[page].ProfileSwitcherHeader:SetTextColor(1,1,0)
+	LunaOptionsFrame.pages[page].ProfileSwitcherHeader:SetText(L["Profile Switcher"])
+
+	LunaOptionsFrame.pages[page].enableSwitch = CreateFrame("CheckButton", "EnableSwitchProfiles", LunaOptionsFrame.pages[page], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[page].enableSwitch:SetPoint("TOPLEFT", LunaOptionsFrame.pages[page].ProfileSwitcherHeader, "TOPLEFT", 0, -30)
+	LunaOptionsFrame.pages[page].enableSwitch:SetHeight(30)
+	LunaOptionsFrame.pages[page].enableSwitch:SetWidth(30)
+	LunaOptionsFrame.pages[page].enableSwitch:SetScript("OnClick", function()
+		LunaDB.ProfileSwitcher = not LunaDB.ProfileSwitcher
+		LunaUF:ProfileSwitcher()
+	end)
+	getglobal("EnableSwitchProfilesText"):SetText(L["Enable"])
+
+	LunaOptionsFrame.pages[page].ProfileSolo = CreateFrame("Button", "ProfileSolo", LunaOptionsFrame.pages[page], "UIDropDownMenuTemplate")
+	LunaOptionsFrame.pages[page].ProfileSolo:SetPoint("TOPLEFT", LunaOptionsFrame.pages[page].enableSwitch, "TOPLEFT", 0, -30)
+	UIDropDownMenu_SetWidth(210, LunaOptionsFrame.pages[page].ProfileSolo)
+	UIDropDownMenu_JustifyText("LEFT", LunaOptionsFrame.pages[page].ProfileSolo)
+
+	UIDropDownMenu_Initialize(LunaOptionsFrame.pages[page].ProfileSolo, function()
+		local info={}
+		for k,v in pairs(LunaDB.profiles) do
+			if v then
+				info.text=k
+				info.value=k
+				info.func= function ()
+					--ChatFrame1:AddMessage(this.value)
+					UIDropDownMenu_SetSelectedValue(LunaOptionsFrame.pages[page].ProfileSolo, this.value)
+					LunaDB.ProfileSwitcherData["Solo"] = this.value
+					LunaUF:ProfileSwitcher()
+				end
+				info.checked = nil
+				info.checkable = true
+				UIDropDownMenu_AddButton(info, 1)
+			end
+		end
+	end)
+	UIDropDownMenu_SetSelectedValue(LunaOptionsFrame.pages[page].ProfileSolo, (LunaDB.ProfileSwitcherData["Solo"] or "Default"))
 
 	-------- Help
 

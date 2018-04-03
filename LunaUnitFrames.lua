@@ -504,6 +504,42 @@ function LunaUF:SystemMessage(msg)
 end
 --------------------------------------------------------------------------------------------
 
+--Profile Changer---------------------------------------------------------------------------
+function LunaUF:ProfileSwitcher()
+	if (not LunaDB.ProfileSwitcher) or (event == "PARTY_MEMBERS_CHANGED" and UnitInRaid("player")) then return end
+	local GrpMode = 0
+	local _,currentProfile = LunaUF:GetProfile()
+	if UnitInRaid("player") then
+		for i=1,8 do
+			if (getn(RAID_SUBGROUP_LISTS[i]) or 0) > 0 then
+				GrpMode = i
+			end
+		end
+		if GrpMode == 1 then
+			GrpMode = "5man"
+		elseif GrpMode == 2 then
+			GrpMode = "10man"
+		elseif GrpMode <= 4 then
+			GrpMode = "20man"
+		else
+			GrpMode = "40man"
+		end
+	else
+		if GetNumPartyMembers() > 0 then
+			GrpMode = "Party"
+		else
+			GrpMode = "Solo"
+		end
+	end
+	local profile = LunaDB.ProfileSwitcherData[GrpMode] or "Default"
+	UIDropDownMenu_SetSelectedValue(LunaOptionsFrame.pages[14].ProfileSelect, profile)
+	LunaUF:SystemMessage(L["Switched to Profile: "]..profile)
+	LunaUF:SetProfile(profile)
+end
+LunaUF:RegisterEvent("PARTY_MEMBERS_CHANGED", "ProfileSwitcher")
+LunaUF:RegisterEvent("RAID_ROSTER_UPDATE", "ProfileSwitcher")
+--------------------------------------------------------------------------------------------
+
 --On Profile changed------------------------------------------------------------------------
 function LunaUF:OnProfileEnable()
 	self:InitBarorder()
@@ -672,6 +708,10 @@ end
 --------------------------------------------------------------------------------------------
 
 function LunaUF:InitBarorder()
+	if not LunaDB.ProfileSwitcherData then
+		LunaDB.ProfileSwitcherData = {}
+	end
+
 	for key,unitGroup in pairs(LunaUF.db.profile.units) do
 		if not unitGroup.barorder or (LunaUF.constants.specialbarorder[key] and (getn(unitGroup.barorder.horizontal) + getn(unitGroup.barorder.vertical)) < (getn(LunaUF.constants.specialbarorder[key].horizontal) + getn(LunaUF.constants.specialbarorder[key].vertical)) or (getn(unitGroup.barorder.horizontal) + getn(unitGroup.barorder.vertical)) < (getn(LunaUF.constants.barorder.horizontal) + getn(LunaUF.constants.barorder.vertical)) ) then
 			if LunaUF.constants.specialbarorder[key] then
