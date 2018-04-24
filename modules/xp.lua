@@ -47,14 +47,12 @@ function XP:OnEnable(frame)
 		frame.xpBar:EnableMouse(true)
 		
 		frame.xpBar.xp = LunaUF.Units:CreateBar(frame.xpBar)
-		frame.xpBar.xp:SetPoint("BOTTOMLEFT", frame.xpBar)
-		frame.xpBar.xp:SetPoint("BOTTOMRIGHT", frame.xpBar)
+		frame.xpBar.xp:SetPoint("TOP", frame.xpBar, "TOP")
 				
 		if( frame.unitGroup == "player" ) then
 			frame.xpBar.unit = "player"
 			frame.xpBar.rep = LunaUF.Units:CreateBar(frame.xpBar)
-			frame.xpBar.rep:SetPoint("TOPLEFT", frame.xpBar)
-			frame.xpBar.rep:SetPoint("TOPRIGHT", frame.xpBar)
+			frame.xpBar.rep:SetPoint("BOTTOM", frame.xpBar, "BOTTOM")
 		else
 			frame.xpBar.unit = "pet"
 		end
@@ -159,15 +157,19 @@ function XP:Update(frame)
 	end
 	if( frame.xpBar.rep and frame.xpBar.rep:IsVisible() and frame.xpBar.xp:IsVisible() ) then
 		frame.xpBar.rep:SetHeight(frame.xpBar:GetHeight() * 0.48)
+		frame.xpBar.rep:SetWidth(frame.xpBar:GetWidth())
 		frame.xpBar.xp:SetHeight(frame.xpBar:GetHeight() * 0.48)
+		frame.xpBar.xp:SetWidth(frame.xpBar:GetWidth())
 		frame.xpBar.tooltip = frame.xpBar.rep.tooltip .. "\n" .. frame.xpBar.xp.tooltip
 
 	elseif( frame.xpBar.rep and frame.xpBar.rep:IsVisible() ) then
 		frame.xpBar.rep:SetHeight(frame.xpBar:GetHeight())
+		frame.xpBar.rep:SetWidth(frame.xpBar:GetWidth())
 		frame.xpBar.tooltip = frame.xpBar.rep.tooltip
 
 	elseif( frame.xpBar.xp:IsVisible() ) then
 		frame.xpBar.xp:SetHeight(frame.xpBar:GetHeight())
+		frame.xpBar.xp:SetWidth(frame.xpBar:GetWidth())
 		frame.xpBar.tooltip = frame.xpBar.xp.tooltip
 	end
 end
