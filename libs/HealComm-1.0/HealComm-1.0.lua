@@ -1,6 +1,6 @@
 --[[
 Name: HealComm-1.0
-Revision: $Rev: 11712 $
+Revision: $Rev: 11722 $
 Author(s): aviana
 Website: https://github.com/Aviana
 Description: A library to provide communication of heals and resurrections.
@@ -8,7 +8,7 @@ Dependencies: AceLibrary, AceEvent-2.0, RosterLib-2.0, ItemBonusLib-1.0
 ]]
 
 local MAJOR_VERSION = "HealComm-1.0"
-local MINOR_VERSION = "$Revision: 11712 $"
+local MINOR_VERSION = "$Revision: 11722 $"
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
 if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end
@@ -1650,7 +1650,7 @@ end
 function HealComm:CastSpellByName(spellName, onSelf)
 	self.hooks.CastSpellByName(spellName, onSelf)
 	
-	if (self.CurrentSpellName and not SpellIsTargeting()) or (GetCVar("AutoSelfCast") == "0" and not SpellIsTargeting() and not (UnitExists("target") and UnitCanAssist("player", "target"))) then return end
+	if (self.CurrentSpellName and not SpellIsTargeting()) or (GetCVar("AutoSelfCast") == "0" and onSelf ~= 1 and not SpellIsTargeting() and not (UnitExists("target") and UnitCanAssist("player", "target"))) then return end
 	
 	local _,_,rank = string.find(spellName,"(%d+)")
 	local _, _, spellName = string.find(spellName, "^([^%(]+)")
