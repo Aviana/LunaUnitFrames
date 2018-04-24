@@ -31,13 +31,13 @@ function emptyBar:FullUpdate(frame)
 		fontstring:ClearAllPoints()
 		fontstring:SetHeight(frame.emptyBar:GetHeight())
 		if align == "left" then
-			fontstring:SetPoint("TOPLEFT", frame.emptyBar, "TOPLEFT", 2, 0)
+			fontstring:SetPoint("LEFT", frame.emptyBar, "LEFT", 2, 0)
 			fontstring:SetWidth((frame.emptyBar:GetWidth()-4)*(tags.leftsize/100))
 		elseif align == "center" then
-			fontstring:SetAllPoints(frame.emptyBar)
+			fontstring:SetPoint("CENTER", frame.emptyBar, "CENTER")
 			fontstring:SetWidth(frame.emptyBar:GetWidth()*(tags.middlesize/100))
 		else
-			fontstring:SetPoint("TOPRIGHT", frame.emptyBar, "TOPRIGHT", -2 , 0)
+			fontstring:SetPoint("RIGHT", frame.emptyBar, "RIGHT", -2 , 0)
 			fontstring:SetWidth((frame.emptyBar:GetWidth()-4)*(tags.rightsize/100))
 		end
 	end

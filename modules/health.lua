@@ -242,13 +242,13 @@ function Health:FullUpdate(frame)
 		fontstring:ClearAllPoints()
 		fontstring:SetHeight(frame.healthBar:GetHeight())
 		if align == "left" then
-			fontstring:SetPoint("TOPLEFT", frame.healthBar, "TOPLEFT", 2, 0)
+			fontstring:SetPoint("LEFT", frame.healthBar, "LEFT", 2, 0)
 			fontstring:SetWidth((frame.healthBar:GetWidth()-4)*(tags.leftsize/100))
 		elseif align == "center" then
-			fontstring:SetAllPoints(frame.healthBar)
+			fontstring:SetPoint("CENTER", frame.healthBar, "CENTER")
 			fontstring:SetWidth(frame.healthBar:GetWidth()*(tags.middlesize/100))
 		else
-			fontstring:SetPoint("TOPRIGHT", frame.healthBar, "TOPRIGHT", -2 , 0)
+			fontstring:SetPoint("RIGHT", frame.healthBar, "RIGHT", -2 , 0)
 			fontstring:SetWidth((frame.healthBar:GetWidth()-4)*(tags.rightsize/100))
 		end
 	end

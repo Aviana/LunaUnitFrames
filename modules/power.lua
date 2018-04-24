@@ -255,13 +255,13 @@ function Power:FullUpdate(frame)
 		fontstring:ClearAllPoints()
 		fontstring:SetHeight(frame.powerBar:GetHeight())
 		if align == "left" then
-			fontstring:SetPoint("TOPLEFT", frame.powerBar, "TOPLEFT", 2, 0)
+			fontstring:SetPoint("LEFT", frame.powerBar, "LEFT", 2, 0)
 			fontstring:SetWidth((frame.powerBar:GetWidth()-4)*(tags.leftsize/100))
 		elseif align == "center" then
-			fontstring:SetAllPoints(frame.powerBar)
+			fontstring:SetPoint("CENTER", frame.powerBar, "CENTER")
 			fontstring:SetWidth(frame.powerBar:GetWidth()*(tags.middlesize/100))
 		else
-			fontstring:SetPoint("TOPRIGHT", frame.powerBar, "TOPRIGHT", -2 , 0)
+			fontstring:SetPoint("RIGHT", frame.powerBar, "RIGHT", -2 , 0)
 			fontstring:SetWidth((frame.powerBar:GetWidth()-4)*(tags.rightsize/100))
 		end
 	end

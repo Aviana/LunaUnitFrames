@@ -89,13 +89,13 @@ function Druid:FullUpdate(frame)
 		fontstring:ClearAllPoints()
 		fontstring:SetHeight(frame.druidBar:GetHeight())
 		if align == "left" then
-			fontstring:SetPoint("TOPLEFT", frame.druidBar, "TOPLEFT", 2, 0)
+			fontstring:SetPoint("LEFT", frame.druidBar, "LEFT", 2, 0)
 			fontstring:SetWidth((frame.druidBar:GetWidth()-4)*(tags.leftsize/100))
 		elseif align == "center" then
-			fontstring:SetAllPoints(frame.druidBar)
+			fontstring:SetPoint("CENTER", frame.druidBar, "CENTER")
 			fontstring:SetWidth(frame.druidBar:GetWidth()*(tags.middlesize/100))
 		else
-			fontstring:SetPoint("TOPRIGHT", frame.druidBar, "TOPRIGHT", -2 , 0)
+			fontstring:SetPoint("RIGHT", frame.druidBar, "RIGHT", -2 , 0)
 			fontstring:SetWidth((frame.druidBar:GetWidth()-4)*(tags.rightsize/100))
 		end
 	end
