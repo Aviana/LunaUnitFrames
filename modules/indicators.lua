@@ -175,7 +175,7 @@ local function GetLootMaster()
 end
 
 local function UpdateMasterLoot(enabled, indicator, unit)
-	if not enabled then
+	if not enabled or not (UnitInRaid("player") or GetNumPartyMembers() > 0) then
 		indicator:Hide()
 	else
 		local name = UnitName(unit)
