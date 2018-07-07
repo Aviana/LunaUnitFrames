@@ -127,7 +127,7 @@ local function UpdateKOS(enabled, indicator, unit, unitGroup)
 		indicator:Hide()
 	else
 		local classification
-		local guild = string.gsub(string.lower(GetGuildInfo(unit)), "%s", "_")
+		local guild = string.gsub(string.lower(GetGuildInfo(unit) or "_"), "%s", "_")
 		local name = string.lower(UnitName(unit))
 		if OpiumData and OpiumData.kosPlayer[GetCVar("realmName")] and OpiumData.kosPlayer[GetCVar("realmName")][name] then
 			classification = "elite"
