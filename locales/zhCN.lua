@@ -130,6 +130,7 @@ local function zhCN() return {
 ["masterLoot"] = "队长分配",
 ["leader"] = "队长标志",
 ["elite"] = "精英",
+["KOS indicator"] = "杀死视线指示器",
 ["pvp"] = "PvP",
 ["pvprank"] = "PvP等级",
 ["ready"] = "准备就绪",

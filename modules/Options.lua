@@ -3428,6 +3428,28 @@ function LunaUF:CreateOptionsMenu()
 	LunaOptionsFrame.pages[page].combosizeslider:SetPoint("TOPLEFT", LunaOptionsFrame.pages[page].comboheader, "BOTTOMLEFT", 280, -10)
 	LunaOptionsFrame.pages[page].combosizeslider:SetWidth(190)
 
+	LunaOptionsFrame.pages[page].kosheader = LunaOptionsFrame.pages[page]:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+	LunaOptionsFrame.pages[page].kosheader:SetPoint("TOPLEFT", LunaOptionsFrame.pages[page].enablecombo, "BOTTOMLEFT", 0, -30)
+	LunaOptionsFrame.pages[page].kosheader:SetHeight(24)
+	LunaOptionsFrame.pages[page].kosheader:SetJustifyH("LEFT")
+	LunaOptionsFrame.pages[page].kosheader:SetTextColor(1,1,0)
+	LunaOptionsFrame.pages[page].kosheader:SetText(L["KOS indicator"])
+
+	LunaOptionsFrame.pages[page].enablekos = CreateFrame("CheckButton", "EnabletargetKos", LunaOptionsFrame.pages[page], "UICheckButtonTemplate")
+	LunaOptionsFrame.pages[page].enablekos:SetPoint("TOPLEFT", LunaOptionsFrame.pages[page].kosheader, "BOTTOMLEFT", 0, -10)
+	LunaOptionsFrame.pages[page].enablekos:SetHeight(30)
+	LunaOptionsFrame.pages[page].enablekos:SetWidth(30)
+	LunaOptionsFrame.pages[page].enablekos:SetScript("OnClick", function()
+		local unit = this:GetParent().id
+		LunaUF.db.profile.units[unit].indicators.icons.elite.kos = not LunaUF.db.profile.units[unit].indicators.icons.elite.kos
+		for _,frame in pairs(LunaUF.Units.frameList) do
+			if frame.unitGroup == unit then
+				LunaUF.Units:SetupFrameModules(frame)
+			end
+		end
+	end)
+	getglobal("EnabletargetKos".."Text"):SetText(L["Enable"])
+	
 	local page = 8
 	LunaOptionsFrame.pages[page].rangedesc = LunaOptionsFrame.pages[page]:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
 	LunaOptionsFrame.pages[page].rangedesc:SetPoint("TOPLEFT", LunaOptionsFrame.pages[page].barorder, "BOTTOMLEFT", 0, -30)

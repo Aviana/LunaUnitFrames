@@ -130,6 +130,7 @@ local function frFR() return {
 ["masterLoot"] = "Masterloot",
 ["leader"] = "Leader",
 ["elite"] = "Elite",
+["KOS indicator"] = "KOS indicator",
 ["pvp"] = "PvP",
 ["pvprank"] = "PvP rank",
 ["ready"] = "Ready",

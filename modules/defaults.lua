@@ -468,7 +468,7 @@ LunaUF.defaults = {
 					enabled = true,
 					icons = {
 						raidTarget = { enabled = true, anchorPoint = "CENTER", size = 20, x = 0, y = 0 },
-						elite = { enabled = false, anchorPoint = "RIGHT", size = 74, x = -14, y = 0 },
+						elite = { enabled = false, kos = false, anchorPoint = "RIGHT", size = 74, x = -14, y = 0 },
 						class = { enabled = true, anchorPoint = "BOTTOMRIGHT", size = 16, x = 0, y = 0 },
 						masterLoot = { enabled = true, anchorPoint = "TOPRIGHT", size = 12, x = -16, y = 0 },
 						leader = { enabled = true, anchorPoint = "TOPRIGHT", size = 14, x = -2, y = 0 },

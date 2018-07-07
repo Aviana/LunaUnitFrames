@@ -121,7 +121,42 @@ local function UpdatePVPRank(enabled, indicator, unit)
 	end
 end
 
+local function UpdateKOS(enabled, indicator, unit, unitGroup)
+	if not UnitIsPlayer(unit) then return end
+	if not enabled then
+		indicator:Hide()
+	else
+		local classification
+		local guild = string.gsub(string.lower(GetGuildInfo(unit)), "%s", "_")
+		local name = string.lower(UnitName(unit))
+		if OpiumData and OpiumData.kosPlayer[GetCVar("realmName")] and OpiumData.kosPlayer[GetCVar("realmName")][name] then
+			classification = "elite"
+		elseif OpiumData and OpiumData.kosGuild[GetCVar("realmName")] and OpiumData.kosGuild[GetCVar("realmName")][guild] then
+			classification = "rare"
+		end
+		local texture
+		if classification == "elite" or classification == "rareelite" or classification == "worldboss" or not LunaUF.db.profile.locked then
+			texture = "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\UI-DialogBox-Gold-Dragon"
+		elseif classification == "rare" then
+			texture = "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\UI-DialogBox-Silver-Dragon"
+		else
+			texture = nil
+		end
+
+		if texture then
+			if LunaUF.db.profile.units[unitGroup].portrait.side == "right" then
+				texture = texture .. "-right"
+			end
+			indicator:SetTexture(texture)
+			indicator:Show()
+		else
+			indicator:Hide()
+		end
+	end
+end
+
 local function UpdateElite(enabled, indicator, unit, unitGroup)
+	if UnitIsPlayer(unit) then return end
 	if not enabled then
 		indicator:Hide()
 	else
@@ -440,6 +475,7 @@ function Indicators:FullUpdate(frame)
 	end
 	if frame.indicators.pvprank then UpdatePVPRank(config.pvprank.enabled, frame.indicators.pvprank, frame.unit) end
 	if frame.indicators.elite then UpdateElite(config.elite.enabled, frame.indicators.elite, frame.unit, frame.unitGroup) end
+	if frame.indicators.elite then UpdateKOS(config.elite.kos, frame.indicators.elite, frame.unit, frame.unitGroup) end
 	if frame.indicators.rezz then UpdateRezz(config.rezz.enabled, frame.indicators.rezz, frame.unit) end
 	if frame.indicators.masterLoot then UpdateMasterLoot(config.masterLoot.enabled, frame.indicators.masterLoot, frame.unit) end
 	if frame.indicators.leader then UpdateLeader(config.leader.enabled, frame.indicators.leader, frame.unit) end
@@ -449,4 +485,15 @@ function Indicators:FullUpdate(frame)
 	if frame.indicators.happiness then UpdateHappiness(config.happiness.enabled, frame.indicators.happiness) end
 	if frame.indicators.class then UpdateClass(config.class.enabled, frame.indicators.class, frame.unit) end
 	if frame.indicators.ready then UpdateReady(config.ready.enabled, frame.indicators.ready, frame.unit) end
+end
+
+local oldOpiumUpdate
+if Opium_KosUpdate then
+	oldOpiumUpdate = Opium_KosUpdate
+	Opium_KosUpdate = function()
+		oldOpiumUpdate()
+		if LUFUnittarget then
+			Indicators:FullUpdate(LUFUnittarget)
+		end
+	end
 end
