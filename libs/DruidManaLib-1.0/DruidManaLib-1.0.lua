@@ -1,6 +1,6 @@
 --[[
 Name: DruidManaLib-1.0
-Revision: $Rev: 10230 $
+Revision: $Rev: 10240 $
 Author(s): aviana
 Website: https://github.com/Aviana
 Description: A library to provide mana values while in shape shift.
@@ -8,7 +8,7 @@ Dependencies: AceLibrary, AceEvent-2.0
 ]]
 
 local MAJOR_VERSION = "DruidManaLib-1.0"
-local MINOR_VERSION = "$Revision: 10230 $"
+local MINOR_VERSION = "$Revision: 10240 $"
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
 if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end
@@ -17,6 +17,81 @@ if not AceLibrary:HasInstance("AceEvent-2.0") then error(MAJOR_VERSION .. " requ
 local DruidManaLib = {}
 local DruidManaLibTip = CreateFrame("GameTooltip", "DruidManaLibTip", nil, "GameTooltipTemplate")
 local DruidManaLibOnUpdateFrame = CreateFrame("Frame")
+
+local curInt = 0
+local maxMana = 0
+local curMana = 0
+local subtractMana = 0
+local extra = 0
+local lowregentimer = 0
+local fullmanatimer = 0
+local waitonce = nil
+_, playerClass = UnitClass("player")
+local inform = (UnitPowerType("player") ~= 0)
+DruidManaLibTip:SetOwner(WorldFrame, "ANCHOR_NONE")
+
+local BaseMana = {
+	[1] =50,
+	[2] =57,
+	[3] =65,
+	[4] =74,
+	[5] =84,
+	[6] =95,
+	[7] =107,
+	[8] =120,
+	[9] =134,
+	[10] =149,
+	[11] =165,
+	[12] =182,
+	[13] =200,
+	[14] =219,
+	[15] =239,
+	[16] =260,
+	[17] =282,
+	[18] =305,
+	[19] =329,
+	[20] =354,
+	[21] =380,
+	[22] =392,
+	[23] =420,
+	[24] =449,
+	[25] =479,
+	[26] =509,
+	[27] =524,
+	[28] =554,
+	[29] =584,
+	[30] =614,
+	[31] =629,
+	[32] =659,
+	[33] =689,
+	[34] =704,
+	[35] =734,
+	[36] =749,
+	[37] =779,
+	[38] =809,
+	[39] =824,
+	[40] =854,
+	[41] =869,
+	[42] =899,
+	[43] =914,
+	[44] =944,
+	[45] =959,
+	[46] =989,
+	[47] =1004,
+	[48] =1019,
+	[49] =1049,
+	[50] =1064,
+	[51] =1079,
+	[52] =1109,
+	[53] =1124,
+	[54] =1139,
+	[55] =1154,
+	[56] =1169,
+	[57] =1199,
+	[58] =1214,
+	[59] =1229,
+	[60] =1244,
+}
 
 ------------------------------------------------
 -- Locales
@@ -108,6 +183,9 @@ function DruidManaLib:AceEvent_FullyInitialized()
 		self:RegisterEvent("PLAYER_AURAS_CHANGED", "OnEvent")
 		self:RegisterEvent("UPDATE_SHAPESHIFT_FORMS", "OnEvent")
 		self:RegisterEvent("SPELLCAST_STOP", "OnEvent")
+		curInt = UnitStat("player", 4)
+		maxMana = BaseMana[UnitLevel("player")] + 20 + (15 * (curInt - 20))
+		curMana = maxMana
 		self:MaxManaScript()
 		DruidManaLibOnUpdateFrame:SetScript("OnUpdate", DruidManaLib_OnUpdate)
 		self:TriggerEvent("DruidManaLib_Enabled")
@@ -117,81 +195,6 @@ end
 ------------------------------------------------
 -- Addon Code
 ------------------------------------------------
-
-local BaseMana = {
-	[1] =50,
-	[2] =57,
-	[3] =65,
-	[4] =74,
-	[5] =84,
-	[6] =95,
-	[7] =107,
-	[8] =120,
-	[9] =134,
-	[10] =149,
-	[11] =165,
-	[12] =182,
-	[13] =200,
-	[14] =219,
-	[15] =239,
-	[16] =260,
-	[17] =282,
-	[18] =305,
-	[19] =329,
-	[20] =354,
-	[21] =380,
-	[22] =392,
-	[23] =420,
-	[24] =449,
-	[25] =479,
-	[26] =509,
-	[27] =524,
-	[28] =554,
-	[29] =584,
-	[30] =614,
-	[31] =629,
-	[32] =659,
-	[33] =689,
-	[34] =704,
-	[35] =734,
-	[36] =749,
-	[37] =779,
-	[38] =809,
-	[39] =824,
-	[40] =854,
-	[41] =869,
-	[42] =899,
-	[43] =914,
-	[44] =944,
-	[45] =959,
-	[46] =989,
-	[47] =1004,
-	[48] =1019,
-	[49] =1049,
-	[50] =1064,
-	[51] =1079,
-	[52] =1109,
-	[53] =1124,
-	[54] =1139,
-	[55] =1154,
-	[56] =1169,
-	[57] =1199,
-	[58] =1214,
-	[59] =1229,
-	[60] =1244,
-}
-
-local curInt = UnitStat("player", 4)
-local maxMana = BaseMana[UnitLevel("player")] + 20 + (15 * (curInt - 20))
-local curMana = maxMana
-local subtractMana = 0
-local extra = 0
-local lowregentimer = 0
-local fullmanatimer = 0
-local waitonce = nil
-_, playerClass = UnitClass("player")
-local inform = (UnitPowerType("player") ~= 0)
-DruidManaLibTip:SetOwner(WorldFrame, "ANCHOR_NONE")
 
 function DruidManaLib:GetShapeshiftCost()
 	subtractMana = 0;
