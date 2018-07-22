@@ -1,6 +1,6 @@
 --[[
 Name: HealComm-1.0
-Revision: $Rev: 11722 $
+Revision: $Rev: 11732 $
 Author(s): aviana
 Website: https://github.com/Aviana
 Description: A library to provide communication of heals and resurrections.
@@ -8,7 +8,7 @@ Dependencies: AceLibrary, AceEvent-2.0, RosterLib-2.0, ItemBonusLib-1.0
 ]]
 
 local MAJOR_VERSION = "HealComm-1.0"
-local MINOR_VERSION = "$Revision: 11722 $"
+local MINOR_VERSION = "$Revision: 11732 $"
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
 if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end
@@ -1375,12 +1375,7 @@ function HealComm:SPELLCAST_INTERRUPTED()
 end
 
 function HealComm:SPELLCAST_FAILED()
-	self.CurrentSpellRank = nil
-	self.CurrentSpellName =  nil
-	self.spellIsCasting = nil
-	for key in pairs(self.SpellCastInfo) do
-		self.SpellCastInfo[key] = nil
-	end
+	self.failed = true
 end
 
 function HealComm:SPELLCAST_DELAYED()
@@ -1626,7 +1621,10 @@ end
 function HealComm:CastSpell(spellId, spellbookTabNum)
 	self.hooks.CastSpell(spellId, spellbookTabNum)
 	
-	if self.CurrentSpellName and not SpellIsTargeting() then return end
+	if self.failed or (self.CurrentSpellName and not SpellIsTargeting()) then
+		self.failed = nil
+		return
+	end
 	
 	local spellName, rank = GetSpellName(spellId, spellbookTabNum)
 	_,_,rank = string.find(rank,"(%d+)")
@@ -1649,6 +1647,11 @@ end
 
 function HealComm:CastSpellByName(spellName, onSelf)
 	self.hooks.CastSpellByName(spellName, onSelf)
+	
+	if self.failed then
+		self.failed = nil
+		return
+	end
 	
 	if (self.CurrentSpellName and not SpellIsTargeting()) or (GetCVar("AutoSelfCast") == "0" and onSelf ~= 1 and not SpellIsTargeting() and not (UnitExists("target") and UnitCanAssist("player", "target"))) then return end
 	
@@ -1717,7 +1720,8 @@ function HealComm:UseAction(slot, checkCursor, onSelf)
 	self.hooks.UseAction(slot, checkCursor, onSelf)
 	
 	-- Test to see if this is a macro
-	if GetActionText(slot) or (self.CurrentSpellName and not SpellIsTargeting()) or not (self.Spells[spellName] or Resurrections[spellName] or Hots[spellName]) then
+	if self.failed or GetActionText(slot) or (self.CurrentSpellName and not SpellIsTargeting()) or not (self.Spells[spellName] or Resurrections[spellName] or Hots[spellName]) then
+		self.failed = nil
 		return
 	end
 	
