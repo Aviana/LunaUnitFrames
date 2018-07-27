@@ -26,7 +26,7 @@ local extra = 0
 local lowregentimer = 0
 local fullmanatimer = 0
 local waitonce = nil
-_, playerClass = UnitClass("player")
+local _, playerClass = UnitClass("player")
 local inform = (UnitPowerType("player") ~= 0)
 DruidManaLibTip:SetOwner(WorldFrame, "ANCHOR_NONE")
 
@@ -172,6 +172,23 @@ end
 ------------------------------------------------
 -- Internal functions
 ------------------------------------------------
+
+local timer = 0
+local function DruidManaLib_OnUpdate()
+	timer = timer + arg1
+	if lowregentimer > 0 then
+		lowregentimer = lowregentimer - arg1;
+		if lowregentimer <= 0 then lowregentimer = 0; end
+	end
+	if UnitPowerType("player") ~= 0 then
+		fullmanatimer = fullmanatimer + arg1;
+		if fullmanatimer > 6 and floor((curMana*100) / maxMana) > 90 then
+			curMana = maxMana;
+			local AceEvent = AceLibrary("AceEvent-2.0")
+			AceEvent:TriggerEvent("DruidManaLib_Manaupdate")
+		end
+	end
+end
 
 function DruidManaLib:AceEvent_FullyInitialized()
 	if playerClass and playerClass == "DRUID" then
@@ -347,22 +364,6 @@ function DruidManaLib:OnEvent()
 		if UnitPowerType("player") == 0 then
 			lowregentimer = 5
 			waitonce = nil
-		end
-	end
-end
-local timer = 0
-function DruidManaLib_OnUpdate()
-	timer = timer + arg1
-	if lowregentimer > 0 then
-		lowregentimer = lowregentimer - arg1;
-		if lowregentimer <= 0 then lowregentimer = 0; end
-	end
-	if UnitPowerType("player") ~= 0 then
-		fullmanatimer = fullmanatimer + arg1;
-		if fullmanatimer > 6 and floor((curMana*100) / maxMana) > 90 then
-			curMana = maxMana;
-			local AceEvent = AceLibrary("AceEvent-2.0")
-			AceEvent:TriggerEvent("DruidManaLib_Manaupdate")
 		end
 	end
 end
