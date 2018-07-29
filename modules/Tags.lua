@@ -220,6 +220,10 @@ local defaultTags = {
 								return form or ""
 							end;
 	["guild"]				= function(unit) return GetGuildInfo(unit) or "" end;
+	["guildrank"]			= function(unit)
+								local _,rank = GetGuildInfo(unit)
+								return rank or ""
+							end;
 	["incheal"]				= function(unit)
 								local heal = HealComm:getHeal(UnitName(unit))
 								if heal > 0 then
@@ -281,7 +285,7 @@ local defaultTags = {
 									return hp
 								end
 							end;
-	["hp"]            	    = function(unit)
+	["hp"]					= function(unit)
 								return UnitHealth(unit)
 							end;
 	["shp"]					= function(unit)
@@ -290,6 +294,26 @@ local defaultTags = {
 								else
 									return UnitHealth(unit)
 								end
+							end;
+	["sshp"]			= function(unit)
+								local hp
+								hp = UnitHealth(unit)
+								if hp < 1 or (hp == 1 and not UnitIsVisible(unit)) then
+									if feigncheck(unit) then
+										return L["Feigned"]
+									else
+										return L["Dead"]
+									end
+								end
+								if hp > 10000 then
+									hp = math.floor(hp/1000).."K"
+								end
+								if UnitIsGhost(unit) then
+									return L["Ghost"]
+								elseif not UnitIsConnected(unit) then
+									return L["Offline"]
+								end
+								return hp
 							end;
 	["maxhp"]				= function(unit)
 								return UnitHealthMax(unit)
