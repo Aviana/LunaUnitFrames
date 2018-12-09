@@ -1,0 +1,11 @@
+## Interface: 70300
+## Version: 1.0
+## X-CompatibleWith: 70300
+## Title: Lib: ClassicHealComm-1.0
+## Notes: A Library that helps with healing predictions for World of Warcraft Classic
+## Author: Aviana
+## X-Category: Library
+
+libs\LibStub\LibStub.lua
+
+lib.xml

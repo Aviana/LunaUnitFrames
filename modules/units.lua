@@ -1,902 +1,996 @@
-local LunaUF = LunaUF
-local L = LunaUF.L
-local Units = {headerFrames = {}, unitFrames = {}, frameList = {}, childframeList = {}}
-local unitFrames, headerFrames, frameList, childframeList = Units.unitFrames, Units.headerFrames, Units.frameList, Units.childframeList
-local UnitWatch = CreateFrame("Frame")
-UnitWatch.time = 0
-local RaidRoster = {}
-local GroupRoster = {}
-local RaidPetRoster = {}
-local PartyPetRoster = {}
-local numPets = 0
-local currPet
-local PetRosterChanged
-local PetExists
+local Units = {headerFrames = {}, unitFrames = {}, frameList = {}, unitEvents = {}, canCure = {}}
+Units.headerUnits = {["raid"] = true, ["raidpet"] = true, ["party"] = true, ["partytarget"] = true, ["partypet"] = true, ["maintank"] = true, ["maintanktarget"] = true, ["mainassist"] = true, ["mainassisttarget"] =true}
+
+local headerFrames, unitFrames, frameList, unitEvents, headerUnits = Units.headerFrames, Units.unitFrames, Units.frameList, Units.unitEvents, Units.headerUnits
+local _G = getfenv(0)
+
 LunaUF.Units = Units
-LunaUF.Units.UnitWatch = UnitWatch
+LunaUF:RegisterModule(Units, "units", "Units")
+
+local stateMonitor = CreateFrame("Frame", nil, nil, "SecureHandlerBaseTemplate")
+stateMonitor.raids = {}
 
 -- Frame shown, do a full update
-local function FullUpdate(frame)
-	if Units.pauseUpdates and strsub(frame.unit,1,6) == "target" then return end
-	local config = LunaUF.db.profile.units[frame.unitGroup]
-	for key,_ in pairs(LunaUF.modules) do
-		if config[key] and config[key].enabled and frame[key] then
-			LunaUF.modules[key]:FullUpdate(frame)
+local function FullUpdate(self)
+	for i=1, #(self.fullUpdates), 2 do
+		local handler = self.fullUpdates[i]
+		handler[self.fullUpdates[i + 1]](handler, self)
+	end
+end
+
+-- Re-registers events when unit changes
+local function ReregisterUnitEvents(self)
+	-- Not an unit event
+	if( LunaUF.fakeUnits[self.unitRealType] or not headerUnits[self.unitType] ) then return end
+
+	for event, list in pairs(self.registeredEvents) do
+		if( unitEvents[event] ) then
+			local hasHandler
+			for handler in pairs(list) do
+				hasHandler = true
+				break
+			end
+
+			if( hasHandler ) then
+				self:UnregisterEvent(event)
+				self:BlizzRegisterUnitEvent(event, self.unit)
+			end
 		end
 	end
 end
 
-LunaUF.Units.FullUpdate = FullUpdate
-
---UnitWatch
-local function UnitWatchOnUpdate()
-	this.time = this.time+arg1
-	if this.time > 0.2 and not Units.pauseUpdates then
-		this.time = 0
-		for _,frame in pairs(childframeList) do
-			if frame.parentunit and UnitExists(frame.parentunit) and frame.UnitExists(frame.unit) and LunaUF.db.profile.units[frame.unitGroup].enabled then
-				if not frame:IsShown() then
-					frame:Show()
-				else
-					FullUpdate(frame)
-				end
-			elseif frame:IsShown() and (LunaUF.db.profile.locked or not LunaUF.db.profile.units[frame.unitGroup].enabled) then
-				frame:Hide()
-			end
-		end
-		numPets = 0
-		PetRosterChanged = nil
-		if LunaUF.db.profile.units.raid.petgrp then
-			if UnitInRaid("player") then
-				for i=1, 40 do
-					currPet = "raidpet"..i
-					if UnitIsVisible(currPet) then
-						if not RaidPetRoster[currPet] then
-							RaidPetRoster[currPet] = true
-							PetRosterChanged = true
-						end
-						numPets = numPets + 1
-					else
-						if RaidPetRoster[currPet] then
-							RaidPetRoster[currPet] = nil
-							PetRosterChanged = true
-						end
-					end
-				end
-			elseif GetNumPartyMembers() > 0 then
-				for i=1, 4 do
-					currPet = "partypet"..i
-					if UnitIsVisible(currPet) then
-						if not PartyPetRoster[currPet] then
-							PartyPetRoster[currPet] = true
-							PetRosterChanged = true
-						end
-						numPets = numPets + 1
-					else
-						if PartyPetRoster[currPet] then
-							PartyPetRoster[currPet] = nil
-							PetRosterChanged = true
-						end
-					end
-				end
-				if UnitExists("pet") then
-					numPets = numPets + 1
-					if not PartyPetRoster["pet"] then
-						PartyPetRoster["pet"] = true
-						PetRosterChanged = true
-					end
-				else
-					if PartyPetRoster["pet"] then
-						PartyPetRoster["pet"] = nil
-						PetRosterChanged = true
-					end
-				end
-			else
-				if UnitExists("pet") then
-					numPets = 1
-					if not PetExists then
-						PetExists = true
-						PetRosterChanged = true
-					end
-				else
-					if PetExists then
-						PetExists = nil
-						PetRosterChanged = true
-					end
-				end
-			end
-		end
-		if PetRosterChanged and headerFrames["raid9"] then
-			headerFrames["raid9"].Update(headerFrames["raid9"])
-		end
+-- Register an event that should always call the frame
+local function RegisterNormalEvent(self, event, handler, func, unitOverride)
+	-- Make sure the handler/func exists
+	if( not handler[func] ) then
+		error(string.format("Invalid handler/function passed for %s on event %s, the function %s does not exist.", self:GetName() or tostring(self), tostring(event), tostring(func)), 3)
+		return
 	end
-end
 
-local function UnitWatchOnEvent()
-	if event == "PLAYER_TARGET_CHANGED" and LunaUF.db.profile.units.target.enabled then
-		local frame = unitFrames.target
-		if UnitExists("target") and LunaUF.db.profile.units.target.enabled then
-			if not frame:IsShown() then
-				frame:Show()
-			else
-				FullUpdate(frame)
-			end
-		elseif frame:IsShown() and LunaUF.db.profile.locked then
-			frame:Hide()
+	if( unitEvents[event] and not LunaUF.fakeUnits[self.unitRealType] ) then
+		self:BlizzRegisterUnitEvent(event, unitOverride or self.unit)
+		if unitOverride then
+			self.unitEventOverrides = self.unitEventOverrides or {}
+			self.unitEventOverrides[event] = unitOverride
 		end
-	elseif event == "UNIT_PET" and arg1 == "player" then
-		if unitFrames["pet"] then
-			if UnitExists(unitFrames["pet"].unit) and not unitFrames["pet"]:IsShown() then
-				unitFrames["pet"]:Show()
-			elseif not UnitExists(unitFrames["pet"].unit) and unitFrames["pet"]:IsShown() and LunaUF.db.profile.locked then
-				unitFrames["pet"]:Hide()
-			end
-			if unitFrames["pet"]:IsShown() then
-				FullUpdate(unitFrames["pet"])
-			end
-		end
-	elseif event == "PLAYER_ENTERING_WORLD" then
-		for _, type in pairs(LunaUF.unitList) do
-			LunaUF.Units:InitializeFrame(type)
-		end
-		if (LunaUF.db.profile.version or 0 > LunaUF.Version) then
-			SendAddonMessage("LUF", LunaUF.db.profile.version, "GUILD")
-			SendAddonMessage("LUF", LunaUF.db.profile.version, "RAID")
-		else
-			SendAddonMessage("LUF", LunaUF.Version, "GUILD")
-			SendAddonMessage("LUF", LunaUF.Version, "RAID")
-		end
-	elseif event == "CHAT_MSG_ADDON" and arg1 == "LUF" then
-		if tonumber(arg2) > (LunaUF.db.profile.version or LunaUF.Version) then
-			LunaUF.db.profile.version = tonumber(arg2)
-			LunaOptionsFrame.version:SetTextColor(1,0,0)
-			LunaOptionsFrame.version:SetText("V."..LunaUF.Version.." Beta (Outdated)")
-		end
-	end
-end
-
-UnitWatch:RegisterEvent("UNIT_PET")
-UnitWatch:RegisterEvent("PLAYER_TARGET_CHANGED")
-UnitWatch:RegisterEvent("PLAYER_ENTERING_WORLD") --???
-UnitWatch:SetScript("OnEvent", UnitWatchOnEvent)
-UnitWatch:SetScript("OnUpdate", UnitWatchOnUpdate)
---
-
--- Show tooltip
-local function OnEnter()
-	if this.unit and LunaUF.db.profile.tooltips then
-		if not GameTooltip.orgSetUnit then
-			if ( SpellIsTargeting() ) then
-				if ( SpellCanTargetUnit(this.unit) ) then
-					SetCursor("CAST_CURSOR")
-				else
-					SetCursor("CAST_ERROR_CURSOR")
-				end
-			end
-			if( LunaUF.db.profile.tooltipCombat and UnitAffectingCombat("player") ) then return end
-			GameTooltip_SetDefaultAnchor(GameTooltip, this)
-			GameTooltip:SetUnit(this.unit)
-			local r, g, b = GameTooltip_UnitColor(this.unit)
-			GameTooltipTextLeft1:SetTextColor(r, g, b)
-		else
-			UnitFrame_OnEnter()
-		end
-	end
-end
-
-local function OnLeave()
-	if not GameTooltip.orgSetUnit then
-		if ( SpellIsTargeting() ) then
-			SetCursor("CAST_ERROR_CURSOR")
-		end
-		GameTooltip:FadeOut()
 	else
-		UnitFrame_OnLeave()
+		self:RegisterEvent(event)
+	end
+
+	self.registeredEvents[event] = self.registeredEvents[event] or {}
+	
+	-- Each handler can only register an event once per a frame.
+	if( self.registeredEvents[event][handler] ) then
+		return
+	end
+
+	self.registeredEvents[event][handler] = func
+end
+
+-- Unregister an event
+local function UnregisterEvent(self, event, handler)
+	if( self.registeredEvents[event] and self.registeredEvents[event][handler] ) then
+		self.registeredEvents[event][handler] = nil
+		
+		local hasHandler
+		for handler in pairs(self.registeredEvents[event]) do
+			hasHandler = true
+			break
+		end
+		
+		if( not hasHandler ) then
+			self:UnregisterEvent(event)
+		end
+	end
+end
+
+-- Register an event thats only called if it's for the actual unit
+local function RegisterUnitEvent(self, event, handler, func)
+	unitEvents[event] = true
+	RegisterNormalEvent(self, event, handler, func)
+end
+
+-- Register a function to be called in an OnUpdate if it's an invalid unit (targettarget/etc)
+local function RegisterUpdateFunc(self, handler, func)
+	if( not handler[func] ) then
+		error(string.format("Invalid handler/function passed to RegisterUpdateFunc for %s, the function %s does not exist.", self:GetName() or tostring(self), func), 3)
+		return
+	end
+
+	for i=1, #(self.fullUpdates), 2 do
+		local data = self.fullUpdates[i]
+		if( data == handler and self.fullUpdates[i + 1] == func ) then
+			return
+		end
+	end
+	
+	table.insert(self.fullUpdates, handler)
+	table.insert(self.fullUpdates, func)
+end
+
+local function UnregisterUpdateFunc(self, handler, func)
+	for i=#(self.fullUpdates), 1, -1 do
+		if( self.fullUpdates[i] == handler and self.fullUpdates[i + 1] == func ) then
+			table.remove(self.fullUpdates, i + 1)
+			table.remove(self.fullUpdates, i)
+		end
+	end
+end
+
+-- Used when something is disabled, removes all callbacks etc to it
+local function UnregisterAll(self, handler)
+	for i=#(self.fullUpdates), 1, -1 do
+		if( self.fullUpdates[i] == handler ) then
+			table.remove(self.fullUpdates, i + 1)
+			table.remove(self.fullUpdates, i)
+		end
+	end
+
+	for event, list in pairs(self.registeredEvents) do
+		if( list[handler] ) then
+			list[handler] = nil
+			
+			local hasRegister
+			for handler in pairs(list) do
+				hasRegister = true
+				break
+			end
+			
+			if( not hasRegister ) then
+				self:UnregisterEvent(event)
+			end
+		end
+	end
+end
+
+-- Handles setting alphas in a way so combat fader and range checker don't override each other
+local function DisableRangeAlpha(self, toggle)
+	self.disableRangeAlpha = toggle
+	
+	if( not toggle and self.rangeAlpha ) then
+		self:SetAlpha(self.rangeAlpha)
+	end
+end
+
+local function SetRangeAlpha(self, alpha)
+	if( not self.disableRangeAlpha ) then
+		self:SetAlpha(alpha)
+	else
+		self.rangeAlpha = alpha
+	end
+end
+
+local function SetBarColor(self, key, r, g, b)
+	self:SetBlockColor(self[key], key, r, g, b)
+end
+
+local function SetBlockColor(self, bar, key, r, g, b)
+	--local bgColor = bar.background.overrideColor or bar.background.backgroundColor
+	--if( not LunaUF.db.profile.units[self.unitType][key].invert ) then
+	if true then
+		bar:SetStatusBarColor(r, g, b)--, LunaUF.db.profile.bars.alpha)
+		if( not bgColor ) then
+			bar.background:SetVertexColor(r, g, b)--, LunaUF.db.profile.bars.backgroundAlpha)
+		else
+			bar.background:SetVertexColor(bgColor.r, bgColor.g, bgColor.b, LunaUF.db.profile.bars.backgroundAlpha)
+		end
+	else
+		bar.background:SetVertexColor(r, g, b, LunaUF.db.profile.bars.alpha)
+		if( not bgColor ) then
+			bar:SetStatusBarColor(0, 0, 0, 1 - LunaUF.db.profile.bars.backgroundAlpha)
+		else
+			bar:SetStatusBarColor(bgColor.r, bgColor.g, bgColor.b, 1 - LunaUF.db.profile.bars.backgroundAlpha)
+		end
 	end
 end
 
 -- Event handling
-local function OnEvent()
-	if UnitExists(this.unit) and this:IsShown() then
-		this.FullUpdate(this)
+local function OnEvent(self, event, unit, ...)
+	if( not unitEvents[event] or self.unit == unit or (self.unitEventOverrides and self.unitEventOverrides[event] == unit)) then
+		for handler, func in pairs(self.registeredEvents[event]) do
+			handler[func](handler, self, event, unit, ...)
+		end
 	end
 end
 
 Units.OnEvent = OnEvent
 
 -- Do a full update OnShow, and stop watching for events when it's not visible
-local function OnShow()
+local function OnShowForced(self)
 	-- Reset the event handler
-	this:SetScript("OnEvent", OnEvent)
-	this:FullUpdate(this)
+	self:SetScript("OnEvent", OnEvent)
+	self:FullUpdate()
 end
 
-local function OnHide()
-	this:SetScript("OnEvent", nil)
+local function OnShow(self)
+	-- Reset the event handler
+	self:SetScript("OnEvent", OnEvent)
+	Units:CheckUnitStatus(self)
 end
 
-local function initPlayerDrop()
-	UnitPopup_ShowMenu(PlayerFrameDropDown, "SELF", "player")
-	if not (UnitInRaid("player") or GetNumPartyMembers() > 0) or UnitIsPartyLeader("player") and PlayerFrameDropDown.init and not CanShowResetInstances() then
-		UIDropDownMenu_AddButton({text = RESET_INSTANCES, func = ResetInstances, notCheckable = 1}, 1)
-		PlayerFrameDropDown.init = nil
+local function OnHide(self)
+	self:SetScript("OnEvent", nil)
+
+	-- If it's a volatile such as target, next time it's shown it has to do an update
+	-- OR if the unit is still shown, but it's been hidden because our parent (Basically UIParent)
+	-- we want to flag it as having changed so it can be updated
+	if( self.isUnitVolatile or self:IsShown() ) then
+		self.unitGUID = nil
 	end
 end
 
-local function ShowMenu()
-	if( UnitIsUnit(this.unit, "player") ) then
-		UIDropDownMenu_Initialize(PlayerFrameDropDown, initPlayerDrop, "MENU")
-		PlayerFrameDropDown.init = true
-		ToggleDropDownMenu(1, nil, PlayerFrameDropDown, "cursor")
-	elseif( this.unit == "pet" ) then
-		ToggleDropDownMenu(1, nil, PetFrameDropDown, "cursor")
-	elseif( this.unit == "target" ) then
-		ToggleDropDownMenu(1, nil, TargetFrameDropDown, "cursor")
-	elseif( this.unitGroup == "party" ) then
-		ToggleDropDownMenu(1, nil, getglobal("PartyMemberFrame" .. string.sub(this.unit,6) .. "DropDown"), "cursor")
-	elseif( this.unitGroup == "raid" ) then
-		HideDropDownMenu(1)
-		local name = UnitName(this.unit)
-		local id = string.sub(this.unit,5)
-		local unit = this.unit
-		local menuFrame = FriendsDropDown
-		menuFrame.displayMode = "MENU"
-		menuFrame.initialize = function() UnitPopup_ShowMenu(getglobal(UIDROPDOWNMENU_OPEN_MENU), "PARTY", unit, name, id) end
-		ToggleDropDownMenu(1, nil, FriendsDropDown, "cursor")
-	end
-end
+-- Deal with enabling modules inside a zone
+local function CheckModules(self)
+	local layoutUpdate
 
-local function OnClick()
-	if arg1 == "UNKNOWN" then
-		arg1 = LunaUF.clickedButton
-	end
-	if Luna_Custom_ClickFunction and Luna_Custom_ClickFunction(arg1, this.unit) then
-		return;
-	else
-		local button = (IsControlKeyDown() and "Ctrl-" or "") .. (IsShiftKeyDown() and "Shift-" or "") .. (IsAltKeyDown() and "Alt-" or "") .. L[arg1]
-		local action = LunaUF.db.profile.clickcasting.bindings[button]
-		if not action then
-			return
-		elseif action == L["menu"] then
-			if SpellIsTargeting() then
-				SpellStopTargeting()
-				return;
-			else
-				this:ShowMenu()
+	-- Selectively disable modules
+	for _, module in pairs(LunaUF.moduleOrder) do
+		if( module.OnEnable and module.OnDisable and LunaUF.db.profile.units[self.unitType][module.moduleKey] ) then
+			local key = module.moduleKey
+			local enabled = LunaUF.db.profile.units[self.unitType][key].enabled
+			
+			-- These modules have mini-modules, the entire module should be enabled if at least one is enabled, and disabled if all are disabled
+			if( key == "auras" or key == "indicators" or key == "highlight" ) then
+				enabled = nil
+				for _, option in pairs(LunaUF.db.profile.units[self.unitType][key]) do
+					if( type(option) == "table" and option.enabled or option == true ) then
+						enabled = true
+						break
+					end
+				end
 			end
-		elseif action == L["target"] then
-			if SpellIsTargeting() then
-				SpellTargetUnit(this.unit)
-			elseif CursorHasItem() then
-				DropItemOnUnit(this.unit)
-			else
-				TargetUnit(this.unit)
+
+			-- Force disable modules for people who aren't the appropriate class
+			if( module.moduleClass and module.moduleClass ~= playerClass ) then
+				enabled = nil
 			end
-		else
-			LunaUF:Mouseover(action)
-		end
-	end
-end
 
-local function StartMoving()
-	this:StartMoving()
-end
-
-local function StopMovingOrSizing()
-	local scale = this:GetScale() * UIParent:GetScale()
-	local _, _, _, x, y = this:GetPoint()
-	this:StopMovingOrSizing()
-	LunaUF.db.profile.units[this.unitGroup].position.x = x * scale
-	LunaUF.db.profile.units[this.unitGroup].position.y = y * scale
-	for i=2,6 do
-		if LunaOptionsFrame.pages[i].id == this.unitGroup then
-			LunaOptionsFrame.pages[i].xInput:SetText(x * scale)
-			LunaOptionsFrame.pages[i].yInput:SetText(y * scale)
-		end
-	end
-end
-
-local function HeaderStartMoving()
-	if LunaUF.db.profile.units.raid.interlock and this.unitGroup == "raid" then
-		headerFrames.raid1:StartMoving()
-	else
-		this:GetParent():StartMoving()
-	end
-end
-
-local function GroupHeaderStopMovingOrSizing()
-	this:GetParent():StopMovingOrSizing()
-	local unit = this:GetParent().unitGroup
-	local x,y
-	x = this:GetParent():GetLeft()
-	y = (UIParent:GetHeight()/UIParent:GetScale()-this:GetParent():GetTop()) * -1
-	LunaUF.db.profile.units[this:GetParent().unitGroup].position.x = x
-	LunaUF.db.profile.units[this:GetParent().unitGroup].position.y = y
-	for i=7,9 do
-		if LunaOptionsFrame.pages[i].id == unit then
-			LunaOptionsFrame.pages[i].xInput:SetText(x)
-			LunaOptionsFrame.pages[i].yInput:SetText(y)
-		end
-	end
-end
-
-local function RaidHeaderStopMovingOrSizing()
-	local x,y
-	if LunaUF.db.profile.units.raid.interlock then
-		headerFrames.raid1:StopMovingOrSizing()
-		for i=1,9 do
-			x = headerFrames["raid"..i]:GetLeft()
-			y = (UIParent:GetHeight()/UIParent:GetScale()-headerFrames["raid"..i]:GetTop()) * -1
-			LunaUF.db.profile.units.raid[i].position.x = x
-			LunaUF.db.profile.units.raid[i].position.y = y
-			if UIDropDownMenu_GetSelectedID(LunaOptionsFrame.pages[11].GrpSelect) == i then
-				LunaOptionsFrame.pages[11].xInput:SetText(x)
-				LunaOptionsFrame.pages[11].yInput:SetText(y)
+			-- Module isn't enabled all the time, only in this zone so we need to force it to be enabled
+			if( not self.visibility[key] and enabled ) then
+				module:OnEnable(self)
+				layoutUpdate = true
+			elseif( self.visibility[key] and not enabled ) then
+				module:OnDisable(self)
+				layoutUpdate = true
 			end
+			
+			self.visibility[key] = enabled or nil
 		end
-	else
-		this:GetParent():StopMovingOrSizing()
-		x = this:GetParent():GetLeft()
-		y = (UIParent:GetHeight()/UIParent:GetScale()-this:GetParent():GetTop()) * -1
-		LunaUF.db.profile.units.raid[this:GetParent().id].position.x = x
-		LunaUF.db.profile.units.raid[this:GetParent().id].position.y = y
-		if UIDropDownMenu_GetSelectedID(LunaOptionsFrame.pages[11].GrpSelect) == this:GetParent().id then
-			LunaOptionsFrame.pages[11].xInput:SetText(x)
-			LunaOptionsFrame.pages[11].yInput:SetText(y)
+	end
+
+	-- We had a module update, force a full layout update of this frame
+	if( layoutUpdate ) then
+		LunaUF.Layout:Load(self)
+	end
+end
+
+-- Handles checking for GUID changes for doing a full update, this fixes frames sometimes showing the wrong unit when they change
+function Units:CheckUnitStatus(frame)
+	local guid = frame.unit and UnitGUID(frame.unit)
+	if( guid ~= frame.unitGUID ) then
+		frame.unitGUID = guid
+		
+		if( guid ) then
+			frame:FullUpdate()
 		end
 	end
 end
 
-local function SetupGroupHeader(groupType)
-	local unitGroup = groupType or this.unitGroup
-	local config = LunaUF.db.profile.units.party
-	local header = headerFrames[unitGroup]
-	if UnitInRaid("player") and not config.inraid then
-		header:Hide()
+-- The argument from UNIT_PET is the pets owner, so the player summoning a new pet gets "player", party1 summoning a new pet gets "party1" and so on
+function Units:CheckPetUnitUpdated(frame, event, unit)
+	if( unit == frame.unitRealOwner and UnitExists(frame.unit) ) then
+		frame.unitGUID = UnitGUID(frame.unit)
+		frame:FullUpdate()
+	end
+end
+
+function Units:CheckGroupedUnitStatus(frame)
+	frame.unitGUID = UnitGUID(frame.unit)
+	frame:FullUpdate()
+end
+
+local OnAttributeChanged
+
+local function createFakeUnitUpdateTimer(frame)
+	if( not frame.updateTimer ) then
+		frame.updateTimer = C_Timer.NewTicker(0.1, function() if( UnitExists(frame.unit) ) then frame:FullUpdate() end end)
+	end
+end
+
+-- Attribute set, something changed
+-- unit = Active unitid
+-- unitID = Just the number from the unitid
+-- unitType = Unitid minus numbers in it, used for configuration
+-- unitRealType = The actual unit type, if party is shown in raid this will be "party" while unitType is still "raid"
+OnAttributeChanged = function(self, name, unit)
+	if( name ~= "unit" or not unit or unit == self.unit ) then return end
+
+	-- Nullify the previous entry if it had one
+	local configUnit = self.unitUnmapped or unit
+	if( self.configUnit and unitFrames[self.configUnit] == self ) then unitFrames[self.configUnit] = nil end
+	
+	-- Setup identification data
+	self.unit = unit
+	self.unitID = tonumber(string.match(unit, "([0-9]+)"))
+	self.unitRealType = string.gsub(unit, "([0-9]+)", "")
+	self.unitType = self.unitUnmapped and string.gsub(self.unitUnmapped, "([0-9]+)", "") or self.unitType or self.unitRealType
+
+	-- Split everything into two maps, this is the simple parentUnit -> frame map
+	-- This is for things like finding a party parent for party target/pet, the main map for doing full updates is
+	-- an indexed frame that is updated once and won't have unit conflicts.
+	if( self.unitRealType == self.unitType ) then
+		unitFrames[configUnit] = self
+	end
+
+	frameList[self] = true
+
+	-- Unit already exists but unitid changed, update the info we got on them
+	-- Don't need to recheck the unitType and force a full update, because a raid frame can never become
+	-- a party frame, or a player frame and so on
+	if( self.unitInitialized ) then
+		self:ReregisterUnitEvents()
+		self:FullUpdate()
 		return
-	else
-		header:Show()
-	end
-	local point = LunaUF.constants.AnchorPoint[config.growth]
-	local framesneeded = config.enabled and ((LunaUF.db.profile.locked and GetNumPartyMembers() or 4) + (config.player and 1 or 0)) or 0
-	if framesneeded == 1 and config.player then
-		framesneeded = 0
-	end
-	for i=getn(header.frames)+1, framesneeded do
-		header.frames[i] = Units:CreateUnit("Button", "LUFUnit"..unitGroup..i, header)
-		header.frames[i]:SetScript("OnDragStop", GroupHeaderStopMovingOrSizing)
-		header.frames[i].unitGroup = unitGroup
-		if unitGroup ~= "party" then
-			table.insert(childframeList, header.frames[i])
-		end
-		if unitGroup ~= "partypet" then
-			header.frames[i].UnitExists = UnitExists
-		else
-			header.frames[i].UnitExists = UnitIsVisible
-		end
 	end
 
-	--Generate Group Table
-	while getn(GroupRoster) > 0 do
-		table.remove(GroupRoster)
-	end
-	for i=1, 4 do
-		local unit = "party"..i
-		if UnitExists(unit) then
-			table.insert(GroupRoster,{UnitName(unit), unit})
-		end
-	end
-	if config.sortby == "NAME" then
-		if config.player then
-			table.insert(GroupRoster,{UnitName("player"),"player"})
-		end
-		if config.order == "ASC" then
-			table.sort(GroupRoster, function (a,b) return a[1]<b[1] end)
-		else
-			table.sort(GroupRoster, function (a,b) return a[1]>b[1] end)
-		end
-	else
-		if config.order ~= "ASC" then
-			table.sort(GroupRoster, function (a,b) return a[2]>b[2] end)
-			if config.player then
-				table.insert(GroupRoster,{UnitName("player"),"player"})
-			end
-		else
-			if config.player then
-				table.insert(GroupRoster,1,{UnitName("player"),"player"})
-			end
-		end
+	self.unitInitialized = true
+
+	-- Add to Clique
+	if( not self:GetAttribute("isHeaderDriven") ) then
+		ClickCastFrames = ClickCastFrames or {}
+		ClickCastFrames[self] = true
 	end
 
-	local anchor = header
+	-- Pet changed, going from pet -> vehicle for one
+	if( self.unit == "pet" or self.unitType == "partypet" ) then
+		self.unitRealOwner = self.unit == "pet" and "player" or LunaUF.partyUnits[self.unitID]
+		self:SetAttribute("unitRealOwner", self.unitRealOwner)
+		self:RegisterNormalEvent("UNIT_PET", Units, "CheckPetUnitUpdated")
 
-	local xoffset
-	if config.growth == "RIGHT" or config.growth == "LEFT" then
-		xoffset = ((config.growth == "RIGHT" and 1 or -1) * (LunaUF.db.profile.units.party.size.x + LunaUF.db.profile.units.party.padding))
-	else
-		xoffset = 0
-	end
-
-	local yoffset
-	if config.growth == "UP" or config.growth == "DOWN" then
-		yoffset = ((config.growth == "UP" and 1 or -1) * (LunaUF.db.profile.units.party.size.y + LunaUF.db.profile.units.party.padding))
-	else
-		yoffset = 0
-	end
-
-	for i,frame in pairs(header.frames) do
-		if i > framesneeded then
-			frame.parentunit = nil
-			frame:Hide()
-		else
-			if unitGroup == "party" then
-				frame:Show()
-			end
-			frame:ClearAllPoints()
-			frame:SetPoint(point, anchor, point, i>1 and xoffset, i>1 and yoffset)
-			frame:SetWidth(LunaUF.db.profile.units[unitGroup].size.x)
-			frame:SetHeight(LunaUF.db.profile.units[unitGroup].size.y)
-			frame:SetScale(LunaUF.db.profile.units[unitGroup].scale)
-			if not LunaUF.db.profile.locked then
-				frame.unit = "player"
-				frame.parentunit = "player"
-				frame:SetScript("OnDragStart", HeaderStartMoving)
-			else
-				if unitGroup == "partytarget" then
-					frame.unit = GroupRoster[i][2].."target"
-					frame.parentunit = GroupRoster[i][2]
-				elseif unitGroup == "partypet" and GroupRoster[i][2] ~= "player" then
-					frame.unit = "partypet"..string.sub(GroupRoster[i][2],6)
-					frame.parentunit = GroupRoster[i][2]
-				elseif unitGroup == "partypet" then
-					frame.unit = "pet"
-					frame.parentunit = "player"
+		stateMonitor:WrapScript(self, "OnAttributeChanged", [[
+			if( name == "state-unitexists" ) then
+				-- Unit does not exist, hide frame
+				if( not self:GetAttribute("state-unitexists") ) then
+					self:Hide()
+				-- Unit exists, show it
 				else
-					frame.unit = GroupRoster[i][2]
-					frame.parentunit = GroupRoster[i][2]
+					self:Show()
 				end
-				frame:SetScript("OnDragStart", nil)
 			end
-			Units:SetupFrameModules(frame)
-			anchor = frame
+		]])
+
+	-- Automatically do a full update on target change
+	elseif( self.unit == "target" ) then
+		self.isUnitVolatile = true
+		self:RegisterNormalEvent("PLAYER_TARGET_CHANGED", Units, "CheckUnitStatus")
+		self:RegisterUnitEvent("UNIT_TARGETABLE_CHANGED", self, "FullUpdate")
+
+	elseif( self.unit == "player" ) then
+
+		-- Force a full update when the player is alive to prevent freezes when releasing in a zone that forces a ressurect (naxx/tk/etc)
+		self:RegisterNormalEvent("PLAYER_ALIVE", self, "FullUpdate")
+
+	-- Check for a unit guid to do a full update
+	elseif( self.unitRealType == "raid" ) then
+		self:RegisterNormalEvent("GROUP_ROSTER_UPDATE", Units, "CheckGroupedUnitStatus")
+		self:RegisterUnitEvent("UNIT_NAME_UPDATE", Units, "CheckUnitStatus")
+		self:RegisterUnitEvent("UNIT_CONNECTION", self, "FullUpdate")
+		
+	-- Party members need to watch for changes
+	elseif( self.unitRealType == "party" ) then
+		self:RegisterNormalEvent("GROUP_ROSTER_UPDATE", Units, "CheckGroupedUnitStatus")
+		self:RegisterNormalEvent("PARTY_MEMBER_ENABLE", Units, "CheckGroupedUnitStatus")
+		self:RegisterNormalEvent("PARTY_MEMBER_DISABLE", Units, "CheckGroupedUnitStatus")
+		self:RegisterUnitEvent("UNIT_NAME_UPDATE", Units, "CheckUnitStatus")
+		self:RegisterUnitEvent("UNIT_OTHER_PARTY_CHANGED", self, "FullUpdate")
+		self:RegisterUnitEvent("UNIT_CONNECTION", self, "FullUpdate")
+	
+	-- *target units are not real units, thus they do not receive events and must be polled for data
+	elseif( LunaUF.fakeUnits[self.unitRealType] ) then
+		createFakeUnitUpdateTimer(self)
+		
+		-- Speeds up updating units when their owner changes target, if party1 changes target then party1target is force updated, if target changes target
+		-- then targettarget and targettargettarget are also force updated
+		if( self.unitRealType == "partytarget" ) then
+			self.unitRealOwner = LunaUF.partyUnits[self.unitID]
+		elseif( self.unitRealType == "raid" ) then
+			self.unitRealOwner = LunaUF.raidUnits[self.unitID]
+		elseif( self.unit == "targettarget" or self.unit == "targettargettarget" ) then
+			self.unitRealOwner = "target"
+			self:RegisterNormalEvent("PLAYER_TARGET_CHANGED", Units, "CheckUnitStatus")
+		end
+
+		self:RegisterNormalEvent("UNIT_TARGET", Units, "CheckPetUnitUpdated")
+	end
+
+	self:CheckModules()
+	Units:CheckUnitStatus(self)
+end
+
+Units.OnAttributeChanged = OnAttributeChanged
+
+local secureInitializeUnit = [[
+	local header = self:GetParent()
+
+	self:SetHeight(header:GetAttribute("style-height"))
+	self:SetWidth(header:GetAttribute("style-width"))
+	self:SetScale(header:GetAttribute("style-scale"))
+
+	self:SetAttribute("*type1", "target")
+	self:SetAttribute("*type2", "togglemenu")
+	self:SetAttribute("type2", "togglemenu")
+
+	self:SetAttribute("isHeaderDriven", true)
+
+	-- initialize frame
+	header:CallMethod("initialConfigFunction", self:GetName())
+
+	-- Clique integration
+	local clickHeader = header:GetFrameRef("clickcast_header")
+	if( clickHeader ) then
+		clickHeader:SetAttribute("clickcast_button", self)
+		clickHeader:RunAttribute("clickcast_register")
+	end
+]]
+
+local unitButtonTemplate = ClickCastHeader and "ClickCastUnitTemplate,SecureUnitButtonTemplate,SecureHandlerStateTemplate" or "SecureUnitButtonTemplate,SecureHandlerStateTemplate"
+
+-- Header unit initialized
+local function initializeUnit(header, frameName)
+	local frame = _G[frameName]
+
+	frame.ignoreAnchor = true
+	frame.unitType = header.unitType
+
+	Units:CreateUnit(frame)
+end
+
+-- Show tooltip
+local function OnEnter(self)
+	if( self.OnEnter ) then
+		self:OnEnter()
+	end
+end
+
+local function OnLeave(self)
+	if( self.OnLeave ) then
+		self:OnLeave()
+	end
+end
+
+local function LUF_OnEnter(self)
+	if( not LunaUF.db.profile.tooltipCombat or not InCombatLockdown() ) then
+		if not GameTooltip:IsForbidden() then
+			UnitFrame_OnEnter(self)
 		end
 	end
 end
 
-local function SetupRaidHeader(passedHeader)
-	local header
-	local config = LunaUF.db.profile.units.raid
-	if passedHeader then
-		header = passedHeader
-	else
-		header = this
-	end
-	local point = LunaUF.constants.AnchorPoint[config.growth]
-	local framesneeded = 0
-	if header.id == 9 then
-		if config.petgrp and (config.showalways or (config.showparty and GetNumPartyMembers() > 0) or UnitInRaid("player")) then
-			framesneeded = not LunaUF.db.profile.locked and 5 or numPets
-		else
-			framesneeded = 0
-		end
-	elseif config.mode == "GROUP" then
-		framesneeded = not LunaUF.db.profile.locked and 5 or RAID_SUBGROUP_LISTS and RAID_SUBGROUP_LISTS[header.id] and getn(RAID_SUBGROUP_LISTS[header.id]) or 0
-	else
-		framesneeded = not LunaUF.db.profile.locked and 5 or RAID_SUBGROUP_LISTS and RAID_SUBGROUP_LISTS[LunaUF.constants.RaidClassMapping[header.id]] and getn(RAID_SUBGROUP_LISTS[LunaUF.constants.RaidClassMapping[header.id]]) or 0
-	end
-	if not UnitInRaid("player") and header.id == 1 and LunaUF.db.profile.locked then
-		if config.showalways or (config.showparty and GetNumPartyMembers() > 0) then
-			framesneeded = GetNumPartyMembers() + 1
-		end
-	end
-	for i=getn(header.frames)+1, framesneeded do
-		header.frames[i] = Units:CreateUnit("Button", "LUFUnitraid"..header.id.."member"..i, header)
-		header.frames[i]:SetScript("OnDragStop", RaidHeaderStopMovingOrSizing)
-		header.frames[i].unitGroup = "raid"
-	end
-
-	--Generate RaidGroup Table
-	while getn(RaidRoster) > 0 do
-		table.remove(RaidRoster)
-	end
-	if header.id == 9 and framesneeded > 0 then
-		if UnitInRaid("player") then
-			for unitid,_ in pairs(RaidPetRoster) do
-				if UnitName(unitid) then
-					table.insert(RaidRoster,{UnitName(unitid),unitid})
-				end
-			end
-		elseif GetNumPartyMembers() > 0 then
-			for unitid,_ in pairs(PartyPetRoster) do
-				if UnitName(unitid) then
-					table.insert(RaidRoster,{UnitName(unitid),unitid})
-				end
-			end
-		elseif PetExists and UnitName("pet") then
-			table.insert(RaidRoster,{UnitName("pet"),"pet"})
-		end
-		if framesneeded > getn(RaidRoster) then
-			framesneeded = getn(RaidRoster)
-		end
-	elseif LunaUF.db.profile.locked and framesneeded > 0 and UnitInRaid("player") then
-		if config.mode == "GROUP" and RAID_SUBGROUP_LISTS[header.id] then
-			for _,v in pairs(RAID_SUBGROUP_LISTS[header.id]) do
-				table.insert(RaidRoster,{UnitName("raid"..v),"raid"..v})
-			end
-		elseif RAID_SUBGROUP_LISTS[LunaUF.constants.RaidClassMapping[header.id]] and framesneeded > 0 then
-			for _,v in pairs(RAID_SUBGROUP_LISTS[LunaUF.constants.RaidClassMapping[header.id]]) do
-				table.insert(RaidRoster,{UnitName("raid"..v),"raid"..v})
-			end
-		end
-	elseif LunaUF.db.profile.locked and framesneeded > 0 then
-		table.insert(RaidRoster,{UnitName("player"),"player"})
-		for i=1, 4 do
-			local unit = "party"..i
-			if UnitExists(unit) then
-				table.insert(RaidRoster,{UnitName(unit),unit})
-			else
-				break
-			end
-		end
-	end
-
-	local anchor = header
-	local xoffset
-	local yoffset
-
-	if config.growth == "RIGHT" or config.growth == "LEFT" then
-		xoffset = (config.growth == "LEFT" and 1 or -1)
-	else
-		xoffset = 0
-	end
-
-	if config.growth == "UP" or config.growth == "DOWN" then
-		yoffset = (config.growth == "DOWN" and 1 or -1)
-	else
-		yoffset = 0
-	end
-
-	if framesneeded > 0 then
-		if LunaUF.db.profile.units.raid.sortby == "NAME" then
-			if LunaUF.db.profile.units.raid.order == "ASC" then
-				table.sort(RaidRoster, function (a,b) return a[1]<b[1] end)
-			else
-				table.sort(RaidRoster, function (a,b) return a[1]>b[1] end)
-			end
-		else
-			if LunaUF.db.profile.units.raid.order ~= "ASC" then
-				table.sort(RaidRoster, function (a,b) return a[2]>b[2] end)
-			else
-				table.sort(RaidRoster, function (a,b) return a[2]<b[2] end)
-			end
-		end
-		header.title:SetPoint("CENTER", header, "CENTER", 20*xoffset, 20*yoffset)
-		local text = config.mode == "CLASS" and LunaUF.constants.RaidClassMapping[header.id] or ("GRP "..header.id)
-		header.title:SetText(LunaUF.db.profile.units.raid.titles and text or "")
-	else
-		header.title:SetText("")
-	end
-
-	xoffset = xoffset * (config.size.x + config.padding) * -1
-	yoffset = yoffset * (config.size.y + config.padding) * -1
-
-	for i,frame in pairs(header.frames) do
-		if i > framesneeded then
-			frame:Hide()
-		else
-			frame:Show()
-			frame:ClearAllPoints()
-			frame:SetPoint(point, anchor, point, i>1 and xoffset, i>1 and yoffset)
-			frame:SetWidth(config.size.x)
-			frame:SetHeight(config.size.y)
-			frame:SetScale(config.scale)
-			if not LunaUF.db.profile.locked then
-				frame.unit = "player"
-				frame:SetScript("OnDragStart", HeaderStartMoving)
-			else
-				frame.unit = RaidRoster[i][2]
-				frame:SetScript("OnDragStart", nil)
-			end
-			Units:SetupFrameModules(frame)
-			anchor = frame
-		end
+local function LUF_OnLeave(self)
+	if not GameTooltip:IsForbidden() then
+		UnitFrame_OnLeave(self)
 	end
 end
 
--- Create the generic things that we want in every frame regardless if it's a button or a header
-function Units:CreateUnit(a1, a2, a3, a4)
-	local frame = a2 and CreateFrame(a1, a2, a3, a4) or a1
+local function ClassToken(self)
+	return (select(2, UnitClass(self.unit)))
+end
+
+function Units:CreateUnit(...)
+	local frame = select("#", ...) > 1 and CreateFrame(...) or select(1, ...)
+	frame.fullUpdates = {}
+	frame.registeredEvents = {}
+	frame.BlizzRegisterUnitEvent = frame.RegisterUnitEvent
+	frame.RegisterNormalEvent = RegisterNormalEvent
+	frame.RegisterUnitEvent = RegisterUnitEvent
+	frame.RegisterUpdateFunc = RegisterUpdateFunc
+	frame.UnregisterAll = UnregisterAll
+	frame.UnregisterSingleEvent = UnregisterEvent
+	frame.SetRangeAlpha = SetRangeAlpha
+	frame.visibility = {}
+	frame.CheckModules = CheckModules
+	frame.DisableRangeAlpha = DisableRangeAlpha
+	frame.UnregisterUpdateFunc = UnregisterUpdateFunc
+	frame.ReregisterUnitEvents = ReregisterUnitEvents
+	frame.SetBarColor = SetBarColor
+	frame.SetBlockColor = SetBlockColor
 	frame.FullUpdate = FullUpdate
-	frame.ShowMenu = ShowMenu
+	frame.UnitClassToken = ClassToken
 	frame.topFrameLevel = 5
 
-	frame.fontstrings = {}
-
+	-- Ensures that text is the absolute highest thing there is
+	frame.highFrame = CreateFrame("Frame", nil, frame)
+	frame.highFrame:SetFrameLevel(frame.topFrameLevel + 2)
+	frame.highFrame:SetAllPoints(frame)
+	frame:HookScript("OnAttributeChanged", OnAttributeChanged)
+	if frame.unitType == "partytarget" or frame.unitType == "maintanktarget" or frame.unitType == "mainassisttarget" then
+		-- Brute forcing targets into a party header since blizz doesn't provide target headers
+		stateMonitor:WrapScript(frame, "OnAttributeChanged", [[
+			if( name == "unit" ) then
+				if ( not value ) then
+					UnregisterUnitWatch(self)
+				elseif value ~= "player" and not strmatch(value, "target$") then
+					self:SetAttribute("unit", value.."target")
+					RegisterUnitWatch(self)
+					return false
+				end
+			end
+		]])
+	elseif frame.unitType == "partypet" then
+		-- Brute forcing partypets into a party header since the pet group template sucks ass
+		stateMonitor:WrapScript(frame, "OnAttributeChanged", [[
+			if( name == "unit" ) then
+				if ( not value ) then
+					UnregisterUnitWatch(self)
+				elseif value ~= "player" and not strmatch(value, "^partypet%d$") then
+					local unitID = strmatch(value, "%d")
+					self:SetAttribute("unit", "partypet"..unitID)
+					RegisterUnitWatch(self)
+					return false
+				end
+			end
+		]])
+	end
 	frame:SetScript("OnEvent", OnEvent)
-	frame:SetScript("OnEnter", OnEnter)
-	frame:SetScript("OnLeave", OnLeave)
+	frame:HookScript("OnEnter", OnEnter)
+	frame:HookScript("OnLeave", OnLeave)
 	frame:SetScript("OnShow", OnShow)
 	frame:SetScript("OnHide", OnHide)
-	frame:RegisterForDrag("LeftButton")
-	frame:SetScript("OnDragStop", StopMovingOrSizing)
 
-	frame:SetFrameStrata("BACKGROUND")
-	frame:SetClampedToScreen(1)
-	local click_action = LunaUF.db.profile.clickcasting.mouseDownClicks and "Down" or "Up"
-	frame:RegisterForClicks('LeftButton' .. click_action, 'RightButton' .. click_action, 'MiddleButton' .. click_action, 'Button4' .. click_action, 'Button5' .. click_action)
-	frame:SetScript("OnClick", OnClick)
-	frame:SetBackdrop(LunaUF.constants.backdrop)
-	frame:SetBackdropColor(LunaUF.db.profile.bgcolor.r,LunaUF.db.profile.bgcolor.g,LunaUF.db.profile.bgcolor.b,LunaUF.db.profile.bgalpha)
+	frame.OnEnter = LUF_OnEnter
+	frame.OnLeave = LUF_OnLeave
 
-	table.insert(frameList,frame)
+	frame:RegisterForClicks("AnyUp")
+	-- non-header frames don't set those, so we need to do it
+	if( not InCombatLockdown() and not frame:GetAttribute("isHeaderDriven") ) then
+		frame:SetAttribute("*type1", "target")
+		frame:SetAttribute("*type2", "togglemenu")
+	end
+	
 	return frame
+end
+
+-- Reload a header completely
+function Units:ReloadHeader(type)
+	if( type == "raid" ) then
+		self:InitializeFrame("raid")
+	elseif( headerFrames[type] ) then
+		self:SetHeaderAttributes(headerFrames[type], type)
+		LunaUF.Layout:AnchorFrame(headerFrames[type], LunaUF.db.profile.units[type])
+		LunaUF:FireModuleEvent("OnLayoutReload", type)
+	end
+end
+
+function Units:CheckGroupVisibility()
+	if( not LunaUF.db.profile.locked ) then return end
+	local raid = headerFrames.raid1
+	local party = headerFrames.party
+	local partytarget = headerFrames.partytarget
+	local partypet = headerFrames.partypet
+	
+	if( party ) then
+		party:SetAttribute("showParty", ( not LunaUF.db.profile.units.raid.showParty or not LunaUF.enabledUnits.raid ) and true or false)
+		party:SetAttribute("showPlayer", LunaUF.db.profile.units.party.showPlayer)
+	end
+
+	if( partytarget ) then
+		partytarget:SetAttribute("showParty", ( not LunaUF.db.profile.units.raid.showParty or not LunaUF.enabledUnits.raid ) and true or false)
+	end
+
+	if( partypet ) then
+		partypet:SetAttribute("showParty", ( not LunaUF.db.profile.units.raid.showParty or not LunaUF.enabledUnits.raid ) and true or false)
+	end
+
+	if( raid and party ) then
+		raid:SetAttribute("showParty", not party:GetAttribute("showParty"))
+		raid:SetAttribute("showPlayer", party:GetAttribute("showPlayer"))
+	end
+end
+
+function Units:SetHeaderAttributes(frame, type)
+	
+	local config = LunaUF.db.profile.units[type]
+	local xMod = config.attribPoint == "LEFT" and 1 or config.attribPoint == "RIGHT" and -1 or 0
+	local yMod = config.attribPoint == "TOP" and -1 or config.attribPoint == "BOTTOM" and 1 or 0
+	local widthMod = (config.attribPoint == "LEFT" or config.attribPoint == "RIGHT") and MEMBERS_PER_RAID_GROUP or 1
+	local heightMod = (config.attribPoint == "TOP" or config.attribPoint == "BOTTOM") and MEMBERS_PER_RAID_GROUP or 1
+	
+	frame:SetAttribute("point", config.attribPoint)
+	frame:SetAttribute("sortMethod", config.sortMethod)
+	frame:SetAttribute("sortDir", config.sortOrder)
+	
+	frame:SetAttribute("xOffset", config.offset * xMod)
+	frame:SetAttribute("yOffset", config.offset * yMod)
+	frame:SetAttribute("xMod", xMod)
+	frame:SetAttribute("yMod", yMod)
+
+	-- Normal raid, ma or mt
+	if( type == "raidpet" or type == "raid" or type == "mainassist" or type == "maintank" ) then
+		local filter
+		if( config.filters ) then
+			for id, enabled in pairs(config.filters) do
+				if( enabled ) then
+					if( filter ) then
+						filter = filter .. "," .. id
+					else
+						filter = id
+					end
+				end
+			end
+		else
+			filter = config.groupFilter
+		end
+
+		frame:SetAttribute("showRaid", LunaUF.db.profile.locked and true)
+		frame:SetAttribute("maxColumns", config.maxColumns)
+		frame:SetAttribute("unitsPerColumn", config.unitsPerColumn)
+		frame:SetAttribute("columnSpacing", config.columnSpacing)
+		frame:SetAttribute("columnAnchorPoint", config.attribAnchorPoint)
+		frame:SetAttribute("groupFilter", filter or "1,2,3,4,5,6,7,8")
+
+		if( config.groupBy == "CLASS" ) then
+			frame:SetAttribute("groupingOrder", "DRUID,HUNTER,MAGE,PALADIN,PRIEST,ROGUE,SHAMAN,WARLOCK,WARRIOR")
+			frame:SetAttribute("groupBy", "CLASS")
+		else
+			frame:SetAttribute("groupingOrder", "1,2,3,4,5,6,7,8")
+			frame:SetAttribute("groupBy", "GROUP")
+		end
+	elseif( type == "party" ) then
+		frame:SetAttribute("maxColumns", math.ceil((config.showPlayer and 5 or 4) / config.unitsPerColumn))
+		frame:SetAttribute("unitsPerColumn", config.unitsPerColumn)
+		frame:SetAttribute("columnSpacing", config.columnSpacing)
+		frame:SetAttribute("columnAnchorPoint", config.attribAnchorPoint)
+
+		self:CheckGroupVisibility()
+		if( stateMonitor.party ) then
+			stateMonitor.party:SetAttribute("hideSemiRaid", LunaUF.db.profile.units.party.hideSemiRaid)
+			stateMonitor.party:SetAttribute("hideAnyRaid", LunaUF.db.profile.units.party.hideAnyRaid)
+		end
+	elseif( type == "partypet" or type == "partytarget" ) then
+		frame:SetAttribute("maxColumns", math.ceil(4 / config.unitsPerColumn))
+		frame:SetAttribute("unitsPerColumn", config.unitsPerColumn)
+		frame:SetAttribute("columnSpacing", config.columnSpacing)
+		frame:SetAttribute("columnAnchorPoint", config.attribAnchorPoint)
+
+		self:CheckGroupVisibility()
+		if( stateMonitor[type] ) then
+			stateMonitor[type]:SetAttribute("hideSemiRaid", LunaUF.db.profile.units[type].hideSemiRaid)
+			stateMonitor[type]:SetAttribute("hideAnyRaid", LunaUF.db.profile.units[type].hideAnyRaid)
+		end
+	end
+	
+	if( type == "raid" ) then
+		self:CheckGroupVisibility()
+
+		for id, monitor in pairs(stateMonitor.raids) do
+			monitor:SetAttribute("hideSemiRaid", LunaUF.db.profile.units.raid.hideSemiRaid)
+		end
+	end
+
+	if( not InCombatLockdown() and headerUnits[type] and frame.shouldReset ) then
+		-- Children no longer have ClearAllPoints() called on them before they are repositioned
+		-- this tries to stop it from bugging out by clearing it then forcing it to reposition everything
+		local name = frame:GetName() .. "UnitButton"
+		local index = 1
+		local child = _G[name .. index]
+		while( child ) do
+			child:ClearAllPoints()
+
+			index = index + 1
+			child = _G[name .. index]
+		end
+	
+		-- Hiding and reshowing the header forces an update
+		if( frame:IsShown() ) then
+			frame:Hide()
+			frame:Show()
+		end
+	end
+
+	frame.shouldReset = true
 end
 
 -- Load a single unit such as player, target, pet, etc
 function Units:LoadUnit(unit)
-	local frame
-
+	-- Already be loaded, just enable
 	if( unitFrames[unit] ) then
-		frame = unitFrames[unit]
-	else
-		frame = self:CreateUnit("Button", "LUFUnit" .. unit, UIParent)
-		frame.unitGroup = unit
-		frame.parentunit = unit
-		frame.UnitExists = UnitExists
-		unitFrames[unit] = frame
-		if unit == "pettarget" or unit == "targettarget" or unit == "targettargettarget" then
-			table.insert(childframeList,frame)
-		end
-	end
-
-	-- And lets get this going
-
-	frame:ClearAllPoints()
-	frame:SetWidth(LunaUF.db.profile.units[frame.unitGroup].size.x)
-	frame:SetHeight(LunaUF.db.profile.units[frame.unitGroup].size.y)
-	frame:SetScale(LunaUF.db.profile.units[frame.unitGroup].scale)
-	local scale = frame:GetScale() * UIParent:GetScale()
-	frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", LunaUF.db.profile.units[frame.unitGroup].position.x / scale, LunaUF.db.profile.units[frame.unitGroup].position.y / scale)
-
-	if not LunaUF.db.profile.units[unit].enabled then
-		frame:Hide()
-		frame:UnregisterAllEvents()
+		RegisterUnitWatch(unitFrames[unit], unitFrames[unit].hasStateWatch)
 		return
-	elseif not LunaUF.db.profile.locked then
-		frame:Show()
-		frame:UnregisterAllEvents()
-		frame:SetScript("OnDragStart", StartMoving)
-		frame:SetMovable(1)
-		frame.unit = "player"
-	else
-		if unit ~= "player" and not UnitExists(unit) then
-			frame:Hide()
-		else
-			frame:Show()
-		end
-		if string.find(frame.unitGroup,"(target)") then
-			frame:RegisterEvent("PLAYER_TARGET_CHANGED")
-		end
-
-		frame:SetScript("OnDragStart", nil)
-		frame:SetMovable(0)
-		frame.unit = frame.unitGroup
 	end
-	self:SetupFrameModules(frame)
+	
+	local frame = self:CreateUnit("Button", "LUFUnit" .. unit, UIParent, "SecureUnitButtonTemplate")
+	frame:SetAttribute("unit", unit)
+	frame.hasStateWatch = unit == "pet"
+	
+	RegisterUnitWatch(frame, frame.hasStateWatch)
 end
 
-function Units:LoadGroupHeader(unit)
-	local header
-	if not headerFrames[unit] then
-		header = CreateFrame("Frame", "LUFHeader"..unit, UIParent)
-		headerFrames[unit] = header
-		header.frames = {}
-		header.Update = SetupGroupHeader
-		header.unitGroup = unit
-		header:SetScript("OnEvent", SetupGroupHeader)
-		header:RegisterEvent("PARTY_MEMBERS_CHANGED")
-		header:RegisterEvent("RAID_ROSTER_UPDATE")
-	else
-		header = headerFrames[unit]
-	end
-	header:ClearAllPoints()
-	header:SetPoint("TOPLEFT", UIParent, "TOPLEFT", LunaUF.db.profile.units[unit].position.x, LunaUF.db.profile.units[unit].position.y)
-	header:SetWidth(1)
-	header:SetHeight(1)
+local function setupRaidStateMonitor(id, headerFrame)
+	if( stateMonitor.raids[id] ) then return end
 
-	if not LunaUF.db.profile.units[unit].enabled then
-		header:Hide()
-	elseif not LunaUF.db.profile.locked then
-		header:Show()
-		header:SetMovable(1)
-	else
-		header:Show()
-		header:SetMovable(0)
-	end
-	header.Update(unit)
-end
-
-function Units:LoadRaidGroupHeader()
-	local header
-	local config = LunaUF.db.profile.units.raid
-	for i=1, 9 do
-		if not headerFrames["raid"..i] then
-			header = CreateFrame("Frame", "LUFHeaderraid"..i, UIParent)
-			headerFrames["raid"..i] = header
-			header:SetWidth(1)
-			header:SetHeight(1)
-			header.frames = {}
-			header.Update = SetupRaidHeader
-			header.id = i
-			header.title = header:CreateFontString(nil, "ARTWORK")
-			header.title:SetShadowColor(0, 0, 0, 1.0)
-			header.title:SetShadowOffset(0.80, -0.80)
-			header.title:SetFont(LunaUF.defaultFont, 14)
-			header:SetScript("OnEvent", SetupRaidHeader)
-			if header.id == 1 or header.id == 9 then
-				header:RegisterEvent("PARTY_MEMBERS_CHANGED")
-			end
-			header:RegisterEvent("RAID_ROSTER_UPDATE")
-		else
-			header = headerFrames["raid"..i]
+	stateMonitor.raids[id] = CreateFrame("Frame", nil, nil, "SecureHandlerBaseTemplate")
+	stateMonitor.raids[id]:SetAttribute("raidDisabled", nil)
+	stateMonitor.raids[id]:SetFrameRef("raidHeader", headerFrame)
+	stateMonitor.raids[id]:SetAttribute("hideSemiRaid", LunaUF.db.profile.units.raid.hideSemiRaid)
+	stateMonitor.raids[id]:WrapScript(stateMonitor.raids[id], "OnAttributeChanged", [[
+		if( name ~= "state-raidmonitor" and name ~= "raiddisabled" and name ~= "hidesemiraid" ) then
+			return
 		end
-		if not config.enabled then
+
+		local header = self:GetFrameRef("raidHeader")
+		if( self:GetAttribute("raidDisabled") ) then
+			if( header:IsVisible() ) then header:Hide() end
+			return
+		end
+		
+		if( self:GetAttribute("hideSemiRaid") and self:GetAttribute("state-raidmonitor") ~= "raid6" ) then
 			header:Hide()
 		else
 			header:Show()
 		end
-		header:ClearAllPoints()
-		if config.interlock and header.id > 1 then
-			if config.interlockgrowth == "RIGHT" then
-				header:SetPoint("CENTER", headerFrames["raid"..(i-1)], "CENTER", (config.size.x + config.padding), 0)
-			elseif config.interlockgrowth == "LEFT" then
-				header:SetPoint("CENTER", headerFrames["raid"..(i-1)], "CENTER", -(config.size.x + config.padding), 0)
-			elseif config.interlockgrowth == "UP" then
-				header:SetPoint("CENTER", headerFrames["raid"..(i-1)], "CENTER", 0, (config.size.y + config.padding))
+	]])
+	
+	RegisterStateDriver(stateMonitor.raids[id], "raidmonitor", "[target=raid6, exists] raid6; none")
+end
+
+function Units:LoadRaidGroupHeader(type)
+	if( headerFrames.raid ) then headerFrames.raid:Hide() end
+	--headerFrames.raidParent = nil
+
+	for id, monitor in pairs(stateMonitor.raids) do
+		monitor:SetAttribute("hideSemiRaid", LunaUF.db.profile.units.raid.hideSemiRaid)
+		monitor:SetAttribute("raidDisabled", id == -1 and true or nil)
+		monitor:SetAttribute("recheck", time())
+	end
+
+	local config = LunaUF.db.profile.units[type]
+	for id, enabled in pairs(LunaUF.db.profile.units[type].filters) do
+		local frame = headerFrames["raid" .. id]
+		if( enabled ) then
+			if( not frame ) then
+				frame = CreateFrame("Frame", "LUFHeader" .. type .. id, UIParent, "SecureGroupHeaderTemplate")
+				frame:SetAttribute("template", unitButtonTemplate)
+				frame:SetAttribute("initial-unitWatch", true)
+				frame:SetAttribute("showRaid", true)
+				frame:SetAttribute("groupFilter", id)
+				frame:SetAttribute("initialConfigFunction", secureInitializeUnit)
+				frame.initialConfigFunction = initializeUnit
+				frame.isHeaderFrame = true
+				frame.unitType = type
+				frame.unitMappedType = type
+				frame.splitParent = type
+				frame.groupID = id
+				--frame:SetBackdrop({bgFile = "Interface\\ChatFrame\\ChatFrameBackground", edgeFile = "Interface\\ChatFrame\\ChatFrameBackground", edgeSize = 1})
+				--frame:SetBackdropBorderColor(1, 0, 0, 1)
+				--frame:SetBackdropColor(0, 0, 0, 0)
+				
+				frame:SetAttribute("style-height", config.height)
+				frame:SetAttribute("style-width", config.width)
+				frame:SetAttribute("style-scale", config.scale)
+				
+				if( ClickCastHeader ) then
+					-- the OnLoad adds the functions like SetFrameRef to the header
+					SecureHandler_OnLoad(frame)
+					frame:SetFrameRef("clickcast_header", ClickCastHeader)
+				end
+				
+				headerFrames["raid" .. id] = frame
+			end
+			
+			frame:Show()
+			
+			LunaUF.Layout:AnchorFrame(frame, LunaUF.db.profile.units.raid.positions[id])
+			
+--			if( not headerFrames.raidParent or headerFrames.raidParent.groupID > id ) then
+--				headerFrames.raidParent = frame
+--			end
+
+			setupRaidStateMonitor(id, frame)
+			
+		elseif( frame ) then
+			frame:Hide()
+		end
+	end
+	
+--	if( headerFrames.raidParent ) then
+--		self:SetHeaderAttributes(headerFrames.raidParent, type)
+--		LunaUF.Layout:AnchorFrame(frame, LunaUF.db.profile.units.raid)
+--	end
+end
+
+-- Load a header unit, party or pets
+function Units:LoadGroupHeader(type)
+	-- Already created, so just reshow and we out
+	if( headerFrames[type] ) then
+		headerFrames[type]:Show()
+
+		if( (type == "party" or type == "partypet" or type == "partytarget") and stateMonitor[type] ) then
+			stateMonitor[type]:SetAttribute("partyDisabled", nil)
+		end
+		
+		if( type == "raid" ) then
+			for id, monitor in pairs(stateMonitor.raids) do
+				monitor:SetAttribute("hideSemiRaid", ShadowUF.db.profile.units.raid.hideSemiRaid)
+				monitor:SetAttribute("raidDisabled", id >= 0 and true or nil)
+			end
+		end
+
+		if( type == "party" or type == "raid" ) then
+			self:CheckGroupVisibility()
+		end
+		return
+	end
+
+	local headerFrame = CreateFrame("Frame", "LUFHeader" .. type, UIParent, type == "raidpet" and "SecureGroupPetHeaderTemplate" or "SecureGroupHeaderTemplate")
+	headerFrames[type] = headerFrame
+
+	self:SetHeaderAttributes(headerFrame, type)
+
+	headerFrame:SetAttribute("template", unitButtonTemplate)
+	headerFrame:SetAttribute("initial-unitWatch", true)
+	headerFrame:SetAttribute("initialConfigFunction", secureInitializeUnit)
+
+	headerFrame.initialConfigFunction = initializeUnit
+	headerFrame.isHeaderFrame = true
+	headerFrame.unitType = type
+	headerFrame.unitMappedType = type
+
+	-- For securely managing the display
+	local config = LunaUF.db.profile.units[type]
+	headerFrame:SetAttribute("style-height", config.height)
+	headerFrame:SetAttribute("style-width", config.width)
+	headerFrame:SetAttribute("style-scale", config.scale)
+
+	if( ClickCastHeader ) then
+		-- the OnLoad adds the functions like SetFrameRef to the header
+		SecureHandler_OnLoad(headerFrame)
+		headerFrame:SetFrameRef("clickcast_header", ClickCastHeader)
+	end
+
+	LunaUF.Layout:AnchorFrame(headerFrame, LunaUF.db.profile.units[type])
+	
+	-- We have to do party hiding based off raid as a state driver so that we can smoothly hide the party frames based off of combat and such
+	-- technically this isn't the cleanest solution because party frames will still have unit watches active
+	-- but this isn't as big of a deal, because SUF automatically will unregister the OnEvent for party frames while hidden
+	if( type == "party" or type == "partypet" or type == "partytarget" ) then
+		stateMonitor[type] = CreateFrame("Frame", nil, nil, "SecureHandlerBaseTemplate")
+		stateMonitor[type]:SetAttribute("partyDisabled", nil)
+		stateMonitor[type]:SetFrameRef("partyHeader", headerFrame)
+		stateMonitor[type]:SetAttribute("hideSemiRaid", LunaUF.db.profile.units[type].hideSemiRaid)
+		stateMonitor[type]:SetAttribute("hideAnyRaid", LunaUF.db.profile.units[type].hideAnyRaid)
+		stateMonitor[type]:WrapScript(stateMonitor[type], "OnAttributeChanged", [[
+			if( name ~= "state-raidmonitor" and name ~= "partydisabled" and name ~= "hideanyraid" and name ~= "hidesemiraid" ) then return end
+			if( self:GetAttribute("partyDisabled") ) then return end
+			
+			if( self:GetAttribute("hideAnyRaid") and ( self:GetAttribute("state-raidmonitor") == "raid1" or self:GetAttribute("state-raidmonitor") == "raid6" ) ) then
+				self:GetFrameRef("partyHeader"):Hide()
+			elseif( self:GetAttribute("hideSemiRaid") and self:GetAttribute("state-raidmonitor") == "raid6" ) then
+				self:GetFrameRef("partyHeader"):Hide()
 			else
-				header:SetPoint("CENTER", headerFrames["raid"..(i-1)], "CENTER", 0, -(config.size.y + config.padding))
+				self:GetFrameRef("partyHeader"):Show()
 			end
-		else
-			header:SetPoint("TOPLEFT", UIParent, "TOPLEFT", config[header.id].position.x, config[header.id].position.y)
-		end
-
-		if not LunaUF.db.profile.locked then
-			header:SetMovable(1)
-		else
-			header:SetMovable(0)
-		end
-		header.Update(header)
-	end
-end
-
-function Units:PositionWidgets(frame)
-	local config = LunaUF.db.profile.units[frame.unitGroup]
-	if not config.enabled then return end
-	local vertical = config.barorder.vertical
-	local horizontal = config.barorder.horizontal
-	local framelength = frame:GetWidth()
-	local frameheight = frame:GetHeight()
-	local barweightH = 0
-	local barweightV = 0
-	local xoffset = 0
-	local yoffset = 0
-	if config.portrait.enabled then
-		if config.portrait.side == "left" then
-			frame.portrait:ClearAllPoints()
-			frame.portrait:SetPoint("TOPLEFT", frame, "TOPLEFT")
-			frame.portrait:SetWidth(frame:GetHeight())
-			frame.portrait:SetHeight(frame:GetHeight() + (config.portrait.type == "3D" and 1 or 0))
-			framelength = framelength - frameheight
-			xoffset = frameheight
-		elseif config.portrait.side == "right" then
-			frame.portrait:ClearAllPoints()
-			frame.portrait:SetPoint("TOPRIGHT", frame, "TOPRIGHT", 1 , 0)
-			frame.portrait:SetWidth(frame:GetHeight())
-			frame.portrait:SetHeight(frame:GetHeight() + (config.portrait.type == "3D" and 1 or 0))
-			framelength = framelength - frameheight
-		end
-	end
-	local numhbars = 0
-	if horizontal then
-		for _,key in pairs(horizontal) do
-			if config[key] and config[key].enabled and frame[key] then
-				if (not config[key].side or config[key].side == "bar") and not frame[key].hidden then
-					barweightH = barweightH + (config[key].size or 0)
-					numhbars = numhbars + 1
-				end
-			end
-		end
-	end
-	local numvbars = 0
-	if vertical then
-		for _,key in pairs(vertical) do
-			if config[key] and config[key].enabled and frame[key] then
-				if (not config[key].side or config[key].side == "bar") and not frame[key].hidden then
-					barweightV = barweightV + (config[key].size or 0)
-					numvbars = numvbars + 1
-				end
-			end
-		end
+		]])
+		RegisterStateDriver(stateMonitor[type], "raidmonitor", "[target=raid6, exists] raid6; [target=raid1, exists] raid1; none")
+		
+	elseif( type == "raid" ) then
+		setupRaidStateMonitor(-1, headerFrame)
+	else
+		headerFrame:Show()
 	end
 
-	local barunith = (frameheight-(numhbars > 0 and (numhbars-1) or 0))/barweightH --Size of one unit of horizontal bar
-	local barunitv = (framelength-(numhbars > 0 and numvbars or numvbars > 0 and (numvbars-1) or 0 ))/(barweightH+barweightV) --Size of one unit of vertical bar
-	if horizontal then
-		for _,key in pairs(horizontal) do
-			if config[key] and config[key].enabled and frame[key] then
-				if not config[key].side or config[key].side == "bar" then
-					frame[key]:ClearAllPoints()
-					frame[key]:SetPoint("TOPLEFT", frame, "TOPLEFT", xoffset, yoffset)
-					frame[key]:SetWidth(barunitv*barweightH)
-					frame[key]:SetHeight((barunith*(config[key].size or 0)) + ((key == "portrait" and config.portrait.type == "3D") and 1 or 0))
-					if frame[key].hidden then
-						frame[key]:Hide()
-					else
-						yoffset = yoffset - (barunith*(config[key].size or 0)) - 1
-						frame[key]:Show()
-					end
-				end
-			end
-		end
-	end
-	xoffset = xoffset + (barunitv*barweightH) + (numhbars > 0 and 1 or 0)
-	if vertical then
-		for _,key in pairs(vertical) do
-			if config[key] and config[key].enabled and frame[key] then
-				if not config[key].side or config[key].side == "bar" then
-					frame[key]:ClearAllPoints()
-					frame[key]:SetPoint("TOPLEFT", frame, "TOPLEFT", xoffset, 0)
-					frame[key]:SetWidth(barunitv*(config[key].size or 0))
-					frame[key]:SetHeight(frameheight + ((key == "portrait" and config.portrait.type == "3D") and 1 or 0))
-					if frame[key].hidden then
-						frame[key]:Hide()
-					else
-						xoffset = xoffset + barunitv*(config[key].size or 0) + 1
-						frame[key]:Show()
-					end
-				end
-			end
-		end
-	end
-
-	FullUpdate(frame)
-end
-
-function Units:SetupFrameModules(frame)
-	local config = LunaUF.db.profile.units[frame.unitGroup]
-	for key,module in pairs(LunaUF.modules) do
-		if config.enabled and config[key] and config[key].enabled then
-			module:OnEnable(frame)
-			if LunaUF.modules[key].SetBarTexture then
-				LunaUF.modules[key]:SetBarTexture(frame,"Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bar\\"..LunaUF.db.profile.texture)
-			end
-		else
-			module:OnDisable(frame)
-		end
-	end
-	self:PositionWidgets(frame)
-end
-
--- Small helper function for creating bars with
-function Units:CreateBar(parent)
-	local bar = LunaUF:CreateBar(nil, parent)
-	bar:SetFrameLevel(parent.topFrameLevel or 5)
-	bar.parent = parent
-
-	bar.background = bar:CreateTexture(nil, "BORDER")
-	bar.background:SetAllPoints(bar)
-
-	return bar
+	-- Any frames that were split out in this group need to be hidden
+--	if( headerFrames.raidParent ) then
+--		for _, headerFrame in pairs(headerFrames) do
+--			if( headerFrame.splitParent == type ) then
+--				headerFrame:Hide()
+--			end
+--		end
+--	end	
 end
 
 -- Initialize units
 function Units:InitializeFrame(type)
---	if not LunaUF.db.profile.units[type].enabled then return end
 	if( type == "raid" ) then
-		self:LoadRaidGroupHeader()
-	elseif( type == "party" or type == "partytarget" or type == "partypet" ) then
+		self:LoadRaidGroupHeader(type)
+	elseif( headerUnits[type] ) then
 		self:LoadGroupHeader(type)
 	else
 		self:LoadUnit(type)
 	end
 end
+
+-- Uninitialize units
+function Units:UninitializeFrame(type)
+	if( type == "party" or type == "raid" ) then
+		self:CheckGroupVisibility()
+	end
+
+	-- Disables showing party in raid automatically if raid frames are disabled
+	if( (type == "party" or type == "partytarget" or type == "partypet") and stateMonitor[type] ) then
+		stateMonitor[type]:SetAttribute("partyDisabled", true)
+	end
+	if( type == "raid" ) then
+		for _, monitor in pairs(stateMonitor.raids) do
+			monitor:SetAttribute("raidDisabled", true)
+		end
+	end
+
+	if( headerFrames[type] ) then
+		headerFrames[type]:Hide()
+	else
+		-- Disable all frames of this type
+		for frame in pairs(frameList) do
+			if( frame.unitType == type ) then
+				UnregisterUnitWatch(frame)
+				frame:SetAttribute("state-unitexits", false)
+				frame:Hide()
+			end
+		end
+	end
+end
+
+-- Profile changed, reload units
+function Units:ProfileChanged()
+	-- Reset the anchors for all frames to prevent X is dependant on Y
+	for frame in pairs(frameList) do
+		if( frame.unit ) then
+			frame:ClearAllPoints()
+		end
+	end
+	
+	for frame in pairs(frameList) do
+		if( frame.unit and LunaUF.db.profile.units[frame.unitType].enabled ) then
+			-- Force all enabled modules to disable
+			for key, module in pairs(ShadowUF.modules) do
+				if( frame[key] and frame.visibility[key] ) then
+					frame.visibility[key] = nil
+					module:OnDisable(frame)
+				end
+			end
+			
+			-- Now enable whatever we need to
+			LunaUF.Layout:Load(frame)
+			frame:FullUpdate()
+		end
+	end
+	
+	for _, frame in pairs(headerFrames) do
+		if( LunaUF.db.profile.units[frame.unitType].enabled ) then
+			self:ReloadHeader(frame.unitType)
+		end
+	end
+end
+
+-- Small helper function for creating bars with
+function Units:CreateBar(parent)
+	local bar = CreateFrame("StatusBar", nil, parent)
+	bar:SetFrameLevel(parent.topFrameLevel or 5)
+	bar.parent = parent
+	
+	bar.background = bar:CreateTexture(nil, "BORDER")
+	bar.background:SetHeight(1)
+	bar.background:SetWidth(1)
+	bar.background:SetAllPoints(bar)
+	bar.background:SetHorizTile(false)
+
+	return bar
+end
+
+local centralFrame = CreateFrame("Frame")
+centralFrame:RegisterEvent("PLAYER_LOGIN")
+centralFrame:SetScript("OnEvent", function(self, event, unit)
+	-- Monitor talent changes for curable changes
+	if( event == "PLAYER_SPECIALIZATION_CHANGED" ) then
+		--checkCurableSpells()
+
+		for frame in pairs(LunaUF.Units.frameList) do
+			if( frame.unit and frame:IsVisible() ) then
+				frame:FullUpdate()
+			end
+		end
+
+	elseif( event == "PLAYER_LOGIN" ) then
+		--checkCurableSpells()
+		--self:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+	end
+end)

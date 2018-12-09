@@ -1,4 +1,5 @@
-local function zhCN() return {
+if( GetLocale() ~= "zhCN" ) then return end
+local L = {
 ["FONT_LIST"] = {"HDZB_35"},
 ["DEFAULT_FONT"] = "HDZB_35",
 ["Loaded. The ride never ends!"] = "已加载，旅途永无止尽！",
@@ -453,6 +454,6 @@ local function zhCN() return {
 ["Shadow Wing Lair"] = "影翼巢穴",
 ["Halls of Strife"] = "征战大厅",
 }
-end
 
-LunaUF.L:RegisterTranslations("zhCN", zhCN)
+local LunaUF = select(2, ...)
+LunaUF.L = setmetatable(L, {__index = LunaUF.L})

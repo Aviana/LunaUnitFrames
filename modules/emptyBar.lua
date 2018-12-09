@@ -1,48 +1,62 @@
-local emptyBar = {}
-local L = LunaUF.L
-LunaUF:RegisterModule(emptyBar, "emptyBar", L["Empty Bar"])
+local Empty = {}
+local fallbackColor
+LunaUF:RegisterModule(Empty, "emptyBar", LunaUF.L["Empty bar"], true)
 
-function emptyBar:OnEnable(frame)
-	if not frame.emptyBar then
-		frame.emptyBar = CreateFrame("Frame", nil, frame)
-		frame.fontstrings["emptyBar"] = {
-			["left"] = frame.emptyBar:CreateFontString(nil, "ARTWORK"),
-			["center"] = frame.emptyBar:CreateFontString(nil, "ARTWORK"),
-			["right"] = frame.emptyBar:CreateFontString(nil, "ARTWORK"),
-		}
-		for align,fontstring in pairs(frame.fontstrings["emptyBar"]) do
-			fontstring:SetFont(LunaUF.defaultFont, 14)
-			fontstring:SetShadowColor(0, 0, 0, 1.0)
-			fontstring:SetShadowOffset(0.80, -0.80)
-			fontstring:SetJustifyH(string.upper(align))
-			fontstring:SetAllPoints(frame.emptyBar)
-		end
-	end
+function Empty:OnEnable(frame)
+	frame.emptyBar = frame.emptyBar or LunaUF.Units:CreateBar(frame)
+	frame.emptyBar:SetMinMaxValues(0, 1)
+	frame.emptyBar:SetValue(0)
+
+	fallbackColor = fallbackColor or {r = 0, g = 0, b = 0}
 end
 
-function emptyBar:OnDisable(frame)
-
+function Empty:OnDisable(frame)
+	frame:UnregisterAll(self)
 end
 
-function emptyBar:FullUpdate(frame)
-	local tags = LunaUF.db.profile.units[frame.unitGroup].tags.bartags.emptyBar
-	for align,fontstring in pairs(frame.fontstrings["emptyBar"]) do
-		fontstring:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\"..LunaUF.db.profile.font..".ttf", tags.size)
-		fontstring:ClearAllPoints()
-		fontstring:SetHeight(frame.emptyBar:GetHeight())
-		if align == "left" then
-			fontstring:SetPoint("LEFT", frame.emptyBar, "LEFT", 2, 0)
-			fontstring:SetWidth((frame.emptyBar:GetWidth()-4)*(tags.leftsize/100))
-		elseif align == "center" then
-			fontstring:SetPoint("CENTER", frame.emptyBar, "CENTER")
-			fontstring:SetWidth(frame.emptyBar:GetWidth()*(tags.middlesize/100))
+function Empty:OnLayoutApplied(frame)
+	if( frame.visibility.emptyBar ) then
+		local color = frame.emptyBar.background.overrideColor or fallbackColor
+		frame.emptyBar.background:SetVertexColor(color.r, color.g, color.b, LunaUF.db.profile.units[frame.unitType].emptyBar.alpha)
+
+		if( LunaUF.db.profile.units[frame.unitType].emptyBar.reactionType or LunaUF.db.profile.units[frame.unitType].emptyBar.class ) then
+			frame:RegisterUnitEvent("UNIT_FACTION", self, "UpdateColor")
+			frame:RegisterUpdateFunc(self, "UpdateColor")
 		else
-			fontstring:SetPoint("RIGHT", frame.emptyBar, "RIGHT", -2 , 0)
-			fontstring:SetWidth((frame.emptyBar:GetWidth()-4)*(tags.rightsize/100))
+			self:OnDisable(frame)
 		end
 	end
 end
 
-function emptyBar:SetBarTexture(frame,texture)
+function Empty:UpdateColor(frame)
+	local color
+	local reactionType = LunaUF.db.profile.units[frame.unitType].emptyBar.reactionType
 
+	if( ( reactionType == "npc" or reactionType == "both" ) and not UnitPlayerControlled(frame.unit) and UnitIsTapDenied(frame.unit) and UnitCanAttack("player", frame.unit) ) then
+		color = LunaUF.db.profile.colors.tapped
+	elseif( not UnitPlayerOrPetInRaid(frame.unit) and not UnitPlayerOrPetInParty(frame.unit) and ( ( ( reactionType == "player" or reactionType == "both" ) and UnitIsPlayer(frame.unit) and not UnitIsFriend(frame.unit, "player") ) or ( ( reactionType == "npc" or reactionType == "both" ) and not UnitIsPlayer(frame.unit) ) ) ) then
+		if( not UnitIsFriend(frame.unit, "player") and UnitPlayerControlled(frame.unit) ) then
+			if( UnitCanAttack("player", frame.unit) ) then
+				color = LunaUF.db.profile.colors.hostile
+			else
+				color = LunaUF.db.profile.colors.enemyUnattack
+			end
+		elseif( UnitReaction(frame.unit, "player") ) then
+			local reaction = UnitReaction(frame.unit, "player")
+			if( reaction > 4 ) then
+				color = LunaUF.db.profile.colors.friendly
+			elseif( reaction == 4 ) then
+				color = LunaUF.db.profile.colors.neutral
+			elseif( reaction < 4 ) then
+				color = LunaUF.db.profile.colors.hostile
+			end
+		end
+	elseif( LunaUF.db.profile.units[frame.unitType].emptyBar.class and ( UnitIsPlayer(frame.unit) or UnitCreatureFamily(frame.unit) ) ) then
+		local class = UnitCreatureFamily(frame.unit) or frame:UnitClassToken()
+		color = class and LunaUF.db.profile.colors[class]
+	end
+	
+	color = color or frame.emptyBar.background.overrideColor or fallbackColor
+	frame.emptyBar.background:SetVertexColor(color.r, color.g, color.b, LunaUF.db.profile.units[frame.unitType].emptyBar.alpha)
 end
+

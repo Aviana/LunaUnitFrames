@@ -1,83 +1,138 @@
-local LunaUF = LunaUF
-local Incheal = {}
-LunaUF:RegisterModule(Incheal, "incheal", LunaUF.L["Incheal"])
-local HealComm = LunaUF.HealComm
+local IncHeal = {}
+LunaUF:RegisterModule(IncHeal, "incHeal", LunaUF.L["Incoming heals"])
+local SML = LibStub:GetLibrary("LibSharedMedia-3.0")
 
-local function OnHeal(target)
-	for _,frame in pairs(LunaUF.Units.frameList) do
-		if frame.incheal and LunaUF.db.profile.units[frame.unitGroup].incheal.enabled and frame.unit and UnitName(frame.unit) == target and (UnitInRaid(frame.unit) or UnitInParty(frame.unit) or UnitIsUnit("player",frame.unit)) then
-			Incheal:FullUpdate(frame)
+function IncHeal:OnEnable(frame)
+	frame.incHeal = frame.incHeal or LunaUF.Units:CreateBar(frame)
+
+	frame:RegisterUnitEvent("UNIT_MAXHEALTH", self, "Update")
+	frame:RegisterUnitEvent("UNIT_HEALTH", self, "Update")
+	frame:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", self, "Update")
+	frame:RegisterUnitEvent("UNIT_HEAL_PREDICTION", self, "Update")
+
+	frame:RegisterUpdateFunc(self, "Update")
+end
+
+function IncHeal:OnDisable(frame)
+	frame:UnregisterAll(self)
+	frame.incHeal:Hide()
+end
+
+function IncHeal:OnLayoutApplied(frame)
+	local bar = frame.incHeal
+	if( not frame.visibility.incHeal or not frame.visibility.healthBar ) then return end
+
+	-- Since we're hiding, reset state
+	bar.total = nil
+
+	bar:SetSize(frame.healthBar:GetSize())
+	bar:SetStatusBarTexture(LunaUF.Layout:LoadMedia(SML.MediaType.STATUSBAR, frame.unitType))
+	bar:SetStatusBarColor(LunaUF.db.profile.colors.incheal.r, LunaUF.db.profile.colors.incheal.g, LunaUF.db.profile.colors.incheal.b, LunaUF.db.profile.units[frame.unitType].incHeal.alpha)
+	bar:GetStatusBarTexture():SetHorizTile(false)
+	bar:SetOrientation(frame.healthBar:GetOrientation())
+	bar:SetReverseFill(frame.healthBar:GetReverseFill())
+	bar:Hide()
+	
+	local cap = LunaUF.db.profile.units[frame.unitType].incHeal.cap or 1.30
+
+	if( ( LunaUF.db.profile.units[frame.unitType].healthBar.invert and LunaUF.db.profile.units[frame.unitType].healthBar.backgroundAlpha == 0 ) or ( not LunaUF.db.profile.units[frame.unitType].healthBar.invert and LunaUF.db.profile.units[frame.unitType].healthBar.backgroundAlpha == 1 ) ) then
+		bar.simple = true
+		bar:SetFrameLevel(frame.topFrameLevel - 2)
+
+		if( bar:GetOrientation() == "HORIZONTAL" ) then
+			bar:SetWidth(frame.healthBar:GetWidth() * cap)
+		else
+			bar:SetHeight(frame.healthBar:GetHeight() * cap)
 		end
+
+		bar:ClearAllPoints()
+		
+		local point = bar:GetReverseFill() and "RIGHT" or "LEFT"
+		bar:SetPoint("TOP" .. point, frame.healthBar)
+		bar:SetPoint("BOTTOM" .. point, frame.healthBar)
+	else
+		bar.simple = nil
+		bar:SetFrameLevel(frame.topFrameLevel + 1)
+		bar:SetWidth(1)
+		bar:SetMinMaxValues(0, 1)
+		bar:SetValue(1)
+		bar:ClearAllPoints()
+
+		bar.orientation = bar:GetOrientation()
+		bar.reverseFill = bar:GetReverseFill()
+
+		if( bar.orientation == "HORIZONTAL" ) then
+			bar.healthSize = frame.healthBar:GetWidth() or 1
+			bar.positionPoint = bar.reverseFill and "TOPRIGHT" or "TOPLEFT"
+			bar.positionRelative = bar.reverseFill and "BOTTOMRIGHT" or "BOTTOMLEFT"
+		else
+			bar.healthSize = frame.healthBar:GetHeight() or 1
+			bar.positionPoint = bar.reverseFill and "TOPLEFT" or "BOTTOMLEFT"
+			bar.positionRelative = bar.reverseFill and "TOPRIGHT" or "BOTTOMRIGHT"
+		end
+
+		bar.positionMod = bar.reverseFill and -1 or 1
+		bar.maxSize = bar.healthSize * cap
 	end
 end
 
-function Incheal:OnEnable(frame)
-	if not frame.incheal then
-		frame.incheal = CreateFrame("Frame", nil, frame)
-		frame.incheal.healBar = CreateFrame("StatusBar", nil, frame)
-		frame.incheal.healBar:SetMinMaxValues(0,1)
-		frame.incheal.healBar:SetValue(1)
-		frame.incheal.healBar:SetFrameLevel(5)
-		frame.incheal.healBar:SetStatusBarTexture("Interface\\Tooltips\\UI-Tooltip-Background")
-	end
-	if not LunaUF:IsEventRegistered("HealComm_Healupdate") then
-		LunaUF:RegisterEvent("HealComm_Healupdate", OnHeal)
-	end
-end
+function IncHeal:PositionBar(frame, incAmount)
+	local bar = frame.incHeal
 
-function Incheal:OnDisable(frame)
-	if frame.incheal then
-		frame.incheal:UnregisterEvent("HealComm_Healupdate")
-		frame.incheal.healBar:Hide()
-	end
-end
-
-function Incheal:FullUpdate(frame)
-	if not frame.unit then return end
-	local healvalue = HealComm:getHeal(UnitName(frame.unit))
-	local healBar = frame.incheal.healBar
-	local health, maxHealth = UnitHealth(frame.unit), UnitHealthMax(frame.unit)
-	healBar:SetStatusBarColor(LunaUF.db.profile.healthColors.inc.r, LunaUF.db.profile.healthColors.inc.g, LunaUF.db.profile.healthColors.inc.b, 0.75)
-	if healvalue == 0 then
-		healBar:Hide()
+	if( incAmount <= 0 ) then
+		bar.total = nil
+		bar:Hide()
 		return
 	end
-	local frameHeight, frameWidth = frame.healthBar:GetHeight(), frame.healthBar:GetWidth()
-	local healthHeight = frameHeight * (health / maxHealth)
-	local healthWidth = frameWidth * (health / maxHealth)
-	healBar:Show()
-	healBar:ClearAllPoints()
-	if LunaUF.db.profile.units[frame.unitGroup].healthBar.vertical then
-		local incHeight = frameHeight * (healvalue / maxHealth)
-		if (healthHeight + incHeight) > (frameHeight * (LunaUF.db.profile.units[frame.unitGroup].incheal.cap + 1)) then
-			incHeight = (frameHeight * (LunaUF.db.profile.units[frame.unitGroup].incheal.cap + 1)) - healthHeight
-		end
-		if incHeight == 0 then
-			healBar:Hide()
-			return
-		end
-		healBar:SetHeight(incHeight)
-		healBar:SetWidth(frameWidth)
-		if LunaUF.db.profile.units[frame.unitGroup].healthBar.reverse then
-			healBar:SetPoint("TOPLEFT", frame.healthBar, "TOPLEFT", 0, (healthHeight * -1))
-		else
-			healBar:SetPoint("BOTTOMLEFT", frame.healthBar, "BOTTOMLEFT", 0, healthHeight)
-		end
+
+	local health = UnitHealth(frame.unit)
+	if( health <= 0 ) then
+		bar.total = nil
+		bar:Hide()
+		return
+	end
+
+	local maxHealth = UnitHealthMax(frame.unit)
+	if( maxHealth <= 0 ) then
+		bar.total = nil
+		bar:Hide()
+		return
+	end
+
+	if( not bar.total ) then bar:Show() end
+	bar.total = incAmount
+
+	if( bar.simple ) then
+		bar.total = health + incAmount
+		bar:SetMinMaxValues(0, maxHealth * (LunaUF.db.profile.units[frame.unitType].incHeal.cap or 1.30))
+		bar:SetValue(bar.total)
 	else
-		local incWidth = frameWidth * (healvalue / maxHealth)
-		if (healthWidth + incWidth) > (frameWidth * (LunaUF.db.profile.units[frame.unitGroup].incheal.cap + 1)) then
-			incWidth = (frameWidth * (LunaUF.db.profile.units[frame.unitGroup].incheal.cap + 1)) - healthWidth
+		local healthSize = bar.healthSize * (health / maxHealth)
+		local incSize = bar.healthSize * (incAmount / maxHealth)
+
+		if( (healthSize + incSize) > bar.maxSize ) then
+			incSize = bar.maxSize - healthSize
 		end
-		if incWidth == 0 then
-			healBar:Hide()
-			return
-		end
-		healBar:SetWidth(incWidth)
-		healBar:SetHeight(frameHeight)
-		if LunaUF.db.profile.units[frame.unitGroup].healthBar.reverse then
-			healBar:SetPoint("TOPRIGHT", frame.healthBar, "TOPRIGHT", (healthWidth * -1), 0)
+
+		if( bar.orientation == "HORIZONTAL" ) then
+			bar:SetWidth(incSize)
+			bar:SetPoint(bar.positionPoint, frame.healthBar, bar.positionMod * healthSize, 0)
+			bar:SetPoint(bar.positionRelative, frame.healthBar, bar.positionMod * healthSize, 0)
 		else
-			healBar:SetPoint("TOPLEFT", frame.healthBar, "TOPLEFT", healthWidth, 0)
+			bar:SetHeight(incSize)
+			bar:SetPoint(bar.positionPoint, frame.healthBar, 0, bar.positionMod * healthSize)
+			bar:SetPoint(bar.positionRelative, frame.healthBar, 0, bar.positionMod * healthSize)
 		end
 	end
+end
+
+function IncHeal:Update(frame)
+	if( not frame.visibility.incHeal or not frame.visibility.healthBar ) then return end
+	
+	local amount = UnitGetIncomingHeals(frame.unit) or 0
+	if( amount > 0 ) then
+		amount = amount + (UnitGetTotalHealAbsorbs(frame.unit) or 0)
+	end
+
+	self:PositionBar(frame, amount)
 end

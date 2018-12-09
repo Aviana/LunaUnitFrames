@@ -1,7 +1,8 @@
 -- \195\188 ü
 -- \195\182 ö
 -- \195\164 ä
-local function deDE() return {
+if( GetLocale() ~= "deDE" ) then return end
+local L = {
 ["FONT_LIST"] = {"Aldrich","Bangers","Celestia","DorisPP","Enigmatic","FasterOne","Fitzgerald","Gentium","Iceland","Inconsolata","LiberationSans","Luna","MetalLord","Optimus","TradeWinds","VeraSerif","Yellowjacket"},
 ["DEFAULT_FONT"]="Luna",
 ["Loaded. The ride never ends!"] = "Geladen. Der Ritt ended niemals!",
@@ -456,6 +457,6 @@ local function deDE() return {
 ["Shadow Wing Lair"] = "Schattenschwingenunterschlupf",
 ["Halls of Strife"] = "Hallen des Zwists",
 }
-end
 
-LunaUF.L:RegisterTranslations("deDE", deDE)
+local LunaUF = select(2, ...)
+LunaUF.L = setmetatable(L, {__index = LunaUF.L})

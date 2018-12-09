@@ -1,49 +1,79 @@
 local Combo = {}
-LunaUF:RegisterModule(Combo, "comboPoints", LunaUF.L["Combo points"])
-local _,playerclass = UnitClass("player")
+LunaUF:RegisterModule(Combo, "comboPoints", LunaUF.L["Combo points"], true)
 
-local function OnEvent()
-	Combo:Update(this:GetParent())
+local SML = LibStub:GetLibrary("LibSharedMedia-3.0")
+
+local function createBlocks(pointsFrame)
+	local pointsConfig = pointsFrame.cpConfig
+
+	-- Position bars, the 5 accounts for borders
+	local blockWidth = (pointsFrame:GetWidth() - 4) / 5
+	local texPath = LunaUF.Layout:LoadMedia(SML.MediaType.STATUSBAR, "target")
+	local color = LunaUF.db.profile.colors["COMBOPOINTS"]
+	for id=1, 5 do
+		pointsFrame.blocks[id] = pointsFrame.blocks[id] or pointsFrame:CreateTexture(nil, "OVERLAY")
+		local texture = pointsFrame.blocks[id]
+		texture:SetVertexColor(color.r, color.g, color.b, color.a)
+		texture:SetHorizTile(false)
+		texture:SetHeight(pointsFrame:GetHeight())
+		texture:SetWidth(blockWidth)
+		texture:ClearAllPoints()
+		texture:SetTexture(texPath)
+		
+		if not texture.background and pointsConfig.background then
+			texture.background = pointsFrame:CreateTexture(nil, "BORDER")
+			texture.background:SetAllPoints(texture)
+			texture.background:SetHorizTile(false)
+			texture.background:SetVertexColor(color.r, color.g, color.b, 0.20)
+			texture.background:SetTexture(texPath)
+		end
+
+		if texture.background then
+			texture.background:SetShown(pointsConfig.background)
+		end
+
+		if( pointsConfig.growth == "LEFT" ) then
+			if( id > 1 ) then
+				texture:SetPoint("TOPRIGHT", pointsFrame.blocks[id - 1], "TOPLEFT", -1, 0)
+			else
+				texture:SetPoint("TOPRIGHT", pointsFrame, "TOPRIGHT", 0, 0)
+			end
+		else
+			if( id > 1 ) then
+				texture:SetPoint("TOPLEFT", pointsFrame.blocks[id - 1], "TOPRIGHT", 1, 0)
+			else
+				texture:SetPoint("TOPLEFT", pointsFrame, "TOPLEFT", 0, 0)
+			end
+		end
+	end
 end
 
 function Combo:OnEnable(frame)
-	if (playerclass ~= "ROGUE" and playerclass ~= "DRUID") or frame.unitGroup ~= "target" then return end
-	if not frame.comboPoints then
-		frame.comboPoints = CreateFrame("Frame", nil, frame)
-		frame.comboPoints.blocks = {}
-		for id=1, MAX_COMBO_POINTS do
-			frame.comboPoints.blocks[id] = frame.comboPoints.blocks[id] or frame.comboPoints:CreateTexture(nil, "OVERLAY")
-		end
-	end
-	frame.comboPoints:RegisterEvent("PLAYER_COMBO_POINTS")
-	frame.comboPoints:SetScript("OnEvent", OnEvent)
+	if frame.unitType ~= "target" then return end
+	frame.comboPoints = frame.comboPoints or CreateFrame("Frame", nil, frame)
+	frame.comboPoints.cpConfig = LunaUF.db.profile.units[frame.unitType].comboPoints
+
+	frame.comboPoints.blocks = frame.comboPoints.blocks or {}
+
+	createBlocks(frame.comboPoints)
+
+	frame:RegisterNormalEvent("UNIT_POWER_UPDATE", self, "Update", "player")
+	--frame:RegisterNormalEvent("UNIT_POWER_FREQUENT", self, "Update", "player")
+
+	frame:RegisterUpdateFunc(self, "Update")
 end
 
 function Combo:OnDisable(frame)
-	if frame.comboPoints then
-		frame.comboPoints:UnregisterAllEvents()
-		frame.comboPoints:SetScript("OnEvent", nil)
-	end
+	frame:UnregisterAll(self)
 end
 
 function Combo:Update(frame)
-	local points = GetComboPoints()
-	if points == 0 and UnitExists("target") then
-		if LunaUF.db.profile.units[frame.unitGroup].comboPoints.hide and not frame.comboPoints.hidden then
-			frame.comboPoints.hidden = true
-			LunaUF.Units:PositionWidgets(frame)
-		elseif not LunaUF.db.profile.units[frame.unitGroup].comboPoints.hide and frame.comboPoints.hidden then
-			frame.comboPoints.hidden = nil
-			LunaUF.Units:PositionWidgets(frame)
-		end
-	else
-		if frame.comboPoints.hidden then
-			frame.comboPoints.hidden = false
-			LunaUF.Units:PositionWidgets(frame)
-		end
-	end
-	for id,block in ipairs(frame.comboPoints.blocks) do
-		if id <= points then
+	local points = UnitPower("player", 4)
+
+	LunaUF.Layout:SetBarVisibility(frame, "comboPoints", LunaUF.db.profile.units[frame.unitType].comboPoints.showAlways or (points and points > 0))
+	
+	for id, block in pairs(frame.comboPoints.blocks) do
+		if( id <= points ) then
 			block:Show()
 		else
 			block:Hide()
@@ -51,35 +81,23 @@ function Combo:Update(frame)
 	end
 end
 
-function Combo:FullUpdate(frame)
-	local blockWidth = (frame.comboPoints:GetWidth() - (MAX_COMBO_POINTS-1)) / MAX_COMBO_POINTS
-	for id=1, MAX_COMBO_POINTS do
-		local texture = frame.comboPoints.blocks[id]
-		texture:SetHeight(frame.comboPoints:GetHeight())
-		texture:SetWidth(blockWidth)
-		texture:ClearAllPoints()
-		if( LunaUF.db.profile.units[frame.unitGroup].comboPoints.growth == "LEFT" ) then
-			if( id > 1 ) then
-				texture:SetPoint("TOPRIGHT", frame.comboPoints.blocks[id - 1], "TOPLEFT", -1, 0)
-			else
-				texture:SetPoint("TOPRIGHT", frame.comboPoints, "TOPRIGHT", 0, 0)
-			end
-		else
-			if( id > 1 ) then
-				texture:SetPoint("TOPLEFT", frame.comboPoints.blocks[id - 1], "TOPRIGHT", 1, 0)
-			else
-				texture:SetPoint("TOPLEFT", frame.comboPoints, "TOPLEFT", 0, 0)
-			end
-		end
-	end
-	Combo:Update(frame)
+function Combo:OnLayoutApplied(frame)
+	local pointsFrame = frame.comboPoints
+	if( not pointsFrame ) then return end
+
+	pointsFrame:SetFrameLevel(frame.topFrameLevel + 1)
+
+	if( not frame.visibility.comboPoints ) then return end
+
+	createBlocks(pointsFrame)
 end
 
-function Combo:SetBarTexture(frame,texture)
-	if frame.comboPoints then
-		for _,block in pairs(frame.comboPoints.blocks) do
-			block:SetTexture(texture)
-			block:SetVertexColor(1, 0.80, 0)
-		end
+function Combo:OnLayoutWidgets(frame)
+	local comboPoints = frame.comboPoints
+	if( not frame.visibility.comboPoints or not comboPoints.blocks) then return end
+
+	local height = comboPoints:GetHeight()
+	for _, block in pairs(comboPoints.blocks) do
+		block:SetHeight(height)
 	end
 end

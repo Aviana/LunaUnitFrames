@@ -1,4 +1,5 @@
-local function ruRU() return {
+if( GetLocale() ~= "ruRU" ) then return end
+local L = {
 --	["FONT_LIST"] = {"Aldrich","Bangers","Celestia","DorisPP","Enigmatic","FasterOne","Fitzgerald","Gentium","Iceland","Inconsolata","LiberationSans","Luna","MetalLord","Optimus","TradeWinds","VeraSerif","Yellowjacket"},
 	["DEFAULT_FONT"] = "Celestia",
 	["Loaded. The ride never ends!"] = "Загружен. Поездка никогда не заканчивается!",
@@ -452,6 +453,7 @@ local function ruRU() return {
 	["CHAT_MSG_SPELL_HOSTILEPLAYER_DAMAGE"] = "\".+\" .+ наносит (вам) %d+ ед%. урона.+", -- SPELLLOGCRITOTHERSELF and SPELLLOGCRITSCHOOLOTHERSELF
 	["Shadow Wing Lair"] = "Логово Крыла Тени",
 	["Halls of Strife"] = "Залы Раздора",
-} end
+}
 
-LunaUF.L:RegisterTranslations("ruRU", ruRU)
+local LunaUF = select(2, ...)
+LunaUF.L = setmetatable(L, {__index = LunaUF.L})

@@ -1,115 +1,121 @@
 local ReckStacks = {}
-local L = LunaUF.L
-LunaUF:RegisterModule(ReckStacks, "reckStacks", L["Reckoning Stacks"])
-local _,playerclass = UnitClass("player")
+LunaUF:RegisterModule(ReckStacks, "reckStacks", LunaUF.L["Reckoning Stacks"], true)
+local SML = LibStub:GetLibrary("LibSharedMedia-3.0")
 local currStacks = 0
-local talentRank
-
-local events = {
-	CHAT_MSG_COMBAT_SELF_HITS = L["CHAT_MSG_COMBAT_SELF_HITS"],
-	CHAT_MSG_COMBAT_SELF_MISSES = true,
-	CHAT_MSG_COMBAT_FRIENDLY_DEATH = L["CHAT_MSG_COMBAT_FRIENDLY_DEATH"],
-	
-	CHAT_MSG_COMBAT_CREATURE_VS_SELF_HITS = L["CHAT_MSG_COMBAT_CREATURE_VS_SELF_HITS"],
-	CHAT_MSG_COMBAT_HOSTILEPLAYER_HITS = L["CHAT_MSG_COMBAT_HOSTILEPLAYER_HITS"],
-	
-	CHAT_MSG_SPELL_CREATURE_VS_SELF_DAMAGE = L["CHAT_MSG_SPELL_CREATURE_VS_SELF_DAMAGE"],
-	CHAT_MSG_SPELL_HOSTILEPLAYER_DAMAGE = L["CHAT_MSG_SPELL_HOSTILEPLAYER_DAMAGE"],
-}
-
-
-local function OnEvent()
-	if event == "CHARACTER_POINTS_CHANGED" or event == "PLAYER_ALIVE" then
-		_,_,_,_,talentRank = GetTalentInfo(2,13)
-	elseif (event == "CHAT_MSG_COMBAT_SELF_HITS" and (string.find(arg1,L["CHAT_MSG_COMBAT_SELF_HITS"]) or string.find(arg1,L["CHAT_MSG_COMBAT_SELF_CRITS"]))) or (event == "CHAT_MSG_COMBAT_FRIENDLY_DEATH" and arg1 == events[event]) or event == "CHAT_MSG_COMBAT_SELF_MISSES" then
-		if currStacks > 0 then
-			currStacks = 0
-			ReckStacks:Update(this:GetParent())
-		else
-			return
-		end
-	elseif talentRank == 5 and currStacks < 4 and string.find(arg1, events[event]) then
-		currStacks = currStacks + 1
-		ReckStacks:Update(this:GetParent())
-	end
-end
+local talentRank = 0
 
 function ReckStacks:OnEnable(frame)
-	if (playerclass ~= "PALADIN") or frame.unitGroup ~= "player" then return end
-	if not frame.reckStacks then
-		frame.reckStacks = CreateFrame("Frame", nil, frame)
-		frame.reckStacks.blocks = {}
-		for id=1, 4 do
-			frame.reckStacks.blocks[id] = frame.reckStacks.blocks[id] or frame.reckStacks:CreateTexture(nil, "OVERLAY")
+	if (select(2, UnitClass("player")) ~= "PALADIN") or frame.unitType ~= "player" then return end
+	frame.reckStacks = frame.reckStacks or CreateFrame("Frame", nil, frame)
+	frame.reckStacks.blocks = frame.reckStacks.blocks or {}
+
+	local config = LunaUF.db.profile.units[frame.unitType].reckStacks
+	local texPath = LunaUF.Layout:LoadMedia(SML.MediaType.STATUSBAR, "player")
+	local color = LunaUF.db.profile.colors["COMBOPOINTS"]
+	for id=1, 4 do
+		frame.reckStacks.blocks[id] = frame.reckStacks.blocks[id] or frame.reckStacks:CreateTexture(nil, "OVERLAY")
+		local texture = frame.reckStacks.blocks[id]
+		texture:SetTexture(texPath)
+		texture:SetVertexColor(color.r, color.g, color.b, color.a)
+		texture:SetHorizTile(false)
+		
+		if not texture.background and config.background then
+			texture.background = frame.reckStacks:CreateTexture(nil, "BORDER")
+			texture.background:SetAllPoints(texture)
+			texture.background:SetHorizTile(false)
+			texture.background:SetVertexColor(color.r, color.g, color.b, config.backgroundAlpha)
+			texture.background:SetTexture(texPath)
+		end
+
+		if texture.background then
+			texture.background:SetShown(config.background)
 		end
 	end
-	_,_,_,_,talentRank = GetTalentInfo(2,13)
-	for i in pairs(events) do frame.reckStacks:RegisterEvent(i) end
-	frame.reckStacks:RegisterEvent("CHARACTER_POINTS_CHANGED")
-	frame.reckStacks:RegisterEvent("PLAYER_ALIVE")
-	frame.reckStacks:SetScript("OnEvent", OnEvent)
+	
+
+
+	frame:RegisterNormalEvent("CHARACTER_POINTS_CHANGED", self, "CheckTalents")
+	frame:RegisterNormalEvent("SPELLS_CHANGED", self, "CheckTalents")
+
+	frame:RegisterUpdateFunc(self, "Update")
+	self:CheckTalents(frame)
 end
 
 function ReckStacks:OnDisable(frame)
-	if frame.reckStacks then
-		frame.reckStacks:UnregisterAllEvents()
-		frame.reckStacks:SetScript("OnEvent", nil)
+	frame:UnregisterAll(self)
+end
+
+function ReckStacks:OnLayoutApplied(frame)
+	local reckStacks = frame.reckStacks
+	if not reckStacks then return end
+	if( not frame.visibility.reckStacks ) then return end
+	
+	for id=1, 4 do
+		local texture = reckStacks.blocks[id]
+		texture:ClearAllPoints()
+		if( LunaUF.db.profile.units[frame.unitType].reckStacks.growth == "LEFT" ) then
+			if( id > 1 ) then
+				texture:SetPoint("TOPRIGHT", reckStacks.blocks[id - 1], "TOPLEFT", -1, 0)
+			else
+				texture:SetPoint("TOPRIGHT", reckStacks, "TOPRIGHT", 0, 0)
+			end
+		else
+			if( id > 1 ) then
+				texture:SetPoint("TOPLEFT", reckStacks.blocks[id - 1], "TOPRIGHT", 1, 0)
+			else
+				texture:SetPoint("TOPLEFT", reckStacks, "TOPLEFT", 0, 0)
+			end
+		end
+	end
+end
+
+function ReckStacks:OnLayoutWidgets(frame)
+	local reckStacks = frame.reckStacks
+	if not reckStacks then return end
+
+	local blockWidth = (reckStacks:GetWidth() - 3) / 4
+	for id=1, 4 do
+		local texture = reckStacks.blocks[id]
+		texture:SetHeight(reckStacks:GetHeight())
+		texture:SetWidth(blockWidth)
+	end
+end
+
+function ReckStacks:CheckTalents(frame)
+	
+	-- Crazy Check here :D
+	talentRank = select(5, GetTalentInfo(2,13)) or 0
+	
+	if talentRank == 5 then
+		frame:RegisterNormalEvent("COMBAT_LOG_EVENT_UNFILTERED", self, "OnCombatlog")
+	else
+		frame:UnregisterSingleEvent("COMBAT_LOG_EVENT_UNFILTERED", self)
+	end
+end
+
+function ReckStacks:OnCombatlog(frame, event)
+	local _, type, _, sourceGUID, _, _, _, destGUID = CombatLogGetCurrentEventInfo()
+	if type == "SWING_DAMAGE" and sourceGUID == UnitGUID("player") then
+		if currStacks > 0 then
+			currStacks = 0
+			self:Update(frame)
+		else
+			return
+		end
+	elseif select(18, CombatLogGetCurrentEventInfo()) and destGUID == UnitGUID("player") and currStacks < 4 then
+		currStacks = currStacks + 1
+		self:Update(frame)
 	end
 end
 
 function ReckStacks:Update(frame)
-	if currStacks == 0 then
-		if LunaUF.db.profile.units[frame.unitGroup].reckStacks.hide and not frame.reckStacks.hidden then
-			frame.reckStacks.hidden = true
-			LunaUF.Units:PositionWidgets(frame)
-		elseif not LunaUF.db.profile.units[frame.unitGroup].reckStacks.hide and frame.reckStacks.hidden then
-			frame.reckStacks.hidden = nil
-			LunaUF.Units:PositionWidgets(frame)
-		end
-	else
-		if frame.reckStacks.hidden then
-			frame.reckStacks.hidden = false
-			LunaUF.Units:PositionWidgets(frame)
-		end
-	end
+	LunaUF.Layout:SetBarVisibility(frame, "reckStacks", LunaUF.db.profile.units[frame.unitType].reckStacks.showAlways or currStacks > 0)
+
 	for id,block in ipairs(frame.reckStacks.blocks) do
 		if id <= currStacks then
 			block:Show()
 		else
 			block:Hide()
-		end
-	end
-end
-
-function ReckStacks:FullUpdate(frame)
-	local blockWidth = (frame.reckStacks:GetWidth() - 3) / 4
-	for id=1, 4 do
-		local texture = frame.reckStacks.blocks[id]
-		texture:SetHeight(frame.reckStacks:GetHeight())
-		texture:SetWidth(blockWidth)
-		texture:ClearAllPoints()
-		if( LunaUF.db.profile.units[frame.unitGroup].reckStacks.growth == "LEFT" ) then
-			if( id > 1 ) then
-				texture:SetPoint("TOPRIGHT", frame.reckStacks.blocks[id - 1], "TOPLEFT", -1, 0)
-			else
-				texture:SetPoint("TOPRIGHT", frame.reckStacks, "TOPRIGHT", 0, 0)
-			end
-		else
-			if( id > 1 ) then
-				texture:SetPoint("TOPLEFT", frame.reckStacks.blocks[id - 1], "TOPRIGHT", 1, 0)
-			else
-				texture:SetPoint("TOPLEFT", frame.reckStacks, "TOPLEFT", 0, 0)
-			end
-		end
-	end
-	ReckStacks:Update(frame)
-end
-
-function ReckStacks:SetBarTexture(frame,texture)
-	if frame.reckStacks then
-		for _,block in pairs(frame.reckStacks.blocks) do
-			block:SetTexture(texture)
-			block:SetVertexColor(1, 0.80, 0)
 		end
 	end
 end

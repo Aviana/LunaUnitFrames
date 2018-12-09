@@ -1,4 +1,5 @@
-local function frFR() return {
+if( GetLocale() ~= "frFR" ) then return end
+local L = {
 ["FONT_LIST"] = {"Aldrich","Bangers","Celestia","DorisPP","Enigmatic","FasterOne","Fitzgerald","Gentium","Iceland","Inconsolata","LiberationSans","Luna","MetalLord","Optimus","TradeWinds","VeraSerif","Yellowjacket"},
 ["DEFAULT_FONT"]="Luna",
 ["Loaded. The ride never ends!"] = "Loaded. The ride never ends!",
@@ -454,6 +455,6 @@ local function frFR() return {
 ["Shadow Wing Lair"] = "Repaire de l'Aile de l'ombre",
 ["Halls of Strife"] = "Halls des conflits",
 }
-end
 
-LunaUF.L:RegisterTranslations("frFR", frFR)
+local LunaUF = select(2, ...)
+LunaUF.L = setmetatable(L, {__index = LunaUF.L})

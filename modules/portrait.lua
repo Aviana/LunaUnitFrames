@@ -1,122 +1,92 @@
 local Portrait = {}
 LunaUF:RegisterModule(Portrait, "portrait", LunaUF.L["Portrait"])
 
-local validunits = {
-	["party1"] = true,
-	["party2"] = true,
-	["party3"] = true,
-	["party4"] = true,
-	["partypet1"] = true,
-	["partypet2"] = true,
-	["partypet3"] = true,
-	["partypet4"] = true,
-	["player"] = true,
-	["pet"] = true,
-	["target"] = true,
-}
-for i=1, 40 do
-	validunits["raid"..i] = true
-	validunits["raidpet"..i] = true
+-- If the camera isn't reset OnShow, it'll show the entire character instead of just the head, odd I know
+local function resetCamera(self)
+	self:SetPortraitZoom(1)
 end
 
-local function OnEvent()
-	if (validunits[arg1] and UnitIsUnit(arg1,this:GetParent().unit)) or (event == "PLAYER_TARGET_CHANGED" and this:GetParent().unit == "target") then
-		Portrait:Update(this:GetParent())
-	end
-end
-
-local function resetCamera()
-	this:SetCamera(0)
-end
-
-local function resetGUID()
-	this.unitname = nil
-	this.isPlayer = nil
+local function resetGUID(self)
+	self.guid = nil
 end
 
 function Portrait:OnEnable(frame)
-	local config = LunaUF.db.profile.units[frame.unitGroup]
+	frame:RegisterUnitEvent("UNIT_PORTRAIT_UPDATE", self, "UpdateFunc")
+	frame:RegisterUnitEvent("UNIT_MODEL_CHANGED", self, "Update")
+	
+	frame:RegisterUpdateFunc(self, "UpdateFunc")
+end
+
+function Portrait:OnDisable(frame)
+	frame:UnregisterAll(self)
+end
+
+function Portrait:OnPreLayoutApply(frame, config)
+	if( not frame.visibility.portrait ) then return end
+
 	if( config.portrait.type == "3D" ) then
 		if( not frame.portraitModel ) then
 			frame.portraitModel = CreateFrame("PlayerModel", nil, frame)
 			frame.portraitModel:SetScript("OnShow", resetCamera)
 			frame.portraitModel:SetScript("OnHide", resetGUID)
+			frame.portraitModel.parent = frame
 		end
-
+				
 		frame.portrait = frame.portraitModel
 		frame.portrait:Show()
-		if frame.portraitTexture then
-			frame.portraitTexture:Hide()
-		end
+
+		LunaUF.Layout:ToggleVisibility(frame.portraitTexture, false)
 	else
-		if not frame.portraitTexture then
-			frame.portraitTexture = CreateFrame("Frame", nil, frame)
-			frame.portraitTexture.texture = frame.portraitTexture:CreateTexture(nil, "ARTWORK")
-			frame.portraitTexture.texture:SetAllPoints(frame.portraitTexture)
-		end
+		frame.portraitTexture = frame.portraitTexture or frame:CreateTexture(nil, "ARTWORK")
 		frame.portrait = frame.portraitTexture
 		frame.portrait:Show()
-		
-		if frame.portraitModel then
-			frame.portraitModel:Hide()
-		end
-	end
-	frame.portrait:RegisterEvent("UNIT_PORTRAIT_UPDATE")
-	frame.portrait:RegisterEvent("UNIT_MODEL_CHANGED")
-	frame.portrait:RegisterEvent("PLAYER_TARGET_CHANGED")
-	frame.portrait:SetScript("OnEvent", OnEvent)
-end
 
-function Portrait:OnDisable(frame)
-	if frame.portrait then
-		frame.portrait:UnregisterAllEvents()
-		frame.portrait:SetScript("OnEvent", nil)
-		frame.portrait:Hide()
+		LunaUF.Layout:ToggleVisibility(frame.portraitModel, false)
 	end
 end
 
-function Portrait:FullUpdate(frame)
-	-- Portrait models can't be updated unless the Name changed or else you have the animation jumping around
-	if( LunaUF.db.profile.units[frame.unitGroup].portrait.type == "3D" ) then
-		local unitname = UnitName(frame.unit)
-		local isPlayer = UnitIsPlayer(frame.unit)
-		if( frame.portrait.unitname ~= unitname or frame.portrait.isPlayer ~= isPlayer ) then
+function Portrait:UpdateFunc(frame)
+	-- Portrait models can't be updated unless the GUID changed or else you have the animation jumping around
+	if( LunaUF.db.profile.units[frame.unitType].portrait.type == "3D" ) then
+		local guid = UnitGUID(frame.unit)
+		if( frame.portrait.guid ~= guid ) then
 			self:Update(frame)
 		end
 		
-		frame.portrait.isPlayer = isPlayer
-		frame.portrait.unitname = unitname
+		frame.portrait.guid = guid
 	else
 		self:Update(frame)
 	end
 end
 
-function Portrait:Update(frame)
-	local type = LunaUF.db.profile.units[frame.unitGroup].portrait.type
-	local aspect = frame.portrait:GetHeight()/frame.portrait:GetWidth()
+function Portrait:Update(frame, event)
+	local type = LunaUF.db.profile.units[frame.unitType].portrait.type
 	-- Use class thingy
-	if( type == "class" and UnitIsPlayer(frame.unit) ) then
-		local _,classToken = UnitClass(frame.unit)
+	if( type == "class" ) then
+		local classToken = frame:UnitClassToken()
 		if( classToken ) then
-			frame.portrait.texture:SetTexture("Interface\\Glues\\CharacterCreate\\UI-CharacterCreate-Classes")
-			frame.portrait.texture:SetTexCoord(unpack(LunaUF.constants.CLASS_ICON_TCOORDS[classToken]))
+			frame.portrait:SetTexture("Interface\\Glues\\CharacterCreate\\UI-CharacterCreate-Classes")
+			frame.portrait:SetTexCoord(CLASS_ICON_TCOORDS[classToken][1], CLASS_ICON_TCOORDS[classToken][2], CLASS_ICON_TCOORDS[classToken][3], CLASS_ICON_TCOORDS[classToken][4])
 		else
-			frame.portrait.texture:SetTexture("")
+			frame.portrait:SetTexture("")
 		end
 	-- Use 2D character image
-	elseif( type == "2D" or type == "class" ) then
-		SetPortraitTexture(frame.portrait.texture, frame.unit)
---		frame.portrait.texture:SetTexCoord(0.10, 0.90, 0.10, 0.90)
-		frame.portrait.texture:SetTexCoord(0.1, 0.9, .1+(0.4-0.4*aspect), .90-(0.4-0.4*aspect))
-	-- Using 3D portrait, but the players not in range so swap to 2D
+	elseif( type == "2D" ) then
+		frame.portrait:SetTexCoord(0.10, 0.90, 0.10, 0.90)
+		SetPortraitTexture(frame.portrait, frame.unit)
+	-- Using 3D portrait, but the players not in range so swap to question mark
 	elseif( not UnitIsVisible(frame.unit) or not UnitIsConnected(frame.unit) ) then
-		frame.portrait:SetModelScale(4.25)
-		frame.portrait:SetPosition(0, 0, -1.0)
-		frame.portrait:SetModel("Interface\\Buttons\\talktomequestionmark.mdx")
+		frame.portrait:ClearModel()
+		frame.portrait:SetModel("Interface\\Buttons\\talktomequestionmark.m2")
+		frame.portrait:SetModelScale(2)
+		frame.portrait:SetPosition(0, 0, -0.08)
+
 	-- Use animated 3D portrait
 	else
+		frame.portrait:ClearModel()
 		frame.portrait:SetUnit(frame.unit)
-		frame.portrait:SetCamera(0)
+		frame.portrait:SetPortraitZoom(1)
+		frame.portrait:SetPosition(0, 0, 0)
 		frame.portrait:Show()
 	end
 end

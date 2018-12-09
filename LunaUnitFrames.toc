@@ -1,83 +1,58 @@
-## Interface: 11200
+## Interface: 70300
 ## Title: Luna Unit Frames
-## Title-zhCN: LunaUF |cffffffff露娜框架|r |cff7fff7f-Ace2-|r
-## Title-deDE: Luna Unit Frames
-## Notes: Lightweight Unit Frames in a modern look.
-## Notes-ruRU: Легкие панели в современном стиле.
-## Notes-zhCN: 轻量级的现代风框架
-## Notes-deDE: Einfache UnitFrames mit modernem Aussehen.
-## Author: Avi
-## Author-zhCN: 原作者Avi，中文协作者zerosnake0
-## Author-deDE: Avi
-##
-## Dependencies:
-## SavedVariables: LunaDB, LunaBuffDB
-## OptionalDeps: Ace2, RosterLib, BanzaiLib, HealComm, DruidManaLib, MobHealth, Clique, FuBar, FuBarPlugin-2.0, Babble-2.2, CompostLib, SurfaceLib, Surfaces, DewdropLib, TabletLib, Opium
-## X-Category: UnitFrame
+## Notes: 
+## Author: Aviana
+## Version: 1.0
+## SavedVariables: LunaUFDB
+## OptionalDeps: Ace3, LibSharedMedia-3.0, AceGUI-3.0-SharedMediaWidgets, LibSpellRange-1.0, Clique
 
+#@no-lib-strip@
+libs\LibStub\LibStub.lua
+libs\CallbackHandler-1.0\CallbackHandler-1.0\CallbackHandler-1.0.xml
+libs\LibSharedMedia-3.0\lib.xml
+libs\AceDB-3.0\AceDB-3.0.xml
+libs\AceDBOptions-3.0\AceDBOptions-3.0.xml
+libs\AceGUI-3.0\AceGUI-3.0.xml
+libs\AceGUI-3.0-SharedMediaWidgets\widget.xml
+libs\AceConfig-3.0\AceConfig-3.0.xml
+libs\LibSpellRange-1.0\lib.xml
+#@end-no-lib-strip@
 
-libs\AceLibrary\AceLibrary.lua
-
-libs\AceOO-2.0\AceOO-2.0.lua
-libs\AceDebug-2.0\AceDebug-2.0.lua
-libs\AceAddon-2.0\AceAddon-2.0.lua
-libs\AceConsole-2.0\AceConsole-2.0.lua
-libs\AceHook-2.1\AceHook-2.1.lua
-libs\AceDB-2.0\AceDB-2.0.lua
-libs\AceEvent-2.0\AceEvent-2.0.lua
-libs\AceLocale-2.2\AceLocale-2.2.lua
-
-libs\Babble-Spell-2.2\Babble-Spell-2.2.lua
-libs\Babble-Zone-2.2\Babble-Zone-2.2.lua
-libs\Dewdrop-2.0\Dewdrop-2.0.lua
-libs\Tablet-2.0\Tablet-2.0.lua
-libs\FuBarPlugin-2.0\FuBarPlugin-2.0.lua
-libs\RosterLib-2.0\RosterLib-2.0.lua
-libs\Banzai-1.0\Banzai-1.0.lua
-libs\FiveSecLib-1.0\FiveSecLib-1.0.lua
-libs\Deformat-2.0\Deformat-2.0.lua
-libs\Gratuity-2.0\Gratuity-2.0.lua
-libs\Compost-2.0\Compost-2.0.lua
-libs\ItemBonusLib-1.0\Locales\enUS.lua
-libs\ItemBonusLib-1.0\Locales\frFR.lua
-libs\ItemBonusLib-1.0\Locales\deDE.lua
-libs\ItemBonusLib-1.0\Locales\ruRU.lua
-libs\ItemBonusLib-1.0\ItemBonusLib-1.0.lua
-libs\HealComm-1.0\HealComm-1.0.lua
-libs\DruidManaLib-1.0\DruidManaLib-1.0.lua
-libs\CastLib-1.0\CastLib-1.0.lua
+locales\enUS.lua
+locales\deDE.lua
+locales\esES.lua
+locales\esMX.lua
+locales\frFR.lua
+locales\koKR.lua
+locales\ruRU.lua
+locales\zhCN.lua
+locales\zhTW.lua
 
 LunaUnitFrames.lua
 
-locales\enUS.lua
-locales\zhCN.lua
-locales\deDE.lua
-locales\frFR.lua
-locales\ruRU.lua
-
-
 modules\defaults.lua
-modules\cooldown.lua
 modules\units.lua
-modules\health.lua
+modules\layout.lua
+modules\movers.lua
+modules\tags.lua
+modules\reckstacks.lua
+modules\totems.lua
+modules\squares.lua
+modules\range.lua
 modules\power.lua
 modules\portrait.lua
-modules\auras.lua
-modules\tags.lua
-modules\range.lua
-modules\incheal.lua
-modules\combopoints.lua
 modules\indicators.lua
-modules\cast.lua
-modules\combattext.lua
-modules\xp.lua
-modules\totems.lua
-modules\druid.lua
+modules\incheal.lua
 modules\highlight.lua
+modules\health.lua
 modules\fader.lua
-modules\squares.lua
-modules\reckstacks.lua
-modules\emptyBar.lua
+modules\emptybar.lua
+modules\druid.lua
+modules\combopoints.lua
+modules\combattext.lua
+modules\cast.lua
 modules\borders.lua
+modules\auras.lua
+modules\xp.lua
 
 modules\options.lua
