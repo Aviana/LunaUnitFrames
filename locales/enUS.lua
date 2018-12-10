@@ -98,7 +98,25 @@ local L = {
 ["Anchor To"] = "Anchor To",
 ["Anchor to another frame."] = "Anchor to another frame.",
 ["None"] = "None",
-["Not a valid number."] = "Not a valid number."
+["Not a valid number."] = "Not a valid number.",
+["Enable or disable the bar."] = "Enable or disable the bar.",
+["Enable background"] = "Enable background",
+["Enable or disable the background."] = "Enable or disable the background.",
+["Background alpha"] = "Background alpha",
+["Set the background alpha."] = "Set the background alpha.",
+["Color by type"] = "Color by type",
+["Color by reaction"] = "Color by reaction",
+["Set the height."] = "Set the height.",
+["Order"] = "Order",
+["Set the order priority."] = "Set the order priority.",
+["Static"] = "Static",
+["Class"] = "Class",
+["Health percent"] = "Health percent",
+["Never (Disabled)"] = "Never (Disabled)",
+["Players only"] = "Players only",
+["NPCs only"] = "NPCs only",
+["Both"] = "Both",
+["Power Type"] = "Power Type",
 }
 
 LunaUF.L = L
