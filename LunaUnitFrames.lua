@@ -256,7 +256,7 @@ function LunaUF:Mouseover(action)
 				if not UnitCanAssist("player", "target") and not func then
 					self:CastSpellByName_IgnoreSelfCast(action)
 					SpellTargetUnit(unit)
-				elseif unit == "target" then
+				elseif UnitIsUnit(unit, "target") then
 					self:CastSpellByName_IgnoreSelfCast(func or action)
 				elseif string.find(unit, "target.+") or func then
 					self.Units.pauseUpdates = true
