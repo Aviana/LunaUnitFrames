@@ -810,7 +810,7 @@ function Units:LoadGroupHeader(type)
 		
 		if( type == "raid" ) then
 			for id, monitor in pairs(stateMonitor.raids) do
-				monitor:SetAttribute("hideSemiRaid", ShadowUF.db.profile.units.raid.hideSemiRaid)
+				monitor:SetAttribute("hideSemiRaid", LunaUF.db.profile.units.raid.hideSemiRaid)
 				monitor:SetAttribute("raidDisabled", id >= 0 and true or nil)
 			end
 		end
@@ -941,7 +941,7 @@ function Units:ProfileChanged()
 	for frame in pairs(frameList) do
 		if( frame.unit and LunaUF.db.profile.units[frame.unitType].enabled ) then
 			-- Force all enabled modules to disable
-			for key, module in pairs(ShadowUF.modules) do
+			for key, module in pairs(LunaUF.modules) do
 				if( frame[key] and frame.visibility[key] ) then
 					frame.visibility[key] = nil
 					module:OnDisable(frame)

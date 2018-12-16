@@ -198,15 +198,18 @@ function LunaUF:CreateConfig()
 		frame:GetScript("OnDragStop")(frame)
 	end
 
+	local moduleBlacklist = {
+		["range"] = {
+			["player"] = true,
+		},
+	}
+
 	local moduleOptions = {
 		["healthBar"] = {
 			health_header = {
 				name = L["Health bar"],
 				type = "header",
 				order = 3,
-				arg = "healthBar",
-				get = get,
-				set = set,
 			},
 			health_enabled = {
 				name = L["Enable"],
@@ -214,6 +217,7 @@ function LunaUF:CreateConfig()
 				type = "toggle",
 				order = 3.1,
 				arg = "healthBar",
+				set = function(info, value) set(info, value) LunaUF.Units:ProfileChanged() end,
 			},
 			health_background = {
 				name = L["Enable background"],
@@ -282,6 +286,7 @@ function LunaUF:CreateConfig()
 				type = "toggle",
 				order = 4.1,
 				arg = "powerBar",
+				set = function(info, value) set(info, value) LunaUF.Units:ProfileChanged() end,
 			},
 			power_background = {
 				name = L["Enable background"],
@@ -329,6 +334,81 @@ function LunaUF:CreateConfig()
 				arg = "powerBar",
 			},
 		},
+		["emptyBar"] = {
+			empty_header = {
+				name = L["Empty bar"],
+				type = "header",
+				order = 5,
+			},
+			empty_enabled = {
+				name = L["Enable"],
+				desc = L["Enable or disable the bar."],
+				type = "toggle",
+				order = 5.1,
+				arg = "emptyBar",
+				set = function(info, value) set(info, value) LunaUF.Units:ProfileChanged() end,
+			},
+			empty_Alpha = {
+				name = L["Alpha"],
+				desc = L["Set the alpha."],
+				type = "range",
+				order = 5.2,
+				min = 0.01,
+				max = 1,
+				step = 0.01,
+				arg = "emptyBar",
+			},
+			empty_reactionType = {
+				name = L["Color by reaction"],
+				--desc = L["Color by reaction"],
+				type = "select",
+				order = 5.3,
+				values = {["none"] = L["Never (Disabled)"], ["player"] = L["Players only"], ["npc"] = L["NPCs only"], ["both"] = L["Both"]},
+				arg = "emptyBar",
+			},
+			empty_class = {
+				name = L["Class Colors"],
+				desc = L["Color by class."],
+				type = "toggle",
+				order = 5.4,
+				arg = "emptyBar",
+			},
+			empty_height = {
+				name = L["Height"],
+				desc = L["Set the height."],
+				type = "range",
+				order = 5.5,
+				min = 0,
+				max = 10,
+				step = 0.1,
+				arg = "emptyBar",
+			},
+			empty_order = {
+				name = L["Order"],
+				desc = L["Set the order priority."],
+				type = "range",
+				order = 5.6,
+				min = 0,
+				max = 100,
+				step = 5,
+				arg = "emptyBar",
+			},
+		},
+		["range"] = {
+			range_header = {
+				name = L["Range"],
+				type = "header",
+				order = 6,
+			},
+			range_enabled = {
+				name = L["Enable"],
+				desc = L["Enable or disable range checking."],
+				type = "toggle",
+				order = 6.1,
+				arg = "range",
+				set = function(info, value) set(info, value) LunaUF.Units:ProfileChanged() end,
+			},
+		},
 	}
 
 	local aceoptions = {
@@ -364,12 +444,37 @@ function LunaUF:CreateConfig()
 						order = 3,
 					},
 					statusbar = {
-						order = 4,
+						order = 3.1,
 						type = "select",
 						name = L["Bar texture"],
 						dialogControl = "LSM30_Statusbar",
 						values = getMediaData,
 						set = function(info, value) setGeneral(info, value) LunaUF.Layout:Reload() end,
+					},
+					headerRange = {
+						name = L["Range"],
+						type = "header",
+						order = 4,
+					},
+					range = {
+						name = L["Distance"],
+						desc = L["Distance to measure"],
+						type = "select",
+						order = 4.1,
+						values = {[10] = L["10y"], [30] = L["30y"], [40] = L["Spell based"], [100] = L["Is Visible"], },
+						get = function(info) return LunaUF.db.profile.range.dist end,
+						set = function(info, value) LunaUF.db.profile.range.dist = value end,
+					},
+					alpha = {
+						name = L["Alpha"],
+						desc = L["Set the alpha."],
+						type = "range",
+						order = 4.2,
+						min = 0.01,
+						max = 1,
+						step = 0.01,
+						get = function(info) return LunaUF.db.profile.range.alpha end,
+						set = function(info, value) LunaUF.db.profile.range.alpha = value end,
 					},
 				},
 			},
@@ -2236,7 +2341,9 @@ function LunaUF:CreateConfig()
 	for mod, tbl in pairs(moduleOptions) do
 		for item, itemtbl in pairs(tbl) do
 			for unit in pairs(aceoptions.args.units.args) do
-				aceoptions.args.units.args[unit].args[item] = itemtbl
+				if not (moduleBlacklist[mod] and moduleBlacklist[mod][unit]) then
+					aceoptions.args.units.args[unit].args[item] = itemtbl
+				end
 			end
 		end
 	end

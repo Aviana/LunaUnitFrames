@@ -19,7 +19,7 @@ function Empty:OnLayoutApplied(frame)
 		local color = frame.emptyBar.background.overrideColor or fallbackColor
 		frame.emptyBar.background:SetVertexColor(color.r, color.g, color.b, LunaUF.db.profile.units[frame.unitType].emptyBar.alpha)
 
-		if( LunaUF.db.profile.units[frame.unitType].emptyBar.reactionType or LunaUF.db.profile.units[frame.unitType].emptyBar.class ) then
+		if( LunaUF.db.profile.units[frame.unitType].emptyBar.reactionType ~= "none" or LunaUF.db.profile.units[frame.unitType].emptyBar.class ) then
 			frame:RegisterUnitEvent("UNIT_FACTION", self, "UpdateColor")
 			frame:RegisterUpdateFunc(self, "UpdateColor")
 		else

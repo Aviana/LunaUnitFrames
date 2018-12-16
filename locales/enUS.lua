@@ -117,6 +117,17 @@ local L = {
 ["NPCs only"] = "NPCs only",
 ["Both"] = "Both",
 ["Power Type"] = "Power Type",
+["Alpha"] = "Alpha",
+["Set the alpha."] = "Set the alpha.",
+["Color by class."] = "Color by class.",
+["Range"] = "Range",
+["Distance"] = "Distance",
+["Distance to measure"] = "Distance to measure",
+["10y"] = "10y",
+["30y"] = "30y",
+["Spell based"] = "Spell based",
+["Is Visible"] = "Is Visible",
+["Enable or disable range checking."] = "Enable or disable range checking.",
 }
 
 LunaUF.L = L

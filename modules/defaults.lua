@@ -7,6 +7,7 @@ function LunaUF:LoadDefaults()
 			tooltipCombat = false,
 			hidden = {cast = true, buffs = false, party = true, raid = true, player = true, pet = true, target = true},
 			statusbar = "Minimalist",
+			range = { dist = 40, alpha = 0.4},
 		},
 	}
 
@@ -59,6 +60,7 @@ function LunaUF:LoadDefaults()
 			portrait = {enabled = true, type = "3D", alignment = "LEFT", width = 0.22, height = 0.50, order = 15, fullBefore = 0, fullAfter = 50},
 			castBar = { enabled = true, background = true, backgroundAlpha = 0.2, height = 0.60, order = 40, icon = "HIDE", autoHide = true, order = 60},
 			xpBar = { enabled = true, height = 0.4, order = 80, background = false, backgroundAlpha = 0.2, Alpha = 1 },
+			emptyBar = { enabled = false, height = 0.4, order = 50, reactionType="npc", class = true, alpha = 0.2},
 			auras = {
 				buffs = false,
 				debuffs = false,
@@ -137,6 +139,8 @@ function LunaUF:LoadDefaults()
 			portrait = {enabled = true, type = "3D", alignment = "LEFT", width = 0.22, height = 0.50, order = 15, fullBefore = 0, fullAfter = 50},
 			castBar = {background = true, backgroundAlpha = 0.2, height = 0.60, order = 40, icon = "HIDE", autoHide = true, order = 60},
 			xpBar = { enabled = true, height = 0.4, order = 80, background = true, backgroundAlpha = 0.2 },
+			emptyBar = { enabled = false, height = 0.4, order = 50, reactionType="npc", class = true, alpha = 0.2},
+			range = { enabled = false },
 			auras = {
 				buffs = false,
 				debuffs = false,
@@ -197,6 +201,8 @@ function LunaUF:LoadDefaults()
 			healthBar = { enabled = true, background = true, backgroundAlpha = 0.2, colorType = "class", reactionType="npc", height = 1.20, order = 10},
 			portrait = { enabled = false, type = "3D", alignment = "LEFT", width = 0.22, height = 0.50, order = 15, fullBefore = 0, fullAfter = 50},
 			powerBar = { enabled = true, background = true, backgroundAlpha = 0.2, height = 1.0, order = 20, colorType = "type" },
+			emptyBar = { enabled = false, height = 0.4, order = 50, reactionType="npc", class = true, alpha = 0.2},
+			range = { enabled = false },
 			scale = 1,
 			width = 100,
 			height = 30,
@@ -210,7 +216,9 @@ function LunaUF:LoadDefaults()
 			portrait = { enabled = true, type = "3D", alignment = "RIGHT", width = 0.22, height = 0.50, order = 15, fullBefore = 0, fullAfter = 50},
 			powerBar = { enabled = true, background = true, backgroundAlpha = 0.2, height = 1.0, order = 20, colorType = "type" },
 			castBar = { enabled = true, background = true, backgroundAlpha = 0.2, height = 0.60, order = 40, icon = "HIDE", autoHide = true, order = 60, name = {enabled = true, size = 0, anchorTo = "$parent", rank = true, anchorPoint = "CLI", x = 1, y = 0}, time = {enabled = true, size = 0, anchorTo = "$parent", anchorPoint = "CRI", x = -1, y = 0}},
+			emptyBar = { enabled = false, height = 0.4, order = 50, reactionType="npc", class = true, alpha = 0.2},
 			comboPoints = {enabled = true, order = 70, growth = "RIGHT", height = 0.40},
+			range = { enabled = false },
 			auras = {
 				buffs = true,
 				debuffs = true,
@@ -286,6 +294,8 @@ function LunaUF:LoadDefaults()
 			healthBar = { enabled = true, background = true, backgroundAlpha = 0.2, colorType = "class", reactionType="npc", height = 1.20, order = 10},
 			portrait = { enabled = false, type = "3D", alignment = "LEFT", width = 0.22, height = 0.50, order = 15, fullBefore = 0, fullAfter = 50},
 			powerBar = { enabled = true, background = true, backgroundAlpha = 0.2, height = 1.0, order = 20, colorType = "type" },
+			emptyBar = { enabled = false, height = 0.4, order = 50, reactionType="npc", class = true, alpha = 0.2},
+			range = { enabled = false },
 			tags = {
 				["healthBar"] = {
 					size = 10,
@@ -330,6 +340,8 @@ function LunaUF:LoadDefaults()
 			healthBar = { enabled = true, background = true, backgroundAlpha = 0.2, colorType = "class", reactionType="npc", height = 1.20, order = 10},
 			portrait = { enabled = false, type = "3D", alignment = "LEFT", width = 0.22, height = 0.50, order = 15, fullBefore = 0, fullAfter = 50},
 			powerBar = { enabled = true, background = true, backgroundAlpha = 0.2, height = 1.0, order = 20, colorType = "type" },
+			emptyBar = { enabled = false, height = 0.4, order = 50, reactionType="npc", class = true, alpha = 0.2},
+			range = { enabled = false },
 			tags = {
 				["healthBar"] = {
 					size = 10,
@@ -374,7 +386,9 @@ function LunaUF:LoadDefaults()
 			healthBar = { enabled = true, background = true, backgroundAlpha = 0.2, colorType = "class", reactionType="npc", height = 1.20, order = 10},
 			portrait = { enabled = true, type = "3D", alignment = "LEFT", width = 0.22, height = 0.50, order = 15, fullBefore = 0, fullAfter = 50},
 			powerBar = { enabled = true, background = true, backgroundAlpha = 0.2, height = 1.0, order = 20, colorType = "type" },
+			emptyBar = { enabled = false, height = 0.4, order = 50, reactionType="npc", class = true, alpha = 0.2},
 			incHeal = {enabled = true, cap = 1.3, alpha = 0.8},
+			range = { enabled = false },
 			auras = {
 				buffs = true,
 				debuffs = true,
@@ -441,6 +455,8 @@ function LunaUF:LoadDefaults()
 			healthBar = { enabled = true, background = true, backgroundAlpha = 0.2, colorType = "class", reactionType="npc", height = 1.20, order = 10},
 			portrait = {enabled = false, type = "3D", alignment = "LEFT", width = 0.22, height = 0.50, order = 15, fullBefore = 0, fullAfter = 50},
 			powerBar = { enabled = false, background = true, backgroundAlpha = 0.2, height = 1.0, order = 20, colorType = "type" },
+			emptyBar = { enabled = false, height = 0.4, order = 50, reactionType="npc", class = true, alpha = 0.2},
+			range = { enabled = false },
 			tags = {
 				["healthBar"] = {
 					size = 10,
@@ -475,6 +491,8 @@ function LunaUF:LoadDefaults()
 			healthBar = { enabled = true, background = true, backgroundAlpha = 0.2, colorType = "class", reactionType="npc", height = 1.20, order = 10},
 			portrait = {enabled = false, type = "3D", alignment = "LEFT", width = 0.22, height = 0.50, order = 15, fullBefore = 0, fullAfter = 50},
 			powerBar = { enabled = false, background = true, backgroundAlpha = 0.2, height = 1.0, order = 20, colorType = "type" },
+			emptyBar = { enabled = false, height = 0.4, order = 50, reactionType="npc", class = true, alpha = 0.2},
+			range = { enabled = false },
 			tags = {
 				["healthBar"] = {
 					size = 10,
@@ -511,7 +529,9 @@ function LunaUF:LoadDefaults()
 			healthBar = { enabled = true, background = true, backgroundAlpha = 0.2, colorType = "class", reactionType="npc", height = 1.20, order = 10},
 			portrait = {enabled = false, type = "3D", alignment = "LEFT", width = 0.22, height = 0.50, order = 15, fullBefore = 0, fullAfter = 50},
 			powerBar = { enabled = true, background = true, backgroundAlpha = 0.2, height = 1.0, order = 20, colorType = "type" },
+			emptyBar = { enabled = false, height = 0.4, order = 50, reactionType="npc", class = true, alpha = 0.2},
 			incHeal = {enabled = true, cap = 1, alpha = 0.8},
+			range = { enabled = false },
 			tags = {
 				["healthBar"] = {
 					size = 10,
@@ -582,6 +602,8 @@ function LunaUF:LoadDefaults()
 			healthBar = { enabled = true, background = true, backgroundAlpha = 0.2, colorType = "class", reactionType="npc", height = 1.20, order = 10},
 			portrait = {enabled = false, type = "3D", alignment = "LEFT", width = 0.22, height = 0.50, order = 15, fullBefore = 0, fullAfter = 50},
 			powerBar = { enabled = true, background = true, backgroundAlpha = 0.2, height = 1.0, order = 20, colorType = "type" },
+			emptyBar = { enabled = false, height = 0.4, order = 50, reactionType="npc", class = true, alpha = 0.2},
+			range = { enabled = false },
 			tags = {
 				["healthBar"] = {
 					size = 10,
@@ -631,6 +653,8 @@ function LunaUF:LoadDefaults()
 			healthBar = { enabled = true, background = true, backgroundAlpha = 0.2, colorType = "class", reactionType="npc", height = 1.20, order = 10},
 			portrait = {enabled = false, type = "3D", alignment = "LEFT", width = 0.22, height = 0.50, order = 15, fullBefore = 0, fullAfter = 50},
 			powerBar = { enabled = false, background = true, backgroundAlpha = 0.2, height = 1.0, order = 20, colorType = "type" },
+			emptyBar = { enabled = false, height = 0.4, order = 50, reactionType="npc", class = true, alpha = 0.2},
+			range = { enabled = false },
 			scale = 1,
 			width = 100,
 			height = 30,
@@ -649,6 +673,8 @@ function LunaUF:LoadDefaults()
 			healthBar = { enabled = true, background = true, backgroundAlpha = 0.2, colorType = "class", reactionType="npc", height = 1.20, order = 10},
 			portrait = {enabled = false, type = "3D", alignment = "LEFT", width = 0.22, height = 0.50, order = 15, fullBefore = 0, fullAfter = 50},
 			powerBar = { enabled = false, background = true, backgroundAlpha = 0.2, height = 1.0, order = 20, colorType = "type" },
+			emptyBar = { enabled = false, height = 0.4, order = 50, reactionType="npc", class = true, alpha = 0.2},
+			range = { enabled = false },
 			scale = 1,
 			width = 100,
 			height = 30,
@@ -667,6 +693,8 @@ function LunaUF:LoadDefaults()
 			healthBar = { enabled = true, background = true, backgroundAlpha = 0.2, colorType = "class", reactionType="npc", height = 1.20, order = 10},
 			portrait = {enabled = false, type = "3D", alignment = "LEFT", width = 0.22, height = 0.50, order = 15, fullBefore = 0, fullAfter = 50},
 			powerBar = { enabled = false, background = true, backgroundAlpha = 0.2, height = 1.0, order = 20, colorType = "type" },
+			emptyBar = { enabled = false, height = 0.4, order = 50, reactionType="npc", class = true, alpha = 0.2},
+			range = { enabled = false },
 			scale = 1,
 			width = 100,
 			height = 30,
@@ -685,6 +713,8 @@ function LunaUF:LoadDefaults()
 			healthBar = { enabled = true, background = true, backgroundAlpha = 0.2, colorType = "class", reactionType="npc", height = 1.20, order = 10},
 			portrait = {enabled = false, type = "3D", alignment = "LEFT", width = 0.22, height = 0.50, order = 15, fullBefore = 0, fullAfter = 50},
 			powerBar = { enabled = false, background = true, backgroundAlpha = 0.2, height = 1.0, order = 20, colorType = "type" },
+			emptyBar = { enabled = false, height = 0.4, order = 50, reactionType="npc", class = true, alpha = 0.2},
+			range = { enabled = false },
 			scale = 1,
 			width = 100,
 			height = 30,
