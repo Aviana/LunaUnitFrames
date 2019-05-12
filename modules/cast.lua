@@ -171,6 +171,8 @@ function Cast:OnLayoutApplied(frame, config)
 	
 	if( config.castBar.autoHide and not UnitCastingInfo(frame.unit) and not UnitChannelInfo(frame.unit) ) then
 		LunaUF.Layout:SetBarVisibility(frame, "castBar", false)
+	else
+		LunaUF.Layout:SetBarVisibility(frame, "castBar", true)
 	end
 end
 

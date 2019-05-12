@@ -1,5 +1,4 @@
 local Power = {}
---local powerMap = LunaUF.Tags.powerMap
 LunaUF:RegisterModule(Power, "powerBar", LunaUF.L["Power bar"], true)
 
 function Power:OnEnable(frame)

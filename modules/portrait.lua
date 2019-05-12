@@ -24,6 +24,12 @@ end
 function Portrait:OnPreLayoutApply(frame, config)
 	if( not frame.visibility.portrait ) then return end
 
+	if config.portrait.alignment == "CENTER" then
+		config.portrait.isBar = true
+	else
+		config.portrait.isBar = false
+	end
+
 	if( config.portrait.type == "3D" ) then
 		if( not frame.portraitModel ) then
 			frame.portraitModel = CreateFrame("PlayerModel", nil, frame)
@@ -72,7 +78,18 @@ function Portrait:Update(frame, event)
 		end
 	-- Use 2D character image
 	elseif( type == "2D" ) then
-		frame.portrait:SetTexCoord(0.10, 0.90, 0.10, 0.90)
+		local height = frame.portrait:GetHeight()
+		local width = frame.portrait:GetWidth()
+		local cutoff
+		if height < width then
+			cutoff = ((width - height) / 2) / width * 0.9
+			frame.portrait:SetTexCoord(0.1, 0.9, 0.1 + cutoff, 0.9 - cutoff)
+		elseif height > width then
+			cutoff = ((height - width) / 2) / height * 0.9
+			frame.portrait:SetTexCoord(0.1 + cutoff, 0.9 - cutoff, 0.1, 0.9)
+		else
+			frame.portrait:SetTexCoord(0.10, 0.90, 0.10, 0.90)
+		end
 		SetPortraitTexture(frame.portrait, frame.unit)
 	-- Using 3D portrait, but the players not in range so swap to question mark
 	elseif( not UnitIsVisible(frame.unit) or not UnitIsConnected(frame.unit) ) then

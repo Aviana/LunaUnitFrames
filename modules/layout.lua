@@ -82,25 +82,24 @@ function Layout:ToggleVisibility(frame, visible)
 end	
 
 function Layout:SetBarVisibility(frame, key, status)
-
 	if( frame.secureLocked ) then return end
 
 	-- Show the bar if it wasn't already
-	if( status and not frame[key]:IsVisible() ) then
-		--LunaUF.Tags:FastRegister(frame, frame[key])
-
-		frame[key].visibilityManaged = true
-		frame[key]:Show()
+	if( status ) then
 		if frame.fontstrings[key] then
 			for _, fstring in pairs(frame.fontstrings[key]) do
 				fstring:Show()
 			end
 		end
-		LunaUF.Layout:PositionWidgets(frame, LunaUF.db.profile.units[frame.unitType])
+		if ( not frame[key]:IsVisible() ) then
+			frame[key].visibilityManaged = true
+			frame[key]:Show()
+
+			LunaUF.Layout:PositionWidgets(frame, LunaUF.db.profile.units[frame.unitType])
+		end
 
 	-- Hide the bar if it wasn't already
 	elseif( not status and frame[key]:IsVisible() ) then
-		--LunaUF.Tags:FastUnregister(frame, frame[key])
 
 		frame[key].visibilityManaged = nil
 		frame[key]:Hide()
@@ -120,7 +119,7 @@ function Layout:Reload(unit)
 	-- Now update them
 	for frame in pairs(LunaUF.Units.frameList) do
 		if( frame.unit and ( not unit or frame.unitType == unit ) and not frame.isHeaderFrame ) then
-			--frame:SetVisibility()
+			frame:CheckModules()
 			self:Load(frame)
 			frame:FullUpdate()
 		end

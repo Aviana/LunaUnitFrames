@@ -58,9 +58,14 @@ function LunaUF:LoadDefaults()
 			powerBar = { enabled = true, background = true, backgroundAlpha = 0.2, height = 1.0, order = 20, colorType = "type" },
 			reckStacks = { enabled = true, growth = "RIGHT", order = 70, height = 0.40, background = true, backgroundAlpha = 0.2 },
 			portrait = {enabled = true, type = "3D", alignment = "LEFT", width = 0.22, height = 0.50, order = 15, fullBefore = 0, fullAfter = 50},
-			castBar = { enabled = true, background = true, backgroundAlpha = 0.2, height = 0.60, order = 40, icon = "HIDE", autoHide = true, order = 60},
+			castBar = { enabled = true, background = true, backgroundAlpha = 0.2, height = 0.60, icon = "HIDE", autoHide = true, order = 60},
 			xpBar = { enabled = true, height = 0.4, order = 80, background = false, backgroundAlpha = 0.2, Alpha = 1 },
 			emptyBar = { enabled = false, height = 0.4, order = 50, reactionType="npc", class = true, alpha = 0.2},
+			druidBar = {enabled = false, order = 70, height = 0.40, background = true, backgroundAlpha = 0.2 },
+			highlight = { enabled = true, debuff = false },
+			borders = { enabled = true },
+			fader = {enabled = false, combatAlpha = 1, inactiveAlpha = 0.2, speedyFade = false},
+			combatText = {enabled = false, size = 15, font = "Myriad Condensed Web"},
 			auras = {
 				buffs = false,
 				debuffs = false,
@@ -89,14 +94,14 @@ function LunaUF:LoadDefaults()
 						size = 100,
 					},
 					["right"] = {
-						tagline = "[smarthealth]",
+						tagline = "[ssmarthealth]",
 						size = 100,
 					},
 				},
 				["powerBar"] = {
 					size = 10,
 					["left"] = {
-						tagline = "[level]",
+						tagline = "[levelcolor][level][shortclassification] [classcolor][smartclass]",
 						size = 100,
 					},
 					["center"] = {
@@ -104,7 +109,7 @@ function LunaUF:LoadDefaults()
 						size = 100,
 					},
 					["right"] = {
-						tagline = "[pp]",
+						tagline = "[pp]/[maxpp]",
 						size = 100,
 					},
 				},
@@ -123,6 +128,21 @@ function LunaUF:LoadDefaults()
 						size = 100,
 					},
 				},
+				["emptyBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
+						size = 100,
+					},
+				},
 			},
 			incHeal = { enabled = true, cap = 1.3, alpha = 0.8 },
 			scale = 1,
@@ -137,10 +157,14 @@ function LunaUF:LoadDefaults()
 			healthBar = { enabled = true, background = true, backgroundAlpha = 0.2, colorType = "class", reactionType="npc", height = 1.20, order = 10},
 			powerBar = { enabled = true, background = true, backgroundAlpha = 0.2, height = 1.0, order = 20, colorType = "type" },
 			portrait = {enabled = true, type = "3D", alignment = "LEFT", width = 0.22, height = 0.50, order = 15, fullBefore = 0, fullAfter = 50},
-			castBar = {background = true, backgroundAlpha = 0.2, height = 0.60, order = 40, icon = "HIDE", autoHide = true, order = 60},
+			castBar = {background = true, backgroundAlpha = 0.2, height = 0.60, icon = "HIDE", autoHide = true, order = 60},
 			xpBar = { enabled = true, height = 0.4, order = 80, background = true, backgroundAlpha = 0.2 },
 			emptyBar = { enabled = false, height = 0.4, order = 50, reactionType="npc", class = true, alpha = 0.2},
 			range = { enabled = false },
+			highlight = { enabled = true, debuff = false },
+			borders = { enabled = true },
+			fader = {enabled = false, combatAlpha = 1, inactiveAlpha = 0.2, speedyFade = false},
+			combatText = {enabled = false, size = 15, font = "Myriad Condensed Web"},
 			auras = {
 				buffs = false,
 				debuffs = false,
@@ -175,7 +199,7 @@ function LunaUF:LoadDefaults()
 				["powerBar"] = {
 					size = 10,
 					["left"] = {
-						tagline = "[level]",
+						tagline = "[levelcolor][level][shortclassification] [classcolor][smartclass]",
 						size = 100,
 					},
 					["center"] = {
@@ -184,6 +208,36 @@ function LunaUF:LoadDefaults()
 					},
 					["right"] = {
 						tagline = "[pp]",
+						size = 100,
+					},
+				},
+				["castBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "[castname]",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "[casttime]",
+						size = 100,
+					},
+				},
+				["emptyBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
 						size = 100,
 					},
 				},
@@ -200,9 +254,92 @@ function LunaUF:LoadDefaults()
 			enabled = false,
 			healthBar = { enabled = true, background = true, backgroundAlpha = 0.2, colorType = "class", reactionType="npc", height = 1.20, order = 10},
 			portrait = { enabled = false, type = "3D", alignment = "LEFT", width = 0.22, height = 0.50, order = 15, fullBefore = 0, fullAfter = 50},
+			castBar = { enabled = false, background = true, backgroundAlpha = 0.2, height = 0.60, icon = "HIDE", autoHide = true, order = 60},
 			powerBar = { enabled = true, background = true, backgroundAlpha = 0.2, height = 1.0, order = 20, colorType = "type" },
 			emptyBar = { enabled = false, height = 0.4, order = 50, reactionType="npc", class = true, alpha = 0.2},
 			range = { enabled = false },
+			highlight = { enabled = true, debuff = false },
+			borders = { enabled = true },
+			fader = {enabled = false, combatAlpha = 1, inactiveAlpha = 0.2, speedyFade = false},
+			combatText = {enabled = false, size = 15, font = "Myriad Condensed Web"},
+			auras = {
+				buffs = false,
+				debuffs = false,
+				buffsize = 18,
+				debuffsize = 18,
+				enlargedbuffsize = 6,
+				enlargeddebuffsize = 6,
+				buffpos = "BOTTOM",
+				debuffpos = "BOTTOM",
+				bordercolor = true,
+				padding = 2,
+				emphasizeBuffs = true,
+				emphasizeDebuffs = true,
+				timer = "all",
+			},
+			tags = {
+				["healthBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "[name]",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "[ssmarthealth]",
+						size = 100,
+					},
+				},
+				["powerBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "[levelcolor][level][shortclassification] [classcolor][smartclass]",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "[pp]",
+						size = 100,
+					},
+				},
+				["castBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "[castname]",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "[casttime]",
+						size = 100,
+					},
+				},
+				["emptyBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
+						size = 100,
+					},
+				},
+			},
+			incHeal = { enabled = false, cap = 1.3, alpha = 0.8 },
 			scale = 1,
 			width = 100,
 			height = 30,
@@ -215,13 +352,114 @@ function LunaUF:LoadDefaults()
 			healthBar = { enabled = true, background = true, backgroundAlpha = 0.2, colorType = "class", reactionType="npc", height = 1.20, order = 10},
 			portrait = { enabled = true, type = "3D", alignment = "RIGHT", width = 0.22, height = 0.50, order = 15, fullBefore = 0, fullAfter = 50},
 			powerBar = { enabled = true, background = true, backgroundAlpha = 0.2, height = 1.0, order = 20, colorType = "type" },
-			castBar = { enabled = true, background = true, backgroundAlpha = 0.2, height = 0.60, order = 40, icon = "HIDE", autoHide = true, order = 60, name = {enabled = true, size = 0, anchorTo = "$parent", rank = true, anchorPoint = "CLI", x = 1, y = 0}, time = {enabled = true, size = 0, anchorTo = "$parent", anchorPoint = "CRI", x = -1, y = 0}},
+			castBar = { enabled = true, background = true, backgroundAlpha = 0.2, height = 0.60, icon = "HIDE", autoHide = true, order = 60},
 			emptyBar = { enabled = false, height = 0.4, order = 50, reactionType="npc", class = true, alpha = 0.2},
 			comboPoints = {enabled = true, order = 70, growth = "RIGHT", height = 0.40},
 			range = { enabled = false },
+			highlight = { enabled = true, debuff = false },
+			borders = { enabled = true },
+			fader = {enabled = false, combatAlpha = 1, inactiveAlpha = 0.2, speedyFade = false},
+			combatText = {enabled = false, size = 15, font = "Myriad Condensed Web"},
 			auras = {
 				buffs = true,
 				debuffs = true,
+				buffsize = 18,
+				debuffsize = 18,
+				enlargedbuffsize = 6,
+				enlargeddebuffsize = 6,
+				buffpos = "BOTTOM",
+				debuffpos = "BOTTOM",
+				bordercolor = true,
+				padding = 2,
+				emphasizeBuffs = true,
+				emphasizeDebuffs = true,
+				timer = "all",
+			},
+			tags = {
+				["healthBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "[name]",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "[ssmarthealth]",
+						size = 100,
+					},
+				},
+				["powerBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "[levelcolor][level][shortclassification] [classcolor][smartclass]",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "[pp]",
+						size = 100,
+					},
+				},
+				["castBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "[castname]",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "[casttime]",
+						size = 100,
+					},
+				},
+				["emptyBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
+						size = 100,
+					},
+				},
+			},
+			incHeal = {enabled = true, cap = 1.3, alpha = 0.8},
+			scale = 1,
+			width = 240,
+			height = 40,
+			x = 250,
+			y = -15,
+			anchorTo = "UIParent",
+		},
+		targettarget = {
+			enabled = true,
+			healthBar = { enabled = true, background = true, backgroundAlpha = 0.2, colorType = "class", reactionType="npc", height = 1.20, order = 10},
+			portrait = { enabled = false, type = "3D", alignment = "LEFT", width = 0.22, height = 0.50, order = 15, fullBefore = 0, fullAfter = 50},
+			castBar = { enabled = false, background = true, backgroundAlpha = 0.2, height = 0.60, icon = "HIDE", autoHide = true, order = 60},
+			powerBar = { enabled = true, background = true, backgroundAlpha = 0.2, height = 1.0, order = 20, colorType = "type" },
+			emptyBar = { enabled = false, height = 0.4, order = 50, reactionType="npc", class = true, alpha = 0.2},
+			range = { enabled = false },
+			highlight = { enabled = true, debuff = false },
+			borders = { enabled = true },
+			fader = {enabled = false, combatAlpha = 1, inactiveAlpha = 0.2, speedyFade = false},
+			combatText = {enabled = false, size = 15, font = "Myriad Condensed Web"},
+			auras = {
+				buffs = false,
+				debuffs = false,
 				buffsize = 18,
 				debuffsize = 18,
 				enlargedbuffsize = 6,
@@ -253,7 +491,7 @@ function LunaUF:LoadDefaults()
 				["powerBar"] = {
 					size = 10,
 					["left"] = {
-						tagline = "[level]",
+						tagline = "[levelcolor][level][shortclassification] [classcolor][smartclass]",
 						size = 100,
 					},
 					["center"] = {
@@ -280,27 +518,10 @@ function LunaUF:LoadDefaults()
 						size = 100,
 					},
 				},
-			},
-			incHeal = {enabled = true, cap = 1.3, alpha = 0.8},
-			scale = 1,
-			width = 240,
-			height = 40,
-			x = 250,
-			y = -15,
-			anchorTo = "UIParent",
-		},
-		targettarget = {
-			enabled = true,
-			healthBar = { enabled = true, background = true, backgroundAlpha = 0.2, colorType = "class", reactionType="npc", height = 1.20, order = 10},
-			portrait = { enabled = false, type = "3D", alignment = "LEFT", width = 0.22, height = 0.50, order = 15, fullBefore = 0, fullAfter = 50},
-			powerBar = { enabled = true, background = true, backgroundAlpha = 0.2, height = 1.0, order = 20, colorType = "type" },
-			emptyBar = { enabled = false, height = 0.4, order = 50, reactionType="npc", class = true, alpha = 0.2},
-			range = { enabled = false },
-			tags = {
-				["healthBar"] = {
+				["emptyBar"] = {
 					size = 10,
 					["left"] = {
-						tagline = "[name]",
+						tagline = "",
 						size = 100,
 					},
 					["center"] = {
@@ -308,26 +529,12 @@ function LunaUF:LoadDefaults()
 						size = 100,
 					},
 					["right"] = {
-						tagline = "[smarthealth]",
-						size = 100,
-					},
-				},
-				["powerBar"] = {
-					size = 10,
-					["left"] = {
-						tagline = "[level]",
-						size = 100,
-					},
-					["center"] = {
 						tagline = "",
-						size = 100,
-					},
-					["right"] = {
-						tagline = "[pp]",
 						size = 100,
 					},
 				},
 			},
+			incHeal = { enabled = false, cap = 1.3, alpha = 0.8 },
 			scale = 1,
 			width = 150,
 			height = 40,
@@ -339,9 +546,29 @@ function LunaUF:LoadDefaults()
 			enabled = true,
 			healthBar = { enabled = true, background = true, backgroundAlpha = 0.2, colorType = "class", reactionType="npc", height = 1.20, order = 10},
 			portrait = { enabled = false, type = "3D", alignment = "LEFT", width = 0.22, height = 0.50, order = 15, fullBefore = 0, fullAfter = 50},
+			castBar = { enabled = false, background = true, backgroundAlpha = 0.2, height = 0.60, icon = "HIDE", autoHide = true, order = 60},
 			powerBar = { enabled = true, background = true, backgroundAlpha = 0.2, height = 1.0, order = 20, colorType = "type" },
 			emptyBar = { enabled = false, height = 0.4, order = 50, reactionType="npc", class = true, alpha = 0.2},
 			range = { enabled = false },
+			highlight = { enabled = true, debuff = false },
+			borders = { enabled = true },
+			fader = {enabled = false, combatAlpha = 1, inactiveAlpha = 0.2, speedyFade = false},
+			combatText = {enabled = false, size = 15, font = "Myriad Condensed Web"},
+			auras = {
+				buffs = false,
+				debuffs = false,
+				buffsize = 18,
+				debuffsize = 18,
+				enlargedbuffsize = 6,
+				enlargeddebuffsize = 6,
+				buffpos = "BOTTOM",
+				debuffpos = "BOTTOM",
+				bordercolor = true,
+				padding = 2,
+				emphasizeBuffs = true,
+				emphasizeDebuffs = true,
+				timer = "all",
+			},
 			tags = {
 				["healthBar"] = {
 					size = 10,
@@ -361,7 +588,7 @@ function LunaUF:LoadDefaults()
 				["powerBar"] = {
 					size = 10,
 					["left"] = {
-						tagline = "[level]",
+						tagline = "[levelcolor][level][shortclassification] [classcolor][smartclass]",
 						size = 100,
 					},
 					["center"] = {
@@ -373,7 +600,38 @@ function LunaUF:LoadDefaults()
 						size = 100,
 					},
 				},
+				["castBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "[castname]",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "[casttime]",
+						size = 100,
+					},
+				},
+				["emptyBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
+						size = 100,
+					},
+				},
 			},
+			incHeal = { enabled = false, cap = 1.3, alpha = 0.8 },
 			scale = 1,
 			width = 150,
 			height = 40,
@@ -385,10 +643,14 @@ function LunaUF:LoadDefaults()
 			enabled = true,
 			healthBar = { enabled = true, background = true, backgroundAlpha = 0.2, colorType = "class", reactionType="npc", height = 1.20, order = 10},
 			portrait = { enabled = true, type = "3D", alignment = "LEFT", width = 0.22, height = 0.50, order = 15, fullBefore = 0, fullAfter = 50},
+			castBar = { enabled = false, background = true, backgroundAlpha = 0.2, height = 0.60, icon = "HIDE", autoHide = true, order = 60},
 			powerBar = { enabled = true, background = true, backgroundAlpha = 0.2, height = 1.0, order = 20, colorType = "type" },
 			emptyBar = { enabled = false, height = 0.4, order = 50, reactionType="npc", class = true, alpha = 0.2},
-			incHeal = {enabled = true, cap = 1.3, alpha = 0.8},
 			range = { enabled = false },
+			highlight = { enabled = true, debuff = false },
+			borders = { enabled = true },
+			fader = {enabled = false, combatAlpha = 1, inactiveAlpha = 0.2, speedyFade = false},
+			combatText = {enabled = false, size = 15, font = "Myriad Condensed Web"},
 			auras = {
 				buffs = true,
 				debuffs = true,
@@ -425,7 +687,7 @@ function LunaUF:LoadDefaults()
 				["powerBar"] = {
 					size = 10,
 					["left"] = {
-						tagline = "[level]",
+						tagline = "[levelcolor][level][shortclassification] [classcolor][smartclass]",
 						size = 100,
 					},
 					["center"] = {
@@ -437,7 +699,38 @@ function LunaUF:LoadDefaults()
 						size = 100,
 					},
 				},
+				["castBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "[castname]",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "[casttime]",
+						size = 100,
+					},
+				},
+				["emptyBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
+						size = 100,
+					},
+				},
 			},
+			incHeal = { enabled = false, cap = 1.3, alpha = 0.8 },
 			scale = 1,
 			width = 240,
 			height = 40,
@@ -454,9 +747,29 @@ function LunaUF:LoadDefaults()
 			enabled = true,
 			healthBar = { enabled = true, background = true, backgroundAlpha = 0.2, colorType = "class", reactionType="npc", height = 1.20, order = 10},
 			portrait = {enabled = false, type = "3D", alignment = "LEFT", width = 0.22, height = 0.50, order = 15, fullBefore = 0, fullAfter = 50},
+			castBar = { enabled = false, background = true, backgroundAlpha = 0.2, height = 0.60, icon = "HIDE", autoHide = true, order = 60},
 			powerBar = { enabled = false, background = true, backgroundAlpha = 0.2, height = 1.0, order = 20, colorType = "type" },
 			emptyBar = { enabled = false, height = 0.4, order = 50, reactionType="npc", class = true, alpha = 0.2},
 			range = { enabled = false },
+			highlight = { enabled = true, debuff = false },
+			borders = { enabled = true },
+			fader = {enabled = false, combatAlpha = 1, inactiveAlpha = 0.2, speedyFade = false},
+			combatText = {enabled = false, size = 15, font = "Myriad Condensed Web"},
+			auras = {
+				buffs = false,
+				debuffs = false,
+				buffsize = 18,
+				debuffsize = 18,
+				enlargedbuffsize = 6,
+				enlargeddebuffsize = 6,
+				buffpos = "BOTTOM",
+				debuffpos = "BOTTOM",
+				bordercolor = true,
+				padding = 2,
+				emphasizeBuffs = true,
+				emphasizeDebuffs = true,
+				timer = "all",
+			},
 			tags = {
 				["healthBar"] = {
 					size = 10,
@@ -473,16 +786,58 @@ function LunaUF:LoadDefaults()
 						size = 100,
 					},
 				},
+				["powerBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
+						size = 100,
+					},
+				},
+				["castBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "[castname]",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "[casttime]",
+						size = 100,
+					},
+				},
+				["emptyBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
+						size = 100,
+					},
+				},
 			},
+			incHeal = { enabled = false, cap = 1.3, alpha = 0.8 },
 			scale = 1,
 			width = 100,
 			height = 20,
 			x = 240,
 			y = 0,
-			attribPoint = "TOP",
-			attribAnchorPoint = "LEFT",
-			unitsPerColumn = 5,
-			columnSpacing = 30,
 			offset = 43,
 			anchorTo = "LUFHeaderparty",
 		},
@@ -490,9 +845,29 @@ function LunaUF:LoadDefaults()
 			enabled = true,
 			healthBar = { enabled = true, background = true, backgroundAlpha = 0.2, colorType = "class", reactionType="npc", height = 1.20, order = 10},
 			portrait = {enabled = false, type = "3D", alignment = "LEFT", width = 0.22, height = 0.50, order = 15, fullBefore = 0, fullAfter = 50},
+			castBar = { enabled = false, background = true, backgroundAlpha = 0.2, height = 0.60, icon = "HIDE", autoHide = true, order = 60},
 			powerBar = { enabled = false, background = true, backgroundAlpha = 0.2, height = 1.0, order = 20, colorType = "type" },
 			emptyBar = { enabled = false, height = 0.4, order = 50, reactionType="npc", class = true, alpha = 0.2},
 			range = { enabled = false },
+			highlight = { enabled = true, debuff = false },
+			borders = { enabled = true },
+			fader = {enabled = false, combatAlpha = 1, inactiveAlpha = 0.2, speedyFade = false},
+			combatText = {enabled = false, size = 15, font = "Myriad Condensed Web"},
+			auras = {
+				buffs = false,
+				debuffs = false,
+				buffsize = 18,
+				debuffsize = 18,
+				enlargedbuffsize = 6,
+				enlargeddebuffsize = 6,
+				buffpos = "BOTTOM",
+				debuffpos = "BOTTOM",
+				bordercolor = true,
+				padding = 2,
+				emphasizeBuffs = true,
+				emphasizeDebuffs = true,
+				timer = "all",
+			},
 			tags = {
 				["healthBar"] = {
 					size = 10,
@@ -509,29 +884,88 @@ function LunaUF:LoadDefaults()
 						size = 100,
 					},
 				},
+				["powerBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
+						size = 100,
+					},
+				},
+				["castBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "[castname]",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "[casttime]",
+						size = 100,
+					},
+				},
+				["emptyBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
+						size = 100,
+					},
+				},
 			},
+			incHeal = { enabled = false, cap = 1.3, alpha = 0.8 },
 			scale = 1,
 			width = 100,
 			height = 20,
 			x = 240,
 			y = -20,
-			attribPoint = "TOP",
-			attribAnchorPoint = "LEFT",
-			unitsPerColumn = 5,
-			columnSpacing = 30,
 			offset = 43,
 			anchorTo = "LUFHeaderparty",
-			sortMethod = "INDEX",
-			sortOrder = "ASC",
 		},
 		raid = {
 			enabled = true,
 			healthBar = { enabled = true, background = true, backgroundAlpha = 0.2, colorType = "class", reactionType="npc", height = 1.20, order = 10},
 			portrait = {enabled = false, type = "3D", alignment = "LEFT", width = 0.22, height = 0.50, order = 15, fullBefore = 0, fullAfter = 50},
+			castBar = { enabled = false, background = true, backgroundAlpha = 0.2, height = 0.60, icon = "HIDE", autoHide = true, order = 60},
 			powerBar = { enabled = true, background = true, backgroundAlpha = 0.2, height = 1.0, order = 20, colorType = "type" },
 			emptyBar = { enabled = false, height = 0.4, order = 50, reactionType="npc", class = true, alpha = 0.2},
-			incHeal = {enabled = true, cap = 1, alpha = 0.8},
 			range = { enabled = false },
+			highlight = { enabled = true, debuff = false },
+			borders = { enabled = true },
+			fader = {enabled = false, combatAlpha = 1, inactiveAlpha = 0.2, speedyFade = false},
+			combatText = {enabled = false, size = 15, font = "Myriad Condensed Web"},
+			auras = {
+				buffs = false,
+				debuffs = false,
+				buffsize = 18,
+				debuffsize = 18,
+				enlargedbuffsize = 6,
+				enlargeddebuffsize = 6,
+				buffpos = "BOTTOM",
+				debuffpos = "BOTTOM",
+				bordercolor = true,
+				padding = 2,
+				emphasizeBuffs = true,
+				emphasizeDebuffs = true,
+				timer = "all",
+			},
 			tags = {
 				["healthBar"] = {
 					size = 10,
@@ -563,7 +997,38 @@ function LunaUF:LoadDefaults()
 						size = 100,
 					},
 				},
+				["castBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "[castname]",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "[casttime]",
+						size = 100,
+					},
+				},
+				["emptyBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
+						size = 100,
+					},
+				},
 			},
+			incHeal = { enabled = false, cap = 1.3, alpha = 0.8 },
 			scale = 1,
 			width = 60,
 			height = 30,
@@ -601,9 +1066,29 @@ function LunaUF:LoadDefaults()
 			enabled = false,
 			healthBar = { enabled = true, background = true, backgroundAlpha = 0.2, colorType = "class", reactionType="npc", height = 1.20, order = 10},
 			portrait = {enabled = false, type = "3D", alignment = "LEFT", width = 0.22, height = 0.50, order = 15, fullBefore = 0, fullAfter = 50},
+			castBar = { enabled = false, background = true, backgroundAlpha = 0.2, height = 0.60, icon = "HIDE", autoHide = true, order = 60},
 			powerBar = { enabled = true, background = true, backgroundAlpha = 0.2, height = 1.0, order = 20, colorType = "type" },
 			emptyBar = { enabled = false, height = 0.4, order = 50, reactionType="npc", class = true, alpha = 0.2},
 			range = { enabled = false },
+			highlight = { enabled = true, debuff = false },
+			borders = { enabled = true },
+			fader = {enabled = false, combatAlpha = 1, inactiveAlpha = 0.2, speedyFade = false},
+			combatText = {enabled = false, size = 15, font = "Myriad Condensed Web"},
+			auras = {
+				buffs = false,
+				debuffs = false,
+				buffsize = 18,
+				debuffsize = 18,
+				enlargedbuffsize = 6,
+				enlargeddebuffsize = 6,
+				buffpos = "BOTTOM",
+				debuffpos = "BOTTOM",
+				bordercolor = true,
+				padding = 2,
+				emphasizeBuffs = true,
+				emphasizeDebuffs = true,
+				timer = "all",
+			},
 			tags = {
 				["healthBar"] = {
 					size = 10,
@@ -635,7 +1120,38 @@ function LunaUF:LoadDefaults()
 						size = 100,
 					},
 				},
+				["castBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "[castname]",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "[casttime]",
+						size = 100,
+					},
+				},
+				["emptyBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
+						size = 100,
+					},
+				},
 			},
+			incHeal = { enabled = false, cap = 1.3, alpha = 0.8 },
 			scale = 1,
 			width = 60,
 			height = 30,
@@ -652,9 +1168,92 @@ function LunaUF:LoadDefaults()
 			enabled = true,
 			healthBar = { enabled = true, background = true, backgroundAlpha = 0.2, colorType = "class", reactionType="npc", height = 1.20, order = 10},
 			portrait = {enabled = false, type = "3D", alignment = "LEFT", width = 0.22, height = 0.50, order = 15, fullBefore = 0, fullAfter = 50},
+			castBar = { enabled = false, background = true, backgroundAlpha = 0.2, height = 0.60, icon = "HIDE", autoHide = true, order = 60},
 			powerBar = { enabled = false, background = true, backgroundAlpha = 0.2, height = 1.0, order = 20, colorType = "type" },
 			emptyBar = { enabled = false, height = 0.4, order = 50, reactionType="npc", class = true, alpha = 0.2},
 			range = { enabled = false },
+			highlight = { enabled = true, debuff = false },
+			borders = { enabled = true },
+			fader = {enabled = false, combatAlpha = 1, inactiveAlpha = 0.2, speedyFade = false},
+			combatText = {enabled = false, size = 15, font = "Myriad Condensed Web"},
+			auras = {
+				buffs = false,
+				debuffs = false,
+				buffsize = 18,
+				debuffsize = 18,
+				enlargedbuffsize = 6,
+				enlargeddebuffsize = 6,
+				buffpos = "BOTTOM",
+				debuffpos = "BOTTOM",
+				bordercolor = true,
+				padding = 2,
+				emphasizeBuffs = true,
+				emphasizeDebuffs = true,
+				timer = "all",
+			},
+			tags = {
+				["healthBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "[name]",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "[ssmarthealth]",
+						size = 100,
+					},
+				},
+				["powerBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
+						size = 100,
+					},
+				},
+				["castBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "[castname]",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "[casttime]",
+						size = 100,
+					},
+				},
+				["emptyBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
+						size = 100,
+					},
+				},
+			},
+			incHeal = { enabled = false, cap = 1.3, alpha = 0.8 },
 			scale = 1,
 			width = 100,
 			height = 30,
@@ -672,9 +1271,92 @@ function LunaUF:LoadDefaults()
 			enabled = true,
 			healthBar = { enabled = true, background = true, backgroundAlpha = 0.2, colorType = "class", reactionType="npc", height = 1.20, order = 10},
 			portrait = {enabled = false, type = "3D", alignment = "LEFT", width = 0.22, height = 0.50, order = 15, fullBefore = 0, fullAfter = 50},
+			castBar = { enabled = false, background = true, backgroundAlpha = 0.2, height = 0.60, icon = "HIDE", autoHide = true, order = 60},
 			powerBar = { enabled = false, background = true, backgroundAlpha = 0.2, height = 1.0, order = 20, colorType = "type" },
 			emptyBar = { enabled = false, height = 0.4, order = 50, reactionType="npc", class = true, alpha = 0.2},
 			range = { enabled = false },
+			highlight = { enabled = true, debuff = false },
+			borders = { enabled = true },
+			fader = {enabled = false, combatAlpha = 1, inactiveAlpha = 0.2, speedyFade = false},
+			combatText = {enabled = false, size = 15, font = "Myriad Condensed Web"},
+			auras = {
+				buffs = false,
+				debuffs = false,
+				buffsize = 18,
+				debuffsize = 18,
+				enlargedbuffsize = 6,
+				enlargeddebuffsize = 6,
+				buffpos = "BOTTOM",
+				debuffpos = "BOTTOM",
+				bordercolor = true,
+				padding = 2,
+				emphasizeBuffs = true,
+				emphasizeDebuffs = true,
+				timer = "all",
+			},
+			tags = {
+				["healthBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "[name]",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "[ssmarthealth]",
+						size = 100,
+					},
+				},
+				["powerBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
+						size = 100,
+					},
+				},
+				["castBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "[castname]",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "[casttime]",
+						size = 100,
+					},
+				},
+				["emptyBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
+						size = 100,
+					},
+				},
+			},
+			incHeal = { enabled = false, cap = 1.3, alpha = 0.8 },
 			scale = 1,
 			width = 100,
 			height = 30,
@@ -692,9 +1374,92 @@ function LunaUF:LoadDefaults()
 			enabled = true,
 			healthBar = { enabled = true, background = true, backgroundAlpha = 0.2, colorType = "class", reactionType="npc", height = 1.20, order = 10},
 			portrait = {enabled = false, type = "3D", alignment = "LEFT", width = 0.22, height = 0.50, order = 15, fullBefore = 0, fullAfter = 50},
+			castBar = { enabled = false, background = true, backgroundAlpha = 0.2, height = 0.60, icon = "HIDE", autoHide = true, order = 60},
 			powerBar = { enabled = false, background = true, backgroundAlpha = 0.2, height = 1.0, order = 20, colorType = "type" },
 			emptyBar = { enabled = false, height = 0.4, order = 50, reactionType="npc", class = true, alpha = 0.2},
 			range = { enabled = false },
+			highlight = { enabled = true, debuff = false },
+			borders = { enabled = true },
+			fader = {enabled = false, combatAlpha = 1, inactiveAlpha = 0.2, speedyFade = false},
+			combatText = {enabled = false, size = 15, font = "Myriad Condensed Web"},
+			auras = {
+				buffs = false,
+				debuffs = false,
+				buffsize = 18,
+				debuffsize = 18,
+				enlargedbuffsize = 6,
+				enlargeddebuffsize = 6,
+				buffpos = "BOTTOM",
+				debuffpos = "BOTTOM",
+				bordercolor = true,
+				padding = 2,
+				emphasizeBuffs = true,
+				emphasizeDebuffs = true,
+				timer = "all",
+			},
+			tags = {
+				["healthBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "[name]",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "[ssmarthealth]",
+						size = 100,
+					},
+				},
+				["powerBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
+						size = 100,
+					},
+				},
+				["castBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "[castname]",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "[casttime]",
+						size = 100,
+					},
+				},
+				["emptyBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
+						size = 100,
+					},
+				},
+			},
+			incHeal = { enabled = false, cap = 1.3, alpha = 0.8 },
 			scale = 1,
 			width = 100,
 			height = 30,
@@ -712,9 +1477,92 @@ function LunaUF:LoadDefaults()
 			enabled = true,
 			healthBar = { enabled = true, background = true, backgroundAlpha = 0.2, colorType = "class", reactionType="npc", height = 1.20, order = 10},
 			portrait = {enabled = false, type = "3D", alignment = "LEFT", width = 0.22, height = 0.50, order = 15, fullBefore = 0, fullAfter = 50},
+			castBar = { enabled = false, background = true, backgroundAlpha = 0.2, height = 0.60, icon = "HIDE", autoHide = true, order = 60},
 			powerBar = { enabled = false, background = true, backgroundAlpha = 0.2, height = 1.0, order = 20, colorType = "type" },
 			emptyBar = { enabled = false, height = 0.4, order = 50, reactionType="npc", class = true, alpha = 0.2},
 			range = { enabled = false },
+			highlight = { enabled = true, debuff = false },
+			borders = { enabled = true },
+			fader = {enabled = false, combatAlpha = 1, inactiveAlpha = 0.2, speedyFade = false},
+			combatText = {enabled = false, size = 15, font = "Myriad Condensed Web"},
+			auras = {
+				buffs = false,
+				debuffs = false,
+				buffsize = 18,
+				debuffsize = 18,
+				enlargedbuffsize = 6,
+				enlargeddebuffsize = 6,
+				buffpos = "BOTTOM",
+				debuffpos = "BOTTOM",
+				bordercolor = true,
+				padding = 2,
+				emphasizeBuffs = true,
+				emphasizeDebuffs = true,
+				timer = "all",
+			},
+			tags = {
+				["healthBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "[name]",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "[ssmarthealth]",
+						size = 100,
+					},
+				},
+				["powerBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
+						size = 100,
+					},
+				},
+				["castBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "[castname]",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "[casttime]",
+						size = 100,
+					},
+				},
+				["emptyBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
+						size = 100,
+					},
+				},
+			},
+			incHeal = { enabled = false, cap = 1.3, alpha = 0.8 },
 			scale = 1,
 			width = 100,
 			height = 30,

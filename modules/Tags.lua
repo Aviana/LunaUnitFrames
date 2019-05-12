@@ -24,18 +24,16 @@ local function Hex(r, g, b)
 end
 
 local function feigncheck(unit)
---	local _,class = UnitClass(unit)
---	if class ~= "HUNTER" then return end
---	for i=1,32 do
---		if not UnitBuff(unit,i) then
---			return
---		end
---		tooltip:ClearLines()
---		tooltip:SetUnitBuff(unit,i)
---		if LunaScanTipTextLeft1:GetText() == L["Feign Death"] then
---			return true
---		end
---	end
+	if select(2,UnitClass(unit)) == "HUNTER" and UnitCanAssist("player", unit) then
+		for i=1,32 do
+			local id = select(10,UnitAura(unit, i, "HELPFUL"))
+			if not id then
+				return
+			elseif id == 5384 then
+				return true
+			end
+		end
+	end
 end
 
 local defaultTags = {
@@ -350,17 +348,17 @@ local defaultTags = {
 									return UnitMana(unit)
 								end
 							end;
-	["maxpp"]				= function(unit) return UnitManaMax(unit) end;
+	["maxpp"]				= function(unit) return UnitPowerMax(unit) end;
 	["smaxpp"]				= function(unit)
-								if UnitManaMax(unit) > 10000 then
-									return math.floor(UnitManaMax(unit)/1000).."K"
+								if UnitPowerMax(unit) > 10000 then
+									return math.floor(UnitPowerMax(unit)/1000).."K"
 								else
-									return UnitManaMax(unit)
+									return UnitPowerMax(unit)
 								end
 							end;
 	["missingpp"]			= function(unit)
 								local mana = UnitMana(unit)
-								local manamax = UnitManaMax(unit)
+								local manamax = UnitPowerMax(unit)
 								if manamax-mana == 0 then
 									return ""
 								else
@@ -368,10 +366,10 @@ local defaultTags = {
 								end
 							end;
 	["perpp"]				= function(unit)
-								if UnitManaMax(unit) < 1 then
+								if UnitPowerMax(unit) < 1 then
 									return 0
 								else
-									return math.floor(((UnitMana(unit) / UnitManaMax(unit)) * 100)+0.5)
+									return math.floor(((UnitMana(unit) / UnitPowerMax(unit)) * 100)+0.5)
 								end
 							end;
 --	["druid:pp"]			= function(unit)
@@ -434,7 +432,7 @@ local defaultTags = {
 								if level == -1 then
 									level = 99
 								end
-								local color = GetDifficultyColor(level)
+								local color = GetQuestDifficultyColor(level)
 								return Hex(color)
 							end;
 	["name"]				= function(unit) return UnitName(unit) or "" end;
@@ -770,51 +768,134 @@ local defaultTags = {
 							end;
 }
 
-function Tags:SetupText(frame, config)
-	if not frame.fontstrings then
-		frame.fontstrings = {}
-		frame.tagUpdate = CreateFrame("Frame", nil, frame)
-		frame.tagUpdate:SetScript("OnUpdate", function(self)
-			local frame = self:GetParent()
-			local fontstrings = frame.fontstrings
-			for barkey,barstrings in pairs(fontstrings) do
-				for align, fstring in pairs(barstrings) do
-					if fstring.tagline and fstring.tagline ~= "" then
-						fstring:SetText(defaultTags[string.sub(fstring.tagline,2,-2)](frame.unit))
-					elseif fstring.tagline then
-						fstring:SetText("")
+LunaUF.Tags.defaultTags = defaultTags
+
+local function tagUpdate(self)
+	local frame = self:GetParent()
+	for barkey,barstrings in pairs(frame.fontstrings) do
+		for align, fstring in pairs(barstrings) do
+			local stringText = ""
+			local array = fstring.parts
+			for i=1,#array do
+				if type(array[i]) == "string" then
+					stringText = stringText .. array[i]
+				else
+					stringText = stringText .. (array[i][0](array[i][1],array[i][2]) or "")
+				end
+			end
+			fstring:SetText(stringText)
+		end
+	end
+end
+
+function Tags:SplitTags(frame, config)
+	for barkey, barconfig in pairs(config.tags) do
+		if frame[barkey] then
+			for align,fontstring in pairs(frame.fontstrings[barkey]) do
+				table.wipe(fontstring.parts)
+				if barconfig[align].tagline ~= "" then
+					local PartNr = 1
+					local startPos, endPos, currTag, text
+					text = barconfig[align].tagline
+					startPos,endPos,currTag = string.find(text,"%[([%w:]+)%]")
+					if not currTag then
+						-- We only have static text in the fontstring
+						fontstring.parts[PartNr] = text
+						return
+					end
+					while currTag do
+						if defaultTags[currTag] then
+							if startPos > 1 then
+								fontstring.parts[PartNr] = string.sub(text,1,startPos-1)
+								PartNr = PartNr + 1
+							end
+							fontstring.parts[PartNr] = {
+								[0] = defaultTags[currTag],
+								[1] = frame.unit,
+							}
+							PartNr = PartNr + 1
+							text = string.sub(text,endPos+1)
+						elseif string.find(currTag,"color:(%x%x%x%x%x%x)") then
+							_,_,tagArg = string.find(currTag,"color:(%x%x%x%x%x%x)")
+							if startPos > 1 then
+								fontstring.parts[PartNr] = string.sub(text,1,startPos-1)
+								PartNr = PartNr + 1
+							end
+							fontstring.parts[PartNr] = {
+								[0] = defaultTags["color"],
+								[1] = tagArg,
+							}
+							PartNr = PartNr + 1
+							text = string.sub(text,endPos+1)
+						elseif string.find(currTag,"shortname:(%d+)") then
+							_,_,tagArg = string.find(currTag,"shortname:(%d+)")
+							if startPos > 1 then
+								fontstring.parts[PartNr] = string.sub(text,1,startPos-1)
+								PartNr = PartNr + 1
+							end
+							fontstring.parts[PartNr] = {
+								[0] = defaultTags["shortname"],
+								[1] = frame.unit,
+								[2] = tagArg,
+							}
+							PartNr = PartNr + 1
+							text = string.sub(text,endPos+1)
+						else
+							fontstring.parts[PartNr] = L["#invalidTag#"]
+							PartNr = PartNr + 1
+							text = string.sub(text,endPos+1)
+						end
+						startPos,endPos,currTag = string.find(text,"%[([%w:]+)%]")
+					end
+					if text ~= "" then
+						fontstring.parts[PartNr] = text
 					end
 				end
 			end
 		end
-		)
 	end
+end
+
+function Tags:SetupText(frame, config)
+	frame.fontstrings = frame.fontstrings or {}
+	local offset
 	if config.tags then
 		for barkey, barconfig in pairs(config.tags) do
-			frame.fontstrings[barkey] = frame.fontstrings[barkey] or {}
-			local bar = frame.fontstrings[barkey]
-			bar["left"] = bar["left"] or frame.highFrame:CreateFontString(nil, "ARTWORK")
-			bar["center"] = bar["center"] or frame.highFrame:CreateFontString(nil, "ARTWORK")
-			bar["right"] = bar["right"] or frame.highFrame:CreateFontString(nil, "ARTWORK")
-			for align,fontstring in pairs(bar) do
-				fontstring:SetFont(LunaUF.Layout:LoadMedia(SML.MediaType.FONT, frame.unitType), config.tags[barkey].size)
-				fontstring:SetShadowColor(0, 0, 0, 1.0)
-				fontstring:SetShadowOffset(0.80, -0.80)
-				fontstring:SetJustifyH(string.upper(align))
-				fontstring.tagline = config.tags[barkey][align].tagline
-				fontstring:SetText("[Test]")
-				fontstring:SetHeight(frame[barkey]:GetHeight())
-				if align == "left" then
-					fontstring:SetPoint("LEFT", frame[barkey], "LEFT", 2, 0)
-					fontstring:SetWidth((frame[barkey]:GetWidth()-4)*(config.tags[barkey][align].size/100))
-				elseif align == "center" then
-					fontstring:SetPoint("CENTER", frame[barkey], "CENTER")
-					fontstring:SetWidth(frame[barkey]:GetWidth()*(config.tags[barkey][align].size/100))
-				else
-					fontstring:SetPoint("RIGHT", frame[barkey], "RIGHT", -2 , 0)
-					fontstring:SetWidth((frame[barkey]:GetWidth()-4)*(config.tags[barkey][align].size/100))
+			if frame[barkey] then
+				frame.fontstrings[barkey] = frame.fontstrings[barkey] or {}
+				local bar = frame.fontstrings[barkey]
+				bar["left"] = bar["left"] or frame.highFrame:CreateFontString(nil, "ARTWORK")
+				bar["center"] = bar["center"] or frame.highFrame:CreateFontString(nil, "ARTWORK")
+				bar["right"] = bar["right"] or frame.highFrame:CreateFontString(nil, "ARTWORK")
+				for align,fontstring in pairs(bar) do
+					fontstring:SetFont(LunaUF.Layout:LoadMedia(SML.MediaType.FONT, frame.unitType), barconfig.size)
+					fontstring:SetShadowColor(0, 0, 0, 1.0)
+					fontstring:SetShadowOffset(0.80, -0.80)
+					fontstring:SetJustifyH(string.upper(align))
+					fontstring:SetHeight(frame[barkey]:GetHeight())
+					if barkey == "castBar" and align == string.lower(config.castBar.icon) then
+						offset = frame[barkey]:GetHeight()
+					else
+						offset = 0
+					end
+					if align == "left" then
+						fontstring:SetPoint("LEFT", frame[barkey], "LEFT", 2 + offset, 0)
+						fontstring:SetWidth((frame[barkey]:GetWidth()-4)*(barconfig[align].size/100))
+					elseif align == "center" then
+						fontstring:SetPoint("CENTER", frame[barkey], "CENTER")
+						fontstring:SetWidth(frame[barkey]:GetWidth()*(barconfig[align].size/100))
+					else
+						fontstring:SetPoint("RIGHT", frame[barkey], "RIGHT", -2 - offset , 0)
+						fontstring:SetWidth((frame[barkey]:GetWidth()-4)*(barconfig[align].size/100))
+					end
+					fontstring.parts = fontstring.parts or {}
 				end
 			end
+		end
+		self:SplitTags(frame, config)
+		if not frame.tagUpdate then
+			frame.tagUpdate = CreateFrame("Frame", nil, frame)
+			frame.tagUpdate:SetScript("OnUpdate", tagUpdate)
 		end
 	end
 end

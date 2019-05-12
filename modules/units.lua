@@ -3,6 +3,7 @@ Units.headerUnits = {["raid"] = true, ["raidpet"] = true, ["party"] = true, ["pa
 
 local headerFrames, unitFrames, frameList, unitEvents, headerUnits = Units.headerFrames, Units.unitFrames, Units.frameList, Units.unitEvents, Units.headerUnits
 local _G = getfenv(0)
+local playerClass = select(2, UnitClass("player"))
 
 LunaUF.Units = Units
 LunaUF:RegisterModule(Units, "units", "Units")
@@ -249,11 +250,20 @@ local function CheckModules(self)
 			if( not self.visibility[key] and enabled ) then
 				module:OnEnable(self)
 				layoutUpdate = true
+				if self.fontstrings and self.fontstrings[key] then
+					for _, fstring in pairs(self.fontstrings[key]) do
+						fstring:Show()
+					end
+				end
 			elseif( self.visibility[key] and not enabled ) then
 				module:OnDisable(self)
 				layoutUpdate = true
+				if self.fontstrings and self.fontstrings[key] then
+					for _, fstring in pairs(self.fontstrings[key]) do
+						fstring:Hide()
+					end
+				end
 			end
-			
 			self.visibility[key] = enabled or nil
 		end
 	end
@@ -590,19 +600,7 @@ end
 function Units:SetHeaderAttributes(frame, type)
 	
 	local config = LunaUF.db.profile.units[type]
-	local xMod = config.attribPoint == "LEFT" and 1 or config.attribPoint == "RIGHT" and -1 or 0
-	local yMod = config.attribPoint == "TOP" and -1 or config.attribPoint == "BOTTOM" and 1 or 0
-	local widthMod = (config.attribPoint == "LEFT" or config.attribPoint == "RIGHT") and MEMBERS_PER_RAID_GROUP or 1
-	local heightMod = (config.attribPoint == "TOP" or config.attribPoint == "BOTTOM") and MEMBERS_PER_RAID_GROUP or 1
-	
-	frame:SetAttribute("point", config.attribPoint)
-	frame:SetAttribute("sortMethod", config.sortMethod)
-	frame:SetAttribute("sortDir", config.sortOrder)
-	
-	frame:SetAttribute("xOffset", config.offset * xMod)
-	frame:SetAttribute("yOffset", config.offset * yMod)
-	frame:SetAttribute("xMod", xMod)
-	frame:SetAttribute("yMod", yMod)
+	local offset = config.offset
 
 	-- Normal raid, ma or mt
 	if( type == "raidpet" or type == "raid" or type == "mainassist" or type == "maintank" ) then
@@ -640,23 +638,22 @@ function Units:SetHeaderAttributes(frame, type)
 		frame:SetAttribute("unitsPerColumn", config.unitsPerColumn)
 		frame:SetAttribute("columnSpacing", config.columnSpacing)
 		frame:SetAttribute("columnAnchorPoint", config.attribAnchorPoint)
-
 		self:CheckGroupVisibility()
 		if( stateMonitor.party ) then
 			stateMonitor.party:SetAttribute("hideSemiRaid", LunaUF.db.profile.units.party.hideSemiRaid)
 			stateMonitor.party:SetAttribute("hideAnyRaid", LunaUF.db.profile.units.party.hideAnyRaid)
 		end
 	elseif( type == "partypet" or type == "partytarget" ) then
+		if( stateMonitor[type] ) then
+			stateMonitor[type]:SetAttribute("hideSemiRaid", config.hideSemiRaid)
+			stateMonitor[type]:SetAttribute("hideAnyRaid", config.hideAnyRaid)
+		end
+		config = LunaUF.db.profile.units["party"]
 		frame:SetAttribute("maxColumns", math.ceil(4 / config.unitsPerColumn))
 		frame:SetAttribute("unitsPerColumn", config.unitsPerColumn)
 		frame:SetAttribute("columnSpacing", config.columnSpacing)
 		frame:SetAttribute("columnAnchorPoint", config.attribAnchorPoint)
-
 		self:CheckGroupVisibility()
-		if( stateMonitor[type] ) then
-			stateMonitor[type]:SetAttribute("hideSemiRaid", LunaUF.db.profile.units[type].hideSemiRaid)
-			stateMonitor[type]:SetAttribute("hideAnyRaid", LunaUF.db.profile.units[type].hideAnyRaid)
-		end
 	end
 	
 	if( type == "raid" ) then
@@ -686,6 +683,18 @@ function Units:SetHeaderAttributes(frame, type)
 			frame:Show()
 		end
 	end
+
+	local xMod = config.attribPoint == "LEFT" and 1 or config.attribPoint == "RIGHT" and -1 or 0
+	local yMod = config.attribPoint == "TOP" and -1 or config.attribPoint == "BOTTOM" and 1 or 0
+	
+	frame:SetAttribute("point", config.attribPoint)
+	frame:SetAttribute("sortMethod", config.sortMethod)
+	frame:SetAttribute("sortDir", config.sortOrder)
+	
+	frame:SetAttribute("xOffset", offset * xMod)
+	frame:SetAttribute("yOffset", offset * yMod)
+	frame:SetAttribute("xMod", xMod)
+	frame:SetAttribute("yMod", yMod)
 
 	frame.shouldReset = true
 end
@@ -976,21 +985,58 @@ function Units:CreateBar(parent)
 	return bar
 end
 
+-- Handle figuring out what auras players can cure
+local curableSpells = {
+	["DRUID"] = {[2782] = {"Curse"}, [2893] = {"Poison"}, [8946] = {"Poison"}},
+	["PRIEST"] = {[528] = {"Disease"}, [552] = {"Disease"}, [527] = {"Magic"}, [988] = {"Magic"}},
+	["PALADIN"] = {[4987] = {"Poison", "Disease", "Magic"}, [1152] = {"Poison", "Disease"}},
+	["SHAMAN"] = {[2870] = {"Disease"}, [526] = {"Poison"}},
+}
+
+curableSpells = curableSpells[select(2, UnitClass("player"))]
+
+local function checkCurableSpells()
+	table.wipe(Units.canCure)
+	
+	if select(2, UnitClass("player")) == "WARLOCK" then
+		if IsUsableSpell(GetSpellInfo(19505)) then
+			Units.canCure["Magic"] = true
+		end
+	elseif curableSpells then
+		for spellID, cures in pairs(curableSpells) do
+			if( IsPlayerSpell(spellID) ) then
+				for _, auraType in pairs(cures) do
+					Units.canCure[auraType] = true
+				end
+			end
+		end
+	end
+end
+
 local centralFrame = CreateFrame("Frame")
 centralFrame:RegisterEvent("PLAYER_LOGIN")
-centralFrame:SetScript("OnEvent", function(self, event, unit)
+centralFrame:SetScript("OnEvent", function(self, event, arg1)
 	-- Monitor talent changes for curable changes
-	if( event == "PLAYER_SPECIALIZATION_CHANGED" ) then
-		--checkCurableSpells()
-
+	if( event == "LEARNED_SPELL_IN_TAB" ) then
+		checkCurableSpells()
 		for frame in pairs(LunaUF.Units.frameList) do
 			if( frame.unit and frame:IsVisible() ) then
 				frame:FullUpdate()
 			end
 		end
-
+	elseif event == "UNIT_PET" and arg1 == "player" then
+		checkCurableSpells()
+		for frame in pairs(LunaUF.Units.frameList) do
+			if( frame.unit and frame:IsVisible() ) then
+				frame:FullUpdate()
+			end
+		end
 	elseif( event == "PLAYER_LOGIN" ) then
-		--checkCurableSpells()
-		--self:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+		checkCurableSpells()
+		if select(2, UnitClass("player")) == "WARLOCK" then
+			self:RegisterEvent("UNIT_PET")
+		elseif curableSpells then
+			self:RegisterEvent("LEARNED_SPELL_IN_TAB")
+		end
 	end
 end)

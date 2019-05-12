@@ -36,6 +36,10 @@ local function spellCheck(unit)
 			return true
 		end
 	end
+	local inRange, checkedRange = UnitInRange(unit)
+	if inRange and checkedRange then
+		return true
+	end
 end
 
 local function measureDistance(unit)

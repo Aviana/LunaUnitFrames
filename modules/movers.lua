@@ -20,11 +20,12 @@ local function createConfigEnv()
 		GetComboPoints = function() return MAX_COMBO_POINTS end,
 		UnitInRaid = function() return true end,
 		UnitInParty = function() return true end,
+		UnitPlayerOrPetInParty = function() return true end,
 --		UnitIsUnit = function(unitA, unitB) return true end,
 		UnitIsDeadOrGhost = function(unit) return false end,
 		UnitIsConnected = function(unit) return true end,
 		UnitLevel = function(unit) return MAX_PLAYER_LEVEL end,
---		UnitIsPlayer = function(unit) return unit ~= "pet" and not string.match(unit, "(%w+)pet") end,
+		UnitIsPlayer = function(unit) return unit ~= "pet" and not string.match(unit, "(%w+)pet") end,
 		UnitHealth = function(unit) return getValue("UnitHealth", unit, math.random(20000, 50000)) end,
 		UnitHealthMax = function(unit) return 50000 end,
 		UnitPower = function(unit, powerType)
@@ -37,7 +38,7 @@ local function createConfigEnv()
 
 			return 50000
 		end,
---		UnitExists = function(unit) return true end,
+		UnitExists = function(unit) return true end,
 		UnitIsGroupLeader = function() return true end,
 		UnitIsPVP = function(unit) return true end,
 		UnitIsDND = function(unit) return false end,
@@ -62,7 +63,7 @@ local function createConfigEnv()
 			
 			return unpack(data)
 		end,
---		UnitIsFriend = function(unit) return true end,
+		UnitIsFriend = function(unit) return true end,
 		GetReadyCheckStatus = function(unit)
 			local status = getValue("GetReadyCheckStatus", unit, math.random(1, 3))
 			return status == 1 and "ready" or status == 2 and "notready" or "waiting"
@@ -71,7 +72,7 @@ local function createConfigEnv()
 			return _G.UnitPowerType("player")
 		end,
 		UnitAura = function(unit, id, filter)
-			if( type(id) ~= "number" or id > 40 ) then return end
+			if( type(id) ~= "number" or id > 32 ) then return end
 			
 			local texture = filter == "HELPFUL" and "Interface\\Icons\\Spell_ChargePositive" or "Interface\\Icons\\Spell_ChargeNegative"
 			local mod = id % 5
@@ -81,13 +82,13 @@ local function createConfigEnv()
 		UnitName = function(unit)
 			local unitID = string.match(unit, "(%d+)")
 			if( unitID ) then
-				return string.format("%s #%d", L.units[string.gsub(unit, "(%d+)", "")] or unit, unitID)
+				return string.format("%s #%d", L[string.gsub(unit, "(%d+)", "")] or unit, unitID)
 			end
-			
-			return L[unitType]
+			return L[unit]
 		end,
 		UnitClass = function(unit)
-			return _G.UnitClass("player")
+			local classToken = getValue("UnitClass", unit, CLASS_SORT_ORDER[math.random(1, #(CLASS_SORT_ORDER))])
+			return LOCALIZED_CLASS_NAMES_MALE[classToken], classToken
 		end,
 	}, {
 		__index = _G,
@@ -101,7 +102,7 @@ local function prepareChildUnits(header, ...)
 		if( frame.unitType and not frame.configUnitID ) then
 			LunaUF.Units.frameList[frame] = true
 			frame.configUnitID = header.groupID and (header.groupID * 5) - 5 + i or i
-			frame:SetAttribute("unit", "player")
+			frame:SetAttribute("unit", frame.unitType..frame.configUnitID)
 		end
 	end
 end
@@ -152,7 +153,11 @@ local function setupUnits()
 			frame.originalMenu = frame.menu
 			frame.menu = nil
 			
-			LunaUF.Units.OnAttributeChanged(frame, "unit", "player")
+			if LunaUF.Units.headerUnits[frame.unitType] then
+				LunaUF.Units.OnAttributeChanged(frame, "unit", frame.unitType..frame.configUnitID)
+			else
+				LunaUF.Units.OnAttributeChanged(frame, "unit", frame.unitType)
+			end
 
 			if( frame.healthBar ) then frame.healthBar:SetScript("OnUpdate", nil) end
 			if( frame.powerBar ) then frame.powerBar:SetScript("OnUpdate", nil) end
@@ -175,9 +180,7 @@ function Movers:Enable()
 		end
 		
 		local config = LunaUF.db.profile.units[header.unitType]
-		if( config.frameSplit ) then
-			header:SetAttribute("startingIndex", -4)
-		elseif( config.maxColumns ) then
+		if( config.maxColumns ) then
 			local maxUnits = MAX_RAID_MEMBERS
 			if( config.filters ) then
 				for _, enabled in pairs(config.filters) do
@@ -199,12 +202,12 @@ function Movers:Enable()
 
 	-- Setup the test env
 	if( not self.isEnabled ) then
---		for _, func in pairs(LunaUF.tagFunc) do
---			if( type(func) == "function" ) then
---				originalEnvs[func] = getfenv(func)
---				setfenv(func, configEnv)
---			end
---		end
+		for _, func in pairs(LunaUF.Tags.defaultTags) do
+			if( type(func) == "function" ) then
+				originalEnvs[func] = getfenv(func)
+				setfenv(func, configEnv)
+			end
+		end
 
 		for _, module in pairs(LunaUF.modules) do
 			if( module.moduleName ) then
@@ -218,18 +221,7 @@ function Movers:Enable()
 		end
 	end
 	
-	-- Why is this called twice you ask? Child units are created on the OnAttributeChanged call
-	-- so the first call gets all the parent units, the second call gets the child units
 	setupUnits()
-	setupUnits()
-
-	-- Don't show the dialog if the configuration is opened through the configmode spec
---	if( not self.isConfigModeSpec ) then
---		self:CreateInfoFrame()
---		self.infoFrame:Show()
---	elseif( self.infoFrame ) then
---		self.infoFrame:Hide()
---	end
 	
 	self.isEnabled = true
 end
@@ -279,16 +271,12 @@ function Movers:Disable()
 			LunaUF.Units:ReloadHeader(header.unitType)
 		end
 	end
-	
+
 	LunaUF.Layout:Reload()
-	
+
 	-- Don't store these so everything can be GCed
 	unitConfig = {}
 
---	if( self.infoFrame ) then
---		self.infoFrame:Hide()
---	end
-	
 	self.isEnabled = nil
 end
 
