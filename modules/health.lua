@@ -88,25 +88,19 @@ function Health:UpdateColor(frame)
 				color = LunaUF.db.profile.colors.hostile
 			end
 		end
-	elseif( LunaUF.db.profile.units[frame.unitType].healthBar.colorType == "class" and (UnitIsPlayer(unit) or unit == "pet") ) then
-		local class = (unit == "pet") and "PET" or frame:UnitClassToken()
+	elseif( LunaUF.db.profile.units[frame.unitType].healthBar.colorType == "class" and UnitIsPlayer(unit) ) then
+		local class = frame:UnitClassToken()
 		color = class and LunaUF.db.profile.colors[class]
-	elseif( LunaUF.db.profile.units[frame.unitType].healthBar.colorType == "playerclass" and unit == "pet") then
-		local class = select(2, UnitClass("player"))
-		color = class and LunaUF.db.profile.colors[class]
-	elseif( LunaUF.db.profile.units[frame.unitType].healthBar.colorType == "playerclass" and (frame.unitType == "partypet" or frame.unitType == "raidpet" or frame.unitType == "arenapet") and (frame.parent or frame.unitType == "raidpet") ) then
-		local unit
-		if frame.unitType == "raidpet" then
-			local id = string.match(frame.unit, "raidpet(%d+)")
-			if id then
-				unit = "raid" .. id
-			end
-		elseif frame.parent then
-			unit = frame.parent.unit
-		end
-		if unit then
-			local class = select(2, UnitClass(unit))
-			color = class and LunaUF.db.profile.colors[class]
+	elseif unit == "pet" and LunaUF.db.profile.units[frame.unitType].healthBar.colorType == "happiness" and GetPetHappiness then
+		local happiness = GetPetHappiness()
+		if happiness == 3 then
+			color = LunaUF.db.profile.colors.friendly
+		elseif happiness == 2 then
+			color = LunaUF.db.profile.colors.neutral
+		elseif happiness == 1 then
+			color = LunaUF.db.profile.colors.hostile
+		else
+			color = LunaUF.db.profile.colors["PET"]
 		end
 	elseif( LunaUF.db.profile.units[frame.unitType].healthBar.colorType == "static" ) then
 		color = LunaUF.db.profile.colors.static

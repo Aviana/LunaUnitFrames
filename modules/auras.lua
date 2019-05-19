@@ -154,7 +154,7 @@ function Auras:OnLayoutApplied(frame)
 			button.border:SetTexCoord(0.296875, 0.5703125, 0, 0.515625)
 			button.border:Show()
 		else
-			button.border:SetTexture("Interface\\AddOns\\LunaUnitFrames\\media\\textures\\border-" .. "dark")
+			button.border:SetTexture("Interface\\AddOns\\LunaUnitFrames\\media\\textures\\borders\\border-" .. "dark")
 			button.border:SetTexCoord(0, 1, 0, 1)
 			button.border:Show()
 		end
@@ -167,7 +167,7 @@ function Auras:OnLayoutApplied(frame)
 			button.border:SetTexCoord(0.296875, 0.5703125, 0, 0.515625)
 			button.border:Show()
 		else
-			button.border:SetTexture("Interface\\AddOns\\LunaUnitFrames\\media\\textures\\border-" .. "dark")
+			button.border:SetTexture("Interface\\AddOns\\LunaUnitFrames\\media\\textures\\borders\\border-" .. "dark")
 			button.border:SetTexCoord(0, 1, 0, 1)
 			button.border:Show()
 		end

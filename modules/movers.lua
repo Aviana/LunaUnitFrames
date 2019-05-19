@@ -18,6 +18,7 @@ local function createConfigEnv()
 		GetRaidTargetIndex = function(unit) return getValue("GetRaidTargetIndex", unit, math.random(1, 8)) end,
 		GetLootMethod = function(unit) return "master", 0, 0 end,
 		GetComboPoints = function() return MAX_COMBO_POINTS end,
+		GetPetHappiness = function() return 3 end,
 		UnitInRaid = function() return true end,
 		UnitInParty = function() return true end,
 		UnitPlayerOrPetInParty = function() return true end,
@@ -38,6 +39,9 @@ local function createConfigEnv()
 
 			return 50000
 		end,
+		UnitHasIncomingResurrection = function(unit) return true end,
+		UnitPVPRank = function(unit) return 17 end,
+		UnitClassification = function(unit) return "elite" end,
 		UnitExists = function(unit) return true end,
 		UnitIsGroupLeader = function() return true end,
 		UnitIsPVP = function(unit) return true end,

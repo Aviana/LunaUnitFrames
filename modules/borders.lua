@@ -5,6 +5,17 @@ local rareColor, eliteColor = {r = 0, g = 0.63, b = 1}, {r = 1, g = 0.81, b = 0}
 local canCure = LunaUF.Units.canCure
 LunaUF:RegisterModule(Borders, "borders", LunaUF.L["Borders"])
 
+local vex = LibStub("LibVexation-1.0", true)
+
+local function BordersCallback(aggro, GUID, ...)
+	for _,frame in pairs(LunaUF.Units.unitFrames) do
+		if frame.unitGUID and frame.unitGUID == GUID then
+			Borders:UpdateThreat(frame)
+		end
+	end
+end
+vex:RegisterCallback(BordersCallback)
+
 local function OnEnter(frame)
 	if( LunaUF.db.profile.units[frame.unitType].borders.mouseover ) then
 		frame.borders.hasMouseover = true
@@ -32,7 +43,7 @@ function Borders:OnEnable(frame)
 		
 		frame.borders.top = frame.borders:CreateTexture(nil, "OVERLAY")
 		frame.borders.top:SetBlendMode("ADD")
-		frame.borders.top:SetTexture("Interface\\AddOns\\LunaUnitFrames\\media\\textures\\border")
+		frame.borders.top:SetTexture("Interface\\AddOns\\LunaUnitFrames\\media\\textures\\borders\\border")
 		frame.borders.top:SetPoint("TOPLEFT", frame, 3, -3)
 		frame.borders.top:SetPoint("TOPRIGHT", frame, -3, 3)
 		frame.borders.top:SetHeight(30)
@@ -41,7 +52,7 @@ function Borders:OnEnable(frame)
 		
 		frame.borders.left = frame.borders:CreateTexture(nil, "OVERLAY")
 		frame.borders.left:SetBlendMode("ADD")
-		frame.borders.left:SetTexture("Interface\\AddOns\\LunaUnitFrames\\media\\textures\\border")
+		frame.borders.left:SetTexture("Interface\\AddOns\\LunaUnitFrames\\media\\textures\\borders\\border")
 		frame.borders.left:SetPoint("TOPLEFT", frame, 3, -3)
 		frame.borders.left:SetPoint("BOTTOMLEFT", frame, -3, 3)
 		frame.borders.left:SetWidth(30)
@@ -50,7 +61,7 @@ function Borders:OnEnable(frame)
 
 		frame.borders.right = frame.borders:CreateTexture(nil, "OVERLAY")
 		frame.borders.right:SetBlendMode("ADD")
-		frame.borders.right:SetTexture("Interface\\AddOns\\LunaUnitFrames\\media\\textures\\border")
+		frame.borders.right:SetTexture("Interface\\AddOns\\LunaUnitFrames\\media\\textures\\borders\\border")
 		frame.borders.right:SetPoint("TOPRIGHT", frame, -3, -3)
 		frame.borders.right:SetPoint("BOTTOMRIGHT", frame, 0, 3)
 		frame.borders.right:SetWidth(30)
@@ -59,7 +70,7 @@ function Borders:OnEnable(frame)
 
 		frame.borders.bottom = frame.borders:CreateTexture(nil, "OVERLAY")
 		frame.borders.bottom:SetBlendMode("ADD")
-		frame.borders.bottom:SetTexture("Interface\\AddOns\\LunaUnitFrames\\media\\textures\\border")
+		frame.borders.bottom:SetTexture("Interface\\AddOns\\LunaUnitFrames\\media\\textures\\borders\\border")
 		frame.borders.bottom:SetPoint("BOTTOMLEFT", frame, 3, 3)
 		frame.borders.bottom:SetPoint("BOTTOMRIGHT", frame, -3, 3)
 		frame.borders.bottom:SetHeight(30)
@@ -75,8 +86,7 @@ function Borders:OnEnable(frame)
 	
 	
 	if( LunaUF.db.profile.units[frame.unitType].borders.aggro ) then
---		frame:RegisterUnitEvent("UNIT_THREAT_SITUATION_UPDATE", self, "UpdateThreat")
---		frame:RegisterUpdateFunc(self, "UpdateThreat")
+		frame:RegisterUpdateFunc(self, "UpdateThreat")
 	end
 	
 	if( LunaUF.db.profile.units[frame.unitType].borders.target and frame.unitType ~= "target" ) then
@@ -134,7 +144,7 @@ function Borders:Update(frame)
 	if( frame.borders.hasDebuff ) then
 		color = DebuffTypeColor[frame.borders.hasDebuff] or DebuffTypeColor[""]
 	elseif( frame.borders.hasThreat ) then
-		color = LunaUF.db.profile.healthColors.hostile
+		color = LunaUF.db.profile.colors.hostile
 	elseif( frame.borders.hasAttention ) then
 		color = goldColor
 	elseif( frame.borders.hasMouseover ) then
@@ -157,7 +167,7 @@ function Borders:Update(frame)
 end
 
 function Borders:UpdateThreat(frame)
---	frame.borders.hasThreat = UnitThreatSituation(frame.unit) == 3 or nil
+	frame.borders.hasThreat = LunaUF.db.profile.units[frame.unitType].borders.aggro and vex:GetUnitAggroByUnitGUID(frame.unitGUID)
 	self:Update(frame)
 end
 

@@ -7,7 +7,7 @@ local SML = LibStub:GetLibrary("LibSharedMedia-3.0")
 LunaUF.Layout = Layout
 
 local defaultMedia = {
-	[SML.MediaType.STATUSBAR] = "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\Minimalist",
+	[SML.MediaType.STATUSBAR] = "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Minimalist",
 	[SML.MediaType.FONT] = "Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Myriad Condensed Web.ttf",
 	[SML.MediaType.BACKGROUND] = "Interface\\ChatFrame\\ChatFrameBackground",
 	[SML.MediaType.BORDER] = "Interface\\None",
@@ -166,18 +166,18 @@ end
 
 -- Register it on file load because authors seem to do a bad job at registering the callbacks
 SML:Register(SML.MediaType.FONT, "Myriad Condensed Web", "Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Myriad Condensed Web.ttf")
-SML:Register(SML.MediaType.BORDER, "Square Clean", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\ABFBorder")
+SML:Register(SML.MediaType.BORDER, "Square Clean", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\borders\\ABFBorder")
 SML:Register(SML.MediaType.BACKGROUND, "Chat Frame", "Interface\\ChatFrame\\ChatFrameBackground")
-SML:Register(SML.MediaType.STATUSBAR, "BantoBar", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\banto")
-SML:Register(SML.MediaType.STATUSBAR, "Smooth",   "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\smooth")
-SML:Register(SML.MediaType.STATUSBAR, "Perl",     "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\perl")
-SML:Register(SML.MediaType.STATUSBAR, "Glaze",    "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\glaze")
-SML:Register(SML.MediaType.STATUSBAR, "Charcoal", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\Charcoal")
-SML:Register(SML.MediaType.STATUSBAR, "Otravi",   "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\otravi")
-SML:Register(SML.MediaType.STATUSBAR, "Striped",  "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\striped")
-SML:Register(SML.MediaType.STATUSBAR, "LiteStep", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\LiteStep")
-SML:Register(SML.MediaType.STATUSBAR, "Aluminium", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\Aluminium")
-SML:Register(SML.MediaType.STATUSBAR, "Minimalist", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\Minimalist")
+SML:Register(SML.MediaType.STATUSBAR, "BantoBar", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\banto")
+SML:Register(SML.MediaType.STATUSBAR, "Smooth",   "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\smooth")
+SML:Register(SML.MediaType.STATUSBAR, "Perl",     "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\perl")
+SML:Register(SML.MediaType.STATUSBAR, "Glaze",    "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\glaze")
+SML:Register(SML.MediaType.STATUSBAR, "Charcoal", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Charcoal")
+SML:Register(SML.MediaType.STATUSBAR, "Otravi",   "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\otravi")
+SML:Register(SML.MediaType.STATUSBAR, "Striped",  "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\striped")
+SML:Register(SML.MediaType.STATUSBAR, "LiteStep", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\LiteStep")
+SML:Register(SML.MediaType.STATUSBAR, "Aluminium", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Aluminium")
+SML:Register(SML.MediaType.STATUSBAR, "Minimalist", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Minimalist")
 
 function Layout:LoadSML()
 	SML.RegisterCallback(self, "LibSharedMedia_Registered", "MediaRegistered")

@@ -2,65 +2,94 @@ local Cast = {}
 local L = LunaUF.L
 local SML = LibStub:GetLibrary("LibSharedMedia-3.0")
 local FADE_TIME = 0.30
+local currentCasts = {}
+local interruptIDs = {
+	[GetSpellInfo(1766)] = true, -- kick
+	[GetSpellInfo(6552)] = true, -- pummel
+	[GetSpellInfo(2139)] = true, -- counterspell
+	[GetSpellInfo(72) or "Shield Bash"] = true, -- shield bash
+	[GetSpellInfo(8042)] = true, -- earth shock
+	[GetSpellInfo(853)] = true, -- hammer of justice
+	[GetSpellInfo(7922)] = true, -- Charge stun
+	[GetSpellInfo(20615)] = true, -- intercept stun
+	[GetSpellInfo(5246)] = true, -- Intimidating shout
+	[GetSpellInfo(5530) or "Mace Stun"] = true, -- Mace Stun
+	[GetSpellInfo(6358)] = true, -- Seduction
+	[GetSpellInfo(6789)] = true, -- Death Coil
+	[GetSpellInfo(22703)] = true, -- Inferno Effect
+	[GetSpellInfo(5484)] = true, -- Howl of Terror
+	[GetSpellInfo(5782)] = true, -- Fear
+	[GetSpellInfo(408)] = true, -- Kidney Shot
+	[GetSpellInfo(1776)] = true, -- Gouge
+	[GetSpellInfo(2094)] = true, -- Blind
+	[GetSpellInfo(15269) or "Blackout"] = true, -- Blackout
+	[GetSpellInfo(15487)] = true, -- Silence
+	[GetSpellInfo(8122)] = true, -- Psychic Scream
+	[GetSpellInfo(20170) or "Stun"] = true, -- Seal of Justice
+	[GetSpellInfo(3355)] = true, -- Freezing Trap
+	[GetSpellInfo(9005) or "Pounce"] = true, -- Pounce
+	[GetSpellInfo(16922) or "Starfire Stun"] = true, -- Starfire Stun
+	[GetSpellInfo(5211)] = true, -- Bash
+	[GetSpellInfo(19675) or "Feral Charge Effect"] = true, -- Feral Charge Effect
+	
+}
 
 LunaUF:RegisterModule(Cast, "castBar", L["Cast bar"], true)
 
--- I'm not really thrilled with this method of detecting fake unit casts, mostly because it's inefficient and ugly
-local function monitorFakeCast(self)
-	local spell, displayName, icon, startTime, endTime, isTradeSkill, castID, notInterruptible, spellID = UnitCastingInfo(self.parent.unit)
-	local isChannelled
-	if( not spell ) then
-		spell, displayName, icon, startTime, endTime, isTradeSkill, notInterruptible, spellID = UnitChannelInfo(self.parent.unit)
-		isChannelled = true
+function LunaUF:GetCastName(unitGUID)
+	if currentCasts[unitGUID] then
+		return currentCasts[unitGUID].name
 	end
-	
-	-- Cast started
-	if( not self.endTime and endTime ) then
-		self.endTime = endTime
-		self.notInterruptible = notInterruptible
-		self.spellName = spell
-		self.spellID = spellID
-		Cast:UpdateCast(self.parent, self.parent.unit, isChannelled, spell, displayName, icon, startTime, endTime, isTradeSkill, notInterruptible, spellID)
-	-- Cast stopped
-	elseif( self.endTime and not endTime ) then
-		if( GetTime() <= (self.endTime / 1000) ) then
-			Cast:EventInterruptCast(self.parent, nil, self.parent.unit, nil, self.spellID)
+end
+
+function LunaUF:GetCastTime(unitGUID)
+	if currentCasts[unitGUID] then
+		return currentCasts[unitGUID].endTime
+	end
+end
+
+local function updateFrame(casterID, spellID)
+	for frame in pairs(LunaUF.Units.frameList) do
+		if frame.unitGUID == casterID and LunaUF.db.profile.units[frame.unitRealType].castBar.enabled then
+			if spellID then
+				Cast:EventStopCast(frame, event, frame.unit, nil, spellID)
+			else
+				Cast:UpdateCurrentCast(frame)
+			end
 		end
-		
-		self.notInterruptible = nil
-		self.spellName = nil
-		self.endTime = nil
+	end
+end
+
+local function combatlogEvent()
+	local _, event, _, casterID, _, _, _, targetID = CombatLogGetCurrentEventInfo()
+	local spellID = select(12,CombatLogGetCurrentEventInfo())
+	local name, rank, icon, castTime = GetSpellInfo(spellID)
+
+	if interruptIDs[name] and currentCasts[targetID] then
+		spellID = currentCasts[targetID].spellID
+		currentCasts[targetID] = nil
+		updateFrame(targetID, spellID)
 		return
 	end
-	
-	-- Cast delayed
-	if( self.endTime and endTime ~= self.endTime ) then
-		self.endTime = endTime
-		Cast:UpdateDelay(self.parent, spell, displayName, icon, startTime, endTime)
+
+	if event == "SPELL_CAST_FAILED" and currentCasts[casterID] then
+		currentCasts[casterID] = nil
+		updateFrame(casterID, spellID)
+	elseif event ~= "SPELL_CAST_START" then
+		return
 	end
 
-	-- Cast interruptible status changed
-	if( self.spellName and self.notInterruptible ~= notInterruptible ) then
-		self.notInterruptible = notInterruptible
-		if( notInterruptible ) then
-			Cast:EventUninterruptible(self.parent)
-		else
-			Cast:EventInterruptible(self.parent)
-		end
-	end
-end
-
-local function createFakeCastMonitor(frame)
-	if( not frame.castBar.monitor ) then
-		frame.castBar.monitor = C_Timer.NewTicker(0.10, monitorFakeCast)
-		frame.castBar.monitor.parent = frame
-	end
-end
-
-local function cancelFakeCastMonitor(frame)
-	if( frame.castBar and frame.castBar.monitor ) then
-		frame.castBar.monitor:Cancel()
-		frame.castBar.monitor = nil
+	if castTime and castTime > 0 then
+		currentCasts[casterID] = {
+			["spellID"] = spellID,
+			["name"] = name,
+			["rank"] = rank,
+			["icon"] = icon,
+			["castTime"] = castTime,
+			["startTime"] = GetTime(),
+			["endTime"] = castTime/1000 + GetTime()
+		}
+		updateFrame(casterID)
 	end
 end
 
@@ -73,31 +102,22 @@ function Cast:OnEnable(frame)
 		frame.castBar.bar.background = frame.castBar.background
 		
 		frame.castBar.icon = frame.castBar.bar:CreateTexture(nil, "ARTWORK")
---		frame.castBar.bar.name = frame.castBar.bar:CreateFontString(nil, "ARTWORK")
---		frame.castBar.bar.time = frame.castBar.bar:CreateFontString(nil, "ARTWORK")
 	end
-	
-	if( LunaUF.fakeUnits[frame.unitType] ) then
-		createFakeCastMonitor(frame)
-		frame:RegisterUpdateFunc(self, "UpdateFakeCast")
-		return
-	end
-	
-	frame:RegisterUnitEvent("UNIT_SPELLCAST_START", self, "EventUpdateCast")
-	frame:RegisterUnitEvent("UNIT_SPELLCAST_STOP", self, "EventStopCast")
-	frame:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", self, "EventStopCast")
-	frame:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", self, "EventInterruptCast")
-	frame:RegisterUnitEvent("UNIT_SPELLCAST_DELAYED", self, "EventDelayCast")
-	frame:RegisterUnitEvent("UNIT_SPELLCAST_SUCCEEDED", self, "EventCastSucceeded")
-	
-	frame:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_START", self, "EventUpdateChannel")
-	frame:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_STOP", self, "EventStopCast")
-	--frame:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_INTERRUPTED", self, "EventInterruptCast")
-	frame:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_UPDATE", self, "EventDelayChannel")
 
-	frame:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTIBLE", self, "EventInterruptible")
-	frame:RegisterUnitEvent("UNIT_SPELLCAST_NOT_INTERRUPTIBLE", self, "EventUninterruptible")
-	
+	if frame.unitRealType == "player" then
+		frame:RegisterUnitEvent("UNIT_SPELLCAST_START", self, "EventUpdateCast")
+		frame:RegisterUnitEvent("UNIT_SPELLCAST_STOP", self, "EventStopCast")
+		frame:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", self, "EventStopCast")
+		frame:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", self, "EventInterruptCast")
+		frame:RegisterUnitEvent("UNIT_SPELLCAST_DELAYED", self, "EventDelayCast")
+		frame:RegisterUnitEvent("UNIT_SPELLCAST_SUCCEEDED", self, "EventCastSucceeded")
+		
+		frame:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_START", self, "EventUpdateChannel")
+		frame:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_STOP", self, "EventStopCast")
+		--frame:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_INTERRUPTED", self, "EventInterruptCast")
+		frame:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_UPDATE", self, "EventDelayChannel")
+	end
+
 	frame:RegisterUpdateFunc(self, "UpdateCurrentCast")
 end
 
@@ -142,33 +162,7 @@ function Cast:OnLayoutApplied(frame, config)
 			frame.castBar.icon:SetPoint("TOPLEFT", frame.castBar.bar, "TOPRIGHT", 0, 0)
 		end
 	end
-	
-	-- Set the font at the very least, so it doesn't error when we set text on it even if it isn't being shown
---	LunaUF.Layout:ToggleVisibility(frame.castBar.bar.name, config.castBar.name.enabled)
---	if( config.castBar.name.enabled ) then
---		frame.castBar.bar.name:SetParent(frame.highFrame)
---		frame.castBar.bar.name:SetWidth(frame.castBar.bar:GetWidth() * 0.75)
---		frame.castBar.bar.name:SetHeight(LunaUF.db.profile.font.size + 1)
---		frame.castBar.bar.name:SetJustifyH(LunaUF.Layout:GetJustify(config.castBar.name))
 
---		ShadowUF.Layout:AnchorFrame(frame.castBar.bar, frame.castBar.bar.name, config.castBar.name)
---		ShadowUF.Layout:SetupFontString(frame.castBar.bar.name, config.castBar.name.size)
---	end
-	
---	ShadowUF.Layout:ToggleVisibility(frame.castBar.bar.time, config.castBar.time.enabled)
---	if( config.castBar.time.enabled ) then
---		frame.castBar.bar.time:SetParent(frame.highFrame)
---		frame.castBar.bar.time:SetWidth(frame.castBar.bar:GetWidth() * 0.25)
---		frame.castBar.bar.time:SetHeight(ShadowUF.db.profile.font.size + 1)
---		frame.castBar.bar.time:SetJustifyH(ShadowUF.Layout:GetJustify(config.castBar.time))
-
---		ShadowUF.Layout:AnchorFrame(frame.castBar.bar, frame.castBar.bar.time, config.castBar.time)
---		ShadowUF.Layout:SetupFontString(frame.castBar.bar.time, config.castBar.time.size)
---	end
-	
-	-- So we don't have to check the entire thing in an OnUpdate
---	frame.castBar.bar.time.enabled = config.castBar.time.enabled
-	
 	if( config.castBar.autoHide and not UnitCastingInfo(frame.unit) and not UnitChannelInfo(frame.unit) ) then
 		LunaUF.Layout:SetBarVisibility(frame, "castBar", false)
 	else
@@ -182,8 +176,6 @@ function Cast:OnDisable(frame, unit)
 	if( frame.castBar ) then
 		cancelFakeCastMonitor(frame)
 
---		frame.castBar.bar.name:Hide()
---		frame.castBar.bar.time:Hide()
 		frame.castBar.bar:Hide()
 	end
 end
@@ -199,8 +191,6 @@ local function fadeOnUpdate(self, elapsed)
 	
 	if( self.fadeElapsed <= 0 ) then
 		self.fadeElapsed = nil
---		self.name:Hide()
---		self.time:Hide()
 		self:Hide()
 		
 		local frame = self:GetParent()
@@ -210,8 +200,6 @@ local function fadeOnUpdate(self, elapsed)
 	else
 		local alpha = self.fadeElapsed / self.fadeStart
 		self:SetAlpha(alpha)
---		self.time:SetAlpha(alpha)
---		self.name:SetAlpha(alpha)
 	end
 end
 
@@ -224,21 +212,9 @@ local function castOnUpdate(self, elapsed)
 	if( self.elapsed <= 0 ) then
 		self.elapsed = 0
 	end
-	
---	if( self.time.enabled ) then
---		local timeLeft = self.endSeconds - self.elapsed
---		if( timeLeft <= 0 ) then
---			self.time:SetText("0.0")
---		elseif( self.pushback == 0 ) then
---			self.time:SetFormattedText("%.1f", timeLeft)
---		else
---			self.time:SetFormattedText("|cffff0000%.1f|r %.1f", self.pushback, timeLeft)
---		end
---	end
 
 	-- Cast finished, do a quick fade
 	if( self.elapsed >= self.endSeconds ) then
---		setBarColor(self, LunaUF.db.profile.colors.finished.r, LunaUF.db.profile.colors.finished.g, LunaUF.db.profile.colors.finished.b)
 
 		self.spellName = nil
 		self.fadeElapsed = FADE_TIME
@@ -257,19 +233,8 @@ local function channelOnUpdate(self, elapsed)
 		self.elapsed = 0
 	end
 
---	if( self.time.enabled ) then
---		if( self.elapsed <= 0 ) then
---			self.time:SetText("0.0")
---		elseif( self.pushback == 0 ) then
---			self.time:SetFormattedText("%.1f", self.elapsed)
---		else
---			self.time:SetFormattedText("|cffff0000%.1f|r %.1f", self.pushback, self.elapsed)
---		end
---	end
-
 	-- Channel finished, do a quick fade
 	if( self.elapsed <= 0 ) then
---		setBarColor(self, LunaUF.db.profile.colors.finished.r, LunaUF.db.profile.colors.finished.g, LunaUF.db.profile.colors.finished.b)
 
 		self.spellName = nil
 		self.fadeElapsed = FADE_TIME
@@ -285,6 +250,9 @@ function Cast:UpdateCurrentCast(frame)
 	elseif( UnitChannelInfo(frame.unit) ) then
 		local name, text, texture, startTime, endTime, isTradeSkill, notInterruptible, spellID = UnitChannelInfo(frame.unit)
 		self:UpdateCast(frame, frame.unit, true, name, text, texture, startTime, endTime, isTradeSkill, notInterruptible, spellID)
+	elseif currentCasts[frame.unitGUID] and currentCasts[frame.unitGUID].endTime > GetTime() and not UnitIsDeadOrGhost(frame.unit) then
+		local cast = currentCasts[frame.unitGUID]
+		self:UpdateCast(frame, frame.unit, false, cast.name, "", cast.icon, cast.startTime, cast.endTime, nil, nil, cast.spellID)
 	else
 		if( LunaUF.db.profile.units[frame.unitType].castBar.autoHide ) then
 			LunaUF.Layout:SetBarVisibility(frame, "castBar", false)
@@ -293,8 +261,6 @@ function Cast:UpdateCurrentCast(frame)
 		setBarColor(frame.castBar.bar, 0, 0, 0)
 		
 		frame.castBar.bar.spellName = nil
---		frame.castBar.bar.name:Hide()
---		frame.castBar.bar.time:Hide()
 		frame.castBar.bar:Hide()
 	end
 end
@@ -325,11 +291,7 @@ end
 function Cast:EventStopCast(frame, event, unit, castID, spellID)
 	local cast = frame.castBar.bar
 	if( cast.spellID ~= spellID or ( event == "UNIT_SPELLCAST_FAILED" and cast.isChannelled ) ) then return end
---	if( cast.time.enabled ) then
---		cast.time:SetText("0.0")
---	end
 
---	setBarColor(cast, LunaUF.db.profile.colors.interrupted.r, LunaUF.db.profile.colors.interrupted.g, LunaUF.db.profile.colors.interrupted.b)
 	if( LunaUF.db.profile.units[frame.unitType].castBar.autoHide ) then
 		LunaUF.Layout:SetBarVisibility(frame, "castBar", true)
 	end
@@ -348,14 +310,12 @@ function Cast:EventInterruptCast(frame, event, unit, castID, spellID)
 	local cast = frame.castBar.bar
 	if( spellID and cast.spellID ~= spellID ) then return end
 	
---	setBarColor(cast, LunaUF.db.profile.colors.interrupted.r, LunaUF.db.profile.colors.interrupted.g, LunaUF.db.profile.colors.interrupted.b)
 	if( LunaUF.db.profile.units[frame.unitType].castBar.autoHide ) then
 		LunaUF.Layout:SetBarVisibility(frame, "castBar", true)
 	end
 
---	if( LunaUF.db.profile.units[frame.unitType].castBar.name.enabled ) then
---		cast.name:SetText(L["Interrupted"])
---	end
+	updateFrame(UnitGUID(frame.unit), spellID)
+	currentCasts[UnitGUID(frame.unit)] = nil
 
 	cast.spellID = nil
 	cast.fadeElapsed = FADE_TIME + 0.20
@@ -369,23 +329,6 @@ end
 -- Cast succeeded
 function Cast:EventCastSucceeded(frame, unit, spell)
 	local cast = frame.castBar.bar
-	if( not cast.isChannelled and cast.spellName == spell ) then
---		setBarColor(cast, LunaUF.db.profile.colors.finished.r, LunaUF.db.profile.colors.finished.g, LunaUF.db.profile.colors.finished.b)
-	end
-end
-
--- Interruptible status changed
-function Cast:EventInterruptible(frame)
-	local cast = frame.castBar.bar
-	if( cast.isChannelled ) then
-		setBarColor(cast, LunaUF.db.profile.colors.channel.r, LunaUF.db.profile.colors.channel.g, LunaUF.db.profile.colors.channel.b)
-	else
-		setBarColor(cast, LunaUF.db.profile.colors.cast.r, LunaUF.db.profile.colors.cast.g, LunaUF.db.profile.colors.cast.b)
-	end
-end
-
-function Cast:EventUninterruptible(frame)
-	--setBarColor(frame.castBar.bar, LunaUF.db.profile.colors.uninterruptible.r, LunaUF.db.profile.colors.uninterruptible.g, LunaUF.db.profile.colors.uninterruptible.b)
 end
 
 function Cast:UpdateDelay(frame, spell, displayName, icon, startTime, endTime)
@@ -417,19 +360,6 @@ function Cast:UpdateCast(frame, unit, channelled, spell, displayName, icon, star
 		LunaUF.Layout:SetBarVisibility(frame, "castBar", true)
 	end
 
-	-- Set casted spell
---	if( LunaUF.db.profile.units[frame.unitType].castBar.name.enabled ) then
---		cast.name:SetText(spell)
---		cast.name:SetAlpha(LunaUF.db.profile.bars.alpha)
---		cast.name:Show()
---	end
-	
-	-- Show cast time
---	if( cast.time.enabled ) then
---		cast.time:SetAlpha(1)
---		cast.time:Show()
---	end
-	
 	-- Set spell icon
 	if( LunaUF.db.profile.units[frame.unitType].castBar.icon ~= "HIDE" ) then
 		frame.castBar.icon:SetTexture(icon)
@@ -464,11 +394,6 @@ function Cast:UpdateCast(frame, unit, channelled, spell, displayName, icon, star
 	end
 end
 
--- Trigger checks on fake cast
-function Cast:UpdateFakeCast(self)
-	local monitor = self.castBar.monitor
-	monitor.endTime = nil
-	monitor.notInterruptible = nil
-	monitor.spellName = nil
-	monitorFakeCast(monitor)
-end
+LunaUF.castMonitor = CreateFrame("Frame")
+LunaUF.castMonitor:SetScript("OnEvent", combatlogEvent)
+LunaUF.castMonitor:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")

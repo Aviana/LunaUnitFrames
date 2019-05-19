@@ -68,7 +68,7 @@ function Combo:OnDisable(frame)
 end
 
 function Combo:Update(frame)
-	local points = UnitPower("player", 4)
+	local points = UnitPower("player", Enum.PowerType.ComboPoints)
 
 	LunaUF.Layout:SetBarVisibility(frame, "comboPoints", LunaUF.db.profile.units[frame.unitType].comboPoints.showAlways or (points and points > 0))
 	

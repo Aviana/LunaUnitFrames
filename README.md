@@ -3,10 +3,22 @@ Unit Frames for WoW Classic
 
 FOR THE 1.12.1 VERSION SELECT IT FROM THE BRANCH MENU
 
-THIS IS VERY EARLY ALPHA STAGE! NOT REALLY USABLE FOR GAMEPLAY!
-Since addons were disabled in the Blizzcon preview and there is no alpha/beta this is somewhat speculative.
-However the UI code of the preview client is available: https://github.com/Daribon/wow-ui-source/tree/classic
+THIS IS VERY EARLY ALPHA STAGE! NOT GUARANTEED TO WORK ON CLASSIC BETA!
 So this will serve as a base for LunaUnitFrames 3. Currently this can be tested in the BFA client.
+Since i do not have access to the beta at this time i can't say if this actually works.
+
+List of stuff that is still missing:
+- Fix tags, add description
+- Mana / Energy ticker
+- Squares
+- Totems
+- Inc heal
+- Font options
+- Bar Textures
+- Reset profile
+- Vertical bars
+- Druid bar text
+- Fix reckoning stacks
 
 Feel free to fork this but give credit (at least author & link to this github)
 

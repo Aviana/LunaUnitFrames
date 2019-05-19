@@ -5,6 +5,17 @@ local rareColor, eliteColor = {r = 0, g = 0.63, b = 1}, {r = 1, g = 0.81, b = 0}
 local canCure = LunaUF.Units.canCure
 LunaUF:RegisterModule(Highlight, "highlight", LunaUF.L["Highlight"])
 
+local vex = LibStub("LibVexation-1.0", true)
+
+local function HighlightCallback(aggro, GUID, ...)
+	for _,frame in pairs(LunaUF.Units.unitFrames) do
+		if frame.unitGUID and frame.unitGUID == GUID then
+			Highlight:UpdateThreat(frame)
+		end
+	end
+end
+vex:RegisterCallback(HighlightCallback)
+
 local function OnEnter(frame)
 	if( LunaUF.db.profile.units[frame.unitType].highlight.mouseover ) then
 		frame.highlight.hasMouseover = true
@@ -38,8 +49,7 @@ function Highlight:OnEnable(frame)
 	end
 	
 	if( LunaUF.db.profile.units[frame.unitType].highlight.aggro ) then
---		frame:RegisterUnitEvent("UNIT_THREAT_SITUATION_UPDATE", self, "UpdateThreat")
---		frame:RegisterUpdateFunc(self, "UpdateThreat")
+		frame:RegisterUpdateFunc(self, "UpdateThreat")
 	end
 	
 	if( LunaUF.db.profile.units[frame.unitType].highlight.target and frame.unitType ~= "target" ) then
@@ -99,7 +109,7 @@ function Highlight:Update(frame)
 	if( frame.highlight.hasDebuff ) then
 		color = DebuffTypeColor[frame.highlight.hasDebuff] or DebuffTypeColor[""]
 	elseif( frame.highlight.hasThreat ) then
-		color = LunaUF.db.profile.healthColors.hostile
+		color = LunaUF.db.profile.colors.hostile
 	elseif( frame.highlight.hasAttention ) then
 		color = goldColor
 	elseif( frame.highlight.hasMouseover ) then
@@ -111,7 +121,7 @@ function Highlight:Update(frame)
 	end
 
 	if( color ) then
-		frame.highlight.texture:SetVertexColor(color.r, color.g, color.b, 0.6)
+		frame.highlight.texture:SetVertexColor(color.r, color.g, color.b, 1)
 		frame.highlight:Show()
 	else
 		frame.highlight:Hide()
@@ -119,7 +129,7 @@ function Highlight:Update(frame)
 end
 
 function Highlight:UpdateThreat(frame)
---	frame.highlight.hasThreat = UnitThreatSituation(frame.unit) == 3 or nil
+	frame.highlight.hasThreat = LunaUF.db.profile.units[frame.unitType].highlight.aggro and vex:GetUnitAggroByUnitGUID(frame.unitGUID)
 	self:Update(frame)
 end
 

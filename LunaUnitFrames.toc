@@ -1,4 +1,4 @@
-## Interface: 70300
+## Interface: 80000
 ## Title: Luna Unit Frames
 ## Notes: 
 ## Author: Aviana
@@ -15,7 +15,7 @@ libs\AceDBOptions-3.0\AceDBOptions-3.0.xml
 libs\AceGUI-3.0\AceGUI-3.0.xml
 libs\AceGUI-3.0-SharedMediaWidgets\widget.xml
 libs\AceConfig-3.0\AceConfig-3.0.xml
-libs\LibSpellRange-1.0\lib.xml
+libs\LibVexation-1.0\lib.xml
 #@end-no-lib-strip@
 
 locales\enUS.lua

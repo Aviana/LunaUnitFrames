@@ -2,11 +2,12 @@ local Tags = {}
 LunaUF.Tags = Tags
 local L = LunaUF.L
 local SML = LibStub:GetLibrary("LibSharedMedia-3.0")
+local vex = LibStub("LibVexation-1.0", true)
 
 local DruidForms = {
-	[24858] = L["form_moonkin"],
-	[1066] = L["form_aquatic"],
-	[783] = L["form_travel"],
+	[24858] = GetSpellInfo(24858),
+	[1066] = GetSpellInfo(1066),
+	[783] = GetSpellInfo(783),
 }
 
 local function Hex(r, g, b)
@@ -108,7 +109,7 @@ local defaultTags = {
 									return ""
 								end
 							end;
-	["color:combat"]		= function(unit)
+	["combatcolor"]		= function(unit)
 								if UnitAffectingCombat(unit) then
 									return Hex(1,0,0)
 								else
@@ -539,14 +540,14 @@ local defaultTags = {
 								end
 								return ""
 							end;
---	["color:aggro"]			= function(unit)
---								local aggro = banzai:GetUnitAggroByUnitId(unit)
---								if aggro then
---									return Hex(1,0,0)
---								else
---									return ""
---								end
---							end;
+	["aggrocolor"]			= function(unit)
+								local aggro = vex:GetUnitAggroByUnitGUID(UnitGUID(unit))
+								if aggro then
+									return Hex(1,0,0)
+								else
+									return ""
+								end
+							end;
 	["classcolor"]			= function(unit)
 								if not UnitIsPlayer(unit) then
 									return Hex(1,1,1)
@@ -753,15 +754,22 @@ local defaultTags = {
 	["castname"]			= function(unit)
 								if UnitCastingInfo(unit) then
 									return UnitCastingInfo(unit)
+								elseif UnitChannelInfo(unit) then
+									return UnitChannelInfo(unit)
+								elseif unit then
+									return LunaUF:GetCastName(UnitGUID(unit))
 								else
-									return UnitChannelInfo(unit) or ""
+									return ""
 								end
 							end;
 	["casttime"]			= function(unit)
-								if UnitCastingInfo(unit) then
+								local time = LunaUF:GetCastTime(UnitGUID(unit))
+								if UnitCastingInfo(unit) and UnitIsUnit(unit, "player") then
 									return math.floor(select(5,UnitCastingInfo(unit))/10 - GetTime()*100)/100
-								elseif UnitChannelInfo(unit) then
+								elseif UnitChannelInfo(unit) and UnitIsUnit(unit, "player") then
 									return math.floor(select(5,UnitChannelInfo(unit))/10 - GetTime()*100)/100
+								elseif unit and time and time > GetTime() then
+									return math.floor(time*100 - GetTime()*100)/100
 								else
 									return ""
 								end
