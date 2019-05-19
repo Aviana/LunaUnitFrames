@@ -17,7 +17,6 @@ List of stuff that is still missing:
 - Bar Textures
 - Reset profile
 - Vertical bars
-- Druid bar text
 - Fix reckoning stacks
 
 Feel free to fork this but give credit (at least author & link to this github)

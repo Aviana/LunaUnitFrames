@@ -373,42 +373,39 @@ local defaultTags = {
 									return math.floor(((UnitMana(unit) / UnitPowerMax(unit)) * 100)+0.5)
 								end
 							end;
---	["druid:pp"]			= function(unit)
---								if unit ~= "player" then
---									return ""
---								end
---								local mana = DruidManaLib:GetMana()
---								return mana
---							end;
---	["druid:maxpp"]			= function(unit)
---								if unit ~= "player" then
---									return ""
---								end
---								local _,manamax = DruidManaLib:GetMana()
---								return manamax
---							end;
---	["druid:missingpp"]		= function(unit)
---								if unit ~= "player" then
---									return ""
---								end
---								local mana,manamax = DruidManaLib:GetMana()
---								if manamax-mana == 0 then
---									return ""
---								else
---									return mana-manamax
---								end
---							end;
---	["druid:perpp"]			= function(unit)
---								if unit ~= "player" then
---									return ""
---								end
---								local mana,manamax = DruidManaLib:GetMana()
---								if manamax == 0 then
---									return 0
---								else
---									return math.floor(((mana / manamax) * 100)+0.5)
---								end
---							end;
+	["druid:pp"]			= function(unit)
+								if unit ~= "player" then
+									return ""
+								end
+								return UnitPower(unit, Enum.PowerType.Mana)
+							end;
+	["druid:maxpp"]			= function(unit)
+								if unit ~= "player" then
+									return ""
+								end
+								return UnitPowerMax(unit, Enum.PowerType.Mana)
+							end;
+	["druid:missingpp"]		= function(unit)
+								if unit ~= "player" then
+									return ""
+								end
+								if UnitPowerMax(unit, Enum.PowerType.Mana)-UnitPower(unit, Enum.PowerType.Mana) == 0 then
+									return ""
+								else
+									return UnitPower(unit, Enum.PowerType.Mana)-UnitPowerMax(unit, Enum.PowerType.Mana)
+								end
+							end;
+	["druid:perpp"]			= function(unit)
+								if unit ~= "player" then
+									return ""
+								end
+								local mana,manamax = UnitPower(unit, Enum.PowerType.Mana),UnitPowerMax(unit, Enum.PowerType.Mana)
+								if manamax == 0 then
+									return 0
+								else
+									return math.floor(((mana / manamax) * 100)+0.5)
+								end
+							end;
 	["level"]				= function(unit)
 								if UnitLevel(unit) == -1 then
 									return "??"
