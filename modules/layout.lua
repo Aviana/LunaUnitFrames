@@ -19,12 +19,13 @@ function Layout:MediaForced(mediaType)
 	self:Reload()
 end
 
-function Layout:LoadMedia(type, unitType)
-	local mediaName = LunaUF.db.profile.units[unitType][type] or LunaUF.db.profile[type]
+function Layout:LoadMedia(type, name)
+	local mediaName = name or LunaUF.db.profile[type]
 	if( not mediaName ) then return defaultMedia[type] end
 
 	local media = SML:Fetch(type, mediaName, true)
 	if( not media ) then
+		ChatFrame1:AddMessage(type.." "..name)
 		mediaRequired = mediaRequired or {}
 		mediaRequired[type] = mediaName
 		return defaultMedia[type]
@@ -46,8 +47,8 @@ local function updateBackdrop()
 		borderTexture = "None",
 		borderColor = {r = 0.30, g = 0.30, b = 0.50, a = 1},
 	}
-	backdropTbl.bgFile = LunaUF.Layout:LoadMedia(SML.MediaType.BACKGROUND, "player")
-	if( LunaUF.Layout:LoadMedia(SML.MediaType.BORDER, "player") ~= "Interface\\None" ) then backdropTbl.edgeFile = LunaUF.Layout:LoadMedia(SML.MediaType.BORDER, "player") end
+	backdropTbl.bgFile = LunaUF.Layout:LoadMedia(SML.MediaType.BACKGROUND, "Chat Frame")
+	if( LunaUF.Layout:LoadMedia(SML.MediaType.BORDER) ~= "Interface\\None" ) then backdropTbl.edgeFile = LunaUF.Layout:LoadMedia(SML.MediaType.BORDER) end
 	backdropTbl.tile = backdrop.tileSize > 0 and true or false
 	backdropTbl.edgeSize = backdrop.edgeSize
 	backdropTbl.tileSize = backdrop.tileSize
@@ -165,7 +166,24 @@ function Layout:Load(frame)
 end
 
 -- Register it on file load because authors seem to do a bad job at registering the callbacks
+SML:Register(SML.MediaType.FONT, "Aldrich", "Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Aldrich.ttf")
+SML:Register(SML.MediaType.FONT, "Bangers", "Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Bangers.ttf")
+SML:Register(SML.MediaType.FONT, "Celestia", "Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Celestia.ttf")
+SML:Register(SML.MediaType.FONT, "DorisPP", "Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\DorisPP.ttf")
+SML:Register(SML.MediaType.FONT, "Enigmatic", "Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Enigmatic.ttf")
+SML:Register(SML.MediaType.FONT, "FasterOne", "Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\FasterOne.ttf")
+SML:Register(SML.MediaType.FONT, "Fitzgerald", "Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Fitzgerald.ttf")
+SML:Register(SML.MediaType.FONT, "Gentium", "Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Gentium.ttf")
+SML:Register(SML.MediaType.FONT, "Iceland", "Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Iceland.ttf")
+SML:Register(SML.MediaType.FONT, "Inconsolata", "Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Inconsolata.ttf")
+SML:Register(SML.MediaType.FONT, "LiberationSans", "Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\LiberationSans.ttf")
+SML:Register(SML.MediaType.FONT, "MetalLord", "Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\MetalLord.ttf")
 SML:Register(SML.MediaType.FONT, "Myriad Condensed Web", "Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Myriad Condensed Web.ttf")
+SML:Register(SML.MediaType.FONT, "Optimus", "Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Optimus.ttf")
+SML:Register(SML.MediaType.FONT, "TradeWinds", "Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\TradeWinds.ttf")
+SML:Register(SML.MediaType.FONT, "VeraSerif", "Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\VeraSerif.ttf")
+SML:Register(SML.MediaType.FONT, "Yellowjacket", "Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Yellowjacket.ttf")
+
 SML:Register(SML.MediaType.BORDER, "Square Clean", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\borders\\ABFBorder")
 SML:Register(SML.MediaType.BACKGROUND, "Chat Frame", "Interface\\ChatFrame\\ChatFrameBackground")
 SML:Register(SML.MediaType.STATUSBAR, "BantoBar", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\banto")
@@ -178,6 +196,30 @@ SML:Register(SML.MediaType.STATUSBAR, "Striped",  "Interface\\AddOns\\LunaUnitFr
 SML:Register(SML.MediaType.STATUSBAR, "LiteStep", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\LiteStep")
 SML:Register(SML.MediaType.STATUSBAR, "Aluminium", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Aluminium")
 SML:Register(SML.MediaType.STATUSBAR, "Minimalist", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Minimalist")
+SML:Register(SML.MediaType.STATUSBAR, "Armory", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Armory")
+SML:Register(SML.MediaType.STATUSBAR, "Bars", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Bars")
+SML:Register(SML.MediaType.STATUSBAR, "Button", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Button")
+SML:Register(SML.MediaType.STATUSBAR, "Cilo", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Cilo")
+SML:Register(SML.MediaType.STATUSBAR, "Dabs", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Dabs")
+SML:Register(SML.MediaType.STATUSBAR, "Diagonal", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Diagonal")
+SML:Register(SML.MediaType.STATUSBAR, "Fifths", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Fifths")
+SML:Register(SML.MediaType.STATUSBAR, "Flat", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Flat")
+SML:Register(SML.MediaType.STATUSBAR, "Fourths", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Fourths")
+SML:Register(SML.MediaType.STATUSBAR, "Glamour", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Glamour")
+SML:Register(SML.MediaType.STATUSBAR, "Glamour2", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Glamour2")
+SML:Register(SML.MediaType.STATUSBAR, "Glamour3", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Glamour3")
+SML:Register(SML.MediaType.STATUSBAR, "Glamour4", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Glamour4")
+SML:Register(SML.MediaType.STATUSBAR, "Glamour5", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Glamour5")
+SML:Register(SML.MediaType.STATUSBAR, "Glamour6", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Glamour6")
+SML:Register(SML.MediaType.STATUSBAR, "Glamour7", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Glamour7")
+SML:Register(SML.MediaType.STATUSBAR, "Gloss", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Gloss")
+SML:Register(SML.MediaType.STATUSBAR, "Healbot", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Healbot")
+SML:Register(SML.MediaType.STATUSBAR, "Lyfe", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Lyfe")
+SML:Register(SML.MediaType.STATUSBAR, "Perl2", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Perl2")
+SML:Register(SML.MediaType.STATUSBAR, "Ruben", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Ruben")
+SML:Register(SML.MediaType.STATUSBAR, "Skewed", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Skewed")
+SML:Register(SML.MediaType.STATUSBAR, "Wisps", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Wisps")
+
 
 function Layout:LoadSML()
 	SML.RegisterCallback(self, "LibSharedMedia_Registered", "MediaRegistered")
@@ -283,7 +325,7 @@ function Layout:SetupBars(frame, config)
 			end
 			
 			if( ( widget:IsShown() or ( not frame[key].visibilityManaged and module.defaultVisibility == false ) ) and widget.SetStatusBarTexture ) then
-				widget:SetStatusBarTexture(LunaUF.Layout:LoadMedia(SML.MediaType.STATUSBAR, frame.unitType))
+				widget:SetStatusBarTexture(LunaUF.Layout:LoadMedia(SML.MediaType.STATUSBAR, LunaUF.db.profile.units[frame.unitType][key].statusbar))
 				widget:GetStatusBarTexture():SetHorizTile(false)
 
 				widget:SetOrientation(config[key].vertical and "VERTICAL" or "HORIZONTAL")
@@ -292,7 +334,7 @@ function Layout:SetupBars(frame, config)
 
 			if( widget.background ) then
 				if( config[key].background or config[key].invert ) then
-					widget.background:SetTexture(LunaUF.Layout:LoadMedia(SML.MediaType.STATUSBAR, frame.unitType))
+					widget.background:SetTexture(LunaUF.Layout:LoadMedia(SML.MediaType.STATUSBAR, LunaUF.db.profile.units[frame.unitType][key].statusbar))
 					widget.background:SetHorizTile(false)
 					widget.background:Show()
 

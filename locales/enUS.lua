@@ -238,6 +238,8 @@ local L = {
 ["Elite indicator alignment"] = "Elite indicator alignment",
 ["Point"] = "Point",
 ["Anchor point"] = "Anchor point",
+["WARNING! This will set ALL bars to this texture."] = "WARNING! This will set ALL bars to this texture.",
+["WARNING! This will set ALL texts to this font."] = "WARNING! This will set ALL texts to this font.",
 }
 
 LunaUF.L = L

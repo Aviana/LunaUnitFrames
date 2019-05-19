@@ -27,7 +27,7 @@ function Combat:OnLayoutApplied(frame, config)
 	LunaUF.Layout:ToggleVisibility(frame.combatText, frame.visibility.combatText)
 	if( frame.visibility.combatText ) then
 		frame.combatText.feedbackFontHeight = config.combatText.size
-		frame.combatText.fontPath = SML:Fetch(SML.MediaType.FONT, config.combatText.font, true)
+		frame.combatText.fontPath = LunaUF.Layout:LoadMedia(SML.MediaType.FONT, LunaUF.db.profile.units[frame.unitType].combatText.font)
 
 		frame.combatText.feedbackText:SetFont(frame.combatText.fontPath, config.combatText.size, "OUTLINE")
 

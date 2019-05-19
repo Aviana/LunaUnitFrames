@@ -26,7 +26,7 @@ function IncHeal:OnLayoutApplied(frame)
 	bar.total = nil
 
 	bar:SetSize(frame.healthBar:GetSize())
-	bar:SetStatusBarTexture(LunaUF.Layout:LoadMedia(SML.MediaType.STATUSBAR, frame.unitType))
+	bar:SetStatusBarTexture("Interface\\Tooltips\\UI-Tooltip-Background")
 	bar:SetStatusBarColor(LunaUF.db.profile.colors.incheal.r, LunaUF.db.profile.colors.incheal.g, LunaUF.db.profile.colors.incheal.b, LunaUF.db.profile.units[frame.unitType].incHeal.alpha)
 	bar:GetStatusBarTexture():SetHorizTile(false)
 	bar:SetOrientation(frame.healthBar:GetOrientation())

@@ -10,7 +10,7 @@ function ReckStacks:OnEnable(frame)
 	frame.reckStacks.blocks = frame.reckStacks.blocks or {}
 
 	local config = LunaUF.db.profile.units[frame.unitType].reckStacks
-	local texPath = LunaUF.Layout:LoadMedia(SML.MediaType.STATUSBAR, "player")
+	local texPath = LunaUF.Layout:LoadMedia(SML.MediaType.STATUSBAR, config.statusbar)
 	local color = LunaUF.db.profile.colors["COMBOPOINTS"]
 	for id=1, 4 do
 		frame.reckStacks.blocks[id] = frame.reckStacks.blocks[id] or frame.reckStacks:CreateTexture(nil, "OVERLAY")

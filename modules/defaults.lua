@@ -7,6 +7,7 @@ function LunaUF:LoadDefaults()
 			tooltipCombat = false,
 			hidden = {cast = true, buffs = false, party = true, raid = true, player = true, pet = true, target = true},
 			statusbar = "Minimalist",
+			font = "Myriad Condensed Web",
 			range = { dist = 40, alpha = 0.4},
 		},
 	}
@@ -65,7 +66,7 @@ function LunaUF:LoadDefaults()
 			highlight = { enabled = true, debuff = false },
 			borders = { enabled = true },
 			fader = {enabled = false, combatAlpha = 1, inactiveAlpha = 0.2, speedyFade = false},
-			combatText = {enabled = false, size = 15, font = "Myriad Condensed Web"},
+			combatText = {enabled = false, size = 15},
 			auras = {
 				buffs = false,
 				debuffs = false,
@@ -190,7 +191,7 @@ function LunaUF:LoadDefaults()
 			highlight = { enabled = true, debuff = false },
 			borders = { enabled = true },
 			fader = {enabled = false, combatAlpha = 1, inactiveAlpha = 0.2, speedyFade = false},
-			combatText = {enabled = false, size = 15, font = "Myriad Condensed Web"},
+			combatText = {enabled = false, size = 15},
 			auras = {
 				buffs = false,
 				debuffs = false,
@@ -291,7 +292,7 @@ function LunaUF:LoadDefaults()
 			highlight = { enabled = true, debuff = false },
 			borders = { enabled = true },
 			fader = {enabled = false, combatAlpha = 1, inactiveAlpha = 0.2, speedyFade = false},
-			combatText = {enabled = false, size = 15, font = "Myriad Condensed Web"},
+			combatText = {enabled = false, size = 15},
 			auras = {
 				buffs = false,
 				debuffs = false,
@@ -397,7 +398,7 @@ function LunaUF:LoadDefaults()
 			highlight = { enabled = true, debuff = false },
 			borders = { enabled = true },
 			fader = {enabled = false, combatAlpha = 1, inactiveAlpha = 0.2, speedyFade = false},
-			combatText = {enabled = false, size = 15, font = "Myriad Condensed Web"},
+			combatText = {enabled = false, size = 15},
 			auras = {
 				buffs = true,
 				debuffs = true,
@@ -505,7 +506,7 @@ function LunaUF:LoadDefaults()
 			highlight = { enabled = true, debuff = false },
 			borders = { enabled = true },
 			fader = {enabled = false, combatAlpha = 1, inactiveAlpha = 0.2, speedyFade = false},
-			combatText = {enabled = false, size = 15, font = "Myriad Condensed Web"},
+			combatText = {enabled = false, size = 15},
 			auras = {
 				buffs = false,
 				debuffs = false,
@@ -613,7 +614,7 @@ function LunaUF:LoadDefaults()
 			highlight = { enabled = true, debuff = false },
 			borders = { enabled = true },
 			fader = {enabled = false, combatAlpha = 1, inactiveAlpha = 0.2, speedyFade = false},
-			combatText = {enabled = false, size = 15, font = "Myriad Condensed Web"},
+			combatText = {enabled = false, size = 15},
 			auras = {
 				buffs = false,
 				debuffs = false,
@@ -721,7 +722,7 @@ function LunaUF:LoadDefaults()
 			highlight = { enabled = true, debuff = false },
 			borders = { enabled = true },
 			fader = {enabled = false, combatAlpha = 1, inactiveAlpha = 0.2, speedyFade = false},
-			combatText = {enabled = false, size = 15, font = "Myriad Condensed Web"},
+			combatText = {enabled = false, size = 15},
 			auras = {
 				buffs = true,
 				debuffs = true,
@@ -836,7 +837,7 @@ function LunaUF:LoadDefaults()
 			highlight = { enabled = true, debuff = false },
 			borders = { enabled = true },
 			fader = {enabled = false, combatAlpha = 1, inactiveAlpha = 0.2, speedyFade = false},
-			combatText = {enabled = false, size = 15, font = "Myriad Condensed Web"},
+			combatText = {enabled = false, size = 15},
 			auras = {
 				buffs = false,
 				debuffs = false,
@@ -941,7 +942,7 @@ function LunaUF:LoadDefaults()
 			highlight = { enabled = true, debuff = false },
 			borders = { enabled = true },
 			fader = {enabled = false, combatAlpha = 1, inactiveAlpha = 0.2, speedyFade = false},
-			combatText = {enabled = false, size = 15, font = "Myriad Condensed Web"},
+			combatText = {enabled = false, size = 15},
 			auras = {
 				buffs = false,
 				debuffs = false,
@@ -1043,7 +1044,7 @@ function LunaUF:LoadDefaults()
 			highlight = { enabled = true, debuff = false },
 			borders = { enabled = true },
 			fader = {enabled = false, combatAlpha = 1, inactiveAlpha = 0.2, speedyFade = false},
-			combatText = {enabled = false, size = 15, font = "Myriad Condensed Web"},
+			combatText = {enabled = false, size = 15},
 			auras = {
 				buffs = false,
 				debuffs = false,
@@ -1177,7 +1178,7 @@ function LunaUF:LoadDefaults()
 			highlight = { enabled = true, debuff = false },
 			borders = { enabled = true },
 			fader = {enabled = false, combatAlpha = 1, inactiveAlpha = 0.2, speedyFade = false},
-			combatText = {enabled = false, size = 15, font = "Myriad Condensed Web"},
+			combatText = {enabled = false, size = 15},
 			auras = {
 				buffs = false,
 				debuffs = false,
@@ -1283,7 +1284,7 @@ function LunaUF:LoadDefaults()
 			highlight = { enabled = true, debuff = false },
 			borders = { enabled = true },
 			fader = {enabled = false, combatAlpha = 1, inactiveAlpha = 0.2, speedyFade = false},
-			combatText = {enabled = false, size = 15, font = "Myriad Condensed Web"},
+			combatText = {enabled = false, size = 15},
 			auras = {
 				buffs = false,
 				debuffs = false,
@@ -1397,7 +1398,7 @@ function LunaUF:LoadDefaults()
 			highlight = { enabled = true, debuff = false },
 			borders = { enabled = true },
 			fader = {enabled = false, combatAlpha = 1, inactiveAlpha = 0.2, speedyFade = false},
-			combatText = {enabled = false, size = 15, font = "Myriad Condensed Web"},
+			combatText = {enabled = false, size = 15},
 			auras = {
 				buffs = false,
 				debuffs = false,
@@ -1511,7 +1512,7 @@ function LunaUF:LoadDefaults()
 			highlight = { enabled = true, debuff = false },
 			borders = { enabled = true },
 			fader = {enabled = false, combatAlpha = 1, inactiveAlpha = 0.2, speedyFade = false},
-			combatText = {enabled = false, size = 15, font = "Myriad Condensed Web"},
+			combatText = {enabled = false, size = 15},
 			auras = {
 				buffs = false,
 				debuffs = false,
@@ -1625,7 +1626,7 @@ function LunaUF:LoadDefaults()
 			highlight = { enabled = true, debuff = false },
 			borders = { enabled = true },
 			fader = {enabled = false, combatAlpha = 1, inactiveAlpha = 0.2, speedyFade = false},
-			combatText = {enabled = false, size = 15, font = "Myriad Condensed Web"},
+			combatText = {enabled = false, size = 15},
 			auras = {
 				buffs = false,
 				debuffs = false,

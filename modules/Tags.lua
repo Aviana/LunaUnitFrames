@@ -873,7 +873,7 @@ function Tags:SetupText(frame, config)
 				bar["center"] = bar["center"] or frame.highFrame:CreateFontString(nil, "ARTWORK")
 				bar["right"] = bar["right"] or frame.highFrame:CreateFontString(nil, "ARTWORK")
 				for align,fontstring in pairs(bar) do
-					fontstring:SetFont(LunaUF.Layout:LoadMedia(SML.MediaType.FONT, frame.unitType), barconfig.size)
+					fontstring:SetFont(LunaUF.Layout:LoadMedia(SML.MediaType.FONT, LunaUF.db.profile.units[frame.unitType].tags[barkey].font), barconfig.size)
 					fontstring:SetShadowColor(0, 0, 0, 1.0)
 					fontstring:SetShadowOffset(0.80, -0.80)
 					fontstring:SetJustifyH(string.upper(align))

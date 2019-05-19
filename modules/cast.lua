@@ -125,7 +125,7 @@ function Cast:OnLayoutApplied(frame, config)
 	if( not frame.visibility.castBar ) then return end
 	
 	-- Set textures
-	frame.castBar.bar:SetStatusBarTexture(LunaUF.Layout:LoadMedia(SML.MediaType.STATUSBAR, frame.unitType))
+	frame.castBar.bar:SetStatusBarTexture(LunaUF.Layout:LoadMedia(SML.MediaType.STATUSBAR, LunaUF.db.profile.units[frame.unitType].castBar.statusbar))
 	frame.castBar.bar:GetStatusBarTexture():SetHorizTile(false)
 	frame.castBar.bar:SetStatusBarColor(0, 0, 0, 0)
 	frame.castBar.background:SetVertexColor(0, 0, 0, 0)

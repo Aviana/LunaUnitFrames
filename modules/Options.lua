@@ -114,12 +114,31 @@ function LunaUF:CreateConfig()
 
 		MediaList[mediaType] = MediaList[mediaType] or {}
 
-		for k in pairs(MediaList[mediaType]) do	MediaList[mediaType][k] = nil end
+		for k in pairs(MediaList[mediaType]) do MediaList[mediaType][k] = nil end
 		for _, name in pairs(SML:List(mediaType)) do
 			MediaList[mediaType][name] = name
 		end
 		
 		return MediaList[mediaType]
+	end
+
+	local function wipeTextures()
+		for unit,tbl in pairs(LunaUF.db.profile.units) do
+			for barname,bartbl in pairs(tbl) do
+				if type(bartbl) == "table" and bartbl.statusbar then
+					bartbl.statusbar = nil
+				end
+			end
+		end
+	end
+
+	local function wipeFonts()
+		for unit,tbl in pairs(LunaUF.db.profile.units) do
+			for bar,bartbl in pairs(tbl.tags) do
+				bartbl.font = nil
+			end
+			tbl.combatText.font = nil
+		end
 	end
 
 	local function getGrowthDir(info)
@@ -313,6 +332,14 @@ function LunaUF:CreateConfig()
 					max = 100,
 					step = 5,
 				},
+				statusbar = {
+					order = 8,
+					type = "select",
+					name = L["Bar texture"],
+					dialogControl = "LSM30_Statusbar",
+					values = getMediaData,
+					get = function(info) return get(info) or LunaUF.db.profile.statusbar end,
+				},
 			},
 		},
 		["powerBar"] = {
@@ -367,6 +394,14 @@ function LunaUF:CreateConfig()
 					min = 0,
 					max = 100,
 					step = 5,
+				},
+				statusbar = {
+					order = 7,
+					type = "select",
+					name = L["Bar texture"],
+					dialogControl = "LSM30_Statusbar",
+					values = getMediaData,
+					get = function(info) return get(info) or LunaUF.db.profile.statusbar end,
 				},
 			},
 		},
@@ -428,6 +463,14 @@ function LunaUF:CreateConfig()
 					max = 100,
 					step = 5,
 				},
+				statusbar = {
+					order = 8,
+					type = "select",
+					name = L["Bar texture"],
+					dialogControl = "LSM30_Statusbar",
+					values = getMediaData,
+					get = function(info) return get(info) or LunaUF.db.profile.statusbar end,
+				},
 			},
 		},
 		["emptyBar"] = {
@@ -481,6 +524,14 @@ function LunaUF:CreateConfig()
 					min = 0,
 					max = 100,
 					step = 5,
+				},
+				statusbar = {
+					order = 7,
+					type = "select",
+					name = L["Bar texture"],
+					dialogControl = "LSM30_Statusbar",
+					values = getMediaData,
+					get = function(info) return get(info) or LunaUF.db.profile.statusbar end,
 				},
 			},
 		},
@@ -929,6 +980,14 @@ function LunaUF:CreateConfig()
 							max = 24,
 							step = 1,
 						},
+						font = {
+							order = 5,
+							type = "select",
+							name = L["Font"],
+							dialogControl = "LSM30_Font",
+							values = getMediaData,
+							get = function(info) return get(info) or LunaUF.db.profile.font end,
+						},
 					},
 				},
 				powerBar = {
@@ -1018,6 +1077,14 @@ function LunaUF:CreateConfig()
 							min = 5,
 							max = 24,
 							step = 1,
+						},
+						font = {
+							order = 5,
+							type = "select",
+							name = L["Font"],
+							dialogControl = "LSM30_Font",
+							values = getMediaData,
+							get = function(info) return get(info) or LunaUF.db.profile.font end,
 						},
 					},
 				},
@@ -1109,6 +1176,14 @@ function LunaUF:CreateConfig()
 							max = 24,
 							step = 1,
 						},
+						font = {
+							order = 5,
+							type = "select",
+							name = L["Font"],
+							dialogControl = "LSM30_Font",
+							values = getMediaData,
+							get = function(info) return get(info) or LunaUF.db.profile.font end,
+						},
 					},
 				},
 				emptyBar = {
@@ -1198,6 +1273,14 @@ function LunaUF:CreateConfig()
 							min = 5,
 							max = 24,
 							step = 1,
+						},
+						font = {
+							order = 5,
+							type = "select",
+							name = L["Font"],
+							dialogControl = "LSM30_Font",
+							values = getMediaData,
+							get = function(info) return get(info) or LunaUF.db.profile.font end,
 						},
 					},
 				},
@@ -1289,6 +1372,14 @@ function LunaUF:CreateConfig()
 							min = 5,
 							max = 24,
 							step = 1,
+						},
+						font = {
+							order = 5,
+							type = "select",
+							name = L["Font"],
+							dialogControl = "LSM30_Font",
+							values = getMediaData,
+							get = function(info) return get(info) or LunaUF.db.profile.font end,
 						},
 					},
 				},
@@ -1834,6 +1925,7 @@ function LunaUF:CreateConfig()
 					order = 2,
 					dialogControl = "LSM30_Font",
 					values = getMediaData,
+					get = function(info) return get(info) or LunaUF.db.profile.font end,
 				},
 				size = {
 					name = L["Font Size"],
@@ -1908,6 +2000,14 @@ function LunaUF:CreateConfig()
 					disabled = Lockdown,
 					order = 7,
 				},
+				statusbar = {
+					order = 8,
+					type = "select",
+					name = L["Bar texture"],
+					dialogControl = "LSM30_Statusbar",
+					values = getMediaData,
+					get = function(info) return get(info) or LunaUF.db.profile.statusbar end,
+				},
 			},
 		},
 		["druidBar"] = {
@@ -1955,6 +2055,14 @@ function LunaUF:CreateConfig()
 					min = 0,
 					max = 100,
 					step = 5,
+				},
+				statusbar = {
+					order = 6,
+					type = "select",
+					name = L["Bar texture"],
+					dialogControl = "LSM30_Statusbar",
+					values = getMediaData,
+					get = function(info) return get(info) or LunaUF.db.profile.statusbar end,
 				},
 			},
 		},
@@ -2011,6 +2119,14 @@ function LunaUF:CreateConfig()
 					order = 6,
 					values = {["LEFT"] = L["Left"], ["RIGHT"] = L["Right"]},
 				},
+				statusbar = {
+					order = 7,
+					type = "select",
+					name = L["Bar texture"],
+					dialogControl = "LSM30_Statusbar",
+					values = getMediaData,
+					get = function(info) return get(info) or LunaUF.db.profile.statusbar end,
+				},
 			},
 		},
 		["comboPoints"] = {
@@ -2050,6 +2166,14 @@ function LunaUF:CreateConfig()
 					min = 0,
 					max = 100,
 					step = 5,
+				},
+				statusbar = {
+					order = 5,
+					type = "select",
+					name = L["Bar texture"],
+					dialogControl = "LSM30_Statusbar",
+					values = getMediaData,
+					get = function(info) return get(info) or LunaUF.db.profile.statusbar end,
 				},
 			},
 		},
@@ -2109,18 +2233,28 @@ function LunaUF:CreateConfig()
 						name = L["Bar texture"],
 						dialogControl = "LSM30_Statusbar",
 						values = getMediaData,
-						set = function(info, value) setGeneral(info, value) LunaUF.Layout:Reload() end,
+						confirm = function(info) return L["WARNING! This will set ALL bars to this texture."] end,
+						set = function(info, value) wipeTextures() setGeneral(info, value) LunaUF.Layout:Reload() end,
+					},
+					font = {
+						order = 6,
+						type = "select",
+						name = L["Font"],
+						dialogControl = "LSM30_Font",
+						values = getMediaData,
+						confirm = function(info) return L["WARNING! This will set ALL texts to this font."] end,
+						set = function(info, value) wipeFonts() setGeneral(info, value) LunaUF.Layout:Reload() end,
 					},
 					headerRange = {
 						name = L["Range"],
 						type = "header",
-						order = 6,
+						order = 7,
 					},
 					range = {
 						name = L["Distance"],
 						desc = L["Distance to measure"],
 						type = "select",
-						order = 7,
+						order = 8,
 						values = {[10] = L["10y"], [30] = L["30y"], [40] = L["Spell based"], [100] = L["Is Visible"], },
 						get = function(info) return LunaUF.db.profile.range.dist end,
 						set = function(info, value) LunaUF.db.profile.range.dist = value end,
@@ -2129,7 +2263,7 @@ function LunaUF:CreateConfig()
 						name = L["Alpha"],
 						desc = L["Set the alpha."],
 						type = "range",
-						order = 8,
+						order = 9,
 						min = 0.01,
 						max = 1,
 						step = 0.01,

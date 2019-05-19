@@ -55,7 +55,7 @@ end
 
 function XP:OnLayoutApplied(frame)
 	if( frame.visibility.xpBar ) then
-		local texture = LunaUF.Layout:LoadMedia(SML.MediaType.STATUSBAR, frame.unitType)
+		local texture = LunaUF.Layout:LoadMedia(SML.MediaType.STATUSBAR, LunaUF.db.profile.units[frame.unitType].xpBar.statusbar)
 		frame.xpBar.xp:SetStatusBarTexture(texture)
 		frame.xpBar.xp:SetStatusBarColor(LunaUF.db.profile.colors.normal.r, LunaUF.db.profile.colors.normal.g, LunaUF.db.profile.colors.normal.b, LunaUF.db.profile.units[frame.unitType].xpBar.alpha)
 		

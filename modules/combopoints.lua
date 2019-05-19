@@ -8,7 +8,7 @@ local function createBlocks(pointsFrame)
 
 	-- Position bars, the 5 accounts for borders
 	local blockWidth = (pointsFrame:GetWidth() - 4) / 5
-	local texPath = LunaUF.Layout:LoadMedia(SML.MediaType.STATUSBAR, "target")
+	local texPath = LunaUF.Layout:LoadMedia(SML.MediaType.STATUSBAR, LunaUF.db.profile.units.target.comboPoints.statusbar)
 	local color = LunaUF.db.profile.colors["COMBOPOINTS"]
 	for id=1, 5 do
 		pointsFrame.blocks[id] = pointsFrame.blocks[id] or pointsFrame:CreateTexture(nil, "OVERLAY")

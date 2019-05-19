@@ -8,13 +8,11 @@ So this will serve as a base for LunaUnitFrames 3. Currently this can be tested 
 Since i do not have access to the beta at this time i can't say if this actually works.
 
 List of stuff that is still missing:
-- Fix tags, add description
+- Fix heal based tags, add description
 - Mana / Energy ticker
 - Squares
 - Totems
 - Inc heal
-- Font options
-- Bar Textures
 - Reset profile
 - Vertical bars
 - Fix reckoning stacks
