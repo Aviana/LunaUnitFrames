@@ -1,4 +1,5 @@
 local Units = {headerFrames = {}, unitFrames = {}, frameList = {}, unitEvents = {}, canCure = {}}
+local Units = {headerFrames = {}, unitFrames = {}, frameList = {}, unitEvents = {}, canCure = {}}
 Units.headerUnits = {["raid"] = true, ["raidpet"] = true, ["party"] = true, ["partytarget"] = true, ["partypet"] = true, ["maintank"] = true, ["maintanktarget"] = true, ["mainassist"] = true, ["mainassisttarget"] =true}
 
 local headerFrames, unitFrames, frameList, unitEvents, headerUnits = Units.headerFrames, Units.unitFrames, Units.frameList, Units.unitEvents, Units.headerUnits

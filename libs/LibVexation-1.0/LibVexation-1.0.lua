@@ -155,7 +155,6 @@ local function start()
 	frame:SetScript("OnEvent", updateRoster)
 	frame:RegisterEvent("GROUP_ROSTER_UPDATE")
 	frame:RegisterEvent("UNIT_PET")
-	frame:RegisterEvent("PLAYER_FOCUS_CHANGED")
 	running = true
 end
 

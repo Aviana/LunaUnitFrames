@@ -234,7 +234,7 @@ function LunaUF:LoadDefaults()
 						size = 100,
 					},
 					["right"] = {
-						tagline = "[pp]",
+						tagline = "[pp]/[maxpp]",
 						size = 100,
 					},
 				},
@@ -335,7 +335,7 @@ function LunaUF:LoadDefaults()
 						size = 100,
 					},
 					["right"] = {
-						tagline = "[pp]",
+						tagline = "[pp]/[maxpp]",
 						size = 100,
 					},
 				},
@@ -441,7 +441,7 @@ function LunaUF:LoadDefaults()
 						size = 100,
 					},
 					["right"] = {
-						tagline = "[pp]",
+						tagline = "[pp]/[maxpp]",
 						size = 100,
 					},
 				},
@@ -549,7 +549,7 @@ function LunaUF:LoadDefaults()
 						size = 100,
 					},
 					["right"] = {
-						tagline = "[pp]",
+						tagline = "[pp]/[maxpp]",
 						size = 100,
 					},
 				},
@@ -657,7 +657,7 @@ function LunaUF:LoadDefaults()
 						size = 100,
 					},
 					["right"] = {
-						tagline = "[pp]",
+						tagline = "[pp]/[maxpp]",
 						size = 100,
 					},
 				},
@@ -767,7 +767,7 @@ function LunaUF:LoadDefaults()
 						size = 100,
 					},
 					["right"] = {
-						tagline = "[pp]",
+						tagline = "[pp]/[maxpp]",
 						size = 100,
 					},
 				},

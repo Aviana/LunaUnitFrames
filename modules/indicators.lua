@@ -19,7 +19,7 @@ end
 function Indicators:UpdateHappiness(frame)
 	if( not frame.indicators.happiness or not frame.indicators.happiness.enabled ) then return end
 
-	local happiness = GetPetHappiness and GetPetHappiness() or 1
+	local happiness = GetPetHappiness and GetPetHappiness() or 3
 
 	-- Happy :D
 	if happiness == 3 then
@@ -43,7 +43,7 @@ end
 function Indicators:UpdatePVPRank(frame)
 	if( not frame.indicators.pvprank or not frame.indicators.pvprank.enabled ) then return end
 
-	local rank = UnitPVPRank and UnitPVPRank(unit) or 1
+	local rank = UnitPVPRank and UnitPVPRank(frame.unit) or 1
 	if rank then
 		if rank < 5 then
 			frame.indicators.pvprank:Hide()

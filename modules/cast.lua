@@ -61,24 +61,23 @@ local function updateFrame(casterID, spellID)
 end
 
 local function combatlogEvent()
-	local _, event, _, casterID, _, _, _, targetID = CombatLogGetCurrentEventInfo()
-	local spellID = select(12,CombatLogGetCurrentEventInfo())
+	local _, event, _, casterID, _, _, _, targetID, _, _, _, spellID = CombatLogGetCurrentEventInfo()
 	local name, rank, icon, castTime = GetSpellInfo(spellID)
 
-	if interruptIDs[name] and currentCasts[targetID] then
-		spellID = currentCasts[targetID].spellID
-		currentCasts[targetID] = nil
-		updateFrame(targetID, spellID)
+--	if interruptIDs[name] and currentCasts[targetID] then
+--		spellID = currentCasts[targetID].spellID
+--		currentCasts[targetID] = nil
+--		updateFrame(targetID, spellID)
+--		return
+--	end
+
+--	if event == "SPELL_CAST_FAILED" and currentCasts[casterID] then
+--		currentCasts[casterID] = nil
+--		updateFrame(casterID, spellID)
+--		ChatFrame1:AddMessage("SPELL_CAST_FAILED")
+	if event ~= "SPELL_CAST_START" then
 		return
 	end
-
-	if event == "SPELL_CAST_FAILED" and currentCasts[casterID] then
-		currentCasts[casterID] = nil
-		updateFrame(casterID, spellID)
-	elseif event ~= "SPELL_CAST_START" then
-		return
-	end
-
 	if castTime and castTime > 0 then
 		currentCasts[casterID] = {
 			["spellID"] = spellID,
@@ -163,7 +162,7 @@ function Cast:OnLayoutApplied(frame, config)
 		end
 	end
 
-	if( config.castBar.autoHide and not UnitCastingInfo(frame.unit) and not UnitChannelInfo(frame.unit) ) then
+	if( config.castBar.autoHide and not CastingInfo() and not ChannelInfo() ) then
 		LunaUF.Layout:SetBarVisibility(frame, "castBar", false)
 	else
 		LunaUF.Layout:SetBarVisibility(frame, "castBar", true)
@@ -174,8 +173,6 @@ function Cast:OnDisable(frame, unit)
 	frame:UnregisterAll(self)
 
 	if( frame.castBar ) then
-		cancelFakeCastMonitor(frame)
-
 		frame.castBar.bar:Hide()
 	end
 end
@@ -244,16 +241,17 @@ local function channelOnUpdate(self, elapsed)
 end
 
 function Cast:UpdateCurrentCast(frame)
-	if( UnitCastingInfo(frame.unit) ) then
-		local name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible, spellID = UnitCastingInfo(frame.unit)
+	if( CastingInfo() and frame.unitType == "player" ) then
+		local name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible, spellID = CastingInfo()
 		self:UpdateCast(frame, frame.unit, false, name, text, texture, startTime, endTime, isTradeSkill, notInterruptible, spellID)
-	elseif( UnitChannelInfo(frame.unit) ) then
-		local name, text, texture, startTime, endTime, isTradeSkill, notInterruptible, spellID = UnitChannelInfo(frame.unit)
+	elseif( ChannelInfo() and frame.unitType == "player" ) then
+		local name, text, texture, startTime, endTime, isTradeSkill, notInterruptible, spellID = ChannelInfo()
 		self:UpdateCast(frame, frame.unit, true, name, text, texture, startTime, endTime, isTradeSkill, notInterruptible, spellID)
 	elseif currentCasts[frame.unitGUID] and currentCasts[frame.unitGUID].endTime > GetTime() and not UnitIsDeadOrGhost(frame.unit) then
 		local cast = currentCasts[frame.unitGUID]
 		self:UpdateCast(frame, frame.unit, false, cast.name, "", cast.icon, cast.startTime, cast.endTime, nil, nil, cast.spellID)
 	else
+		ChatFrame1:AddMessage("End Cast "..frame.unit)
 		if( LunaUF.db.profile.units[frame.unitType].castBar.autoHide ) then
 			LunaUF.Layout:SetBarVisibility(frame, "castBar", false)
 		end
@@ -267,23 +265,23 @@ end
 
 -- Cast updated/changed
 function Cast:EventUpdateCast(frame)
-	local name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible, spellID = UnitCastingInfo(frame.unit)
+	local name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible, spellID = CastingInfo()
 	self:UpdateCast(frame, frame.unit, false, name, text, texture, startTime, endTime, isTradeSkill, notInterruptible, spellID)
 end
 
 function Cast:EventDelayCast(frame)
-	local name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible, spellID = UnitCastingInfo(frame.unit)
+	local name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible, spellID = CastingInfo()
 	self:UpdateDelay(frame, name, text, texture, startTime, endTime)
 end
 
 -- Channel updated/changed
 function Cast:EventUpdateChannel(frame)
-	local name, text, texture, startTime, endTime, isTradeSkill, notInterruptible, spellID = UnitChannelInfo(frame.unit)
+	local name, text, texture, startTime, endTime, isTradeSkill, notInterruptible, spellID = ChannelInfo()
 	self:UpdateCast(frame, frame.unit, true, name, text, texture, startTime, endTime, isTradeSkill, notInterruptible, spellID)
 end
 
 function Cast:EventDelayChannel(frame)
-	local name, text, texture, startTime, endTime, isTradeSkill, notInterruptible, spellID = UnitChannelInfo(frame.unit)
+	local name, text, texture, startTime, endTime, isTradeSkill, notInterruptible, spellID = ChannelInfo()
 	self:UpdateDelay(frame, name, text, texture, startTime, endTime)
 end
 

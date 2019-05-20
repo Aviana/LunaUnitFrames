@@ -8,7 +8,7 @@ function IncHeal:OnEnable(frame)
 	frame:RegisterUnitEvent("UNIT_MAXHEALTH", self, "Update")
 	frame:RegisterUnitEvent("UNIT_HEALTH", self, "Update")
 	frame:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", self, "Update")
-	frame:RegisterUnitEvent("UNIT_HEAL_PREDICTION", self, "Update")
+--	frame:RegisterUnitEvent("UNIT_HEAL_PREDICTION", self, "Update")
 
 	frame:RegisterUpdateFunc(self, "Update")
 end
@@ -129,7 +129,7 @@ end
 function IncHeal:Update(frame)
 	if( not frame.visibility.incHeal or not frame.visibility.healthBar ) then return end
 	
-	local amount = UnitGetIncomingHeals(frame.unit) or 0
+	local amount = 0 --UnitGetIncomingHeals(frame.unit) or 0
 	if( amount > 0 ) then
 		amount = amount + (UnitGetTotalHealAbsorbs(frame.unit) or 0)
 	end

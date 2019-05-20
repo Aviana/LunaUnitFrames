@@ -43,14 +43,35 @@ function LunaUF:OnInitialize()
 end
 
 function LunaUF:ProfilesChanged()
-	self:Print("The Profiles changed!")
+	if( resetTimer ) then resetTimer:Hide() end
+	
+	self.db:RegisterDefaults(self.defaults)
+	
+	-- No active layout, register the default one
+	if( not self.db.profile.loadedLayout ) then
+		self:LoadDefaults()
+	end
+	
+	self:FireModuleEvent("OnProfileChange")
 	self:LoadUnits()
-	self:FireModuleEvent("OnProfileChanged")
+	self:HideBlizzardFrames()
+	self.Layout:CheckMedia()
+	self.Units:ProfileChanged()
+	self.modules.movers:Update()
 end
 
+local resetTimer
 function LunaUF:ProfileReset()
 	self:Print("The Profile was reset!")
-	self:FireModuleEvent("OnProfileChanged")
+	if( not resetTimer ) then
+		resetTimer = CreateFrame("Frame")
+		resetTimer:SetScript("OnUpdate", function(self)
+			LunaUF:ProfilesChanged()
+			self:Hide()
+		end)
+	end
+	
+	resetTimer:Show()
 end
 
 function LunaUF:RegisterModule(module, key, name, isBar, class)

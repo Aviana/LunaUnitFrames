@@ -749,10 +749,14 @@ local defaultTags = {
 								return "\n"
 							end;
 	["castname"]			= function(unit)
-								if UnitCastingInfo(unit) then
-									return UnitCastingInfo(unit)
-								elseif UnitChannelInfo(unit) then
-									return UnitChannelInfo(unit)
+								if UnitIsUnit(unit,"player") then
+									if CastingInfo() then
+										return CastingInfo()
+									elseif ChannelInfo() then
+										return ChannelInfo()
+									else
+										return ""
+									end
 								elseif unit then
 									return LunaUF:GetCastName(UnitGUID(unit))
 								else
@@ -761,10 +765,14 @@ local defaultTags = {
 							end;
 	["casttime"]			= function(unit)
 								local time = LunaUF:GetCastTime(UnitGUID(unit))
-								if UnitCastingInfo(unit) and UnitIsUnit(unit, "player") then
-									return math.floor(select(5,UnitCastingInfo(unit))/10 - GetTime()*100)/100
-								elseif UnitChannelInfo(unit) and UnitIsUnit(unit, "player") then
-									return math.floor(select(5,UnitChannelInfo(unit))/10 - GetTime()*100)/100
+								if UnitIsUnit(unit, "player") then
+									if CastingInfo() then
+										return math.floor(select(5,CastingInfo())/10 - GetTime()*100)/100
+									elseif ChannelInfo() then
+										return math.floor(select(5,ChannelInfo())/10 - GetTime()*100)/100
+									else
+										return ""
+									end
 								elseif unit and time and time > GetTime() then
 									return math.floor(time*100 - GetTime()*100)/100
 								else
