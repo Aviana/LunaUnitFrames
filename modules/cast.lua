@@ -50,7 +50,7 @@ end
 
 local function updateFrame(casterID, spellID)
 	for frame in pairs(LunaUF.Units.frameList) do
-		if frame.unitGUID == casterID and LunaUF.db.profile.units[frame.unitRealType].castBar.enabled then
+		if frame.unitRealType ~= "player" and frame.unitGUID == casterID and LunaUF.db.profile.units[frame.unitRealType].castBar.enabled then
 			if spellID then
 				Cast:EventStopCast(frame, event, frame.unit, nil, spellID)
 			else
@@ -64,12 +64,12 @@ local function combatlogEvent()
 	local _, event, _, casterID, _, _, _, targetID, _, _, _, spellID = CombatLogGetCurrentEventInfo()
 	local name, rank, icon, castTime = GetSpellInfo(spellID)
 
---	if interruptIDs[name] and currentCasts[targetID] then
---		spellID = currentCasts[targetID].spellID
---		currentCasts[targetID] = nil
---		updateFrame(targetID, spellID)
---		return
---	end
+	if interruptIDs[name] and currentCasts[targetID] then
+		spellID = currentCasts[targetID].spellID
+		currentCasts[targetID] = nil
+		updateFrame(targetID, spellID)
+		return
+	end
 
 --	if event == "SPELL_CAST_FAILED" and currentCasts[casterID] then
 --		currentCasts[casterID] = nil
@@ -85,8 +85,8 @@ local function combatlogEvent()
 			["rank"] = rank,
 			["icon"] = icon,
 			["castTime"] = castTime,
-			["startTime"] = GetTime(),
-			["endTime"] = castTime/1000 + GetTime()
+			["startTime"] = GetTime() * 1000,
+			["endTime"] = castTime + GetTime() * 1000
 		}
 		updateFrame(casterID)
 	end
@@ -212,7 +212,7 @@ local function castOnUpdate(self, elapsed)
 
 	-- Cast finished, do a quick fade
 	if( self.elapsed >= self.endSeconds ) then
-
+		currentCasts[self:GetParent().unitGUID] = nil
 		self.spellName = nil
 		self.fadeElapsed = FADE_TIME
 		self.fadeStart = FADE_TIME
@@ -241,18 +241,17 @@ local function channelOnUpdate(self, elapsed)
 end
 
 function Cast:UpdateCurrentCast(frame)
-	if( CastingInfo() and frame.unitType == "player" ) then
+	if( CastingInfo() and frame.unitRealType == "player" ) then
 		local name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible, spellID = CastingInfo()
 		self:UpdateCast(frame, frame.unit, false, name, text, texture, startTime, endTime, isTradeSkill, notInterruptible, spellID)
-	elseif( ChannelInfo() and frame.unitType == "player" ) then
+	elseif( ChannelInfo() and frame.unitRealType == "player" ) then
 		local name, text, texture, startTime, endTime, isTradeSkill, notInterruptible, spellID = ChannelInfo()
 		self:UpdateCast(frame, frame.unit, true, name, text, texture, startTime, endTime, isTradeSkill, notInterruptible, spellID)
-	elseif currentCasts[frame.unitGUID] and currentCasts[frame.unitGUID].endTime > GetTime() and not UnitIsDeadOrGhost(frame.unit) then
+	elseif frame.unitRealType ~= "player" and currentCasts[frame.unitGUID] and currentCasts[frame.unitGUID].endTime > (GetTime()*1000) and not UnitIsDeadOrGhost(frame.unit) then
 		local cast = currentCasts[frame.unitGUID]
 		self:UpdateCast(frame, frame.unit, false, cast.name, "", cast.icon, cast.startTime, cast.endTime, nil, nil, cast.spellID)
 	else
-		ChatFrame1:AddMessage("End Cast "..frame.unit)
-		if( LunaUF.db.profile.units[frame.unitType].castBar.autoHide ) then
+		if( LunaUF.db.profile.units[frame.unitRealType].castBar.autoHide ) then
 			LunaUF.Layout:SetBarVisibility(frame, "castBar", false)
 		end
 
@@ -307,7 +306,7 @@ end
 function Cast:EventInterruptCast(frame, event, unit, castID, spellID)
 	local cast = frame.castBar.bar
 	if( spellID and cast.spellID ~= spellID ) then return end
-	
+
 	if( LunaUF.db.profile.units[frame.unitType].castBar.autoHide ) then
 		LunaUF.Layout:SetBarVisibility(frame, "castBar", true)
 	end

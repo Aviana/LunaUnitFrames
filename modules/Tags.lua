@@ -4,6 +4,11 @@ local L = LunaUF.L
 local SML = LibStub:GetLibrary("LibSharedMedia-3.0")
 local vex = LibStub("LibVexation-1.0", true)
 
+local UnitHealth = UnitHealth
+local realUnitHealth = UnitHealth
+local UnitHealthMax = UnitHealthMax
+local realUnitHealthMax = UnitHealthMax
+
 local DruidForms = {
 	[24858] = GetSpellInfo(24858),
 	[1066] = GetSpellInfo(1066),
@@ -765,7 +770,7 @@ local defaultTags = {
 							end;
 	["casttime"]			= function(unit)
 								local time = LunaUF:GetCastTime(UnitGUID(unit))
-								if UnitIsUnit(unit, "player") then
+								if unit == "player" then
 									if CastingInfo() then
 										return math.floor(select(5,CastingInfo())/10 - GetTime()*100)/100
 									elseif ChannelInfo() then
@@ -774,7 +779,7 @@ local defaultTags = {
 										return ""
 									end
 								elseif unit and time and time > GetTime() then
-									return math.floor(time*100 - GetTime()*100)/100
+									return math.floor((time/1000 - GetTime())*100)/100
 								else
 									return ""
 								end
@@ -910,5 +915,16 @@ function Tags:SetupText(frame, config)
 			frame.tagUpdate = CreateFrame("Frame", nil, frame)
 			frame.tagUpdate:SetScript("OnUpdate", tagUpdate)
 		end
+	end
+end
+
+if RealMobHealth then
+	UnitHealth = function(unit)
+		local hp = RealMobHealth.GetHealth(unit, true)
+		return hp or realUnitHealth(unit)
+	end
+	UnitHealthMax = function(unit)
+		local _,maxhp = RealMobHealth.GetHealth(unit, true)
+		return maxhp or realUnitHealthMax(unit)
 	end
 end

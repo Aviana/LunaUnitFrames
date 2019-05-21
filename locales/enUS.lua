@@ -240,6 +240,21 @@ local L = {
 ["Anchor point"] = "Anchor point",
 ["WARNING! This will set ALL bars to this texture."] = "WARNING! This will set ALL bars to this texture.",
 ["WARNING! This will set ALL texts to this font."] = "WARNING! This will set ALL texts to this font.",
+["Dead"] = "Dead",
+["Feigned"] = "Feigned",
+["Ghost"] = "Ghost",
+["Offline"] = "Offline",
+["(i)"] = "(i)",
+["rare"] = "rare",
+["elite"] = "elite",
+["rareelite"] = "rareelite",
+["(civ)"] = "(civ)",
+["unhappy"] = "unhappy",
+["content"] = "content",
+["happy"] = "happy",
+["(c)"] = "(c)",
+["male"] = "male",
+["female"] = "female",
 }
 
 LunaUF.L = L
