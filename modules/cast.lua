@@ -48,6 +48,11 @@ function LunaUF:GetCastTime(unitGUID)
 	end
 end
 
+function LunaUF:GetCastTimeDelay()
+	return LunaUF.Units.unitFrames.player.castBar.bar.pushback
+end
+
+
 local function updateFrame(casterID, spellID)
 	for frame in pairs(LunaUF.Units.frameList) do
 		if frame.unitRealType ~= "player" and frame.unitGUID == casterID and LunaUF.db.profile.units[frame.unitRealType].castBar.enabled then
@@ -74,7 +79,6 @@ local function combatlogEvent()
 --	if event == "SPELL_CAST_FAILED" and currentCasts[casterID] then
 --		currentCasts[casterID] = nil
 --		updateFrame(casterID, spellID)
---		ChatFrame1:AddMessage("SPELL_CAST_FAILED")
 	if event ~= "SPELL_CAST_START" then
 		return
 	end

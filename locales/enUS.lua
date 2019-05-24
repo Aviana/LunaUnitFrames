@@ -255,6 +255,8 @@ local L = {
 ["(c)"] = "(c)",
 ["male"] = "male",
 ["female"] = "female",
+["Energy / 5sec ticker"] = "Energy / 5sec ticker",
+["Totem bar"] = "Totem bar",
 }
 
 LunaUF.L = L

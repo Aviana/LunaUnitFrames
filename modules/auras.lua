@@ -2,7 +2,7 @@ local Auras = {}
 LunaUF:RegisterModule(Auras, "auras", LunaUF.L["Auras"])
 local L = LunaUF.L
 
-local mainEnchant, offEnchant = {timeLeft = 0}, {timeLeft = 0}
+local mainEnchant, offEnchant, timeElapsed = {timeLeft = 0}, {timeLeft = 0}, 0
 
 local magicColors = {
 	["Magic"] = {0.2, 0.6, 1},
@@ -47,6 +47,43 @@ local function cancelAura(self, button)
 	CancelUnitBuff(self.unit, self.auraID, self.filter)
 end
 
+local function UpdateWeaponEnchants(self, elapsed)
+
+	timeElapsed = timeElapsed + elapsed
+	if( timeElapsed < 0.50 ) then return end
+	timeElapsed = timeElapsed - 0.50
+
+	local changed
+	local hasMain, mainTimeLeft, mainCharges, mainEnchantId, hasOff, offTimeLeft, offCharges, offEnchantId = GetWeaponEnchantInfo()
+	mainTimeLeft = mainTimeLeft or 0
+	offTimeLeft = offTimeLeft or 0
+	mainTimeLeft = mainTimeLeft / 1000
+	offTimeLeft = offTimeLeft / 1000
+	if hasMain ~= mainEnchant.exists or mainTimeLeft > mainEnchant.timeLeft or mainCharges ~= mainEnchant.charges then
+		changed = true
+		mainEnchant.exists = hasMain
+		mainEnchant.timeLeft = mainTimeLeft
+		mainEnchant.charges = mainCharges
+		mainEnchant.id = mainEnchantId
+		mainEnchant.startTime = GetTime()
+	end
+	if hasOff ~= offEnchant.exists or offTimeLeft > offEnchant.timeLeft or offCharges ~= offEnchant.charges then
+		changed = true
+		offEnchant.exists = hasOff
+		offEnchant.timeLeft = offTimeLeft
+		offEnchant.charges = offCharges
+		offEnchant.id = offEnchantId
+		offEnchant.startTime = GetTime()
+	end
+	if changed then
+		for _,frame in pairs(LunaUF.Units.unitFrames) do
+			if frame.unit and frame.unit == "player" then
+				Auras:Update(frame)
+			end
+		end
+	end
+end
+
 function Auras:OnEnable(frame)
 	local isPlayer = frame.unitType == "player"
 	if not frame.auras then
@@ -58,6 +95,9 @@ function Auras:OnEnable(frame)
 		frame.auras.buffbuttons.buttons = {}
 		frame.auras.debuffbuttons = CreateFrame("Frame", nil, frame)
 		frame.auras.debuffbuttons.buttons = {}
+		if isPlayer then
+			frame.auras.buffbuttons:SetScript("OnUpdate", LunaUF.db.profile.units.player.auras.weaponbuffs and UpdateWeaponEnchants or nil)
+		end
 		for i=1, (isPlayer and 34 or 32) do
 			local button = CreateFrame("Button", frame:GetName().."BuffFrame"..i, frame.auras.buffbuttons)
 			button.unit = frame.unit
@@ -133,9 +173,7 @@ function Auras:OnEnable(frame)
 			frame.auras.debuffbuttons.buttons[i] = button
 		end
 	end
-	if isPlayer then
-		frame:RegisterUnitEvent("UNIT_INVENTORY_CHANGED", self, "UpdateWeaponEnchants")
-	end
+
 	frame:RegisterUnitEvent("UNIT_AURA", self, "Update")
 	frame:RegisterUpdateFunc(self, "Update")
 end
@@ -174,35 +212,9 @@ function Auras:OnLayoutApplied(frame)
 	end
 end
 
-function Auras:UpdateWeaponEnchants(frame)
-	local changed
-	local hasMain, mainTimeLeft, mainCharges, mainEnchantId, hasOff, offTimeLeft, offCharges, offEnchantId = GetWeaponEnchantInfo()
-	mainTimeLeft = mainTimeLeft or 0
-	offTimeLeft = offTimeLeft or 0
-	if hasMain ~= mainEnchant.exists or mainTimeLeft > mainEnchant.timeLeft or mainCharges ~= mainEnchant.charges then
-		changed = true
-		mainEnchant.exists = hasMain
-		mainEnchant.timeLeft = mainTimeLeft
-		mainEnchant.charges = mainCharges
-		mainEnchant.id = mainEnchantId
-		mainEnchant.startTime = GetTime()
-	end
-	if hasOff ~= offEnchant.exists or offTimeLeft > offEnchant.timeLeft or offCharges ~= offEnchant.charges then
-		changed = true
-		offEnchant.exists = hasOff
-		offEnchant.timeLeft = offTimeLeft
-		offEnchant.charges = offCharges
-		offEnchant.id = offEnchantId
-		offEnchant.startTime = GetTime()
-	end
-	if changed then
-		self:Update()
-	end
-end
-
 function Auras:UpdateFrames(frame)
 	local config = LunaUF.db.profile.units[frame.unitType].auras
-	local name, texture, count, auraType, duration, endTime, caster, spellID
+	local name, texture, count, auraType, duration, endTime, caster, spellID, main, off
 	for i,button in ipairs(frame.auras.buffbuttons.buttons) do
 		if i < 33 then
 			name, texture, count, auraType, duration, endTime, caster, _, _, spellID = UnitAura(frame.unit, i, "HELPFUL")
@@ -252,7 +264,8 @@ function Auras:UpdateFrames(frame)
 			else
 				button.cooldown:Hide()
 			end
-		elseif config.weaponbuffs and mainEnchant.exists and frame.unitType == "player" and LunaUF.db.profile.locked then
+		elseif config.weaponbuffs and mainEnchant.exists and frame.unit == "player" and LunaUF.db.profile.locked and not main then
+			main = true
 			button:Show()
 			button.large = config.emphasizeAuras
 			button.filter = "TEMP"
@@ -275,7 +288,8 @@ function Auras:UpdateFrames(frame)
 			else
 				button.cooldown:Hide()
 			end
-		elseif config.weaponbuffs and offEnchant.exists and frame.unitType == "player" and LunaUF.db.profile.locked then
+		elseif config.weaponbuffs and offEnchant.exists and frame.unit == "player" and LunaUF.db.profile.locked and not off then
+			off = true
 			button:Show()
 			button.large = config.emphasizeAuras
 			button.filter = "TEMP"

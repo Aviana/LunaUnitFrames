@@ -770,11 +770,14 @@ local defaultTags = {
 							end;
 	["casttime"]			= function(unit)
 								local time = LunaUF:GetCastTime(UnitGUID(unit))
+								local delay = LunaUF:GetCastTimeDelay() or 0
 								if unit == "player" then
 									if CastingInfo() then
-										return math.floor(select(5,CastingInfo())/10 - GetTime()*100)/100
+										if delay > 0 then delay = " +" .. math.floor(delay*100)/100 else delay = "" end
+										return math.floor(select(5,CastingInfo())/10 - GetTime()*100)/100 .. delay
 									elseif ChannelInfo() then
-										return math.floor(select(5,ChannelInfo())/10 - GetTime()*100)/100
+										if delay > 0 then delay = " -" .. math.floor(delay*100)/100 else delay = "" end
+										return math.floor(select(5,ChannelInfo())/10 - GetTime()*100)/100 .. delay
 									else
 										return ""
 									end

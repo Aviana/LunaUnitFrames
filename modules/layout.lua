@@ -25,7 +25,6 @@ function Layout:LoadMedia(type, name)
 
 	local media = SML:Fetch(type, mediaName, true)
 	if( not media ) then
-		ChatFrame1:AddMessage(type.." "..name)
 		mediaRequired = mediaRequired or {}
 		mediaRequired[type] = mediaName
 		return defaultMedia[type]

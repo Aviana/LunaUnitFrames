@@ -9,11 +9,12 @@ This will serve as a base for LunaUnitFrames 3.
 This Addon supports RealMobHealth.
 https://www.wowinterface.com/downloads/info24924-RealMobHealth.html
 
+Clickcasting:
+https://www.warcrafttavern.com/addons/clique/
+
 List of stuff that is still missing:
 - Fix heal based tags, add description
-- Mana / Energy ticker
 - Squares
-- Totems
 - Drag placement in config mode broken
 - XP bar tags
 - Inc heal

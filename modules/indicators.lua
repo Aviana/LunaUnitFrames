@@ -170,7 +170,6 @@ function Indicators:UpdateStatus(frame)
 	if( frame.unit and UnitAffectingCombat(frame.unit) ) then
 		frame.indicators.status:SetTexCoord(0.50, 1.0, 0.0, 0.49)
 		frame.indicators.status:Show()
-		ChatFrame1:AddMessage(frame.unitOwner)
 	elseif( frame.unitRealType == "player" and IsResting() ) then
 		frame.indicators.status:SetTexCoord(0.0, 0.50, 0.0, 0.421875)
 		frame.indicators.status:Show()
