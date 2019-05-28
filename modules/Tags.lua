@@ -209,14 +209,14 @@ local defaultTags = {
 	["guildrank"]			= function(unit)
 								return select(2,GetGuildInfo(unit)) or ""
 							end;
---	["incheal"]				= function(unit)
---								local heal = HealComm:getHeal(UnitName(unit))
---								if heal > 0 then
---									return heal
---								else
---									return ""
---								end
---							end;
+	["incheal"]				= function(unit)
+								local heal = LunaUF.Units.unitFrames[unit].incomingHeal or 0
+								if heal > 0 then
+									return heal
+								else
+									return ""
+								end
+							end;
 --	["numheals"]			= function(unit) return HealComm:getNumHeals(UnitName(unit)) end;
 	["pvp"]					= function(unit) return UnitIsPVP(unit) and "PVP" or "" end;
 	["smarthealth"]			= function(unit)
@@ -260,16 +260,16 @@ local defaultTags = {
 								end
 								return hp.."/"..maxhp
 							end;
---	["healhp"]				= function(unit)
---								local heal = HealComm:getHeal(UnitName(unit))
---								local hp
---								hp = UnitHealth(unit)
---								if heal > 0 then
---									return Hex(0,1,0)..(hp+heal)..Hex(1,1,1)
---								else
---									return hp
---								end
---							end;
+	["healhp"]				= function(unit)
+								local heal = LunaUF.Units.unitFrames[unit].incomingHeal or 0
+								local hp
+								hp = UnitHealth(unit)
+								if heal > 0 then
+									return Hex(0,1,0)..(hp+heal)..Hex(1,1,1)
+								else
+									return hp
+								end
+							end;
 	["hp"]					= function(unit)
 								return UnitHealth(unit)
 							end;
@@ -320,22 +320,22 @@ local defaultTags = {
 									return hp-maxhp
 								end
 							end;
---	["healmishp"]			= function(unit)
---								local hp,maxhp
---								local heal = HealComm:getHeal(UnitName(unit))
---								hp = UnitHealth(unit)
---								maxhp = UnitHealthMax(unit)
---								local result = hp-maxhp+heal
---								if result == 0 then
---									return ""
---								else
---									if heal > 0 then
---										return Hex(0,1,0)..result..Hex(1,1,1)
---									else
---										return result
---									end
---								end
---							end;
+	["healmishp"]			= function(unit)
+								local hp,maxhp
+								local heal = LunaUF.Units.unitFrames[unit].incomingHeal or 0
+								hp = UnitHealth(unit)
+								maxhp = UnitHealthMax(unit)
+								local result = hp-maxhp+heal
+								if result == 0 then
+									return ""
+								else
+									if heal > 0 then
+										return Hex(0,1,0)..result..Hex(1,1,1)
+									else
+										return result
+									end
+								end
+							end;
 	["perhp"]				= function(unit)
 								local hp,maxhp
 								hp = UnitHealth(unit)
@@ -593,34 +593,34 @@ local defaultTags = {
 								end
 								return Hex(1,1,1)
 							end;
---	["smart:healmishp"]		= function(unit)
---								if UnitIsGhost(unit) then
---									return "Ghost"
---								elseif not UnitIsConnected(unit) then
---									return "Offline"
---								end
---								local hp,maxhp
---								hp = UnitHealth(unit)
---								maxhp = UnitHealthMax(unit)
---								if hp < 1 or (hp == 1 and not UnitIsVisible(unit)) then
---									if feigncheck(unit) then
---										return L["Feigned"]
---									else
---										return L["Dead"]
---									end
---								end
---								local heal = HealComm:getHeal(UnitName(unit))
---								local result = hp-maxhp+heal
---								if result == 0 then
---									return ""
---								else
---									if heal > 0 then
---										return Hex(0,1,0)..result..Hex(1,1,1)
---									else
---										return result
---									end
---								end
---							end;
+	["smart:healmishp"]		= function(unit)
+								if UnitIsGhost(unit) then
+									return "Ghost"
+								elseif not UnitIsConnected(unit) then
+									return "Offline"
+								end
+								local hp,maxhp
+								hp = UnitHealth(unit)
+								maxhp = UnitHealthMax(unit)
+								if hp < 1 or (hp == 1 and not UnitIsVisible(unit)) then
+									if feigncheck(unit) then
+										return L["Feigned"]
+									else
+										return L["Dead"]
+									end
+								end
+								local heal = LunaUF.Units.unitFrames[unit].incomingHeal or 0
+								local result = hp-maxhp+heal
+								if result == 0 then
+									return ""
+								else
+									if heal > 0 then
+										return Hex(0,1,0)..result..Hex(1,1,1)
+									else
+										return result
+									end
+								end
+							end;
 	["smartrace"]			= function(unit)
 								local race = UnitRace(unit)
 								local ctype = UnitCreatureType(unit)
@@ -645,84 +645,84 @@ local defaultTags = {
 									return ""
 								end
 							end;
---	["healerhealth"]		= function(unit)
---								if UnitIsGhost(unit) then
---									return L["Ghost"]
---								elseif not UnitIsConnected(unit) then
---									return L["Offline"]
---								end
---								local hp,maxhp
---								hp = UnitHealth(unit)
---								maxhp = UnitHealthMax(unit)
---								if hp < 1 or (hp == 1 and not UnitIsVisible(unit)) then
---									if feigncheck(unit) then
---										return L["Feigned"]
---									else
---										return L["Dead"]
---									end
---								end
---								local heal = HealComm:getHeal(UnitName(unit))
---								if UnitIsEnemy("player", unit) then
---									if heal == 0 then
---										return hp.."/"..maxhp
---									else
---										return Hex(0,1,0)..hp..Hex(1,1,1).."/"..maxhp
---									end
---								end
---								local result = hp-maxhp+heal
---								if result == 0 then
---									if heal == 0 then
---										return ""
---									else
---										return Hex(0,1,0).."0"..Hex(1,1,1)
---									end
---								else
---									if heal > 0 then
---										return Hex(0,1,0)..result..Hex(1,1,1)
---									else
---										return result
---									end
---								end
---							end;
-	-- ["namehealerhealth"]		= function(unit)
-								-- if UnitIsGhost(unit) then
-									-- return "Ghost"
-								-- elseif not UnitIsConnected(unit) then
-									-- return "Offline"
-								-- end
-								-- local hp,maxhp
-								-- hp = UnitHealth(unit)
-								-- maxhp = UnitHealthMax(unit)
-								-- if hp < 1 or (hp == 1 and not UnitIsVisible(unit)) then
-									-- if feigncheck(unit) then
-										-- return L["Feigned"]
-									-- else
-										-- return L["Dead"]
-									-- end
-								-- end
-								-- local heal = HealComm:getHeal(UnitName(unit))
-								-- if UnitIsEnemy("player", unit) then
-									-- if heal == 0 then
-										-- return hp.."/"..maxhp
-									-- else
-										-- return Hex(0,1,0)..hp..Hex(1,1,1).."/"..maxhp
-									-- end
-								-- end
-								-- local result = hp-maxhp+heal
-								-- if result == 0 then
-									-- if heal == 0 then
-										-- return UnitName(unit)
-									-- else
-										-- return Hex(0,1,0).."0"..Hex(1,1,1)
-									-- end
-								-- else
-									-- if heal > 0 then
-										-- return Hex(0,1,0)..result..Hex(1,1,1)
-									-- else
-										-- return result
-									-- end
-								-- end
-							-- end;
+	["healerhealth"]		= function(unit)
+								if UnitIsGhost(unit) then
+									return L["Ghost"]
+								elseif not UnitIsConnected(unit) then
+									return L["Offline"]
+								end
+								local hp,maxhp
+								hp = UnitHealth(unit)
+								maxhp = UnitHealthMax(unit)
+								if hp < 1 or (hp == 1 and not UnitIsVisible(unit)) then
+									if feigncheck(unit) then
+										return L["Feigned"]
+									else
+										return L["Dead"]
+									end
+								end
+								local heal = LunaUF.Units.unitFrames[unit].incomingHeal or 0
+								if UnitIsEnemy("player", unit) then
+									if heal == 0 then
+										return hp.."/"..maxhp
+									else
+										return Hex(0,1,0)..hp..Hex(1,1,1).."/"..maxhp
+									end
+								end
+								local result = hp-maxhp+heal
+								if result == 0 then
+									if heal == 0 then
+										return ""
+									else
+										return Hex(0,1,0).."0"..Hex(1,1,1)
+									end
+								else
+									if heal > 0 then
+										return Hex(0,1,0)..result..Hex(1,1,1)
+									else
+										return result
+									end
+								end
+							end;
+	 ["namehealerhealth"]		= function(unit)
+								if UnitIsGhost(unit) then
+									return "Ghost"
+								elseif not UnitIsConnected(unit) then
+									 return "Offline"
+								end
+								local hp,maxhp
+								hp = UnitHealth(unit)
+								maxhp = UnitHealthMax(unit)
+								if hp < 1 or (hp == 1 and not UnitIsVisible(unit)) then
+									if feigncheck(unit) then
+										return L["Feigned"]
+									else
+										return L["Dead"]
+									end
+								end
+								local heal = LunaUF.Units.unitFrames[unit].incomingHeal or 0
+								if UnitIsEnemy("player", unit) then
+									if heal == 0 then
+										return hp.."/"..maxhp
+									else
+										return Hex(0,1,0)..hp..Hex(1,1,1).."/"..maxhp
+									end
+								end
+								local result = hp-maxhp+heal
+								if result == 0 then
+									if heal == 0 then
+										return UnitName(unit)
+									else
+										return Hex(0,1,0).."0"..Hex(1,1,1)
+									end
+								else
+									if heal > 0 then
+										return Hex(0,1,0)..result..Hex(1,1,1)
+									else
+										return result
+									end
+								end
+							end;
 	["healthcolor"]			=function(unit)
 								local percent = UnitHealth(unit) / UnitHealthMax(unit)
 								if( percent >= 1 ) then return Hex(LunaUF.db.profile.colors.green.r, LunaUF.db.profile.colors.green.g, LunaUF.db.profile.colors.green.b) end
@@ -786,6 +786,16 @@ local defaultTags = {
 								else
 									return ""
 								end
+							end;
+	["xp"]			= function(unit)
+								return UnitXP(unit).."/"..UnitXPMax(unit)..(GetXPExhaustion() and (" (+"..GetXPExhaustion()..")") or "")
+							end;
+	["percxp"]			= function(unit)
+								return math.floor(UnitXP("player")/UnitXPMax("player")*10000)/100 .. "%"
+							end;
+	["rep"]			= function(unit)
+								local name, standing, min, max, value, factionID = GetWatchedFactionInfo()
+								return (value-min).."/"..(max-min).." "..name
 							end;
 }
 

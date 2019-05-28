@@ -13,14 +13,11 @@ Clickcasting:
 https://www.warcrafttavern.com/addons/clique/
 
 List of stuff that is still missing:
-- Fix heal based tags, add description
+- Add tag description
 - Squares
 - Drag placement in config mode broken
-- XP bar tags
-- Inc heal
 - Reset profile
 - Vertical bars
-- Fix reckoning stacks
 - Party frames are broken due to broken blizzard code (Maybe i can do a workaround?)
 - Target (ToT, ToToT) right click menu is broken (Maybe i can do a workaround?)
 

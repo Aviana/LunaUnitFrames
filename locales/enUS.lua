@@ -257,6 +257,7 @@ local L = {
 ["female"] = "female",
 ["Energy / 5sec ticker"] = "Energy / 5sec ticker",
 ["Totem bar"] = "Totem bar",
+["Note: This bar only works with 5/5 Reckoning and at least 1/5 Redoubt talents."] = "Note: This bar only works with 5/5 Reckoning and at least 1/5 Redoubt talents.",
 }
 
 LunaUF.L = L

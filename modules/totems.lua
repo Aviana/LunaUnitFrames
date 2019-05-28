@@ -1,5 +1,5 @@
 local Totems = {}
-LunaUF:RegisterModule(Totems, "totemBar", LunaUF.L["Totem bar"], true)
+LunaUF:RegisterModule(Totems, "totemBar", LunaUF.L["Totem bar"], true, "SHAMAN")
 
 local SML = LibStub:GetLibrary("LibSharedMedia-3.0")
 
@@ -336,7 +336,6 @@ local function createBlocks(pointsFrame)
 		pointsFrame.blocks[id] = pointsFrame.blocks[id] or LunaUF.Units:CreateBar(pointsFrame)
 		local bar = pointsFrame.blocks[id]
 		bar:SetStatusBarColor(colors[id].r, colors[id].g, colors[id].b, 1)
---		bar:SetHorizTile(false)
 		bar:SetHeight(pointsFrame:GetHeight())
 		bar:SetWidth(blockWidth)
 		bar:ClearAllPoints()
@@ -374,7 +373,7 @@ local function onUpdateTotem(self, elapsed)
 end
 
 function Totems:OnEnable(frame)
-	if (select(2, UnitClass("player")) ~= "SHAMAN") or frame.unitType ~= "player" then return end
+	if frame.unitType ~= "player" then return end
 	frame.totemBar = frame.totemBar or CreateFrame("Frame", nil, frame)
 	frame.totemBar.Config = LunaUF.db.profile.units.player.totemBar
 
@@ -397,9 +396,9 @@ function Totems:OnDisable(frame)
 end
 
 function Totems:OnCombatLog(frame)
-	local _, event, _, _, _, _, _, targetID, _, _, _, spellID = CombatLogGetCurrentEventInfo()
+	local _, event, _, sourceID, _, _, _, targetID, _, _, _, spellID = CombatLogGetCurrentEventInfo()
 	local overkill
-	if event == "SPELL_SUMMON" then
+	if event == "SPELL_SUMMON" and sourceID == UnitGUID("player") then
 		local type = TotemDB[spellID].type
 		totemsAlive[type] = targetID
 		frame.totemBar.blocks[type].dur = TotemDB[spellID].dur

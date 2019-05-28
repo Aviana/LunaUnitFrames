@@ -1296,6 +1296,105 @@ function LunaUF:CreateConfig()
 					type = "group",
 					order = 5,
 					inline = true,
+					hidden = function(info) return info[1] ~= "player" or select(2,UnitClass("player")) ~= "DRUID" end,
+					args = {
+						left = {
+							name = L["Left"],
+							type = "group",
+							order = 1,
+							inline = true,
+							args = {
+								tagline = {
+									name = L["Left"],
+									desc = L["Set the tags."],
+									type = "input",
+									order = 1,
+									width = "double",
+								},
+								size = {
+									name = L["Limit"],
+									desc = L["Set after wich percentage of the bar to cut off."],
+									type = "range",
+									order = 2,
+									min = 1,
+									max = 100,
+									step = 1,
+								},
+							},
+						},
+						center = {
+							name = L["Center"],
+							type = "group",
+							order = 2,
+							inline = true,
+							args = {
+								tagline = {
+									name = L["Center"],
+									desc = L["Set the tags."],
+									type = "input",
+									order = 1,
+									width = "double",
+								},
+								size = {
+									name = L["Limit"],
+									desc = L["Set after wich percentage of the bar to cut off."],
+									type = "range",
+									order = 2,
+									min = 1,
+									max = 100,
+									step = 1,
+								},
+							},
+						},
+						right = {
+							name = L["Right"],
+							type = "group",
+							order = 3,
+							inline = true,
+							args = {
+								tagline = {
+									name = L["Right"],
+									desc = L["Set the tags."],
+									type = "input",
+									order = 1,
+									width = "double",
+								},
+								size = {
+									name = L["Limit"],
+									desc = L["Set after wich percentage of the bar to cut off."],
+									type = "range",
+									order = 2,
+									min = 1,
+									max = 100,
+									step = 1,
+								},
+							},
+						},
+						size = {
+							name = L["Font Size"],
+							desc = L["Set the font size."],
+							type = "range",
+							order = 4,
+							width = "double",
+							min = 5,
+							max = 24,
+							step = 1,
+						},
+						font = {
+							order = 5,
+							type = "select",
+							name = L["Font"],
+							dialogControl = "LSM30_Font",
+							values = getMediaData,
+							get = function(info) return get(info) or LunaUF.db.profile.font end,
+						},
+					},
+				},
+				xpBar = {
+					name = L["Xp bar"],
+					type = "group",
+					order = 6,
+					inline = true,
 					hidden = function(info) return info[1] ~= "player" end,
 					args = {
 						left = {
@@ -2022,7 +2121,7 @@ function LunaUF:CreateConfig()
 			type = "group",
 			order = -4,
 			inline = true,
-			hidden = function(info) return info[1] ~= "player" end,
+			hidden = function(info) return info[1] ~= "player" or select(2,UnitClass("player")) ~= "DRUID" end,
 			args = {
 				enabled = {
 					name = L["Enable"],
@@ -2078,7 +2177,7 @@ function LunaUF:CreateConfig()
 			type = "group",
 			order = -3,
 			inline = true,
-			hidden = function(info) return info[1] ~= "player" end,
+			hidden = function(info) return info[1] ~= "player" or select(2,UnitClass("player")) ~= "PALADIN" end,
 			args = {
 				enabled = {
 					name = L["Enable"],
@@ -2086,17 +2185,22 @@ function LunaUF:CreateConfig()
 					type = "toggle",
 					order = 1,
 				},
+				description = {
+					name = L["Note: This bar only works with 5/5 Reckoning and at least 1/5 Redoubt talents."],
+					type = "description",
+					order = 2,
+				},
 				background = {
 					name = L["Background"],
 					desc = string.format(L["Enable or disable the %s."], L["Background"]),
 					type = "toggle",
-					order = 2,
+					order = 3,
 				},
 				backgroundAlpha = {
 					name = L["Background alpha"],
 					desc = L["Set the background alpha."],
 					type = "range",
-					order = 3,
+					order = 4,
 					min = 0.01,
 					max = 1,
 					step = 0.01,
@@ -2105,7 +2209,7 @@ function LunaUF:CreateConfig()
 					name = L["Height"],
 					desc = L["Set the height."],
 					type = "range",
-					order = 4,
+					order = 5,
 					min = 0,
 					max = 10,
 					step = 0.1,
@@ -2114,7 +2218,7 @@ function LunaUF:CreateConfig()
 					name = L["Order"],
 					desc = L["Set the order priority."],
 					type = "range",
-					order = 5,
+					order = 6,
 					min = 0,
 					max = 100,
 					step = 5,
@@ -2123,11 +2227,11 @@ function LunaUF:CreateConfig()
 					name = L["Growth direction"],
 					desc = L["Growth direction"],
 					type = "select",
-					order = 6,
+					order = 7,
 					values = {["LEFT"] = L["Left"], ["RIGHT"] = L["Right"]},
 				},
 				statusbar = {
-					order = 7,
+					order = 8,
 					type = "select",
 					name = L["Bar texture"],
 					dialogControl = "LSM30_Statusbar",
@@ -2141,7 +2245,7 @@ function LunaUF:CreateConfig()
 			type = "group",
 			order = -2,
 			inline = true,
-			hidden = function(info) return info[1] ~= "player" end,
+			hidden = function(info) return info[1] ~= "player" or select(2,UnitClass("player")) ~= "SHAMAN" end,
 			args = {
 				enabled = {
 					name = L["Enable"],
@@ -2203,7 +2307,7 @@ function LunaUF:CreateConfig()
 			type = "group",
 			order = -1,
 			inline = true,
-			hidden = function(info) return info[1] ~= "target" end,
+			hidden = function(info) return info[1] ~= "target" or not (select(2,UnitClass("player")) == "DRUID" or select(2,UnitClass("player") ~= "ROGUE")) end,
 			args = {
 				enabled = {
 					name = L["Enable"],

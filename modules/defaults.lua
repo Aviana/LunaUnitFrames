@@ -160,6 +160,21 @@ function LunaUF:LoadDefaults()
 						size = 100,
 					},
 				},
+				["xpBar"] = {
+					size = 8,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "[xp] [percxp]",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
+						size = 100,
+					},
+				},
 			},
 			indicators = {
 				raidTarget = { enabled = true, anchorPoint = "CENTER", size = 20, x = 0, y = 0 },

@@ -1,19 +1,24 @@
 local IncHeal = {}
 LunaUF:RegisterModule(IncHeal, "incHeal", LunaUF.L["Incoming heals"])
 local SML = LibStub:GetLibrary("LibSharedMedia-3.0")
+local HealComm = LibStub("LibClassicHealComm-1.0", true)
+local frames = {}
+
+
 
 function IncHeal:OnEnable(frame)
 	frame.incHeal = frame.incHeal or LunaUF.Units:CreateBar(frame)
-
+	frames[frame] = true
+	frame.incHeal.incAmount = 0
 	frame:RegisterUnitEvent("UNIT_MAXHEALTH", self, "Update")
 	frame:RegisterUnitEvent("UNIT_HEALTH", self, "Update")
 	frame:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", self, "Update")
---	frame:RegisterUnitEvent("UNIT_HEAL_PREDICTION", self, "Update")
 
 	frame:RegisterUpdateFunc(self, "Update")
 end
 
 function IncHeal:OnDisable(frame)
+	frames[frame] = nil
 	frame:UnregisterAll(self)
 	frame.incHeal:Hide()
 end
@@ -127,12 +132,44 @@ function IncHeal:PositionBar(frame, incAmount)
 end
 
 function IncHeal:Update(frame)
+	local amount = (HealComm:GetHealAmount(frame.unitGUID, HealComm.ALL_HEALS) or 0) * (HealComm:GetHealModifier(frame.unitGUID) or 1)
+	frame.incomingHeal = amount
 	if( not frame.visibility.incHeal or not frame.visibility.healthBar ) then return end
-	
-	local amount = 0 --UnitGetIncomingHeals(frame.unit) or 0
-	if( amount > 0 ) then
-		amount = amount + (UnitGetTotalHealAbsorbs(frame.unit) or 0)
-	end
 
 	self:PositionBar(frame, amount)
 end
+
+function IncHeal:UpdateIncoming(...)
+	for frame in pairs(frames) do
+		for i=1, select("#", ...) do
+			if( select(i, ...) == frame.unitGUID ) then
+				self:Update(frame)
+				break
+			end
+		end
+	end
+end
+
+-- Handle callbacks from HealComm
+function IncHeal:HealComm_HealUpdated(event, casterGUID, spellID, healType, endTime, ...)
+	IncHeal:UpdateIncoming(...)
+end
+
+function IncHeal:HealComm_HealStopped(event, casterGUID, spellID, healType, interrupted, ...)
+	IncHeal:UpdateIncoming(...)
+end
+
+function IncHeal:HealComm_ModifierChanged(event, guid)
+	IncHeal:UpdateIncoming(guid)
+end
+
+function IncHeal:HealComm_GUIDDisappeared(event, guid)
+	IncHeal:UpdateIncoming(guid)
+end
+
+HealComm.RegisterCallback(IncHeal, "HealComm_HealStarted", "HealComm_HealUpdated")
+HealComm.RegisterCallback(IncHeal, "HealComm_HealStopped")
+HealComm.RegisterCallback(IncHeal, "HealComm_HealDelayed", "HealComm_HealUpdated")
+HealComm.RegisterCallback(IncHeal, "HealComm_HealUpdated")
+HealComm.RegisterCallback(IncHeal, "HealComm_ModifierChanged")
+HealComm.RegisterCallback(IncHeal, "HealComm_GUIDDisappeared")
