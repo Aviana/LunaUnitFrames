@@ -36,7 +36,7 @@ function LunaUF:LoadDefaults()
 		green = {r = 0.20, g = 0.90, b = 0.20},
 		static = {r = 0.70, g = 0.20, b = 0.90},
 		yellow = {r = 0.93, g = 0.93, b = 0.0},
-		incheal = {r = 0, g = 0.35, b = 0.23},
+		incheal = {r = 0.20, g = 0.90, b = 0.20},
 		enemyUnattack = {r = 0.60, g = 0.20, b = 0.20},
 		hostile = {r = 0.90, g = 0.0, b = 0.0},
 		aggro = {r = 0.90, g = 0.0, b = 0.0},
@@ -49,8 +49,6 @@ function LunaUF:LoadDefaults()
 		--XP
 		normal = {r = 0.58, g = 0.0, b = 0.55},
 		rested = {r = 0.0, g = 0.39, b = 0.88},
-		-- Aura
-		removable = {r = 1, g = 1, b = 1},
 	}
 	self.defaults.profile.units = {
 		player = {
@@ -60,7 +58,7 @@ function LunaUF:LoadDefaults()
 			reckStacks = { enabled = true, growth = "RIGHT", order = 70, height = 0.40, background = true, backgroundAlpha = 0.2 },
 			portrait = {enabled = true, type = "3D", alignment = "LEFT", width = 0.22, height = 0.50, order = 15, fullBefore = 0, fullAfter = 100},
 			castBar = { enabled = true, background = true, backgroundAlpha = 0.2, height = 0.60, icon = "HIDE", autoHide = true, order = 60},
-			xpBar = { enabled = true, height = 0.4, order = 80, background = false, backgroundAlpha = 0.2, Alpha = 1 },
+			xpBar = { enabled = false, height = 0.4, order = 80, background = false, backgroundAlpha = 0.2, Alpha = 1 },
 			emptyBar = { enabled = false, height = 0.4, order = 50, reactionType="npc", class = true, alpha = 0.2},
 			druidBar = {enabled = false, order = 70, height = 0.40, background = true, backgroundAlpha = 0.2 },
 			totemBar = {enabled = false, order = 70, height = 0.40, background = true, backgroundAlpha = 0.2, autoHide = true},
@@ -178,7 +176,7 @@ function LunaUF:LoadDefaults()
 			},
 			indicators = {
 				raidTarget = { enabled = true, anchorPoint = "CENTER", size = 20, x = 0, y = 0 },
-				class = { enabled = true, anchorPoint = "BOTTOMLEFT", size = 16, x = 4, y = 4 },
+				class = { enabled = false, anchorPoint = "BOTTOMLEFT", size = 16, x = 4, y = 4 },
 				masterLoot = { enabled = true, anchorPoint = "TOPLEFT", size = 12, x = 16, y = -4 },
 				leader = { enabled = true, anchorPoint = "TOPLEFT", size = 14, x = 4, y = -4 },
 				pvp = { enabled = true, anchorPoint = "LEFT", size = 30, x = 9, y = -4 },
@@ -389,7 +387,7 @@ function LunaUF:LoadDefaults()
 			indicators = {
 				raidTarget = { enabled = true, anchorPoint = "CENTER", size = 20, x = 0, y = 0 },
 				elite = { enabled = false, anchorPoint = "RIGHT" },
-				class = { enabled = true, anchorPoint = "BOTTOMRIGHT", size = 16, x = -4, y = 4 },
+				class = { enabled = false, anchorPoint = "BOTTOMRIGHT", size = 16, x = -4, y = 4 },
 				pvp = { enabled = true, anchorPoint = "RIGHT", size = 30, x = 1, y = -4 },
 				pvprank = { enabled = true, anchorPoint = "LEFT", size = 8, x = -46, y = -16 },
 				status = { enabled = true, anchorPoint = "BOTTOMRIGHT", size = 16, x = -30, y = 5 },
@@ -495,7 +493,7 @@ function LunaUF:LoadDefaults()
 			indicators = {
 				raidTarget = { enabled = true, anchorPoint = "CENTER", size = 20, x = 0, y = 0 },
 				elite = { enabled = false, anchorPoint = "RIGHT" },
-				class = { enabled = true, anchorPoint = "BOTTOMRIGHT", size = 16, x = -4, y = 4 },
+				class = { enabled = false, anchorPoint = "BOTTOMRIGHT", size = 16, x = -4, y = 4 },
 				masterLoot = { enabled = true, anchorPoint = "TOPRIGHT", size = 12, x = -16, y = -4 },
 				leader = { enabled = true, anchorPoint = "TOPRIGHT", size = 14, x = -4, y = -4 },
 				pvp = { enabled = true, anchorPoint = "RIGHT", size = 30, x = 1, y = -4 },
@@ -603,7 +601,7 @@ function LunaUF:LoadDefaults()
 			indicators = {
 				raidTarget = { enabled = true, anchorPoint = "CENTER", size = 20, x = 0, y = 0 },
 				elite = { enabled = false, anchorPoint = "RIGHT" },
-				class = { enabled = true, anchorPoint = "BOTTOMRIGHT", size = 16, x = -4, y = 4 },
+				class = { enabled = false, anchorPoint = "BOTTOMRIGHT", size = 16, x = -4, y = 4 },
 				masterLoot = { enabled = true, anchorPoint = "TOPRIGHT", size = 12, x = -16, y = -4 },
 				leader = { enabled = true, anchorPoint = "TOPRIGHT", size = 14, x = -4, y = -4 },
 				pvp = { enabled = true, anchorPoint = "RIGHT", size = 30, x = 1, y = -4 },
@@ -711,13 +709,13 @@ function LunaUF:LoadDefaults()
 			indicators = {
 				raidTarget = { enabled = true, anchorPoint = "CENTER", size = 20, x = 0, y = 0 },
 				elite = { enabled = false, anchorPoint = "RIGHT" },
-				class = { enabled = true, anchorPoint = "BOTTOMRIGHT", size = 16, x = -4, y = 4 },
+				class = { enabled = false, anchorPoint = "BOTTOMRIGHT", size = 16, x = -4, y = 4 },
 				masterLoot = { enabled = true, anchorPoint = "TOPRIGHT", size = 12, x = -16, y = -4 },
 				leader = { enabled = true, anchorPoint = "TOPRIGHT", size = 14, x = -4, y = -4 },
 				pvp = { enabled = true, anchorPoint = "RIGHT", size = 30, x = 1, y = -4 },
 				pvprank = { enabled = true, anchorPoint = "BOTTOMLEFT", size = 8, x = 4, y = 4 },
 				status = { enabled = true, anchorPoint = "BOTTOMRIGHT", size = 16, x = -30, y = 5 },
-				rezz = { enabled = true, anchorPoint = "RIGHT", size = 20, x = -30, y = 0 },
+				rezz = { enabled = true, anchorPoint = "CENTER", size = 20, x = 0, y = 0 },
 			},
 			incHeal = { enabled = false, cap = 1.3, alpha = 0.8 },
 			scale = 1,
@@ -820,7 +818,7 @@ function LunaUF:LoadDefaults()
 			},
 			indicators = {
 				raidTarget = { enabled = true, anchorPoint = "CENTER", size = 20, x = 0, y = 0 },
-				class = { enabled = true, anchorPoint = "BOTTOMLEFT", size = 16, x = 4, y = 4 },
+				class = { enabled = false, anchorPoint = "BOTTOMLEFT", size = 16, x = 4, y = 4 },
 				masterLoot = { enabled = true, anchorPoint = "TOPLEFT", size = 12, x = 16, y = -4 },
 				leader = { enabled = true, anchorPoint = "TOPLEFT", size = 14, x = 4, y = -4 },
 				pvp = { enabled = true, anchorPoint = "LEFT", size = 30, x = 9, y = -4 },
@@ -839,7 +837,7 @@ function LunaUF:LoadDefaults()
 			attribAnchorPoint = "LEFT",
 			unitsPerColumn = 5,
 			columnSpacing = 30,
-			offset = 23,
+			offset = 40,
 			anchorTo = "UIParent",
 		},
 		partytarget = {
@@ -944,7 +942,7 @@ function LunaUF:LoadDefaults()
 			height = 20,
 			x = 240,
 			y = 0,
-			offset = 43,
+			offset = 60,
 			anchorTo = "LUFHeaderparty",
 		},
 		partypet = {
@@ -1046,7 +1044,7 @@ function LunaUF:LoadDefaults()
 			height = 20,
 			x = 240,
 			y = -20,
-			offset = 43,
+			offset = 60,
 			anchorTo = "LUFHeaderparty",
 		},
 		raid = {
@@ -1160,7 +1158,7 @@ function LunaUF:LoadDefaults()
 			groupSpacing = 0,
 			attribPoint = "TOP",
 			attribAnchorPoint = "LEFT",
-			offset = 4,
+			offset = 0,
 			showParty = false,
 			filters = {
 				[1] = true,
@@ -1290,7 +1288,7 @@ function LunaUF:LoadDefaults()
 			anchorTo = "LUFHeaderraid8",
 		},
 		maintank = {
-			enabled = true,
+			enabled = false,
 			healthBar = { enabled = true, background = true, backgroundAlpha = 0.2, colorType = "class", reactionType="npc", height = 1.20, order = 10},
 			portrait = {enabled = false, type = "3D", alignment = "LEFT", width = 0.22, height = 0.50, order = 15, fullBefore = 0, fullAfter = 50},
 			castBar = { enabled = false, background = true, backgroundAlpha = 0.2, height = 0.60, icon = "HIDE", autoHide = true, order = 60},
@@ -1404,7 +1402,7 @@ function LunaUF:LoadDefaults()
 			anchorTo = "UIParent",
 		},
 		maintanktarget = {
-			enabled = true,
+			enabled = false,
 			healthBar = { enabled = true, background = true, backgroundAlpha = 0.2, colorType = "class", reactionType="npc", height = 1.20, order = 10},
 			portrait = {enabled = false, type = "3D", alignment = "LEFT", width = 0.22, height = 0.50, order = 15, fullBefore = 0, fullAfter = 50},
 			castBar = { enabled = false, background = true, backgroundAlpha = 0.2, height = 0.60, icon = "HIDE", autoHide = true, order = 60},
@@ -1518,7 +1516,7 @@ function LunaUF:LoadDefaults()
 			anchorTo = "LUFHeadermaintank"
 		},
 		mainassist = {
-			enabled = true,
+			enabled = false,
 			healthBar = { enabled = true, background = true, backgroundAlpha = 0.2, colorType = "class", reactionType="npc", height = 1.20, order = 10},
 			portrait = {enabled = false, type = "3D", alignment = "LEFT", width = 0.22, height = 0.50, order = 15, fullBefore = 0, fullAfter = 50},
 			castBar = { enabled = false, background = true, backgroundAlpha = 0.2, height = 0.60, icon = "HIDE", autoHide = true, order = 60},
@@ -1632,7 +1630,7 @@ function LunaUF:LoadDefaults()
 			anchorTo = "UIParent",
 		},
 		mainassisttarget = {
-			enabled = true,
+			enabled = false,
 			healthBar = { enabled = true, background = true, backgroundAlpha = 0.2, colorType = "class", reactionType="npc", height = 1.20, order = 10},
 			portrait = {enabled = false, type = "3D", alignment = "LEFT", width = 0.22, height = 0.50, order = 15, fullBefore = 0, fullAfter = 50},
 			castBar = { enabled = false, background = true, backgroundAlpha = 0.2, height = 0.60, icon = "HIDE", autoHide = true, order = 60},

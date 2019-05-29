@@ -248,21 +248,25 @@ local function CheckModules(self)
 			end
 
 			-- Module isn't enabled all the time, only in this zone so we need to force it to be enabled
-			if( not self.visibility[key] and enabled ) then
-				module:OnEnable(self)
-				layoutUpdate = true
+			if( enabled ) then
 				if self.fontstrings and self.fontstrings[key] then
 					for _, fstring in pairs(self.fontstrings[key]) do
 						fstring:Show()
 					end
 				end
-			elseif( self.visibility[key] and not enabled ) then
-				module:OnDisable(self)
-				layoutUpdate = true
+				if ( not self.visibility[key] ) then
+					module:OnEnable(self)
+					layoutUpdate = true
+				end
+			elseif( not enabled ) then
 				if self.fontstrings and self.fontstrings[key] then
 					for _, fstring in pairs(self.fontstrings[key]) do
 						fstring:Hide()
 					end
+				end
+				if ( self.visibility[key] ) then
+					module:OnDisable(self)
+					layoutUpdate = true
 				end
 			end
 			self.visibility[key] = enabled or nil
@@ -621,7 +625,7 @@ function Units:SetHeaderAttributes(frame, type)
 		end
 
 		frame:SetAttribute("showRaid", LunaUF.db.profile.locked and true)
-		frame:SetAttribute("maxColumns", config.maxColumns)
+		frame:SetAttribute("maxColumns", config.maxColumns or 1)
 		frame:SetAttribute("unitsPerColumn", config.unitsPerColumn)
 		frame:SetAttribute("columnSpacing", config.columnSpacing)
 		frame:SetAttribute("columnAnchorPoint", config.attribAnchorPoint)
@@ -646,8 +650,8 @@ function Units:SetHeaderAttributes(frame, type)
 		end
 	elseif( type == "partypet" or type == "partytarget" ) then
 		if( stateMonitor[type] ) then
-			stateMonitor[type]:SetAttribute("hideSemiRaid", config.hideSemiRaid)
-			stateMonitor[type]:SetAttribute("hideAnyRaid", config.hideAnyRaid)
+			stateMonitor[type]:SetAttribute("hideSemiRaid", LunaUF.db.profile.units.party.hideSemiRaid)
+			stateMonitor[type]:SetAttribute("hideAnyRaid", LunaUF.db.profile.units.party.hideAnyRaid)
 		end
 		config = LunaUF.db.profile.units["party"]
 		frame:SetAttribute("maxColumns", math.ceil(4 / config.unitsPerColumn))
@@ -754,6 +758,9 @@ function Units:LoadRaidGroupHeader(type)
 	end
 
 	local config = LunaUF.db.profile.units[type]
+	local xMod = config.attribPoint == "LEFT" and 1 or config.attribPoint == "RIGHT" and -1 or 0
+	local yMod = config.attribPoint == "TOP" and -1 or config.attribPoint == "BOTTOM" and 1 or 0
+	
 	for id, enabled in pairs(LunaUF.db.profile.units[type].filters) do
 		local frame = headerFrames["raid" .. id]
 		if( enabled ) then
@@ -788,6 +795,15 @@ function Units:LoadRaidGroupHeader(type)
 			end
 			
 			frame:Show()
+			
+			frame:SetAttribute("point", config.attribPoint)
+			frame:SetAttribute("sortMethod", config.sortMethod)
+			frame:SetAttribute("sortDir", config.sortOrder)
+			
+			frame:SetAttribute("xOffset", config.offset * xMod)
+			frame:SetAttribute("yOffset", config.offset * yMod)
+			frame:SetAttribute("xMod", xMod)
+			frame:SetAttribute("yMod", yMod)
 			
 			LunaUF.Layout:AnchorFrame(frame, LunaUF.db.profile.units.raid.positions[id])
 			
@@ -847,6 +863,7 @@ function Units:LoadGroupHeader(type)
 
 	-- For securely managing the display
 	local config = LunaUF.db.profile.units[type]
+
 	headerFrame:SetAttribute("style-height", config.height)
 	headerFrame:SetAttribute("style-width", config.width)
 	headerFrame:SetAttribute("style-scale", config.scale)

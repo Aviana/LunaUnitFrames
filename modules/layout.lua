@@ -57,7 +57,6 @@ local function updateBackdrop()
 	backdropTbl.insets.bottom = backdrop.inset
 end
 
--- Tries to load media, if it fails it will default to whatever I set
 function Layout:CheckMedia()
 	updateBackdrop()
 end

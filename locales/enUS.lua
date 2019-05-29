@@ -182,6 +182,7 @@ local L = {
 ["Growth direction"] = "Growth direction",
 ["The direction in which new frames are added."] = "The direction in which new frames are added.",
 ["This is set through party options."] = "This is set through party options.",
+["This is set through raid options."] = "This is set through raid options.",
 ["Hide in raid"] = "Hide in raid",
 ["Hide while in a raid group."] = "Hide while in a raid group.",
 ["Never"] = "Never",
@@ -258,6 +259,11 @@ local L = {
 ["Energy / 5sec ticker"] = "Energy / 5sec ticker",
 ["Totem bar"] = "Totem bar",
 ["Note: This bar only works with 5/5 Reckoning and at least 1/5 Redoubt talents."] = "Note: This bar only works with 5/5 Reckoning and at least 1/5 Redoubt talents.",
+["Enable this group"] = "Enable this group",
+["Offset"] = "Offset",
+["Set the space between units."] = "Set the space between units.",
+["Show party"] = "Show party",
+["Show a non raid party in the raid frame"] = "Show a non raid party in the raid frame",
 }
 
 LunaUF.L = L

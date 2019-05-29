@@ -228,7 +228,7 @@ local defaultTags = {
 									return L["Ghost"]
 								elseif not UnitIsConnected(unit) then
 									return L["Offline"]
-								elseif hp < 1 or (hp == 1 and not UnitIsVisible(unit)) then
+								elseif hp < 1 then
 									if feigncheck(unit) then
 										return L["Feigned"]
 									else
@@ -239,7 +239,7 @@ local defaultTags = {
 							end;
 	["ssmarthealth"]			= function(unit)
 								local hp = UnitHealth(unit)
-								if hp < 1 or (hp == 1 and not UnitIsVisible(unit)) then
+								if hp < 1 then
 									if feigncheck(unit) then
 										return L["Feigned"]
 									else
@@ -283,7 +283,7 @@ local defaultTags = {
 	["sshp"]			= function(unit)
 								local hp
 								hp = UnitHealth(unit)
-								if hp < 1 or (hp == 1 and not UnitIsVisible(unit)) then
+								if hp < 1 then
 									if feigncheck(unit) then
 										return L["Feigned"]
 									else
@@ -470,7 +470,7 @@ local defaultTags = {
 							end;
 	["status"]				= function(unit)
 								local hp = UnitHealth(unit)
-								if hp < 1 or (hp == 1 and not UnitIsVisible(unit)) then
+								if hp < 1 then
 									if feigncheck(unit) then
 										return L["Feigned"]
 									else
@@ -602,7 +602,7 @@ local defaultTags = {
 								local hp,maxhp
 								hp = UnitHealth(unit)
 								maxhp = UnitHealthMax(unit)
-								if hp < 1 or (hp == 1 and not UnitIsVisible(unit)) then
+								if hp < 1 then
 									if feigncheck(unit) then
 										return L["Feigned"]
 									else
@@ -654,7 +654,7 @@ local defaultTags = {
 								local hp,maxhp
 								hp = UnitHealth(unit)
 								maxhp = UnitHealthMax(unit)
-								if hp < 1 or (hp == 1 and not UnitIsVisible(unit)) then
+								if hp < 1 then
 									if feigncheck(unit) then
 										return L["Feigned"]
 									else
@@ -693,7 +693,7 @@ local defaultTags = {
 								local hp,maxhp
 								hp = UnitHealth(unit)
 								maxhp = UnitHealthMax(unit)
-								if hp < 1 or (hp == 1 and not UnitIsVisible(unit)) then
+								if hp < 1 then
 									if feigncheck(unit) then
 										return L["Feigned"]
 									else

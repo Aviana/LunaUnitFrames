@@ -27,17 +27,17 @@ local function createConfigEnv()
 		UnitIsConnected = function(unit) return true end,
 		UnitLevel = function(unit) return MAX_PLAYER_LEVEL end,
 		UnitIsPlayer = function(unit) return unit ~= "pet" and not string.match(unit, "(%w+)pet") end,
-		UnitHealth = function(unit) return getValue("UnitHealth", unit, math.random(20000, 50000)) end,
-		UnitHealthMax = function(unit) return 50000 end,
+		UnitHealth = function(unit) return getValue("UnitHealth", unit, math.random(2000, 4000)) end,
+		UnitHealthMax = function(unit) return 5000 end,
 		UnitPower = function(unit, powerType)
-			return getValue("UnitPower", unit, math.random(20000, 50000))
+			return getValue("UnitPower", unit, math.random(2000, 5000))
 		end,
 		UnitPowerMax = function(unit, powerType)
 			if powerType == Enum.PowerType.ComboPoints then
 				return 5
 			end
 
-			return 50000
+			return 5000
 		end,
 		UnitHasIncomingResurrection = function(unit) return true end,
 		UnitPVPRank = function(unit) return 17 end,
@@ -49,9 +49,9 @@ local function createConfigEnv()
 		UnitIsAFK = function(unit) return false end,
 		UnitFactionGroup = function(unit) return _G.UnitFactionGroup("player") end,
 		UnitAffectingCombat = function() return true end,
-		UnitCastingInfo = function(unit)
+		CastingInfo = function()
 			-- 1 -> 10: spell, displayName, icon, startTime, endTime, isTradeSkill, castID, notInterruptible, spellID
-			local data = unitConfig["UnitCastingInfo" .. unit] or {}
+			local data = unitConfig["CastingInfo"] or {}
 			if( not data[5] or GetTime() < data[5] ) then
 				data[1] = L["Test spell"]
 				data[2] = L["Test spell"]
@@ -62,7 +62,7 @@ local function createConfigEnv()
 				data[7] = math.floor(GetTime())
 				data[8] = math.random(0, 100) < 25
 				data[9] = 1000
-				unitConfig["UnitCastingInfo" .. unit] = data
+				unitConfig["CastingInfo"] = data
 			end
 			
 			return unpack(data)
@@ -226,6 +226,7 @@ function Movers:Enable()
 	end
 	
 	setupUnits()
+	setupUnits(true)
 	
 	self.isEnabled = true
 end
@@ -261,7 +262,9 @@ function Movers:Disable()
 			frame:SetMovable(false)
 			frame:RegisterForDrag()
 
-			RegisterUnitWatch(frame, frame.hasStateWatch)
+			if LunaUF.db.profile.units[frame.unitType].enabled then
+				RegisterUnitWatch(frame, frame.hasStateWatch)
+			end
 			if( not UnitExists(frame.unit) ) then frame:Hide() end
 		end
 	end

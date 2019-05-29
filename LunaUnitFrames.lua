@@ -53,11 +53,12 @@ function LunaUF:ProfilesChanged()
 	end
 	
 	self:FireModuleEvent("OnProfileChange")
-	self:LoadUnits()
 	self:HideBlizzardFrames()
 	self.Layout:CheckMedia()
 	self.Units:ProfileChanged()
+	self:LoadUnits()
 	self.modules.movers:Update()
+	LunaUF.Layout:Reload()
 end
 
 local resetTimer
