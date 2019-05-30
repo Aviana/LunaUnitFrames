@@ -1,6 +1,5 @@
 local Highlight = {}
 local goldColor, mouseColor = {r = 0.75, g = 0.75, b = 0.35}, {r = 0.75, g = 0.75, b = 0.50}
-local rareColor, eliteColor = {r = 0, g = 0.63, b = 1}, {r = 1, g = 0.81, b = 0}
 
 local canCure = LunaUF.Units.canCure
 LunaUF:RegisterModule(Highlight, "highlight", LunaUF.L["Highlight"])
@@ -114,10 +113,6 @@ function Highlight:Update(frame)
 		color = goldColor
 	elseif( frame.highlight.hasMouseover ) then
 		color = mouseColor
-	elseif( LunaUF.db.profile.units[frame.unitType].highlight.rareMob and ( frame.highlight.hasClassification == "rareelite" or frame.highlight.hasClassification == "rare" ) ) then
-		color = rareColor
-	elseif( LunaUF.db.profile.units[frame.unitType].highlight.eliteMob and frame.highlight.hasClassification == "elite" ) then
-		color = eliteColor
 	end
 
 	if( color ) then

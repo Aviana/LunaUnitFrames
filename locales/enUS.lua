@@ -264,6 +264,15 @@ local L = {
 ["Set the space between units."] = "Set the space between units.",
 ["Show party"] = "Show party",
 ["Show a non raid party in the raid frame"] = "Show a non raid party in the raid frame",
+["Squares"] = "Squares",
+["What the indicator should display."] = "What the indicator should display.",
+["Name (exact) or ID"] = "Name or ID",
+["Name (exact) or ID of the effect to track."] = "Name or ID of the effect to track.",
+["Buff/Debuff"] = "Buff/Debuff",
+["Dispel"] = "Dispel",
+["Timer"] = "Timer",
+["Texture"] = "Texture",
+["Show the spell texture instead of its type color."] = "Show the spell texture instead of its type color.",
 }
 
 LunaUF.L = L

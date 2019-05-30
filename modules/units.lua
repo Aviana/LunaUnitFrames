@@ -232,7 +232,7 @@ local function CheckModules(self)
 			local enabled = LunaUF.db.profile.units[self.unitType][key].enabled
 			
 			-- These modules have mini-modules, the entire module should be enabled if at least one is enabled, and disabled if all are disabled
-			if( key == "auras" or key == "indicators" or key == "highlight" ) then
+			if( key == "auras" or key == "indicators" or key == "highlight" or key == "squares" ) then
 				enabled = nil
 				for _, option in pairs(LunaUF.db.profile.units[self.unitType][key]) do
 					if( type(option) == "table" and option.enabled or option == true ) then

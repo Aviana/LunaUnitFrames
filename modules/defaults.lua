@@ -66,6 +66,13 @@ function LunaUF:LoadDefaults()
 			borders = { enabled = true },
 			fader = {enabled = false, combatAlpha = 1, inactiveAlpha = 0.2, speedyFade = false},
 			combatText = {enabled = false, size = 15},
+			squares = {
+				topleft = {enabled = false, type = "aggro", size = 10 },
+				topright = {enabled = false, type = "aggro", size = 10 },
+				center = {enabled = false, type = "aggro", size = 20 },
+				bottomleft = {enabled = false, type = "aggro", size = 10 },
+				bottomright = {enabled = false, type = "aggro", size = 10 },
+			},
 			auras = {
 				buffs = false,
 				debuffs = false,
@@ -206,6 +213,13 @@ function LunaUF:LoadDefaults()
 			borders = { enabled = true },
 			fader = {enabled = false, combatAlpha = 1, inactiveAlpha = 0.2, speedyFade = false},
 			combatText = {enabled = false, size = 15},
+			squares = {
+				topleft = {enabled = false, type = "aggro", size = 10 },
+				topright = {enabled = false, type = "aggro", size = 10 },
+				center = {enabled = false, type = "aggro", size = 20 },
+				bottomleft = {enabled = false, type = "aggro", size = 10 },
+				bottomright = {enabled = false, type = "aggro", size = 10 },
+			},
 			auras = {
 				buffs = false,
 				debuffs = false,
@@ -307,6 +321,13 @@ function LunaUF:LoadDefaults()
 			borders = { enabled = true },
 			fader = {enabled = false, combatAlpha = 1, inactiveAlpha = 0.2, speedyFade = false},
 			combatText = {enabled = false, size = 15},
+			squares = {
+				topleft = {enabled = false, type = "aggro", size = 10 },
+				topright = {enabled = false, type = "aggro", size = 10 },
+				center = {enabled = false, type = "aggro", size = 20 },
+				bottomleft = {enabled = false, type = "aggro", size = 10 },
+				bottomright = {enabled = false, type = "aggro", size = 10 },
+			},
 			auras = {
 				buffs = false,
 				debuffs = false,
@@ -413,6 +434,13 @@ function LunaUF:LoadDefaults()
 			borders = { enabled = true },
 			fader = {enabled = false, combatAlpha = 1, inactiveAlpha = 0.2, speedyFade = false},
 			combatText = {enabled = false, size = 15},
+			squares = {
+				topleft = {enabled = false, type = "aggro", size = 10 },
+				topright = {enabled = false, type = "aggro", size = 10 },
+				center = {enabled = false, type = "aggro", size = 20 },
+				bottomleft = {enabled = false, type = "aggro", size = 10 },
+				bottomright = {enabled = false, type = "aggro", size = 10 },
+			},
 			auras = {
 				buffs = true,
 				debuffs = true,
@@ -521,6 +549,13 @@ function LunaUF:LoadDefaults()
 			borders = { enabled = true },
 			fader = {enabled = false, combatAlpha = 1, inactiveAlpha = 0.2, speedyFade = false},
 			combatText = {enabled = false, size = 15},
+			squares = {
+				topleft = {enabled = false, type = "aggro", size = 10 },
+				topright = {enabled = false, type = "aggro", size = 10 },
+				center = {enabled = false, type = "aggro", size = 20 },
+				bottomleft = {enabled = false, type = "aggro", size = 10 },
+				bottomright = {enabled = false, type = "aggro", size = 10 },
+			},
 			auras = {
 				buffs = false,
 				debuffs = false,
@@ -629,6 +664,13 @@ function LunaUF:LoadDefaults()
 			borders = { enabled = true },
 			fader = {enabled = false, combatAlpha = 1, inactiveAlpha = 0.2, speedyFade = false},
 			combatText = {enabled = false, size = 15},
+			squares = {
+				topleft = {enabled = false, type = "aggro", size = 10 },
+				topright = {enabled = false, type = "aggro", size = 10 },
+				center = {enabled = false, type = "aggro", size = 20 },
+				bottomleft = {enabled = false, type = "aggro", size = 10 },
+				bottomright = {enabled = false, type = "aggro", size = 10 },
+			},
 			auras = {
 				buffs = false,
 				debuffs = false,
@@ -737,6 +779,13 @@ function LunaUF:LoadDefaults()
 			borders = { enabled = true },
 			fader = {enabled = false, combatAlpha = 1, inactiveAlpha = 0.2, speedyFade = false},
 			combatText = {enabled = false, size = 15},
+			squares = {
+				topleft = {enabled = false, type = "aggro", size = 10 },
+				topright = {enabled = false, type = "aggro", size = 10 },
+				center = {enabled = false, type = "aggro", size = 20 },
+				bottomleft = {enabled = false, type = "aggro", size = 10 },
+				bottomright = {enabled = false, type = "aggro", size = 10 },
+			},
 			auras = {
 				buffs = true,
 				debuffs = true,
@@ -852,6 +901,13 @@ function LunaUF:LoadDefaults()
 			borders = { enabled = true },
 			fader = {enabled = false, combatAlpha = 1, inactiveAlpha = 0.2, speedyFade = false},
 			combatText = {enabled = false, size = 15},
+			squares = {
+				topleft = {enabled = false, type = "aggro", size = 10 },
+				topright = {enabled = false, type = "aggro", size = 10 },
+				center = {enabled = false, type = "aggro", size = 20 },
+				bottomleft = {enabled = false, type = "aggro", size = 10 },
+				bottomright = {enabled = false, type = "aggro", size = 10 },
+			},
 			auras = {
 				buffs = false,
 				debuffs = false,
@@ -957,6 +1013,13 @@ function LunaUF:LoadDefaults()
 			borders = { enabled = true },
 			fader = {enabled = false, combatAlpha = 1, inactiveAlpha = 0.2, speedyFade = false},
 			combatText = {enabled = false, size = 15},
+			squares = {
+				topleft = {enabled = false, type = "aggro", size = 10 },
+				topright = {enabled = false, type = "aggro", size = 10 },
+				center = {enabled = false, type = "aggro", size = 20 },
+				bottomleft = {enabled = false, type = "aggro", size = 10 },
+				bottomright = {enabled = false, type = "aggro", size = 10 },
+			},
 			auras = {
 				buffs = false,
 				debuffs = false,
@@ -1059,6 +1122,13 @@ function LunaUF:LoadDefaults()
 			borders = { enabled = true },
 			fader = {enabled = false, combatAlpha = 1, inactiveAlpha = 0.2, speedyFade = false},
 			combatText = {enabled = false, size = 15},
+			squares = {
+				topleft = {enabled = false, type = "aggro", size = 10 },
+				topright = {enabled = false, type = "aggro", size = 10 },
+				center = {enabled = false, type = "aggro", size = 20 },
+				bottomleft = {enabled = false, type = "aggro", size = 10 },
+				bottomright = {enabled = false, type = "aggro", size = 10 },
+			},
 			auras = {
 				buffs = false,
 				debuffs = false,
@@ -1193,6 +1263,13 @@ function LunaUF:LoadDefaults()
 			borders = { enabled = true },
 			fader = {enabled = false, combatAlpha = 1, inactiveAlpha = 0.2, speedyFade = false},
 			combatText = {enabled = false, size = 15},
+			squares = {
+				topleft = {enabled = false, type = "aggro", size = 10 },
+				topright = {enabled = false, type = "aggro", size = 10 },
+				center = {enabled = false, type = "aggro", size = 20 },
+				bottomleft = {enabled = false, type = "aggro", size = 10 },
+				bottomright = {enabled = false, type = "aggro", size = 10 },
+			},
 			auras = {
 				buffs = false,
 				debuffs = false,
@@ -1299,6 +1376,13 @@ function LunaUF:LoadDefaults()
 			borders = { enabled = true },
 			fader = {enabled = false, combatAlpha = 1, inactiveAlpha = 0.2, speedyFade = false},
 			combatText = {enabled = false, size = 15},
+			squares = {
+				topleft = {enabled = false, type = "aggro", size = 10 },
+				topright = {enabled = false, type = "aggro", size = 10 },
+				center = {enabled = false, type = "aggro", size = 20 },
+				bottomleft = {enabled = false, type = "aggro", size = 10 },
+				bottomright = {enabled = false, type = "aggro", size = 10 },
+			},
 			auras = {
 				buffs = false,
 				debuffs = false,
@@ -1413,6 +1497,13 @@ function LunaUF:LoadDefaults()
 			borders = { enabled = true },
 			fader = {enabled = false, combatAlpha = 1, inactiveAlpha = 0.2, speedyFade = false},
 			combatText = {enabled = false, size = 15},
+			squares = {
+				topleft = {enabled = false, type = "aggro", size = 10 },
+				topright = {enabled = false, type = "aggro", size = 10 },
+				center = {enabled = false, type = "aggro", size = 20 },
+				bottomleft = {enabled = false, type = "aggro", size = 10 },
+				bottomright = {enabled = false, type = "aggro", size = 10 },
+			},
 			auras = {
 				buffs = false,
 				debuffs = false,
@@ -1527,6 +1618,13 @@ function LunaUF:LoadDefaults()
 			borders = { enabled = true },
 			fader = {enabled = false, combatAlpha = 1, inactiveAlpha = 0.2, speedyFade = false},
 			combatText = {enabled = false, size = 15},
+			squares = {
+				topleft = {enabled = false, type = "aggro", size = 10 },
+				topright = {enabled = false, type = "aggro", size = 10 },
+				center = {enabled = false, type = "aggro", size = 20 },
+				bottomleft = {enabled = false, type = "aggro", size = 10 },
+				bottomright = {enabled = false, type = "aggro", size = 10 },
+			},
 			auras = {
 				buffs = false,
 				debuffs = false,
@@ -1641,6 +1739,13 @@ function LunaUF:LoadDefaults()
 			borders = { enabled = true },
 			fader = {enabled = false, combatAlpha = 1, inactiveAlpha = 0.2, speedyFade = false},
 			combatText = {enabled = false, size = 15},
+			squares = {
+				topleft = {enabled = false, type = "aggro", size = 10 },
+				topright = {enabled = false, type = "aggro", size = 10 },
+				center = {enabled = false, type = "aggro", size = 20 },
+				bottomleft = {enabled = false, type = "aggro", size = 10 },
+				bottomright = {enabled = false, type = "aggro", size = 10 },
+			},
 			auras = {
 				buffs = false,
 				debuffs = false,
