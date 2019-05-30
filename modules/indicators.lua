@@ -310,7 +310,7 @@ function Indicators:OnEnable(frame)
 		frame:RegisterUpdateFunc(self, "UpdateResurrect")
 
 		frame.indicators.rezz = frame.indicators.rezz or frame.indicators:CreateTexture(nil, "OVERLAY")
-		frame.indicators.rezz:SetTexture("Interface\\AddOns\\LunaUnitFrames\\media\\textures\\Raid-Icon-Rez")
+		frame.indicators.rezz:SetTexture("Interface\\RaidFrame\\Raid-Icon-Rez")
 	end
 
 	if( config.indicators.pvp and config.indicators.pvp.enabled ) then

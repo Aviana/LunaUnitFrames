@@ -1230,6 +1230,7 @@ function LunaUF:LoadDefaults()
 			attribAnchorPoint = "LEFT",
 			offset = 0,
 			showParty = false,
+			fontsize = 10,
 			filters = {
 				[1] = true,
 				[2] = true,

@@ -6,6 +6,9 @@ local headerFrames, unitFrames, frameList, unitEvents, headerUnits = Units.heade
 local _G = getfenv(0)
 local playerClass = select(2, UnitClass("player"))
 
+local L = LunaUF.L
+local SML = LibStub:GetLibrary("LibSharedMedia-3.0")
+
 LunaUF.Units = Units
 LunaUF:RegisterModule(Units, "units", "Units")
 
@@ -277,6 +280,26 @@ local function CheckModules(self)
 	if( layoutUpdate ) then
 		LunaUF.Layout:Load(self)
 	end
+end
+
+local function checkForGroupNumber(self,x,y)
+	if LunaUF.db.profile.units.raid.groupnumbers then
+		if x > 1 and y > 1 or not LunaUF.db.profile.locked then
+			self.number:Show()
+			return
+		end
+	end
+	self.number:Hide()
+end
+
+local function checkForPetGroupNumber(self,x,y)
+	if LunaUF.db.profile.units.raid.groupnumbers then
+		if x > 1 and y > 1 or not LunaUF.db.profile.locked then
+			self.number:Show()
+			return
+		end
+	end
+	self.number:Hide()
 end
 
 -- Handles checking for GUID changes for doing a full update, this fixes frames sometimes showing the wrong unit when they change
@@ -623,6 +646,28 @@ function Units:SetHeaderAttributes(frame, type)
 		else
 			filter = config.groupFilter
 		end
+		
+		if type == "raidpet" then
+			local raidconfig = LunaUF.db.profile.units.raid
+			checkForPetGroupNumber(frame,frame:GetWidth(),frame:GetHeight())
+			frame.number:SetFont(LunaUF.Layout:LoadMedia(SML.MediaType.FONT, LunaUF.db.profile.units.raid.font), LunaUF.db.profile.units.raid.fontsize)
+			frame.number:SetText(L["Pet"])
+			
+			local dir = LunaUF.growthDirMap[(raidconfig.attribPoint..raidconfig.attribAnchorPoint)]
+			if dir == "left" then
+				frame.number:ClearAllPoints()
+				frame.number:SetPoint("LEFT", frame, "RIGHT")
+			elseif dir == "right" then
+				frame.number:ClearAllPoints()
+				frame.number:SetPoint("RIGHT", frame, "LEFT")
+			elseif dir == "up" then
+				frame.number:ClearAllPoints()
+				frame.number:SetPoint("TOP", frame, "BOTTOM")
+			else
+				frame.number:ClearAllPoints()
+				frame.number:SetPoint("BOTTOM", frame, "TOP")
+			end
+		end
 
 		frame:SetAttribute("showRaid", LunaUF.db.profile.locked and true)
 		frame:SetAttribute("maxColumns", config.maxColumns or 1)
@@ -781,6 +826,13 @@ function Units:LoadRaidGroupHeader(type)
 				--frame:SetBackdropBorderColor(1, 0, 0, 1)
 				--frame:SetBackdropColor(0, 0, 0, 0)
 				
+				frame.number = frame:CreateFontString(nil, "ARTWORK")
+				frame.number:SetShadowColor(0, 0, 0, 1.0)
+				frame.number:SetShadowOffset(0.80, -0.80)
+				frame.number:SetJustifyH("CENTER")
+				
+				frame:HookScript("OnSizeChanged",checkForGroupNumber)
+				
 				frame:SetAttribute("style-height", config.height)
 				frame:SetAttribute("style-width", config.width)
 				frame:SetAttribute("style-scale", config.scale)
@@ -795,6 +847,25 @@ function Units:LoadRaidGroupHeader(type)
 			end
 			
 			frame:Show()
+			
+			checkForGroupNumber(frame,frame:GetWidth(),frame:GetHeight())
+			frame.number:SetFont(LunaUF.Layout:LoadMedia(SML.MediaType.FONT, LunaUF.db.profile.units.raid.font), LunaUF.db.profile.units.raid.fontsize)
+			frame.number:SetText(string.format(L["Group %s"],id))
+			
+			local dir = LunaUF.growthDirMap[(config.attribPoint..config.attribAnchorPoint)]
+			if dir == "left" then
+				frame.number:ClearAllPoints()
+				frame.number:SetPoint("LEFT", frame, "RIGHT")
+			elseif dir == "right" then
+				frame.number:ClearAllPoints()
+				frame.number:SetPoint("RIGHT", frame, "LEFT")
+			elseif dir == "up" then
+				frame.number:ClearAllPoints()
+				frame.number:SetPoint("TOP", frame, "BOTTOM")
+			else
+				frame.number:ClearAllPoints()
+				frame.number:SetPoint("BOTTOM", frame, "TOP")
+			end
 			
 			frame:SetAttribute("point", config.attribPoint)
 			frame:SetAttribute("sortMethod", config.sortMethod)
@@ -849,6 +920,15 @@ function Units:LoadGroupHeader(type)
 
 	local headerFrame = CreateFrame("Frame", "LUFHeader" .. type, UIParent, type == "raidpet" and "SecureGroupPetHeaderTemplate" or "SecureGroupHeaderTemplate")
 	headerFrames[type] = headerFrame
+
+	if type == "raidpet" then
+		local raidconfig = LunaUF.db.profile.units.raid
+		headerFrame.number = headerFrame:CreateFontString(nil, "ARTWORK")
+		headerFrame.number:SetShadowColor(0, 0, 0, 1.0)
+		headerFrame.number:SetShadowOffset(0.80, -0.80)
+		headerFrame.number:SetJustifyH("CENTER")
+		headerFrame:HookScript("OnSizeChanged",checkForPetGroupNumber)
+	end
 
 	self:SetHeaderAttributes(headerFrame, type)
 

@@ -273,6 +273,13 @@ local L = {
 ["Timer"] = "Timer",
 ["Texture"] = "Texture",
 ["Show the spell texture instead of its type color."] = "Show the spell texture instead of its type color.",
+["Fontsize"] = "Fontsize",
+["Set the space between units."] = "Set the space between units.",
+["Groupnumbers"] = "Groupnumbers",
+["Show Groupnumbers next to the group"] = "Show Groupnumbers next to the group",
+["Groupnumberfont"] = "Groupnumberfont",
+["Group %s"] = "Group %s",
+["Set the size of the group number."] = "Set the size of the group number.",
 }
 
 LunaUF.L = L

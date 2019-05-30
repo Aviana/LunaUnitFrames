@@ -33,7 +33,7 @@ local UnitToFrame = {
 	["mainassisttarget"] = "LUFHeadermainassisttarget",
 }
 
-local growthDirMap = {
+LunaUF.growthDirMap = {
 	["down"] = {
 		["attribPoint"] = "TOP",
 		["attribAnchorPoint"] = "LEFT",
@@ -139,18 +139,19 @@ function LunaUF:CreateConfig()
 			end
 			tbl.combatText.font = nil
 		end
+		LunaUF.db.profile.units.raid.font = nil
 	end
 
 	local function getGrowthDir(info)
 		local db = LunaUF.db.profile.units[info[#info-1]]
-		return growthDirMap[(db.attribPoint..db.attribAnchorPoint)]
+		return LunaUF.growthDirMap[(db.attribPoint..db.attribAnchorPoint)]
 	end
 
 	local function setGrowthDir(info, value)
 		local unit = info[#info-1]
 		local db = LunaUF.db.profile.units[unit]
-		db.attribPoint = growthDirMap[value].attribPoint
-		db.attribAnchorPoint = growthDirMap[value].attribAnchorPoint
+		db.attribPoint = LunaUF.growthDirMap[value].attribPoint
+		db.attribAnchorPoint = LunaUF.growthDirMap[value].attribAnchorPoint
 		if unit == "party" then
 			LunaUF.Units:ReloadHeader("partypet")
 			LunaUF.Units:ReloadHeader("partytarget")
@@ -2644,6 +2645,12 @@ function LunaUF:CreateConfig()
 						width = "half",
 						order = 1,
 					},
+					descriptiontext = {
+						name = "Luna Unit Frames by Aviana\nDonate: paypal.me/LunaUnitFrames",
+						type = "description",
+						width = "full",
+						order = 1.1,
+					},
 					header = {
 						name = L["Global Settings"],
 						type = "header",
@@ -2685,7 +2692,7 @@ function LunaUF:CreateConfig()
 						dialogControl = "LSM30_Font",
 						values = getMediaData,
 						confirm = function(info) return L["WARNING! This will set ALL texts to this font."] end,
-						set = function(info, value) wipeFonts() setGeneral(info, value) LunaUF.Layout:Reload() end,
+						set = function(info, value) wipeFonts() setGeneral(info, value) LunaUF.Layout:Reload() LunaUF.Units:ReloadHeader("raid") LunaUF.Units:ReloadHeader("raidpet") end,
 					},
 					headerRange = {
 						name = L["Range"],
@@ -3666,7 +3673,7 @@ function LunaUF:CreateConfig()
 						type = "select",
 						order = 2.8,
 						values = {["left"] = L["Left"],["right"] = L["Right"],["up"] = L["Up"],["down"] = L["Down"]},
-						get = function(info) local db = LunaUF.db.profile.units["party"] return growthDirMap[(db.attribPoint..db.attribAnchorPoint)] end,
+						get = function(info) local db = LunaUF.db.profile.units["party"] return LunaUF.growthDirMap[(db.attribPoint..db.attribAnchorPoint)] end,
 						disabled = true,
 					},
 					hideraid = {
@@ -3782,7 +3789,7 @@ function LunaUF:CreateConfig()
 						type = "select",
 						order = 2.8,
 						values = {["left"] = L["Left"],["right"] = L["Right"],["up"] = L["Up"],["down"] = L["Down"]},
-						get = function(info) local db = LunaUF.db.profile.units["party"] return growthDirMap[(db.attribPoint..db.attribAnchorPoint)] end,
+						get = function(info) local db = LunaUF.db.profile.units["party"] return LunaUF.growthDirMap[(db.attribPoint..db.attribAnchorPoint)] end,
 						disabled = true,
 					},
 					hideraid = {
@@ -3878,6 +3885,34 @@ function LunaUF:CreateConfig()
 						order = 2.33,
 						disabled = Lockdown,
 						set = function(info, value) set(info,value) LunaUF.Units:ReloadHeader("raid") end,
+					},
+					groupnumbers = {
+						name = L["Groupnumbers"],
+						desc = L["Show Groupnumbers next to the group"],
+						type = "toggle",
+						order = 2.34,
+						disabled = Lockdown,
+						set = function(info, value) set(info,value) LunaUF.Units:ReloadHeader("raid") LunaUF.Units:ReloadHeader("raidpet") end,
+					},
+					fontsize = {
+						name = L["Fontsize"],
+						desc = L["Set the size of the group number."],
+						type = "range",
+						order = 2.35,
+						min = -6,
+						max = 20,
+						step = 1,
+						disabled = Lockdown,
+						set = function(info, value) set(info,value) LunaUF.Units:ReloadHeader("raid") end,
+					},
+					font = {
+						order = 2.36,
+						type = "select",
+						name = L["Groupnumberfont"],
+						dialogControl = "LSM30_Font",
+						values = getMediaData,
+						get = function(info) return get(info) or LunaUF.db.profile.font end,
+						set = function(info, value) set(info,value) LunaUF.Units:ReloadHeader("raid") LunaUF.Units:ReloadHeader("raidpet") end,
 					},
 					headerraid1 = {
 						name = L["raid"].."1",
@@ -4350,7 +4385,7 @@ function LunaUF:CreateConfig()
 						type = "select",
 						order = 2.8,
 						values = {["left"] = L["Left"],["right"] = L["Right"],["up"] = L["Up"],["down"] = L["Down"]},
-						get = function(info) local db = LunaUF.db.profile.units["raid"] return growthDirMap[(db.attribPoint..db.attribAnchorPoint)] end,
+						get = function(info) local db = LunaUF.db.profile.units["raid"] return LunaUF.growthDirMap[(db.attribPoint..db.attribAnchorPoint)] end,
 						set = setGrowthDir,
 						disabled = true,
 					},

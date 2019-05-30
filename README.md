@@ -14,9 +14,7 @@ https://www.warcrafttavern.com/addons/clique/
 
 List of stuff that is still missing:
 - Add tag description
-- Squares
 - Vertical bars
-- Raid group numbers
 - Drag placement in config mode broken??? (Needs testing)
 - Party frames are broken due to broken blizzard code (Maybe i can do a workaround?)
 - Target (ToT, ToToT) right click menu is broken (Maybe i can do a workaround?)
