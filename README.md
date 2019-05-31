@@ -15,8 +15,8 @@ https://www.warcrafttavern.com/addons/clique/
 List of stuff that is still missing:
 - Add tag description
 - Vertical bars
-- Drag placement in config mode broken??? (Needs testing)
 - Party frames are broken due to broken blizzard code (Maybe i can do a workaround?)
+- Drag placement in config mode broken??? (Needs testing)
 
 Feel free to fork this but give credit (at least author & link to this github)
 

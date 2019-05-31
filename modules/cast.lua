@@ -33,6 +33,27 @@ local interruptIDs = {
 	[GetSpellInfo(19675) or "Feral Charge Effect"] = true, -- Feral Charge Effect
 	
 }
+local channelIDs = {
+	[GetSpellInfo(10)] = 7500,		--Blizzard
+	[GetSpellInfo(605)] = 3000,		--Mind Control
+	[GetSpellInfo(689)] = 4500,		--Drain Life
+	[GetSpellInfo(740)] = 9500,		--Tranquility
+	[GetSpellInfo(746)] = 7000,		--First Aid
+	[GetSpellInfo(755)] = 10000,	--Health Funnel
+	[GetSpellInfo(1002)] = 60000,	--Eyes of the Beast
+	[GetSpellInfo(1120)] = 14500,	--Drain Soul
+	[GetSpellInfo(1949)] = 15000,	--Hellfire
+	[GetSpellInfo(2096)] = 60000,	--Mind Vision
+	[GetSpellInfo(5138)] = 4500,	--Drain Mana
+	[GetSpellInfo(5143)] = 4500,	--Arcane Missiles
+	[GetSpellInfo(5740)] = 7500,	--Rain of Fire
+	[GetSpellInfo(6197)] = 60000,	--Eagle Eye
+	[GetSpellInfo(12051)] = 8000,	--Evocation
+	[GetSpellInfo(13278)] = 4000,	--Gnomish Death Ray
+	[GetSpellInfo(15407)] = 3000,	--Mind Flay
+	[GetSpellInfo(17401)] = 9500,	--Hurricane
+	[GetSpellInfo(20577)] = 10000,	--Cannibalize
+}
 
 LunaUF:RegisterModule(Cast, "castBar", L["Cast bar"], true)
 
@@ -79,20 +100,36 @@ local function combatlogEvent()
 --	if event == "SPELL_CAST_FAILED" and currentCasts[casterID] then
 --		currentCasts[casterID] = nil
 --		updateFrame(casterID, spellID)
-	if event ~= "SPELL_CAST_START" then
-		return
-	end
-	if castTime and castTime > 0 then
-		currentCasts[casterID] = {
-			["spellID"] = spellID,
-			["name"] = name,
-			["rank"] = rank,
-			["icon"] = icon,
-			["castTime"] = castTime,
-			["startTime"] = GetTime() * 1000,
-			["endTime"] = castTime + GetTime() * 1000
-		}
-		updateFrame(casterID)
+	if event == "SPELL_CAST_START" then
+		if castTime and castTime > 0 then
+			currentCasts[casterID] = {
+				["spellID"] = spellID,
+				["name"] = name,
+				["rank"] = rank,
+				["icon"] = icon,
+				["castTime"] = castTime,
+				["startTime"] = GetTime() * 1000,
+				["endTime"] = castTime + GetTime() * 1000
+			}
+			updateFrame(casterID)
+		end
+	elseif event == "SPELL_CAST_SUCCESS" then
+		local castTime = channelIDs[name]
+		if castTime then
+			currentCasts[casterID] = {
+				["spellID"] = spellID,
+				["name"] = name,
+				["rank"] = rank,
+				["icon"] = icon,
+				["castTime"] = castTime,
+				["startTime"] = GetTime() * 1000,
+				["endTime"] = castTime + GetTime() * 1000,
+				["channeled"] = true,
+			}
+			updateFrame(casterID)
+		elseif currentCasts[casterID] then
+			updateFrame(casterID, currentCasts[casterID].spellID)
+		end
 	end
 end
 
@@ -236,7 +273,7 @@ local function channelOnUpdate(self, elapsed)
 
 	-- Channel finished, do a quick fade
 	if( self.elapsed <= 0 ) then
-
+		currentCasts[self:GetParent().unitGUID] = nil
 		self.spellName = nil
 		self.fadeElapsed = FADE_TIME
 		self.fadeStart = FADE_TIME
@@ -253,7 +290,7 @@ function Cast:UpdateCurrentCast(frame)
 		self:UpdateCast(frame, frame.unit, true, name, text, texture, startTime, endTime, isTradeSkill, notInterruptible, spellID)
 	elseif frame.unitRealType ~= "player" and currentCasts[frame.unitGUID] and currentCasts[frame.unitGUID].endTime > (GetTime()*1000) and not UnitIsDeadOrGhost(frame.unit) then
 		local cast = currentCasts[frame.unitGUID]
-		self:UpdateCast(frame, frame.unit, false, cast.name, "", cast.icon, cast.startTime, cast.endTime, nil, nil, cast.spellID)
+		self:UpdateCast(frame, frame.unit, cast.channeled, cast.name, "", cast.icon, cast.startTime, cast.endTime, nil, nil, cast.spellID)
 	else
 		if( LunaUF.db.profile.units[frame.unitRealType].castBar.autoHide ) then
 			LunaUF.Layout:SetBarVisibility(frame, "castBar", false)
