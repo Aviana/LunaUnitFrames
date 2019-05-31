@@ -15,6 +15,99 @@ LunaUF:RegisterModule(Units, "units", "Units")
 local stateMonitor = CreateFrame("Frame", nil, nil, "SecureHandlerBaseTemplate")
 stateMonitor.raids = {}
 
+local classOrder = {
+	[1] = "DRUID",
+	[2] = "HUNTER",
+	[3] = "MAGE",
+	[4] = "PALADIN",
+	[5] = "PRIEST",
+	[6] = "ROGUE",
+	[7] = "WARLOCK",
+	[8] = "WARRIOR",
+}
+
+local function TargetTargetFrameDropDown_Initialize(self)
+	local menu;
+	local name;
+	local id = nil;
+	if ( UnitIsUnit("targettarget", "player") ) then
+		menu = "SELF";
+	elseif ( UnitIsUnit("targettarget", "vehicle") ) then
+		-- NOTE: vehicle check must come before pet check for accuracy's sake because
+		-- a vehicle may also be considered your pet
+		menu = "VEHICLE";
+	elseif ( UnitIsUnit("targettarget", "pet") ) then
+		menu = "PET";
+	elseif ( UnitIsOtherPlayersPet("targettarget") ) then
+		menu = "OTHERPET";
+	elseif ( UnitIsPlayer("targettarget") ) then
+		id = UnitInRaid("targettarget");
+		if ( id ) then
+			menu = "RAID_PLAYER";
+		elseif ( UnitInParty("targettarget") ) then
+			menu = "PARTY";
+		elseif ( UnitCanCooperate("player", "targettarget") ) then
+			menu = "PLAYER";
+		else
+			menu = "ENEMY_PLAYER"
+		end
+	else
+		menu = "TARGET";
+		name = RAID_TARGET_ICON;
+	end
+	if ( menu ) then
+		UnitPopup_ShowMenu(self, menu, "targettarget", name, id);
+	end
+end
+
+local function TargetTargetTargetFrameDropDown_Initialize(self)
+	local menu;
+	local name;
+	local id = nil;
+	if ( UnitIsUnit("targettargettarget", "player") ) then
+		menu = "SELF";
+	elseif ( UnitIsUnit("targettargettarget", "vehicle") ) then
+		-- NOTE: vehicle check must come before pet check for accuracy's sake because
+		-- a vehicle may also be considered your pet
+		menu = "VEHICLE";
+	elseif ( UnitIsUnit("targettargettarget", "pet") ) then
+		menu = "PET";
+	elseif ( UnitIsOtherPlayersPet("targettargettarget") ) then
+		menu = "OTHERPET";
+	elseif ( UnitIsPlayer("targettargettarget") ) then
+		id = UnitInRaid("targettargettarget");
+		if ( id ) then
+			menu = "RAID_PLAYER";
+		elseif ( UnitInParty("targettargettarget") ) then
+			menu = "PARTY";
+		elseif ( UnitCanCooperate("player", "targettargettarget") ) then
+			menu = "PLAYER";
+		else
+			menu = "ENEMY_PLAYER"
+		end
+	else
+		menu = "TARGET";
+		name = RAID_TARGET_ICON;
+	end
+	if ( menu ) then
+		UnitPopup_ShowMenu(self, menu, "targettargettarget", name, id);
+	end
+end
+
+totdropdown = CreateFrame("Frame", "TargetTargetFrameDropDown", nil, "UIDropDownMenuTemplate")
+UIDropDownMenu_SetInitializeFunction(totdropdown, TargetTargetFrameDropDown_Initialize)
+UIDropDownMenu_SetDisplayMode(totdropdown, "MENU")
+
+tototdropdown = CreateFrame("Frame", "TargetTargetTargetFrameDropDown", nil, "UIDropDownMenuTemplate")
+UIDropDownMenu_SetInitializeFunction(tototdropdown, TargetTargetTargetFrameDropDown_Initialize)
+UIDropDownMenu_SetDisplayMode(tototdropdown, "MENU")
+
+local dropdowns = {
+	["target"] = function() ToggleDropDownMenu(1, nil, _G["TargetFrameDropDown"], "LUFUnittarget", 120, 10) end,
+	["targettarget"] = function() ToggleDropDownMenu(1, nil, totdropdown, "LUFUnittargettarget", 120, 10) end,
+	["targettargettarget"] = function() ToggleDropDownMenu(1, nil, tototdropdown, "LUFUnittargettargettarget", 120, 10) end,
+}
+
 -- Frame shown, do a full update
 local function FullUpdate(self)
 	for i=1, #(self.fullUpdates), 2 do
@@ -758,7 +851,11 @@ function Units:LoadUnit(unit)
 	end
 	
 	local frame = self:CreateUnit("Button", "LUFUnit" .. unit, UIParent, "SecureUnitButtonTemplate")
-	frame:SetAttribute("unit", unit)
+	if dropdowns[unit] then
+		SecureUnitButton_OnLoad(frame, unit, dropdowns[unit])
+	else
+		frame:SetAttribute("unit", unit)
+	end
 	frame.hasStateWatch = unit == "pet"
 	
 	RegisterUnitWatch(frame, frame.hasStateWatch)
@@ -850,7 +947,11 @@ function Units:LoadRaidGroupHeader(type)
 			
 			checkForGroupNumber(frame,frame:GetWidth(),frame:GetHeight())
 			frame.number:SetFont(LunaUF.Layout:LoadMedia(SML.MediaType.FONT, LunaUF.db.profile.units.raid.font), LunaUF.db.profile.units.raid.fontsize)
-			frame.number:SetText(string.format(L["Group %s"],id))
+			if LunaUF.db.profile.units.raid.groupBy == "GROUP" then
+				frame.number:SetText(string.format(L["Group %s"],id))
+			else
+				frame.number:SetText(LOCALIZED_CLASS_NAMES_MALE[classOrder[id]])
+			end
 			
 			local dir = LunaUF.growthDirMap[(config.attribPoint..config.attribAnchorPoint)]
 			if dir == "left" then

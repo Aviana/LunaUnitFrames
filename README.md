@@ -17,7 +17,6 @@ List of stuff that is still missing:
 - Vertical bars
 - Drag placement in config mode broken??? (Needs testing)
 - Party frames are broken due to broken blizzard code (Maybe i can do a workaround?)
-- Target (ToT, ToToT) right click menu is broken (Maybe i can do a workaround?)
 
 Feel free to fork this but give credit (at least author & link to this github)
 

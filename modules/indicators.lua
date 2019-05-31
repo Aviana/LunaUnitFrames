@@ -19,7 +19,7 @@ end
 function Indicators:UpdateHappiness(frame)
 	if( not frame.indicators.happiness or not frame.indicators.happiness.enabled ) then return end
 
-	local happiness = GetPetHappiness and GetPetHappiness() or 3
+	local happiness = GetPetHappiness and GetPetHappiness()
 
 	-- Happy :D
 	if happiness == 3 then

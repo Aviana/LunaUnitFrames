@@ -280,6 +280,9 @@ local L = {
 ["Groupnumberfont"] = "Groupnumberfont",
 ["Group %s"] = "Group %s",
 ["Set the size of the group number."] = "Set the size of the group number.",
+["Group"] = "Group",
+["Group by"] = "Group by",
+["Group by class or group"] = "Group by class or group",
 }
 
 LunaUF.L = L

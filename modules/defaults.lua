@@ -1214,7 +1214,7 @@ function LunaUF:LoadDefaults()
 				pvp = { enabled = false, anchorPoint = "RIGHT", size = 22, x = 4, y = -2 },
 				pvprank = { enabled = false, anchorPoint = "BOTTOMRIGHT", size = 8, x = 0, y = 1 },
 				status = { enabled = false, anchorPoint = "BOTTOM", size = 16, x = 0, y = 5 },
-				ready = { enabled = false, anchorPoint = "CENTER", size = 24, x = 0, y = 0 },
+				ready = { enabled = true, anchorPoint = "CENTER", size = 24, x = 0, y = 0 },
 				rezz = { enabled = true, anchorPoint = "TOPRIGHT", size = 20, x = -8, y = -9 },
 			},
 			incHeal = { enabled = false, cap = 1.3, alpha = 0.8 },
@@ -1231,6 +1231,7 @@ function LunaUF:LoadDefaults()
 			offset = 0,
 			showParty = false,
 			fontsize = 10,
+			groupBy = "GROUP",
 			filters = {
 				[1] = true,
 				[2] = true,
