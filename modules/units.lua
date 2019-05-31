@@ -26,6 +26,8 @@ local classOrder = {
 	[8] = "WARRIOR",
 }
 
+-- REMOVE ONCE FIXED ------------------------------------------------------------------
+
 local function TargetTargetFrameDropDown_Initialize(self)
 	local menu;
 	local name;
@@ -107,6 +109,8 @@ local dropdowns = {
 	["targettarget"] = function() ToggleDropDownMenu(1, nil, totdropdown, "LUFUnittargettarget", 120, 10) end,
 	["targettargettarget"] = function() ToggleDropDownMenu(1, nil, tototdropdown, "LUFUnittargettargettarget", 120, 10) end,
 }
+
+-------------------------------------------------------------------------------------------------------------------------------------
 
 -- Frame shown, do a full update
 local function FullUpdate(self)
@@ -712,9 +716,10 @@ function Units:CheckGroupVisibility()
 		partypet:SetAttribute("showParty", ( not LunaUF.db.profile.units.raid.showParty or not LunaUF.enabledUnits.raid ) and true or false)
 	end
 
-	if( raid and party ) then
-		raid:SetAttribute("showParty", not party:GetAttribute("showParty"))
-		raid:SetAttribute("showPlayer", party:GetAttribute("showPlayer"))
+	if( raid ) then
+		raid:SetAttribute("showParty", LunaUF.db.profile.units.raid.showParty)
+		raid:SetAttribute("showPlayer", true)
+		raid:SetAttribute("showSolo", LunaUF.db.profile.units.raid.showSolo)
 	end
 end
 
@@ -898,6 +903,9 @@ function Units:LoadRaidGroupHeader(type)
 		monitor:SetAttribute("raidDisabled", id == -1 and true or nil)
 		monitor:SetAttribute("recheck", time())
 	end
+	if stateMonitor.raids[1] then
+		stateMonitor.raids[1]:SetAttribute("showSolo", LunaUF.db.profile.units.raid.showSolo)
+	end
 
 	local config = LunaUF.db.profile.units[type]
 	local xMod = config.attribPoint == "LEFT" and 1 or config.attribPoint == "RIGHT" and -1 or 0
@@ -989,6 +997,8 @@ function Units:LoadRaidGroupHeader(type)
 			frame:Hide()
 		end
 	end
+	
+	headerFrames.raid1:SetAttribute("showSolo", LunaUF.db.profile.units.raid.showSolo)
 	
 --	if( headerFrames.raidParent ) then
 --		self:SetHeaderAttributes(headerFrames.raidParent, type)

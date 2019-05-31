@@ -7,6 +7,87 @@ local SML = SML or LibStub:GetLibrary("LibSharedMedia-3.0")
 
 local L = LunaUF.L
 
+local InfoTags = {
+	["numtargeting"] = true,
+	["cnumtargeting"] = true,
+	["br"] = true,
+	["name"] = true,
+	["shortname:x"] = true,
+	["abbrev:name"] = true,
+	["guild"] = true,
+	["guildrank"] = true,
+	["level"] = true,
+	["smartlevel"] = true,
+	["class"] = true,
+	["smartclass"] = true,
+	["rare"] = true,
+	["elite"] = true,
+	["classification"] = true,
+	["shortclassification"] = true,
+	["race"] = true,
+	["smartrace"] = true,
+	["creature"] = true,
+	["sex"] = true,
+	["druidform"] = true,
+	["civilian"] = true,
+	["pvp"] = true,
+	["rank"] = true,
+	["numrank"] = true,
+	["faction"] = true,
+	["ignore"] = true,
+	["server"] = true,
+	["status"] = true,
+	["happiness"] = true,
+	["group"] = true,
+	["combat"] = true,
+	["loyalty"] = true,
+}
+local HealthnPowerTags = {
+	["namehealerhealth"] = true,
+	["healerhealth"] = true,
+	["smart:healmishp"] = true,
+	["cpoints"] = true,
+	["smarthealth"] = true,
+	["ssmarthealth"] = true,
+	["healhp"] = true,
+	["hp"] = true,
+	["shp"] = true,
+	["sshp"] = true,
+	["maxhp"] = true,
+	["smaxhp"] = true,
+	["missinghp"] = true,
+	["healmishp"] = true,
+	["perhp"] = true,
+	["pp"] = true,
+	["spp"] = true,
+	["maxpp"] = true,
+	["smaxpp"] = true,
+	["missingpp"] = true,
+	["perpp"] = true,
+	["druid:pp"] = true,
+	["druid:maxpp"] = true,
+	["druid:missingpp"] = true,
+	["druid:perpp"] = true,
+	["incheal"] = true,
+	["numheals"] = true,
+}
+local ColorTags = {
+	["combatcolor"] = true,
+	["pvpcolor"] = true,
+	["reactcolor"] = true,
+	["levelcolor"] = true,
+	["aggrocolor"] = true,
+	["classcolor"] = true,
+	["healthcolor"] = true,
+	["color:xxxxxx"] = true,
+	["nocolor"] = true,
+	["castname"] = true,
+	["casttime"] = true,
+	["xp"] = true,
+	["percxp"] = true,
+	["rep"] = true,
+}
+
 local UnitToFrame = {
 	["none"] = "UIParent",
 	["player"] = "LUFUnitplayer",
@@ -343,6 +424,12 @@ function LunaUF:CreateConfig()
 					values = getMediaData,
 					get = function(info) return get(info) or LunaUF.db.profile.statusbar end,
 				},
+				vertical = {
+					name = L["Vertical"],
+					desc = L["Set the bar vertical."],
+					type = "toggle",
+					order = 9,
+				},
 			},
 		},
 		["powerBar"] = {
@@ -411,6 +498,12 @@ function LunaUF:CreateConfig()
 					dialogControl = "LSM30_Statusbar",
 					values = getMediaData,
 					get = function(info) return get(info) or LunaUF.db.profile.statusbar end,
+				},
+				vertical = {
+					name = L["Vertical"],
+					desc = L["Set the bar vertical."],
+					type = "toggle",
+					order = 9,
 				},
 			},
 		},
@@ -541,6 +634,12 @@ function LunaUF:CreateConfig()
 					dialogControl = "LSM30_Statusbar",
 					values = getMediaData,
 					get = function(info) return get(info) or LunaUF.db.profile.statusbar end,
+				},
+				vertical = {
+					name = L["Vertical"],
+					desc = L["Set the bar vertical."],
+					type = "toggle",
+					order = 8,
 				},
 			},
 		},
@@ -2440,6 +2539,12 @@ function LunaUF:CreateConfig()
 					values = getMediaData,
 					get = function(info) return get(info) or LunaUF.db.profile.statusbar end,
 				},
+				vertical = {
+					name = L["Vertical"],
+					desc = L["Set the bar vertical."],
+					type = "toggle",
+					order = 7,
+				},
 			},
 		},
 		["reckStacks"] = {
@@ -3570,6 +3675,14 @@ function LunaUF:CreateConfig()
 						set = setHideRaid,
 						disabled = Lockdown,
 					},
+					showPlayer = {
+						name = L["Show player"],
+						desc = L["Show player in the party frame."],
+						type = "toggle",
+						order = 2.91,
+						disabled = Lockdown,
+						set = function(info, value) set(info, value) LunaUF.Units:ReloadHeader("party") end,
+					},
 				},
 			},
 			partytarget = {
@@ -3895,11 +4008,19 @@ function LunaUF:CreateConfig()
 						disabled = Lockdown,
 						set = function(info, value) set(info,value) LunaUF.Units:ReloadHeader("raid") end,
 					},
+					showSolo = {
+						name = L["Show solo"],
+						desc = L["Show raid frame when solo"],
+						type = "toggle",
+						order = 2.35,
+						disabled = Lockdown,
+						set = function(info, value) set(info,value) LunaUF.Units:ReloadHeader("raid") end,
+					},
 					groupnumbers = {
 						name = L["Groupnumbers"],
 						desc = L["Show Groupnumbers next to the group"],
 						type = "toggle",
-						order = 2.35,
+						order = 2.36,
 						disabled = Lockdown,
 						set = function(info, value) set(info,value) LunaUF.Units:ReloadHeader("raid") LunaUF.Units:ReloadHeader("raidpet") end,
 					},
@@ -3907,7 +4028,7 @@ function LunaUF:CreateConfig()
 						name = L["Fontsize"],
 						desc = L["Set the size of the group number."],
 						type = "range",
-						order = 2.36,
+						order = 2.37,
 						min = -6,
 						max = 20,
 						step = 1,
@@ -3915,7 +4036,7 @@ function LunaUF:CreateConfig()
 						set = function(info, value) set(info,value) LunaUF.Units:ReloadHeader("raid") end,
 					},
 					font = {
-						order = 2.37,
+						order = 2.38,
 						type = "select",
 						name = L["Groupnumberfont"],
 						dialogControl = "LSM30_Font",
@@ -4848,10 +4969,6 @@ function LunaUF:CreateConfig()
 							},
 						},
 					},
-					header = {
-						name = "",
-						order = 2,
-					},
 					player = {
 						name = L["player"],
 						desc = string.format(L["Hides the default %s frame"], L["player"]),
@@ -4896,6 +5013,31 @@ function LunaUF:CreateConfig()
 					},
 				},
 			},
+			help = {
+				name = L["Tag Help"],
+				type = "group",
+				order = 19,
+				args = {
+					help = {
+						order = 1,
+						type = "group",
+						name = L["Tags - Help"],
+						inline = true,
+						args = {
+							description = {
+								type = "description",
+								name = L["You can use tags to change the text information displayed on each frame. Just go to the tag section of the frame you want to change and put in some tags."],
+								width = "full",
+							},
+						},
+					},
+					infoheader = {
+						name = L["Info tags"],
+						type = "header",
+						order = 2,
+					},
+				},
+			},
 		},
 	}
 	for mod, tbl in pairs(moduleOptions) do
@@ -4905,16 +5047,57 @@ function LunaUF:CreateConfig()
 			end
 		end
 	end
+	local i = 3
+	for k in pairs(InfoTags) do
+		aceoptions.args.help.args[k] = {
+			order = i,
+			type = "description",
+			name = "["..k.."] = "..L[k],
+			width = "full",
+		}
+		i = i + 1
+	end
+	aceoptions.args.help.args["healthnpowerheader"] = {
+		order = i,
+		type = "header",
+		name = L["Health and power tags"],
+	}
+	i = i + 1
+	for k in pairs(HealthnPowerTags) do
+		aceoptions.args.help.args[k] = {
+			order = i,
+			type = "description",
+			name = "["..k.."] = "..L[k],
+			width = "full",
+		}
+		i = i + 1
+	end
+	aceoptions.args.help.args["colorheader"] = {
+		order = i,
+		type = "header",
+		name = L["Color tags"],
+	}
+	i = i + 1
+	for k in pairs(ColorTags) do
+		aceoptions.args.help.args[k] = {
+			order = i,
+			type = "description",
+			name = "["..k.."] = "..L[k],
+			width = "full",
+		}
+		i = i + 1
+	end
 	AceConfigRegistry:RegisterOptionsTable(Addon, aceoptions, true)
 	aceoptions.args.profile = LibStub("AceDBOptions-3.0"):GetOptionsTable(self.db)
 	
 	AceConfigDialog:AddToBlizOptions(Addon, nil, nil, "general")
-	AceConfigDialog:AddToBlizOptions(Addon, "Colors", Addon, "colors")
+	AceConfigDialog:AddToBlizOptions(Addon, L["Colors"], Addon, "colors")
 	for _,unit in ipairs(LunaUF.unitList) do
 		AceConfigDialog:AddToBlizOptions(Addon, L[unit], Addon, unit)
 	end
-	AceConfigDialog:AddToBlizOptions(Addon, "Hide Blizzard", Addon, "hidden")
-	AceConfigDialog:AddToBlizOptions(Addon, "Profiles", Addon, "profile")
+	AceConfigDialog:AddToBlizOptions(Addon, L["Hide Blizzard"], Addon, "hidden")
+	AceConfigDialog:AddToBlizOptions(Addon, L["Tag Help"], Addon, "help")
+	AceConfigDialog:AddToBlizOptions(Addon, L["Profiles"], Addon, "profile")
 	
 	AceConfigDialog:SetDefaultSize(Addon, 895, 570)
 end
