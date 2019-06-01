@@ -1,6 +1,6 @@
 --[[
 Name: LibClassicHealComm-1.0
-Revision: $Revision: 1 $
+Revision: $Revision: 2 $
 Author(s): Aviana, Original by Shadowed (shadowed.wow@gmail.com)
 Description: Healing communication library. This is a heavily modified clone of LibHealComm-4.0.
 Dependencies: LibStub, ChatThrottleLib
@@ -863,9 +863,9 @@ if( playerClass == "PRIEST" ) then
 		-- Heal
 		local Heal = GetSpellInfo(2054)
 		spellData[2054] = {coeff = 3 / 3.5, level = 16, average = avg(295, 341)}
-		spellData[2055] = {coeff = 3 / 3.5, levels = 22, average = avg(429, 491)}
-		spellData[6063] = {coeff = 3 / 3.5, levels = 28, average = avg(566, 642)}
-		spellData[6064] = {coeff = 3 / 3.5, levels = 34, average = avg(712, 804)}
+		spellData[2055] = {coeff = 3 / 3.5, level = 22, average = avg(429, 491)}
+		spellData[6063] = {coeff = 3 / 3.5, level = 28, average = avg(566, 642)}
+		spellData[6064] = {coeff = 3 / 3.5, level = 34, average = avg(712, 804)}
 		-- Lesser Heal
 		local LesserHeal = GetSpellInfo(2050)
 		spellData[2050] = {level = 1, average = avg(47, 58)}
@@ -886,6 +886,7 @@ if( playerClass == "PRIEST" ) then
 		GetHealTargets = function(bitType, guid, healAmount, spellID)
 			local spellName = GetSpellInfo(spellID)
 			if( spellName == PrayerofHealing ) then
+				guid = UnitGUID("player")
 				local targets = compressGUID[guid]
 				local group = guidToGroup[guid]
 				
