@@ -69,7 +69,7 @@ local HealthnPowerTags = {
 	["druid:missingpp"] = true,
 	["druid:perpp"] = true,
 	["incheal"] = true,
-	["numheals"] = true,
+--	["numheals"] = true,
 }
 local ColorTags = {
 	["combatcolor"] = true,
@@ -531,21 +531,6 @@ function LunaUF:CreateConfig()
 					type = "select",
 					order = 3,
 					values = {["HIDE"] = L["Hide"], ["LEFT"] = L["Left"], ["RIGHT"] = L["Right"]},
-				},
-				background = {
-					name = L["Background"],
-					desc = string.format(L["Enable or disable the %s."], L["Background"]),
-					type = "toggle",
-					order = 4,
-				},
-				backgroundAlpha = {
-					name = L["Background alpha"],
-					desc = L["Set the background alpha."],
-					type = "range",
-					order = 5,
-					min = 0.01,
-					max = 1,
-					step = 0.01,
 				},
 				height = {
 					name = L["Height"],
@@ -2682,7 +2667,7 @@ function LunaUF:CreateConfig()
 			type = "group",
 			order = -1,
 			inline = true,
-			hidden = function(info) return info[1] ~= "target" or not (select(2,UnitClass("player")) == "DRUID" or select(2,UnitClass("player") ~= "ROGUE")) end,
+			hidden = function(info) return info[1] ~= "target" or (select(2,UnitClass("player")) ~= "ROGUE" and select(2,UnitClass("player")) ~= "DRUID") end,
 			args = {
 				enabled = {
 					name = L["Enable"],
@@ -2751,7 +2736,7 @@ function LunaUF:CreateConfig()
 						order = 1,
 					},
 					descriptiontext = {
-						name = "Luna Unit Frames by Aviana\nDonate: paypal.me/LunaUnitFrames",
+						name = "Luna Unit Frames by Aviana\nDonate: paypal.me/LunaUnitFrames\n".."Version: "..LunaUF.version,
 						type = "description",
 						width = "full",
 						order = 1.1,

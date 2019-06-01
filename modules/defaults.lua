@@ -1112,10 +1112,10 @@ function LunaUF:LoadDefaults()
 		},
 		raid = {
 			enabled = true,
-			healthBar = { enabled = true, background = true, backgroundAlpha = 0.2, colorType = "class", reactionType="npc", height = 1.20, order = 10},
+			healthBar = { enabled = true, background = true, backgroundAlpha = 0.2, colorType = "class", reactionType="npc", height = 10, order = 10, vertical = true},
 			portrait = {enabled = false, type = "3D", alignment = "LEFT", width = 0.22, height = 0.50, order = 15, fullBefore = 0, fullAfter = 50},
 			castBar = { enabled = false, background = true, backgroundAlpha = 0.2, height = 0.60, icon = "HIDE", autoHide = true, order = 60},
-			powerBar = { enabled = true, background = true, backgroundAlpha = 0.2, height = 1.0, order = 20, colorType = "type" },
+			powerBar = { enabled = true, background = true, backgroundAlpha = 0.2, height = 1, order = 20, colorType = "type" },
 			emptyBar = { enabled = false, height = 0.4, order = 50, reactionType="npc", class = true, alpha = 0.2},
 			range = { enabled = false },
 			highlight = { enabled = true, debuff = false },
@@ -1146,13 +1146,13 @@ function LunaUF:LoadDefaults()
 			},
 			tags = {
 				["healthBar"] = {
-					size = 10,
+					size = 8,
 					["left"] = {
 						tagline = "",
 						size = 100,
 					},
 					["center"] = {
-						tagline = "[smarthealth]",
+						tagline = "[name][br][healerhealth]",
 						size = 100,
 					},
 					["right"] = {
@@ -1167,7 +1167,7 @@ function LunaUF:LoadDefaults()
 						size = 100,
 					},
 					["center"] = {
-						tagline = "[pp]",
+						tagline = "",
 						size = 100,
 					},
 					["right"] = {
@@ -1255,10 +1255,10 @@ function LunaUF:LoadDefaults()
 		},
 		raidpet = {
 			enabled = false,
-			healthBar = { enabled = true, background = true, backgroundAlpha = 0.2, colorType = "class", reactionType="npc", height = 1.20, order = 10},
+			healthBar = { enabled = true, background = true, backgroundAlpha = 0.2, colorType = "class", reactionType="npc", height = 10, order = 10, vertical = true},
 			portrait = {enabled = false, type = "3D", alignment = "LEFT", width = 0.22, height = 0.50, order = 15, fullBefore = 0, fullAfter = 50},
 			castBar = { enabled = false, background = true, backgroundAlpha = 0.2, height = 0.60, icon = "HIDE", autoHide = true, order = 60},
-			powerBar = { enabled = true, background = true, backgroundAlpha = 0.2, height = 1.0, order = 20, colorType = "type" },
+			powerBar = { enabled = true, background = true, backgroundAlpha = 0.2, height = 1, order = 20, colorType = "type" },
 			emptyBar = { enabled = false, height = 0.4, order = 50, reactionType="npc", class = true, alpha = 0.2},
 			range = { enabled = false },
 			highlight = { enabled = true, debuff = false },
@@ -1289,13 +1289,13 @@ function LunaUF:LoadDefaults()
 			},
 			tags = {
 				["healthBar"] = {
-					size = 10,
+					size = 8,
 					["left"] = {
 						tagline = "",
 						size = 100,
 					},
 					["center"] = {
-						tagline = "[smarthealth]",
+						tagline = "[name][br][healerhealth]",
 						size = 100,
 					},
 					["right"] = {
@@ -1310,7 +1310,7 @@ function LunaUF:LoadDefaults()
 						size = 100,
 					},
 					["center"] = {
-						tagline = "[pp]",
+						tagline = "",
 						size = 100,
 					},
 					["right"] = {

@@ -124,7 +124,7 @@ function Power:UpdateColor(frame)
 		end
 	end
 
-	if frame.unit == "player" then
+	if frame.unitRealType == "player" then
 		if not LunaUF.db.profile.units.player.powerBar.ticker or UnitPowerType("player") ~= Enum.PowerType.Energy then
 			frame.powerBar.ticker:Hide()
 		elseif LunaUF.db.profile.units.player.powerBar.ticker and UnitPowerType("player") == Enum.PowerType.Energy then
@@ -174,7 +174,7 @@ function Power:Update(frame, event, unit, powerType)
 			frame.powerBar.ignorePowerChange = nil
 		elseif frame.powerBar.currentPower < UnitPower(frame.unit) and UnitPowerType("player") == Enum.PowerType.Energy then
 			frame.powerBar.ticker.startTime = GetTime()
-		elseif frame.powerBar.currentPower > UnitPower(frame.unit) and UnitPowerType("player") == Enum.PowerType.Mana then
+		elseif frame.powerBar.currentPower > UnitPower(frame.unit) and not (UnitPowerMax(frame.unit) == UnitPower(frame.unit)) and UnitPowerType("player") == Enum.PowerType.Mana then
 			frame.powerBar.ticker.startTime = GetTime()
 			frame.powerBar.ticker:Show()
 		end

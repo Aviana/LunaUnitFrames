@@ -419,7 +419,7 @@ function Layout:PositionWidgets(frame, config)
 
 	-- Position and size everything
 	local portraitHeight, xOffset = 0, -clip
-	local availableHeight = frame:GetHeight() - clipDoubled - (1.25 * totalBars)
+	local availableHeight = frame:GetHeight() - clipDoubled - (1.02 * totalBars)
 	for id, key in pairs(barOrder) do
 		local bar = frame[key]
 		-- Position the actual bar based on it's type
@@ -444,7 +444,7 @@ function Layout:PositionWidgets(frame, config)
 			portraitAnchor = bar
 		end
 
-		xOffset = xOffset - bar:GetHeight() + (-1.25)
+		xOffset = xOffset - bar:GetHeight() + (-1.02)
 	end
 
 	-- Now position the portrait and set the height

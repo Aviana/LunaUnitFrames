@@ -12,9 +12,6 @@ https://www.wowinterface.com/downloads/info24924-RealMobHealth.html
 Clickcasting:
 https://www.warcrafttavern.com/addons/clique/
 
-List of stuff that is still missing:
-- Vertical bars
-
 Feel free to fork this but give credit (at least author & link to this github)
 
 DO NOT REUPLOAD! LINK HERE INSTEAD.

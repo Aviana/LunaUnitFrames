@@ -139,7 +139,6 @@ function Cast:OnEnable(frame)
 		frame.castBar.bar = LunaUF.Units:CreateBar(frame)
 		frame.castBar.background = frame.castBar.bar.background
 		frame.castBar.bar.parent = frame
-		frame.castBar.bar.background = frame.castBar.background
 		
 		frame.castBar.icon = frame.castBar.bar:CreateTexture(nil, "ARTWORK")
 	end

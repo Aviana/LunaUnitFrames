@@ -274,7 +274,7 @@ local function SetBlockColor(self, bar, key, r, g, b)
 		if( not bgColor ) then
 			bar.background:SetVertexColor(r, g, b)--, LunaUF.db.profile.bars.backgroundAlpha)
 		else
-			bar.background:SetVertexColor(bgColor.r, bgColor.g, bgColor.b, LunaUF.db.profile.bars.backgroundAlpha)
+			bar.background:SetVertexColor(r, g, b, LunaUF.db.profile.bars.backgroundAlpha)
 		end
 	else
 		bar.background:SetVertexColor(r, g, b, LunaUF.db.profile.bars.alpha)
@@ -1026,6 +1026,8 @@ function Units:LoadGroupHeader(type)
 		if( type == "party" or type == "raid" ) then
 			self:CheckGroupVisibility()
 		end
+		
+		LunaUF.Layout:AnchorFrame(headerFrames[type], LunaUF.db.profile.units[type])
 		return
 	end
 

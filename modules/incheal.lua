@@ -142,7 +142,7 @@ end
 function IncHeal:UpdateIncoming(...)
 	for frame in pairs(frames) do
 		for i=1, select("#", ...) do
-			if( select(i, ...) == frame.unitGUID ) then
+			if( select(i, ...) == frame.unitGUID ) and (UnitPlayerOrPetInParty(frame.unit) or UnitPlayerOrPetInRaid(frame.unit) or UnitIsUnit("player",frame.unit) or UnitIsUnit("pet",frame.unit)) then
 				self:Update(frame)
 				break
 			end

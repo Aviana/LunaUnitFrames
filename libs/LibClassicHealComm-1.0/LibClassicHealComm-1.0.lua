@@ -1371,7 +1371,7 @@ local function parseHealEnd(casterGUID, pending, checkField, spellID, interrupte
 	
 	-- Hots use spell IDs while everything else uses spell names. Avoids naming conflicts for multi-purpose spells such as Lifebloom or Regrowth
 	if( not pending ) then
-		pending = checkField == "id" and pendingHots[casterGUID][spellID] or pendingHeals[casterGUID][spellID]
+		pending = checkField == "id" and pendingHots[casterGUID] and pendingHots[casterGUID][spellID] or checkField ~= "id" and pendingHeals[casterGUID] and pendingHeals[casterGUID][spellID]
 	end
 	if( not pending or not pending.bitType ) then return end
 			
