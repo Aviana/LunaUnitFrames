@@ -319,8 +319,12 @@ OnDragStop = function(self)
 	local point, anchorTo, relativePoint, x, y = self:GetPoint()
 
 	if position.anchorTo ~= "UIParent" then
-		x = self:GetLeft() - anchor:GetLeft()
-		y = self:GetTop() - anchor:GetTop()
+		x = (self:GetLeft()*self:GetScale()) - (anchor:GetLeft()*anchor:GetScale())
+		y = (self:GetTop()*self:GetScale()) - (anchor:GetTop()*anchor:GetScale())
+		if not self.isHeaderFrame then
+			x = x / self:GetScale()
+			y = y / self:GetScale()
+		end
 		point = "TOPLEFT"
 		relativePoint = "TOPLEFT"
 		scale = 1

@@ -22,9 +22,7 @@ for i=1, MAX_RAID_MEMBERS do LunaUF.raidUnits[i] = "raid" .. i end
 for i=1, MAX_RAID_MEMBERS do LunaUF.raidPetUnits[i] = "raidpet" .. i end
 
 -- REMOVE ONCE FIXED ----------------
-function UnitGroupRolesAssigned(unit)
-	return "NONE"
-end
+UnitGroupRolesAssigned = InCombatLockdown
 -------------------------------------
 
 function LunaUF:OnInitialize()

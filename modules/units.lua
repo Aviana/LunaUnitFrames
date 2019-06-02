@@ -706,6 +706,7 @@ function Units:CheckGroupVisibility()
 	if( party ) then
 		party:SetAttribute("showParty", ( not LunaUF.db.profile.units.raid.showParty or not LunaUF.enabledUnits.raid ) and true or false)
 		party:SetAttribute("showPlayer", LunaUF.db.profile.units.party.showPlayer)
+		party:SetAttribute("showSolo", LunaUF.db.profile.units.party.showPlayer)
 	end
 
 	if( partytarget ) then
@@ -1080,6 +1081,7 @@ function Units:LoadGroupHeader(type)
 		stateMonitor[type]:SetAttribute("hideAnyRaid", LunaUF.db.profile.units[type].hideAnyRaid)
 		stateMonitor[type]:WrapScript(stateMonitor[type], "OnAttributeChanged", [[
 			if( name ~= "state-raidmonitor" and name ~= "partydisabled" and name ~= "hideanyraid" and name ~= "hidesemiraid" ) then return end
+			if( self:GetAttribute("state-raidmonitor") == "combat" ) then return end
 			if( self:GetAttribute("partyDisabled") ) then return end
 			
 			if( self:GetAttribute("hideAnyRaid") and ( self:GetAttribute("state-raidmonitor") == "raid1" or self:GetAttribute("state-raidmonitor") == "raid6" ) ) then
@@ -1090,7 +1092,11 @@ function Units:LoadGroupHeader(type)
 				self:GetFrameRef("partyHeader"):Show()
 			end
 		]])
-		RegisterStateDriver(stateMonitor[type], "raidmonitor", "[target=raid6, exists] raid6; [target=raid1, exists] raid1; none")
+		if type == "party" then
+			RegisterStateDriver(stateMonitor[type], "raidmonitor", "[target=raid6, exists, nocombat] raid6; [target=raid1, exists, nocombat] raid1; [nocombat] none; combat") -- REMOVE ONCE FIXED
+		else
+			RegisterStateDriver(stateMonitor[type], "raidmonitor", "[target=raid6, exists] raid6; [target=raid1, exists] raid1; none")
+		end
 		
 	elseif( type == "raid" ) then
 		setupRaidStateMonitor(-1, headerFrame)
