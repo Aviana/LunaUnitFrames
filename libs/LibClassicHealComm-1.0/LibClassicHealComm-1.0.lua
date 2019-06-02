@@ -1,6 +1,6 @@
 --[[
 Name: LibClassicHealComm-1.0
-Revision: $Revision: 3 $
+Revision: $Revision: 4 $
 Author(s): Aviana, Original by Shadowed (shadowed.wow@gmail.com)
 Description: Healing communication library. This is a heavily modified clone of LibHealComm-4.0.
 Dependencies: LibStub, ChatThrottleLib
@@ -1328,8 +1328,8 @@ local function findAura(casterGUID, spellID, inc, ...)
 				if( not spell ) then break end
 				
 				if( spell == spellID and caster and UnitGUID(caster) == casterGUID ) then
-					duration = duration or select(5,CalculateHotHealing(UnitGUID(unit), spellID))
-					endTime = endTime or (GetTime() + (duration * 1000))
+					duration = duration ~= 0 and duration or select(5,CalculateHotHealing(UnitGUID(unit), spellID))
+					endTime = endTime ~= 0 and endTime or (GetTime() + (duration * 1000))
 					return (stack and stack > 0 and stack or 1), duration, endTime
 				end
 
@@ -1503,7 +1503,7 @@ HealComm.bucketFrame:SetScript("OnUpdate", function(self, elapsed)
 						local pending = pendingHots[casterGUID] and pendingHots[casterGUID][data.spellID]
 						if( pending and pending.bitType ) then
 							local endTime = select(3, getRecord(pending, data[1]))
-							HealComm.callbacks:Fire("HealComm_HealUpdated", casterGUID, pending.spellID, pending.bitType, endtime, unpack(data))
+							HealComm.callbacks:Fire("HealComm_HealUpdated", casterGUID, pending.spellID, pending.bitType, endTime, unpack(data))
 						end
 
 						table.wipe(data)

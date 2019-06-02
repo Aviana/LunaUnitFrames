@@ -1072,7 +1072,7 @@ function Units:LoadGroupHeader(type)
 	
 	-- We have to do party hiding based off raid as a state driver so that we can smoothly hide the party frames based off of combat and such
 	-- technically this isn't the cleanest solution because party frames will still have unit watches active
-	-- but this isn't as big of a deal, because SUF automatically will unregister the OnEvent for party frames while hidden
+	-- but this isn't as big of a deal, because LUF automatically will unregister the OnEvent for party frames while hidden
 	if( type == "party" or type == "partypet" or type == "partytarget" ) then
 		stateMonitor[type] = CreateFrame("Frame", nil, nil, "SecureHandlerBaseTemplate")
 		stateMonitor[type]:SetAttribute("partyDisabled", nil)

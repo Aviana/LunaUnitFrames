@@ -48,7 +48,7 @@ function Power:OnEnable(frame)
 	if ( frame.unit == "player" ) then
 		frame:RegisterNormalEvent("PLAYER_UNGHOST", self, "Update")
 	end
-	if not frame.powerBar.ticker and frame.unit == "player" then
+	if not frame.powerBar.ticker and frame.unitType == "player" then
 		frame.powerBar.ticker = CreateFrame("Frame", nil, frame.powerBar)
 		frame.powerBar.ticker:SetBackdrop(backdrop)
 		frame.powerBar.ticker:SetBackdropColor(0,0,0)
@@ -124,7 +124,7 @@ function Power:UpdateColor(frame)
 		end
 	end
 
-	if frame.unitRealType == "player" then
+	if frame.unitType == "player" then
 		if not LunaUF.db.profile.units.player.powerBar.ticker or UnitPowerType("player") ~= Enum.PowerType.Energy then
 			frame.powerBar.ticker:Hide()
 		elseif LunaUF.db.profile.units.player.powerBar.ticker and UnitPowerType("player") == Enum.PowerType.Energy then
@@ -169,7 +169,7 @@ function Power:Update(frame, event, unit, powerType)
 	if( event and powerType and powerType ~= frame.powerBar.currentType ) then return end
 	if( frame.powerBar.minusMob ) then return end
 
-	if frame.unit == "player" and LunaUF.db.profile.units.player.powerBar.ticker then
+	if frame.unitType == "player" and LunaUF.db.profile.units.player.powerBar.ticker then
 		if frame.powerBar.ignorePowerChange then
 			frame.powerBar.ignorePowerChange = nil
 		elseif frame.powerBar.currentPower < UnitPower(frame.unit) and UnitPowerType("player") == Enum.PowerType.Energy then

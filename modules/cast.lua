@@ -252,7 +252,9 @@ local function castOnUpdate(self, elapsed)
 
 	-- Cast finished, do a quick fade
 	if( self.elapsed >= self.endSeconds ) then
-		currentCasts[self:GetParent().unitGUID] = nil
+		if self:GetParent().unitGUID then
+			currentCasts[self:GetParent().unitGUID] = nil
+		end
 		self.spellName = nil
 		self.fadeElapsed = FADE_TIME
 		self.fadeStart = FADE_TIME

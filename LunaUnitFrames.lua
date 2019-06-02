@@ -4,7 +4,7 @@ LunaUF = select(2, ...)
 
 local L = LunaUF.L
 local ACR = LibStub("AceConfigRegistry-3.0", true)
-LunaUF.version = 3003
+LunaUF.version = 3004
 LunaUF.unitList = {"player", "pet", "pettarget", "target", "targettarget", "targettargettarget", "party", "partytarget", "partypet", "raid", "raidpet", "maintank", "maintanktarget", "mainassist", "mainassisttarget"}
 LunaUF.fakeUnits = {["targettarget"] = true, ["targettargettarget"] = true, ["pettarget"] = true, ["partytarget"] = true, ["maintanktarget"] = true, ["mainassisttarget"] = true}
 LunaUF.enabledUnits = {}
@@ -22,7 +22,7 @@ for i=1, MAX_RAID_MEMBERS do LunaUF.raidUnits[i] = "raid" .. i end
 for i=1, MAX_RAID_MEMBERS do LunaUF.raidPetUnits[i] = "raidpet" .. i end
 
 -- REMOVE ONCE FIXED ----------------
-UnitGroupRolesAssigned = InCombatLockdown
+UnitGroupRolesAssigned = function(unit) return "NONE" end
 -------------------------------------
 
 function LunaUF:OnInitialize()
