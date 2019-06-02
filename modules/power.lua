@@ -37,6 +37,9 @@ end
 function Power:OnEnable(frame)
 	frame.powerBar = frame.powerBar or LunaUF.Units:CreateBar(frame)
 	
+	if frame.unitType ~= "player" then
+		frame:RegisterUnitEvent("UNIT_POWER_FREQUENT", self, "Update")
+	end
 	frame:RegisterUnitEvent("UNIT_POWER_UPDATE", self, "Update")
 	frame:RegisterUnitEvent("UNIT_MAXPOWER", self, "Update")
 	frame:RegisterUnitEvent("UNIT_CONNECTION", self, "Update")
