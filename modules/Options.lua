@@ -2162,7 +2162,7 @@ function LunaUF:CreateConfig()
 							desc = L["What the indicator should display."],
 							type = "select",
 							order = 3,
-							values = { ["aggro"] = L["Aggro"], ["aura"] = L["Buff/Debuff"], ["dispel"] = L["Dispel"] },
+							values = { ["aggro"] = L["Aggro"], ["aura"] = L["Buff/Debuff"], ["ownaura"] = L["Own buff/debuff"], ["dispel"] = L["Dispel"] },
 							set = function(info, value) set(info,value) AceConfigRegistry:NotifyChange("LunaUnitFrames") end,
 						},
 						value = {
@@ -2214,7 +2214,7 @@ function LunaUF:CreateConfig()
 							desc = L["What the indicator should display."],
 							type = "select",
 							order = 3,
-							values = { ["aggro"] = L["Aggro"], ["aura"] = L["Buff/Debuff"], ["dispel"] = L["Dispel"] },
+							values = { ["aggro"] = L["Aggro"], ["aura"] = L["Buff/Debuff"], ["ownaura"] = L["Own buff/debuff"], ["dispel"] = L["Dispel"] },
 							set = function(info, value) set(info,value) AceConfigRegistry:NotifyChange("LunaUnitFrames") end,
 						},
 						value = {
@@ -2266,7 +2266,7 @@ function LunaUF:CreateConfig()
 							desc = L["What the indicator should display."],
 							type = "select",
 							order = 3,
-							values = { ["aggro"] = L["Aggro"], ["aura"] = L["Buff/Debuff"], ["dispel"] = L["Dispel"] },
+							values = { ["aggro"] = L["Aggro"], ["aura"] = L["Buff/Debuff"], ["ownaura"] = L["Own buff/debuff"], ["dispel"] = L["Dispel"] },
 							set = function(info, value) set(info,value) AceConfigRegistry:NotifyChange("LunaUnitFrames") end,
 						},
 						value = {
@@ -2318,7 +2318,7 @@ function LunaUF:CreateConfig()
 							desc = L["What the indicator should display."],
 							type = "select",
 							order = 3,
-							values = { ["aggro"] = L["Aggro"], ["aura"] = L["Buff/Debuff"], ["dispel"] = L["Dispel"] },
+							values = { ["aggro"] = L["Aggro"], ["aura"] = L["Buff/Debuff"], ["ownaura"] = L["Own buff/debuff"], ["dispel"] = L["Dispel"] },
 							set = function(info, value) set(info,value) AceConfigRegistry:NotifyChange("LunaUnitFrames") end,
 						},
 						value = {
@@ -2370,7 +2370,7 @@ function LunaUF:CreateConfig()
 							desc = L["What the indicator should display."],
 							type = "select",
 							order = 3,
-							values = { ["aggro"] = L["Aggro"], ["aura"] = L["Buff/Debuff"], ["dispel"] = L["Dispel"] },
+							values = { ["aggro"] = L["Aggro"], ["aura"] = L["Buff/Debuff"], ["ownaura"] = L["Own buff/debuff"], ["dispel"] = L["Dispel"] },
 							set = function(info, value) set(info,value) AceConfigRegistry:NotifyChange("LunaUnitFrames") end,
 						},
 						value = {

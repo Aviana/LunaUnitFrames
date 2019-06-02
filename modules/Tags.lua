@@ -15,6 +15,13 @@ local DruidForms = {
 	[783] = GetSpellInfo(783),
 }
 
+local abbrevCache = setmetatable({}, {
+	__index = function(tbl, val)
+		val = string.gsub(val, "([^%s]+) ", abbreviateName)
+		rawset(tbl, val, val)
+		return val
+end})
+
 local function Hex(r, g, b)
 	if r == nil then
 		return string.format("|cff%02x%02x%02x", 255, 255, 255)

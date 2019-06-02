@@ -269,6 +269,7 @@ local L = {
 ["Name (exact) or ID"] = "Name or ID",
 ["Name (exact) or ID of the effect to track."] = "Name or ID of the effect to track.",
 ["Buff/Debuff"] = "Buff/Debuff",
+["Own buff/debuff"] = "Own buff/debuff",
 ["Dispel"] = "Dispel",
 ["Timer"] = "Timer",
 ["Texture"] = "Texture",

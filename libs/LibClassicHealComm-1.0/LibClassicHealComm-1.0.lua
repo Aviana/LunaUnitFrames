@@ -1,6 +1,6 @@
 --[[
 Name: LibClassicHealComm-1.0
-Revision: $Revision: 2 $
+Revision: $Revision: 3 $
 Author(s): Aviana, Original by Shadowed (shadowed.wow@gmail.com)
 Description: Healing communication library. This is a heavily modified clone of LibHealComm-4.0.
 Dependencies: LibStub, ChatThrottleLib
@@ -653,7 +653,7 @@ if( playerClass == "DRUID" ) then
 			local healAmount = hotData[spellID].average
 			local spellPower = GetSpellBonusHealing()
 			local healModifier, spModifier = playerHealModifier, 1
-			local totalTicks
+			local totalTicks, duration
 			healModifier = healModifier + talentData[GiftofNature].current
 			
 			-- Rejuvenation
@@ -665,7 +665,7 @@ if( playerClass == "DRUID" ) then
 					spellPower = spellPower + 50
 				end
 				
-				local duration, ticks
+				local ticks
 
 				duration = 12
 				ticks = 4
@@ -686,10 +686,11 @@ if( playerClass == "DRUID" ) then
 				healAmount = healAmount / hotData[spellID].ticks
 				
 				totalTicks = 7
+				duration = equippedSetCache["Stormrage"] and 24 or 21
 			end
 	
 			healAmount = calculateGeneralAmount(hotData[spellID].level, healAmount, spellPower, spModifier, healModifier)
-			return HOT_HEALS, math.ceil(healAmount), totalTicks, hotData[spellID].interval
+			return HOT_HEALS, math.ceil(healAmount), totalTicks, hotData[spellID].interval, duration
 		end
 			
 		-- Calcualte direct and channeled heals
@@ -907,7 +908,7 @@ if( playerClass == "PRIEST" ) then
 			local healAmount = hotData[spellID].average
 			local spellPower = GetSpellBonusHealing()
 			local healModifier, spModifier = playerHealModifier, 1
-			local totalTicks
+			local totalTicks, duration
 
 			healModifier = healModifier + talentData[SpiritualHealing].current
 
@@ -919,10 +920,11 @@ if( playerClass == "PRIEST" ) then
 				healAmount = healAmount / hotData[spellID].ticks
 				
 				totalTicks = equippedSetCache["Oracle"] and 6 or 5
+				duration = equippedSetCache["Oracle"] and 18 or 15
 			end
 
 			healAmount = calculateGeneralAmount(hotData[spellID].level, healAmount, spellPower, spModifier, healModifier)
-			return HOT_HEALS, math.ceil(healAmount), totalTicks, hotData[spellID].interval
+			return HOT_HEALS, math.ceil(healAmount), totalTicks, hotData[spellID].interval, duration
 		end
 
 		CalculateHealing = function(guid, spellID)
@@ -1326,6 +1328,8 @@ local function findAura(casterGUID, spellID, inc, ...)
 				if( not spell ) then break end
 				
 				if( spell == spellID and caster and UnitGUID(caster) == casterGUID ) then
+					duration = duration or select(5,CalculateHotHealing(UnitGUID(unit), spellID))
+					endTime = endTime or (GetTime() + (duration * 1000))
 					return (stack and stack > 0 and stack or 1), duration, endTime
 				end
 
@@ -1563,9 +1567,9 @@ function HealComm:COMBAT_LOG_EVENT_UNFILTERED()
 	elseif( ( eventType == "SPELL_AURA_APPLIED" or eventType == "SPELL_AURA_REFRESH" or eventType == "SPELL_AURA_APPLIED_DOSE" ) and bit.band(sourceFlags, COMBATLOG_OBJECT_AFFILIATION_MINE) == COMBATLOG_OBJECT_AFFILIATION_MINE ) then
 		if( hotData[spellID] ) then
 			-- Single target so we can just send it off now thankfully
-			local type, amount, totalTicks, tickInterval = CalculateHotHealing(destGUID, spellID)
+			local type, amount, totalTicks, tickInterval, duration = CalculateHotHealing(destGUID, spellID)
 			if( type ) then
-				local targets, amount = GetHealTargets(type, destGUID, hasVariableTicks and amount or math.max(amount, 0), spellName, hasVariableTicks)
+				local targets, amount = GetHealTargets(type, destGUID, math.max(amount, 0), spellName)
 				parseHotHeal(sourceGUID, false, spellID, amount, totalTicks, tickInterval, string.split(",", targets))
 				sendMessage(string.format("H:%d:%d:%d::%d:%s", totalTicks, spellID, amount, tickInterval, targets))
 			end
