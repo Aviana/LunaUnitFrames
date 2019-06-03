@@ -1092,26 +1092,13 @@ function Units:LoadGroupHeader(type)
 				self:GetFrameRef("partyHeader"):Show()
 			end
 		]])
-		if type == "party" then
-			RegisterStateDriver(stateMonitor[type], "raidmonitor", "[target=raid6, exists, nocombat] raid6; [target=raid1, exists, nocombat] raid1; [nocombat] none; combat") -- REMOVE ONCE FIXED
-		else
-			RegisterStateDriver(stateMonitor[type], "raidmonitor", "[target=raid6, exists] raid6; [target=raid1, exists] raid1; none")
-		end
+		RegisterStateDriver(stateMonitor[type], "raidmonitor", "[target=raid6, exists] raid6; [target=raid1, exists] raid1; none")
 		
 	elseif( type == "raid" ) then
 		setupRaidStateMonitor(-1, headerFrame)
 	else
 		headerFrame:Show()
 	end
-
-	-- Any frames that were split out in this group need to be hidden
---	if( headerFrames.raidParent ) then
---		for _, headerFrame in pairs(headerFrames) do
---			if( headerFrame.splitParent == type ) then
---				headerFrame:Hide()
---			end
---		end
---	end	
 end
 
 -- Initialize units

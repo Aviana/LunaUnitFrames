@@ -355,10 +355,10 @@ local defaultTags = {
 							end;
 	["pp"]					= function(unit) return UnitPower(unit) end;
 	["spp"]					= function(unit)
-								if UnitMana(unit) > 10000 then
-									return math.floor(UnitMana(unit)/1000).."K"
+								if UnitPower(unit) > 10000 then
+									return math.floor(UnitPower(unit)/1000).."K"
 								else
-									return UnitMana(unit)
+									return UnitPower(unit)
 								end
 							end;
 	["maxpp"]				= function(unit) return UnitPowerMax(unit) end;
@@ -370,7 +370,7 @@ local defaultTags = {
 								end
 							end;
 	["missingpp"]			= function(unit)
-								local mana = UnitMana(unit)
+								local mana = UnitPower(unit)
 								local manamax = UnitPowerMax(unit)
 								if manamax-mana == 0 then
 									return ""
@@ -382,7 +382,7 @@ local defaultTags = {
 								if UnitPowerMax(unit) < 1 then
 									return 0
 								else
-									return math.floor(((UnitMana(unit) / UnitPowerMax(unit)) * 100)+0.5)
+									return math.floor(((UnitPower(unit) / UnitPowerMax(unit)) * 100)+0.5)
 								end
 							end;
 	["druid:pp"]			= function(unit)
@@ -777,7 +777,7 @@ local defaultTags = {
 							end;
 	["casttime"]			= function(unit)
 								local time = LunaUF:GetCastTime(UnitGUID(unit))
-								local delay = LunaUF:GetCastTimeDelay() or 0
+								local delay = LunaUF:GetCastTimeDelay(unit) or 0
 								if unit == "player" then
 									if CastingInfo() then
 										if delay > 0 then delay = " +" .. math.floor(delay*100)/100 else delay = "" end

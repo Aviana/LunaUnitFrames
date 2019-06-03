@@ -69,8 +69,8 @@ function LunaUF:GetCastTime(unitGUID)
 	end
 end
 
-function LunaUF:GetCastTimeDelay()
-	return LunaUF.Units.unitFrames.player.castBar.bar.pushback
+function LunaUF:GetCastTimeDelay(unit)
+	return LunaUF.Units.unitFrames[unit].castBar and LunaUF.Units.unitFrames[unit].castBar.bar.pushback
 end
 
 
