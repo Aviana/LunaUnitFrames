@@ -1,6 +1,6 @@
 --[[
 Name: LibClassicHealComm-1.0
-Revision: $Revision: 4 $
+Revision: $Revision: 5 $
 Author(s): Aviana, Original by Shadowed (shadowed.wow@gmail.com)
 Description: Healing communication library. This is a heavily modified clone of LibHealComm-4.0.
 Dependencies: LibStub, ChatThrottleLib
@@ -64,7 +64,17 @@ if( not HealComm.compressGUID ) then
 
 	HealComm.compressGUID = setmetatable({}, {
 		__index = function(tbl, guid)
-			local str = string.match(guid, "^%w*-([-%w]*)$")
+			local str
+			if strsub(guid,1,3) == "Pet" then
+				for unit,pguid in pairs(activePets) do
+					if pguid == guid then
+						str = "p-" .. string.match(UnitGUID(unit), "^%w*-([-%w]*)$")
+					end
+				end
+				if not str then return nil end
+			else
+				str = string.match(guid, "^%w*-([-%w]*)$")
+			end
 			rawset(tbl, guid, str)
 			return str
 	end})
@@ -72,8 +82,12 @@ if( not HealComm.compressGUID ) then
 	HealComm.decompressGUID = setmetatable({}, {
 		__index = function(tbl, str)
 			if( not str ) then return nil end
-			
-			local guid = "Player-"..str
+			local guid
+			if strsub(str,1,2) == "p-" then
+				guid = activePets[HealComm.guidToUnit["Player-"..strsub(str,3)]]
+			else
+				guid = "Player-"..str
+			end
 	
 			rawset(tbl, str, guid)
 			return guid
@@ -1565,7 +1579,7 @@ function HealComm:COMBAT_LOG_EVENT_UNFILTERED()
 
 	-- New hot was applied
 	elseif( ( eventType == "SPELL_AURA_APPLIED" or eventType == "SPELL_AURA_REFRESH" or eventType == "SPELL_AURA_APPLIED_DOSE" ) and bit.band(sourceFlags, COMBATLOG_OBJECT_AFFILIATION_MINE) == COMBATLOG_OBJECT_AFFILIATION_MINE ) then
-		if( hotData[spellID] ) then
+		if( hotData[spellID] and guidToUnit[destGUID] ) then
 			-- Single target so we can just send it off now thankfully
 			local type, amount, totalTicks, tickInterval, duration = CalculateHotHealing(destGUID, spellID)
 			if( type ) then
@@ -1637,7 +1651,7 @@ end
 function HealComm:UNIT_SPELLCAST_START(casterUnit, cast, spellID)
 	if( casterUnit ~= "player" or not spellData[spellID] or UnitIsCharmed("player") or not UnitPlayerControlled("player") ) then return end
 	local castGUID = castGUIDs[spellID]
-	if( not castGUID ) then
+	if( not castGUID or not guidToUnit[castGUID] ) then
 		return
 	end
 
@@ -2055,7 +2069,7 @@ function HealComm:PLAYER_LOGIN()
 	playerLevel = UnitLevel("player")
 	
 	-- Oddly enough player GUID is not available on file load, so keep the map of player GUID to themselves too
---	guidToUnit[playerGUID] = "player"
+	guidToUnit[playerGUID] = "player"
 
 	if( isHealerClass ) then
 		self:OnInitialize()
