@@ -1,13 +1,13 @@
 --[[
 Name: LibClassicHealComm-1.0
-Revision: $Revision: 5 $
+Revision: $Revision: 6 $
 Author(s): Aviana, Original by Shadowed (shadowed.wow@gmail.com)
 Description: Healing communication library. This is a heavily modified clone of LibHealComm-4.0.
 Dependencies: LibStub, ChatThrottleLib
 ]]
 
 local major = "LibClassicHealComm-1.0"
-local minor = 1
+local minor = 6
 assert(LibStub, string.format("%s requires LibStub.", major))
 
 local HealComm = LibStub:NewLibrary(major, minor)
@@ -704,7 +704,7 @@ if( playerClass == "DRUID" ) then
 			end
 	
 			healAmount = calculateGeneralAmount(hotData[spellID].level, healAmount, spellPower, spModifier, healModifier)
-			return HOT_HEALS, math.ceil(healAmount), totalTicks, hotData[spellID].interval, duration
+			return HOT_HEALS, math.ceil(healAmount), totalTicks, hotData[spellID].interval, duration * 1000
 		end
 			
 		-- Calcualte direct and channeled heals
@@ -938,7 +938,7 @@ if( playerClass == "PRIEST" ) then
 			end
 
 			healAmount = calculateGeneralAmount(hotData[spellID].level, healAmount, spellPower, spModifier, healModifier)
-			return HOT_HEALS, math.ceil(healAmount), totalTicks, hotData[spellID].interval, duration
+			return HOT_HEALS, math.ceil(healAmount), totalTicks, hotData[spellID].interval, duration * 1000
 		end
 
 		CalculateHealing = function(guid, spellID)
@@ -1343,7 +1343,7 @@ local function findAura(casterGUID, spellID, inc, ...)
 				
 				if( spell == spellID and caster and UnitGUID(caster) == casterGUID ) then
 					duration = duration ~= 0 and duration or select(5,CalculateHotHealing(UnitGUID(unit), spellID))
-					endTime = endTime ~= 0 and endTime or (GetTime() + (duration * 1000))
+					endTime = endTime ~= 0 and endTime or (GetTime() + duration)
 					return (stack and stack > 0 and stack or 1), duration, endTime
 				end
 
