@@ -1,0 +1,9 @@
+## Interface: 11302
+## Title: LibClassicDurations
+## Version: @project-version@
+## Author: d87
+
+LibStub\LibStub.lua
+CallbackHandler-1.0\CallbackHandler-1.0.lua
+
+LibClassicDurations.xml

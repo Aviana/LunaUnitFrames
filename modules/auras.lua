@@ -2,6 +2,9 @@ local Auras = {}
 LunaUF:RegisterModule(Auras, "auras", LunaUF.L["Auras"])
 local L = LunaUF.L
 
+local lCD = LibStub("LibClassicDurations")
+lCD:RegisterFrame(LunaUF)
+
 local mainEnchant, offEnchant, timeElapsed = {timeLeft = 0}, {timeLeft = 0}, 0
 
 local magicColors = {
@@ -218,6 +221,11 @@ function Auras:UpdateFrames(frame)
 	for i,button in ipairs(frame.auras.buffbuttons.buttons) do
 		if i < 33 then
 			name, texture, count, auraType, duration, endTime, caster, _, _, spellID = UnitAura(frame.unit, i, "HELPFUL")
+			if not duration or duration == 0 then
+				local Newduration, NewendTime = lCD:GetAuraDurationByUnit(frame.unit, spellID, caster)
+				duration = Newduration or duration
+				endTime = NewendTime or endTime
+			end
 			if caster and UnitIsUnit("player", caster) and config.emphasizeBuffs then
 				button.large = true
 			else
@@ -318,6 +326,12 @@ function Auras:UpdateFrames(frame)
 	end
 	for i,button in ipairs(frame.auras.debuffbuttons.buttons) do
 		name, texture, count, auraType, duration, endTime, caster, _, _, spellID = UnitAura(frame.unit, i, "HARMFUL")
+		if not duration or duration == 0 then
+			local Newduration, NewendTime = lCD:GetAuraDurationByUnit(frame.unit, spellID, caster)
+			ChatFrame1:AddMessage(Newduration)
+			duration = Newduration or duration
+			endTime = NewendTime or endTime
+		end
 		if caster and UnitIsUnit("player", caster) and config.emphasizeDebuffs then
 			button.large = true
 		else

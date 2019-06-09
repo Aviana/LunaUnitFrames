@@ -141,7 +141,7 @@ function Power:UpdateColor(frame)
 end
 
 function Power:OnLayoutApplied(frame)
-	if frame.unitType == "player" then
+	if frame.unitType == "player" and frame.powerBar then
 		frame.powerBar.ticker:SetHeight(frame.powerBar:GetHeight())
 		frame.powerBar.ticker:SetWidth(1)
 	end

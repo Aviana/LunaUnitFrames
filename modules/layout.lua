@@ -355,21 +355,32 @@ local function sortOrder(a, b)
 	return currentConfig[a].order < currentConfig[b].order
 end
 
-local barOrder = {}
+local barOrderH = {}
+local barOrderV = {}
 function Layout:PositionWidgets(frame, config)
 	-- Deal with setting all of the bar heights
-	local totalWeight, totalBars, hasFullSize = 0, -1
+	local totalWeight, totalHBars, totalVBars, hasFullSize, vWeight, hWeight = 0, -1, -1, nil, 0, 0
 
 	-- Figure out total weighting as well as what bars are full sized
-	for i=#(barOrder), 1, -1 do table.remove(barOrder, i) end
+	for i=#(barOrderH), 1, -1 do table.remove(barOrderH, i) end
+	for i=#(barOrderV), 1, -1 do table.remove(barOrderV, i) end
 	for key, module in pairs(LunaUF.modules) do
 		if( config[key] and not config[key].height ) then config[key].height = 0.50 end
 
 		if( ( module.moduleHasBar or config[key] and config[key].isBar ) and frame[key] and frame[key]:IsShown() and config[key].height > 0 ) then
+		
 			totalWeight = totalWeight + config[key].height
-			totalBars = totalBars + 1
+			if config[key].vertical then
+				vWeight = vWeight + config[key].height
+				totalVBars = totalVBars + 1
 
-			table.insert(barOrder, key)
+				table.insert(barOrderV, key)
+			else
+				hWeight = hWeight + config[key].height
+				totalHBars = totalHBars + 1
+
+				table.insert(barOrderH, key)
+			end
 
 			config[key].order = config[key].order or 99
 			
@@ -385,13 +396,15 @@ function Layout:PositionWidgets(frame, config)
 
 	-- Sort the barOrder so it's all nice and orderly (:>)
 	currentConfig = config
-	table.sort(barOrder, sortOrder)
+	table.sort(barOrderH, sortOrder)
+	table.sort(barOrderV, sortOrder)
 
 	-- Now deal with setting the heights and figure out how large the portrait should be.
 	local clip = 4 --ShadowUF.db.profile.backdrop.inset + ShadowUF.db.profile.backdrop.clip
 	local clipDoubled = clip * 2
 	
-	local portraitOffset, portraitAlignment, portraitAnchor, portraitWidth
+	local portraitOffset, portraitAlignment, portraitAnchor
+	local portraitWidth = 0
 
 	if( not config.portrait.isBar ) then
 		self:ToggleVisibility(frame.portrait, frame.visibility.portrait)
@@ -417,24 +430,28 @@ function Layout:PositionWidgets(frame, config)
 		end
 	end
 
+	hWeight = math.max(hWeight, 1)
+	totalWeight = math.max(totalWeight, 1)
+
 	-- Position and size everything
-	local portraitHeight, xOffset = 0, -clip
-	local availableHeight = frame:GetHeight() - clipDoubled - (1.02 * totalBars)
-	for id, key in pairs(barOrder) do
+	local portraitHeight, yOffset, hBarWidth = 0, -clip, ((frame:GetWidth() - portraitWidth) * (hWeight / totalWeight)) - clip - (#barOrderV > 0 and 0 or clip)
+	local vBarWidth = vWeight > 0 and ((frame:GetWidth() - portraitWidth) * (vWeight / totalWeight)) - clip - (#barOrderH > 0 and 1.02 or clip) or 0
+	local availableHeight = frame:GetHeight() - clipDoubled - (1.02 * totalHBars)
+	for id, key in pairs(barOrderH) do
 		local bar = frame[key]
 		-- Position the actual bar based on it's type
 		if( bar.fullSize ) then
 			bar:SetWidth(frame:GetWidth() - clipDoubled)
-			bar:SetHeight(availableHeight * (config[key].height / totalWeight))
+			bar:SetHeight(availableHeight * (config[key].height / hWeight))
 
 			bar:ClearAllPoints()
-			bar:SetPoint("TOPLEFT", frame, "TOPLEFT", clip, xOffset)
+			bar:SetPoint("TOPLEFT", frame, "TOPLEFT", clip, yOffset)
 		else
-			bar:SetWidth(frame:GetWidth() - portraitWidth - clipDoubled)
-			bar:SetHeight(availableHeight * (config[key].height / totalWeight))
+			bar:SetWidth(hBarWidth)
+			bar:SetHeight(availableHeight * (config[key].height / hWeight))
 
 			bar:ClearAllPoints()
-			bar:SetPoint("TOPLEFT", frame, "TOPLEFT", portraitOffset, xOffset)
+			bar:SetPoint("TOPLEFT", frame, "TOPLEFT", portraitOffset, yOffset)
 
 			portraitHeight = portraitHeight + bar:GetHeight() + 1
 		end
@@ -444,8 +461,38 @@ function Layout:PositionWidgets(frame, config)
 			portraitAnchor = bar
 		end
 
-		xOffset = xOffset - bar:GetHeight() + (-1.02)
+		yOffset = yOffset - bar:GetHeight() + (-1.02)
 	end
+
+	local xOffset = portraitOffset and 0 or clip
+	if portraitHeight == 0 then portraitHeight = availableHeight end
+	for id, key in pairs(barOrderV) do
+		local bar = frame[key]
+		-- Position the actual bar based on it's type
+		bar:SetWidth((vBarWidth * (config[key].height / vWeight)) - 0.2)
+		bar:SetHeight(portraitHeight - 1.02)
+
+		bar:ClearAllPoints()
+		if #barOrderH > 0 then
+			bar:SetPoint("TOPLEFT", portraitAnchor, "TOPRIGHT", 1.02 + xOffset, 0)
+		else
+			bar:SetPoint("TOPLEFT", frame, "TOPLEFT", xOffset + (portraitOffset or 0), -clip)
+		end
+		
+		xOffset = xOffset + bar:GetWidth() + (1.02)
+		
+		-- Figure out where the portrait is going to be anchored to
+		if( not portraitAnchor ) then
+			portraitAnchor = bar
+		end
+		
+	end
+
+	if( not portraitAnchor ) then
+		portraitAnchor = frame
+	end
+
+	if #barOrderV > 0 then vBarWidth = vBarWidth + 1.02 end
 
 	-- Now position the portrait and set the height
 	if( frame.portrait and frame.portrait:IsShown() and portraitAnchor and portraitHeight > 0 ) then
@@ -454,7 +501,7 @@ function Layout:PositionWidgets(frame, config)
 			frame.portrait:SetPoint("TOPLEFT", portraitAnchor, "TOPLEFT", -frame.portrait:GetWidth() - 0.5, 0)
 		elseif( portraitAlignment == "RIGHT" ) then
 			frame.portrait:ClearAllPoints()
-			frame.portrait:SetPoint("TOPRIGHT", portraitAnchor, "TOPRIGHT", frame.portrait:GetWidth() + 1, 0)
+			frame.portrait:SetPoint("TOPRIGHT", portraitAnchor, "TOPRIGHT", frame.portrait:GetWidth() + 1 + (#barOrderH > 0 and vBarWidth or 0), 0)
 		end
 			
 		if( hasFullSize ) then

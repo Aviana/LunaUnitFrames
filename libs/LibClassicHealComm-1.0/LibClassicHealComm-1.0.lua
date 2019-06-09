@@ -1,13 +1,13 @@
 --[[
 Name: LibClassicHealComm-1.0
-Revision: $Revision: 7 $
+Revision: $Revision: 8 $
 Author(s): Aviana, Original by Shadowed (shadowed.wow@gmail.com)
 Description: Healing communication library. This is a heavily modified clone of LibHealComm-4.0.
 Dependencies: LibStub, ChatThrottleLib
 ]]
 
 local major = "LibClassicHealComm-1.0"
-local minor = 7
+local minor = 8
 assert(LibStub, string.format("%s requires LibStub.", major))
 
 local HealComm = LibStub:NewLibrary(major, minor)
@@ -98,26 +98,24 @@ end
 local compressGUID, decompressGUID = HealComm.compressGUID, HealComm.decompressGUID
 
 -- This gets filled out after data has been loaded, this is only for casted heals. Hots just directly pull from the averages as they do not increase in power with level, Cataclysm will change this though.
-if( HealComm.averageHealMT and not HealComm.fixedAverage ) then
-	HealComm.averageHealMT = nil
+if( HealComm.averageHeal and not HealComm.fixedAverage ) then
+	HealComm.averageHeal = nil
 end
 
 HealComm.fixedAverage = true
-HealComm.averageHeal = HealComm.averageHeal or {}
-HealComm.averageHealMT = HealComm.averageHealMT or {
+HealComm.averageHeal = setmetatable({}, {
 	__index = function(tbl, index)
---		local rank = HealComm.rankNumbers[index]
-		local spellData = HealComm.spellData[rawget(tbl, "spell")]
+		local spellData = HealComm.spellData[index]
 		local spellLevel = spellData.level
 		
 		-- No increase, it doesn't scale with levely
 		if( not spellData.increase or UnitLevel("player") <= spellLevel ) then
-			rawset(tbl, index, spellData.average)
+			rawset(tbl, index, average)
 			return spellData.average
 		end
 		
 		local average = spellData.average
-		if( UnitLevel("level") >= MAX_PLAYER_LEVEL ) then
+		if( UnitLevel("player") >= MAX_PLAYER_LEVEL ) then
 			average = average + spellData.increase
 		-- Here's how this works: If a spell increases 1,000 between 70 and 80, the player is level 75 the spell is 70
 		-- it's 1000 / (80 - 70) so 100, the player learned the spell 5 levels ago which means that the spell average increases by 500
@@ -128,7 +126,7 @@ HealComm.averageHealMT = HealComm.averageHealMT or {
 		
 		rawset(tbl, index, average)
 		return average
-	end}
+	end})
 
 -- Record management, because this is getting more complicted to deal with
 local function updateRecord(pending, guid, amount, stack, endTime, ticksLeft)
@@ -1257,11 +1255,10 @@ end
 
 -- Invalidate he average cache to recalculate for spells that increase in power due to leveling up (but not training new ranks)
 function HealComm:PLAYER_LEVEL_UP(level)
-	for spell, average in pairs(averageHeal) do
-		table.wipe(average)
-		
-		average.spell = spell
-	end
+	table.wipe(averageHeal)
+--	for spell in pairs(spellData) do
+--		averageHeal[spell] = spell
+--	end
 	
 	-- WoWProgramming says this is a string, why this is a string I do not know.
 	playerLevel = tonumber(level) or UnitLevel("player")
@@ -1672,7 +1669,7 @@ local function setCastData(priority, name, guid)
 end
 
 function HealComm:UNIT_SPELLCAST_SENT(casterUnit, targetName, castGUID, spellID)
-	if( casterUnit ~= "player" or not spellData[spellID] or not averageHeal[spellID] ) then return end
+	if( casterUnit ~= "player" or not spellData[spellID] ) then return end
 	
 	castTarget = string.gsub(targetName, "(.-)%-(.*)$", "%1")
 	lastSentID = spellID
@@ -1698,7 +1695,7 @@ function HealComm:UNIT_SPELLCAST_SENT(casterUnit, targetName, castGUID, spellID)
 end
 
 function HealComm:UNIT_SPELLCAST_START(casterUnit, cast, spellID)
-	if( casterUnit ~= "player" or not spellData[spellID] or not averageHeal[spellID] or UnitIsCharmed("player") or not UnitPlayerControlled("player") ) then return end
+	if( casterUnit ~= "player" or not spellData[spellID] or UnitIsCharmed("player") or not UnitPlayerControlled("player") ) then return end
 	local castGUID = castGUIDs[spellID]
 	if( not castGUID or not guidToUnit[castGUID] ) then
 		return
@@ -2053,10 +2050,9 @@ function HealComm:OnInitialize()
 	-- Load all of the classes formulas and such
 	LoadClassData()
 	
-	-- Setup the metatables for average healing
-	for spell in pairs(spellData) do
-		averageHeal[spell] = setmetatable({spell = spell}, self.averageHealMT)
-	end
+--	for spell in pairs(spellData) do
+--		averageHeal[spell] = spell
+--	end
 	
 	clearGUIDData()
 	
