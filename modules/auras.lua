@@ -328,7 +328,6 @@ function Auras:UpdateFrames(frame)
 		name, texture, count, auraType, duration, endTime, caster, _, _, spellID = UnitAura(frame.unit, i, "HARMFUL")
 		if not duration or duration == 0 then
 			local Newduration, NewendTime = lCD:GetAuraDurationByUnit(frame.unit, spellID, caster)
-			ChatFrame1:AddMessage(Newduration)
 			duration = Newduration or duration
 			endTime = NewendTime or endTime
 		end
