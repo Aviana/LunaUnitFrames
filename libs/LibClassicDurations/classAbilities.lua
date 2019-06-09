@@ -2,7 +2,7 @@ local lib = LibStub and LibStub("LibClassicDurations", true)
 if not lib then return end
 
 local Type, Version = "SpellTable", 5
-if lib.GetDataVersion and lib:GetDataVersion(Type) >= Version then return end  -- older versions didn't have that function
+if lib:GetDataVersion(Type) >= Version then return end  -- older versions didn't have that function
 
 local Spell = lib.AddAura
 local Talent = lib.Talent
@@ -463,6 +463,4 @@ Spell(12042, { duration = 15 }) -- Arcane Power
 
 
 
-if lib.SetDataVersion then -- older versions didn't have that function
-    lib:SetDataVersion(Type, Version)
-end
+lib:SetDataVersion(Type, Version)

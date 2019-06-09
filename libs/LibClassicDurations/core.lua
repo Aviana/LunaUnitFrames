@@ -5,14 +5,13 @@ Description: tracking expiration times
 --]================]
 
 
-local MAJOR, MINOR = "LibClassicDurations", 1.05
+local MAJOR, MINOR = "LibClassicDurations", 2
 local lib = LibStub:NewLibrary(MAJOR, MINOR)
 if not lib then return end
 
-
 lib.frame = lib.frame or CreateFrame("Frame")
 
-local weakKeysMeta = { __mode == "k" }
+local weakKeysMeta = { __mode = "k" }
 lib.guids = lib.guids or setmetatable({}, weakKeysMeta)
 lib.spells = lib.spells or {
 
