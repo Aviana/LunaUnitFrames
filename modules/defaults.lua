@@ -38,6 +38,7 @@ function LunaUF:LoadDefaults()
 		yellow = {r = 0.93, g = 0.93, b = 0.0},
 		incheal = {r = 0.20, g = 0.90, b = 0.20},
 		enemyUnattack = {r = 0.60, g = 0.20, b = 0.20},
+		enemyCivilian = {r = 1, g = 0.90, b = 0.90},
 		hostile = {r = 0.90, g = 0.0, b = 0.0},
 		aggro = {r = 0.90, g = 0.0, b = 0.0},
 		friendly = {r = 0.20, g = 0.90, b = 0.20},

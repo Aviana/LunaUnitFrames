@@ -938,7 +938,16 @@ function Tags:SetupText(frame, config)
 	end
 end
 
-if RealMobHealth then
+if RealMobHealth and RealMobHealth.GetUnitHealth then -- Changed function name for no reason :/
+	UnitHealth = function(unit)
+		local hp = RealMobHealth.GetUnitHealth(unit, true)
+		return hp or realUnitHealth(unit)
+	end
+	UnitHealthMax = function(unit)
+		local _,maxhp = RealMobHealth.GetUnitHealth(unit, true)
+		return maxhp or realUnitHealthMax(unit)
+	end
+else -- maintain compatibility for now
 	UnitHealth = function(unit)
 		local hp = RealMobHealth.GetHealth(unit, true)
 		return hp or realUnitHealth(unit)

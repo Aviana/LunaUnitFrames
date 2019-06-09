@@ -1,13 +1,13 @@
 --[[
 Name: LibClassicHealComm-1.0
-Revision: $Revision: 6 $
+Revision: $Revision: 7 $
 Author(s): Aviana, Original by Shadowed (shadowed.wow@gmail.com)
 Description: Healing communication library. This is a heavily modified clone of LibHealComm-4.0.
 Dependencies: LibStub, ChatThrottleLib
 ]]
 
 local major = "LibClassicHealComm-1.0"
-local minor = 6
+local minor = 7
 assert(LibStub, string.format("%s requires LibStub.", major))
 
 local HealComm = LibStub:NewLibrary(major, minor)
@@ -96,6 +96,39 @@ if( not HealComm.compressGUID ) then
 end
 
 local compressGUID, decompressGUID = HealComm.compressGUID, HealComm.decompressGUID
+
+-- This gets filled out after data has been loaded, this is only for casted heals. Hots just directly pull from the averages as they do not increase in power with level, Cataclysm will change this though.
+if( HealComm.averageHealMT and not HealComm.fixedAverage ) then
+	HealComm.averageHealMT = nil
+end
+
+HealComm.fixedAverage = true
+HealComm.averageHeal = HealComm.averageHeal or {}
+HealComm.averageHealMT = HealComm.averageHealMT or {
+	__index = function(tbl, index)
+--		local rank = HealComm.rankNumbers[index]
+		local spellData = HealComm.spellData[rawget(tbl, "spell")]
+		local spellLevel = spellData.level
+		
+		-- No increase, it doesn't scale with levely
+		if( not spellData.increase or UnitLevel("player") <= spellLevel ) then
+			rawset(tbl, index, spellData.average)
+			return spellData.average
+		end
+		
+		local average = spellData.average
+		if( UnitLevel("level") >= MAX_PLAYER_LEVEL ) then
+			average = average + spellData.increase
+		-- Here's how this works: If a spell increases 1,000 between 70 and 80, the player is level 75 the spell is 70
+		-- it's 1000 / (80 - 70) so 100, the player learned the spell 5 levels ago which means that the spell average increases by 500
+		-- This figures out how much it increases per level and how ahead of the spells level they are to figure out how much to add
+		else
+			average = average + (UnitLevel("player") - spellLevel) * (spellData.increase / (MAX_PLAYER_LEVEL - spellLevel))
+		end
+		
+		rawset(tbl, index, average)
+		return average
+	end}
 
 -- Record management, because this is getting more complicted to deal with
 local function updateRecord(pending, guid, amount, stack, endTime, ticksLeft)
@@ -486,6 +519,7 @@ end
 -- Healing class data
 -- Thanks to Gagorian (DrDamage) for letting me steal his formulas and such
 local playerCurrentRelic
+local averageHeal = HealComm.averageHeal
 local guidToUnit, guidToGroup, glyphCache = HealComm.guidToUnit, HealComm.guidToGroup, HealComm.glyphCache
 
 -- UnitBuff priortizes our buffs over everyone elses when there is a name conflict, so yay for that
@@ -598,15 +632,16 @@ if( playerClass == "DRUID" ) then
 		hotData[9858] = {interval = 3, ticks = 7, coeff = 1.316, level = 60, average = 1064}
 		
 		-- Regrowth
-		spellData[8936] = {coeff = 0.2867, level = 12, average = avg(84, 98)}
-		spellData[8938] = {coeff = 0.2867, level = 18, average = avg(164, 188)}
-		spellData[8939] = {coeff = 0.2867, level = 24, average = avg(240, 274)}
-		spellData[8940] = {coeff = 0.2867, level = 30, average = avg(318, 360)}
-		spellData[8941] = {coeff = 0.2867, level = 36, average = avg(405, 457)}
-		spellData[9750] = {coeff = 0.2867, level = 42, average = avg(511, 575)}
-		spellData[9856] = {coeff = 0.2867, level = 48, average = avg(646, 724)}
-		spellData[9857] = {coeff = 0.2867, level = 54, average = avg(809, 905)}
-		spellData[9858] = {coeff = 0.2867, level = 60, average = avg(1003, 1119)}
+		spellData[8936] = {coeff = 0.2867, level = 12, average = avg(84, 98), increase = 122}
+		spellData[8938] = {coeff = 0.2867, level = 18, average = avg(164, 188), increase = 155}
+		spellData[8939] = {coeff = 0.2867, level = 24, average = avg(240, 274), increase = 173}
+		spellData[8940] = {coeff = 0.2867, level = 30, average = avg(318, 360), increase = 180}
+		spellData[8941] = {coeff = 0.2867, level = 36, average = avg(405, 457), increase = 178}
+		spellData[9750] = {coeff = 0.2867, level = 42, average = avg(511, 575), increase = 169}
+		spellData[9856] = {coeff = 0.2867, level = 48, average = avg(646, 724), increase = 156}
+		spellData[9857] = {coeff = 0.2867, level = 54, average = avg(809, 905), increase = 136}
+		spellData[9858] = {coeff = 0.2867, level = 60, average = avg(1003, 1119), increase = 115}
+		
 		-- Healing Touch
 		local HealingTouch = GetSpellInfo(5185)
 		spellData[5185] = { level = 1, average = avg(37, 51)}
@@ -700,16 +735,15 @@ if( playerClass == "DRUID" ) then
 				healAmount = healAmount / hotData[spellID].ticks
 				
 				totalTicks = 7
-				duration = equippedSetCache["Stormrage"] and 24 or 21
 			end
 	
 			healAmount = calculateGeneralAmount(hotData[spellID].level, healAmount, spellPower, spModifier, healModifier)
-			return HOT_HEALS, math.ceil(healAmount), totalTicks, hotData[spellID].interval, duration * 1000
+			return HOT_HEALS, math.ceil(healAmount), totalTicks, hotData[spellID].interval
 		end
 			
 		-- Calcualte direct and channeled heals
 		CalculateHealing = function(guid, spellID)
-			local healAmount = spellData[spellID].average
+			local healAmount = averageHeal[spellID]
 			local spellPower = GetSpellBonusHealing()
 			local healModifier, spModifier = playerHealModifier, 1
 			
@@ -755,24 +789,24 @@ if( playerClass == "PALADIN" ) then
 		-- Spell data
 		-- Holy Light
 		local HolyLight = GetSpellInfo(635)
-		spellData[635] = {coeff = 2.5 / 3.5 * 1.25, level = 1, average = avg(50, 60)}
-		spellData[639] = {coeff = 2.5 / 3.5 * 1.25, level = 6, average = avg(96, 116)}
-		spellData[647] = {coeff = 2.5 / 3.5 * 1.25, level = 14, average = avg(203, 239)}
-		spellData[1026] = {coeff = 2.5 / 3.5 * 1.25, level = 22, average = avg(397, 455)}
-		spellData[1042] = {coeff = 2.5 / 3.5 * 1.25, level = 30, average = avg(628, 708)}
-		spellData[3472] = {coeff = 2.5 / 3.5 * 1.25, level = 38, average = avg(894, 998)}
-		spellData[10328] = {coeff = 2.5 / 3.5 * 1.25, level = 46, average = avg(1209, 1349)}
-		spellData[10392] = {coeff = 2.5 / 3.5 * 1.25, level = 54, average = avg(1595, 1777)}
-		spellData[25292] = {coeff = 2.5 / 3.5 * 1.25, level = 60, average = avg(2034, 2266)}
+		spellData[635] = {coeff = 2.5 / 3.5 * 1.25, level = 1, average = avg(50, 60), increase = 63}
+		spellData[639] = {coeff = 2.5 / 3.5 * 1.25, level = 6, average = avg(96, 116), increase = 81}
+		spellData[647] = {coeff = 2.5 / 3.5 * 1.25, level = 14, average = avg(203, 239), increase = 112}
+		spellData[1026] = {coeff = 2.5 / 3.5 * 1.25, level = 22, average = avg(397, 455), increase = 139}
+		spellData[1042] = {coeff = 2.5 / 3.5 * 1.25, level = 30, average = avg(628, 708), increase = 155}
+		spellData[3472] = {coeff = 2.5 / 3.5 * 1.25, level = 38, average = avg(894, 998), increase = 159}
+		spellData[10328] = {coeff = 2.5 / 3.5 * 1.25, level = 46, average = avg(1209, 1349), increase = 156}
+		spellData[10392] = {coeff = 2.5 / 3.5 * 1.25, level = 54, average = avg(1595, 1777), increase = 135}
+		spellData[25292] = {coeff = 2.5 / 3.5 * 1.25, level = 60, average = avg(2034, 2266), increase = 116}
 		
 		-- Flash of Light
 		local FlashofLight = GetSpellInfo(19750)
-		spellData[19750] = {coeff = 1.5 / 3.5 * 1.25, level = 20, average = avg(81, 93)}
-		spellData[19939] = {coeff = 1.5 / 3.5 * 1.25, level = 26, average = avg(124, 144)}
-		spellData[19940] = {coeff = 1.5 / 3.5 * 1.25, level = 34, average = avg(189, 211)}
-		spellData[19941] = {coeff = 1.5 / 3.5 * 1.25, level = 42, average = avg(256, 288)}
-		spellData[19942] = {coeff = 1.5 / 3.5 * 1.25, level = 50, average = avg(346, 390)}
-		spellData[19943] = {coeff = 1.5 / 3.5 * 1.25, level = 58, average = avg(445, 499)}
+		spellData[19750] = {coeff = 1.5 / 3.5 * 1.25, level = 20, average = avg(81, 93), increase = 60}
+		spellData[19939] = {coeff = 1.5 / 3.5 * 1.25, level = 26, average = avg(124, 144), increase = 70}
+		spellData[19940] = {coeff = 1.5 / 3.5 * 1.25, level = 34, average = avg(189, 211), increase = 73}
+		spellData[19941] = {coeff = 1.5 / 3.5 * 1.25, level = 42, average = avg(256, 288), increase = 72}
+		spellData[19942] = {coeff = 1.5 / 3.5 * 1.25, level = 50, average = avg(346, 390), increase = 66}
+		spellData[19943] = {coeff = 1.5 / 3.5 * 1.25, level = 58, average = avg(445, 499), increase = 57}
 		
 		-- Talent data
 		-- Need to figure out a way of supporting +6% healing from imp devo aura, might not be able to
@@ -801,7 +835,7 @@ if( playerClass == "PALADIN" ) then
 		end
 	
 		CalculateHealing = function(guid, spellID)
-			local healAmount = spellData[spellID].average
+			local healAmount = averageHeal[spellID]
 			local spellPower = GetSpellBonusHealing()
 			local healModifier, spModifier = playerHealModifier, 1
 			
@@ -854,38 +888,42 @@ if( playerClass == "PRIEST" ) then
 		-- Spell data
 		-- Greater Heal
 		local GreaterHeal = GetSpellInfo(2060)
-		spellData[2060] = {coeff = 3 / 3.5, level = 40, average = avg(899, 1013)}
-		spellData[10963] = {coeff = 3 / 3.5, level = 46, average = avg(1149, 1289)}
-		spellData[10964] = {coeff = 3 / 3.5, level = 52, average = avg(1437, 1609)}
-		spellData[10965] = {coeff = 3 / 3.5, level = 58, average = avg(1798, 2006)}
-		spellData[25314] = {coeff = 3 / 3.5, level = 60, average = avg(1966, 2194)}
+		spellData[2060] = {coeff = 3 / 3.5, level = 40, average = avg(899, 1013), increase = 204}
+		spellData[10963] = {coeff = 3 / 3.5, level = 46, average = avg(1149, 1289), increase = 197}
+		spellData[10964] = {coeff = 3 / 3.5, level = 52, average = avg(1437, 1609), increase = 184}
+		spellData[10965] = {coeff = 3 / 3.5, level = 58, average = avg(1798, 2006), increase = 165}
+		spellData[25314] = {coeff = 3 / 3.5, level = 60, average = avg(1966, 2194), increase = 162}
+		
 		-- Prayer of Healing
 		local PrayerofHealing = GetSpellInfo(596)
-		spellData[596] = {coeff = 0.2798, level = 30, average = avg(301, 321)}
-		spellData[996] = {coeff = 0.2798, level = 40, average = avg(444, 472)}
-		spellData[10960] = {coeff = 0.2798, level = 50, average = avg(657, 695)}
-		spellData[10961] = {coeff = 0.2798, level = 60, average = avg(939, 991)}
-		spellData[25316] = {coeff = 0.2798, level = 60, average = avg(997, 1053)}
+		spellData[596] = {coeff = 0.2798, level = 30, average = avg(301, 321), increase = 65}
+		spellData[996] = {coeff = 0.2798, level = 40, average = avg(444, 472), increase = 64}
+		spellData[10960] = {coeff = 0.2798, level = 50, average = avg(657, 695), increase = 60}
+		spellData[10961] = {coeff = 0.2798, level = 60, average = avg(939, 991), increase = 48}
+		spellData[25316] = {coeff = 0.2798, level = 60, average = avg(997, 1053), increase = 50}
+		
 		-- Flash Heal
 		local FlashHeal = GetSpellInfo(2061)
-		spellData[2061] = {coeff = 1.5 / 3.5, level = 20, average = avg(193, 237)}
-		spellData[9472] = {coeff = 1.5 / 3.5, level = 26, average = avg(258, 314)}
-		spellData[9473] = {coeff = 1.5 / 3.5, level = 32, average = avg(327, 393)}
-		spellData[9474] = {coeff = 1.5 / 3.5, level = 38, average = avg(400, 478)}
-		spellData[10915] = {coeff = 1.5 / 3.5, level = 44, average = avg(518, 616)}
-		spellData[10916] = {coeff = 1.5 / 3.5, level = 52, average = avg(644, 764)}
-		spellData[10917] = {coeff = 1.5 / 3.5, level = 58, average = avg(812, 958)}
+		spellData[2061] = {coeff = 1.5 / 3.5, level = 20, average = avg(193, 237), increase = 114}
+		spellData[9472] = {coeff = 1.5 / 3.5, level = 26, average = avg(258, 314), increase = 118}
+		spellData[9473] = {coeff = 1.5 / 3.5, level = 32, average = avg(327, 393), increase = 120}
+		spellData[9474] = {coeff = 1.5 / 3.5, level = 38, average = avg(400, 478), increase = 117}
+		spellData[10915] = {coeff = 1.5 / 3.5, level = 44, average = avg(518, 616), increase = 118}
+		spellData[10916] = {coeff = 1.5 / 3.5, level = 52, average = avg(644, 764), increase = 111}
+		spellData[10917] = {coeff = 1.5 / 3.5, level = 58, average = avg(812, 958), increase = 100}
+		
 		-- Heal
 		local Heal = GetSpellInfo(2054)
-		spellData[2054] = {coeff = 3 / 3.5, level = 16, average = avg(295, 341)}
-		spellData[2055] = {coeff = 3 / 3.5, level = 22, average = avg(429, 491)}
-		spellData[6063] = {coeff = 3 / 3.5, level = 28, average = avg(566, 642)}
-		spellData[6064] = {coeff = 3 / 3.5, level = 34, average = avg(712, 804)}
+		spellData[2054] = {coeff = 3 / 3.5, level = 16, average = avg(295, 341), increase = 153}
+		spellData[2055] = {coeff = 3 / 3.5, level = 22, average = avg(429, 491), increase = 185}
+		spellData[6063] = {coeff = 3 / 3.5, level = 28, average = avg(566, 642), increase = 208}
+		spellData[6064] = {coeff = 3 / 3.5, level = 34, average = avg(712, 804), increase = 207}
+		
 		-- Lesser Heal
 		local LesserHeal = GetSpellInfo(2050)
-		spellData[2050] = {level = 1, average = avg(47, 58)}
-		spellData[2052] = {level = 4, average = avg(76, 91)}
-		spellData[2053] = {level = 10, average = avg(135, 157)}
+		spellData[2050] = {level = 1, average = avg(46, 56), increase = 71}
+		spellData[2052] = {level = 4, average = avg(71, 85), increase = 83}
+		spellData[2053] = {level = 10, average = avg(135, 157), increase = 112}
 		
 		-- Talent data
 		local SpiritualHealing = GetSpellInfo(14898)
@@ -922,7 +960,7 @@ if( playerClass == "PRIEST" ) then
 			local healAmount = hotData[spellID].average
 			local spellPower = GetSpellBonusHealing()
 			local healModifier, spModifier = playerHealModifier, 1
-			local totalTicks, duration
+			local totalTicks
 
 			healModifier = healModifier + talentData[SpiritualHealing].current
 
@@ -933,17 +971,16 @@ if( playerClass == "PRIEST" ) then
 				spellPower = spellPower / hotData[spellID].ticks
 				healAmount = healAmount / hotData[spellID].ticks
 				
-				totalTicks = equippedSetCache["Oracle"] and 6 or 5
-				duration = equippedSetCache["Oracle"] and 18 or 15
+				totalTicks = equippedSetCache["Oracle"] >= 5 and 6 or 5
 			end
 
 			healAmount = calculateGeneralAmount(hotData[spellID].level, healAmount, spellPower, spModifier, healModifier)
-			return HOT_HEALS, math.ceil(healAmount), totalTicks, hotData[spellID].interval, duration * 1000
+			return HOT_HEALS, math.ceil(healAmount), totalTicks, hotData[spellID].interval
 		end
 
 		CalculateHealing = function(guid, spellID)
 			local spellName = GetSpellInfo(spellID)
-			local healAmount = spellData[spellID].average
+			local healAmount = averageHeal[spellID]
 			local spellPower = GetSpellBonusHealing()
 			local healModifier, spModifier = playerHealModifier, 1
 
@@ -986,31 +1023,31 @@ if( playerClass == "SHAMAN" ) then
 		
 		-- Chain Heal
 		local ChainHeal = GetSpellInfo(1064)
-		spellData[1064] = {coeff = 2.5 / 3.5, levels = 40, average = avg(320, 368)}
-		spellData[10622] = {coeff = 2.5 / 3.5, levels = 46, average = avg(405, 465)}
-		spellData[10623] = {coeff = 2.5 / 3.5, levels = 54, average = avg(551, 629)}
+		spellData[1064] = {coeff = 2.5 / 3.5, levels = 40, average = avg(320, 368), increase = 100}
+		spellData[10622] = {coeff = 2.5 / 3.5, levels = 46, average = avg(405, 465), increase = 95}
+		spellData[10623] = {coeff = 2.5 / 3.5, levels = 54, average = avg(551, 629), increase = 85}
 		
 		-- Healing Wave
 		local HealingWave = GetSpellInfo(331)
-		spellData[331] = {level = 1, average = avg(34, 44)}
-		spellData[332] = {level = 6, average = avg(64, 78)}
-		spellData[547] = {level = 12, average = avg(129, 155)}
-		spellData[913] = {level = 18, average = avg(268, 316)}
-		spellData[939] = {level = 24, average = avg(376, 440)}
-		spellData[959] = {level = 32, average = avg(536, 622)}
-		spellData[8005] = {level = 40, average = avg(740, 854)}
-		spellData[10395] = {level = 48, average = avg(1017, 1167)}
-		spellData[10396] = {level = 56, average = avg(1367, 1561)}
-		spellData[25357] = {level = 60, average = avg(1620, 1850)}
+		spellData[331] = {level = 1, average = avg(34, 44), increase = 55}
+		spellData[332] = {level = 6, average = avg(64, 78), increase = 74}
+		spellData[547] = {level = 12, average = avg(129, 155), increase = 102}
+		spellData[913] = {level = 18, average = avg(268, 316), increase = 142}
+		spellData[939] = {level = 24, average = avg(376, 440), increase = 151}
+		spellData[959] = {level = 32, average = avg(536, 622), increase = 158}
+		spellData[8005] = {level = 40, average = avg(740, 854), increase = 156}
+		spellData[10395] = {level = 48, average = avg(1017, 1167), increase = 150}
+		spellData[10396] = {level = 56, average = avg(1367, 1561), increase = 132}
+		spellData[25357] = {level = 60, average = avg(1620, 1850), increase = 110}
 		
 		-- Lesser Healing Wave
 		local LesserHealingWave = GetSpellInfo(8004)
-		spellData[8004] = {coeff = 1.5 / 3.5, level = 20, average = avg(162, 186)}
-		spellData[8008] = {coeff = 1.5 / 3.5, level = 28, average = avg(247, 281)}
-		spellData[8010] = {coeff = 1.5 / 3.5, level = 36, average = avg(337, 381)}
-		spellData[10466] = {coeff = 1.5 / 3.5, level = 44, average = avg(458, 514)}
-		spellData[10467] = {coeff = 1.5 / 3.5, level = 52, average = avg(631, 705)}
-		spellData[10468] = {coeff = 1.5 / 3.5, level = 60, average = avg(832, 928)}
+		spellData[8004] = {coeff = 1.5 / 3.5, level = 20, average = avg(162, 186), increase = 102}
+		spellData[8008] = {coeff = 1.5 / 3.5, level = 28, average = avg(247, 281), increase = 109}
+		spellData[8010] = {coeff = 1.5 / 3.5, level = 36, average = avg(337, 381), increase = 110}
+		spellData[10466] = {coeff = 1.5 / 3.5, level = 44, average = avg(458, 514), increase = 108}
+		spellData[10467] = {coeff = 1.5 / 3.5, level = 52, average = avg(631, 705), increase = 100}
+		spellData[10468] = {coeff = 1.5 / 3.5, level = 60, average = avg(832, 928), increase = 84}
 		
 		-- Talent data
 		-- Purification (Add)
@@ -1037,7 +1074,7 @@ if( playerClass == "SHAMAN" ) then
 		
 		CalculateHealing = function(guid, spellID)
 			local spellName = GetSpellInfo(spellID)
-			local healAmount = spellData[spellID].average
+			local healAmount = averageHeal[spellID]
 			local spellPower = GetSpellBonusHealing()
 			local healModifier, spModifier = playerHealModifier, 1
 			
@@ -1218,6 +1255,18 @@ function HealComm:UNIT_AURA(unit)
 	end
 end
 
+-- Invalidate he average cache to recalculate for spells that increase in power due to leveling up (but not training new ranks)
+function HealComm:PLAYER_LEVEL_UP(level)
+	for spell, average in pairs(averageHeal) do
+		table.wipe(average)
+		
+		average.spell = spell
+	end
+	
+	-- WoWProgramming says this is a string, why this is a string I do not know.
+	playerLevel = tonumber(level) or UnitLevel("player")
+end
+
 -- Cache player talent data for spells we need
 function HealComm:CHARACTER_POINTS_CHANGED()
 	for tabIndex=1, GetNumTalentTabs() do
@@ -1342,8 +1391,6 @@ local function findAura(casterGUID, spellID, inc, ...)
 				if( not spell ) then break end
 				
 				if( spell == spellID and caster and UnitGUID(caster) == casterGUID ) then
-					duration = duration ~= 0 and duration or select(5,CalculateHotHealing(UnitGUID(unit), spellID))
-					endTime = endTime ~= 0 and endTime or (GetTime() + duration)
 					return (stack and stack > 0 and stack or 1), duration, endTime
 				end
 
@@ -1358,6 +1405,8 @@ local function parseHotHeal(casterGUID, wasUpdated, spellID, tickAmount, totalTi
 	-- Retrieve the hot information
 	local inc = ( tickAmount == -1 or tickAmount == "-1" ) and 2 or 1
 	local stack, duration, endTime = findAura(casterGUID, spellID, inc, ...)
+	duration = duration > 0 and duration or (totalTicks * tickInterval * 1000)
+	endTime = endTime > 0 and endTime or (GetTime() + duration)
 	if( not stack or not duration or not endTime ) then return end
 
 	pendingHots[casterGUID] = pendingHots[casterGUID] or {}
@@ -1581,7 +1630,7 @@ function HealComm:COMBAT_LOG_EVENT_UNFILTERED()
 	elseif( ( eventType == "SPELL_AURA_APPLIED" or eventType == "SPELL_AURA_REFRESH" or eventType == "SPELL_AURA_APPLIED_DOSE" ) and bit.band(sourceFlags, COMBATLOG_OBJECT_AFFILIATION_MINE) == COMBATLOG_OBJECT_AFFILIATION_MINE ) then
 		if( hotData[spellID] and guidToUnit[destGUID] ) then
 			-- Single target so we can just send it off now thankfully
-			local type, amount, totalTicks, tickInterval, duration = CalculateHotHealing(destGUID, spellID)
+			local type, amount, totalTicks, tickInterval = CalculateHotHealing(destGUID, spellID)
 			if( type ) then
 				local targets, amount = GetHealTargets(type, destGUID, math.max(amount, 0), spellName)
 				parseHotHeal(sourceGUID, false, spellID, amount, totalTicks, tickInterval, string.split(",", targets))
@@ -1623,7 +1672,7 @@ local function setCastData(priority, name, guid)
 end
 
 function HealComm:UNIT_SPELLCAST_SENT(casterUnit, targetName, castGUID, spellID)
-	if( casterUnit ~= "player" or not spellData[spellID] ) then return end
+	if( casterUnit ~= "player" or not spellData[spellID] or not averageHeal[spellID] ) then return end
 	
 	castTarget = string.gsub(targetName, "(.-)%-(.*)$", "%1")
 	lastSentID = spellID
@@ -1649,7 +1698,7 @@ function HealComm:UNIT_SPELLCAST_SENT(casterUnit, targetName, castGUID, spellID)
 end
 
 function HealComm:UNIT_SPELLCAST_START(casterUnit, cast, spellID)
-	if( casterUnit ~= "player" or not spellData[spellID] or UnitIsCharmed("player") or not UnitPlayerControlled("player") ) then return end
+	if( casterUnit ~= "player" or not spellData[spellID] or not averageHeal[spellID] or UnitIsCharmed("player") or not UnitPlayerControlled("player") ) then return end
 	local castGUID = castGUIDs[spellID]
 	if( not castGUID or not guidToUnit[castGUID] ) then
 		return
@@ -1993,9 +2042,21 @@ end
 
 -- Initialize the library
 function HealComm:OnInitialize()
+	-- If another instance already loaded then the tables should be wiped to prevent old data from persisting
+	-- in case of a spell being removed later on, only can happen if a newer LoD version is loaded
+	table.wipe(spellData)
+	table.wipe(hotData)
+	table.wipe(itemSetsData)
+	table.wipe(talentData)
+	table.wipe(averageHeal)
 
 	-- Load all of the classes formulas and such
 	LoadClassData()
+	
+	-- Setup the metatables for average healing
+	for spell in pairs(spellData) do
+		averageHeal[spell] = setmetatable({spell = spell}, self.averageHealMT)
+	end
 	
 	clearGUIDData()
 	
@@ -2027,6 +2088,7 @@ function HealComm:OnInitialize()
 	self.eventFrame:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
 	self.eventFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
 	self.eventFrame:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
+	self.eventFrame:RegisterEvent("PLAYER_LEVEL_UP")
 	self.eventFrame:RegisterEvent("UNIT_AURA")
 	
 	if( self.initialized ) then return end
