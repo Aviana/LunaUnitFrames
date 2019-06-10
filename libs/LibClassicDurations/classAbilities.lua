@@ -1,7 +1,7 @@
 local lib = LibStub and LibStub("LibClassicDurations", true)
 if not lib then return end
 
-local Type, Version = "SpellTable", 5
+local Type, Version = "SpellTable", 7
 if lib:GetDataVersion(Type) >= Version then return end  -- older versions didn't have that function
 
 local Spell = lib.AddAura
@@ -11,6 +11,7 @@ local Talent = lib.Talent
 -- GLOBAL
 ------------------
 
+Spell( 835, { duration = 3 }) -- Tidal Charm
 Spell( 11196, { duration = 60 }) -- Recently Bandaged
 
 Spell({ 13099, 13138, 16566 }, {
@@ -29,7 +30,7 @@ Spell({ 4068, 19769 }, { duration = 3 }) -- Iron Grenade, Thorium
 
 Spell( 552, { duration = 20, type = "BUFF" }) -- Abolish Disease
 Spell({ 17, 592, 600, 3747, 6065, 6066, 10898, 10899, 10900, 10901 }, {duration = 30, type = "BUFF" }) -- PWS
-Spell( 6788, { duration = 15, isStacking = false, type = "DEBUFF" }) -- Weakened Soul
+Spell( 6788, { duration = 15, type = "DEBUFF" }) -- Weakened Soul
 Spell({ 139, 6074, 6075, 6076, 6077, 6078, 10927, 10928, 10929, 25315 }, { duration = 15, type = "BUFF" }) -- Renew
 
 Spell( 15487, { duration = 5 }) -- Silence
@@ -217,9 +218,27 @@ Spell( 2094 , { duration = 10 }) -- Blind
 
 Spell({ 8647, 8649, 8650, 11197, 11198 }, { duration = 30 }) -- Expose Armor
 Spell({ 703, 8631, 8632, 8633, 11289, 1129 }, { duration = 18 }) -- Garrote
--- Kidney Shot -- too random
--- Rupture -- too random
--- SnD -- too random
+Spell({ 408, 8643 }, {
+    duration = function(spellID, isSrcPlayer, comboPoints)
+        local duration = spellID == 8643 and 1 or 0 -- if Rank 2, add 1s
+        if isSrcPlayer then
+            return duration + comboPoints
+        else
+            return duration + 5 -- just assume 5cp i guess
+        end
+    end
+}) -- Kidney Shot
+
+Spell({ 1943, 8639, 8640, 11273, 11274, 11275 }, { stacking = true,
+    duration = function(spellID, isSrcPlayer, comboPoints)
+        if isSrcPlayer then
+            return (6 + comboPoints*2)
+        else
+            return 16
+        end
+    end
+}) -- Rupture
+-- SnD -- player-only, can skip
 
 Spell({ 2983, 8696, 11305 }, { duration = 8 }) -- Sprint
 Spell( 5277 ,{ duration = 15, type = "BUFF" }) -- Evasion

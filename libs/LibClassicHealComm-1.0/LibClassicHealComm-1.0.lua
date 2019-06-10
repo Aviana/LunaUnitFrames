@@ -1,13 +1,13 @@
 --[[
 Name: LibClassicHealComm-1.0
-Revision: $Revision: 8 $
+Revision: $Revision: 9 $
 Author(s): Aviana, Original by Shadowed (shadowed.wow@gmail.com)
 Description: Healing communication library. This is a heavily modified clone of LibHealComm-4.0.
 Dependencies: LibStub, ChatThrottleLib
 ]]
 
 local major = "LibClassicHealComm-1.0"
-local minor = 8
+local minor = 9
 assert(LibStub, string.format("%s requires LibStub.", major))
 
 local HealComm = LibStub:NewLibrary(major, minor)
@@ -1670,6 +1670,8 @@ end
 
 function HealComm:UNIT_SPELLCAST_SENT(casterUnit, targetName, castGUID, spellID)
 	if( casterUnit ~= "player" or not spellData[spellID] ) then return end
+	
+	targetName = targetName or UnitName("player")
 	
 	castTarget = string.gsub(targetName, "(.-)%-(.*)$", "%1")
 	lastSentID = spellID
