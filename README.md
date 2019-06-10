@@ -6,14 +6,29 @@ FOR THE 1.12.1 VERSION SELECT IT FROM THE BRANCH MENU
 THIS IS STILL BETA! THERE COULD STILL BE STUFF BROKEN! REPORT BUGS!
 This is LunaUnitFrames 3.
 
+Due to the interface code not being cleaned up PARTY & RAID frames are BROKEN!
+Please disable them and use the default ones for now.
+
 This Addon supports RealMobHealth.
 https://www.wowinterface.com/downloads/info24924-RealMobHealth.html
 
 Clickcasting:
 https://www.warcrafttavern.com/addons/clique/
 
-Due to the interface code not being cleaned up PARTY & RAID frames are BROKEN!
-Please disable them and use the default ones for now.
+This addon comes with LibClassicDurations integrated to view aura durations,
+
+Other features include:
+
+- Config mode for easy setup
+- Enemy (and friendly) castbars
+- Energy / MP5 ticker
+- Druid mana bar
+- Reckoning tracker
+- Healing communication (green heal bars)
+- Totem timer
+
+
+
 
 Feel free to fork this but give credit (at least author & link to this github)
 
