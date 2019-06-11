@@ -8,16 +8,28 @@ local backdrop = {
 	insets = {left = -1.5, right = -1.5, top = -1.5, bottom = -1.5},
 }
 
+local stealthIDs = {
+	[1784] = true, -- stealth r1
+	[1785] = true, -- stealth r2
+	[1786] = true, -- stealth r3
+	[1787] = true, -- stealth r4
+	[5215] = true, -- prowl r1
+	[6783] = true, -- prowl r2
+	[9913] = true, -- prowl r3
+}
+
 local PowerUpdate = function(self)
 	local powerType = UnitPowerType("player")
 	local frame = self:GetParent()
 	local time = GetTime()
 	local Position = 0
+	local config = LunaUF.db.profile.units.player.powerBar
 	if powerType == Enum.PowerType.Mana then
 		if self.startTime then
 			if (time - self.startTime) >= 5 then
 				self.startTime = nil
-				self:Hide()
+				self.texture:Hide()
+				self:SetBackdropColor(0,0,0,0)
 			else
 				Position = ((time - self.startTime) / 5)
 			end
@@ -27,8 +39,16 @@ local PowerUpdate = function(self)
 			self.startTime = GetTime()
 		end
 		Position = ((time - self.startTime) / 2)
+		if not config.hideticker or self.combat or self.stealthed and self.target then
+			self.texture:Show()
+			self:SetBackdropColor(0,0,0,1)
+		else
+			self.texture:Hide()
+			self:SetBackdropColor(0,0,0,0)
+		end
 	else
-		self:Hide()
+		self.texture:Hide()
+		self:SetBackdropColor(0,0,0,0)
 		return
 	end
 	self:SetPoint("CENTER", frame, "LEFT", Position * frame:GetWidth(), 0)
@@ -62,8 +82,14 @@ function Power:OnEnable(frame)
 		frame.powerBar.ticker:SetPoint("CENTER", frame.powerBar, "CENTER")
 		frame.powerBar.ticker.startTime = GetTime()
 		frame.powerBar.ticker:SetFrameLevel(6)
+		frame.powerBar.ticker.combat = UnitAffectingCombat("player")
 		
 		frame:RegisterNormalEvent("COMBAT_LOG_EVENT_UNFILTERED", self, "UpdatePowerStateIgnore")
+		frame:RegisterNormalEvent("PLAYER_REGEN_ENABLED", self, "DisableCombat")
+		frame:RegisterNormalEvent("PLAYER_REGEN_DISABLED", self, "EnableCombat")
+		frame:RegisterNormalEvent("PLAYER_TARGET_CHANGED", self, "TargetChanged")
+		frame:RegisterUnitEvent("UNIT_AURA", self, "UpdateAura")
+		
 		frame.powerBar.ticker:SetScript("OnUpdate", PowerUpdate)
 	end
 
@@ -79,6 +105,30 @@ end
 
 function Power:OnDisable(frame)
 	frame:UnregisterAll(self)
+end
+
+function Power:UpdateAura(frame)
+	local i = 1
+	while UnitBuff("player",i) do
+		if stealthIDs[select(10,UnitBuff("player",i))] then
+			frame.powerBar.ticker.stealthed = true
+			return
+		end
+		i = i + 1
+	end
+	frame.powerBar.ticker.stealthed = nil
+end
+
+function Power:TargetChanged(frame)
+	frame.powerBar.ticker.target = UnitExists("target") and UnitCanAttack("player", "target")
+end
+
+function Power:EnableCombat(frame)
+	frame.powerBar.ticker.combat = true
+end
+
+function Power:DisableCombat(frame)
+	frame.powerBar.ticker.combat = nil
 end
 
 local events = {
@@ -129,9 +179,11 @@ function Power:UpdateColor(frame)
 
 	if frame.unitType == "player" then
 		if not LunaUF.db.profile.units.player.powerBar.ticker or UnitPowerType("player") ~= Enum.PowerType.Energy then
-			frame.powerBar.ticker:Hide()
+			frame.powerBar.ticker.texture:Hide()
+			frame.powerBar.ticker:SetBackdropColor(0,0,0,0)
 		elseif LunaUF.db.profile.units.player.powerBar.ticker and UnitPowerType("player") == Enum.PowerType.Energy then
-			frame.powerBar.ticker:Show()
+			frame.powerBar.ticker.texture:Show()
+			frame.powerBar.ticker:SetBackdropColor(0,0,0,1)
 		end
 	end
 
@@ -144,6 +196,11 @@ function Power:OnLayoutApplied(frame)
 	if frame.unitType == "player" and frame.powerBar then
 		frame.powerBar.ticker:SetHeight(frame.powerBar:GetHeight())
 		frame.powerBar.ticker:SetWidth(1)
+		if LunaUF.db.profile.units.player.powerBar.ticker then
+			frame.powerBar.ticker:Show()
+		else
+			frame.powerBar.ticker:Hide()
+		end
 	end
 end
 
@@ -179,7 +236,8 @@ function Power:Update(frame, event, unit, powerType)
 			frame.powerBar.ticker.startTime = GetTime()
 		elseif frame.powerBar.currentPower > UnitPower(frame.unit) and not (UnitPowerMax(frame.unit) == UnitPower(frame.unit)) and UnitPowerType("player") == Enum.PowerType.Mana then
 			frame.powerBar.ticker.startTime = GetTime()
-			frame.powerBar.ticker:Show()
+			frame.powerBar.ticker.texture:Show()
+			frame.powerBar.ticker:SetBackdropColor(0,0,0,1)
 		end
 	end
 	frame.powerBar.currentPower = UnitPower(frame.unit)
