@@ -36,7 +36,7 @@ function Health:OnEnable(frame)
 	frame:RegisterUnitEvent("UNIT_TARGETABLE_CHANGED", self, "UpdateColor")
 
 	if( frame.unit == "pet" ) then
-		frame:RegisterUnitEvent("UNIT_POWER_UPDATE", self, "UpdateColor")
+		frame:RegisterUnitEvent("UNIT_HAPPINESS", self, "UpdateColor")
 	end
 
 --	if ( LunaUF.db.profile.units[frame.unitType].healthBar.colorDispel ) then
@@ -71,7 +71,7 @@ function Health:UpdateColor(frame)
 --		return
 	elseif( not UnitPlayerControlled(unit) and UnitIsTapDenied(unit) and UnitCanAttack("player", unit) ) then
 		color = LunaUF.db.profile.colors.tapped
-	elseif( not UnitPlayerOrPetInRaid(unit) and not UnitPlayerOrPetInParty(unit) and ( ( ( reactionType == "player" or reactionType == "both" ) and UnitIsPlayer(unit) and not UnitIsFriend(unit, "player") ) or ( ( reactionType == "npc" or reactionType == "both" )  and not UnitIsPlayer(unit) ) ) ) then
+	elseif( not UnitPlayerOrPetInRaid(unit) and not UnitPlayerOrPetInParty(unit) and ( ( ( reactionType == "player" or reactionType == "both" ) and UnitIsPlayer(unit) and not UnitIsFriend(unit, "player") ) or ( ( reactionType == "npc" or reactionType == "both" )  and not UnitIsPlayer(unit) and not UnitIsUnit("pet", unit) ) ) ) then
 		if( not UnitIsFriend(unit, "player") and UnitPlayerControlled(unit) ) then
 			if( UnitCanAttack("player", unit) ) then
 				color = LunaUF.db.profile.colors.hostile
@@ -95,7 +95,7 @@ function Health:UpdateColor(frame)
 	elseif( LunaUF.db.profile.units[frame.unitType].healthBar.colorType == "class" and UnitIsPlayer(unit) ) then
 		local class = frame:UnitClassToken()
 		color = class and LunaUF.db.profile.colors[class]
-	elseif unit == "pet" and LunaUF.db.profile.units[frame.unitType].healthBar.colorType == "happiness" and GetPetHappiness then
+	elseif unit == "pet" and LunaUF.db.profile.units[frame.unitType].healthBar.colorType == "happiness" then
 		local happiness = GetPetHappiness()
 		if happiness == 3 then
 			color = LunaUF.db.profile.colors.friendly

@@ -143,7 +143,7 @@ function XP:Update(frame)
 	self:UpdateRep(frame)
 	self:UpdateXP(frame)
 
-	if( ( not frame.xpBar.rep or not frame.xpBar.rep:IsShown() ) and not frame.xpBar.xp:IsShown() ) or (frame.unit == "pet" and UnitXPMax(frame.unit) == 0) then
+	if( ( not frame.xpBar.rep or not frame.xpBar.rep:IsShown() ) and not frame.xpBar.xp:IsShown() ) or (frame.unit == "pet" and select(2,GetPetExperience()) == 0) then
 		LunaUF.Layout:SetBarVisibility(frame, "xpBar", false)
 		return
 	end

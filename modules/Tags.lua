@@ -947,7 +947,7 @@ if RealMobHealth and RealMobHealth.GetUnitHealth then -- Changed function name f
 		local _,maxhp = RealMobHealth.GetUnitHealth(unit, true)
 		return maxhp or realUnitHealthMax(unit)
 	end
-else -- maintain compatibility for now
+elseif RealMobHealth then -- maintain compatibility for now
 	UnitHealth = function(unit)
 		local hp = RealMobHealth.GetHealth(unit, true)
 		return hp or realUnitHealth(unit)

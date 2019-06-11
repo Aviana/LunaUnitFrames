@@ -1,7 +1,7 @@
 local lib = LibStub and LibStub("LibClassicDurations", true)
 if not lib then return end
 
-local Type, Version = "SpellTable", 7
+local Type, Version = "SpellTable", 8
 if lib:GetDataVersion(Type) >= Version then return end  -- older versions didn't have that function
 
 local Spell = lib.AddAura
@@ -453,12 +453,29 @@ Spell(12355, { duration = 2 }) -- Impact
 Spell(12654, { duration = 4 }) -- Ignite
 Spell(22959, { duration = 30 }) -- Fire Vulnerability
 Spell({ 11113, 13018, 13019, 13020, 13021 }, { duration = 6 }) -- Blast Wave
+
+Spell({ 2120, 2121, 8422, 8423, 10215, 10216 }, { duration = 8, stacking = true }) -- Flamestrike
+
 Spell({ 120, 8492, 10159, 10160, 10161 }, {
     duration = function(spellID, isSrcPlayer)
         local permafrost = isSrcPlayer and Talent(11175, 12569, 12571) or 0
         return 8 + permafrost
     end
 }) -- Cone of Cold
+
+Spell({ 12484, 12485, 12486 }, {
+    duration = function(spellID, isSrcPlayer)
+        local permafrost = isSrcPlayer and Talent(11175, 12569, 12571) or 0
+        return 1.5 + permafrost
+    end
+}) -- Improved Blizzard
+
+Spell(6136 , {
+    duration = function(spellID, isSrcPlayer)
+        local permafrost = isSrcPlayer and Talent(11175, 12569, 12571) or 0
+        return 5 + permafrost
+    end
+}) -- Frost Armor
 
 Spell({ 116, 205, 837, 7322, 8406, 8407, 8408, 10179, 10180, 10181, 25304 }, {
     duration = function(spellID, isSrcPlayer)
