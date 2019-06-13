@@ -50,7 +50,7 @@ local function feigncheck(unit)
 end
 
 local defaultTags = {
-	["numtargeting"]		= function(unit)
+	["numtargeting"]		= function(frame, unit)
 								if UnitInRaid("player") then
 									local count = 0
 									for i = 1, GetNumRaidMembers() do
@@ -74,7 +74,7 @@ local defaultTags = {
 									return tostring(count)
 								end
 							end;
-	["cnumtargeting"]		= function(unit)
+	["cnumtargeting"]		= function(frame, unit)
 								local count = 0
 								if UnitInRaid("player") then
 									for i = 1, GetNumRaidMembers() do
@@ -102,7 +102,7 @@ local defaultTags = {
 									return Hex(0.5,0.5,1)..count..Hex(1,1,1)
 								end
 							end;
-	["happiness"]			= function(unit)
+	["happiness"]			= function(frame, unit)
 								if unit ~= "pet" or select(2,UnitClass("player")) ~= "HUNTER" then
 									return ""
 								end
@@ -114,21 +114,21 @@ local defaultTags = {
 									return L["happy"]
 								end
 							end;
-	["combat"]				= function(unit)
+	["combat"]				= function(frame, unit)
 								if UnitAffectingCombat(unit) then
 									return L["(c)"]
 								else
 									return ""
 								end
 							end;
-	["combatcolor"]		= function(unit)
+	["combatcolor"]		= function(frame, unit)
 								if UnitAffectingCombat(unit) then
 									return Hex(1,0,0)
 								else
 									return ""
 								end
 							end;
-	["range"]				= function(unit)
+	["range"]				= function(frame, unit)
 								if UnitIsUnit("player", unit) then
 									return "0"
 								elseif CheckInteractDistance(unit, 3) then
@@ -141,7 +141,7 @@ local defaultTags = {
 									return ">40"
 								end
 							end;
-	["race"]				= function(unit)
+	["race"]				= function(frame, unit)
 								local race = UnitRace(unit)
 								if race then
 									return race
@@ -149,7 +149,7 @@ local defaultTags = {
 									return ""
 								end
 							end;
-	["rank"]				= function(unit)
+	["rank"]				= function(frame, unit)
 								local pvpname = UnitPVPName(unit)
 								local name = UnitName(unit)
 								if name and pvpname and name ~= pvpname then
@@ -159,14 +159,14 @@ local defaultTags = {
 									return ""
 								end
 							end;
-	["numrank"]				= function(unit)
+	["numrank"]				= function(frame, unit)
 								local rank = UnitPVPRank(unit)
 								if rank == 0 then
 									return ""
 								end
 								return rank-4
 							end;
-	["creature"]			= function(unit)
+	["creature"]			= function(frame, unit)
 								local creature = UnitCreatureFamily(unit)
 								if creature then
 									return creature
@@ -174,7 +174,7 @@ local defaultTags = {
 									return ""
 								end
 							end;
-	["faction"]				= function(unit)
+	["faction"]				= function(frame, unit)
 								local _,faction = UnitFactionGroup(unit)
 								if faction then
 									return faction
@@ -182,7 +182,7 @@ local defaultTags = {
 									return ""
 								end
 							end;
-	["sex"]					= function(unit)
+	["sex"]					= function(frame, unit)
 								local sex = UnitSex(unit)
 								if sex == 1 then
 									return ""
@@ -192,8 +192,8 @@ local defaultTags = {
 									return L["female"]
 								end
 							end;
-	["nocolor"]				= function(unit) return Hex(1,1,1) end;
-	["druidform"]			= function(unit)
+	["nocolor"]				= function(frame, unit) return Hex(1,1,1) end;
+	["druidform"]			= function(frame, unit)
 								local _,class = UnitClass(unit)
 								if class == "DRUID" then
 									if UnitPowerType(unit) == 1 then
@@ -212,11 +212,11 @@ local defaultTags = {
 								end
 								return form or ""
 							end;
-	["guild"]				= function(unit) return GetGuildInfo(unit) or "" end;
-	["guildrank"]			= function(unit)
+	["guild"]				= function(frame, unit) return GetGuildInfo(unit) or "" end;
+	["guildrank"]			= function(frame, unit)
 								return select(2,GetGuildInfo(unit)) or ""
 							end;
-	["incheal"]				= function(unit)
+	["incheal"]				= function(frame, unit)
 								local heal = LunaUF.Units.unitFrames[unit].incomingHeal or 0
 								if heal > 0 then
 									return heal
@@ -224,9 +224,9 @@ local defaultTags = {
 									return ""
 								end
 							end;
---	["numheals"]			= function(unit) return HealComm:getNumHeals(UnitName(unit)) end;
-	["pvp"]					= function(unit) return UnitIsPVP(unit) and "PVP" or "" end;
-	["smarthealth"]			= function(unit)
+--	["numheals"]			= function(frame, unit) return HealComm:getNumHeals(UnitName(unit)) end;
+	["pvp"]					= function(frame, unit) return UnitIsPVP(unit) and "PVP" or "" end;
+	["smarthealth"]			= function(frame, unit)
 								local hp
 								local maxhp
 								hp = UnitHealth(unit)
@@ -244,7 +244,7 @@ local defaultTags = {
 								end
 								return hp.."/"..maxhp
 							end;
-	["ssmarthealth"]			= function(unit)
+	["ssmarthealth"]			= function(frame, unit)
 								local hp = UnitHealth(unit)
 								if hp < 1 then
 									if feigncheck(unit) then
@@ -267,7 +267,7 @@ local defaultTags = {
 								end
 								return hp.."/"..maxhp
 							end;
-	["healhp"]				= function(unit)
+	["healhp"]				= function(frame, unit)
 								local heal = LunaUF.Units.unitFrames[unit].incomingHeal or 0
 								local hp
 								hp = UnitHealth(unit)
@@ -277,17 +277,17 @@ local defaultTags = {
 									return hp
 								end
 							end;
-	["hp"]					= function(unit)
+	["hp"]					= function(frame, unit)
 								return UnitHealth(unit)
 							end;
-	["shp"]					= function(unit)
+	["shp"]					= function(frame, unit)
 								if UnitHealth(unit) > 10000 then
 									return math.floor(UnitHealth(unit)/1000).."K"
 								else
 									return UnitHealth(unit)
 								end
 							end;
-	["sshp"]			= function(unit)
+	["sshp"]			= function(frame, unit)
 								local hp
 								hp = UnitHealth(unit)
 								if hp < 1 then
@@ -307,17 +307,17 @@ local defaultTags = {
 								end
 								return hp
 							end;
-	["maxhp"]				= function(unit)
+	["maxhp"]				= function(frame, unit)
 								return UnitHealthMax(unit)
 							end;
-	["smaxhp"]				= function(unit)
+	["smaxhp"]				= function(frame, unit)
 								if UnitHealthMax(unit) > 10000 then
 									return math.floor(UnitHealthMax(unit)/1000).."K"
 								else
 									return UnitHealthMax(unit)
 								end
 							end;
-	["missinghp"]			= function(unit)
+	["missinghp"]			= function(frame, unit)
 								local hp,maxhp
 								hp = UnitHealth(unit)
 								maxhp = UnitHealthMax(unit)
@@ -327,7 +327,7 @@ local defaultTags = {
 									return hp-maxhp
 								end
 							end;
-	["healmishp"]			= function(unit)
+	["healmishp"]			= function(frame, unit)
 								local hp,maxhp
 								local heal = LunaUF.Units.unitFrames[unit].incomingHeal or 0
 								hp = UnitHealth(unit)
@@ -343,7 +343,7 @@ local defaultTags = {
 									end
 								end
 							end;
-	["perhp"]				= function(unit)
+	["perhp"]				= function(frame, unit)
 								local hp,maxhp
 								hp = UnitHealth(unit)
 								maxhp = UnitHealthMax(unit)
@@ -353,23 +353,23 @@ local defaultTags = {
 									return math.floor(((hp / maxhp) * 100)+0.5)
 								end
 							end;
-	["pp"]					= function(unit) return UnitPower(unit) end;
-	["spp"]					= function(unit)
+	["pp"]					= function(frame, unit) return UnitPower(unit) end;
+	["spp"]					= function(frame, unit)
 								if UnitPower(unit) > 10000 then
 									return math.floor(UnitPower(unit)/1000).."K"
 								else
 									return UnitPower(unit)
 								end
 							end;
-	["maxpp"]				= function(unit) return UnitPowerMax(unit) end;
-	["smaxpp"]				= function(unit)
+	["maxpp"]				= function(frame, unit) return UnitPowerMax(unit) end;
+	["smaxpp"]				= function(frame, unit)
 								if UnitPowerMax(unit) > 10000 then
 									return math.floor(UnitPowerMax(unit)/1000).."K"
 								else
 									return UnitPowerMax(unit)
 								end
 							end;
-	["missingpp"]			= function(unit)
+	["missingpp"]			= function(frame, unit)
 								local mana = UnitPower(unit)
 								local manamax = UnitPowerMax(unit)
 								if manamax-mana == 0 then
@@ -378,26 +378,26 @@ local defaultTags = {
 									return mana-manamax
 								end
 							end;
-	["perpp"]				= function(unit)
+	["perpp"]				= function(frame, unit)
 								if UnitPowerMax(unit) < 1 then
 									return 0
 								else
 									return math.floor(((UnitPower(unit) / UnitPowerMax(unit)) * 100)+0.5)
 								end
 							end;
-	["druid:pp"]			= function(unit)
+	["druid:pp"]			= function(frame, unit)
 								if unit ~= "player" then
 									return ""
 								end
 								return UnitPower(unit, Enum.PowerType.Mana)
 							end;
-	["druid:maxpp"]			= function(unit)
+	["druid:maxpp"]			= function(frame, unit)
 								if unit ~= "player" then
 									return ""
 								end
 								return UnitPowerMax(unit, Enum.PowerType.Mana)
 							end;
-	["druid:missingpp"]		= function(unit)
+	["druid:missingpp"]		= function(frame, unit)
 								if unit ~= "player" then
 									return ""
 								end
@@ -407,7 +407,7 @@ local defaultTags = {
 									return UnitPower(unit, Enum.PowerType.Mana)-UnitPowerMax(unit, Enum.PowerType.Mana)
 								end
 							end;
-	["druid:perpp"]			= function(unit)
+	["druid:perpp"]			= function(frame, unit)
 								if unit ~= "player" then
 									return ""
 								end
@@ -418,14 +418,14 @@ local defaultTags = {
 									return math.floor(((mana / manamax) * 100)+0.5)
 								end
 							end;
-	["level"]				= function(unit)
+	["level"]				= function(frame, unit)
 								if UnitLevel(unit) == -1 then
 									return "??"
 								else
 									return UnitLevel(unit)
 								end
 							end;
-	["smartlevel"]			= function(unit)
+	["smartlevel"]			= function(frame, unit)
 								local level = UnitLevel(unit)
 								if level == -1 then
 									if UnitClassification(unit) == "worldboss" then
@@ -437,7 +437,7 @@ local defaultTags = {
 									return level
 								end
 							end;
-	["levelcolor"]			= function(unit)
+	["levelcolor"]			= function(frame, unit)
 								local level = UnitLevel(unit)
 								if level == -1 then
 									level = 99
@@ -445,14 +445,14 @@ local defaultTags = {
 								local color = GetQuestDifficultyColor(level)
 								return Hex(color)
 							end;
-	["name"]				= function(unit) return UnitName(unit) or "" end;
-	["shortname"]			= function(unit, length)
+	["name"]				= function(frame, unit) return UnitName(unit) or "" end;
+	["shortname"]			= function(frame, unit, length)
 								if length == nil then
 									length = 3
 								end
 								return UnitName(unit) and strsub(UnitName(unit),1,math.max(math.min(length, 12), 1)) or ""
 							end;
-	["ignore"]				= function(unit)
+	["ignore"]				= function(frame, unit)
 								if not UnitIsPlayer(unit) then
 									return ""
 								end
@@ -464,18 +464,18 @@ local defaultTags = {
 								end
 								return ""
 							end;	
-	["abbrev:name"]			= function(unit)
+	["abbrev:name"]			= function(frame, unit)
 								local name = UnitName(unit)
 								if not name then
 									return ""
 								end
 								return string.len(name) > 10 and abbrevCache[name] or name
 							end;
-	["server"]				= function(unit)
+	["server"]				= function(frame, unit)
 								local _,server = UnitName(unit)
 								return server or GetRealmName()
 							end;
-	["status"]				= function(unit)
+	["status"]				= function(frame, unit)
 								local hp = UnitHealth(unit)
 								if hp < 1 then
 									if feigncheck(unit) then
@@ -491,13 +491,13 @@ local defaultTags = {
 									return ""
 								end
 							end;
-	["cpoints"]				= function(unit)
+	["cpoints"]				= function(frame, unit)
 								if unit ~= "target" then
 									return ""
 								end
 								return GetComboPoints()
 							end;
-	["rare"]				= function(unit)
+	["rare"]				= function(frame, unit)
 								local classif = UnitClassification(unit)
 								if classif == "rare" or classif == "rareelite" then
 									return L["rare"]
@@ -505,7 +505,7 @@ local defaultTags = {
 									return ""
 								end
 							end;
-	["elite"]				= function(unit)
+	["elite"]				= function(frame, unit)
 								local classif = UnitClassification(unit)
 								if classif == "elite" or classif == "rareelite" then
 									return L["elite"]
@@ -513,7 +513,7 @@ local defaultTags = {
 									return ""
 								end
 							end;
-	["classification"]		= function(unit)
+	["classification"]		= function(frame, unit)
 								local classif = UnitClassification(unit)
 								if classif == "normal" then
 									return ""
@@ -521,7 +521,7 @@ local defaultTags = {
 									return L[classif]
 								end
 							end;
-	["shortclassification"]	= function(unit)
+	["shortclassification"]	= function(frame, unit)
 								local classif = UnitClassification(unit)
 								if classif == "rare" then
 									return "R"
@@ -535,7 +535,7 @@ local defaultTags = {
 									return ""
 								end
 							end;
-	["group"]				= function(unit)
+	["group"]				= function(frame, unit)
 								if GetNumRaidMembers() > 0 then
 									local name = UnitName(unit)
 									for i=1, GetNumRaidMembers() do
@@ -549,7 +549,7 @@ local defaultTags = {
 								end
 								return ""
 							end;
-	["aggrocolor"]			= function(unit)
+	["aggrocolor"]			= function(frame, unit)
 								local aggro = vex:GetUnitAggroByUnitGUID(UnitGUID(unit))
 								if aggro then
 									return Hex(1,0,0)
@@ -557,7 +557,7 @@ local defaultTags = {
 									return ""
 								end
 							end;
-	["classcolor"]			= function(unit)
+	["classcolor"]			= function(frame, unit)
 								if not UnitIsPlayer(unit) then
 									return Hex(1,1,1)
 								end
@@ -568,15 +568,15 @@ local defaultTags = {
 									return Hex(1,1,1)
 								end
 							end;
-	["class"]				= function(unit) return UnitClass(unit) or "" end;
-	["smartclass"]			= function(unit)
+	["class"]				= function(frame, unit) return UnitClass(unit) or "" end;
+	["smartclass"]			= function(frame, unit)
 								if UnitIsPlayer(unit) then
 									return UnitClass(unit) or ""
 								else
 									return UnitCreatureType(unit) or ""
 								end
 							end;
-	["reactcolor"]			= function(unit)
+	["reactcolor"]			= function(frame, unit)
 								local reaction = UnitReaction("player",unit)
 								if not reaction then
 									return ""
@@ -588,7 +588,7 @@ local defaultTags = {
 									return Hex(LunaUF.db.profile.colors["friendly"])
 								end
 							end;
-	["pvpcolor"]			= function(unit)
+	["pvpcolor"]			= function(frame, unit)
 								if UnitIsPlayer(unit) then
 									if UnitIsPVP(unit) then
 										if UnitIsEnemy("player",unit) then
@@ -600,7 +600,7 @@ local defaultTags = {
 								end
 								return Hex(1,1,1)
 							end;
-	["smart:healmishp"]		= function(unit)
+	["smart:healmishp"]		= function(frame, unit)
 								if UnitIsGhost(unit) then
 									return "Ghost"
 								elseif not UnitIsConnected(unit) then
@@ -628,7 +628,7 @@ local defaultTags = {
 									end
 								end
 							end;
-	["smartrace"]			= function(unit)
+	["smartrace"]			= function(frame, unit)
 								local race = UnitRace(unit)
 								local ctype = UnitCreatureType(unit)
 								if UnitIsPlayer(unit) then
@@ -637,14 +637,14 @@ local defaultTags = {
 									return ctype or ""
 								end
 							end;
-	["civilian"]			= function(unit)
+	["civilian"]			= function(frame, unit)
 								if UnitIsCivilian(unit) then
 									return L["(civ)"]
 								else
 									return ""
 								end
 							end;
-	["loyalty"]				= function(unit)
+	["loyalty"]				= function(frame, unit)
 								local loyalty = GetPetLoyalty()
 								if loyalty then
 									return loyalty
@@ -652,7 +652,7 @@ local defaultTags = {
 									return ""
 								end
 							end;
-	["healerhealth"]		= function(unit)
+	["healerhealth"]		= function(frame, unit)
 								if UnitIsGhost(unit) then
 									return L["Ghost"]
 								elseif not UnitIsConnected(unit) then
@@ -691,7 +691,7 @@ local defaultTags = {
 									end
 								end
 							end;
-	 ["namehealerhealth"]		= function(unit)
+	 ["namehealerhealth"]		= function(frame, unit)
 								if UnitIsGhost(unit) then
 									return "Ghost"
 								elseif not UnitIsConnected(unit) then
@@ -757,50 +757,38 @@ local defaultTags = {
 									return L["#invalidTag#"]
 								end
 							end;
-	["br"]					= function(unit)
+	["br"]					= function(frame, unit)
 								return "\n"
 							end;
-	["castname"]			= function(unit)
-								if UnitIsUnit(unit,"player") then
-									if CastingInfo() then
-										return CastingInfo()
-									elseif ChannelInfo() then
-										return ChannelInfo()
+	["castname"]			= function(frame, unit)
+								return frame.castBar.bar.spellName or ""
+							end;
+	["casttime"]			= function(frame, unit)
+								local time = (frame.castBar.bar.endSeconds or 0) - (frame.castBar.bar.elapsed or 0)
+								if time == 0 then return "" end
+								time = math.floor(time * 100) / 100
+								local delay = frame.castBar.bar.delay
+								if frame.castBar.bar.isChannelled then
+									if delay and delay > 0 then
+										return frame.castBar.bar.elapsed.." -"..delay
 									else
-										return ""
+										return frame.castBar.bar.elapsed
 									end
-								elseif unit then
-									return LunaUF:GetCastName(UnitGUID(unit))
 								else
-									return ""
+									if delay and delay > 0 then
+										return time .. " +"..delay
+									else
+										return time
+									end
 								end
 							end;
-	["casttime"]			= function(unit)
-								local time = LunaUF:GetCastTime(UnitGUID(unit))
-								local delay = LunaUF:GetCastTimeDelay(unit) or 0
-								if unit == "player" then
-									if CastingInfo() then
-										if delay > 0 then delay = " +" .. math.floor(delay*100)/100 else delay = "" end
-										return math.floor(select(5,CastingInfo())/10 - GetTime()*100)/100 .. delay
-									elseif ChannelInfo() then
-										if delay > 0 then delay = " -" .. math.floor(delay*100)/100 else delay = "" end
-										return math.floor(select(5,ChannelInfo())/10 - GetTime()*100)/100 .. delay
-									else
-										return ""
-									end
-								elseif unit and time and time > GetTime() then
-									return math.floor((time/1000 - GetTime())*100)/100
-								else
-									return ""
-								end
-							end;
-	["xp"]			= function(unit)
+	["xp"]			= function(frame, unit)
 								return UnitXP(unit).."/"..UnitXPMax(unit)..(GetXPExhaustion() and (" (+"..GetXPExhaustion()..")") or "")
 							end;
-	["percxp"]			= function(unit)
+	["percxp"]			= function(frame, unit)
 								return math.floor(UnitXP("player")/UnitXPMax("player")*10000)/100 .. "%"
 							end;
-	["rep"]			= function(unit)
+	["rep"]			= function(frame, unit)
 								local name, standing, min, max, value, factionID = GetWatchedFactionInfo()
 								return (value-min).."/"..(max-min).." "..name
 							end;
@@ -818,7 +806,7 @@ local function tagUpdate(self)
 				if type(array[i]) == "string" then
 					stringText = stringText .. array[i]
 				else
-					stringText = stringText .. (array[i][0](array[i][1],array[i][2]) or "")
+					stringText = stringText .. (array[i][0](frame,array[i][1],array[i][2]) or "")
 				end
 			end
 			fstring:SetText(stringText)
@@ -902,9 +890,9 @@ function Tags:SetupText(frame, config)
 			if frame[barkey] then
 				frame.fontstrings[barkey] = frame.fontstrings[barkey] or {}
 				local bar = frame.fontstrings[barkey]
-				bar["left"] = bar["left"] or frame.highFrame:CreateFontString(nil, "ARTWORK")
-				bar["center"] = bar["center"] or frame.highFrame:CreateFontString(nil, "ARTWORK")
-				bar["right"] = bar["right"] or frame.highFrame:CreateFontString(nil, "ARTWORK")
+				bar["left"] = bar["left"] or frame[barkey] and frame[barkey]:CreateFontString(nil, "ARTWORK")
+				bar["center"] = bar["center"] or frame[barkey] and frame[barkey]:CreateFontString(nil, "ARTWORK")
+				bar["right"] = bar["right"] or frame[barkey] and frame[barkey]:CreateFontString(nil, "ARTWORK")
 				for align,fontstring in pairs(bar) do
 					fontstring:SetFont(LunaUF.Layout:LoadMedia(SML.MediaType.FONT, LunaUF.db.profile.units[frame.unitType].tags[barkey].font), barconfig.size)
 					fontstring:SetShadowColor(0, 0, 0, 1.0)

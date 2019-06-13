@@ -282,7 +282,6 @@ local L = {
 ["Groupnumbers"] = "Groupnumbers",
 ["Show Groupnumbers next to the group"] = "Show Groupnumbers next to the group",
 ["Groupnumberfont"] = "Groupnumberfont",
-["Group %s"] = "Group %s",
 ["Set the size of the group number."] = "Set the size of the group number.",
 ["Group"] = "Group",
 ["Group by"] = "Group by",
@@ -374,6 +373,7 @@ local L = {
 ["Info tags"] = "Info tags",
 ["Health and power tags"] = "Health and power tags",
 ["Color tags"] = "Color tags",
+["Currently disabled due to a blizzard bug"] = "Currently disabled due to a blizzard bug",
 }
 
 LunaUF.L = L

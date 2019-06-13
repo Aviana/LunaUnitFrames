@@ -57,23 +57,6 @@ local channelIDs = {
 
 LunaUF:RegisterModule(Cast, "castBar", L["Cast bar"], true)
 
-function LunaUF:GetCastName(unitGUID)
-	if currentCasts[unitGUID] then
-		return currentCasts[unitGUID].name
-	end
-end
-
-function LunaUF:GetCastTime(unitGUID)
-	if currentCasts[unitGUID] then
-		return currentCasts[unitGUID].endTime
-	end
-end
-
-function LunaUF:GetCastTimeDelay(unit)
-	return LunaUF.Units.unitFrames[unit].castBar and LunaUF.Units.unitFrames[unit].castBar.bar.pushback
-end
-
-
 local function updateFrame(casterID, spellID)
 	for frame in pairs(LunaUF.Units.frameList) do
 		if frame.unitRealType ~= "player" and frame.unitGUID == casterID and LunaUF.db.profile.units[frame.unitRealType].castBar.enabled then
@@ -101,6 +84,12 @@ local function combatlogEvent()
 --		currentCasts[casterID] = nil
 --		updateFrame(casterID, spellID)
 	if event == "SPELL_CAST_START" then
+		if casterID == UnitGUID("player") and name == GetSpellInfo(19434) then
+			Cast:UpdateCast(_G["LUFUnitplayer"], "player", nil, name, nil, icon, GetTime(), GetTime()+castTime+500, nil, nil, spellID)
+			return
+		elseif casterID == UnitGUID("player") and name == GetSpellInfo(2643) then
+			Cast:UpdateCast(_G["LUFUnitplayer"], "player", nil, name, nil, icon, GetTime(), GetTime()+500, nil, nil, spellID)
+		end
 		if castTime and castTime > 0 then
 			currentCasts[casterID] = {
 				["spellID"] = spellID,
@@ -137,6 +126,7 @@ function Cast:OnEnable(frame)
 	if( not frame.castBar ) then
 		frame.castBar = CreateFrame("Frame", nil, frame)
 		frame.castBar.bar = LunaUF.Units:CreateBar(frame)
+		frame.castBar.bar:SetFrameLevel(1)
 		frame.castBar.background = frame.castBar.bar.background
 		frame.castBar.bar.parent = frame
 		
@@ -242,13 +232,15 @@ end
 
 local function castOnUpdate(self, elapsed)
 	local time = GetTime()
-	self.elapsed = self.elapsed + (time - self.lastUpdate)
+	self.elapsed = self.elapsed + elapsed
 	self.lastUpdate = time
-	self:SetValue(self.elapsed)
 	
-	if( self.elapsed <= 0 ) then
+	if( self.elapsed >= self.endSeconds ) then
 		self.elapsed = 0
+		self.endSeconds = 0
 	end
+
+	self:SetValue(self.elapsed)
 
 	-- Cast finished, do a quick fade
 	if( self.elapsed >= self.endSeconds ) then
@@ -264,13 +256,14 @@ end
 
 local function channelOnUpdate(self, elapsed)
 	local time = GetTime()
-	self.elapsed = self.elapsed - (time - self.lastUpdate)
-	self.lastUpdate = time
-	self:SetValue(self.elapsed)
+	self.elapsed = self.elapsed - elapsed
 
 	if( self.elapsed <= 0 ) then
 		self.elapsed = 0
+		self.endSeconds = 0
 	end
+
+	self:SetValue(self.elapsed)
 
 	-- Channel finished, do a quick fade
 	if( self.elapsed <= 0 ) then
@@ -335,7 +328,7 @@ function Cast:EventStopCast(frame, event, unit, castID, spellID)
 		LunaUF.Layout:SetBarVisibility(frame, "castBar", true)
 	end
 
-	cast.spellName = nil
+--	cast.spellName = nil
 	cast.fadeElapsed = FADE_TIME
 	cast.fadeStart = FADE_TIME
 	cast:SetScript("OnUpdate", fadeOnUpdate)

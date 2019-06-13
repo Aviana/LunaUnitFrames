@@ -85,11 +85,6 @@ function Layout:SetBarVisibility(frame, key, status)
 
 	-- Show the bar if it wasn't already
 	if( status ) then
-		if frame.fontstrings[key] then
-			for _, fstring in pairs(frame.fontstrings[key]) do
-				fstring:Show()
-			end
-		end
 		if ( not frame[key]:IsVisible() ) then
 			frame[key].visibilityManaged = true
 			frame[key]:Show()
@@ -102,11 +97,6 @@ function Layout:SetBarVisibility(frame, key, status)
 
 		frame[key].visibilityManaged = nil
 		frame[key]:Hide()
-		if frame.fontstrings[key] then
-			for _, fstring in pairs(frame.fontstrings[key]) do
-				fstring:Hide()
-			end
-		end
 		LunaUF.Layout:PositionWidgets(frame, LunaUF.db.profile.units[frame.unitType])
 	end
 end

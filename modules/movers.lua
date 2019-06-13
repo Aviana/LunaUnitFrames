@@ -194,7 +194,7 @@ function Movers:Enable()
 				end
 			end
 					
-			header:SetAttribute("startingIndex", -math.min(config.maxColumns * config.unitsPerColumn, maxUnits) + 1)
+			header:SetAttribute("startingIndex", -math.min(config.maxColumns * (config.unitsPerColumn or 5), maxUnits) + 1)
 		elseif( LunaUF[header.unitType .. "Units"] ) then
 			header:SetAttribute("startingIndex", -#(LunaUF[header.unitType .. "Units"]) + 1)
 		end

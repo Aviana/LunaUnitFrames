@@ -349,21 +349,11 @@ local function CheckModules(self)
 
 			-- Module isn't enabled all the time, only in this zone so we need to force it to be enabled
 			if( enabled ) then
-				if self.fontstrings and self.fontstrings[key] then
-					for _, fstring in pairs(self.fontstrings[key]) do
-						fstring:Show()
-					end
-				end
 				if ( not self.visibility[key] ) then
 					module:OnEnable(self)
 					layoutUpdate = true
 				end
 			elseif( not enabled ) then
-				if self.fontstrings and self.fontstrings[key] then
-					for _, fstring in pairs(self.fontstrings[key]) do
-						fstring:Hide()
-					end
-				end
 				if ( self.visibility[key] ) then
 					module:OnDisable(self)
 					layoutUpdate = true
@@ -704,7 +694,7 @@ function Units:CheckGroupVisibility()
 	local partypet = headerFrames.partypet
 	
 	if( party ) then
-		party:SetAttribute("showParty", ( not LunaUF.db.profile.units.raid.showParty or not LunaUF.enabledUnits.raid ) and true or false)
+		party:SetAttribute("showParty", true)
 		party:SetAttribute("showPlayer", LunaUF.db.profile.units.party.showPlayer)
 		party:SetAttribute("showSolo", LunaUF.db.profile.units.party.showPlayer)
 	end
@@ -719,7 +709,6 @@ function Units:CheckGroupVisibility()
 
 	if( raid ) then
 		raid:SetAttribute("showParty", LunaUF.db.profile.units.raid.showParty)
-		raid:SetAttribute("showPlayer", true)
 		raid:SetAttribute("showSolo", LunaUF.db.profile.units.raid.showSolo)
 	end
 end
@@ -770,7 +759,7 @@ function Units:SetHeaderAttributes(frame, type)
 
 		frame:SetAttribute("showRaid", LunaUF.db.profile.locked and true)
 		frame:SetAttribute("maxColumns", config.maxColumns or 1)
-		frame:SetAttribute("unitsPerColumn", config.unitsPerColumn)
+		frame:SetAttribute("unitsPerColumn", config.unitsPerColumn or 5)
 		frame:SetAttribute("columnSpacing", config.columnSpacing)
 		frame:SetAttribute("columnAnchorPoint", config.attribAnchorPoint)
 		frame:SetAttribute("groupFilter", filter or "1,2,3,4,5,6,7,8")
@@ -783,8 +772,8 @@ function Units:SetHeaderAttributes(frame, type)
 			frame:SetAttribute("groupBy", "GROUP")
 		end
 	elseif( type == "party" ) then
-		frame:SetAttribute("maxColumns", math.ceil((config.showPlayer and 5 or 4) / config.unitsPerColumn))
-		frame:SetAttribute("unitsPerColumn", config.unitsPerColumn)
+		frame:SetAttribute("maxColumns", 5)
+		frame:SetAttribute("unitsPerColumn", 5)
 		frame:SetAttribute("columnSpacing", config.columnSpacing)
 		frame:SetAttribute("columnAnchorPoint", config.attribAnchorPoint)
 		self:CheckGroupVisibility()
@@ -798,8 +787,8 @@ function Units:SetHeaderAttributes(frame, type)
 			stateMonitor[type]:SetAttribute("hideAnyRaid", LunaUF.db.profile.units.party.hideAnyRaid)
 		end
 		config = LunaUF.db.profile.units["party"]
-		frame:SetAttribute("maxColumns", math.ceil(4 / config.unitsPerColumn))
-		frame:SetAttribute("unitsPerColumn", config.unitsPerColumn)
+		frame:SetAttribute("maxColumns", 5)
+		frame:SetAttribute("unitsPerColumn", 5)
 		frame:SetAttribute("columnSpacing", config.columnSpacing)
 		frame:SetAttribute("columnAnchorPoint", config.attribAnchorPoint)
 		self:CheckGroupVisibility()
@@ -896,16 +885,11 @@ local function setupRaidStateMonitor(id, headerFrame)
 end
 
 function Units:LoadRaidGroupHeader(type)
-	if( headerFrames.raid ) then headerFrames.raid:Hide() end
-	--headerFrames.raidParent = nil
 
 	for id, monitor in pairs(stateMonitor.raids) do
 		monitor:SetAttribute("hideSemiRaid", LunaUF.db.profile.units.raid.hideSemiRaid)
 		monitor:SetAttribute("raidDisabled", id == -1 and true or nil)
 		monitor:SetAttribute("recheck", time())
-	end
-	if stateMonitor.raids[1] then
-		stateMonitor.raids[1]:SetAttribute("showSolo", LunaUF.db.profile.units.raid.showSolo)
 	end
 
 	local config = LunaUF.db.profile.units[type]
@@ -957,7 +941,7 @@ function Units:LoadRaidGroupHeader(type)
 			checkForGroupNumber(frame,frame:GetWidth(),frame:GetHeight())
 			frame.number:SetFont(LunaUF.Layout:LoadMedia(SML.MediaType.FONT, LunaUF.db.profile.units.raid.font), LunaUF.db.profile.units.raid.fontsize)
 			if LunaUF.db.profile.units.raid.groupBy == "GROUP" then
-				frame.number:SetText(string.format(L["Group %s"],id))
+				frame.number:SetText(GROUP.." "..id)
 			else
 				frame.number:SetText(LOCALIZED_CLASS_NAMES_MALE[classOrder[id]])
 			end
@@ -986,12 +970,10 @@ function Units:LoadRaidGroupHeader(type)
 			frame:SetAttribute("xMod", xMod)
 			frame:SetAttribute("yMod", yMod)
 			
+			self:SetHeaderAttributes(frame, type)
+			
 			LunaUF.Layout:AnchorFrame(frame, LunaUF.db.profile.units.raid.positions[id])
 			
---			if( not headerFrames.raidParent or headerFrames.raidParent.groupID > id ) then
---				headerFrames.raidParent = frame
---			end
-
 			setupRaidStateMonitor(id, frame)
 			
 		elseif( frame ) then
@@ -999,12 +981,6 @@ function Units:LoadRaidGroupHeader(type)
 		end
 	end
 	
-	headerFrames.raid1:SetAttribute("showSolo", LunaUF.db.profile.units.raid.showSolo)
-	
---	if( headerFrames.raidParent ) then
---		self:SetHeaderAttributes(headerFrames.raidParent, type)
---		LunaUF.Layout:AnchorFrame(frame, LunaUF.db.profile.units.raid)
---	end
 end
 
 -- Load a header unit, party or pets
@@ -1080,7 +1056,7 @@ function Units:LoadGroupHeader(type)
 		stateMonitor[type]:SetAttribute("hideSemiRaid", LunaUF.db.profile.units[type].hideSemiRaid)
 		stateMonitor[type]:SetAttribute("hideAnyRaid", LunaUF.db.profile.units[type].hideAnyRaid)
 		stateMonitor[type]:WrapScript(stateMonitor[type], "OnAttributeChanged", [[
-			if( name ~= "state-raidmonitor" and name ~= "partydisabled" and name ~= "hideanyraid" and name ~= "hidesemiraid" ) then return end
+			if( name ~= "state-raidmonitor" and name ~= "partydisabled" and name ~= "hideanyraid" and name ~= "hidesemiraid" and name ~= "showPlayer" ) then return end
 			if( self:GetAttribute("state-raidmonitor") == "combat" ) then return end
 			if( self:GetAttribute("partyDisabled") ) then return end
 			
@@ -1093,9 +1069,6 @@ function Units:LoadGroupHeader(type)
 			end
 		]])
 		RegisterStateDriver(stateMonitor[type], "raidmonitor", "[target=raid6, exists] raid6; [target=raid1, exists] raid1; none")
-		
-	elseif( type == "raid" ) then
-		setupRaidStateMonitor(-1, headerFrame)
 	else
 		headerFrame:Show()
 	end
