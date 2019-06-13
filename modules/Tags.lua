@@ -764,17 +764,17 @@ local defaultTags = {
 								return frame.castBar.bar.spellName or ""
 							end;
 	["casttime"]			= function(frame, unit)
-								local time = (frame.castBar.bar.endSeconds or 0) - (frame.castBar.bar.elapsed or 0)
-								if time == 0 then return "" end
-								time = math.floor(time * 100) / 100
+								local time
 								local delay = frame.castBar.bar.delay
 								if frame.castBar.bar.isChannelled then
+									time = math.floor(frame.castBar.bar.elapsed * 100) / 100
 									if delay and delay > 0 then
-										return frame.castBar.bar.elapsed.." -"..delay
+										return time.." -"..delay
 									else
-										return frame.castBar.bar.elapsed
+										return time
 									end
 								else
+									time = math.floor(((frame.castBar.bar.endSeconds or 0) - (frame.castBar.bar.elapsed or 0)) * 100) / 100
 									if delay and delay > 0 then
 										return time .. " +"..delay
 									else
