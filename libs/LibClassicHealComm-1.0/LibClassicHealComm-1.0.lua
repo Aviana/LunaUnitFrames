@@ -1,13 +1,13 @@
 --[[
 Name: LibClassicHealComm-1.0
-Revision: $Revision: 9 $
+Revision: $Revision: 10 $
 Author(s): Aviana, Original by Shadowed (shadowed.wow@gmail.com)
 Description: Healing communication library. This is a heavily modified clone of LibHealComm-4.0.
 Dependencies: LibStub, ChatThrottleLib
 ]]
 
 local major = "LibClassicHealComm-1.0"
-local minor = 9
+local minor = 10
 assert(LibStub, string.format("%s requires LibStub.", major))
 
 local HealComm = LibStub:NewLibrary(major, minor)
@@ -2059,6 +2059,8 @@ function HealComm:OnInitialize()
 	clearGUIDData()
 	
 	self:PLAYER_EQUIPMENT_CHANGED()
+	
+	self:GROUP_ROSTER_UPDATE()
 	
 	-- When first logging in talent data isn't available until at least PLAYER_ALIVE, so if we don't have data
 	-- will wait for that event otherwise will just cache it right now

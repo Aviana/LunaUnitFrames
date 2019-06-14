@@ -57,8 +57,8 @@ function Combo:OnEnable(frame)
 
 	createBlocks(frame.comboPoints)
 
-	frame:RegisterNormalEvent("UNIT_POWER_UPDATE", self, "Update", "player")
-	--frame:RegisterNormalEvent("UNIT_POWER_FREQUENT", self, "Update", "player")
+	frame:RegisterNormalEvent("UNIT_POWER_FREQUENT", self, "Update", "player")
+	
 
 	frame:RegisterUpdateFunc(self, "Update")
 end
@@ -68,7 +68,7 @@ function Combo:OnDisable(frame)
 end
 
 function Combo:Update(frame)
-	local points = UnitPower("player", Enum.PowerType.ComboPoints)
+	local points = GetComboPoints("player", "target")
 
 	LunaUF.Layout:SetBarVisibility(frame, "comboPoints", LunaUF.db.profile.units[frame.unitType].comboPoints.showAlways or (points and points > 0))
 	
