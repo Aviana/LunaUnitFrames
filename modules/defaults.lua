@@ -1362,6 +1362,7 @@ function LunaUF:LoadDefaults()
 			columnSpacing = 5,
 			offset = 0,
 			anchorTo = "LUFHeaderraid8",
+			groupFilter = "MT",
 		},
 		maintank = {
 			enabled = false,
@@ -1483,6 +1484,7 @@ function LunaUF:LoadDefaults()
 			columnSpacing = 4,
 			offset = 4,
 			anchorTo = "UIParent",
+			groupFilter = "MT",
 		},
 		maintanktarget = {
 			enabled = false,
@@ -1603,7 +1605,8 @@ function LunaUF:LoadDefaults()
 			maxColumns = 1,
 			columnSpacing = 4,
 			offset = 4,
-			anchorTo = "LUFHeadermaintank"
+			anchorTo = "LUFHeadermaintank",
+			groupFilter = "MT",
 		},
 		mainassist = {
 			enabled = false,
@@ -1725,6 +1728,7 @@ function LunaUF:LoadDefaults()
 			columnSpacing = 4,
 			offset = 4,
 			anchorTo = "UIParent",
+			groupFilter = "MA",
 		},
 		mainassisttarget = {
 			enabled = false,
@@ -1845,7 +1849,8 @@ function LunaUF:LoadDefaults()
 			maxColumns = 1,
 			columnSpacing = 4,
 			offset = 4,
-			anchorTo = "LUFHeadermainassist"
+			anchorTo = "LUFHeadermainassist",
+			groupFilter = "MA",
 		},
 	}
 end

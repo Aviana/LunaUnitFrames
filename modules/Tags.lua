@@ -217,7 +217,7 @@ local defaultTags = {
 								return select(2,GetGuildInfo(unit)) or ""
 							end;
 	["incheal"]				= function(frame, unit)
-								local heal = LunaUF.Units.unitFrames[unit].incomingHeal or 0
+								local heal = frame.incomingHeal or 0
 								if heal > 0 then
 									return heal
 								else
@@ -268,7 +268,7 @@ local defaultTags = {
 								return hp.."/"..maxhp
 							end;
 	["healhp"]				= function(frame, unit)
-								local heal = LunaUF.Units.unitFrames[unit].incomingHeal or 0
+								local heal = frame.incomingHeal or 0
 								local hp
 								hp = UnitHealth(unit)
 								if heal > 0 then
@@ -329,7 +329,7 @@ local defaultTags = {
 							end;
 	["healmishp"]			= function(frame, unit)
 								local hp,maxhp
-								local heal = LunaUF.Units.unitFrames[unit].incomingHeal or 0
+								local heal = frame.incomingHeal or 0
 								hp = UnitHealth(unit)
 								maxhp = UnitHealthMax(unit)
 								local result = hp-maxhp+heal
@@ -616,7 +616,7 @@ local defaultTags = {
 										return L["Dead"]
 									end
 								end
-								local heal = LunaUF.Units.unitFrames[unit].incomingHeal or 0
+								local heal = frame.incomingHeal or 0
 								local result = hp-maxhp+heal
 								if result == 0 then
 									return ""
@@ -668,7 +668,7 @@ local defaultTags = {
 										return L["Dead"]
 									end
 								end
-								local heal = LunaUF.Units.unitFrames[unit].incomingHeal or 0
+								local heal = frame.incomingHeal or 0
 								if UnitIsEnemy("player", unit) then
 									if heal == 0 then
 										return hp.."/"..maxhp
@@ -707,7 +707,7 @@ local defaultTags = {
 										return L["Dead"]
 									end
 								end
-								local heal = LunaUF.Units.unitFrames[unit].incomingHeal or 0
+								local heal = frame.incomingHeal or 0
 								if UnitIsEnemy("player", unit) then
 									if heal == 0 then
 										return hp.."/"..maxhp
@@ -750,7 +750,7 @@ local defaultTags = {
 								inverseModifier = 1 - modifier
 								return Hex(eR * inverseModifier + sR * modifier, eG * inverseModifier + sG * modifier, eB * inverseModifier + sB * modifier)
 							end;
-	["color"]				= function(color)
+	["color"]				= function(unit, color)
 								if color and strlen(color) == 6 then
 									return ("|cff"..color.."|h")
 								else
@@ -806,7 +806,7 @@ local function tagUpdate(self)
 				if type(array[i]) == "string" then
 					stringText = stringText .. array[i]
 				else
-					stringText = stringText .. (array[i][0](frame,array[i][1],array[i][2]) or "")
+					stringText = stringText .. (array[i][0](frame,frame.unit,array[i][1]) or "")
 				end
 			end
 			fstring:SetText(stringText)
@@ -837,7 +837,6 @@ function Tags:SplitTags(frame, config)
 							end
 							fontstring.parts[PartNr] = {
 								[0] = defaultTags[currTag],
-								[1] = frame.unit,
 							}
 							PartNr = PartNr + 1
 							text = string.sub(text,endPos+1)
@@ -861,8 +860,7 @@ function Tags:SplitTags(frame, config)
 							end
 							fontstring.parts[PartNr] = {
 								[0] = defaultTags["shortname"],
-								[1] = frame.unit,
-								[2] = tagArg,
+								[1] = tagArg,
 							}
 							PartNr = PartNr + 1
 							text = string.sub(text,endPos+1)

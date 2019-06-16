@@ -722,15 +722,8 @@ function Units:SetHeaderAttributes(frame, type)
 	if( type == "raidpet" or type == "raid" or type == "mainassist" or type == "maintank" ) then
 		local filter
 		if( config.filters ) then
-			for id, enabled in pairs(config.filters) do
-				if( enabled ) then
-					if( filter ) then
-						filter = filter .. "," .. id
-					else
-						filter = id
-					end
-				end
-			end
+			filter = config.filters[frame.groupID] and frame.groupID
+			stateMonitor.raids[frame.groupID]:SetAttribute("raidDisabled", not filter)
 		else
 			filter = config.groupFilter
 		end
@@ -860,7 +853,7 @@ local function setupRaidStateMonitor(id, headerFrame)
 	if( stateMonitor.raids[id] ) then return end
 
 	stateMonitor.raids[id] = CreateFrame("Frame", nil, nil, "SecureHandlerBaseTemplate")
-	stateMonitor.raids[id]:SetAttribute("raidDisabled", nil)
+--	stateMonitor.raids[id]:SetAttribute("raidDisabled", nil)
 	stateMonitor.raids[id]:SetFrameRef("raidHeader", headerFrame)
 	stateMonitor.raids[id]:SetAttribute("hideSemiRaid", LunaUF.db.profile.units.raid.hideSemiRaid)
 	stateMonitor.raids[id]:WrapScript(stateMonitor.raids[id], "OnAttributeChanged", [[
@@ -888,7 +881,7 @@ function Units:LoadRaidGroupHeader(type)
 
 	for id, monitor in pairs(stateMonitor.raids) do
 		monitor:SetAttribute("hideSemiRaid", LunaUF.db.profile.units.raid.hideSemiRaid)
-		monitor:SetAttribute("raidDisabled", id == -1 and true or nil)
+--		monitor:SetAttribute("raidDisabled", id == -1 and true or nil)
 		monitor:SetAttribute("recheck", time())
 	end
 
@@ -898,45 +891,45 @@ function Units:LoadRaidGroupHeader(type)
 	
 	for id, enabled in pairs(LunaUF.db.profile.units[type].filters) do
 		local frame = headerFrames["raid" .. id]
-		if( enabled ) then
-			if( not frame ) then
-				frame = CreateFrame("Frame", "LUFHeader" .. type .. id, UIParent, "SecureGroupHeaderTemplate")
-				frame:SetAttribute("template", unitButtonTemplate)
-				frame:SetAttribute("initial-unitWatch", true)
-				frame:SetAttribute("showRaid", true)
-				frame:SetAttribute("groupFilter", id)
-				frame:SetAttribute("initialConfigFunction", secureInitializeUnit)
-				frame.initialConfigFunction = initializeUnit
-				frame.isHeaderFrame = true
-				frame.unitType = type
-				frame.unitMappedType = type
-				frame.splitParent = type
-				frame.groupID = id
-				--frame:SetBackdrop({bgFile = "Interface\\ChatFrame\\ChatFrameBackground", edgeFile = "Interface\\ChatFrame\\ChatFrameBackground", edgeSize = 1})
-				--frame:SetBackdropBorderColor(1, 0, 0, 1)
-				--frame:SetBackdropColor(0, 0, 0, 0)
-				
-				frame.number = frame:CreateFontString(nil, "ARTWORK")
-				frame.number:SetShadowColor(0, 0, 0, 1.0)
-				frame.number:SetShadowOffset(0.80, -0.80)
-				frame.number:SetJustifyH("CENTER")
-				
-				frame:HookScript("OnSizeChanged",checkForGroupNumber)
-				
-				frame:SetAttribute("style-height", config.height)
-				frame:SetAttribute("style-width", config.width)
-				frame:SetAttribute("style-scale", config.scale)
-				
-				if( ClickCastHeader ) then
-					-- the OnLoad adds the functions like SetFrameRef to the header
-					SecureHandler_OnLoad(frame)
-					frame:SetFrameRef("clickcast_header", ClickCastHeader)
-				end
-				
-				headerFrames["raid" .. id] = frame
+		if( not frame ) then
+			frame = CreateFrame("Frame", "LUFHeader" .. type .. id, UIParent, "SecureGroupHeaderTemplate")
+			frame:SetAttribute("template", unitButtonTemplate)
+			frame:SetAttribute("initial-unitWatch", true)
+			frame:SetAttribute("showRaid", true)
+			frame:SetAttribute("groupFilter", id)
+			frame:SetAttribute("initialConfigFunction", secureInitializeUnit)
+			frame.initialConfigFunction = initializeUnit
+			frame.isHeaderFrame = true
+			frame.unitType = type
+			frame.unitMappedType = type
+			frame.splitParent = type
+			frame.groupID = id
+			--frame:SetBackdrop({bgFile = "Interface\\ChatFrame\\ChatFrameBackground", edgeFile = "Interface\\ChatFrame\\ChatFrameBackground", edgeSize = 1})
+			--frame:SetBackdropBorderColor(1, 0, 0, 1)
+			--frame:SetBackdropColor(0, 0, 0, 0)
+			
+			frame.number = frame:CreateFontString(nil, "ARTWORK")
+			frame.number:SetShadowColor(0, 0, 0, 1.0)
+			frame.number:SetShadowOffset(0.80, -0.80)
+			frame.number:SetJustifyH("CENTER")
+			
+			frame:HookScript("OnSizeChanged",checkForGroupNumber)
+			
+			frame:SetAttribute("style-height", config.height)
+			frame:SetAttribute("style-width", config.width)
+			frame:SetAttribute("style-scale", config.scale)
+			
+			if( ClickCastHeader ) then
+				-- the OnLoad adds the functions like SetFrameRef to the header
+				SecureHandler_OnLoad(frame)
+				frame:SetFrameRef("clickcast_header", ClickCastHeader)
 			end
 			
-			frame:Show()
+			headerFrames["raid" .. id] = frame
+			
+			setupRaidStateMonitor(id, frame)
+		end
+		if( enabled ) then
 			
 			checkForGroupNumber(frame,frame:GetWidth(),frame:GetHeight())
 			frame.number:SetFont(LunaUF.Layout:LoadMedia(SML.MediaType.FONT, LunaUF.db.profile.units.raid.font), LunaUF.db.profile.units.raid.fontsize)
@@ -970,15 +963,9 @@ function Units:LoadRaidGroupHeader(type)
 			frame:SetAttribute("xMod", xMod)
 			frame:SetAttribute("yMod", yMod)
 			
-			self:SetHeaderAttributes(frame, type)
-			
-			LunaUF.Layout:AnchorFrame(frame, LunaUF.db.profile.units.raid.positions[id])
-			
-			setupRaidStateMonitor(id, frame)
-			
-		elseif( frame ) then
-			frame:Hide()
 		end
+		LunaUF.Layout:AnchorFrame(frame, LunaUF.db.profile.units.raid.positions[id])
+		self:SetHeaderAttributes(frame, type)
 	end
 	
 end
@@ -991,13 +978,6 @@ function Units:LoadGroupHeader(type)
 
 		if( (type == "party" or type == "partypet" or type == "partytarget") and stateMonitor[type] ) then
 			stateMonitor[type]:SetAttribute("partyDisabled", nil)
-		end
-		
-		if( type == "raid" ) then
-			for id, monitor in pairs(stateMonitor.raids) do
-				monitor:SetAttribute("hideSemiRaid", LunaUF.db.profile.units.raid.hideSemiRaid)
-				monitor:SetAttribute("raidDisabled", id >= 0 and true or nil)
-			end
 		end
 
 		if( type == "party" or type == "raid" ) then

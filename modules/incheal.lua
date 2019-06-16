@@ -135,7 +135,6 @@ function IncHeal:Update(frame)
 	local amount = (HealComm:GetHealAmount(frame.unitGUID, HealComm.ALL_HEALS) or 0) * (HealComm:GetHealModifier(frame.unitGUID) or 1)
 	frame.incomingHeal = amount
 	if( not frame.visibility.incHeal or not frame.visibility.healthBar ) then return end
-
 	self:PositionBar(frame, amount)
 end
 

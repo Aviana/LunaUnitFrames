@@ -111,6 +111,7 @@ function Layout:Reload(unit)
 			frame:CheckModules()
 			self:Load(frame)
 			frame:FullUpdate()
+--			LunaUF.Tags:SetupText(frame, LunaUF.db.profile.units[frame.unitType])
 		end
 	end
 
