@@ -70,31 +70,30 @@ local function updateFrame(casterID, spellID)
 end
 
 local function combatlogEvent()
-	local _, event, _, casterID, _, _, _, targetID, _, _, _, spellID = CombatLogGetCurrentEventInfo()
+	local _, event, _, casterID, _, _, _, targetID, _, _, _, spellID, _, _, extra_spell_id = CombatLogGetCurrentEventInfo()
 	local name, rank, icon, castTime = GetSpellInfo(spellID)
 
-	if interruptIDs[name] and currentCasts[targetID] then
+	if event ~= "SPELL_MISSED" and interruptIDs[name] and currentCasts[targetID] then
 		spellID = currentCasts[targetID].spellID
 		currentCasts[targetID] = nil
 		updateFrame(targetID, spellID)
 		return
 	end
 
---	if event == "SPELL_CAST_FAILED" and currentCasts[casterID] then
---		currentCasts[casterID] = nil
---		updateFrame(casterID, spellID)
-	if event == "SPELL_CAST_START" then
+	if event == "SPELL_INTERRUPT" and currentCasts[casterID] then
+		currentCasts[casterID] = nil
+		updateFrame(casterID, extra_spell_id)
+	elseif event == "SPELL_CAST_START" then
 		if casterID == UnitGUID("player") and name == GetSpellInfo(19434) then
-			Cast:UpdateCast(_G["LUFUnitplayer"], "player", nil, name, nil, icon, GetTime(), GetTime()+castTime+500, nil, nil, spellID)
+			Cast:UpdateCast(_G["LUFUnitplayer"], "player", nil, name, nil, icon, GetTime()*1000, GetTime()*1000+castTime+500, nil, nil, spellID)
 			return
 		elseif casterID == UnitGUID("player") and name == GetSpellInfo(2643) then
-			Cast:UpdateCast(_G["LUFUnitplayer"], "player", nil, name, nil, icon, GetTime(), GetTime()+500, nil, nil, spellID)
+			Cast:UpdateCast(_G["LUFUnitplayer"], "player", nil, name, nil, icon, GetTime()*1000, GetTime()*1000+500, nil, nil, spellID)
 		end
 		if castTime and castTime > 0 then
 			currentCasts[casterID] = {
 				["spellID"] = spellID,
 				["name"] = name,
-				["rank"] = rank,
 				["icon"] = icon,
 				["castTime"] = castTime,
 				["startTime"] = GetTime() * 1000,
@@ -108,7 +107,6 @@ local function combatlogEvent()
 			currentCasts[casterID] = {
 				["spellID"] = spellID,
 				["name"] = name,
-				["rank"] = rank,
 				["icon"] = icon,
 				["castTime"] = castTime,
 				["startTime"] = GetTime() * 1000,
@@ -117,7 +115,10 @@ local function combatlogEvent()
 			}
 			updateFrame(casterID)
 		elseif currentCasts[casterID] then
-			updateFrame(casterID, currentCasts[casterID].spellID)
+			if currentCasts[casterID].endTime > (GetTime() * 1000) then
+				updateFrame(casterID, currentCasts[casterID].spellID)
+			end
+			currentCasts[casterID] = nil
 		end
 	end
 end
@@ -403,7 +404,7 @@ function Cast:UpdateCast(frame, unit, channelled, spell, displayName, icon, star
 	cast.startTime = startTime / 1000
 	cast.endTime = endTime / 1000
 	cast.endSeconds = cast.endTime - cast.startTime
-	cast.elapsed = cast.isChannelled and cast.endSeconds or 0
+	cast.elapsed = cast.isChannelled and (cast.endTime - GetTime()) or (GetTime() - cast.startTime)
 	cast.spellName = spell
 	cast.spellID = spellID
 	cast.pushback = 0

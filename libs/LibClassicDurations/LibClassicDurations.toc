@@ -1,6 +1,6 @@
 ## Interface: 11302
 ## Title: LibClassicDurations
-## Version: @project-version@
+## Version: 1.6
 ## Author: d87
 
 LibStub\LibStub.lua

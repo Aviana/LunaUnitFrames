@@ -3,7 +3,7 @@ LunaUF:RegisterModule(Auras, "auras", LunaUF.L["Auras"])
 local L = LunaUF.L
 
 local lCD = LibStub("LibClassicDurations")
-lCD:RegisterFrame(LunaUF)
+lCD:Register(LunaUF)
 
 local mainEnchant, offEnchant, timeElapsed = {timeLeft = 0}, {timeLeft = 0}, 0
 
@@ -221,7 +221,7 @@ function Auras:UpdateFrames(frame)
 	for i,button in ipairs(frame.auras.buffbuttons.buttons) do
 		if i < 33 then
 			name, texture, count, auraType, duration, endTime, caster, _, _, spellID = UnitAura(frame.unit, i, "HELPFUL")
-			if not duration or duration == 0 then
+			if (not duration or duration == 0) and spellID then
 				local Newduration, NewendTime = lCD:GetAuraDurationByUnit(frame.unit, spellID, caster)
 				duration = Newduration or duration
 				endTime = NewendTime or endTime
@@ -326,7 +326,7 @@ function Auras:UpdateFrames(frame)
 	end
 	for i,button in ipairs(frame.auras.debuffbuttons.buttons) do
 		name, texture, count, auraType, duration, endTime, caster, _, _, spellID = UnitAura(frame.unit, i, "HARMFUL")
-		if not duration or duration == 0 then
+		if (not duration or duration == 0) and spellID then
 			local Newduration, NewendTime = lCD:GetAuraDurationByUnit(frame.unit, spellID, caster)
 			duration = Newduration or duration
 			endTime = NewendTime or endTime

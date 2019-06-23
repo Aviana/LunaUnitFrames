@@ -1,13 +1,13 @@
 --[[
 Name: LibClassicHealComm-1.0
-Revision: $Revision: 11 $
+Revision: $Revision: 12 $
 Author(s): Aviana, Original by Shadowed (shadowed.wow@gmail.com)
 Description: Healing communication library. This is a heavily modified clone of LibHealComm-4.0.
 Dependencies: LibStub, ChatThrottleLib
 ]]
 
 local major = "LibClassicHealComm-1.0"
-local minor = 11
+local minor = 12
 assert(LibStub, string.format("%s requires LibStub.", major))
 
 local HealComm = LibStub:NewLibrary(major, minor)
@@ -56,22 +56,23 @@ local activeHots, activePets = HealComm.activeHots, HealComm.activePets
 
 -- Figure out what they are now since a few things change based off of this
 local playerClass = select(2, UnitClass("player"))
-local isHealerClass = playerClass == "DRUID" or playerClass == "PRIEST" or playerClass == "SHAMAN" or playerClass == "PALADIN"
-
---strsub(UnitGUID("player"), 8, 11) .. strsub(UnitGUID("player"), 13)
+local isHealerClass = playerClass == "DRUID" or playerClass == "PRIEST" or playerClass == "SHAMAN" or playerClass == "PALADIN" or playerClass == "HUNTER"
 
 if( not HealComm.compressGUID ) then
 
 	HealComm.compressGUID = setmetatable({}, {
 		__index = function(tbl, guid)
 			local str
-			if strsub(guid,1,3) == "Pet" then
+			if strsub(guid,1,6) ~= "Player" then
 				for unit,pguid in pairs(activePets) do
 					if pguid == guid then
 						str = "p-" .. string.match(UnitGUID(unit), "^%w*-([-%w]*)$")
 					end
 				end
-				if not str then return nil end
+				if not str then
+					--assert(str, "Could not encode: "..guid)
+					return nil
+				end
 			else
 				str = string.match(guid, "^%w*-([-%w]*)$")
 			end
@@ -1045,6 +1046,37 @@ if( playerClass == "SHAMAN" ) then
 	end
 end
 
+if( playerClass == "HUNTER" ) then
+	LoadClassData = function()
+		-- Spell data
+		
+		local MendPet = GetSpellInfo(136)
+		spellData[136] = {interval = 1, level = 12, ticks = 5, average = 100}
+		spellData[3111] = {interval = 1, level = 20, ticks = 5, average = 190}
+		spellData[3661] = {interval = 1, level = 28, ticks = 5, average = 340}
+		spellData[3662] = {interval = 1, level = 36, ticks = 5, average = 515}
+		spellData[13542] = {interval = 1, level = 44, ticks = 5, average = 710}
+		spellData[13543] = {interval = 1, level = 52, ticks = 5, average = 945}
+		spellData[13544] = {interval = 1, level = 60, ticks = 5, average = 1225}
+		
+		itemSetsData["Giantstalker"] = {16851, 16849, 16850, 16845, 16848, 16852, 16846, 16847}
+		
+		GetHealTargets = function(bitType, guid, healAmount, spellID)
+			return compressGUID[UnitGUID("pet")], healAmount
+		end
+
+		CalculateHotHealing = function(guid, spellID)
+			return HOT_HEALS, 0, 0
+		end
+
+		CalculateHealing = function(guid, spellID)
+			local amount = spellData[spellID].average
+			if( equippedSetCache["Giantstalker"] >= 3 ) then amount = amount * 1.1 end
+			return CHANNEL_HEALS, math.ceil(amount / spellData[spellID].ticks), spellData[spellID].ticks, spellData[spellID].ticks
+		end
+	end
+end
+
 -- Healing modifiers
 if( not HealComm.aurasUpdated ) then
 	HealComm.aurasUpdated = true
@@ -1295,7 +1327,7 @@ local function parseChannelHeal(casterGUID, spellID, amount, totalTicks, ...)
 	pending.endTime = endTime / 1000
 	pending.duration = math.max(0, pending.endTime - pending.startTime)
 	pending.totalTicks = totalTicks
-	pending.tickInterval = 2
+	pending.tickInterval = playerClass == "DRUID" and 2 or 1
 	pending.spellID = spellID
 	pending.isMultiTarget = select("#", ...) > 1
 	pending.bitType = CHANNEL_HEALS
@@ -1565,7 +1597,9 @@ function HealComm:COMBAT_LOG_EVENT_UNFILTERED()
 		-- Hot faded that we cast 
 		if( hotData[spellID] and bit.band(sourceFlags, COMBATLOG_OBJECT_AFFILIATION_MINE) == COMBATLOG_OBJECT_AFFILIATION_MINE ) then
 			parseHealEnd(sourceGUID, nil, "id", spellID, false, compressGUID[destGUID])
-			sendMessage(string.format("HS::%d::%s", spellID, compressGUID[destGUID]))
+			if compressGUID[destGUID] then
+				sendMessage(string.format("HS::%d::%s", spellID, compressGUID[destGUID]))
+			end
 		end
 	end
 end
@@ -2003,6 +2037,7 @@ function HealComm:OnInitialize()
 	self.eventFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
 	self.eventFrame:RegisterEvent("UNIT_SPELLCAST_DELAYED")
 	self.eventFrame:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
+	self.eventFrame:RegisterEvent("UNIT_PET")
 	self.eventFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
 	self.eventFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 	self.eventFrame:RegisterEvent("CHARACTER_POINTS_CHANGED")
