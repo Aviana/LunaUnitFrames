@@ -6,8 +6,6 @@ FOR THE 1.12.1 VERSION SELECT IT FROM THE BRANCH MENU
 THIS IS STILL BETA! THERE COULD STILL BE STUFF BROKEN! REPORT BUGS!
 This is LunaUnitFrames 3.
 
-Due to the interface code not being cleaned up PARTY & RAID frames are BROKEN!
-Please disable them and use the default ones for now.
 
 This Addon supports RealMobHealth.
 https://www.wowinterface.com/downloads/info24924-RealMobHealth.html
