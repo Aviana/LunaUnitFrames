@@ -1,13 +1,13 @@
 --[[
 Name: LibClassicHealComm-1.0
-Revision: $Revision: 12 $
+Revision: $Revision: 13 $
 Author(s): Aviana, Original by Shadowed (shadowed.wow@gmail.com)
 Description: Healing communication library. This is a heavily modified clone of LibHealComm-4.0.
 Dependencies: LibStub, ChatThrottleLib
 ]]
 
 local major = "LibClassicHealComm-1.0"
-local minor = 12
+local minor = 13
 assert(LibStub, string.format("%s requires LibStub.", major))
 
 local HealComm = LibStub:NewLibrary(major, minor)
@@ -1364,8 +1364,8 @@ local function parseHotHeal(casterGUID, wasUpdated, spellID, tickAmount, duratio
 	if( not tickAmount or not spellID or select("#", ...) == 0 ) then return end
 	-- Retrieve the hot information
 	local stack, spellDuration, endTime = findAura(casterGUID, spellID, ...)
-	spellDuration = spellDuration > 0 and spellDuration or duration
-	endTime = endTime > 0 and endTime or (GetTime() + spellDuration)
+	spellDuration = spellDuration and spellDuration > 0 and spellDuration or duration
+	endTime = endTime and endTime > 0 and endTime or (GetTime() + spellDuration)
 	if( not stack or not spellDuration or not endTime ) then return end
 
 	pendingHots[casterGUID] = pendingHots[casterGUID] or {}

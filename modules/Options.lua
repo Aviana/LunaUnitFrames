@@ -3565,10 +3565,10 @@ function LunaUF:CreateConfig()
 				args = {
 					enabled = {
 						name = L["Enable"],
-						desc = L["Currently disabled due to a blizzard bug"], --string.format(L["Enable the %s frame(s)"], L["party"]),
+						desc = string.format(L["Enable the %s frame(s)"], L["party"]),
 						type = "toggle",
 						order = 1,
-						disabled = true,--Lockdown,
+						disabled = Lockdown,
 						set = function(info, value) set(info, value) LunaUF:LoadUnits() LunaUF.modules.movers:Update() end,
 					},
 					headerGeneralOptions = {
@@ -3674,10 +3674,10 @@ function LunaUF:CreateConfig()
 					},
 					showPlayer = {
 						name = L["Show player"],
-						desc = L["Currently disabled due to a blizzard bug"], --L["Show player in the party frame."],
+						desc = L["Show player in the party frame."],
 						type = "toggle",
 						order = 2.91,
-						disabled = true,--Lockdown,
+						disabled = Lockdown,
 						set = function(info, value) set(info, value) LunaUF.Units:ReloadHeader("party") end,
 					},
 				},
@@ -3690,10 +3690,10 @@ function LunaUF:CreateConfig()
 				args = {
 					enabled = {
 						name = L["Enable"],
-						desc = L["Currently disabled due to a blizzard bug"], --string.format(L["Enable the %s frame(s)"], L["partytarget"]),
+						desc = string.format(L["Enable the %s frame(s)"], L["partytarget"]),
 						type = "toggle",
 						order = 1,
-						disabled = true,--Lockdown,
+						disabled = Lockdown,
 						set = function(info, value) set(info, value) LunaUF:LoadUnits() LunaUF.modules.movers:Update() end,
 					},
 					headerGeneralOptions = {
@@ -3806,10 +3806,10 @@ function LunaUF:CreateConfig()
 				args = {
 					enabled = {
 						name = L["Enable"],
-						desc = L["Currently disabled due to a blizzard bug"], --string.format(L["Enable the %s frame(s)"], L["partypet"]),
+						desc = string.format(L["Enable the %s frame(s)"], L["partypet"]),
 						type = "toggle",
 						order = 1,
-						disabled = true,--Lockdown,
+						disabled = Lockdown,
 						set = function(info, value) set(info, value) LunaUF:LoadUnits() LunaUF.modules.movers:Update() end,
 					},
 					headerGeneralOptions = {
@@ -3999,18 +3999,18 @@ function LunaUF:CreateConfig()
 					},
 					showParty = {
 						name = L["Show party"],
-						desc = L["Currently disabled due to a blizzard bug"], --L["Show a non raid party in the raid frame"],
+						desc = L["Show a non raid party in the raid frame"],
 						type = "toggle",
 						order = 2.34,
-						disabled = true, --Lockdown,
+						disabled = Lockdown,
 						set = function(info, value) set(info,value) LunaUF.Units:ReloadHeader("raid") end,
 					},
 					showSolo = {
 						name = L["Show solo"],
-						desc = L["Currently disabled due to a blizzard bug"], --L["Show raid frame when solo"],
+						desc = L["Show raid frame when solo"],
 						type = "toggle",
 						order = 2.35,
-						disabled = true, --Lockdown,
+						disabled = Lockdown,
 						set = function(info, value) set(info,value) LunaUF.Units:ReloadHeader("raid") end,
 					},
 					groupnumbers = {

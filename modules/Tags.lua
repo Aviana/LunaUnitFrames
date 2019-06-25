@@ -765,7 +765,8 @@ local defaultTags = {
 							end;
 	["casttime"]			= function(frame, unit)
 								local time
-								local delay = frame.castBar.bar.delay
+								local delay = frame.castBar.bar.pushback
+								delay = delay and math.floor(delay*100) / 100
 								if frame.castBar.bar.isChannelled then
 									time = math.floor(frame.castBar.bar.elapsed * 100) / 100
 									if delay and delay > 0 then

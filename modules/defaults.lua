@@ -769,7 +769,7 @@ function LunaUF:LoadDefaults()
 			anchorTo = "LUFUnittargettarget",
 		},
 		party = {
-			enabled = false,
+			enabled = true,
 			healthBar = { enabled = true, background = true, backgroundAlpha = 0.2, colorType = "class", reactionType="npc", height = 6, order = 10},
 			portrait = { enabled = true, type = "3D", alignment = "LEFT", width = 0.22, height = 4, order = 15, fullBefore = 0, fullAfter = 50},
 			castBar = { enabled = false, background = true, backgroundAlpha = 0.2, height = 3, icon = "HIDE", autoHide = true, order = 60},
@@ -1002,7 +1002,7 @@ function LunaUF:LoadDefaults()
 			anchorTo = "LUFHeaderparty",
 		},
 		partypet = {
-			enabled = false,
+			enabled = true,
 			healthBar = { enabled = true, background = true, backgroundAlpha = 0.2, colorType = "class", reactionType="npc", height = 6, order = 10},
 			portrait = {enabled = false, type = "3D", alignment = "LEFT", width = 0.22, height = 4, order = 15, fullBefore = 0, fullAfter = 50},
 			castBar = { enabled = false, background = true, backgroundAlpha = 0.2, height = 3, icon = "HIDE", autoHide = true, order = 60},

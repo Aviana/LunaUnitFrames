@@ -15,6 +15,10 @@ https://www.wowinterface.com/downloads/info24924-RealMobHealth.html
 Clickcasting:
 https://www.warcrafttavern.com/addons/clique/
 
+Numeric timers on auras:
+https://www.curseforge.com/wow/addons/omni-cc/files?filter-game-version=1738749986%3A67408
+
+
 This addon comes with LibClassicDurations integrated to view aura durations,
 
 Other features include:

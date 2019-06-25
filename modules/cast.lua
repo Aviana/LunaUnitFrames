@@ -1,8 +1,12 @@
 local Cast = {}
 local L = LunaUF.L
 local SML = LibStub:GetLibrary("LibSharedMedia-3.0")
+
+LunaUF:RegisterModule(Cast, "castBar", L["Cast bar"], true)
+
 local FADE_TIME = 0.30
 local currentCasts = {}
+local AimedDelay = 1
 local interruptIDs = {
 	[GetSpellInfo(1766)] = true, -- kick
 	[GetSpellInfo(6552)] = true, -- pummel
@@ -34,28 +38,26 @@ local interruptIDs = {
 	
 }
 local channelIDs = {
-	[GetSpellInfo(10)] = 7500,		--Blizzard
-	[GetSpellInfo(605)] = 3000,		--Mind Control
-	[GetSpellInfo(689)] = 4500,		--Drain Life
-	[GetSpellInfo(740)] = 9500,		--Tranquility
-	[GetSpellInfo(746)] = 7000,		--First Aid
-	[GetSpellInfo(755)] = 10000,	--Health Funnel
-	[GetSpellInfo(1002)] = 60000,	--Eyes of the Beast
-	[GetSpellInfo(1120)] = 14500,	--Drain Soul
-	[GetSpellInfo(1949)] = 15000,	--Hellfire
-	[GetSpellInfo(2096)] = 60000,	--Mind Vision
-	[GetSpellInfo(5138)] = 4500,	--Drain Mana
-	[GetSpellInfo(5143)] = 4500,	--Arcane Missiles
-	[GetSpellInfo(5740)] = 7500,	--Rain of Fire
-	[GetSpellInfo(6197)] = 60000,	--Eagle Eye
-	[GetSpellInfo(12051)] = 8000,	--Evocation
-	[GetSpellInfo(13278)] = 4000,	--Gnomish Death Ray
-	[GetSpellInfo(15407)] = 3000,	--Mind Flay
-	[GetSpellInfo(17401)] = 9500,	--Hurricane
-	[GetSpellInfo(20577)] = 10000,	--Cannibalize
+	[GetSpellInfo(10)] = 7.5,		--Blizzard
+	[GetSpellInfo(605)] = 3,		--Mind Control
+	[GetSpellInfo(689)] = 4.5,		--Drain Life
+	[GetSpellInfo(740)] = 9.5,		--Tranquility
+	[GetSpellInfo(746)] = 7,		--First Aid
+	[GetSpellInfo(755)] = 10,		--Health Funnel
+	[GetSpellInfo(1002)] = 60,		--Eyes of the Beast
+	[GetSpellInfo(1120)] = 14.5,	--Drain Soul
+	[GetSpellInfo(1949)] = 15,		--Hellfire
+	[GetSpellInfo(2096)] = 60,		--Mind Vision
+	[GetSpellInfo(5138)] = 4.5,		--Drain Mana
+	[GetSpellInfo(5143)] = 4.5,		--Arcane Missiles
+	[GetSpellInfo(5740)] = 7.5,		--Rain of Fire
+	[GetSpellInfo(6197)] = 60,		--Eagle Eye
+	[GetSpellInfo(12051)] = 8,		--Evocation
+	[GetSpellInfo(13278)] = 4,		--Gnomish Death Ray
+	[GetSpellInfo(15407)] = 3,		--Mind Flay
+	[GetSpellInfo(17401)] = 9.5,	--Hurricane
+	[GetSpellInfo(20577)] = 10,		--Cannibalize
 }
-
-LunaUF:RegisterModule(Cast, "castBar", L["Cast bar"], true)
 
 local function updateFrame(casterID, spellID)
 	for frame in pairs(LunaUF.Units.frameList) do
@@ -70,7 +72,7 @@ local function updateFrame(casterID, spellID)
 end
 
 local function combatlogEvent()
-	local _, event, _, casterID, _, _, _, targetID, _, _, _, spellID, _, _, extra_spell_id = CombatLogGetCurrentEventInfo()
+	local _, event, _, casterID, _, _, _, targetID, _, dstFlags, _, spellID, _, _, extra_spell_id, _, _, resisted, blocked, absorbed = CombatLogGetCurrentEventInfo()
 	local name, rank, icon, castTime = GetSpellInfo(spellID)
 
 	if event ~= "SPELL_MISSED" and interruptIDs[name] and currentCasts[targetID] then
@@ -80,24 +82,49 @@ local function combatlogEvent()
 		return
 	end
 
-	if event == "SPELL_INTERRUPT" and currentCasts[casterID] then
+	if event == "SWING_DAMAGE" or event == "ENVIRONMENTAL_DAMAGE" or event == "RANGE_DAMAGE" or event == "SPELL_DAMAGE" then
+		local cast = currentCasts[targetID]
+		if (not cast and targetID ~= UnitGUID("player")) or resisted or blocked or absorbed then return end
+		if bit.band(dstFlags, COMBATLOG_OBJECT_TYPE_PLAYER) > 0 then -- is player
+			if targetID ~= UnitGUID("player") then
+				if cast.channeled then
+					cast.endTime = cast.endTime - math.min(cast.delay, (GetTime() - cast.startTime))
+				else
+					cast.endTime = cast.endTime + math.min(cast.delay, (GetTime() - cast.startTime))
+				end
+				if cast.delay > 200 then
+					cast.delay = cast.delay - 200
+				end
+				updateFrame(targetID)
+			elseif _G["LUFUnitplayer"].castBar and _G["LUFUnitplayer"].castBar.bar.spellName == GetSpellInfo(19434) then
+				local delay = math.min(AimedDelay, GetTime() - _G["LUFUnitplayer"].castBar.bar.startTime)
+				Cast:UpdateDelay(_G["LUFUnitplayer"], 19434, "", nil , (_G["LUFUnitplayer"].castBar.bar.startTime + delay) * 1000, (_G["LUFUnitplayer"].castBar.bar.endTime + delay) * 1000)
+				if AimedDelay > 0.2 then
+					AimedDelay = AimedDelay - 0.2
+				end
+			end
+		end
+		return
+	elseif event == "SPELL_INTERRUPT" and currentCasts[casterID] then
 		currentCasts[casterID] = nil
 		updateFrame(casterID, extra_spell_id)
 	elseif event == "SPELL_CAST_START" then
 		if casterID == UnitGUID("player") and name == GetSpellInfo(19434) then
-			Cast:UpdateCast(_G["LUFUnitplayer"], "player", nil, name, nil, icon, GetTime()*1000, GetTime()*1000+castTime+500, nil, nil, spellID)
+			AimedDelay = 1
+			Cast:UpdateCast(_G["LUFUnitplayer"], "player", nil, name, nil, icon, GetTime()*1000, GetTime()*1000 + 3000, nil, nil, spellID)
 			return
 		elseif casterID == UnitGUID("player") and name == GetSpellInfo(2643) then
-			Cast:UpdateCast(_G["LUFUnitplayer"], "player", nil, name, nil, icon, GetTime()*1000, GetTime()*1000+500, nil, nil, spellID)
+			Cast:UpdateCast(_G["LUFUnitplayer"], "player", nil, name, nil, icon, GetTime()*1000, GetTime()*1000 + 500, nil, nil, spellID)
 		end
 		if castTime and castTime > 0 then
+			castTime = castTime / 1000
 			currentCasts[casterID] = {
 				["spellID"] = spellID,
 				["name"] = name,
 				["icon"] = icon,
-				["castTime"] = castTime,
-				["startTime"] = GetTime() * 1000,
-				["endTime"] = castTime + GetTime() * 1000
+				["startTime"] = GetTime(),
+				["endTime"] = castTime + GetTime(),
+				["delay"] = 1000,
 			}
 			updateFrame(casterID)
 		end
@@ -108,10 +135,10 @@ local function combatlogEvent()
 				["spellID"] = spellID,
 				["name"] = name,
 				["icon"] = icon,
-				["castTime"] = castTime,
-				["startTime"] = GetTime() * 1000,
-				["endTime"] = castTime + GetTime() * 1000,
+				["startTime"] = GetTime(),
+				["endTime"] = castTime + GetTime(),
 				["channeled"] = true,
+				["delay"] = 1000,
 			}
 			updateFrame(casterID)
 		elseif currentCasts[casterID] then
@@ -127,7 +154,7 @@ function Cast:OnEnable(frame)
 	if( not frame.castBar ) then
 		frame.castBar = CreateFrame("Frame", nil, frame)
 		frame.castBar.bar = LunaUF.Units:CreateBar(frame)
-		frame.castBar.bar:SetFrameLevel(1)
+		frame.castBar.bar:SetFrameLevel(2)
 		frame.castBar.background = frame.castBar.bar.background
 		frame.castBar.bar.parent = frame
 		
@@ -283,9 +310,9 @@ function Cast:UpdateCurrentCast(frame)
 	elseif( ChannelInfo() and frame.unitRealType == "player" ) then
 		local name, text, texture, startTime, endTime, isTradeSkill, notInterruptible, spellID = ChannelInfo()
 		self:UpdateCast(frame, frame.unit, true, name, text, texture, startTime, endTime, isTradeSkill, notInterruptible, spellID)
-	elseif frame.unitRealType ~= "player" and currentCasts[frame.unitGUID] and currentCasts[frame.unitGUID].endTime > (GetTime()*1000) and not UnitIsDeadOrGhost(frame.unit) then
+	elseif frame.unitRealType ~= "player" and currentCasts[frame.unitGUID] and currentCasts[frame.unitGUID].endTime > GetTime() and not UnitIsDeadOrGhost(frame.unit) then
 		local cast = currentCasts[frame.unitGUID]
-		self:UpdateCast(frame, frame.unit, cast.channeled, cast.name, "", cast.icon, cast.startTime, cast.endTime, nil, nil, cast.spellID)
+		self:UpdateCast(frame, frame.unit, cast.channeled, cast.name, "", cast.icon, cast.startTime * 1000, cast.endTime * 1000, nil, nil, cast.spellID)
 	else
 		if( LunaUF.db.profile.units[frame.unitRealType].castBar.autoHide ) then
 			LunaUF.Layout:SetBarVisibility(frame, "castBar", false)
@@ -365,7 +392,7 @@ function Cast:EventCastSucceeded(frame, unit, spell)
 end
 
 function Cast:UpdateDelay(frame, spell, displayName, icon, startTime, endTime)
-	if( not spell or not frame.castBar.bar.startTime ) then return end
+	if( not spell or not frame.castBar or not frame.castBar.bar.startTime ) then return end
 	local cast = frame.castBar.bar
 	startTime = startTime / 1000
 	endTime = endTime / 1000
@@ -387,7 +414,7 @@ end
 
 -- Update the actual bar
 function Cast:UpdateCast(frame, unit, channelled, spell, displayName, icon, startTime, endTime, isTradeSkill, notInterruptible, spellID)
-	if( not spell ) then return end
+	if( not spell or not frame.castBar ) then return end
 	local cast = frame.castBar.bar
 	if( LunaUF.db.profile.units[frame.unitType].castBar.autoHide ) then
 		LunaUF.Layout:SetBarVisibility(frame, "castBar", true)
