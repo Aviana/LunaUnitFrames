@@ -84,17 +84,13 @@ function Layout:SetBarVisibility(frame, key, status)
 	if( frame.secureLocked ) then return end
 
 	-- Show the bar if it wasn't already
-	if( status ) then
-		if ( not frame[key]:IsVisible() ) then
-			frame[key].visibilityManaged = true
-			frame[key]:Show()
-
-			LunaUF.Layout:PositionWidgets(frame, LunaUF.db.profile.units[frame.unitType])
-		end
+	if( status and not frame[key]:IsShown() ) then
+		frame[key].visibilityManaged = true
+		frame[key]:Show()
+		LunaUF.Layout:PositionWidgets(frame, LunaUF.db.profile.units[frame.unitType])
 
 	-- Hide the bar if it wasn't already
-	elseif( not status and frame[key]:IsVisible() ) then
-
+	elseif( not status and frame[key]:IsShown() ) then
 		frame[key].visibilityManaged = nil
 		frame[key]:Hide()
 		LunaUF.Layout:PositionWidgets(frame, LunaUF.db.profile.units[frame.unitType])
@@ -111,7 +107,6 @@ function Layout:Reload(unit)
 			frame:CheckModules()
 			self:Load(frame)
 			frame:FullUpdate()
---			LunaUF.Tags:SetupText(frame, LunaUF.db.profile.units[frame.unitType])
 		end
 	end
 
