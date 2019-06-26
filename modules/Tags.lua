@@ -889,9 +889,9 @@ function Tags:SetupText(frame, config)
 			if frame[barkey] then
 				frame.fontstrings[barkey] = frame.fontstrings[barkey] or {}
 				local bar = frame.fontstrings[barkey]
-				bar["left"] = bar["left"] or frame[barkey] and frame[barkey]:CreateFontString(nil, "ARTWORK")
-				bar["center"] = bar["center"] or frame[barkey] and frame[barkey]:CreateFontString(nil, "ARTWORK")
-				bar["right"] = bar["right"] or frame[barkey] and frame[barkey]:CreateFontString(nil, "ARTWORK")
+				bar["left"] = bar["left"] or frame[barkey] and (frame[barkey].bar and frame[barkey].bar:CreateFontString(nil, "ARTWORK") or frame[barkey]:CreateFontString(nil, "ARTWORK"))
+				bar["center"] = bar["center"] or frame[barkey] and (frame[barkey].bar and frame[barkey].bar:CreateFontString(nil, "ARTWORK") or frame[barkey]:CreateFontString(nil, "ARTWORK"))
+				bar["right"] = bar["right"] or frame[barkey] and (frame[barkey].bar and frame[barkey].bar:CreateFontString(nil, "ARTWORK") or frame[barkey]:CreateFontString(nil, "ARTWORK"))
 				for align,fontstring in pairs(bar) do
 					fontstring:SetFont(LunaUF.Layout:LoadMedia(SML.MediaType.FONT, LunaUF.db.profile.units[frame.unitType].tags[barkey].font), barconfig.size)
 					fontstring:SetShadowColor(0, 0, 0, 1.0)
