@@ -696,7 +696,7 @@ function Units:CheckGroupVisibility()
 	if( party ) then
 		party:SetAttribute("showParty", true)
 		party:SetAttribute("showPlayer", LunaUF.db.profile.units.party.showPlayer)
-		party:SetAttribute("showSolo", LunaUF.db.profile.units.party.showPlayer)
+		party:SetAttribute("showSolo", LunaUF.db.profile.units.party.showPlayersolo)
 	end
 
 	if( partytarget ) then
@@ -1036,7 +1036,7 @@ function Units:LoadGroupHeader(type)
 		stateMonitor[type]:SetAttribute("hideSemiRaid", LunaUF.db.profile.units[type].hideSemiRaid)
 		stateMonitor[type]:SetAttribute("hideAnyRaid", LunaUF.db.profile.units[type].hideAnyRaid)
 		stateMonitor[type]:WrapScript(stateMonitor[type], "OnAttributeChanged", [[
-			if( name ~= "state-raidmonitor" and name ~= "partydisabled" and name ~= "hideanyraid" and name ~= "hidesemiraid" and name ~= "showPlayer" ) then return end
+			if( name ~= "state-raidmonitor" and name ~= "partydisabled" and name ~= "hideanyraid" and name ~= "hidesemiraid" and name ~= "showPlayer" and name ~= "showPlayersolo" ) then return end
 			if( self:GetAttribute("state-raidmonitor") == "combat" ) then return end
 			if( self:GetAttribute("partyDisabled") ) then return end
 			

@@ -3680,6 +3680,14 @@ function LunaUF:CreateConfig()
 						disabled = Lockdown,
 						set = function(info, value) set(info, value) LunaUF.Units:ReloadHeader("party") end,
 					},
+					showPlayersolo = {
+						name = L["Show solo"],
+						desc = L["Show player in the party frame when solo."],
+						type = "toggle",
+						order = 2.91,
+						disabled = Lockdown,
+						set = function(info, value) set(info, value) LunaUF.Units:ReloadHeader("party") end,
+					},
 				},
 			},
 			partytarget = {
