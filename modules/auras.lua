@@ -17,7 +17,11 @@ local magicColors = {
 
 local function updateTooltip(self)
 	if( not GameTooltip:IsForbidden() and GameTooltip:IsOwned(self) ) then
-		GameTooltip:SetUnitAura(self.unit, self.auraID, self.filter)
+		if( self.filter == "TEMP" ) then
+			GameTooltip:SetInventoryItem("player", self.auraID)
+		else
+			GameTooltip:SetUnitAura(self.unit, self.auraID, self.filter)
+		end
 	end
 end
 
@@ -28,7 +32,7 @@ local function showTooltip(self)
 	GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
 	if( self.filter == "TEMP" ) then
 		GameTooltip:SetInventoryItem("player", self.auraID)
-		self:SetScript("OnUpdate", nil)
+		self:SetScript("OnUpdate", updateTooltip)
 	else
 		GameTooltip:SetUnitAura(self.unit, self.auraID, self.filter)
 		self:SetScript("OnUpdate", updateTooltip)

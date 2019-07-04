@@ -2,6 +2,8 @@ local Squares = {}
 
 LunaUF:RegisterModule(Squares, "squares", LunaUF.L["Squares"])
 
+local lCD = LibStub("LibClassicDurations")
+
 local vex = LibStub("LibVexation-1.0", true)
 local canCure = LunaUF.Units.canCure
 local backdrop = {
@@ -13,7 +15,9 @@ local backdrop = {
 local positions = {
 	topright = "TOPRIGHT",
 	topleft = "TOPLEFT",
+	leftcenter = "LEFTCENTER",
 	center = "CENTER",
+	rightcenter = "RIGHTCENTER",
 	bottomright = "BOTTOMRIGHT",
 	bottomleft = "BOTTOMLEFT",
 }
@@ -95,7 +99,7 @@ function Squares:OnEnable(frame)
 			frame.squares.square[k]:SetBackdropColor(0,0,0)
 			frame.squares.square[k].texture = frame.squares.square[k]:CreateTexture(nil, "ARTWORK")
 			frame.squares.square[k].texture:SetAllPoints(frame.squares.square[k])
-			frame.squares.square[k].cd = CreateFrame("Cooldown", frame:GetName().."CD"..k, frame.squares , "CooldownFrameTemplate")
+			frame.squares.square[k].cd = CreateFrame("Cooldown", frame:GetName().."CD"..k, frame.squares.square[k] , "CooldownFrameTemplate")
 			frame.squares.square[k].cd:ClearAllPoints()
 			frame.squares.square[k].cd:SetPoint("TOPLEFT", frame.squares.square[k], "TOPLEFT")
 			frame.squares.square[k].cd:SetAllPoints(frame.squares.square[k])
@@ -105,11 +109,13 @@ function Squares:OnEnable(frame)
 			frame.squares.square[k].cd:SetSwipeColor(0, 0, 0, 0.8)
 			frame.squares.square[k].cd:Hide()
 		end
-		frame.squares.square["topleft"]:SetPoint("TOPLEFT", frame.squares, "TOPLEFT", 5, -5)
-		frame.squares.square["topright"]:SetPoint("TOPRIGHT", frame.squares, "TOPRIGHT", -5, -5)
-		frame.squares.square["bottomright"]:SetPoint("BOTTOMRIGHT", frame.squares, "BOTTOMRIGHT", -5, 5)
-		frame.squares.square["bottomleft"]:SetPoint("BOTTOMLEFT", frame.squares, "BOTTOMLEFT", 5, 5)
+		frame.squares.square["topright"]:SetPoint("TOPRIGHT", frame.squares, "TOPRIGHT", -1, -1)
+		frame.squares.square["topleft"]:SetPoint("TOPLEFT", frame.squares, "TOPLEFT", 1, -1)
+		frame.squares.square["leftcenter"]:SetPoint("RIGHT", frame.squares.square["center"], "LEFT", 0, 0)
 		frame.squares.square["center"]:SetPoint("CENTER", frame.squares, "CENTER", 0, 0)
+		frame.squares.square["rightcenter"]:SetPoint("LEFT", frame.squares.square["center"], "RIGHT", 0, 0)
+		frame.squares.square["bottomright"]:SetPoint("BOTTOMRIGHT", frame.squares, "BOTTOMRIGHT", -1, 1)
+		frame.squares.square["bottomleft"]:SetPoint("BOTTOMLEFT", frame.squares, "BOTTOMLEFT", 1, 1)
 	end
 	
 	frame:RegisterUnitEvent("UNIT_AURA", self, "Update")
@@ -147,7 +153,12 @@ function Squares:Update(frame)
 				square:Hide()
 			end
 		elseif config[pos].type == "aura" and config[pos].value then
-			local _, icon, _, debuffType, duration, expirationTime = checkAura(frame.unit, config[pos].value)
+			local _, icon, _, debuffType, duration, expirationTime, caster, _, _, spellID = checkAura(frame.unit, config[pos].value)
+			if (not duration or duration == 0) and spellID then
+				local Newduration, NewendTime = lCD:GetAuraDurationByUnit(frame.unit, spellID, caster)
+				duration = Newduration or duration
+				expirationTime = NewendTime or expirationTime
+			end
 			if icon then
 				square:Show()
 				if config[pos].texture then
@@ -168,7 +179,12 @@ function Squares:Update(frame)
 				square:Hide()
 			end
 		elseif config[pos].type == "ownaura" and config[pos].value then
-			local _, icon, _, debuffType, duration, expirationTime = checkAura(frame.unit, config[pos].value, true)
+			local _, icon, _, debuffType, duration, expirationTime, caster, _, _, spellID = checkAura(frame.unit, config[pos].value, true)
+			if (not duration or duration == 0) and spellID then
+				local Newduration, NewendTime = lCD:GetAuraDurationByUnit(frame.unit, spellID, "player")
+				duration = Newduration or duration
+				expirationTime = NewendTime or expirationTime
+			end
 			if icon then
 				square:Show()
 				if config[pos].texture then

@@ -60,7 +60,7 @@ end
 
 local function CheckRange(self, elapsed)
 	self.elapsed = self.elapsed + elapsed
-	if self.elapsed > 0.5 then
+	if self.elapsed > LunaUF.db.profile.range.frequency then
 		self.elapsed = 0
 		local frame = self:GetParent()
 		if measureDistance(frame.unit) <= LunaUF.db.profile.range.dist then

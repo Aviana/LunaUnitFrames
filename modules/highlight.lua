@@ -20,8 +20,10 @@ local function OnEnter(frame)
 		frame.highlight.hasMouseover = true
 		Highlight:Update(frame)
 	end
-		
-	frame.highlight.OnEnter(frame)
+
+	if frame.highlight.OnEnter then
+		frame.highlight.OnEnter(frame)
+	end
 end
 
 local function OnLeave(frame)
@@ -29,8 +31,10 @@ local function OnLeave(frame)
 		frame.highlight.hasMouseover = nil
 		Highlight:Update(frame)
 	end
-		
-	frame.highlight.OnLeave(frame)
+
+	if frame.highlight.OnLeave then
+		frame.highlight.OnLeave(frame)
+	end
 end
 
 function Highlight:OnEnable(frame)
@@ -44,43 +48,33 @@ function Highlight:OnEnable(frame)
 		frame.highlight.texture:SetTexture("Interface\\AddOns\\LunaUnitFrames\\media\\textures\\highlight")
 		frame.highlight.texture:SetPoint("CENTER", frame, "CENTER")
 		frame.highlight.texture:SetHorizTile(false)
+		frame.highlight.texture:SetAllPoints(frame)
 		frame.highlight:Hide()
 	end
 	
-	if( LunaUF.db.profile.units[frame.unitType].highlight.aggro ) then
-		frame:RegisterUpdateFunc(self, "UpdateThreat")
-	end
+	frame:RegisterUpdateFunc(self, "UpdateThreat")
 	
-	if( LunaUF.db.profile.units[frame.unitType].highlight.target and frame.unitType ~= "target" ) then
+	if( frame.unitType ~= "target" ) then
 		frame:RegisterNormalEvent("PLAYER_TARGET_CHANGED", self, "UpdateAttention")
 		frame:RegisterUpdateFunc(self, "UpdateAttention")
 	end
 
-	if( LunaUF.db.profile.units[frame.unitType].highlight.debuff ~= false ) then
-		frame:RegisterUnitEvent("UNIT_AURA", self, "UpdateAura")
-		frame:RegisterUpdateFunc(self, "UpdateAura")
-	end
+	frame:RegisterUnitEvent("UNIT_AURA", self, "UpdateAura")
+	frame:RegisterUpdateFunc(self, "UpdateAura")
 
-	if( LunaUF.db.profile.units[frame.unitType].highlight.mouseover and not frame.highlight.OnEnter ) then
+	if( not frame.highlight.OnEnter ) then
 		frame.highlight.OnEnter = frame.OnEnter
 		frame.highlight.OnLeave = frame.OnLeave
 		
 		frame.OnEnter = OnEnter
 		frame.OnLeave = OnLeave
 	end
-
-	if( LunaUF.db.profile.units[frame.unitType].highlight.rareMob or LunaUF.db.profile.units[frame.unitType].highlight.eliteMob ) then
-		frame:RegisterUnitEvent("UNIT_CLASSIFICATION_CHANGED", self, "UpdateClassification")
-		frame:RegisterUpdateFunc(self, "UpdateClassification")
-	end
 end
 
 function Highlight:OnLayoutApplied(frame)
 	if( frame.visibility.highlight ) then
-		self:OnDisable(frame)
-		self:OnEnable(frame)
-		frame.highlight.texture:SetHeight(frame:GetHeight()-10)
-		frame.highlight.texture:SetWidth(frame:GetWidth())
+--		self:OnDisable(frame)
+--		self:OnEnable(frame)
 	end
 end
 
@@ -129,12 +123,7 @@ function Highlight:UpdateThreat(frame)
 end
 
 function Highlight:UpdateAttention(frame)
-	frame.highlight.hasAttention = UnitIsUnit(frame.unit, "target") or nil
-	self:Update(frame)
-end
-
-function Highlight:UpdateClassification(frame)
-	frame.highlight.hasClassification = UnitClassification(frame.unit)
+	frame.highlight.hasAttention = LunaUF.db.profile.units[frame.unitType].highlight.target and UnitIsUnit(frame.unit, "target") or nil
 	self:Update(frame)
 end
 

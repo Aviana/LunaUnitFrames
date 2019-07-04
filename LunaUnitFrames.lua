@@ -4,7 +4,7 @@ LunaUF = select(2, ...)
 
 local L = LunaUF.L
 local ACR = LibStub("AceConfigRegistry-3.0", true)
-LunaUF.version = 3021
+LunaUF.version = 3022
 LunaUF.unitList = {"player", "pet", "pettarget", "target", "targettarget", "targettargettarget", "party", "partytarget", "partypet", "raid", "raidpet", "maintank", "maintanktarget", "mainassist", "mainassisttarget"}
 LunaUF.fakeUnits = {["targettarget"] = true, ["targettargettarget"] = true, ["pettarget"] = true, ["partytarget"] = true, ["maintanktarget"] = true, ["mainassisttarget"] = true}
 LunaUF.enabledUnits = {}
@@ -54,7 +54,6 @@ function LunaUF:ProfilesChanged()
 	
 	self:FireModuleEvent("OnProfileChange")
 	self:HideBlizzardFrames()
-	self.Layout:CheckMedia()
 	self.Units:ProfileChanged()
 	self:LoadUnits()
 	self.modules.movers:Update()

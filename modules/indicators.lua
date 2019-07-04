@@ -93,7 +93,7 @@ function Indicators:UpdateMasterLoot(frame)
 	local lootType, partyID, raidID = GetLootMethod()
 	if( lootType ~= "master" ) then
 		frame.indicators.masterLoot:Hide()
-	elseif( ( partyID and partyID == 0 and UnitIsUnit(frame.unit, "player") ) or ( partyID and partyID > 0 and UnitIsUnit(frame.unit, LunaUF.partyUnits[partyID]) ) or ( raidID and raidID > 0 and UnitIsUnit(frame.unit, LunaUF.raidUnits[raidID]) ) ) then
+	elseif( not LunaUF.db.profile.locked or ( partyID and partyID == 0 and UnitIsUnit(frame.unit, "player") ) or ( partyID and partyID > 0 and UnitIsUnit(frame.unit, LunaUF.partyUnits[partyID]) ) or ( raidID and raidID > 0 and UnitIsUnit(frame.unit, LunaUF.raidUnits[raidID]) ) ) then
 		frame.indicators.masterLoot:Show()
 	else
 		frame.indicators.masterLoot:Hide()
@@ -393,7 +393,7 @@ function Indicators:OnLayoutApplied(frame, config)
 					else
 						mod = -1
 					end
-					height = (0.0004166667*height*height) + (1.725*height) - 11.6666666667
+					height = (0.0004166667*height*height) + (1.725*height)
 					indicator:SetHeight(height)
 					indicator:SetWidth(height)
 					indicator:SetPoint("CENTER", frame, config.indicators.elite.side, mod*(frame:GetHeight()*0.375), 0)

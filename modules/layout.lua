@@ -1,6 +1,10 @@
 local Layout = {}
 local mediaRequired, anchoringQueued
-local backdropTbl = {insets = {}}
+	local backdrop = {
+		bgFile = "Chat Frame",
+		insets = { left = 0, right = 0, top = 0, bottom = 0 },
+		backdropColor = {r = 0, g = 0, b = 0, a = 0.80},
+	}
 local _G = getfenv(0)
 local SML = LibStub:GetLibrary("LibSharedMedia-3.0")
 
@@ -15,7 +19,6 @@ local defaultMedia = {
 
 -- Someone is using another mod that is forcing a media type for all mods using SML
 function Layout:MediaForced(mediaType)
-	self:CheckMedia()
 	self:Reload()
 end
 
@@ -31,34 +34,6 @@ function Layout:LoadMedia(type, name)
 	end
 	
 	return media
-end
-
--- Updates the background table
-local function updateBackdrop()
-	-- Update the backdrop table
-	local backdrop = {
-		tileSize = 1,
-		edgeSize = 5,
-		clip = 1,
-		inset = 3,
-		backgroundTexture = "Chat Frame",
-		backgroundColor = {r = 0, g = 0, b = 0, a = 0.80},
-		borderTexture = "None",
-		borderColor = {r = 0.30, g = 0.30, b = 0.50, a = 1},
-	}
-	backdropTbl.bgFile = LunaUF.Layout:LoadMedia(SML.MediaType.BACKGROUND, "Chat Frame")
-	if( LunaUF.Layout:LoadMedia(SML.MediaType.BORDER) ~= "Interface\\None" ) then backdropTbl.edgeFile = LunaUF.Layout:LoadMedia(SML.MediaType.BORDER) end
-	backdropTbl.tile = backdrop.tileSize > 0 and true or false
-	backdropTbl.edgeSize = backdrop.edgeSize
-	backdropTbl.tileSize = backdrop.tileSize
-	backdropTbl.insets.left = backdrop.inset
-	backdropTbl.insets.right = backdrop.inset
-	backdropTbl.insets.top = backdrop.inset
-	backdropTbl.insets.bottom = backdrop.inset
-end
-
-function Layout:CheckMedia()
-	updateBackdrop()
 end
 
 -- We might not have had a media we required at initial load, wait for it to load and then update everything when it does
@@ -99,7 +74,6 @@ end
 
 -- Frame changed somehow between when we first set it all up and now
 function Layout:Reload(unit)
-	updateBackdrop()
 
 	-- Now update them
 	for frame in pairs(LunaUF.Units.frameList) do
@@ -208,14 +182,13 @@ SML:Register(SML.MediaType.STATUSBAR, "Wisps", "Interface\\AddOns\\LunaUnitFrame
 function Layout:LoadSML()
 	SML.RegisterCallback(self, "LibSharedMedia_Registered", "MediaRegistered")
 	SML.RegisterCallback(self, "LibSharedMedia_SetGlobal", "MediaForced")
-	self:CheckMedia()
 end
 
 function Layout:AnchorFrame(frame, config)
 
 	local anchorTo = config.anchorTo or "UIParent"
-	local point = config.point or "TOPLEFT"
-	local relativePoint = config.relativePoint or "TOPLEFT"
+	local point = config.point or LunaUF.db.profile.units[frame.unitType].attribPoint or "TOPLEFT"
+	local relativePoint = config.relativePoint or LunaUF.db.profile.units[frame.unitType].attribPoint or "TOPLEFT"
 
 	if( anchorTo ~= "UIParent" ) then
 		-- The frame we wanted to anchor to doesn't exist yet, so will queue and wait for it to exist
@@ -226,11 +199,6 @@ function Layout:AnchorFrame(frame, config)
 			anchoringQueued = anchoringQueued or {}
 			anchoringQueued[frame] = true
 			
-			-- For the time being, will take over the frame we wanted to anchor to's position.
---			local unit = string.match(anchorTo, "LUFUnit(%w+)") or string.match(anchorTo, "LUFHeader(%w+)")
---			if( unit and LunaUF.db.profile.units[unit] ) then
---				self:AnchorFrame(frame, LunaUF.db.profile.positions[unit])
---			end
 			return
 		end
 	end
@@ -242,24 +210,25 @@ function Layout:AnchorFrame(frame, config)
 	
 	frame:ClearAllPoints()
 	frame:SetPoint(point, _G[anchorTo], relativePoint, (config.x / scale), (config.y / scale))
+
+	if( anchoringQueued ) then
+		for queued in pairs(anchoringQueued) do
+			if( queued.queuedName == frame:GetName() ) then
+				self:AnchorFrame(queued, queued.queuedConfig)
+
+				queued.queuedConfig = nil
+				queued.queuedName = nil
+				anchoringQueued[queued] = nil
+			end
+		end
+	end
 end
 
 -- Setup the main frame
 function Layout:SetupFrame(frame, config)
-	local backdrop = {
-		tileSize = 1,
-		edgeSize = 5,
-		clip = 1,
-		inset = 3,
-		backgroundTexture = "Chat Frame",
-		backgroundColor = {r = 0, g = 0, b = 0, a = 0.80},
-		borderTexture = "None",
-		borderColor = {r = 0.30, g = 0.30, b = 0.50, a = 1},
-	}
-	--local backdrop = ShadowUF.db.profile.backdrop
-	frame:SetBackdrop(backdropTbl)
-	frame:SetBackdropColor(backdrop.backgroundColor.r, backdrop.backgroundColor.g, backdrop.backgroundColor.b, backdrop.backgroundColor.a)
-	frame:SetBackdropBorderColor(backdrop.borderColor.r, backdrop.borderColor.g, backdrop.borderColor.b, backdrop.borderColor.a)
+	frame:SetBackdrop(backdrop)
+	frame:SetBackdropColor(backdrop.backdropColor.r, backdrop.backdropColor.g, backdrop.backdropColor.b, backdrop.backdropColor.a)
+--	frame:SetBackdropBorderColor(backdrop.borderColor.r, backdrop.borderColor.g, backdrop.borderColor.b, backdrop.borderColor.a)
 	
 	-- Prevent these from updating while in combat to prevent tainting
 	if( not InCombatLockdown() ) then
@@ -268,7 +237,7 @@ function Layout:SetupFrame(frame, config)
 		frame:SetScale(config.scale)
 
 		-- Let the frame clip closer to the edge, not using inset + clip as that lets you move it too far in
-		local clamp = backdrop.inset + 0.20
+		local clamp = 0.20
 		frame:SetClampRectInsets(clamp, -clamp, -clamp, clamp)
 		frame:SetClampedToScreen(true)
 
@@ -279,19 +248,6 @@ function Layout:SetupFrame(frame, config)
 		
 		if( not frame.ignoreAnchor ) then
 			self:AnchorFrame(frame, LunaUF.db.profile.units[frame.unitType])
-		end
-	end
-
-	-- Check if we had anything parented to us
-	if( anchoringQueued ) then
-		for queued in pairs(anchoringQueued) do
-			if( queued.queuedName == frame:GetName() ) then
-				self:AnchorFrame(queued, queued.queuedConfig)
-
-				queued.queuedConfig = nil
-				queued.queuedName = nil
-				anchoringQueued[queued] = nil
-			end
 		end
 	end
 end
@@ -386,7 +342,7 @@ function Layout:PositionWidgets(frame, config)
 	table.sort(barOrderV, sortOrder)
 
 	-- Now deal with setting the heights and figure out how large the portrait should be.
-	local clip = 4 --ShadowUF.db.profile.backdrop.inset + ShadowUF.db.profile.backdrop.clip
+	local clip = 1 --ShadowUF.db.profile.backdrop.inset + ShadowUF.db.profile.backdrop.clip
 	local clipDoubled = clip * 2
 	
 	local portraitOffset, portraitAlignment, portraitAnchor

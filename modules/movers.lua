@@ -6,6 +6,8 @@ local attributeBlacklist = {["showplayer"] = true, ["showraid"] = true, ["showpa
 local OnDragStop, OnDragStart, configEnv
 LunaUF:RegisterModule(Movers, "movers")
 
+local ACR = LibStub("AceConfigRegistry-3.0", true)
+
 local function getValue(func, unit, value)
 	unit = string.gsub(unit, "(%d+)", "")
 	if( unitConfig[func .. unit] == nil ) then unitConfig[func .. unit] = value end
@@ -287,6 +289,93 @@ function Movers:Disable()
 	self.isEnabled = nil
 end
 
+function Movers:SetFrame(frame)
+	local scale
+	local position = LunaUF.db.profile.units[frame.unitType]
+	local config = LunaUF.db.profile.units[frame.unitType]
+	if not position.x then
+		position = LunaUF.db.profile.units[frame.unitType].positions[frame.groupID]
+	end
+	local anchor = position.anchorTo and _G[position.anchorTo]
+
+	local point, anchorTo, relativePoint, x, y = frame:GetPoint()
+
+	if position.anchorTo ~= "UIParent" and not frame.isHeaderFrame then -- Working
+		if anchor.isHeaderFrame then
+			relativePoint = (LunaUF.db.profile.units[anchor.unitType].attribPoint == "TOP" or LunaUF.db.profile.units[anchor.unitType].attribPoint == "RIGHT") and "TOPRIGHT" or "BOTTOMLEFT"
+			point = "BOTTOMLEFT"
+			if relativePoint == "BOTTOMLEFT" then
+				x = ((frame:GetLeft()*frame:GetScale()) - anchor:GetLeft())/frame:GetScale()
+				y = ((frame:GetBottom()*frame:GetScale()) - anchor:GetBottom())/frame:GetScale()
+			else
+				x = ((frame:GetLeft()*frame:GetScale()) - anchor:GetRight())/frame:GetScale()
+				y = ((frame:GetBottom()*frame:GetScale()) - anchor:GetTop())/frame:GetScale()
+			end
+			scale = 1
+		else
+			x = (frame:GetLeft()*frame:GetScale()) - (anchor:GetLeft()*anchor:GetScale())
+			y = (frame:GetTop()*frame:GetScale()) - (anchor:GetTop()*anchor:GetScale())
+			x = x / frame:GetScale()
+			y = y / frame:GetScale()
+			point = "TOPLEFT"
+			relativePoint = "TOPLEFT"
+			scale = 1
+		end
+	elseif position.anchorTo ~= "UIParent" and frame.isHeaderFrame then --working Header to header, header to frame broken
+		if anchor.isHeaderFrame then
+			relativePoint = (LunaUF.db.profile.units[anchor.unitType].attribPoint == "TOP" or LunaUF.db.profile.units[anchor.unitType].attribPoint == "RIGHT") and "TOPRIGHT" or "BOTTOMLEFT"
+		else
+			relativePoint = "BOTTOMLEFT"
+		end
+		point = (config.attribPoint == "TOP" or config.attribPoint == "RIGHT") and "TOPRIGHT" or "BOTTOMLEFT"
+		if relativePoint == "BOTTOMLEFT" then
+			if point == "BOTTOMLEFT" then
+				x = (frame:GetLeft() - anchor:GetLeft()*anchor:GetScale())
+				y = (frame:GetBottom() - anchor:GetBottom()*anchor:GetScale())
+			else
+				x = (frame:GetRight() - anchor:GetLeft()*anchor:GetScale())
+				y = (frame:GetTop() - anchor:GetBottom()*anchor:GetScale())
+			end
+		else
+			if point == "BOTTOMLEFT" then
+				x = frame:GetLeft() - anchor:GetRight()
+				y = frame:GetBottom() - anchor:GetTop()
+			else
+				x = -(GetScreenWidth() - frame:GetRight()) + (GetScreenWidth() - anchor:GetRight())
+				y = -((768 / UIParent:GetScale()) - frame:GetTop()) + ((768 / UIParent:GetScale()) - anchor:GetTop())
+			end
+		end
+		scale = 1
+	elseif position.anchorTo == "UIParent" and frame.isHeaderFrame then -- working
+		if config.attribPoint == "BOTTOM" or config.attribPoint == "LEFT" then
+			x = frame:GetLeft()
+			y = frame:GetBottom()
+			point = "BOTTOMLEFT"
+			relativePoint = "BOTTOMLEFT"
+		else
+			x = -(GetScreenWidth() - frame:GetRight())
+			y = -((768 / UIParent:GetScale()) - frame:GetTop())
+			point = "TOPRIGHT"
+			relativePoint = "TOPRIGHT"
+		end
+		scale = (frame:GetScale() * UIParent:GetScale())
+	else --working
+		x = frame:GetLeft()
+		y = frame:GetBottom()
+		point = "BOTTOMLEFT"
+		relativePoint = "BOTTOMLEFT"
+		scale = (frame:GetScale() * UIParent:GetScale())
+	end
+
+
+	position.x = x * scale
+	position.y = y * scale
+	position.point = point
+	position.relativePoint = relativePoint
+	--ChatFrame1:AddMessage("Anchoring "..frame:GetName().."'s "..point.." to "..position.anchorTo.."'s "..relativePoint.." with offset x: "..position.x.." y: "..position.y)
+	LunaUF.Layout:AnchorFrame(frame, position)
+end
+
 OnDragStart = function(self)
 	if( not self:IsMovable() ) then return end
 	
@@ -306,45 +395,10 @@ OnDragStop = function(self)
 
 	self.isMoving = nil
 	self:StopMovingOrSizing()
-	
-	-- When dragging the frame around, Blizzard changes the anchoring based on the closet portion of the screen
-	-- When a widget is near the top left it uses top left, near the left it uses left and so on, which messes up positioning for header frames
-	local scale = (self:GetScale() * UIParent:GetScale()) or 1
-	local position = LunaUF.db.profile.units[self.unitType]
-	if not position.x then
-		position = LunaUF.db.profile.units[self.unitType].positions[self.groupID]
-	end
-	local anchor = position.anchorTo and _G[position.anchorTo]
 
-	local point, anchorTo, relativePoint, x, y = self:GetPoint()
-
-	if position.anchorTo ~= "UIParent" then
-		x = (self:GetLeft()*self:GetScale()) - (anchor:GetLeft()*anchor:GetScale())
-		y = (self:GetTop()*self:GetScale()) - (anchor:GetTop()*anchor:GetScale())
-		if not self.isHeaderFrame then
-			x = x / self:GetScale()
-			y = y / self:GetScale()
-		end
-		point = "TOPLEFT"
-		relativePoint = "TOPLEFT"
-		scale = 1
-	elseif anchorTo then
-		x = 0
-		y = 0
-		point = "CENTER"
-		relativePoint = "CENTER"
-	end
-
-
-	position.x = x * scale
-	position.y = y * scale
-	position.point = point
-	position.relativePoint = relativePoint
-
-	LunaUF.Layout:AnchorFrame(self, position)
+	Movers:SetFrame(self)
 
 	-- Notify the configuration it can update itself now
-	local ACR = LibStub("AceConfigRegistry-3.0", true)
 	if( ACR ) then
 		ACR:NotifyChange("LunaUnitFrames")
 	end

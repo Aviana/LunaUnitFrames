@@ -332,10 +332,10 @@ local function CheckModules(self)
 			local enabled = LunaUF.db.profile.units[self.unitType][key].enabled
 			
 			-- These modules have mini-modules, the entire module should be enabled if at least one is enabled, and disabled if all are disabled
-			if( key == "auras" or key == "indicators" or key == "highlight" or key == "squares" ) then
+			if( key == "auras" or key == "indicators" or key == "squares" or key == "highlight" or key == "borders" ) then
 				enabled = nil
 				for _, option in pairs(LunaUF.db.profile.units[self.unitType][key]) do
-					if( type(option) == "table" and option.enabled or option == true ) then
+					if( type(option) == "table" and option.enabled or option == true or option == false) then
 						enabled = true
 						break
 					end
@@ -369,9 +369,9 @@ local function CheckModules(self)
 	end
 end
 
-local function checkForGroupNumber(self,x,y)
+local function checkForGroupNumber(self)
 	if LunaUF.db.profile.units.raid.groupnumbers then
-		if x > 1 and y > 1 or not LunaUF.db.profile.locked then
+		if self:GetWidth() > 1 and self:GetHeight() > 1 or not LunaUF.db.profile.locked then
 			self.number:Show()
 			return
 		end
@@ -734,14 +734,13 @@ function Units:SetHeaderAttributes(frame, type)
 			frame.number:SetFont(LunaUF.Layout:LoadMedia(SML.MediaType.FONT, LunaUF.db.profile.units.raid.font), LunaUF.db.profile.units.raid.fontsize)
 			frame.number:SetText(L["Pet"])
 			
-			local dir = LunaUF.growthDirMap[(raidconfig.attribPoint..raidconfig.attribAnchorPoint)]
-			if dir == "left" then
+			if raidconfig.attribPoint == "RIGHT" then
 				frame.number:ClearAllPoints()
 				frame.number:SetPoint("LEFT", frame, "RIGHT")
-			elseif dir == "right" then
+			elseif raidconfig.attribPoint == "LEFT" then
 				frame.number:ClearAllPoints()
 				frame.number:SetPoint("RIGHT", frame, "LEFT")
-			elseif dir == "up" then
+			elseif raidconfig.attribPoint == "BOTTOM" then
 				frame.number:ClearAllPoints()
 				frame.number:SetPoint("TOP", frame, "BOTTOM")
 			else
@@ -756,6 +755,7 @@ function Units:SetHeaderAttributes(frame, type)
 		frame:SetAttribute("columnSpacing", config.columnSpacing)
 		frame:SetAttribute("columnAnchorPoint", config.attribAnchorPoint)
 		frame:SetAttribute("groupFilter", filter or "1,2,3,4,5,6,7,8")
+		frame:SetAttribute("roleFilter", config.roleFilter)
 
 		if( config.groupBy == "CLASS" ) then
 			frame:SetAttribute("groupingOrder", "DRUID,HUNTER,MAGE,PALADIN,PRIEST,ROGUE,SHAMAN,WARLOCK,WARRIOR")
@@ -795,6 +795,18 @@ function Units:SetHeaderAttributes(frame, type)
 		end
 	end
 
+	local xMod = config.attribPoint == "LEFT" and 1 or config.attribPoint == "RIGHT" and -1 or 0
+	local yMod = config.attribPoint == "TOP" and -1 or config.attribPoint == "BOTTOM" and 1 or 0
+	
+	frame:SetAttribute("point", config.attribPoint)
+	frame:SetAttribute("sortMethod", config.sortMethod)
+	frame:SetAttribute("sortDir", config.sortOrder)
+	
+	frame:SetAttribute("xOffset", offset * xMod)
+	frame:SetAttribute("yOffset", offset * yMod)
+	frame:SetAttribute("xMod", xMod)
+	frame:SetAttribute("yMod", yMod)
+
 	if( not InCombatLockdown() and headerUnits[type] and frame.shouldReset ) then
 		-- Children no longer have ClearAllPoints() called on them before they are repositioned
 		-- this tries to stop it from bugging out by clearing it then forcing it to reposition everything
@@ -814,18 +826,6 @@ function Units:SetHeaderAttributes(frame, type)
 			frame:Show()
 		end
 	end
-
-	local xMod = config.attribPoint == "LEFT" and 1 or config.attribPoint == "RIGHT" and -1 or 0
-	local yMod = config.attribPoint == "TOP" and -1 or config.attribPoint == "BOTTOM" and 1 or 0
-	
-	frame:SetAttribute("point", config.attribPoint)
-	frame:SetAttribute("sortMethod", config.sortMethod)
-	frame:SetAttribute("sortDir", config.sortOrder)
-	
-	frame:SetAttribute("xOffset", offset * xMod)
-	frame:SetAttribute("yOffset", offset * yMod)
-	frame:SetAttribute("xMod", xMod)
-	frame:SetAttribute("yMod", yMod)
 
 	frame.shouldReset = true
 end
@@ -904,15 +904,16 @@ function Units:LoadRaidGroupHeader(type)
 			frame.unitMappedType = type
 			frame.splitParent = type
 			frame.groupID = id
-			--frame:SetBackdrop({bgFile = "Interface\\ChatFrame\\ChatFrameBackground", edgeFile = "Interface\\ChatFrame\\ChatFrameBackground", edgeSize = 1})
-			--frame:SetBackdropBorderColor(1, 0, 0, 1)
-			--frame:SetBackdropColor(0, 0, 0, 0)
+--			frame:SetBackdrop({bgFile = "Interface\\ChatFrame\\ChatFrameBackground", edgeFile = "Interface\\ChatFrame\\ChatFrameBackground", edgeSize = 1})
+--			frame:SetBackdropBorderColor(1, 0, 0, 1)
+--			frame:SetBackdropColor(0, 0, 0, 0)
 			
 			frame.number = frame:CreateFontString(nil, "ARTWORK")
 			frame.number:SetShadowColor(0, 0, 0, 1.0)
 			frame.number:SetShadowOffset(0.80, -0.80)
 			frame.number:SetJustifyH("CENTER")
 			
+			frame:HookScript("OnAttributeChanged",checkForGroupNumber)
 			frame:HookScript("OnSizeChanged",checkForGroupNumber)
 			
 			frame:SetAttribute("style-height", config.height)
@@ -931,7 +932,7 @@ function Units:LoadRaidGroupHeader(type)
 		end
 		if( enabled ) then
 			
-			checkForGroupNumber(frame,frame:GetWidth(),frame:GetHeight())
+			checkForGroupNumber(frame)
 			frame.number:SetFont(LunaUF.Layout:LoadMedia(SML.MediaType.FONT, LunaUF.db.profile.units.raid.font), LunaUF.db.profile.units.raid.fontsize)
 			if LunaUF.db.profile.units.raid.groupBy == "GROUP" then
 				frame.number:SetText(GROUP.." "..id)
@@ -939,14 +940,13 @@ function Units:LoadRaidGroupHeader(type)
 				frame.number:SetText(LOCALIZED_CLASS_NAMES_MALE[classOrder[id]])
 			end
 			
-			local dir = LunaUF.growthDirMap[(config.attribPoint..config.attribAnchorPoint)]
-			if dir == "left" then
+			if config.attribPoint == "RIGHT" then
 				frame.number:ClearAllPoints()
 				frame.number:SetPoint("LEFT", frame, "RIGHT")
-			elseif dir == "right" then
+			elseif config.attribPoint == "LEFT" then
 				frame.number:ClearAllPoints()
 				frame.number:SetPoint("RIGHT", frame, "LEFT")
-			elseif dir == "up" then
+			elseif config.attribPoint == "BOTTOM" then
 				frame.number:ClearAllPoints()
 				frame.number:SetPoint("TOP", frame, "BOTTOM")
 			else
