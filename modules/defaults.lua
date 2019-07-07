@@ -825,8 +825,6 @@ function LunaUF:LoadDefaults()
 				emphasizeBuffs = false,
 				emphasizeDebuffs = false,
 				timer = "all",
-				sortMethod = "INDEX",
-				sortOrder = "ASC",
 			},
 			tags = {
 				["healthBar"] = {
@@ -914,6 +912,8 @@ function LunaUF:LoadDefaults()
 			columnSpacing = 30,
 			offset = 40,
 			anchorTo = "LUFUnitpet",
+			sortMethod = "INDEX",
+			sortOrder = "ASC",
 		},
 		partytarget = {
 			enabled = false,
@@ -1032,6 +1032,8 @@ function LunaUF:LoadDefaults()
 			relativePoint = "TOPRIGHT",
 			attribPoint = "TOP",
 			anchorTo = "LUFHeaderparty",
+			sortMethod = "INDEX",
+			sortOrder = "ASC",
 		},
 		partypet = {
 			enabled = true,
@@ -1146,6 +1148,8 @@ function LunaUF:LoadDefaults()
 			offset = 60,
 			attribPoint = "TOP",
 			anchorTo = "LUFHeaderparty",
+			sortMethod = "INDEX",
+			sortOrder = "ASC",
 		},
 		raid = {
 			enabled = true,
@@ -1268,6 +1272,8 @@ function LunaUF:LoadDefaults()
 			offset = 0,
 			fontsize = 10,
 			groupBy = "GROUP",
+			sortMethod = "INDEX",
+			sortOrder = "ASC",
 			filters = {
 				[1] = true,
 				[2] = true,
@@ -1401,12 +1407,13 @@ function LunaUF:LoadDefaults()
 			attribAnchorPoint = "LEFT",
 			unitsPerColumn = 5,
 			maxColumns = 1,
-			columnSpacing = 5,
+			columnSpacing = 0,
 			offset = 0,
 			point = "TOPRIGHT",
 			relativePoint = "TOPRIGHT",
 			anchorTo = "LUFHeaderraid8",
---			groupFilter = "MT",
+			sortMethod = "INDEX",
+			sortOrder = "ASC",
 		},
 		maintank = {
 			enabled = false,
@@ -1533,7 +1540,8 @@ function LunaUF:LoadDefaults()
 			relativePoint = "CENTER",
 			anchorTo = "UIParent",
 			roleFilter = "MAINTANK",
---			groupFilter = "MT",
+			sortMethod = "INDEX",
+			sortOrder = "ASC",
 		},
 		maintanktarget = {
 			enabled = false,
@@ -1660,7 +1668,8 @@ function LunaUF:LoadDefaults()
 			relativePoint = "TOPRIGHT",
 			anchorTo = "LUFHeadermaintank",
 			roleFilter = "MAINTANK",
---			groupFilter = "MT",
+			sortMethod = "INDEX",
+			sortOrder = "ASC",
 		},
 		mainassist = {
 			enabled = false,
@@ -1787,7 +1796,8 @@ function LunaUF:LoadDefaults()
 			relativePoint = "CENTER",
 			anchorTo = "UIParent",
 			roleFilter = "MAINASSIST",
---			groupFilter = "MA",
+			sortMethod = "INDEX",
+			sortOrder = "ASC",
 		},
 		mainassisttarget = {
 			enabled = false,
@@ -1914,7 +1924,8 @@ function LunaUF:LoadDefaults()
 			relativePoint = "TOPRIGHT",
 			anchorTo = "LUFHeadermainassist",
 			roleFilter = "MAINASSIST",
---			groupFilter = "MA",
+			sortMethod = "INDEX",
+			sortOrder = "ASC",
 		},
 	}
 end

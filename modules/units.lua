@@ -634,8 +634,12 @@ function Units:CreateUnit(...)
 			if( name == "unit" ) then
 				if ( not value ) then
 					UnregisterUnitWatch(self)
-				elseif value ~= "player" and not strmatch(value, "target$") then
+				elseif value ~= "player" and value ~= "target" and not strmatch(value, "target$") then
 					self:SetAttribute("unit", value.."target")
+					RegisterUnitWatch(self)
+					return false
+				elseif value == "player" then
+					self:SetAttribute("unit", "target")
 					RegisterUnitWatch(self)
 					return false
 				end
@@ -647,9 +651,13 @@ function Units:CreateUnit(...)
 			if( name == "unit" ) then
 				if ( not value ) then
 					UnregisterUnitWatch(self)
-				elseif value ~= "player" and not strmatch(value, "^partypet%d$") then
+				elseif value ~= "player" and value ~= "pet" and not strmatch(value, "^partypet%d$") then
 					local unitID = strmatch(value, "%d")
 					self:SetAttribute("unit", "partypet"..unitID)
+					RegisterUnitWatch(self)
+					return false
+				elseif value == "player" then
+					self:SetAttribute("unit", "pet")
 					RegisterUnitWatch(self)
 					return false
 				end
@@ -689,6 +697,7 @@ end
 function Units:CheckGroupVisibility()
 	if( not LunaUF.db.profile.locked ) then return end
 	local raid = headerFrames.raid1
+	local raidpet = headerFrames.raidpet
 	local party = headerFrames.party
 	local partytarget = headerFrames.partytarget
 	local partypet = headerFrames.partypet
@@ -700,16 +709,25 @@ function Units:CheckGroupVisibility()
 	end
 
 	if( partytarget ) then
-		partytarget:SetAttribute("showParty", ( not LunaUF.db.profile.units.raid.showParty or not LunaUF.enabledUnits.raid ) and true or false)
+		partytarget:SetAttribute("showParty", LunaUF.db.profile.units.raid.showParty)
+		partytarget:SetAttribute("showPlayer", LunaUF.db.profile.units.party.showPlayer)
+		partytarget:SetAttribute("showSolo", LunaUF.db.profile.units.party.showPlayersolo)
 	end
 
 	if( partypet ) then
-		partypet:SetAttribute("showParty", ( not LunaUF.db.profile.units.raid.showParty or not LunaUF.enabledUnits.raid ) and true or false)
+		partypet:SetAttribute("showParty", LunaUF.db.profile.units.raid.showParty)
+		partypet:SetAttribute("showPlayer", LunaUF.db.profile.units.party.showPlayer)
+		partypet:SetAttribute("showSolo", LunaUF.db.profile.units.party.showPlayersolo)
 	end
 
 	if( raid ) then
 		raid:SetAttribute("showParty", LunaUF.db.profile.units.raid.showParty)
 		raid:SetAttribute("showSolo", LunaUF.db.profile.units.raid.showSolo)
+	end
+	
+	if ( raidpet ) then
+		raidpet:SetAttribute("showParty", LunaUF.db.profile.units.raid.showParty)
+		raidpet:SetAttribute("showSolo", LunaUF.db.profile.units.raid.showSolo)
 	end
 end
 
@@ -920,6 +938,8 @@ function Units:LoadRaidGroupHeader(type)
 			frame:SetAttribute("style-width", config.width)
 			frame:SetAttribute("style-scale", config.scale)
 			
+			frame.shouldReset = true
+			
 			if( ClickCastHeader ) then
 				-- the OnLoad adds the functions like SetFrameRef to the header
 				SecureHandler_OnLoad(frame)
@@ -953,15 +973,6 @@ function Units:LoadRaidGroupHeader(type)
 				frame.number:ClearAllPoints()
 				frame.number:SetPoint("BOTTOM", frame, "TOP")
 			end
-			
-			frame:SetAttribute("point", config.attribPoint)
-			frame:SetAttribute("sortMethod", config.sortMethod)
-			frame:SetAttribute("sortDir", config.sortOrder)
-			
-			frame:SetAttribute("xOffset", config.offset * xMod)
-			frame:SetAttribute("yOffset", config.offset * yMod)
-			frame:SetAttribute("xMod", xMod)
-			frame:SetAttribute("yMod", yMod)
 			
 		end
 		LunaUF.Layout:AnchorFrame(frame, LunaUF.db.profile.units.raid.positions[id])

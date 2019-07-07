@@ -1,13 +1,13 @@
 --[[
 Name: LibClassicHealComm-1.0
-Revision: $Revision: 13 $
+Revision: $Revision: 14 $
 Author(s): Aviana, Original by Shadowed (shadowed.wow@gmail.com)
 Description: Healing communication library. This is a heavily modified clone of LibHealComm-4.0.
 Dependencies: LibStub, ChatThrottleLib
 ]]
 
 local major = "LibClassicHealComm-1.0"
-local minor = 13
+local minor = 14
 assert(LibStub, string.format("%s requires LibStub.", major))
 
 local HealComm = LibStub:NewLibrary(major, minor)
@@ -1288,8 +1288,12 @@ local function parseDirectHeal(casterGUID, spellID, amount, castTime, ...)
 	local unit = guidToUnit[casterGUID]
 	if( not unit or not spellID or not amount or select("#", ...) == 0 ) then return end
 
-	local endTime = select(5, CastingInfo(unit))
-	if( not endTime ) then endTime = GetTime() + castTime end
+	local endTime
+	if unit == "player" then
+		endTime = select(5, CastingInfo())
+	else
+		endTime = GetTime() + castTime
+	end
 
 	pendingHeals[casterGUID] = pendingHeals[casterGUID] or {}
 	pendingHeals[casterGUID][spellID] = pendingHeals[casterGUID][spellID] or {}
@@ -1312,8 +1316,10 @@ local function parseChannelHeal(casterGUID, spellID, amount, totalTicks, ...)
 	local unit = guidToUnit[casterGUID]
 	if( not unit or not spellID or not totalTicks or not amount or select("#", ...) == 0 ) then return end
 
-	local startTime, endTime = select(4, ChannelInfo(unit))
-	if( not startTime or not endTime ) then
+	local startTime, endTime
+	if unit == "player" then
+		startTime, endTime = select(4, ChannelInfo())
+	else
 		startTime = GetTime()
 		endTime = GetTime() + 10
 	end
@@ -1463,15 +1469,15 @@ function HealComm:CHAT_MSG_ADDON(prefix, message, channel, sender)
 	if( prefix ~= COMM_PREFIX or channel ~= distribution or sender == playerName ) then return end
 	
 	
-	local commType, extraArg, spellID, arg1, arg2, arg3, arg4, arg5, arg6 = string.split(":", message)
+	local commType, castTime, spellID, arg1, arg2, arg3, arg4, arg5, arg6 = string.split(":", message)
 	local casterGUID = UnitGUID(sender)
 	spellID = tonumber(spellID)
 	
 	if( not commType or not spellID or not casterGUID ) then return end
 			
-	-- New direct heal - D:<extra>:<spellID>:<amount>:target1,target2...
+	-- New direct heal - D:<castTime>:<spellID>:<amount>:target1,target2...
 	if( commType == "D" and arg1 and arg2 ) then
-		parseDirectHeal(casterGUID, spellID, tonumber(arg1), extraArg, string.split(",", arg2))
+		parseDirectHeal(casterGUID, spellID, tonumber(arg1), castTime, string.split(",", arg2))
 	-- Direct or channel heal delayed - DL:<extra>:<spellID>:<start>:<end>...
 	elseif( commType == "DL" and arg1 and arg2 ) then
 		parseHealDelayed(casterGUID, tonumber(arg1)/1000, tonumber(arg2)/1000, spellID)
@@ -1481,9 +1487,6 @@ function HealComm:CHAT_MSG_ADDON(prefix, message, channel, sender)
 	-- New hot - H:<extra>:<spellID>:<amount>:<duration>:target1,target2...
 	elseif( commType == "H" and arg1 and arg2 ) then
 		parseHotHeal(casterGUID, false, spellID, tonumber(arg1), tonumber(arg2), string.split(",", arg3))
-	-- New updated heal somehow before ending - U:<extra>:<spellID>:<amount>:<duration>:target1,target2...
-	elseif( commtype == "U" and arg1 and arg2 ) then
-		parseHotHeal(casterGUID, true, spellID, tonumber(arg1), tonumber(arg2), string.split(",", arg3))
 	-- Heal stopped - S:<extra>:<spellID>:<ended early: 0/1>:target1,target2...
 	elseif( commType == "S" or commType == "HS" ) then
 		local interrupted = arg1 == "1" and true or false
@@ -1672,7 +1675,7 @@ function HealComm:UNIT_SPELLCAST_START(casterUnit, cast, spellID)
 
 	if( type == DIRECT_HEALS ) then
 		parseDirectHeal(playerGUID, spellID, amount, (endTime - startTime) / 1000, string.split(",", targets))
-		sendMessage(string.format("D::%d:%d:%d:%s", spellID or 0, amount or "", (endTime - startTime) / 1000, targets))
+		sendMessage(string.format("D:%d:%d:%d:%s", (endTime - startTime) / 1000, spellID or 0, amount or "", targets))
 	elseif( type == CHANNEL_HEALS ) then
 		parseChannelHeal(playerGUID, spellID, amount, localTicks, string.split(",", targets))
 		sendMessage(string.format("C::%d:%d:%s:%s", spellID or 0, amount, ticks, targets))

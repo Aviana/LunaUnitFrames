@@ -22,36 +22,38 @@ local PowerUpdate = function(self)
 	local powerType = UnitPowerType("player")
 	local frame = self:GetParent()
 	local time = GetTime()
-	local Position = 0
+	local Position, Position2
 	local config = LunaUF.db.profile.units.player.powerBar
-	if powerType == Enum.PowerType.Mana then
-		if self.startTime then
-			if (time - self.startTime) >= 5 then
-				self.startTime = nil
-				self.texture:Hide()
-				self:SetBackdropColor(0,0,0,0)
+
+	if UnitPowerType("player") == Enum.PowerType.Mana and config.fivesecond then
+		if self.startTimeFive then
+			if (time - self.startTimeFive) >= 5 then
+				self.startTimeFive = nil
 			else
-				Position = ((time - self.startTime) / 5)
+				Position2 = ((time - self.startTimeFive) / 5)
 			end
 		end
-	elseif powerType == Enum.PowerType.Energy then
-		if (time - self.startTime) >= 2 then 		--Ticks happen every 2 sec
-			self.startTime = GetTime()
-		end
-		Position = ((time - self.startTime) / 2)
-		if not config.hideticker or self.combat or self.stealthed and self.target then
-			self.texture:Show()
-			self:SetBackdropColor(0,0,0,1)
-		else
-			self.texture:Hide()
-			self:SetBackdropColor(0,0,0,0)
-		end
+	end
+
+	if (time - self.startTimeTicks) >= 2 then 		--Ticks happen every 2 sec
+		self.startTimeTicks = GetTime()
+	end
+	if config.ticker then
+		Position = ((time - self.startTimeTicks) / 2)
+	end
+	if UnitPowerType("player") ~= Enum.PowerType.Rage and (Position or Position2) and ( not config.hideticker or self.combat or self.stealthed and self.target or UnitPower("player") < UnitPowerMax("player") ) then
+		self.texture:Show()
+		self:SetBackdropColor(0,0,0,1)
+		frame.ticker2:Show()
 	else
 		self.texture:Hide()
 		self:SetBackdropColor(0,0,0,0)
-		return
+		frame.ticker2:Hide()
 	end
-	self:SetPoint("CENTER", frame, "LEFT", Position * frame:GetWidth(), 0)
+	if (Position or Position2) then
+		self:SetPoint("BOTTOM", frame, "LEFT", (Position or Position2) * frame:GetWidth(), 0)
+		frame.ticker2:SetPoint("TOP", frame, "LEFT", (Position2 or Position) * frame:GetWidth(), 0)
+	end
 end
 
 function Power:OnEnable(frame)
@@ -79,10 +81,22 @@ function Power:OnEnable(frame)
 		frame.powerBar.ticker.texture:SetAllPoints(frame.powerBar.ticker)
 		frame.powerBar.ticker.texture:SetTexture("Interface\\AddOns\\LunaUnitFrames\\media\\textures\\indicator")
 		frame.powerBar.ticker.texture:SetVertexColor(1,1,1,1)
-		frame.powerBar.ticker:SetPoint("CENTER", frame.powerBar, "CENTER")
-		frame.powerBar.ticker.startTime = GetTime()
+		frame.powerBar.ticker:SetPoint("BOTTOM", frame.powerBar, "CENTER")
+		frame.powerBar.ticker.startTimeTicks = GetTime()
 		frame.powerBar.ticker:SetFrameLevel(6)
 		frame.powerBar.ticker.combat = UnitAffectingCombat("player")
+		frame.powerBar.ticker:SetWidth(1)
+		
+		frame.powerBar.ticker2 = CreateFrame("Frame", nil, frame.powerBar)
+		frame.powerBar.ticker2:SetBackdrop(backdrop)
+		frame.powerBar.ticker2:SetBackdropColor(0,0,0)
+		frame.powerBar.ticker2.texture = frame.powerBar.ticker2:CreateTexture(nil, "OVERLAY")
+		frame.powerBar.ticker2.texture:SetAllPoints(frame.powerBar.ticker2)
+		frame.powerBar.ticker2.texture:SetTexture("Interface\\AddOns\\LunaUnitFrames\\media\\textures\\indicator")
+		frame.powerBar.ticker2.texture:SetVertexColor(1,1,1,1)
+		frame.powerBar.ticker2:SetPoint("TOP", frame.powerBar, "CENTER")
+		frame.powerBar.ticker2:SetFrameLevel(6)
+		frame.powerBar.ticker2:SetWidth(1)
 		
 		frame:RegisterNormalEvent("COMBAT_LOG_EVENT_UNFILTERED", self, "UpdatePowerStateIgnore")
 		frame:RegisterNormalEvent("PLAYER_REGEN_ENABLED", self, "DisableCombat")
@@ -159,7 +173,7 @@ function Power:UpdateColor(frame)
 
 	local color
 	if( frame.powerBar.minusMob ) then
-		color = ShadowUF.db.profile.colors.offline
+		color = LunaUF.db.profile.colors.offline
 	elseif( LunaUF.db.profile.units[frame.unitType].powerBar.colorType == "class" and UnitIsPlayer(frame.unit) ) then
 		local class = frame:UnitClassToken()
 		color = class and LunaUF.db.profile.colors[class]
@@ -178,12 +192,14 @@ function Power:UpdateColor(frame)
 	end
 
 	if frame.unitType == "player" then
-		if not LunaUF.db.profile.units.player.powerBar.ticker or UnitPowerType("player") ~= Enum.PowerType.Energy then
+		if UnitPowerType("player") == Enum.PowerType.Rage then
 			frame.powerBar.ticker.texture:Hide()
 			frame.powerBar.ticker:SetBackdropColor(0,0,0,0)
-		elseif LunaUF.db.profile.units.player.powerBar.ticker and UnitPowerType("player") == Enum.PowerType.Energy then
+			frame.powerBar.ticker2:Hide()
+		else
 			frame.powerBar.ticker.texture:Show()
 			frame.powerBar.ticker:SetBackdropColor(0,0,0,1)
+			frame.powerBar.ticker2:Show()
 		end
 	end
 
@@ -194,13 +210,8 @@ end
 
 function Power:OnLayoutApplied(frame)
 	if frame.unitType == "player" and frame.powerBar then
-		frame.powerBar.ticker:SetHeight(frame.powerBar:GetHeight())
-		frame.powerBar.ticker:SetWidth(1)
-		if LunaUF.db.profile.units.player.powerBar.ticker then
-			frame.powerBar.ticker:Show()
-		else
-			frame.powerBar.ticker:Hide()
-		end
+		frame.powerBar.ticker:SetHeight(frame.powerBar:GetHeight()/2)
+		frame.powerBar.ticker2:SetHeight(frame.powerBar:GetHeight()/2)
 	end
 end
 
@@ -229,13 +240,13 @@ function Power:Update(frame, event, unit, powerType)
 	if( event and powerType and powerType ~= frame.powerBar.currentType ) then return end
 	if( frame.powerBar.minusMob ) then return end
 
-	if frame.unitType == "player" and LunaUF.db.profile.units.player.powerBar.ticker then
+	if frame.unitType == "player" then
 		if frame.powerBar.ignorePowerChange then
 			frame.powerBar.ignorePowerChange = nil
-		elseif frame.powerBar.currentPower < UnitPower(frame.unit) and UnitPowerType("player") == Enum.PowerType.Energy then
-			frame.powerBar.ticker.startTime = GetTime()
+		elseif frame.powerBar.currentPower < UnitPower(frame.unit) then
+			frame.powerBar.ticker.startTimeTicks = GetTime()
 		elseif frame.powerBar.currentPower > UnitPower(frame.unit) and not (UnitPowerMax(frame.unit) == UnitPower(frame.unit)) and UnitPowerType("player") == Enum.PowerType.Mana then
-			frame.powerBar.ticker.startTime = GetTime()
+			frame.powerBar.ticker.startTimeFive = GetTime()
 			frame.powerBar.ticker.texture:Show()
 			frame.powerBar.ticker:SetBackdropColor(0,0,0,1)
 		end

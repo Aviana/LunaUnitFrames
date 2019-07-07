@@ -137,7 +137,7 @@ function Highlight:UpdateAura(frame)
 			local name, _, _, auraType = UnitDebuff(frame.unit, id)
 			if( not name ) then break end
 			
-			if( canCure[auraType] or (showAll and auraType) ) then
+			if ( canCure[auraType] and UnitCanAssist("player", frame.unit) or (showAll and auraType) ) then
 				frame.highlight.hasDebuff = auraType
 				break
 			end

@@ -155,6 +155,12 @@ function LunaUF:CreateConfig()
 		return LunaUF.db.profile[info[#info]]
 	end
 
+	local function setEnableUnit(info, value)
+		set(info, value)
+		LunaUF:LoadUnits()
+		LunaUF.modules.movers:Update()
+	end
+
 	local function setColor(info, r, g, b)
 		local db = LunaUF.db.profile.colors[info[#info]]
 		db.r = r
@@ -205,6 +211,7 @@ function LunaUF:CreateConfig()
 	local function setGrowthDir(info, value)
 		local unit = info[#info-1]
 		local db = LunaUF.db.profile.units[unit]
+		local alreadySet = {}
 		
 		db.attribPoint = value
 		if unit == "party" then
@@ -212,28 +219,18 @@ function LunaUF:CreateConfig()
 			LunaUF.db.profile.units.partypet.attribPoint = value
 		end
 		
-		if unit == "raid" then
-			for i=1, 8 do
-				LunaUF.modules.movers:SetFrame(LunaUF.Units.headerFrames["raid"..i])
-				--LunaUF.Layout:AnchorFrame(LunaUF.Units.headerFrames["raid"..i], db.positions[i])
-			end
-		else
-			LunaUF.modules.movers:SetFrame(LunaUF.Units.headerFrames[unit])
-			if unit == "party" then
-				if LunaUF.Units.headerFrames["partytarget"] then
-					LunaUF.modules.movers:SetFrame(LunaUF.Units.headerFrames["partytarget"])
-				end
-				if LunaUF.Units.headerFrames["partypet"] then
-					LunaUF.modules.movers:SetFrame(LunaUF.Units.headerFrames["partypet"])
-				end
+		-- Simply re-set all frames is easier than making a complicated selection algorithm
+		for unitName, name in pairs(UnitToFrame) do
+			if unitName ~= "None" and _G[name] then
+				LunaUF.modules.movers:SetFrame(_G[name])
 			end
 		end
+		
 		LunaUF.Units:ReloadHeader(unit)
 		if unit == "party" then
 			LunaUF.Units:ReloadHeader("partytarget")
 			LunaUF.Units:ReloadHeader("partypet")
 		end
-		-- find frames directly anchored to this and re-anchor them
 	end
 
 	local function getHideRaid(info)
@@ -262,6 +259,30 @@ function LunaUF:CreateConfig()
 		LunaUF.Units:ReloadHeader("party")
 		LunaUF.Units:ReloadHeader("partypet")
 		LunaUF.Units:ReloadHeader("partytarget")
+	end
+
+	local function setSortMethod(info, value)
+		local unit = info[#info-1]
+		LunaUF.db.profile.units[unit].sortMethod = value
+		LunaUF.Units:ReloadHeader(unit)
+		if unit == "party" then
+			LunaUF.db.profile.units["partytarget"].sortMethod = value
+			LunaUF.Units:ReloadHeader("partytarget")
+			LunaUF.db.profile.units["partypet"].sortMethod = value
+			LunaUF.Units:ReloadHeader("partypet")
+		end
+	end
+
+	local function setSortOrder(info, value)
+		local unit = info[#info-1]
+		LunaUF.db.profile.units[unit].sortOrder = value
+		LunaUF.Units:ReloadHeader(unit)
+		if unit == "party" then
+			LunaUF.db.profile.units["partytarget"].sortOrder = value
+			LunaUF.Units:ReloadHeader("partytarget")
+			LunaUF.db.profile.units["partypet"].sortOrder = value
+			LunaUF.Units:ReloadHeader("partypet")
+		end
 	end
 
 	local function Lockdown() return LunaUF.InCombatLockdown end
@@ -324,6 +345,15 @@ function LunaUF:CreateConfig()
 			}
 		for key in pairs(deepAnchorCheck({[UnitToFrame[unit]]=true})) do
 			tbl[key] = nil
+		end
+		for frameName, unitName in pairs(tbl) do
+			if frameName ~= "UIParent" and _G[frameName] then
+				if not LunaUF.db.profile.units[_G[frameName].unitType].enabled then
+					tbl[frameName] = nil
+				end
+			elseif not _G[frameName] then
+				tbl[frameName] = nil
+			end
 		end
 		return tbl
 	end
@@ -441,30 +471,37 @@ function LunaUF:CreateConfig()
 					order = 1,
 				},
 				ticker = {
-					name = L["Energy / 5sec ticker"],
-					desc = string.format(L["Enable or disable the %s."], L["Energy / 5sec ticker"]),
+					name = L["Ticker"],
+					desc = L["Since mana/energy regenerate in ticks, show a timer for it"],
 					type = "toggle",
 					order = 2,
 					hidden = function(info) return info[1] ~= "player" end
 				},
 				hideticker = {
-					name = L["Autohide Energy ticker"],
-					desc = L["Hide the energy ticker when it's not needed"],
+					name = L["Autohide ticker"],
+					desc = L["Hide the ticker when it's not needed"],
 					type = "toggle",
 					order = 3,
+					hidden = function(info) return info[1] ~= "player" end
+				},
+				fivesecond = {
+					name = L["Five second rule"],
+					desc = L["Show a timer for the five second rule"],
+					type = "toggle",
+					order = 4,
 					hidden = function(info) return info[1] ~= "player" end
 				},
 				background = {
 					name = L["Background"],
 					desc = string.format(L["Enable or disable the %s."], L["Background"]),
 					type = "toggle",
-					order = 4,
+					order = 5,
 				},
 				backgroundAlpha = {
 					name = L["Background alpha"],
 					desc = L["Set the background alpha."],
 					type = "range",
-					order = 5,
+					order = 6,
 					min = 0.01,
 					max = 1,
 					step = 0.01,
@@ -473,14 +510,14 @@ function LunaUF:CreateConfig()
 					name = L["Color by type"],
 					--desc = L["Color by type"],
 					type = "select",
-					order = 6,
+					order = 7,
 					values = {["class"] = L["Class"], ["type"] = L["Power Type"]},
 				},
 				height = {
 					name = L["Height"],
 					desc = L["Set the height."],
 					type = "range",
-					order = 7,
+					order = 8,
 					min = 1,
 					max = 10,
 					step = 0.1,
@@ -489,13 +526,13 @@ function LunaUF:CreateConfig()
 					name = L["Order"],
 					desc = L["Set the order priority."],
 					type = "range",
-					order = 8,
+					order = 9,
 					min = 0,
 					max = 100,
 					step = 5,
 				},
 				statusbar = {
-					order = 9,
+					order = 10,
 					type = "select",
 					name = L["Bar texture"],
 					dialogControl = "LSM30_Statusbar",
@@ -506,7 +543,7 @@ function LunaUF:CreateConfig()
 					name = L["Vertical"],
 					desc = L["Set the bar vertical."],
 					type = "toggle",
-					order = 10,
+					order = 11,
 				},
 			},
 		},
@@ -3164,7 +3201,7 @@ function LunaUF:CreateConfig()
 						type = "toggle",
 						order = 1,
 						disabled = Lockdown,
-						set = function(info, value) set(info, value) LunaUF:LoadUnits() LunaUF.modules.movers:Update() end,
+						set = setEnableUnit,
 					},
 					headerGeneralOptions = {
 						name = L["General"],
@@ -3248,7 +3285,7 @@ function LunaUF:CreateConfig()
 						type = "toggle",
 						order = 1,
 						disabled = Lockdown,
-						set = function(info, value) set(info, value) LunaUF:LoadUnits() LunaUF.modules.movers:Update() end,
+						set = setEnableUnit,
 					},
 					headerGeneralOptions = {
 						name = L["General"],
@@ -3332,7 +3369,7 @@ function LunaUF:CreateConfig()
 						type = "toggle",
 						order = 1,
 						disabled = Lockdown,
-						set = function(info, value) set(info, value) LunaUF:LoadUnits() LunaUF.modules.movers:Update() end,
+						set = setEnableUnit,
 					},
 					headerGeneralOptions = {
 						name = L["General"],
@@ -3416,7 +3453,7 @@ function LunaUF:CreateConfig()
 						type = "toggle",
 						order = 1,
 						disabled = Lockdown,
-						set = function(info, value) set(info, value) LunaUF:LoadUnits() LunaUF.modules.movers:Update() end,
+						set = setEnableUnit,
 					},
 					headerGeneralOptions = {
 						name = L["General"],
@@ -3500,7 +3537,7 @@ function LunaUF:CreateConfig()
 						type = "toggle",
 						order = 1,
 						disabled = Lockdown,
-						set = function(info, value) set(info, value) LunaUF:LoadUnits() LunaUF.modules.movers:Update() end,
+						set = setEnableUnit,
 					},
 					headerGeneralOptions = {
 						name = L["General"],
@@ -3584,7 +3621,7 @@ function LunaUF:CreateConfig()
 						type = "toggle",
 						order = 1,
 						disabled = Lockdown,
-						set = function(info, value) set(info, value) LunaUF:LoadUnits() LunaUF.modules.movers:Update() end,
+						set = setEnableUnit,
 					},
 					headerGeneralOptions = {
 						name = L["General"],
@@ -3668,7 +3705,7 @@ function LunaUF:CreateConfig()
 						type = "toggle",
 						order = 1,
 						disabled = Lockdown,
-						set = function(info, value) set(info, value) LunaUF:LoadUnits() LunaUF.modules.movers:Update() end,
+						set = setEnableUnit,
 					},
 					headerGeneralOptions = {
 						name = L["General"],
@@ -3714,7 +3751,7 @@ function LunaUF:CreateConfig()
 						desc = L["Set the space between units."],
 						type = "range",
 						order = 2.4,
-						min = -6,
+						min = 0,
 						max = 200,
 						step = 1,
 						disabled = Lockdown,
@@ -3768,11 +3805,29 @@ function LunaUF:CreateConfig()
 						set = setHideRaid,
 						disabled = Lockdown,
 					},
+					sortMethod = {
+						name = L["Sort by"],
+						desc = L["Sort by name or index"],
+						type = "select",
+						order = 2.91,
+						values = {["INDEX"] = L["Index"],["NAME"] = L["Name"]},
+						set = setSortMethod,
+						disabled = Lockdown,
+					},
+					sortOrder = {
+						name = L["Sort order"],
+						desc = L["Sort ascending or descending"],
+						type = "select",
+						order = 2.92,
+						values = {["ASC"] = L["Ascending"],["DESC"] = L["Descending"]},
+						set = setSortOrder,
+						disabled = Lockdown,
+					},
 					showPlayer = {
 						name = L["Show player"],
 						desc = L["Show player in the party frame."],
 						type = "toggle",
-						order = 2.91,
+						order = 2.93,
 						disabled = Lockdown,
 						set = function(info, value) set(info, value) LunaUF.Units:ReloadHeader("party") end,
 					},
@@ -3780,7 +3835,7 @@ function LunaUF:CreateConfig()
 						name = L["Show solo"],
 						desc = L["Show player in the party frame when solo."],
 						type = "toggle",
-						order = 2.91,
+						order = 2.94,
 						disabled = Lockdown,
 						set = function(info, value) set(info, value) LunaUF.Units:ReloadHeader("party") end,
 					},
@@ -3798,7 +3853,7 @@ function LunaUF:CreateConfig()
 						type = "toggle",
 						order = 1,
 						disabled = Lockdown,
-						set = function(info, value) set(info, value) LunaUF:LoadUnits() LunaUF.modules.movers:Update() end,
+						set = setEnableUnit,
 					},
 					headerGeneralOptions = {
 						name = L["General"],
@@ -3844,7 +3899,7 @@ function LunaUF:CreateConfig()
 						desc = L["Set the space between units."],
 						type = "range",
 						order = 2.4,
-						min = -6,
+						min = 0,
 						max = 200,
 						step = 1,
 						disabled = Lockdown,
@@ -3898,6 +3953,24 @@ function LunaUF:CreateConfig()
 						set = setHideRaid,
 						disabled = true,
 					},
+					sortMethod = {
+						name = L["Sort by"],
+						desc = L["This is set through party options."],
+						type = "select",
+						order = 2.91,
+						values = {["INDEX"] = L["Index"],["NAME"] = L["Name"]},
+						set = setSortMethod,
+						disabled = true,
+					},
+					sortOrder = {
+						name = L["Sort order"],
+						desc = L["This is set through party options."],
+						type = "select",
+						order = 2.92,
+						values = {["ASC"] = L["Ascending"],["DESC"] = L["Descending"]},
+						set = setSortOrder,
+						disabled = true,
+					},
 				},
 			},
 			partypet = {
@@ -3912,7 +3985,7 @@ function LunaUF:CreateConfig()
 						type = "toggle",
 						order = 1,
 						disabled = Lockdown,
-						set = function(info, value) set(info, value) LunaUF:LoadUnits() LunaUF.modules.movers:Update() end,
+						set = setEnableUnit,
 					},
 					headerGeneralOptions = {
 						name = L["General"],
@@ -3958,7 +4031,7 @@ function LunaUF:CreateConfig()
 						desc = L["Set the space between units."],
 						type = "range",
 						order = 2.4,
-						min = -6,
+						min = 0,
 						max = 200,
 						step = 1,
 						disabled = Lockdown,
@@ -4012,6 +4085,24 @@ function LunaUF:CreateConfig()
 						set = setHideRaid,
 						disabled = true,
 					},
+					sortMethod = {
+						name = L["Sort by"],
+						desc = L["This is set through party options."],
+						type = "select",
+						order = 2.91,
+						values = {["INDEX"] = L["Index"],["NAME"] = L["Name"]},
+						set = setSortMethod,
+						disabled = true,
+					},
+					sortOrder = {
+						name = L["Sort order"],
+						desc = L["This is set through party options."],
+						type = "select",
+						order = 2.92,
+						values = {["ASC"] = L["Ascending"],["DESC"] = L["Descending"]},
+						set = setSortOrder,
+						disabled = true,
+					},
 				},
 			},
 			raid = {
@@ -4026,7 +4117,7 @@ function LunaUF:CreateConfig()
 						type = "toggle",
 						order = 1,
 						disabled = Lockdown,
-						set = function(info, value) set(info, value) LunaUF:LoadUnits() LunaUF.modules.movers:Update() end,
+						set = setEnableUnit,
 					},
 					headerGeneralOptions = {
 						name = L["General"],
@@ -4072,8 +4163,8 @@ function LunaUF:CreateConfig()
 						desc = L["Set the space between units."],
 						type = "range",
 						order = 2.31,
-						min = -6,
-						max = 20,
+						min = 0,
+						max = 200,
 						step = 1,
 						disabled = Lockdown,
 						set = function(info, value) set(info,value) LunaUF.Units:ReloadHeader("raid") end,
@@ -4095,6 +4186,24 @@ function LunaUF:CreateConfig()
 						values = {["GROUP"] = L["Group"],["CLASS"] = L["Class"]},
 						disabled = Lockdown,
 						set = function(info, value) set(info,value) LunaUF.Units:ReloadHeader("raid") end,
+					},
+					sortMethod = {
+						name = L["Sort by"],
+						desc = L["Sort by name or index"],
+						type = "select",
+						order = 2.331,
+						values = {["INDEX"] = L["Index"],["NAME"] = L["Name"]},
+						set = setSortMethod,
+						disabled = Lockdown,
+					},
+					sortOrder = {
+						name = L["Sort order"],
+						desc = L["Sort ascending or descending"],
+						type = "select",
+						order = 2.332,
+						values = {["ASC"] = L["Ascending"],["DESC"] = L["Descending"]},
+						set = setSortOrder,
+						disabled = Lockdown,
 					},
 					showParty = {
 						name = L["Show party"],
@@ -4530,7 +4639,7 @@ function LunaUF:CreateConfig()
 						type = "toggle",
 						order = 1,
 						disabled = Lockdown,
-						set = function(info, value) set(info, value) LunaUF:LoadUnits() LunaUF.modules.movers:Update() end,
+						set = setEnableUnit,
 					},
 					headerGeneralOptions = {
 						name = L["General"],
@@ -4576,8 +4685,8 @@ function LunaUF:CreateConfig()
 						desc = L["Set the space between units."],
 						type = "range",
 						order = 2.4,
-						min = -6,
-						max = 20,
+						min = 0,
+						max = 200,
 						step = 1,
 						disabled = Lockdown,
 						set = function(info, value) set(info,value) LunaUF.Units:ReloadHeader("raidpet") end,
@@ -4621,6 +4730,67 @@ function LunaUF:CreateConfig()
 						set = setGrowthDir,
 						disabled = true,
 					},
+					sortMethod = {
+						name = L["Sort by"],
+						desc = L["Sort by name or index"],
+						type = "select",
+						order = 2.9,
+						values = {["INDEX"] = L["Index"],["NAME"] = L["Name"]},
+						set = setSortMethod,
+						disabled = Lockdown,
+					},
+					sortOrder = {
+						name = L["Sort order"],
+						desc = L["Sort ascending or descending"],
+						type = "select",
+						order = 2.91,
+						values = {["ASC"] = L["Ascending"],["DESC"] = L["Descending"]},
+						set = setSortOrder,
+						disabled = Lockdown,
+					},
+					unitsPerColumn = {
+						name = L["Units per column"],
+						desc = L["The amount of units until a new column is started"],
+						type = "range",
+						order = 2.92,
+						min = 1,
+						max = 40,
+						step = 1,
+						disabled = Lockdown,
+						set = function(info, value) set(info,value) LunaUF.Units:ReloadHeader("raidpet") end,
+					},
+					maxColumns = {
+						name = L["Max columns"],
+						desc = L["The maximum amount of columns"],
+						type = "range",
+						order = 2.93,
+						min = 1,
+						max = 40,
+						step = 1,
+						disabled = Lockdown,
+						set = function(info, value) set(info,value) LunaUF.Units:ReloadHeader("raidpet") end,
+					},
+					columnSpacing = {
+						name = L["Column spacing"],
+						desc = L["The space between each column"],
+						type = "range",
+						order = 2.93,
+						min = 0,
+						max = 200,
+						step = 1,
+						disabled = Lockdown,
+						set = function(info, value) set(info,value) LunaUF.Units:ReloadHeader("raidpet") end,
+					},
+					attribPoint = {
+						name = L["Column Growth direction"],
+						desc = L["Where a new column is started"],
+						type = "select",
+						order = 2.94,
+						values = {["RIGHT"] = L["Left"],["LEFT"] = L["Right"],["BOTTOM"] = L["Up"],["TOP"] = L["Down"]},
+						get = function(info) return LunaUF.db.profile.units["raidpet"].attribAnchorPoint end,
+						set = function(info, value) LunaUF.db.profile.units["raidpet"].attribAnchorPoint = value LunaUF.Units:ReloadHeader("raidpet") end,
+						disabled = Lockdown,
+					},
 				},
 			},
 			maintank = {
@@ -4635,7 +4805,7 @@ function LunaUF:CreateConfig()
 						type = "toggle",
 						order = 1,
 						disabled = Lockdown,
-						set = function(info, value) set(info, value) LunaUF:LoadUnits() LunaUF.modules.movers:Update() end,
+						set = setEnableUnit,
 					},
 					headerGeneralOptions = {
 						name = L["General"],
@@ -4681,7 +4851,7 @@ function LunaUF:CreateConfig()
 						desc = L["Set the space between units."],
 						type = "range",
 						order = 2.4,
-						min = -6,
+						min = 0,
 						max = 200,
 						step = 1,
 						disabled = Lockdown,
@@ -4725,6 +4895,24 @@ function LunaUF:CreateConfig()
 						set = setGrowthDir,
 						disabled = Lockdown,
 					},
+					sortMethod = {
+						name = L["Sort by"],
+						desc = L["Sort by name or index"],
+						type = "select",
+						order = 2.9,
+						values = {["INDEX"] = L["Index"],["NAME"] = L["Name"]},
+						set = setSortMethod,
+						disabled = Lockdown,
+					},
+					sortOrder = {
+						name = L["Sort order"],
+						desc = L["Sort ascending or descending"],
+						type = "select",
+						order = 2.91,
+						values = {["ASC"] = L["Ascending"],["DESC"] = L["Descending"]},
+						set = setSortOrder,
+						disabled = Lockdown,
+					},
 				},
 			},
 			maintanktarget = {
@@ -4739,7 +4927,7 @@ function LunaUF:CreateConfig()
 						type = "toggle",
 						order = 1,
 						disabled = Lockdown,
-						set = function(info, value) set(info, value) LunaUF:LoadUnits() LunaUF.modules.movers:Update() end,
+						set = setEnableUnit,
 					},
 					headerGeneralOptions = {
 						name = L["General"],
@@ -4785,7 +4973,7 @@ function LunaUF:CreateConfig()
 						desc = L["Set the space between units."],
 						type = "range",
 						order = 2.4,
-						min = -6,
+						min = 0,
 						max = 200,
 						step = 1,
 						disabled = Lockdown,
@@ -4829,6 +5017,24 @@ function LunaUF:CreateConfig()
 						set = setGrowthDir,
 						disabled = Lockdown,
 					},
+					sortMethod = {
+						name = L["Sort by"],
+						desc = L["Sort by name or index"],
+						type = "select",
+						order = 2.9,
+						values = {["INDEX"] = L["Index"],["NAME"] = L["Name"]},
+						set = setSortMethod,
+						disabled = Lockdown,
+					},
+					sortOrder = {
+						name = L["Sort order"],
+						desc = L["Sort ascending or descending"],
+						type = "select",
+						order = 2.91,
+						values = {["ASC"] = L["Ascending"],["DESC"] = L["Descending"]},
+						set = setSortOrder,
+						disabled = Lockdown,
+					},
 				},
 			},
 			mainassist = {
@@ -4843,7 +5049,7 @@ function LunaUF:CreateConfig()
 						type = "toggle",
 						order = 1,
 						disabled = Lockdown,
-						set = function(info, value) set(info, value) LunaUF:LoadUnits() LunaUF.modules.movers:Update() end,
+						set = setEnableUnit,
 					},
 					headerGeneralOptions = {
 						name = L["General"],
@@ -4889,7 +5095,7 @@ function LunaUF:CreateConfig()
 						desc = L["Set the space between units."],
 						type = "range",
 						order = 2.4,
-						min = -6,
+						min = 0,
 						max = 200,
 						step = 1,
 						disabled = Lockdown,
@@ -4933,6 +5139,24 @@ function LunaUF:CreateConfig()
 						set = setGrowthDir,
 						disabled = Lockdown,
 					},
+					sortMethod = {
+						name = L["Sort by"],
+						desc = L["Sort by name or index"],
+						type = "select",
+						order = 2.9,
+						values = {["INDEX"] = L["Index"],["NAME"] = L["Name"]},
+						set = setSortMethod,
+						disabled = Lockdown,
+					},
+					sortOrder = {
+						name = L["Sort order"],
+						desc = L["Sort ascending or descending"],
+						type = "select",
+						order = 2.91,
+						values = {["ASC"] = L["Ascending"],["DESC"] = L["Descending"]},
+						set = setSortOrder,
+						disabled = Lockdown,
+					},
 				},
 			},
 			mainassisttarget = {
@@ -4947,7 +5171,7 @@ function LunaUF:CreateConfig()
 						type = "toggle",
 						order = 1,
 						disabled = Lockdown,
-						set = function(info, value) set(info, value) LunaUF:LoadUnits() LunaUF.modules.movers:Update() end,
+						set = setEnableUnit,
 					},
 					headerGeneralOptions = {
 						name = L["General"],
@@ -4993,7 +5217,7 @@ function LunaUF:CreateConfig()
 						desc = L["Set the space between units."],
 						type = "range",
 						order = 2.4,
-						min = -6,
+						min = 0,
 						max = 200,
 						step = 1,
 						disabled = Lockdown,
@@ -5035,6 +5259,24 @@ function LunaUF:CreateConfig()
 						order = 2.8,
 						values = {["RIGHT"] = L["Left"],["LEFT"] = L["Right"],["BOTTOM"] = L["Up"],["TOP"] = L["Down"]},
 						set = setGrowthDir,
+						disabled = Lockdown,
+					},
+					sortMethod = {
+						name = L["Sort by"],
+						desc = L["Sort by name or index"],
+						type = "select",
+						order = 2.9,
+						values = {["INDEX"] = L["Index"],["NAME"] = L["Name"]},
+						set = setSortMethod,
+						disabled = Lockdown,
+					},
+					sortOrder = {
+						name = L["Sort order"],
+						desc = L["Sort ascending or descending"],
+						type = "select",
+						order = 2.91,
+						values = {["ASC"] = L["Ascending"],["DESC"] = L["Descending"]},
+						set = setSortOrder,
 						disabled = Lockdown,
 					},
 				},

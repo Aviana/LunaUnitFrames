@@ -187,8 +187,6 @@ end
 function Layout:AnchorFrame(frame, config)
 
 	local anchorTo = config.anchorTo or "UIParent"
-	local point = config.point or LunaUF.db.profile.units[frame.unitType].attribPoint or "TOPLEFT"
-	local relativePoint = config.relativePoint or LunaUF.db.profile.units[frame.unitType].attribPoint or "TOPLEFT"
 
 	if( anchorTo ~= "UIParent" ) then
 		-- The frame we wanted to anchor to doesn't exist yet, so will queue and wait for it to exist
@@ -209,7 +207,7 @@ function Layout:AnchorFrame(frame, config)
 	end
 	
 	frame:ClearAllPoints()
-	frame:SetPoint(point, _G[anchorTo], relativePoint, (config.x / scale), (config.y / scale))
+	frame:SetPoint(config.point, _G[anchorTo], config.relativePoint, (config.x / scale), (config.y / scale))
 
 	if( anchoringQueued ) then
 		for queued in pairs(anchoringQueued) do

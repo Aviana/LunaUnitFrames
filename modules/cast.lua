@@ -11,13 +11,13 @@ local interruptIDs = {
 	[GetSpellInfo(1766)] = true, -- kick
 	[GetSpellInfo(6552)] = true, -- pummel
 	[GetSpellInfo(2139)] = true, -- counterspell
-	[GetSpellInfo(72) or "Shield Bash"] = true, -- shield bash
+	[GetSpellInfo(72)] = true, -- shield bash
 	[GetSpellInfo(8042)] = true, -- earth shock
 	[GetSpellInfo(853)] = true, -- hammer of justice
 	[GetSpellInfo(7922)] = true, -- Charge stun
 	[GetSpellInfo(20615)] = true, -- intercept stun
 	[GetSpellInfo(5246)] = true, -- Intimidating shout
-	[GetSpellInfo(5530) or "Mace Stun"] = true, -- Mace Stun
+	[GetSpellInfo(5530)] = true, -- Mace Stun
 	[GetSpellInfo(6358)] = true, -- Seduction
 	[GetSpellInfo(6789)] = true, -- Death Coil
 	[GetSpellInfo(22703)] = true, -- Inferno Effect
@@ -26,15 +26,15 @@ local interruptIDs = {
 	[GetSpellInfo(408)] = true, -- Kidney Shot
 	[GetSpellInfo(1776)] = true, -- Gouge
 	[GetSpellInfo(2094)] = true, -- Blind
-	[GetSpellInfo(15269) or "Blackout"] = true, -- Blackout
+	[GetSpellInfo(15269)] = true, -- Blackout
 	[GetSpellInfo(15487)] = true, -- Silence
 	[GetSpellInfo(8122)] = true, -- Psychic Scream
-	[GetSpellInfo(20170) or "Stun"] = true, -- Seal of Justice
+	[GetSpellInfo(20170)] = true, -- Seal of Justice
 	[GetSpellInfo(3355)] = true, -- Freezing Trap
-	[GetSpellInfo(9005) or "Pounce"] = true, -- Pounce
-	[GetSpellInfo(16922) or "Starfire Stun"] = true, -- Starfire Stun
+	[GetSpellInfo(9005)] = true, -- Pounce
+	[GetSpellInfo(16922)] = true, -- Starfire Stun
 	[GetSpellInfo(5211)] = true, -- Bash
-	[GetSpellInfo(19675) or "Feral Charge Effect"] = true, -- Feral Charge Effect
+	[GetSpellInfo(19675)] = true, -- Feral Charge Effect
 	
 }
 local channelIDs = {
@@ -87,6 +87,10 @@ local function combatlogEvent()
 		if (not cast and targetID ~= UnitGUID("player")) or resisted or blocked or absorbed then return end
 		if bit.band(dstFlags, COMBATLOG_OBJECT_TYPE_PLAYER) > 0 then -- is player
 			if targetID ~= UnitGUID("player") then
+				if GetTime() > cast.endTime then
+					currentCasts[targetID] = nil
+					return
+				end
 				if cast.channeled then
 					cast.endTime = cast.endTime - math.min(cast.delay, (GetTime() - cast.startTime))
 				else
