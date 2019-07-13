@@ -740,10 +740,10 @@ function Units:SetHeaderAttributes(frame, type)
 	if( type == "raidpet" or type == "raid" or type == "mainassist" or type == "maintank" ) then
 		local filter
 		if( config.filters ) then
-			filter = config.filters[frame.groupID] and frame.groupID
-			stateMonitor.raids[frame.groupID]:SetAttribute("raidDisabled", not filter)
-		else
-			filter = config.groupFilter
+			if config.groupBy == "GROUP" then
+				filter = config.filters[frame.groupID] and frame.groupID
+			end
+			stateMonitor.raids[frame.groupID]:SetAttribute("raidDisabled", not config.filters[frame.groupID])
 		end
 		
 		if type == "raidpet" then
@@ -774,6 +774,7 @@ function Units:SetHeaderAttributes(frame, type)
 		frame:SetAttribute("columnAnchorPoint", config.attribAnchorPoint)
 		frame:SetAttribute("groupFilter", filter or "1,2,3,4,5,6,7,8")
 		frame:SetAttribute("roleFilter", config.roleFilter)
+		frame:SetAttribute("strictFiltering", true)
 
 		if( config.groupBy == "CLASS" ) then
 			frame:SetAttribute("groupingOrder", "DRUID,HUNTER,MAGE,PALADIN,PRIEST,ROGUE,SHAMAN,WARLOCK,WARRIOR")
