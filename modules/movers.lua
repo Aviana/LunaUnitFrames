@@ -196,8 +196,10 @@ function Movers:Enable()
 				end
 			end
 					
-			header:SetAttribute("startingIndex", -math.min(config.maxColumns * (config.unitsPerColumn or 5), maxUnits) + 1)
+			header:SetAttribute("startingIndex", -math.min(config.maxColumns * 5, maxUnits) + 1)
+			header:SetAttribute("unitsPerColumn", 5)
 		elseif( LunaUF[header.unitType .. "Units"] ) then
+			header:SetAttribute("unitsPerColumn", 5)
 			header:SetAttribute("startingIndex", -#(LunaUF[header.unitType .. "Units"]) + 1)
 		end
 		
@@ -274,6 +276,7 @@ function Movers:Disable()
 	for type, header in pairs(LunaUF.Units.headerFrames) do
 		header:SetMovable(false)
 		header:SetAttribute("startingIndex", 1)
+		header:SetAttribute("unitsPerColumn", LunaUF.db.profile.units[header.unitType].unitsPerColumn or 5)
 		header:SetAttribute("initial-unitWatch", true)
 		
 		if( header.unitType == type ) then
@@ -293,6 +296,9 @@ function Movers:SetFrame(frame)
 	local scale
 	local position = LunaUF.db.profile.units[frame.unitType]
 	local config = LunaUF.db.profile.units[frame.unitType]
+	if not position then
+		ChatFrame1:AddMessage(frame:GetName())
+	end
 	if not position.x then
 		position = LunaUF.db.profile.units[frame.unitType].positions[frame.groupID]
 	end

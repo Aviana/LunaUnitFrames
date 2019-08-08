@@ -202,6 +202,8 @@ function LunaUF:LoadDefaults()
 			x = 10,
 			y = -15,
 			anchorTo = "UIParent",
+			point = "TOPLEFT",
+			relativePoint = "TOPLEFT",
 		},
 		pet = {
 			enabled = true,
@@ -1267,6 +1269,7 @@ function LunaUF:LoadDefaults()
 			columnSpacing = 5,
 			groupsPerRow = 5,
 			unitsPerColumn = 40,
+			maxColumns = 1,
 			groupSpacing = 0,
 			attribPoint = "BOTTOM",
 			attribAnchorPoint = "LEFT",

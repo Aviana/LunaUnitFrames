@@ -683,7 +683,7 @@ function Units:SetHeaderAttributes(frame, type)
 
 		frame:SetAttribute("showRaid", LunaUF.db.profile.locked and true)
 		frame:SetAttribute("maxColumns", config.maxColumns or 1)
-		frame:SetAttribute("unitsPerColumn", config.unitsPerColumn or 5)
+		frame:SetAttribute("unitsPerColumn", LunaUF.db.profile.locked and config.unitsPerColumn or 5)
 		frame:SetAttribute("columnSpacing", config.columnSpacing)
 		frame:SetAttribute("columnAnchorPoint", config.attribAnchorPoint)
 		frame:SetAttribute("groupFilter", filter or "1,2,3,4,5,6,7,8")

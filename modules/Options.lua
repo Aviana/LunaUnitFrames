@@ -221,7 +221,7 @@ function LunaUF:CreateConfig()
 		
 		-- Simply re-set all frames is easier than making a complicated selection algorithm
 		for unitName, name in pairs(UnitToFrame) do
-			if unitName ~= "None" and _G[name] then
+			if unitName ~= "None" and name ~= "UIParent" and _G[name] then
 				LunaUF.modules.movers:SetFrame(_G[name])
 			end
 		end
