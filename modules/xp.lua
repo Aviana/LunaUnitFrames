@@ -19,6 +19,7 @@ function XP:OnEnable(frame)
 		frame.xpBar = CreateFrame("Frame", nil, frame)
 		
 		frame.xpBar.xp = LunaUF.Units:CreateBar(frame.xpBar)
+		frame.xpBar.bar = frame.xpBar.xp
 		frame.xpBar.xp:SetPoint("BOTTOMLEFT", frame.xpBar)
 		frame.xpBar.xp:SetPoint("BOTTOMRIGHT", frame.xpBar)
 				

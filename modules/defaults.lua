@@ -1268,7 +1268,7 @@ function LunaUF:LoadDefaults()
 			height = 30,
 			columnSpacing = 5,
 			groupsPerRow = 5,
-			unitsPerColumn = 40,
+			unitsPerColumn = 5,
 			maxColumns = 1,
 			groupSpacing = 0,
 			attribPoint = "BOTTOM",

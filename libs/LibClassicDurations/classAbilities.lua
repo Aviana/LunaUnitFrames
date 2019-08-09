@@ -1,7 +1,7 @@
 local lib = LibStub and LibStub("LibClassicDurations", true)
 if not lib then return end
 
-local Type, Version = "SpellTable", 12
+local Type, Version = "SpellTable", 13
 if lib:GetDataVersion(Type) >= Version then return end  -- older versions didn't have that function
 
 local Spell = lib.AddAura
@@ -11,7 +11,8 @@ local Talent = lib.Talent
 -- GLOBAL
 ------------------
 
--- Spell( 23605, { duration = 5 }) -- Nightfall (Axe) Proc
+Spell(1604, { duration = 4 }) -- Common Daze
+Spell( 23605, { duration = 5 }) -- Nightfall (Axe) Proc
 Spell( 835, { duration = 3 }) -- Tidal Charm
 Spell( 11196, { duration = 60 }) -- Recently Bandaged
 
@@ -22,8 +23,43 @@ Spell({ 13099, 13138, 16566 }, {
         else return 10 end
     end
 }) -- Net-o-Matic
+
+Spell( 23451, { duration = 10 }) -- Battleground speed buff
+Spell( 23493, { duration = 10 }) -- Battleground heal buff
+Spell( 23505, { duration = 60 }) -- Battleground damage buff
 Spell({ 4068, 19769 }, { duration = 3 }) -- Iron Grenade, Thorium
--- too lazy to add more, everyone is using iron anyway
+Spell( 6615, { duration = 30, type = "BUFF" }) -- Free Action Potion
+Spell( 24364, { duration = 5, type = "BUFF" }) -- Living Action Potion
+Spell( 3169, { duration = 6, type = "BUFF" }) -- Limited Invulnerability Potion
+Spell( 16621, { duration = 3, type = "BUFF" }) -- Invulnerable Mail
+Spell( 1090, { duration = 30 }) -- Magic Dust
+Spell( 13327, { duration = 30 }) -- Reckless Charge
+Spell({ 26740, 13181 }, { duration = 20 }) -- Mind Control Cap + Backfire
+Spell( 11359, { duration = 30, type = "BUFF" }) -- Restorative Potion
+Spell( 6727, { duration = 30 }) -- Violet Tragan
+Spell( 5024, { duration = 10, type = "BUFF" }) -- Skull of Impending Doom
+Spell( 2379, { duration = 15, type = "BUFF" }) -- Swiftness Potion
+Spell( 5134, { duration = 10 }) -- Flash Bomb
+Spell( 23097, { duration = 5, type = "BUFF" }) -- Fire Reflector
+Spell( 23131, { duration = 5, type = "BUFF" }) -- Frost Reflector
+Spell( 23132, { duration = 5, type = "BUFF" }) -- Shadow Reflector
+Spell({ 25750, 25747, 25746, 23991 }, { duration = 15, type = "BUFF" }) -- AB Trinkets
+Spell( 23506, { duration = 20, type = "BUFF" }) -- Arena Grand Master trinket
+Spell( 29506, { duration = 20, type = "BUFF" }) -- Burrower's Shell trinket
+Spell( 12733, { duration = 30, type = "BUFF" }) -- Blacksmith trinket
+-- Spell( 15753, { duration = 2 }) -- Linken's Boomerang stun
+-- Spell( 15752, { duration = 10 }) -- Linken's Boomerang disarm
+Spell( 14530, { duration = 10, type = "BUFF" }) -- Nifty Stopwatch
+Spell( 13237, { duration = 3 }) -- Goblin Mortar trinket
+Spell( 14253, { duration = 8, type = "BUFF" }) -- Black Husk Shield
+Spell( 9175, { duration = 15, type = "BUFF" }) -- Swift Boots
+Spell( 13141, { duration = 20, type = "BUFF" }) -- Gnomish Rocket Boots
+Spell( 8892, { duration = 20, type = "BUFF" }) -- Goblin Rocket Boots
+Spell( 9774, { duration = 5, type = "BUFF" }) -- Spider Belt & Ornate Mithril Boots
+
+-------------
+-- RACIALS
+-------------
 
 Spell( 26635 ,{ duration = 10, type = "BUFF" }) -- Berserking
 Spell( 20600 ,{ duration = 20, type = "BUFF" }) -- Perception
@@ -32,6 +68,7 @@ Spell( 23230 ,{ duration = 25 }) -- Blood Fury debuff
 Spell( 20594 ,{ duration = 8, type = "BUFF" }) -- Stoneform
 Spell( 20549 ,{ duration = 2 }) -- War Stomp
 Spell( 7744, { duration = 5, type = "BUFF" }) -- Will of the Forsaken
+
 -------------
 -- PRIEST
 -------------
@@ -50,6 +87,7 @@ Spell( 15271, { duration = 15, type = "BUFF" }) -- Spirit Tap
 Spell({ 2652, 19261, 19262, 19264, 19265, 19266 }, { duration = 600, type = "BUFF" }) -- Touch of Weakness
 Spell({ 13896, 19271, 19273, 19274, 19275 }, { duration = 15, type = "BUFF" }) -- Feedback
 Spell({ 2651, 19289, 19291, 19292, 19293 }, { duration = 15, type = "BUFF" }) -- Elune's Grace
+Spell({ 9035, 19281, 19282, 19283, 19284, 19285 }, { duration = 120 }) -- Hex of Weakness
 
 Spell( 6346, { duration = 600, type = "BUFF" }) -- Fear Ward
 Spell({ 7001, 27873, 27874 }, { duration = 10, type = "BUFF" }) -- Lightwell Renew
@@ -85,6 +123,8 @@ Spell({ 589, 594, 970, 992, 2767, 10892, 10893, 10894 }, { stacking = true,
 Spell( 15269 ,{ duration = 3 }) -- Blackout
 Spell( 15258 ,{ duration = 15 }) -- Shadow Vulnerability
 Spell( 15286 ,{ duration = 60 }) -- Vampiric Embrace
+Spell({ 15407, 17311, 17312, 17313, 17314, 18807 }, { duration = 3 }) -- Mind Flay
+Spell({ 605, 10911, 10912 }, { duration = 60 }) -- Mind Control
 
 ---------------
 -- DRUID
@@ -92,7 +132,7 @@ Spell( 15286 ,{ duration = 60 }) -- Vampiric Embrace
 
 -- Spell({ 1126, 5232, 5234, 6756, 8907, 9884, 9885 }, { duration = 1800, type = "BUFF" }) -- Mark of the Wild
 -- Spell({ 21849, 21850 }, { duration = 3600, type = "BUFF" }) -- Gift of the Wild
-
+Spell( 19975, { duration = 12 }) -- Nature's Grasp root
 Spell({ 16689, 16810, 16811, 16812, 16813, 17329 }, { duration = 45, type = "BUFF" }) -- Nature's Grasp
 Spell( 16864, { duration = 600, type = "BUFF" }) -- Omen of Clarity
 Spell( 16870, { duration = 15, type = "BUFF" }) -- Clearcasting from OoC
@@ -202,7 +242,12 @@ Spell({ 6343, 8198, 8204, 8205, 11580, 11581 }, {
 Spell({ 694, 7400, 7402, 20559, 20560 }, { duration = 6 }) -- Mocking Blow
 Spell( 1161 ,{ duration = 6 }) -- Challenging Shout
 Spell( 355 ,{ duration = 3 }) -- Taunt
-Spell({ 5242, 6192, 6673, 11549, 11550, 11551, 25289 }, { duration = 120, type = "BUFF" }) -- Battle Shout
+Spell({ 5242, 6192, 6673, 11549, 11550, 11551, 25289 }, { type = "BUFF",
+    duration = function(spellID, isSrcPlayer)
+        local talents = isSrcPlayer and Talent(12321, 12835, 12836, 12837, 12838) or 0
+        return 120 * (1 + 0.1 * talents)
+    end
+}) -- Battle Shout
 Spell({ 1160, 6190, 11554, 11555, 11556 }, {
     duration = function(spellID, isSrcPlayer)
         local talents = isSrcPlayer and Talent(12321, 12835, 12836, 12837, 12838) or 0
@@ -289,7 +334,7 @@ Spell({ 1943, 8639, 8640, 11273, 11274, 11275 }, { stacking = true,
 }) -- Rupture
 -- SnD -- player-only, can skip
 
-Spell({ 2983, 8696, 11305 }, { duration = 8 }) -- Sprint
+Spell({ 2983, 8696, 11305 }, { duration = 8, type = "BUFF" }) -- Sprint
 Spell( 5277 ,{ duration = 15, type = "BUFF" }) -- Evasion
 Spell({ 1776, 1777, 8629, 11285, 11286 }, {
     duration = function(spellID, isSrcPlayer)
@@ -300,6 +345,8 @@ Spell({ 1776, 1777, 8629, 11285, 11286 }, {
         end
     end
 }) -- Gouge
+
+Spell( 14251 , { duration = 6 }) -- Riposte (disarm)
 
 ------------
 -- WARLOCK
@@ -372,6 +419,7 @@ Spell({ 348, 707, 1094, 2941, 11665, 11667, 11668, 25309 },{ duration = 15, stac
 Spell({ 6229, 11739, 11740, 28610 } ,{ duration = 30, type = "BUFF" }) -- Shadow Ward
 Spell({ 7812, 19438, 19440, 19441, 19442, 19443 }, { duration = 30, type = "BUFF" }) -- Sacrifice
 Spell({ 17877, 18867, 18868, 18869, 18870, 18871 }, { duration = 5 }) -- Shadowburn Debuff
+Spell( 18093 ,{ duration = 3 }) -- Pyroclasm
 
 ---------------
 -- SHAMAN
@@ -387,6 +435,9 @@ Spell({ 16177, 16236, 16237 }, { duration = 15, type = "BUFF" }) -- Ancestral Fo
 Spell({ 8056, 8058, 10472, 10473 }, { duration = 8 }) -- Frost Shock
 Spell({ 8050, 8052, 8053, 10447, 10448, 29228 }, { duration = 12, stacking = true }) -- Flame Shock
 Spell( 29203 ,{ duration = 15, type = "BUFF" }) -- Healing Way
+Spell({ 8034, 8037, 10458, 16352, 16353 }, { duration = 8 }) -- Frostbrand Attack
+Spell( 3600 ,{ duration = 5 }) -- Earthbind Totem
+-- Spell( 8178 ,{ type = "BUFF" }) -- Grounding Totem Effect, no duration
 
 --------------
 -- PALADIN
@@ -484,6 +535,7 @@ Spell({ 20925, 20927, 20928 }, { duration = 10, type = "BUFF" }) -- Holy Shield
 Spell({ 20128, 20131, 20132, 20133, 20134 }, { duration = 10, type = "BUFF" }) -- Holy Shield
 Spell({ 67, 26017, 26018 }, { duration = 10, type = "BUFF" }) -- Vindication
 Spell({ 20050, 20052, 20053, 20054, 20055 }, { duration = 8, type = "BUFF" }) -- Vengeance
+Spell( 20170 ,{ duration = 2 }) -- Seal of Justice stun
 
 -------------
 -- HUNTER
@@ -508,7 +560,7 @@ Spell({ 1513, 14326, 14327 }, {
     end
 }) -- Scare Beast
 
-Spell(19229, { duration = 5 }) -- Wing Clip
+Spell(19229, { duration = 5 }) -- Wing Clip Root
 Spell({ 19306, 20909, 20910 }, { duration = 5 }) -- Counterattack
 -- Spell({ 13812, 14314, 14315 }, { duration = 20, stacking = true }) -- Explosive Trap
 Spell({ 13797, 14298, 14299, 14300, 14301 }, { duration = 15, stacking = true }) -- Immolation Trap
@@ -528,6 +580,9 @@ Spell({ 2974, 14267, 14268 }, { duration = 10 }) -- Wing Clip
 Spell(5116, { duration = 4 }) -- Concussive Shot
 Spell(19410, { duration = 3 }) -- Conc Stun
 Spell(24394, { duration = 3 }) -- Intimidation
+Spell(15571, { duration = 4 }) -- Daze from Aspect
+Spell(19185, { duration = 5 }) -- Entrapment
+Spell(25999, { duration = 1 }) -- Boar Charge
 
 -------------
 -- MAGE
@@ -591,7 +646,7 @@ Spell({ 120, 8492, 10159, 10160, 10161 }, {
 --     end
 -- }) -- Improved Blizzard
 
-Spell(6136 , {
+Spell({6136, 7321}, {
     duration = function(spellID, isSrcPlayer)
         local permafrost = isSrcPlayer and Talent(11175, 12569, 12571) or 0
         return 5 + permafrost
@@ -617,6 +672,8 @@ Spell({ 122, 865, 6131, 10230 }, { duration = 8 }) -- Frost Nova
 -- Spell(12536, { duration = 15 }) -- Clearcasting
 Spell(12043, { duration = 15 }) -- Presence of Mind
 Spell(12042, { duration = 15 }) -- Arcane Power
+Spell(12051, { duration = 8, type = "BUFF" }) -- Evocation
+
 
 
 

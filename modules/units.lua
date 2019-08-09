@@ -287,6 +287,13 @@ local function checkForGroupNumber(self)
 	if LunaUF.db.profile.units.raid.groupnumbers then
 		if self:GetWidth() > 1 and self:GetHeight() > 1 or not LunaUF.db.profile.locked then
 			self.number:Show()
+			if self.groupID == 4 and LunaUF.db.profile.units.raid.groupBy == "CLASS" then --Since UnitFactionGroup returns garbage on login, we hack
+				if UnitFactionGroup("player") == "Horde" then
+					self.number:SetText(LOCALIZED_CLASS_NAMES_MALE["SHAMAN"])
+				else
+					self.number:SetText(LOCALIZED_CLASS_NAMES_MALE["PALADIN"])
+				end
+			end
 			return
 		end
 	end
@@ -635,12 +642,15 @@ function Units:CheckGroupVisibility()
 	end
 
 	if( raid ) then
+		
 		raid:SetAttribute("showParty", LunaUF.db.profile.units.raid.showParty)
+		raid:SetAttribute("showPlayer", LunaUF.db.profile.units.raid.showParty)
 		raid:SetAttribute("showSolo", LunaUF.db.profile.units.raid.showSolo)
 	end
 	
 	if ( raidpet ) then
 		raidpet:SetAttribute("showParty", LunaUF.db.profile.units.raid.showParty)
+		raidpet:SetAttribute("showPlayer", LunaUF.db.profile.units.raid.showParty)
 		raidpet:SetAttribute("showSolo", LunaUF.db.profile.units.raid.showSolo)
 	end
 end
@@ -656,6 +666,8 @@ function Units:SetHeaderAttributes(frame, type)
 		if( config.filters ) then
 			if config.groupBy == "GROUP" then
 				filter = config.filters[frame.groupID] and frame.groupID
+			elseif config.groupBy == "CLASS" then
+				filter = frame.groupID == 4 and "SHAMAN,PALADIN" or classOrder[frame.groupID]
 			end
 			stateMonitor.raids[frame.groupID]:SetAttribute("raidDisabled", not config.filters[frame.groupID])
 		end
@@ -688,15 +700,7 @@ function Units:SetHeaderAttributes(frame, type)
 		frame:SetAttribute("columnAnchorPoint", config.attribAnchorPoint)
 		frame:SetAttribute("groupFilter", filter or "1,2,3,4,5,6,7,8")
 		frame:SetAttribute("roleFilter", config.roleFilter)
-		frame:SetAttribute("strictFiltering", true)
 
-		if( config.groupBy == "CLASS" ) then
-			frame:SetAttribute("groupingOrder", "DRUID,HUNTER,MAGE,PALADIN,PRIEST,ROGUE,SHAMAN,WARLOCK,WARRIOR")
-			frame:SetAttribute("groupBy", "CLASS")
-		else
-			frame:SetAttribute("groupingOrder", "1,2,3,4,5,6,7,8")
-			frame:SetAttribute("groupBy", "GROUP")
-		end
 	elseif( type == "party" ) then
 		frame:SetAttribute("maxColumns", 5)
 		frame:SetAttribute("unitsPerColumn", 5)
@@ -869,7 +873,15 @@ function Units:LoadRaidGroupHeader(type)
 			if LunaUF.db.profile.units.raid.groupBy == "GROUP" then
 				frame.number:SetText(GROUP.." "..id)
 			else
-				frame.number:SetText(LOCALIZED_CLASS_NAMES_MALE[classOrder[id]])
+				if id == 4 and LunaUF.db.profile.units.raid.groupBy == "CLASS" then --Since UnitFactionGroup returns garbage on login, we hack
+					if UnitFactionGroup("player") == "Horde" then
+						frame.number:SetText(LOCALIZED_CLASS_NAMES_MALE["SHAMAN"])
+					else
+						frame.number:SetText(LOCALIZED_CLASS_NAMES_MALE["PALADIN"])
+					end
+				else
+					frame.number:SetText(LOCALIZED_CLASS_NAMES_MALE[classOrder[id]])
+				end
 			end
 			
 			if config.attribPoint == "RIGHT" then

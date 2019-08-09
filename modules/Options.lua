@@ -285,6 +285,30 @@ function LunaUF:CreateConfig()
 		end
 	end
 
+	local function getShowWhen(info)
+		if LunaUF.db.profile.units.raid.showSolo then
+			return "ALWAYS"
+		elseif LunaUF.db.profile.units.raid.showParty then
+			return "PARTY"
+		else
+			return "RAID"
+		end
+	end
+
+	local function setShowWhen(info, value)
+		if value == "ALWAYS" then
+			LunaUF.db.profile.units.raid.showSolo = true
+			LunaUF.db.profile.units.raid.showParty = true
+		elseif value == "PARTY" then
+			LunaUF.db.profile.units.raid.showSolo = nil
+			LunaUF.db.profile.units.raid.showParty = true
+		else
+			LunaUF.db.profile.units.raid.showSolo = nil
+			LunaUF.db.profile.units.raid.showParty = nil
+		end
+		LunaUF.Units:ReloadHeader("raid")
+	end
+
 	local function Lockdown() return LunaUF.InCombatLockdown end
 
 	local function deepAnchorCheck(tbl)
@@ -4185,7 +4209,15 @@ function LunaUF:CreateConfig()
 						order = 2.33,
 						values = {["GROUP"] = L["Group"],["CLASS"] = L["Class"]},
 						disabled = Lockdown,
-						set = function(info, value) set(info,value) LunaUF.Units:ReloadHeader("raid") end,
+						set = function(info, value)
+								if value == "GROUP" then
+									LunaUF.db.profile.units.raid.unitsPerColumn = 5
+								else
+									LunaUF.db.profile.units.raid.unitsPerColumn = 40
+								end
+								set(info,value)
+								LunaUF.Units:ReloadHeader("raid")
+							end,
 					},
 					sortMethod = {
 						name = L["Sort by"],
@@ -4205,21 +4237,31 @@ function LunaUF:CreateConfig()
 						set = setSortOrder,
 						disabled = Lockdown,
 					},
-					showParty = {
-						name = L["Show party"],
-						desc = L["Show a non raid party in the raid frame"],
-						type = "toggle",
+--					showParty = {
+--						name = L["Show party"],
+--						desc = L["Show a non raid party in the raid frame"],
+--						type = "toggle",
+--						order = 2.34,
+--						disabled = Lockdown,
+--						set = function(info, value) set(info,value) LunaUF.Units:ReloadHeader("raid") end,
+--					},
+--					showSolo = {
+--						name = L["Show solo"],
+--						desc = L["Show raid frame when solo"],
+--						type = "toggle",
+--						order = 2.35,
+--						disabled = Lockdown,
+--						set = function(info, value) set(info,value) LunaUF.Units:ReloadHeader("raid") end,
+--					},
+					showWhen = {
+						name = L["Show when"],
+						desc = L["Show even smaler groups than a raid in the raidframe"],
+						type = "select",
 						order = 2.34,
+						values = {["ALWAYS"] = L["Always"],["PARTY"] = L["party"], ["RAID"] = L["raid"]},
+						get = getShowWhen,
+						set = setShowWhen,
 						disabled = Lockdown,
-						set = function(info, value) set(info,value) LunaUF.Units:ReloadHeader("raid") end,
-					},
-					showSolo = {
-						name = L["Show solo"],
-						desc = L["Show raid frame when solo"],
-						type = "toggle",
-						order = 2.35,
-						disabled = Lockdown,
-						set = function(info, value) set(info,value) LunaUF.Units:ReloadHeader("raid") end,
 					},
 					groupnumbers = {
 						name = L["Groupnumbers"],
