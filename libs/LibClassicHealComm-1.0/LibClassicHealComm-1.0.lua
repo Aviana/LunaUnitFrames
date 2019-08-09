@@ -7,7 +7,7 @@ Dependencies: LibStub, ChatThrottleLib
 ]]
 
 local major = "LibClassicHealComm-1.0"
-local minor = 14
+local minor = 15
 assert(LibStub, string.format("%s requires LibStub.", major))
 
 local HealComm = LibStub:NewLibrary(major, minor)
@@ -1325,9 +1325,9 @@ local function parseChannelHeal(casterGUID, spellID, amount, totalTicks, ...)
 	end
 
 	pendingHots[casterGUID] = pendingHots[casterGUID] or {}
-	pendingHots[casterGUID][spellID] = pendingHots[casterGUID][spellID] or {}
+	pendingHots[casterGUID][spellID] = pendingHots[casterGUID][GetSpellInfo(spellID)] or {}
 
-	local pending = pendingHots[casterGUID][spellID]
+	local pending = pendingHots[casterGUID][GetSpellInfo(spellID)]
 	table.wipe(pending)
 	pending.startTime = startTime / 1000
 	pending.endTime = endTime / 1000
@@ -1375,9 +1375,9 @@ local function parseHotHeal(casterGUID, wasUpdated, spellID, tickAmount, duratio
 	if( not stack or not spellDuration or not endTime ) then return end
 
 	pendingHots[casterGUID] = pendingHots[casterGUID] or {}
-	pendingHots[casterGUID][spellID] = pendingHots[casterGUID][spellID] or {}
+	pendingHots[casterGUID][spellID] = pendingHots[casterGUID][GetSpellInfo(spellID)] or {}
 	
-	local pending = pendingHots[casterGUID][spellID]
+	local pending = pendingHots[casterGUID][GetSpellInfo(spellID)]
 	pending.duration = duration
 	pending.endTime = endTime
 	pending.stack = stack
@@ -1403,7 +1403,7 @@ local function parseHealEnd(casterGUID, pending, checkField, spellID, interrupte
 	
 	-- Hots use spell IDs while everything else uses spell names. Avoids naming conflicts for multi-purpose spells such as Lifebloom or Regrowth
 	if( not pending ) then
-		pending = checkField == "id" and pendingHots[casterGUID] and pendingHots[casterGUID][spellID] or checkField ~= "id" and pendingHeals[casterGUID] and pendingHeals[casterGUID][spellID]
+		pending = checkField == "id" and pendingHots[casterGUID] and pendingHots[casterGUID][GetSpellInfo(spellID)] or checkField ~= "id" and pendingHeals[casterGUID] and pendingHeals[casterGUID][spellID]
 	end
 	if( not pending or not pending.bitType ) then return end
 			
@@ -1437,7 +1437,7 @@ HealComm.parseHealEnd = parseHealEnd
 
 -- Heal delayed
 local function parseHealDelayed(casterGUID, startTime, endTime, spellID)
-	local pending = pendingHeals[casterGUID] and pendingHeals[casterGUID][spellID] or pendingHots[casterGUID][spellID]
+	local pending = pendingHeals[casterGUID] and pendingHeals[casterGUID][spellID] or pendingHots[casterGUID][GetSpellInfo(spellID)]
 	-- It's possible to get duplicate interrupted due to raid1 = party1, player = raid# etc etc, just block it here
 	if( pending.endTime == endTime and pending.startTime == startTime ) then return end
 	
@@ -1517,14 +1517,14 @@ HealComm.bucketFrame:SetScript("OnUpdate", function(self, elapsed)
 				data.timeout = data.timeout - elapsed
 				if( data.timeout <= 0 ) then
 					-- This shouldn't happen, on the offhand chance it does then don't bother sending an event
-					if( #(data) == 0 or not data.spellID or not data.spellName ) then
+					if( #(data) == 0 or not data.spellName ) then
 						table.wipe(data)
 					-- We're doing a bucket for a tick heal like Tranquility or Wild Growth
 					elseif( data.type == "tick" ) then
-						local pending = pendingHots[casterGUID] and pendingHots[casterGUID][data.spellID]
+						local pending = pendingHots[casterGUID] and pendingHots[casterGUID][data.spellName]
 						if( pending and pending.bitType ) then
 							local endTime = select(3, getRecord(pending, data[1]))
-							HealComm.callbacks:Fire("HealComm_HealUpdated", casterGUID, pending.spellID, pending.bitType, endTime, unpack(data))
+							HealComm.callbacks:Fire("HealComm_HealUpdated", casterGUID, nil, pending.bitType, endTime, unpack(data))
 						end
 
 						table.wipe(data)
@@ -1551,12 +1551,13 @@ end
 
 local COMBATLOG_OBJECT_AFFILIATION_MINE = COMBATLOG_OBJECT_AFFILIATION_MINE
 function HealComm:COMBAT_LOG_EVENT_UNFILTERED()
-	local timestamp, eventType, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellID, spellName, spellSchool, auraType = CombatLogGetCurrentEventInfo()
+	local timestamp, eventType, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, _, spellName, spellSchool, auraType = CombatLogGetCurrentEventInfo()
+	local spellID = select(7,GetSpellInfo(spellName))
 	if( not eventRegistered[eventType] ) then return end
 	-- Heal or hot ticked that the library is tracking
 	-- It's more efficient/accurate to have the library keep track of this locally, spamming the comm channel would not be a very good thing especially when a single player can have 4 - 8 hots/channels going on them.
 	if( eventType == "SPELL_HEAL" or eventType == "SPELL_PERIODIC_HEAL" ) then
-		local pending = sourceGUID and pendingHots[sourceGUID] and pendingHots[sourceGUID][spellID]
+		local pending  = sourceGUID and pendingHots[sourceGUID] and pendingHots[sourceGUID][spellName]
 		if( pending and pending[destGUID] and pending.bitType and bit.band(pending.bitType, OVERTIME_HEALS) > 0 ) then
 			local amount, stack, endTime, ticksLeft = getRecord(pending, destGUID)
 			ticksLeft = math.max(ticksLeft - 1, 0)
@@ -1565,21 +1566,20 @@ function HealComm:COMBAT_LOG_EVENT_UNFILTERED()
 			
 			if( pending.isMultiTarget ) then
 				bucketHeals[sourceGUID] = bucketHeals[sourceGUID] or {}
-				bucketHeals[sourceGUID][spellID] = bucketHeals[sourceGUID][spellID] or {}
+				bucketHeals[sourceGUID][spellName] = bucketHeals[sourceGUID][spellName] or {}
 				
-				local spellBucket = bucketHeals[sourceGUID][spellID]
+				local spellBucket = bucketHeals[sourceGUID][spellName]
 				if( not spellBucket[destGUID] ) then
 					spellBucket.timeout = BUCKET_FILLED
 					spellBucket.type = "tick"
 					spellBucket.spellName = spellName
-					spellBucket.spellID = spellID
 					spellBucket[destGUID] = true
 					table.insert(spellBucket, destGUID)
 					
 					self.bucketFrame:Show()
 				end
 			else
-				HealComm.callbacks:Fire("HealComm_HealUpdated", sourceGUID, spellID, pending.bitType, endTime, destGUID)
+				HealComm.callbacks:Fire("HealComm_HealUpdated", sourceGUID, nil, pending.bitType, endTime, destGUID)
 			end
 		end
 

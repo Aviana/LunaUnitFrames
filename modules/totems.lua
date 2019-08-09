@@ -396,8 +396,9 @@ function Totems:OnDisable(frame)
 end
 
 function Totems:OnCombatLog(frame)
-	local _, event, _, sourceID, _, _, _, targetID, _, _, _, spellID = CombatLogGetCurrentEventInfo()
+	local _, event, _, sourceID, _, _, _, targetID, _, _, _, _, spellName = CombatLogGetCurrentEventInfo()
 	local overkill
+	local spellID = select(7,GetSpellInfo(spellName))
 	if event == "SPELL_SUMMON" and sourceID == UnitGUID("player") then
 		local type = TotemDB[spellID].type
 		totemsAlive[type] = targetID
