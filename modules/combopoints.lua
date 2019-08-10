@@ -70,7 +70,7 @@ end
 function Combo:Update(frame)
 	local points = GetComboPoints("player", "target")
 
-	LunaUF.Layout:SetBarVisibility(frame, "comboPoints", LunaUF.db.profile.units[frame.unitType].comboPoints.showAlways or (points and points > 0))
+	LunaUF.Layout:SetBarVisibility(frame, "comboPoints", not LunaUF.db.profile.units[frame.unitType].comboPoints.autoHide or (points and points > 0))
 	
 	for id, block in pairs(frame.comboPoints.blocks) do
 		if( id <= points ) then
