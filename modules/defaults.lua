@@ -441,7 +441,7 @@ function LunaUF:LoadDefaults()
 			powerBar = { enabled = true, background = true, backgroundAlpha = 0.2, height = 4.5, order = 20, colorType = "type" },
 			castBar = { enabled = true, background = true, backgroundAlpha = 0.2, height = 3, icon = "HIDE", autoHide = true, order = 60},
 			emptyBar = { enabled = false, height = 3, order = 50, reactionType="npc", class = true, alpha = 0.2},
-			comboPoints = {enabled = true, order = 70, growth = "RIGHT", height = 2},
+			comboPoints = {enabled = true, autoHide = true, order = 70, growth = "RIGHT", height = 2},
 			range = { enabled = false },
 			highlight = { enabled = true, debuff = false },
 			borders = { enabled = true },

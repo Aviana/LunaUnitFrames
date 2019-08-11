@@ -53,7 +53,7 @@ local defaultTags = {
 	["numtargeting"]		= function(frame, unit)
 								if UnitInRaid("player") then
 									local count = 0
-									for i = 1, GetNumRaidMembers() do
+									for i = 1, GetNumGroupMembers() do
 										if UnitIsUnit(unit, ("raid"..i.."target")) then
 											count = count + 1
 										end
@@ -66,7 +66,7 @@ local defaultTags = {
 									else
 										count = 0
 									end
-									for i=1, GetNumPartyMembers() do
+									for i=1, GetNumSubgroupMembers() do
 										if UnitIsUnit(unit, ("party"..i.."target")) then
 											count = count + 1
 										end

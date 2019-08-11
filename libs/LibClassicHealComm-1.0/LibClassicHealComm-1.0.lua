@@ -1,13 +1,13 @@
 --[[
 Name: LibClassicHealComm-1.0
-Revision: $Revision: 14 $
+Revision: $Revision: 18 $
 Author(s): Aviana, Original by Shadowed (shadowed.wow@gmail.com)
 Description: Healing communication library. This is a heavily modified clone of LibHealComm-4.0.
 Dependencies: LibStub, ChatThrottleLib
 ]]
 
 local major = "LibClassicHealComm-1.0"
-local minor = 17
+local minor = 18
 assert(LibStub, string.format("%s requires LibStub.", major))
 
 local HealComm = LibStub:NewLibrary(major, minor)
@@ -1371,9 +1371,8 @@ local function parseHotHeal(casterGUID, wasUpdated, spellID, tickAmount, duratio
 	if( not tickAmount or not spellID or select("#", ...) == 0 ) then return end
 	-- Retrieve the hot information
 	local stack, spellDuration, endTime = findAura(casterGUID, spellID, ...)
-	spellDuration = spellDuration and spellDuration > 0 and spellDuration or duration
-	endTime = endTime and endTime > 0 and endTime or (GetTime() + spellDuration)
-	if( not stack or not spellDuration or not endTime ) then return end
+	endTime = endTime and endTime > 0 and endTime or (GetTime() + duration)
+	if( not stack or not duration or not endTime ) then return end
 
 	pendingHots[casterGUID] = pendingHots[casterGUID] or {}
 	pendingHots[casterGUID][spellName] = pendingHots[casterGUID][spellName] or {}
@@ -1467,13 +1466,12 @@ end
 -- Channels use tick total because the tick interval varies by haste
 -- Hots use tick interval because the total duration varies but the tick interval stays the same
 function HealComm:CHAT_MSG_ADDON(prefix, message, channel, sender)
-	if( not commType or not spellID or not casterGUID ) then return end
-	
+	if( prefix ~= COMM_PREFIX or channel ~= distribution or Ambiguate(sender, "none") == playerName ) then return end
 	local commType, castTime, spellID, arg1, arg2, arg3 = string.split(":", message)
 	local casterGUID = UnitGUID(Ambiguate(sender, "none"))
 	spellID = tonumber(spellID)
 	
-	if( prefix ~= COMM_PREFIX or channel ~= distribution or sender == playerName ) then return end
+	if( not commType or not spellID or not casterGUID ) then return end
 	
 	-- New direct heal - D:<castTime>:<spellID>:<amount>:target1,target2...
 	if( commType == "D" and arg1 and arg2 ) then
@@ -1591,7 +1589,7 @@ function HealComm:COMBAT_LOG_EVENT_UNFILTERED()
 			if( type ) then
 				local targets, amount = GetHealTargets(type, destGUID, math.max(amount, 0), spellName)
 				parseHotHeal(sourceGUID, false, spellID, amount, duration, string.split(",", targets))
-				sendMessage(string.format("H::%d:%d::%d:%s", spellID, amount, duration, targets))
+				sendMessage(string.format("H::%d:%d:%d:%s", spellID, amount, duration, targets))
 			end
 		end
 	-- Aura faded		
@@ -1951,7 +1949,6 @@ function HealComm:GROUP_ROSTER_UPDATE()
 	end
 	
 	if UnitInParty("player") then
-	
 		-- Parties are not considered groups in terms of API, so fake it and pretend they are all in group 0
 		guidToGroup[playerGUID or UnitGUID("player")] = 0
 		if( not wasInParty ) then self:UNIT_PET("player") end
@@ -2018,8 +2015,6 @@ function HealComm:OnInitialize()
 	
 	self:PLAYER_EQUIPMENT_CHANGED()
 	
-	self:GROUP_ROSTER_UPDATE()
-	
 	-- When first logging in talent data isn't available until at least PLAYER_ALIVE, so if we don't have data
 	-- will wait for that event otherwise will just cache it right now
 	if( GetNumTalentTabs() == 0 ) then
@@ -2040,8 +2035,8 @@ function HealComm:OnInitialize()
 	self.eventFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
 	self.eventFrame:RegisterEvent("UNIT_SPELLCAST_DELAYED")
 	self.eventFrame:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
-	self.eventFrame:RegisterEvent("UNIT_PET")
-	self.eventFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
+--	self.eventFrame:RegisterEvent("UNIT_PET")
+--	self.eventFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
 	self.eventFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 	self.eventFrame:RegisterEvent("CHARACTER_POINTS_CHANGED")
 	self.eventFrame:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
@@ -2097,9 +2092,12 @@ function HealComm:PLAYER_LOGIN()
 	end
 
 	self.eventFrame:UnregisterEvent("PLAYER_LOGIN")
+	self.eventFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
+	self.eventFrame:RegisterEvent("UNIT_PET")
 	self.eventFrame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
 --	self.eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 	
+	self:GROUP_ROSTER_UPDATE()
 	self:ZONE_CHANGED_NEW_AREA()
 	C_ChatInfo.RegisterAddonMessagePrefix(COMM_PREFIX)
 end

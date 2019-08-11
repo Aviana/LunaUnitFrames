@@ -8,6 +8,7 @@ local FADE_TIME = 0.30
 local currentCasts = {}
 local AimedDelay = 1
 local interruptIDs = {
+	[GetSpellInfo(20549)] = true, -- war stomp
 	[GetSpellInfo(1766)] = true, -- kick
 	[GetSpellInfo(6552)] = true, -- pummel
 	[GetSpellInfo(2139)] = true, -- counterspell
@@ -2576,7 +2577,7 @@ local function updateFrame(casterID, spellID)
 	for frame in pairs(LunaUF.Units.frameList) do
 		if frame.unitRealType ~= "player" and frame.unitGUID == casterID and LunaUF.db.profile.units[frame.unitRealType].castBar.enabled then
 			if spellID then
-				Cast:EventStopCast(frame, event, frame.unit, nil, spellID)
+				Cast:EventStopCast(frame, event, frame.unit, nil, nil)
 			else
 				Cast:UpdateCurrentCast(frame)
 			end
@@ -2585,13 +2586,12 @@ local function updateFrame(casterID, spellID)
 end
 
 local function combatlogEvent()
-	local _, event, _, casterID, _, _, _, targetID, _, dstFlags, _, spellID, name, _, extra_spell_id, _, _, resisted, blocked, absorbed = CombatLogGetCurrentEventInfo()
+	local _, event, _, casterID, _, _, _, targetID, _, dstFlags, _, _, name, _, extra_spell_id, _, _, resisted, blocked, absorbed = CombatLogGetCurrentEventInfo()
 	local name, rank, icon, castTime = GetSpellInfo(castTimeDB[name])
 
 	if event ~= "SPELL_MISSED" and interruptIDs[name] and currentCasts[targetID] then
-		spellID = currentCasts[targetID].spellID
 		currentCasts[targetID] = nil
-		updateFrame(targetID, spellID)
+		updateFrame(targetID, true)
 		return
 	end
 
@@ -2628,16 +2628,15 @@ local function combatlogEvent()
 	elseif event == "SPELL_CAST_START" then
 		if casterID == UnitGUID("player") and name == GetSpellInfo(19434) then
 			AimedDelay = 1
-			Cast:UpdateCast(_G["LUFUnitplayer"], "player", nil, name, nil, icon, GetTime()*1000, GetTime()*1000 + 3000, nil, nil, spellID)
+			Cast:UpdateCast(_G["LUFUnitplayer"], "player", nil, name, nil, icon, GetTime()*1000, GetTime()*1000 + 3000, nil, nil, nil)
 			return
 		elseif casterID == UnitGUID("player") and name == GetSpellInfo(2643) then
-			Cast:UpdateCast(_G["LUFUnitplayer"], "player", nil, name, nil, icon, GetTime()*1000, GetTime()*1000 + 500, nil, nil, spellID)
+			Cast:UpdateCast(_G["LUFUnitplayer"], "player", nil, name, nil, icon, GetTime()*1000, GetTime()*1000 + 500, nil, nil, nil)
 			return
 		end
 		if castTime and castTime > 0 then
 			castTime = castTime / 1000
 			currentCasts[casterID] = {
-				["spellID"] = spellID,
 				["name"] = name,
 				["icon"] = icon,
 				["startTime"] = GetTime(),
@@ -2650,7 +2649,6 @@ local function combatlogEvent()
 		local castTime = channelIDs[name]
 		if castTime then
 			currentCasts[casterID] = {
-				["spellID"] = spellID,
 				["name"] = name,
 				["icon"] = icon,
 				["startTime"] = GetTime(),
@@ -2661,7 +2659,7 @@ local function combatlogEvent()
 			updateFrame(casterID)
 		elseif currentCasts[casterID] then
 			if currentCasts[casterID].endTime > (GetTime() * 1000) then
-				updateFrame(casterID, currentCasts[casterID].spellID)
+				updateFrame(casterID, true)
 			end
 			currentCasts[casterID] = nil
 		end
@@ -2868,7 +2866,7 @@ end
 -- Cast finished
 function Cast:EventStopCast(frame, event, unit, castID, spellID)
 	local cast = frame.castBar.bar
-	if( cast.spellID ~= spellID or ( event == "UNIT_SPELLCAST_FAILED" and cast.isChannelled ) ) then return end
+	if( (cast.spellID ~= spellID and spellID ~= nil) or ( event == "UNIT_SPELLCAST_FAILED" and cast.isChannelled ) ) then return end
 
 	if( LunaUF.db.profile.units[frame.unitType].castBar.autoHide ) then
 		LunaUF.Layout:SetBarVisibility(frame, "castBar", true)

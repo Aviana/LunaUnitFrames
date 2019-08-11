@@ -1,3 +1,4 @@
+if (select(2,UnitClass("player")) ~= "ROGUE" and select(2,UnitClass("player")) ~= "DRUID") then return end
 local Combo = {}
 LunaUF:RegisterModule(Combo, "comboPoints", LunaUF.L["Combo points"], true)
 

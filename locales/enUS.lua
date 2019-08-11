@@ -312,6 +312,7 @@ local L = {
 ["Profiles"] = "Profiles",
 ["Show player"] = "Show player",
 ["Show player in the party frame."] = "Show player in the party frame.",
+["Show solo"] = "Show solo",
 ["Show player in the party frame when solo."] = "Show player in the party frame when solo.",
 ["Vertical"] = "Vertical",
 ["Set the bar vertical."] = "Set the bar vertical.",

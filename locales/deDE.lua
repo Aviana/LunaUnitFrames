@@ -315,6 +315,7 @@ local L = {
 ["Profiles"] = "Profile",
 ["Show player"] = "Zeige Spieler",
 ["Show player in the party frame."] = "Zeige den Spieler im Gruppenfenster.",
+["Show solo"] = "Zeige allein",
 ["Show player in the party frame when solo."] = "Zeige den Spieler im Gruppenfenster wenn alleine.",
 ["Vertical"] = "Vertikal",
 ["Set the bar vertical."] = "Setze den Balken vertikal.",

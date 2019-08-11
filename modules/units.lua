@@ -551,6 +551,7 @@ function Units:CreateUnit(...)
 	frame:HookScript("OnAttributeChanged", OnAttributeChanged)
 	if frame.unitType == "partytarget" or frame.unitType == "maintanktarget" or frame.unitType == "mainassisttarget" then
 		-- Brute forcing targets into a party header since blizz doesn't provide target headers
+		ChatFrame1:AddMessage(frame.unitType)
 		stateMonitor:WrapScript(frame, "OnAttributeChanged", [[
 			if( name == "unit" ) then
 				if ( not value ) then
@@ -630,19 +631,18 @@ function Units:CheckGroupVisibility()
 	end
 
 	if( partytarget ) then
-		partytarget:SetAttribute("showParty", LunaUF.db.profile.units.raid.showParty)
+		partytarget:SetAttribute("showParty", true)
 		partytarget:SetAttribute("showPlayer", LunaUF.db.profile.units.party.showPlayer)
 		partytarget:SetAttribute("showSolo", LunaUF.db.profile.units.party.showPlayersolo)
 	end
 
 	if( partypet ) then
-		partypet:SetAttribute("showParty", LunaUF.db.profile.units.raid.showParty)
+		partypet:SetAttribute("showParty", true)
 		partypet:SetAttribute("showPlayer", LunaUF.db.profile.units.party.showPlayer)
 		partypet:SetAttribute("showSolo", LunaUF.db.profile.units.party.showPlayersolo)
 	end
 
 	if( raid ) then
-		
 		raid:SetAttribute("showParty", LunaUF.db.profile.units.raid.showParty)
 		raid:SetAttribute("showPlayer", LunaUF.db.profile.units.raid.showParty)
 		raid:SetAttribute("showSolo", LunaUF.db.profile.units.raid.showSolo)
@@ -968,8 +968,8 @@ function Units:LoadGroupHeader(type)
 		stateMonitor[type] = CreateFrame("Frame", nil, nil, "SecureHandlerBaseTemplate")
 		stateMonitor[type]:SetAttribute("partyDisabled", nil)
 		stateMonitor[type]:SetFrameRef("partyHeader", headerFrame)
-		stateMonitor[type]:SetAttribute("hideSemiRaid", LunaUF.db.profile.units[type].hideSemiRaid)
-		stateMonitor[type]:SetAttribute("hideAnyRaid", LunaUF.db.profile.units[type].hideAnyRaid)
+		stateMonitor[type]:SetAttribute("hideSemiRaid", LunaUF.db.profile.units.party.hideSemiRaid)
+		stateMonitor[type]:SetAttribute("hideAnyRaid", LunaUF.db.profile.units.party.hideAnyRaid)
 		stateMonitor[type]:WrapScript(stateMonitor[type], "OnAttributeChanged", [[
 			if( name ~= "state-raidmonitor" and name ~= "partydisabled" and name ~= "hideanyraid" and name ~= "hidesemiraid" and name ~= "showPlayer" and name ~= "showPlayersolo" ) then return end
 			if( self:GetAttribute("state-raidmonitor") == "combat" ) then return end
