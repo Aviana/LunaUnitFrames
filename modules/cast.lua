@@ -8,34 +8,34 @@ local FADE_TIME = 0.30
 local currentCasts = {}
 local AimedDelay = 1
 local interruptIDs = {
-	[GetSpellInfo(20549)] = true, -- war stomp
-	[GetSpellInfo(1766)] = true, -- kick
-	[GetSpellInfo(6552)] = true, -- pummel
-	[GetSpellInfo(2139)] = true, -- counterspell
-	[GetSpellInfo(72)] = true, -- shield bash
-	[GetSpellInfo(8042)] = true, -- earth shock
-	[GetSpellInfo(853)] = true, -- hammer of justice
-	[GetSpellInfo(7922)] = true, -- Charge stun
-	[GetSpellInfo(20615)] = true, -- intercept stun
-	[GetSpellInfo(5246)] = true, -- Intimidating shout
-	[GetSpellInfo(5530)] = true, -- Mace Stun
-	[GetSpellInfo(6358)] = true, -- Seduction
-	[GetSpellInfo(6789)] = true, -- Death Coil
-	[GetSpellInfo(22703)] = true, -- Inferno Effect
-	[GetSpellInfo(5484)] = true, -- Howl of Terror
-	[GetSpellInfo(5782)] = true, -- Fear
-	[GetSpellInfo(408)] = true, -- Kidney Shot
-	[GetSpellInfo(1776)] = true, -- Gouge
-	[GetSpellInfo(2094)] = true, -- Blind
-	[GetSpellInfo(15269)] = true, -- Blackout
-	[GetSpellInfo(15487)] = true, -- Silence
-	[GetSpellInfo(8122)] = true, -- Psychic Scream
-	[GetSpellInfo(20170)] = true, -- Seal of Justice
-	[GetSpellInfo(3355)] = true, -- Freezing Trap
-	[GetSpellInfo(9005)] = true, -- Pounce
-	[GetSpellInfo(16922)] = true, -- Starfire Stun
-	[GetSpellInfo(5211)] = true, -- Bash
-	[GetSpellInfo(19675)] = true, -- Feral Charge Effect
+	[GetSpellInfo(20549)] = 20549, -- war stomp
+	[GetSpellInfo(1766)] = 1766, -- kick
+	[GetSpellInfo(6552)] = 6552, -- pummel
+	[GetSpellInfo(2139)] = 2139, -- counterspell
+	[GetSpellInfo(72)] = 72, -- shield bash
+	[GetSpellInfo(8042)] = 8042, -- earth shock
+	[GetSpellInfo(853)] = 853, -- hammer of justice
+	[GetSpellInfo(7922)] = 7922, -- Charge stun
+	[GetSpellInfo(20615)] = 20615, -- intercept stun
+	[GetSpellInfo(5246)] = 5246, -- Intimidating shout
+	[GetSpellInfo(5530)] = 5530, -- Mace Stun
+	[GetSpellInfo(6358)] = 6358, -- Seduction
+	[GetSpellInfo(6789)] = 6789, -- Death Coil
+	[GetSpellInfo(22703)] = 22703, -- Inferno Effect
+	[GetSpellInfo(5484)] = 5484, -- Howl of Terror
+	[GetSpellInfo(5782)] = 5782, -- Fear
+	[GetSpellInfo(408)] = 408, -- Kidney Shot
+	[GetSpellInfo(1776)] = 1776, -- Gouge
+	[GetSpellInfo(2094)] = 2094, -- Blind
+	[GetSpellInfo(15269)] = 15269, -- Blackout
+	[GetSpellInfo(15487)] = 15487, -- Silence
+	[GetSpellInfo(8122)] = 8122, -- Psychic Scream
+	[GetSpellInfo(20170)] = 20170, -- Seal of Justice
+	[GetSpellInfo(3355)] = 3355, -- Freezing Trap
+	[GetSpellInfo(9005)] = 9005, -- Pounce
+	[GetSpellInfo(16922)] = 16922, -- Starfire Stun
+	[GetSpellInfo(5211)] = 5211, -- Bash
+	[GetSpellInfo(19675)] = 19675, -- Feral Charge Effect
 	
 }
 local channelIDs = {
@@ -2587,8 +2587,7 @@ end
 
 local function combatlogEvent()
 	local _, event, _, casterID, _, _, _, targetID, _, dstFlags, _, _, name, _, extra_spell_id, _, _, resisted, blocked, absorbed = CombatLogGetCurrentEventInfo()
-	local name, rank, icon, castTime = GetSpellInfo(castTimeDB[name])
-
+	local name, rank, icon, castTime = GetSpellInfo(castTimeDB[name] or interruptIDs[name])
 	if event ~= "SPELL_MISSED" and interruptIDs[name] and currentCasts[targetID] then
 		currentCasts[targetID] = nil
 		updateFrame(targetID, true)
