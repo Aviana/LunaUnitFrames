@@ -551,7 +551,6 @@ function Units:CreateUnit(...)
 	frame:HookScript("OnAttributeChanged", OnAttributeChanged)
 	if frame.unitType == "partytarget" or frame.unitType == "maintanktarget" or frame.unitType == "mainassisttarget" then
 		-- Brute forcing targets into a party header since blizz doesn't provide target headers
-		ChatFrame1:AddMessage(frame.unitType)
 		stateMonitor:WrapScript(frame, "OnAttributeChanged", [[
 			if( name == "unit" ) then
 				if ( not value ) then
@@ -643,6 +642,7 @@ function Units:CheckGroupVisibility()
 	end
 
 	if( raid ) then
+	
 		raid:SetAttribute("showParty", LunaUF.db.profile.units.raid.showParty)
 		raid:SetAttribute("showPlayer", LunaUF.db.profile.units.raid.showParty)
 		raid:SetAttribute("showSolo", LunaUF.db.profile.units.raid.showSolo)
@@ -661,7 +661,7 @@ function Units:SetHeaderAttributes(frame, type)
 	local offset = config.offset
 
 	-- Normal raid, ma or mt
-	if( type == "raidpet" or type == "raid" or type == "mainassist" or type == "maintank" ) then
+	if( type == "raidpet" or type == "raid" or type == "mainassist" or type == "maintank" or type == "maintanktarget" or type == "mainassisttarget" ) then
 		local filter
 		if( config.filters ) then
 			if config.groupBy == "GROUP" then
@@ -698,7 +698,7 @@ function Units:SetHeaderAttributes(frame, type)
 		frame:SetAttribute("unitsPerColumn", LunaUF.db.profile.locked and config.unitsPerColumn or 5)
 		frame:SetAttribute("columnSpacing", config.columnSpacing)
 		frame:SetAttribute("columnAnchorPoint", config.attribAnchorPoint)
-		frame:SetAttribute("groupFilter", filter or "1,2,3,4,5,6,7,8")
+		frame:SetAttribute("groupFilter", filter)
 		frame:SetAttribute("roleFilter", config.roleFilter)
 
 	elseif( type == "party" ) then

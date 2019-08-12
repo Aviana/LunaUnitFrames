@@ -1,13 +1,13 @@
 --[[
 Name: LibClassicHealComm-1.0
-Revision: $Revision: 18 $
+Revision: $Revision: 19 $
 Author(s): Aviana, Original by Shadowed (shadowed.wow@gmail.com)
 Description: Healing communication library. This is a heavily modified clone of LibHealComm-4.0.
 Dependencies: LibStub, ChatThrottleLib
 ]]
 
 local major = "LibClassicHealComm-1.0"
-local minor = 18
+local minor = 19
 assert(LibStub, string.format("%s requires LibStub.", major))
 
 local HealComm = LibStub:NewLibrary(major, minor)
@@ -1313,6 +1313,7 @@ HealComm.parseDirectHeal = parseDirectHeal
 
 -- Channeled heal started
 local function parseChannelHeal(casterGUID, spellID, amount, totalTicks, ...)
+	local spellName = GetSpellInfo(spellID)
 	local unit = guidToUnit[casterGUID]
 	if( not unit or not spellID or not totalTicks or not amount or select("#", ...) == 0 ) then return end
 
@@ -1321,19 +1322,19 @@ local function parseChannelHeal(casterGUID, spellID, amount, totalTicks, ...)
 		startTime, endTime = select(4, ChannelInfo())
 	else
 		startTime = GetTime()
-		endTime = GetTime() + 10
+		endTime = GetTime() + (GetSpellInfo(spellID) == GetSpellInfo(136) and 5 or 10)
 	end
 
 	pendingHots[casterGUID] = pendingHots[casterGUID] or {}
-	pendingHots[casterGUID][spellID] = pendingHots[casterGUID][GetSpellInfo(spellID)] or {}
+	pendingHots[casterGUID][spellName] = pendingHots[casterGUID][spellName] or {}
 
-	local pending = pendingHots[casterGUID][GetSpellInfo(spellID)]
+	local pending = pendingHots[casterGUID][spellName]
 	table.wipe(pending)
 	pending.startTime = startTime / 1000
 	pending.endTime = endTime / 1000
 	pending.duration = math.max(0, pending.endTime - pending.startTime)
 	pending.totalTicks = totalTicks
-	pending.tickInterval = playerClass == "DRUID" and 2 or 1
+	pending.tickInterval = GetSpellInfo(spellID) == GetSpellInfo(136) and 1 or 2
 	pending.spellID = spellID
 	pending.isMultiTarget = select("#", ...) > 1
 	pending.bitType = CHANNEL_HEALS
