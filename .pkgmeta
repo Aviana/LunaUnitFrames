@@ -19,3 +19,6 @@ externals:
   libs/LibClassicHealComm-1.0:
     url: https://github.com/Aviana/LibClassicHealComm-1.0.git
     tag: master
+
+ignore:
+  - README.md
