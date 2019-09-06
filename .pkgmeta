@@ -12,6 +12,9 @@ externals:
   libs/AceGUI-3.0: https://repos.wowace.com/wow/ace3/trunk/AceGUI-3.0
   libs/AceGUI-3.0-SharedMediaWidgets: https://repos.wowace.com/wow/ace-gui-3-0-shared-media-widgets/trunk/AceGUI-3.0-SharedMediaWidgets
   libs/LibClassicDurations: https://repos.curseforge.com/wow/libclassicdurations
+  libs/LibClassicCasterino:
+    url: https://github.com/rgd87/LibClassicCasterino.git
+    tag: master
   libs/LibVexation-1.0:
     url: https://github.com/Aviana/LibVexation-1.0.git
     tag: master
