@@ -21,20 +21,12 @@ local function OnEnter(frame)
 		frame.borders.hasMouseover = true
 		Borders:Update(frame)
 	end
-
-	if frame.borders.OnEnter then
-		frame.borders.OnEnter(frame)
-	end
 end
 
 local function OnLeave(frame)
 	if( LunaUF.db.profile.units[frame.unitType].borders.mouseover ) then
 		frame.borders.hasMouseover = nil
 		Borders:Update(frame)
-	end
-
-	if frame.borders.OnLeave then
-		frame.borders.OnLeave(frame)
 	end
 end
 
@@ -99,13 +91,9 @@ function Borders:OnEnable(frame)
 	frame:RegisterUnitEvent("UNIT_AURA", self, "UpdateAura")
 	frame:RegisterUpdateFunc(self, "UpdateAura")
 
-	if( not frame.borders.OnEnter ) then
-		frame.borders.OnEnter = frame.OnEnter
-		frame.borders.OnLeave = frame.OnLeave
-		
-		frame.OnEnter = OnEnter
-		frame.OnLeave = OnLeave
-	end
+	frame.borders.OnEnter = OnEnter
+	frame.borders.OnLeave = OnLeave
+
 end
 
 function Borders:OnLayoutApplied(frame)
@@ -126,13 +114,9 @@ function Borders:OnDisable(frame)
 
 	frame.borders:Hide()
 
-	if( frame.borders.OnEnter ) then
-		frame.OnEnter = frame.borders.OnEnter
-		frame.OnLeave = frame.borders.OnLeave
+	frame.borders.OnEnter = nil
+	frame.borders.OnLeave = nil
 
-		frame.borders.OnEnter = nil
-		frame.borders.OnLeave = nil
-	end
 end
 
 function Borders:Update(frame)

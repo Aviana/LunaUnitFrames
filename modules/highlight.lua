@@ -20,20 +20,12 @@ local function OnEnter(frame)
 		frame.highlight.hasMouseover = true
 		Highlight:Update(frame)
 	end
-
-	if frame.highlight.OnEnter then
-		frame.highlight.OnEnter(frame)
-	end
 end
 
 local function OnLeave(frame)
 	if( LunaUF.db.profile.units[frame.unitType].highlight.mouseover ) then
 		frame.highlight.hasMouseover = nil
 		Highlight:Update(frame)
-	end
-
-	if frame.highlight.OnLeave then
-		frame.highlight.OnLeave(frame)
 	end
 end
 
@@ -62,13 +54,9 @@ function Highlight:OnEnable(frame)
 	frame:RegisterUnitEvent("UNIT_AURA", self, "UpdateAura")
 	frame:RegisterUpdateFunc(self, "UpdateAura")
 
-	if( not frame.highlight.OnEnter ) then
-		frame.highlight.OnEnter = frame.OnEnter
-		frame.highlight.OnLeave = frame.OnLeave
-		
-		frame.OnEnter = OnEnter
-		frame.OnLeave = OnLeave
-	end
+	frame.highlight.OnEnter = OnEnter
+	frame.highlight.OnLeave = OnLeave
+
 end
 
 function Highlight:OnLayoutApplied(frame)
@@ -88,13 +76,9 @@ function Highlight:OnDisable(frame)
 
 	frame.highlight:Hide()
 
-	if( frame.highlight.OnEnter ) then
-		frame.OnEnter = frame.highlight.OnEnter
-		frame.OnLeave = frame.highlight.OnLeave
+	frame.highlight.OnEnter = nil
+	frame.highlight.OnLeave = nil
 
-		frame.highlight.OnEnter = nil
-		frame.highlight.OnLeave = nil
-	end
 end
 
 function Highlight:Update(frame)

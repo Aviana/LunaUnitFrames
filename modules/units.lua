@@ -510,11 +510,23 @@ local function LUF_OnEnter(self)
 			UnitFrame_OnEnter(self)
 		end
 	end
+	if self.highlight and self.highlight.OnEnter then
+		self.highlight.OnEnter(self)
+	end
+	if self.borders and self.borders.OnEnter then
+		self.borders.OnEnter(self)
+	end
 end
 
 local function LUF_OnLeave(self)
 	if not GameTooltip:IsForbidden() then
 		UnitFrame_OnLeave(self)
+	end
+	if self.highlight and self.highlight.OnLeave then
+		self.highlight.OnLeave(self)
+	end
+	if self.borders and self.borders.OnLeave then
+		self.borders.OnLeave(self)
 	end
 end
 
