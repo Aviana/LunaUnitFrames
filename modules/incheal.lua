@@ -126,8 +126,8 @@ function IncHeal:PositionBar(frame, incAmount)
 end
 
 function IncHeal:Update(frame)
-  local castedHeals = (HealComm:GetHealAmount(frame.unitGUID, HealComm.CASTED_HEALS) or 0)
-  local nextHotTick = (HealComm:GetHealAmount(frame.unitGUID, HealComm.HOT_HEALS, GetTime() + 3) or 0)
+	local castedHeals = (HealComm:GetHealAmount(frame.unitGUID, HealComm.CASTED_HEALS) or 0)
+	local nextHotTick = (HealComm:GetHealAmount(frame.unitGUID, HealComm.HOT_HEALS, GetTime() + 3) or 0)
 	local amount =  (castedHeals + nextHotTick)  * (HealComm:GetHealModifier(frame.unitGUID) or 1)
 	frame.incomingHeal = amount
 	if( not frame.visibility.incHeal or not frame.visibility.healthBar ) then return end
