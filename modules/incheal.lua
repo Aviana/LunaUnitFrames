@@ -37,7 +37,7 @@ function IncHeal:OnLayoutApplied(frame)
 	bar:SetOrientation(frame.healthBar:GetOrientation())
 	bar:SetReverseFill(frame.healthBar:GetReverseFill())
 	bar:Hide()
-	
+
 	local cap = LunaUF.db.profile.units[frame.unitType].incHeal.cap or 1.30
 
 	if( ( LunaUF.db.profile.units[frame.unitType].healthBar.invert and LunaUF.db.profile.units[frame.unitType].healthBar.backgroundAlpha == 0 ) or ( not LunaUF.db.profile.units[frame.unitType].healthBar.invert and LunaUF.db.profile.units[frame.unitType].healthBar.backgroundAlpha == 1 ) ) then
@@ -51,7 +51,7 @@ function IncHeal:OnLayoutApplied(frame)
 		end
 
 		bar:ClearAllPoints()
-		
+
 		local point = bar:GetReverseFill() and "RIGHT" or "LEFT"
 		bar:SetPoint("TOP" .. point, frame.healthBar)
 		bar:SetPoint("BOTTOM" .. point, frame.healthBar)
@@ -126,7 +126,9 @@ function IncHeal:PositionBar(frame, incAmount)
 end
 
 function IncHeal:Update(frame)
-	local amount = (HealComm:GetHealAmount(frame.unitGUID, HealComm.ALL_HEALS) or 0) * (HealComm:GetHealModifier(frame.unitGUID) or 1)
+  local castedHeals = (HealComm:GetHealAmount(frame.unitGUID, HealComm.CASTED_HEALS) or 0)
+  local nextHotTick = (HealComm:GetHealAmount(frame.unitGUID, HealComm.HOT_HEALS, GetTime() + 3) or 0)
+	local amount =  (castedHeals + nextHotTick)  * (HealComm:GetHealModifier(frame.unitGUID) or 1)
 	frame.incomingHeal = amount
 	if( not frame.visibility.incHeal or not frame.visibility.healthBar ) then return end
 	self:PositionBar(frame, amount)
