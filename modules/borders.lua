@@ -158,7 +158,7 @@ end
 
 function Borders:UpdateAura(frame)
 	frame.borders.hasDebuff = nil
-	local showAll = LunaUF.db.profile.units[frame.unitType].borders.debuff == true
+	local showAll = LunaUF.db.profile.units[frame.unitType].borders.debuff == true and LunaUF.db.profile.units[frame.unitType].borders.debuff ~= 2
 	if( UnitIsFriend(frame.unit, "player") ) then
 		local id = 0
 		while( true ) do

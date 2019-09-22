@@ -113,7 +113,7 @@ end
 
 function Highlight:UpdateAura(frame)
 	frame.highlight.hasDebuff = nil
-	local showAll = LunaUF.db.profile.units[frame.unitType].highlight.debuff == true
+	local showAll = LunaUF.db.profile.units[frame.unitType].highlight.debuff == true and LunaUF.db.profile.units[frame.unitType].highlight.debuff ~= 2
 	if( UnitIsFriend(frame.unit, "player") ) then
 		local id = 0
 		while( true ) do

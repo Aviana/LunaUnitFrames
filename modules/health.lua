@@ -124,7 +124,7 @@ function Health:Update(frame)
 	frame.healthBar.currentHealth = UnitHealth(frame.unit)
 	frame.healthBar:SetMinMaxValues(0, UnitHealthMax(frame.unit))
 	frame.healthBar:SetValue(isOffline and UnitHealthMax(frame.unit) or frame.isDead and 0 or frame.healthBar.currentHealth)
-	
+	frame.healthBar.background:SetAlpha(LunaUF.db.profile.units[frame.unitType].healthBar.backgroundAlpha)
 	-- Unit is offline, fill bar up + grey it
 	if( isOffline ) then
 		frame.healthBar.wasOffline = true

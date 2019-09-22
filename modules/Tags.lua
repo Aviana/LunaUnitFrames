@@ -457,8 +457,8 @@ local defaultTags = {
 									return ""
 								end
 								local name = UnitName(unit)
-								for i=1, GetNumIgnores() do
-									if name == GetIgnoreName(i) then
+								for i=1, C_FriendList.GetNumIgnores() do
+									if name == C_FriendList.GetIgnoreName(i) then
 										return L["(i)"]
 									end
 								end
@@ -495,7 +495,7 @@ local defaultTags = {
 								if unit ~= "target" then
 									return ""
 								end
-								return GetComboPoints()
+								return GetComboPoints("player", "target")
 							end;
 	["rare"]				= function(frame, unit)
 								local classif = UnitClassification(unit)
@@ -750,7 +750,7 @@ local defaultTags = {
 								inverseModifier = 1 - modifier
 								return Hex(eR * inverseModifier + sR * modifier, eG * inverseModifier + sG * modifier, eB * inverseModifier + sB * modifier)
 							end;
-	["color"]				= function(unit, color)
+	["color"]				= function(frame, unit, color)
 								if color and strlen(color) == 6 then
 									return ("|cff"..color.."|h")
 								else
@@ -766,16 +766,16 @@ local defaultTags = {
 	["casttime"]			= function(frame, unit)
 								local time
 								local delay = frame.castBar.bar.pushback
-								delay = delay and math.floor(delay*100) / 100
+								delay = delay and math.floor(delay*10) / 10
 								if frame.castBar.bar.isChannelled then
-									time = math.floor(frame.castBar.bar.elapsed * 100) / 100
+									time = math.floor(frame.castBar.bar.elapsed * 10) / 10
 									if delay and delay > 0 then
 										return time.." -"..delay
 									else
 										return time
 									end
 								else
-									time = math.floor(((frame.castBar.bar.endSeconds or 0) - (frame.castBar.bar.elapsed or 0)) * 100) / 100
+									time = math.floor(((frame.castBar.bar.endSeconds or 0) - (frame.castBar.bar.elapsed or 0)) * 10) / 10
 									if delay and delay > 0 then
 										return time .. " +"..delay
 									else

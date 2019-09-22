@@ -149,6 +149,8 @@ function XP:Update(frame)
 		return
 	end
 	
+	frame.xpBar.xp.background:SetAlpha(LunaUF.db.profile.units[frame.unitType].xpBar.backgroundAlpha)
+	
 	LunaUF.Layout:SetBarVisibility(frame, "xpBar", true)
 	if( frame.xpBar.rep and frame.xpBar.rep:IsVisible() and frame.xpBar.xp:IsVisible() ) then
 		frame.xpBar.rep:SetHeight(frame.xpBar:GetHeight() * 0.48)

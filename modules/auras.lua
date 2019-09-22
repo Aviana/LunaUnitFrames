@@ -223,6 +223,8 @@ function Auras:UpdateFrames(frame)
 	local config = LunaUF.db.profile.units[frame.unitType].auras
 	local name, texture, count, auraType, duration, endTime, caster, spellID, main, off
 	for i,button in ipairs(frame.auras.buffbuttons.buttons) do
+		button.cooldown.noCooldownCount = LunaUF.db.profile.omnicc
+		button.cooldown:SetHideCountdownNumbers(LunaUF.db.profile.blizzardcc)
 		if i < 33 then
 			name, texture, count, auraType, duration, endTime, caster, _, _, spellID = UnitAura(frame.unit, i, "HELPFUL")
 			if (not duration or duration == 0) and spellID then
@@ -329,6 +331,8 @@ function Auras:UpdateFrames(frame)
 		end
 	end
 	for i,button in ipairs(frame.auras.debuffbuttons.buttons) do
+		button.cooldown.noCooldownCount = LunaUF.db.profile.omnicc
+		button.cooldown:SetHideCountdownNumbers(LunaUF.db.profile.blizzardcc)
 		name, texture, count, auraType, duration, endTime, caster, _, _, spellID = UnitAura(frame.unit, i, "HARMFUL")
 		if (not duration or duration == 0) and spellID then
 			local Newduration, NewendTime = lCD:GetAuraDurationByUnit(frame.unit, spellID, caster)

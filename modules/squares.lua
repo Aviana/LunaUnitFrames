@@ -32,44 +32,47 @@ local function SquaresCallback(aggro, GUID, ...)
 end
 vex:RegisterCallback(SquaresCallback)
 
-local function checkAura(unit, spell, playeronly)
-	if type(spell) == "number" then
-		local i, casterunit,_,_,spellID = 1, select(7,UnitAura(unit, 1))
-		while spellID do
-			if spellID == spell and (not playeronly or playeronly and casterunit and UnitIsUnit(casterunit,"player")) then
-				return UnitAura(unit, i)
+local function checkAura(unit, spells, playeronly)
+	local spells = {strsplit(";",spells)}
+	for k,spell in ipairs(spells) do
+		if tonumber(spell) then
+			local i, casterunit,_,_,spellID = 1, select(7,UnitAura(unit, 1))
+			while spellID do
+				if spellID == tonumber(spell) and (not playeronly or playeronly and casterunit and UnitIsUnit(casterunit,"player")) then
+					return UnitAura(unit, i)
+				end
+				i = i + 1
+				casterunit,_,_,spellID = select(7, UnitAura(unit, i))
 			end
-			i = i + 1
-			casterunit,_,_,spellID = select(7, UnitAura(unit, i))
-		end
-		i, casterunit,_,_,spellID = 1, select(7,UnitAura(unit, 1, "HARMFUL"))
-		while spellID do
-			if spellID == spell and (not playeronly or playeronly and casterunit and UnitIsUnit(casterunit,"player")) then
-				return UnitAura(unit, i, "HARMFUL")
+			i, casterunit,_,_,spellID = 1, select(7,UnitAura(unit, 1, "HARMFUL"))
+			while spellID do
+				if spellID == spell and (not playeronly or playeronly and casterunit and UnitIsUnit(casterunit,"player")) then
+					return UnitAura(unit, i, "HARMFUL")
+				end
+				i = i + 1
+				casterunit,_,_,spellID = select(7, UnitAura(unit, i, "HARMFUL"))
 			end
-			i = i + 1
-			casterunit,_,_,spellID = select(7, UnitAura(unit, i, "HARMFUL"))
-		end
-	elseif type(spell) == "string" then
-		local i, spellName = 1, UnitAura(unit, 1)
-		local casterunit = select(7,UnitAura(unit, 1))
-		while spellName do
-			if spellName == spell and (not playeronly or playeronly and casterunit and UnitIsUnit(casterunit,"player")) then
-				return UnitAura(unit, i)
+		elseif type(spell) == "string" then
+			local i, spellName = 1, UnitAura(unit, 1)
+			local casterunit = select(7,UnitAura(unit, 1))
+			while spellName do
+				if spellName == spell and (not playeronly or playeronly and casterunit and UnitIsUnit(casterunit,"player")) then
+					return UnitAura(unit, i)
+				end
+				i = i + 1
+				spellName = UnitAura(unit, i)
+				casterunit = select(7,UnitAura(unit, 1))
 			end
-			i = i + 1
-			spellName = UnitAura(unit, i)
-			casterunit = select(7,UnitAura(unit, 1))
-		end
-		i, spellName = 1, UnitAura(unit, 1, "HARMFUL")
-		casterunit = select(7,UnitAura(unit, 1, "HARMFUL"))
-		while spellName do
-			if spellName == spell and (not playeronly or playeronly and casterunit and UnitIsUnit(casterunit,"player")) then
-				return UnitAura(unit, i, "HARMFUL")
-			end
-			i = i + 1
-			spellName = UnitAura(unit, i, "HARMFUL")
+			i, spellName = 1, UnitAura(unit, 1, "HARMFUL")
 			casterunit = select(7,UnitAura(unit, 1, "HARMFUL"))
+			while spellName do
+				if spellName == spell and (not playeronly or playeronly and casterunit and UnitIsUnit(casterunit,"player")) then
+					return UnitAura(unit, i, "HARMFUL")
+				end
+				i = i + 1
+				spellName = UnitAura(unit, i, "HARMFUL")
+				casterunit = select(7,UnitAura(unit, 1, "HARMFUL"))
+			end
 		end
 	end
 end

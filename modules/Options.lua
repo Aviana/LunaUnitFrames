@@ -159,6 +159,34 @@ function LunaUF:CreateConfig()
 		set(info, value)
 		LunaUF:LoadUnits()
 		LunaUF.modules.movers:Update()
+		if not value then
+			if info[#info-1] == "raid" then
+				for unit,tbl in pairs(LunaUF.db.profile.units) do
+					if unit ~= "raid" then
+						if strsub(tbl.anchorTo,1,13) == "LUFHeaderraid" then
+							tbl.anchorTo = "UIParent"
+							LunaUF.modules.movers:SetFrame(_G[UnitToFrame[unit]])
+						end
+					end
+				end
+			else
+				for unit,tbl in pairs(LunaUF.db.profile.units) do
+					if unit == "raid" then
+						for i,opt in pairs(tbl.positions) do
+							if opt.anchorTo == UnitToFrame[info[#info-1]] then
+								opt.anchorTo = "UIParent"
+								LunaUF.modules.movers:SetFrame(_G[UnitToFrame["raid"..i]])
+							end
+						end
+					else
+						if tbl.anchorTo == UnitToFrame[info[#info-1]] then
+							tbl.anchorTo = "UIParent"
+							LunaUF.modules.movers:SetFrame(_G[UnitToFrame[unit]])
+						end
+					end
+				end
+			end
+		end
 	end
 
 	local function setColor(info, r, g, b)
@@ -968,6 +996,8 @@ function LunaUF:CreateConfig()
 					type = "toggle",
 					tristate = true,
 					order = 4,
+					get = function(info) local v = get(info) if v == 2 then return false else return v end end,
+					set = function(info, value) if value == false then set(info, 2) else set(info, value) end end,
 				},
 			},
 		},
@@ -1002,6 +1032,8 @@ function LunaUF:CreateConfig()
 					type = "toggle",
 					tristate = true,
 					order = 4,
+					get = function(info) local v = get(info) if v == 2 then return false else return v end end,
+					set = function(info, value) if value == false then set(info, 2) else set(info, value) end end,
 				},
 			},
 		},
@@ -2231,7 +2263,7 @@ function LunaUF:CreateConfig()
 						},
 						value = {
 							name = L["Name (exact) or ID"],
-							desc = L["Name (exact) or ID of the effect to track."],
+							desc = L["Name (exact) or ID of the effect to track. Can have multiple entries seperated by ;"],
 							type = "input",
 							order = 4,
 							hidden = function(info) return LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "aggro" or LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "dispel" end,
@@ -2958,16 +2990,41 @@ function LunaUF:CreateConfig()
 						confirm = function(info) return L["WARNING! This will set ALL texts to this font."] end,
 						set = function(info, value) wipeFonts() setGeneral(info, value) LunaUF.Layout:Reload() LunaUF.Units:ReloadHeader("raid") LunaUF.Units:ReloadHeader("raidpet") end,
 					},
+					inchealTime = {
+						name = L["Heal prediction timeframe"],
+						desc = L["Set how long into the future heals are predicted."],
+						type = "range",
+						order = 7,
+						min = 3,
+						max = 30,
+						step = 1,
+					},
+					omnicc = {
+						name = L["Disable OmniCC"],
+						desc = L["Prevent OmniCC from putting numbers on cooldown animations (Requires UI reload)"],
+						type = "toggle",
+						order = 8,
+						disabled = Lockdown,
+						set = function(info, value) setGeneral(info, value) for frame in pairs(LunaUF.Units.frameList) do frame:FullUpdate() end end,
+					},
+					blizzardcc = {
+						name = L["Disable Blizzard cooldown count"],
+						desc = L["Prevent the default UI from putting numbers on cooldown animations"],
+						type = "toggle",
+						order = 9,
+						disabled = Lockdown,
+						set = function(info, value) setGeneral(info, value) for frame in pairs(LunaUF.Units.frameList) do frame:FullUpdate() end end,
+					},
 					headerRange = {
 						name = L["Range"],
 						type = "header",
-						order = 7,
+						order = 10,
 					},
 					range = {
 						name = L["Distance"],
 						desc = L["Distance to measure"],
 						type = "select",
-						order = 8,
+						order = 11,
 						values = {[10] = L["10y"], [30] = L["30y"], [40] = L["Spell based"], [100] = L["Is Visible"], },
 						get = function(info) return LunaUF.db.profile.range.dist end,
 						set = function(info, value) LunaUF.db.profile.range.dist = value end,
@@ -2976,7 +3033,7 @@ function LunaUF:CreateConfig()
 						name = L["Alpha"],
 						desc = L["Set the alpha."],
 						type = "range",
-						order = 9,
+						order = 12,
 						min = 0.01,
 						max = 1,
 						step = 0.01,
@@ -2987,7 +3044,7 @@ function LunaUF:CreateConfig()
 						name = L["Range Frequency"],
 						desc = L["Set the interval of range checking."],
 						type = "range",
-						order = 10,
+						order = 13,
 						min = 0.1,
 						max = 1,
 						step = 0.1,
@@ -4243,22 +4300,6 @@ function LunaUF:CreateConfig()
 						set = setSortOrder,
 						disabled = Lockdown,
 					},
---					showParty = {
---						name = L["Show party"],
---						desc = L["Show a non raid party in the raid frame"],
---						type = "toggle",
---						order = 2.34,
---						disabled = Lockdown,
---						set = function(info, value) set(info,value) LunaUF.Units:ReloadHeader("raid") end,
---					},
---					showSolo = {
---						name = L["Show solo"],
---						desc = L["Show raid frame when solo"],
---						type = "toggle",
---						order = 2.35,
---						disabled = Lockdown,
---						set = function(info, value) set(info,value) LunaUF.Units:ReloadHeader("raid") end,
---					},
 					showWhen = {
 						name = L["Show when"],
 						desc = L["Show even smaler groups than a raid in the raidframe"],

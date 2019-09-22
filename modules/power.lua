@@ -239,7 +239,9 @@ end
 function Power:Update(frame, event, unit, powerType)
 	if( event and powerType and powerType ~= frame.powerBar.currentType ) then return end
 	if( frame.powerBar.minusMob ) then return end
-
+	
+	frame.powerBar.background:SetAlpha(LunaUF.db.profile.units[frame.unitType].powerBar.backgroundAlpha)
+	
 	if frame.unitType == "player" then
 		if frame.powerBar.ignorePowerChange then
 			frame.powerBar.ignorePowerChange = nil

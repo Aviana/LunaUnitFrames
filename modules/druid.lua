@@ -29,6 +29,7 @@ function Druid:UpdateState(frame)
 end
 
 function Druid:Update(frame, event, unit, powerType)
+	frame.druidBar.background:SetAlpha(LunaUF.db.profile.units[frame.unitType].druidBar.backgroundAlpha)
 	frame.druidBar:SetMinMaxValues(0, UnitPowerMax(frame.unit, Enum.PowerType.Mana))
 	frame.druidBar:SetValue(UnitPower(frame.unit, Enum.PowerType.Mana))
 end

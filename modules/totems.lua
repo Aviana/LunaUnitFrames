@@ -405,14 +405,14 @@ function Totems:OnCombatLog(frame)
 		frame.totemBar.blocks[type].dur = TotemDB[spellID].dur
 		frame.totemBar.blocks[type]:SetMinMaxValues(0,TotemDB[spellID].dur)
 		self:Update(frame)
-	else
+	elseif strsub(event,-7) == "_DAMAGE" then
+		if event == "SWING_DAMAGE" then
+			overkill = select(13,CombatLogGetCurrentEventInfo())
+		else
+			overkill = select(16,CombatLogGetCurrentEventInfo())
+		end
 		for i=1, 4 do
 			if totemsAlive[i] == targetID then
-				if event == "SWING_DAMAGE" then
-					overkill = select(13,CombatLogGetCurrentEventInfo())
-				else
-					overkill = select(16,CombatLogGetCurrentEventInfo())
-				end
 				if overkill and overkill > 0 then
 					totemsAlive[i] = false
 					self:Update(frame)
@@ -435,6 +435,7 @@ function Totems:Update(frame)
 	end
 	
 	for id, block in pairs(frame.totemBar.blocks) do
+		block.background:SetAlpha(LunaUF.db.profile.units.player.totemBar.backgroundAlpha)
 		if( totemsAlive[id] ) then
 			block:Show()
 		else

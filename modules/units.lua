@@ -390,7 +390,7 @@ OnAttributeChanged = function(self, name, unit)
 	-- Pet changed, going from pet -> vehicle for one
 	if( self.unit == "pet" or self.unitType == "partypet" ) then
 		self.unitRealOwner = self.unit == "pet" and "player" or LunaUF.partyUnits[self.unitID]
-		self:SetAttribute("unitRealOwner", self.unitRealOwner)
+--		self:SetAttribute("unitRealOwner", self.unitRealOwner)
 		self:RegisterNormalEvent("UNIT_PET", Units, "CheckPetUnitUpdated")
 
 		stateMonitor:WrapScript(self, "OnAttributeChanged", [[
