@@ -169,6 +169,9 @@ function Squares:Update(frame)
 					square.texture:SetVertexColor(1,1,1,1)
 				else
 					local color = DebuffTypeColor[debuffType]
+					if not color then
+						color = {r = 0, g = 0, b = 0}
+					end
 					square.texture:SetTexture(indicator)
 					square.texture:SetVertexColor(color.r, color.g, color.b, 1)
 				end
@@ -195,6 +198,9 @@ function Squares:Update(frame)
 					square.texture:SetVertexColor(1,1,1,1)
 				else
 					local color = DebuffTypeColor[debuffType]
+					if not color then
+						color = {r = 0, g = 0, b = 0}
+					end
 					square.texture:SetTexture(indicator)
 					square.texture:SetVertexColor(color.r, color.g, color.b, 1)
 				end
