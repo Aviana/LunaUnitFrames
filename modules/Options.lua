@@ -2315,7 +2315,7 @@ function LunaUF:CreateConfig()
 						},
 						value = {
 							name = L["Name (exact) or ID"],
-							desc = L["Name (exact) or ID of the effect to track."],
+							desc = L["Name (exact) or ID of the effect to track. Can have multiple entries seperated by ;"],
 							type = "input",
 							order = 4,
 							hidden = function(info) return LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "aggro" or LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "dispel" end,
@@ -2367,7 +2367,7 @@ function LunaUF:CreateConfig()
 						},
 						value = {
 							name = L["Name (exact) or ID"],
-							desc = L["Name (exact) or ID of the effect to track."],
+							desc = L["Name (exact) or ID of the effect to track. Can have multiple entries seperated by ;"],
 							type = "input",
 							order = 4,
 							hidden = function(info) return LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "aggro" or LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "dispel" end,
@@ -2419,7 +2419,7 @@ function LunaUF:CreateConfig()
 						},
 						value = {
 							name = L["Name (exact) or ID"],
-							desc = L["Name (exact) or ID of the effect to track."],
+							desc = L["Name (exact) or ID of the effect to track. Can have multiple entries seperated by ;"],
 							type = "input",
 							order = 4,
 							hidden = function(info) return LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "aggro" or LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "dispel" end,
@@ -2471,7 +2471,7 @@ function LunaUF:CreateConfig()
 						},
 						value = {
 							name = L["Name (exact) or ID"],
-							desc = L["Name (exact) or ID of the effect to track."],
+							desc = L["Name (exact) or ID of the effect to track. Can have multiple entries seperated by ;"],
 							type = "input",
 							order = 4,
 							hidden = function(info) return LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "aggro" or LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "dispel" end,
@@ -2523,7 +2523,7 @@ function LunaUF:CreateConfig()
 						},
 						value = {
 							name = L["Name (exact) or ID"],
-							desc = L["Name (exact) or ID of the effect to track."],
+							desc = L["Name (exact) or ID of the effect to track. Can have multiple entries seperated by ;"],
 							type = "input",
 							order = 4,
 							hidden = function(info) return LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "aggro" or LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "dispel" end,
@@ -2575,7 +2575,7 @@ function LunaUF:CreateConfig()
 						},
 						value = {
 							name = L["Name (exact) or ID"],
-							desc = L["Name (exact) or ID of the effect to track."],
+							desc = L["Name (exact) or ID of the effect to track. Can have multiple entries seperated by ;"],
 							type = "input",
 							order = 4,
 							hidden = function(info) return LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "aggro" or LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "dispel" end,
