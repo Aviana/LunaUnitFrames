@@ -84,10 +84,9 @@ function Cast:OnLayoutApplied(frame, config)
 	end
 end
 
-function Cast:OnDisable(frame, unit)
-	frame:UnregisterAll(self)
-
+function Cast:OnDisable(frame)
 	if( frame.castBar ) then
+		LibCC.UnregisterAllCallbacks(frame)
 		frame.castBar.bar:Hide()
 	end
 end
