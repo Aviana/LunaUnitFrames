@@ -253,12 +253,12 @@ local defaultTags = {
 										return L["Dead"]
 									end
 								end
-								if hp > 10000 then
-									hp = math.floor(hp/1000).."K"
+								if hp > 1000 then
+									hp = (math.floor(hp/100)/10).."K"
 								end
 								local maxhp = UnitHealthMax(unit)
-								if maxhp > 10000 then
-									maxhp = math.floor(maxhp/1000).."K"
+								if maxhp > 1000 then
+									maxhp = (math.floor(maxhp/100)/10).."K"
 								end
 								if UnitIsGhost(unit) then
 									return L["Ghost"]
@@ -281,8 +281,8 @@ local defaultTags = {
 								return UnitHealth(unit)
 							end;
 	["shp"]					= function(frame, unit)
-								if UnitHealth(unit) > 10000 then
-									return math.floor(UnitHealth(unit)/1000).."K"
+								if UnitHealth(unit) > 1000 then
+									return (math.floor(UnitHealth(unit)/100)/10).."K"
 								else
 									return UnitHealth(unit)
 								end
@@ -297,8 +297,8 @@ local defaultTags = {
 										return L["Dead"]
 									end
 								end
-								if hp > 10000 then
-									hp = math.floor(hp/1000).."K"
+								if hp > 1000 then
+									hp = (math.floor(hp/100)/10).."K"
 								end
 								if UnitIsGhost(unit) then
 									return L["Ghost"]
@@ -311,8 +311,8 @@ local defaultTags = {
 								return UnitHealthMax(unit)
 							end;
 	["smaxhp"]				= function(frame, unit)
-								if UnitHealthMax(unit) > 10000 then
-									return math.floor(UnitHealthMax(unit)/1000).."K"
+								if UnitHealthMax(unit) > 1000 then
+									return (math.floor(UnitHealthMax(unit)/100)/10).."K"
 								else
 									return UnitHealthMax(unit)
 								end
@@ -355,16 +355,16 @@ local defaultTags = {
 							end;
 	["pp"]					= function(frame, unit) return UnitPower(unit) end;
 	["spp"]					= function(frame, unit)
-								if UnitPower(unit) > 10000 then
-									return math.floor(UnitPower(unit)/1000).."K"
+								if UnitPower(unit) > 1000 then
+									return (math.floor(UnitPower(unit)/100)/10).."K"
 								else
 									return UnitPower(unit)
 								end
 							end;
 	["maxpp"]				= function(frame, unit) return UnitPowerMax(unit) end;
 	["smaxpp"]				= function(frame, unit)
-								if UnitPowerMax(unit) > 10000 then
-									return math.floor(UnitPowerMax(unit)/1000).."K"
+								if UnitPowerMax(unit) > 1000 then
+									return (math.floor(UnitPowerMax(unit)/100)/10).."K"
 								else
 									return UnitPowerMax(unit)
 								end

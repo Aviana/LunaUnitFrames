@@ -53,7 +53,9 @@ function ReckStacks:OnLayoutApplied(frame)
 	for id=1, 4 do
 		local texture = reckStacks.blocks[id]
 		texture:ClearAllPoints()
-		texture.background:SetAlpha(LunaUF.db.profile.units[frame.unitType].reckStacks.backgroundAlpha)
+		if texture.background then
+			texture.background:SetAlpha(LunaUF.db.profile.units.player.reckStacks.backgroundAlpha)
+		end
 		if( LunaUF.db.profile.units[frame.unitType].reckStacks.growth == "LEFT" ) then
 			if( id > 1 ) then
 				texture:SetPoint("TOPRIGHT", reckStacks.blocks[id - 1], "TOPLEFT", -1, 0)

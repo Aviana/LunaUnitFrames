@@ -214,12 +214,17 @@ function Squares:Update(frame)
 				square:Hide()
 			end
 		elseif config[pos].type == "dispel" then
-			local _, _, _, debuffType, duration, expirationTime = checkDispel(frame.unit)
+			local _, icon, _, debuffType, duration, expirationTime = checkDispel(frame.unit)
 			if debuffType then
 				square:Show()
-				square.texture:SetTexture(indicator)
 				local color = DebuffTypeColor[debuffType]
-				square.texture:SetVertexColor(color.r, color.g, color.b, 1)
+				if config[pos].texture then
+					square.texture:SetTexture(icon)
+					square.texture:SetVertexColor(1,1,1,1)
+				else
+					square.texture:SetTexture(indicator)
+					square.texture:SetVertexColor(color.r, color.g, color.b, 1)
+				end
 				if duration and config[pos].timer then
 					square.cd:Show()
 					square.cd:SetCooldown(expirationTime - duration, duration)
