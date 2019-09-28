@@ -107,7 +107,7 @@ function LunaUF:LoadDefaults()
 						size = 100,
 					},
 					["right"] = {
-						tagline = "[ssmarthealth]",
+						tagline = "[smarthealth]",
 						size = 100,
 					},
 				},
@@ -369,7 +369,7 @@ function LunaUF:LoadDefaults()
 						size = 100,
 					},
 					["right"] = {
-						tagline = "[ssmarthealth]",
+						tagline = "[smarthealth]",
 						size = 100,
 					},
 				},
@@ -486,7 +486,7 @@ function LunaUF:LoadDefaults()
 						size = 100,
 					},
 					["right"] = {
-						tagline = "[ssmarthealth]",
+						tagline = "[smarthealth]",
 						size = 100,
 					},
 				},
@@ -1470,7 +1470,7 @@ function LunaUF:LoadDefaults()
 						size = 100,
 					},
 					["right"] = {
-						tagline = "[ssmarthealth]",
+						tagline = "[smarthealth]",
 						size = 100,
 					},
 				},
@@ -1598,7 +1598,7 @@ function LunaUF:LoadDefaults()
 						size = 100,
 					},
 					["right"] = {
-						tagline = "[ssmarthealth]",
+						tagline = "[smarthealth]",
 						size = 100,
 					},
 				},
@@ -1726,7 +1726,7 @@ function LunaUF:LoadDefaults()
 						size = 100,
 					},
 					["right"] = {
-						tagline = "[ssmarthealth]",
+						tagline = "[smarthealth]",
 						size = 100,
 					},
 				},
@@ -1854,7 +1854,7 @@ function LunaUF:LoadDefaults()
 						size = 100,
 					},
 					["right"] = {
-						tagline = "[ssmarthealth]",
+						tagline = "[smarthealth]",
 						size = 100,
 					},
 				},
