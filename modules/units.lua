@@ -654,10 +654,26 @@ function Units:CheckGroupVisibility()
 	end
 
 	if( raid ) then
-	
 		raid:SetAttribute("showParty", LunaUF.db.profile.units.raid.showParty)
 		raid:SetAttribute("showPlayer", LunaUF.db.profile.units.raid.showParty)
 		raid:SetAttribute("showSolo", LunaUF.db.profile.units.raid.showSolo)
+		if LunaUF.db.profile.units.raid.groupBy == "CLASS" then
+			for i=2, 8 do
+				if headerFrames["raid"..i] then
+					headerFrames["raid"..i]:SetAttribute("showParty", LunaUF.db.profile.units.raid.showParty)
+					headerFrames["raid"..i]:SetAttribute("showPlayer", LunaUF.db.profile.units.raid.showParty)
+					headerFrames["raid"..i]:SetAttribute("showSolo", LunaUF.db.profile.units.raid.showSolo)
+				end
+			end
+		else
+			for i=2, 8 do
+				if headerFrames["raid"..i] then
+					headerFrames["raid"..i]:SetAttribute("showParty", nil)
+					headerFrames["raid"..i]:SetAttribute("showPlayer", nil)
+					headerFrames["raid"..i]:SetAttribute("showSolo", nil)
+				end
+			end
+		end
 	end
 	
 	if ( raidpet ) then
