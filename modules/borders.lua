@@ -158,15 +158,16 @@ end
 
 function Borders:UpdateAura(frame)
 	frame.borders.hasDebuff = nil
-	local showAll = LunaUF.db.profile.units[frame.unitType].borders.debuff == true and LunaUF.db.profile.units[frame.unitType].borders.debuff ~= 2
-	if( UnitIsFriend(frame.unit, "player") ) then
+	local showOwn = LunaUF.db.profile.units[frame.unitType].borders.debuff == 2
+	local showAll = LunaUF.db.profile.units[frame.unitType].borders.debuff == 3
+	if( UnitIsFriend(frame.unit, "player") and LunaUF.db.profile.units[frame.unitType].borders.debuff ~= 1 ) then
 		local id = 0
 		while( true ) do
 			id = id + 1
 			local name, _, _, auraType = UnitDebuff(frame.unit, id)
 			if( not name ) then break end
 			
-			if( canCure[auraType] and UnitCanAssist("player", frame.unit) or (showAll and auraType) ) then
+			if( showOwn and canCure[auraType] and UnitCanAssist("player", frame.unit) or (showAll and auraType) ) then
 				frame.borders.hasDebuff = auraType
 				break
 			end

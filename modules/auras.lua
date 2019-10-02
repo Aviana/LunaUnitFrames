@@ -107,6 +107,7 @@ function Auras:OnEnable(frame)
 		end
 		for i=1, (isPlayer and 34 or 32) do
 			local button = CreateFrame("Button", frame:GetName().."BuffFrame"..i, frame.auras.buffbuttons)
+			button:SetFrameLevel(6)
 			button.unit = frame.unit
 			button:SetScript("OnEnter", showTooltip)
 			button:SetScript("OnLeave", hideTooltip)
@@ -145,6 +146,7 @@ function Auras:OnEnable(frame)
 		end
 		for i=1, 16 do
 			local button = CreateFrame("Button", frame:GetName().."DebuffFrame"..i, frame.auras.debuffbuttons)
+			button:SetFrameLevel(6)
 			button.unit = frame.unit
 			button:SetScript("OnEnter", showTooltip)
 			button:SetScript("OnLeave", hideTooltip)
@@ -409,7 +411,57 @@ function Auras:UpdateLayout(frame)
 	local frameheight = 1
 	local buttonsize, lastButton, firstButton, rowlenght
 	local rowheight = 0
-	if config.buffpos == "BOTTOM" then
+	if config.buffpos == "INFRAME" then
+		for i,button in ipairs(frame.auras.buffbuttons.buttons) do
+			if not button:IsVisible() then break end
+			button:ClearAllPoints()
+			button:SetHeight(config.buffsize)
+			button:SetWidth(config.buffsize)
+			button.stack:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Myriad Condensed Web.ttf", (10*(config.buffsize/18)), "OUTLINE")
+			button.border:SetHeight(config.buffsize+2)
+			button.border:SetWidth(config.buffsize+2)
+			if i == 1 then
+				button:SetPoint("TOPLEFT", frame, "TOPLEFT", 1, -1)
+				rowlenght = config.buffsize + config.padding
+				firstButton = button
+			elseif (rowlenght + config.buffsize) <= framelength then
+				rowlenght = rowlenght + config.buffsize + config.padding
+				button:SetPoint("LEFT", firstButton, "RIGHT", config.padding, 0)
+				firstButton = button
+			else
+				button:Hide()
+			end
+			if button.cooldown then
+				button.cooldown:SetPoint("TOPLEFT", button, "TOPLEFT", 0, 0)
+				button.cooldown:SetScale((button:GetWidth() + 0.7)/36)
+			end
+		end
+	elseif config.buffpos == "INFRAMECENTER" then
+		for i,button in ipairs(frame.auras.buffbuttons.buttons) do
+			if not button:IsVisible() then break end
+			button:ClearAllPoints()
+			button:SetHeight(config.buffsize)
+			button:SetWidth(config.buffsize)
+			button.stack:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Myriad Condensed Web.ttf", (10*(config.buffsize/18)), "OUTLINE")
+			button.border:SetHeight(config.buffsize+2)
+			button.border:SetWidth(config.buffsize+2)
+			if i == 1 then
+				button:SetPoint("BOTTOMLEFT", frame, "LEFT", 1, 1)
+				rowlenght = config.buffsize + config.padding
+				firstButton = button
+			elseif (rowlenght + config.buffsize) <= framelength then
+				rowlenght = rowlenght + config.buffsize + config.padding
+				button:SetPoint("LEFT", firstButton, "RIGHT", config.padding, 0)
+				firstButton = button
+			else
+				button:Hide()
+			end
+			if button.cooldown then
+				button.cooldown:SetPoint("TOPLEFT", button, "TOPLEFT", 0, 0)
+				button.cooldown:SetScale((button:GetWidth() + 0.7)/36)
+			end
+		end
+	elseif config.buffpos == "BOTTOM" then
 		for i,button in ipairs(frame.auras.buffbuttons.buttons) do
 			if not button:IsVisible() then break end
 			buttonsize = not button.large and config.buffsize or config.buffsize + config.enlargedbuffsize
@@ -546,7 +598,53 @@ function Auras:UpdateLayout(frame)
 	frame.auras.buffbuttons:SetWidth(framelength)
 	frameheight = 1
 	rowheight = 0
-	if config.debuffpos == "BOTTOM" then
+	if config.debuffpos == "INFRAME" then
+		for i,button in ipairs(frame.auras.debuffbuttons.buttons) do
+			if not button:IsVisible() then break end
+			button:ClearAllPoints()
+			button:SetHeight(config.debuffsize)
+			button:SetWidth(config.debuffsize)
+			button.stack:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Myriad Condensed Web.ttf", (10*(config.debuffsize/18)), "OUTLINE")
+			button.border:SetHeight(config.debuffsize+2)
+			button.border:SetWidth(config.debuffsize+2)
+			if i == 1 then
+				button:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 1, 1)
+				rowlenght = config.debuffsize + config.padding
+				firstButton = button
+			elseif (rowlenght + config.debuffsize) <= framelength then
+				rowlenght = rowlenght + config.debuffsize + config.padding
+				button:SetPoint("LEFT", firstButton, "RIGHT", config.padding, 0)
+				firstButton = button
+			end
+			if button.cooldown then
+				button.cooldown:SetPoint("TOPLEFT", button, "TOPLEFT", 0, 0)
+				button.cooldown:SetScale((button:GetWidth() + 0.7)/36)
+			end
+		end
+	elseif config.debuffpos == "INFRAMECENTER" then
+		for i,button in ipairs(frame.auras.debuffbuttons.buttons) do
+			if not button:IsVisible() then break end
+			button:ClearAllPoints()
+			button:SetHeight(config.debuffsize)
+			button:SetWidth(config.debuffsize)
+			button.stack:SetFont("Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Myriad Condensed Web.ttf", (10*(config.debuffsize/18)), "OUTLINE")
+			button.border:SetHeight(config.debuffsize+2)
+			button.border:SetWidth(config.debuffsize+2)
+			if i == 1 then
+				button:SetPoint("TOPLEFT", frame, "LEFT", 1, -1)
+				rowlenght = config.debuffsize + config.padding
+				firstButton = button
+			elseif (rowlenght + config.debuffsize) <= framelength then
+				rowlenght = rowlenght + config.debuffsize + config.padding
+				button:SetPoint("LEFT", firstButton, "RIGHT", config.padding, 0)
+				firstButton = button
+			end
+			if button.cooldown then
+				button.cooldown:SetPoint("TOPLEFT", button, "TOPLEFT", 0, 0)
+				button.cooldown:SetScale((button:GetWidth() + 0.7)/36)
+			end
+		end
+	elseif config.debuffpos == "BOTTOM" then
 		for i,button in ipairs(frame.auras.debuffbuttons.buttons) do
 			if not button:IsVisible() then break end
 			buttonsize = not button.large and config.debuffsize or config.debuffsize + config.enlargeddebuffsize

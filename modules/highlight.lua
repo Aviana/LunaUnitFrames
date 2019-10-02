@@ -113,15 +113,16 @@ end
 
 function Highlight:UpdateAura(frame)
 	frame.highlight.hasDebuff = nil
-	local showAll = LunaUF.db.profile.units[frame.unitType].highlight.debuff == true and LunaUF.db.profile.units[frame.unitType].highlight.debuff ~= 2
-	if( UnitIsFriend(frame.unit, "player") ) then
+	local showOwn = LunaUF.db.profile.units[frame.unitType].highlight.debuff == 2
+	local showAll = LunaUF.db.profile.units[frame.unitType].highlight.debuff == 3
+	if( UnitIsFriend(frame.unit, "player") and LunaUF.db.profile.units[frame.unitType].highlight.debuff ~= 1 ) then
 		local id = 0
 		while( true ) do
 			id = id + 1
 			local name, _, _, auraType = UnitDebuff(frame.unit, id)
 			if( not name ) then break end
 			
-			if ( canCure[auraType] and UnitCanAssist("player", frame.unit) or (showAll and auraType) ) then
+			if( showOwn and canCure[auraType] and UnitCanAssist("player", frame.unit) or (showAll and auraType) ) then
 				frame.highlight.hasDebuff = auraType
 				break
 			end

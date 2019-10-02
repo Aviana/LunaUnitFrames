@@ -730,7 +730,7 @@ local defaultTags = {
 									end
 								end
 							end;
-	["healthcolor"]			=function(unit)
+	["healthcolor"]			=function(frame, unit)
 								local percent = UnitHealth(unit) / UnitHealthMax(unit)
 								if( percent >= 1 ) then return Hex(LunaUF.db.profile.colors.green.r, LunaUF.db.profile.colors.green.g, LunaUF.db.profile.colors.green.b) end
 								if( percent == 0 ) then return Hex(LunaUF.db.profile.colors.red.r, LunaUF.db.profile.colors.red.g, LunaUF.db.profile.colors.red.b) end

@@ -92,7 +92,7 @@ function Squares:OnEnable(frame)
 	if( not frame.squares ) then
 		frame.squares = CreateFrame("Frame", nil, frame)
 		frame.squares:SetAllPoints(frame)
-		frame.squares:SetFrameLevel(6)
+		frame.squares:SetFrameLevel(7)
 		
 		frame.squares.square = {}
 		

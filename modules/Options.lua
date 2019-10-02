@@ -895,7 +895,7 @@ function LunaUF:CreateConfig()
 					desc = L["Set the buffsize."],
 					type = "range",
 					order = 8,
-					min = 10,
+					min = 4,
 					max = 50,
 					step = 1,
 				},
@@ -904,6 +904,7 @@ function LunaUF:CreateConfig()
 					desc = string.format(L["Make your own %s bigger."],L["Buffs"]),
 					type = "toggle",
 					order = 9,
+					hidden = function(info) return (LunaUF.db.profile.units[info[1]].auras.buffpos == "INFRAME" or LunaUF.db.profile.units[info[1]].auras.buffpos == "INFRAMECENTER") end
 				},
 				enlargedbuffsize = {
 					name = L["Bigger buff size"],
@@ -913,13 +914,14 @@ function LunaUF:CreateConfig()
 					min = 0,
 					max = 20,
 					step = 1,
+					hidden = function(info) return (LunaUF.db.profile.units[info[1]].auras.buffpos == "INFRAME" or LunaUF.db.profile.units[info[1]].auras.buffpos == "INFRAMECENTER") end
 				},
 				buffpos = {
 					name = L["Position"],
 					desc = string.format(L["Position of the %s."],L["Buffs"]),
 					type = "select",
 					order = 11,
-					values = {["LEFT"] = L["Left"], ["RIGHT"] = L["Right"], ["TOP"] = L["Top"], ["BOTTOM"] = L["Bottom"]},
+					values = {["LEFT"] = L["Left"], ["RIGHT"] = L["Right"], ["TOP"] = L["Top"], ["BOTTOM"] = L["Bottom"], ["INFRAME"] = L["Inside"], ["INFRAMECENTER"] = L["Inside Center"]},
 				},
 				debuffheader = {
 					name = L["Debuffs"],
@@ -937,7 +939,7 @@ function LunaUF:CreateConfig()
 					desc = L["Set the debuffsize."],
 					type = "range",
 					order = 14,
-					min = 10,
+					min = 4,
 					max = 50,
 					step = 1,
 				},
@@ -946,6 +948,7 @@ function LunaUF:CreateConfig()
 					desc = string.format(L["Make your own %s bigger."],L["Debuffs"]),
 					type = "toggle",
 					order = 15,
+					hidden = function(info) return (LunaUF.db.profile.units[info[1]].auras.debuffpos == "INFRAME" or LunaUF.db.profile.units[info[1]].auras.debuffpos == "INFRAMECENTER") end
 				},
 				enlargeddebuffsize = {
 					name = L["Bigger debuff size"],
@@ -955,13 +958,14 @@ function LunaUF:CreateConfig()
 					min = 0,
 					max = 20,
 					step = 1,
+					hidden = function(info) return (LunaUF.db.profile.units[info[1]].auras.debuffpos == "INFRAME" or LunaUF.db.profile.units[info[1]].auras.debuffpos == "INFRAMECENTER") end
 				},
 				debuffpos = {
 					name = L["Position"],
 					desc = string.format(L["Position of the %s."],L["Debuffs"]),
 					type = "select",
 					order = 17,
-					values = {["LEFT"] = L["Left"], ["RIGHT"] = L["Right"], ["TOP"] = L["Top"], ["BOTTOM"] = L["Bottom"]},
+					values = {["LEFT"] = L["Left"], ["RIGHT"] = L["Right"], ["TOP"] = L["Top"], ["BOTTOM"] = L["Bottom"], ["INFRAME"] = L["Inside"], ["INFRAMECENTER"] = L["Inside Center"]},
 				},
 			},
 		},
@@ -992,12 +996,10 @@ function LunaUF:CreateConfig()
 				},
 				debuff = {
 					name = L["On debuff"],
-					desc = string.format(L["Highlight the frames borders when the unit has a debuff you (grey checkmark) or someone (golden checkmark) can remove"]),
-					type = "toggle",
-					tristate = true,
+					desc = string.format(L["Highlight the frames borders when the unit has a debuff you or someone can remove"]),
+					type = "select",
 					order = 4,
-					get = function(info) local v = get(info) if v == 2 then return false else return v end end,
-					set = function(info, value) if value == false then set(info, 2) else set(info, value) end end,
+					values = {[1] = L["Off"], [2] = L["Your own"], [3] = L["All"]},
 				},
 			},
 		},
@@ -1028,12 +1030,10 @@ function LunaUF:CreateConfig()
 				},
 				debuff = {
 					name = L["On debuff"],
-					desc = string.format(L["Highlight the frame when the unit has a debuff you (grey checkmark) or someone (golden checkmark) can remove"]),
-					type = "toggle",
-					tristate = true,
+					desc = string.format(L["Highlight the frame when the unit has a debuff you or someone can remove"]),
+					type = "select",
 					order = 4,
-					get = function(info) local v = get(info) if v == 2 then return false else return v end end,
-					set = function(info, value) if value == false then set(info, 2) else set(info, value) end end,
+					values = {[1] = L["Off"], [2] = L["Your own"], [3] = L["All"]},
 				},
 			},
 		},

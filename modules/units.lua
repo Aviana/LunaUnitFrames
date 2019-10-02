@@ -388,30 +388,18 @@ OnAttributeChanged = function(self, name, unit)
 	end
 
 	-- Pet changed, going from pet -> vehicle for one
-	if( self.unit == "pet" or self.unitType == "partypet" ) then
+	if( self.unitType == "pet" or self.unitType == "partypet" ) then
 		self.unitRealOwner = self.unit == "pet" and "player" or LunaUF.partyUnits[self.unitID]
 --		self:SetAttribute("unitRealOwner", self.unitRealOwner)
 		self:RegisterNormalEvent("UNIT_PET", Units, "CheckPetUnitUpdated")
 
-		stateMonitor:WrapScript(self, "OnAttributeChanged", [[
-			if( name == "state-unitexists" ) then
-				-- Unit does not exist, hide frame
-				if( not self:GetAttribute("state-unitexists") ) then
-					self:Hide()
-				-- Unit exists, show it
-				else
-					self:Show()
-				end
-			end
-		]])
-
 	-- Automatically do a full update on target change
-	elseif( self.unit == "target" ) then
+	elseif( self.unitType == "target" ) then
 		self.isUnitVolatile = true
 		self:RegisterNormalEvent("PLAYER_TARGET_CHANGED", Units, "CheckUnitStatus")
 		self:RegisterUnitEvent("UNIT_TARGETABLE_CHANGED", self, "FullUpdate")
 
-	elseif( self.unit == "player" ) then
+	elseif( self.unitType == "player" ) then
 
 		-- Force a full update when the player is alive to prevent freezes when releasing in a zone that forces a ressurect (naxx/tk/etc)
 		self:RegisterNormalEvent("PLAYER_ALIVE", self, "FullUpdate")
@@ -423,21 +411,22 @@ OnAttributeChanged = function(self, name, unit)
 		self:RegisterUnitEvent("UNIT_CONNECTION", self, "FullUpdate")
 		
 	-- Party members need to watch for changes
-	elseif( self.unitRealType == "party" ) then
+	elseif( self.unitType == "party" ) then
 		self:RegisterNormalEvent("GROUP_ROSTER_UPDATE", Units, "CheckGroupedUnitStatus")
 		self:RegisterNormalEvent("PARTY_MEMBER_ENABLE", Units, "CheckGroupedUnitStatus")
 		self:RegisterNormalEvent("PARTY_MEMBER_DISABLE", Units, "CheckGroupedUnitStatus")
 		self:RegisterUnitEvent("UNIT_NAME_UPDATE", Units, "CheckUnitStatus")
 		self:RegisterUnitEvent("UNIT_OTHER_PARTY_CHANGED", self, "FullUpdate")
 		self:RegisterUnitEvent("UNIT_CONNECTION", self, "FullUpdate")
-	
+		
+	end
 	-- *target units are not real units, thus they do not receive events and must be polled for data
-	elseif( LunaUF.fakeUnits[self.unitRealType] ) then
+	if( LunaUF.fakeUnits[self.unitType] ) then
 		createFakeUnitUpdateTimer(self)
 		
 		-- Speeds up updating units when their owner changes target, if party1 changes target then party1target is force updated, if target changes target
 		-- then targettarget and targettargettarget are also force updated
-		if( self.unitRealType == "partytarget" ) then
+		if( self.unitType == "partytarget" ) then
 			self.unitRealOwner = LunaUF.partyUnits[self.unitID]
 		elseif( self.unitRealType == "raid" ) then
 			self.unitRealOwner = LunaUF.raidUnits[self.unitID]
@@ -477,9 +466,10 @@ local secureInitializeUnit = [[
 		clickHeader:SetAttribute("clickcast_button", self)
 		clickHeader:RunAttribute("clickcast_register")
 	end
+	self:SetAttribute("refreshUnitChange", header:GetAttribute("refreshUnitChange"))
 ]]
 
-local unitButtonTemplate = ClickCastHeader and "ClickCastUnitTemplate,SecureUnitButtonTemplate,SecureHandlerStateTemplate" or "SecureUnitButtonTemplate,SecureHandlerStateTemplate"
+local unitButtonTemplate = ClickCastHeader and "ClickCastUnitTemplate" or "SecureUnitButtonTemplate,SecureHandlerStateTemplate"
 
 -- Header unit initialized
 local function initializeUnit(header, frameName)
@@ -561,42 +551,6 @@ function Units:CreateUnit(...)
 	frame.highFrame:SetFrameLevel(frame.topFrameLevel + 2)
 	frame.highFrame:SetAllPoints(frame)
 	frame:HookScript("OnAttributeChanged", OnAttributeChanged)
-	if frame.unitType == "partytarget" or frame.unitType == "maintanktarget" or frame.unitType == "mainassisttarget" then
-		-- Brute forcing targets into a party header since blizz doesn't provide target headers
-		stateMonitor:WrapScript(frame, "OnAttributeChanged", [[
-			if( name == "unit" ) then
-				if ( not value ) then
-					UnregisterUnitWatch(self)
-				elseif value ~= "player" and value ~= "target" and not strmatch(value, "target$") then
-					self:SetAttribute("unit", value.."target")
-					RegisterUnitWatch(self)
-					return false
-				elseif value == "player" then
-					self:SetAttribute("unit", "target")
-					RegisterUnitWatch(self)
-					return false
-				end
-			end
-		]])
-	elseif frame.unitType == "partypet" then
-		-- Brute forcing partypets into a party header since the pet group template sucks ass
-		stateMonitor:WrapScript(frame, "OnAttributeChanged", [[
-			if( name == "unit" ) then
-				if ( not value ) then
-					UnregisterUnitWatch(self)
-				elseif value ~= "player" and value ~= "pet" and not strmatch(value, "^partypet%d$") then
-					local unitID = strmatch(value, "%d")
-					self:SetAttribute("unit", "partypet"..unitID)
-					RegisterUnitWatch(self)
-					return false
-				elseif value == "player" then
-					self:SetAttribute("unit", "pet")
-					RegisterUnitWatch(self)
-					return false
-				end
-			end
-		]])
-	end
 	frame:SetScript("OnEvent", OnEvent)
 	frame:HookScript("OnEnter", OnEnter)
 	frame:HookScript("OnLeave", OnLeave)
@@ -734,7 +688,6 @@ function Units:SetHeaderAttributes(frame, type)
 		frame:SetAttribute("unitsPerColumn", 5)
 		frame:SetAttribute("columnSpacing", config.columnSpacing)
 		frame:SetAttribute("columnAnchorPoint", config.attribAnchorPoint)
-		self:CheckGroupVisibility()
 		if( stateMonitor.party ) then
 			stateMonitor.party:SetAttribute("hideSemiRaid", LunaUF.db.profile.units.party.hideSemiRaid)
 			stateMonitor.party:SetAttribute("hideAnyRaid", LunaUF.db.profile.units.party.hideAnyRaid)
@@ -749,16 +702,16 @@ function Units:SetHeaderAttributes(frame, type)
 		frame:SetAttribute("unitsPerColumn", 5)
 		frame:SetAttribute("columnSpacing", config.columnSpacing)
 		frame:SetAttribute("columnAnchorPoint", config.attribAnchorPoint)
-		self:CheckGroupVisibility()
 	end
 	
 	if( type == "raid" ) then
-		self:CheckGroupVisibility()
 
 		for id, monitor in pairs(stateMonitor.raids) do
 			monitor:SetAttribute("hideSemiRaid", LunaUF.db.profile.units.raid.hideSemiRaid)
 		end
 	end
+
+	self:CheckGroupVisibility()
 
 	local xMod = config.attribPoint == "LEFT" and 1 or config.attribPoint == "RIGHT" and -1 or 0
 	local yMod = config.attribPoint == "TOP" and -1 or config.attribPoint == "BOTTOM" and 1 or 0
@@ -805,7 +758,20 @@ function Units:LoadUnit(unit)
 	
 	local frame = self:CreateUnit("Button", "LUFUnit" .. unit, UIParent, "SecureUnitButtonTemplate")
 	
+	stateMonitor:WrapScript(frame, "OnAttributeChanged", [[
+		if( name == "state-unitexists" ) then
+			-- Unit does not exist, hide frame
+			if( not self:GetAttribute("state-unitexists") ) then
+				self:Hide()
+			-- Unit exists, show it
+			else
+				self:Show()
+			end
+		end
+	]])
+	
 	frame:SetAttribute("unit", unit)
+	
 	frame.hasStateWatch = unit == "pet"
 	
 	RegisterUnitWatch(frame, frame.hasStateWatch)
@@ -963,6 +929,35 @@ function Units:LoadGroupHeader(type)
 		headerFrame:HookScript("OnSizeChanged",checkForPetGroupNumber)
 	end
 
+	if type == "partypet" then
+		headerFrame:SetAttribute("refreshUnitChange", [[
+			local unit = self:GetAttribute("unit")
+			if ( not unit ) then
+				UnregisterUnitWatch(self)
+			elseif unit ~= "player" and unit ~= "pet" and not strmatch(unit, "^partypet%d$") then
+				local unitID = strmatch(unit, "%d")
+				self:SetAttribute("unit", "partypet"..unitID)
+				RegisterUnitWatch(self)
+			elseif unit == "player" then
+				self:SetAttribute("unit", "pet")
+				RegisterUnitWatch(self)
+			end
+		]])
+	elseif type == "partytarget" or type == "mainassisttarget" or type == "maintanktarget" then
+		headerFrame:SetAttribute("refreshUnitChange", [[
+			local unit = self:GetAttribute("unit")
+			if ( not unit ) then
+				UnregisterUnitWatch(self)
+			elseif unit ~= "player" and unit ~= "target" and not strmatch(unit, "target$") then
+				self:SetAttribute("unit", unit.."target")
+				RegisterUnitWatch(self)
+			elseif unit == "player" then
+				self:SetAttribute("unit", "target")
+				RegisterUnitWatch(self)
+			end
+		]])
+	end
+
 	self:SetHeaderAttributes(headerFrame, type)
 
 	headerFrame:SetAttribute("template", unitButtonTemplate)
@@ -1000,7 +995,6 @@ function Units:LoadGroupHeader(type)
 		stateMonitor[type]:SetAttribute("hideAnyRaid", LunaUF.db.profile.units.party.hideAnyRaid)
 		stateMonitor[type]:WrapScript(stateMonitor[type], "OnAttributeChanged", [[
 			if( name ~= "state-raidmonitor" and name ~= "partydisabled" and name ~= "hideanyraid" and name ~= "hidesemiraid" and name ~= "showPlayer" and name ~= "showPlayersolo" ) then return end
-			if( self:GetAttribute("state-raidmonitor") == "combat" ) then return end
 			if( self:GetAttribute("partyDisabled") ) then return end
 			
 			if( self:GetAttribute("hideAnyRaid") and ( self:GetAttribute("state-raidmonitor") == "raid1" or self:GetAttribute("state-raidmonitor") == "raid6" ) ) then
