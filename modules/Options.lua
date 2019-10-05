@@ -181,7 +181,14 @@ function LunaUF:CreateConfig()
 					else
 						if tbl.anchorTo == UnitToFrame[info[#info-1]] then
 							tbl.anchorTo = "UIParent"
-							LunaUF.modules.movers:SetFrame(_G[UnitToFrame[unit]])
+							if _G[UnitToFrame[unit]] then
+								LunaUF.modules.movers:SetFrame(_G[UnitToFrame[unit]])
+							else
+								tbl.point = "TOPRIGHT"
+								tbl.relativePoint = "BOTTOMLEFT"
+								tbl.x = UIParent:GetWidth()/2*UIParent:GetScale()
+								tbl.y = UIParent:GetHeight()/2*UIParent:GetScale()
+							end
 						end
 					end
 				end
@@ -2683,17 +2690,41 @@ function LunaUF:CreateConfig()
 					type = "toggle",
 					order = 1,
 				},
+				autoHide = {
+					name = L["Auto hide"],
+					desc = string.format(L["Hide when inactive"]),
+					type = "toggle",
+					order = 2,
+				},
+				ticker = {
+					name = L["Ticker"],
+					desc = L["Since mana/energy regenerate in ticks, show a timer for it"],
+					type = "toggle",
+					order = 3,
+				},
+				hideticker = {
+					name = L["Autohide ticker"],
+					desc = L["Hide the ticker when it's not needed"],
+					type = "toggle",
+					order = 4,
+				},
+				fivesecond = {
+					name = L["Five second rule"],
+					desc = L["Show a timer for the five second rule"],
+					type = "toggle",
+					order = 5,
+				},
 				background = {
 					name = L["Background"],
 					desc = string.format(L["Enable or disable the %s."], L["Background"]),
 					type = "toggle",
-					order = 2,
+					order = 6,
 				},
 				backgroundAlpha = {
 					name = L["Background alpha"],
 					desc = L["Set the background alpha."],
 					type = "range",
-					order = 3,
+					order = 7,
 					min = 0.01,
 					max = 1,
 					step = 0.01,
@@ -2702,7 +2733,7 @@ function LunaUF:CreateConfig()
 					name = L["Height"],
 					desc = L["Set the height."],
 					type = "range",
-					order = 4,
+					order = 8,
 					min = 1,
 					max = 10,
 					step = 0.1,
@@ -2711,13 +2742,13 @@ function LunaUF:CreateConfig()
 					name = L["Order"],
 					desc = L["Set the order priority."],
 					type = "range",
-					order = 5,
+					order = 9,
 					min = 0,
 					max = 100,
 					step = 5,
 				},
 				statusbar = {
-					order = 6,
+					order = 10,
 					type = "select",
 					name = L["Bar texture"],
 					dialogControl = "LSM30_Statusbar",
@@ -2728,7 +2759,7 @@ function LunaUF:CreateConfig()
 					name = L["Vertical"],
 					desc = L["Set the bar vertical."],
 					type = "toggle",
-					order = 7,
+					order = 11,
 				},
 			},
 		},

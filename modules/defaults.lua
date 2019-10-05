@@ -64,7 +64,7 @@ function LunaUF:LoadDefaults()
 			castBar = { enabled = true, background = true, backgroundAlpha = 0.2, height = 3, icon = "HIDE", autoHide = true, order = 60},
 			xpBar = { enabled = false, height = 2, order = 80, background = false, backgroundAlpha = 0.2, Alpha = 1 },
 			emptyBar = { enabled = false, height = 3, order = 50, reactionType="npc", class = true, alpha = 0.2},
-			druidBar = {enabled = false, order = 70, height = 3, background = true, backgroundAlpha = 0.2 },
+			druidBar = {enabled = false, autoHide = true, order = 70, height = 3, background = true, backgroundAlpha = 0.2 },
 			totemBar = {enabled = false, order = 70, height = 2, background = true, backgroundAlpha = 0.2, autoHide = true},
 			highlight = { enabled = true, debuff = 2 },
 			borders = { enabled = true, debuff = 2 },

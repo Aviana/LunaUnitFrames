@@ -388,18 +388,21 @@ OnAttributeChanged = function(self, name, unit)
 	end
 
 	-- Pet changed, going from pet -> vehicle for one
-	if( self.unitType == "pet" or self.unitType == "partypet" ) then
+	if( self.unitRealType == "pet" or self.unitRealType == "partypet" ) then
 		self.unitRealOwner = self.unit == "pet" and "player" or LunaUF.partyUnits[self.unitID]
---		self:SetAttribute("unitRealOwner", self.unitRealOwner)
+		self:RegisterNormalEvent("UNIT_PET", Units, "CheckPetUnitUpdated")
+
+	elseif( self.unitRealType == "raidpet" ) then
+		self.unitRealOwner = LunaUF.raidUnits[self.unitID]
 		self:RegisterNormalEvent("UNIT_PET", Units, "CheckPetUnitUpdated")
 
 	-- Automatically do a full update on target change
-	elseif( self.unitType == "target" ) then
+	elseif( self.unitRealType == "target" ) then
 		self.isUnitVolatile = true
 		self:RegisterNormalEvent("PLAYER_TARGET_CHANGED", Units, "CheckUnitStatus")
 		self:RegisterUnitEvent("UNIT_TARGETABLE_CHANGED", self, "FullUpdate")
 
-	elseif( self.unitType == "player" ) then
+	elseif( self.unitRealType == "player" ) then
 
 		-- Force a full update when the player is alive to prevent freezes when releasing in a zone that forces a ressurect (naxx/tk/etc)
 		self:RegisterNormalEvent("PLAYER_ALIVE", self, "FullUpdate")
@@ -411,7 +414,7 @@ OnAttributeChanged = function(self, name, unit)
 		self:RegisterUnitEvent("UNIT_CONNECTION", self, "FullUpdate")
 		
 	-- Party members need to watch for changes
-	elseif( self.unitType == "party" ) then
+	elseif( self.unitRealType == "party" ) then
 		self:RegisterNormalEvent("GROUP_ROSTER_UPDATE", Units, "CheckGroupedUnitStatus")
 		self:RegisterNormalEvent("PARTY_MEMBER_ENABLE", Units, "CheckGroupedUnitStatus")
 		self:RegisterNormalEvent("PARTY_MEMBER_DISABLE", Units, "CheckGroupedUnitStatus")
@@ -428,8 +431,6 @@ OnAttributeChanged = function(self, name, unit)
 		-- then targettarget and targettargettarget are also force updated
 		if( self.unitType == "partytarget" ) then
 			self.unitRealOwner = LunaUF.partyUnits[self.unitID]
-		elseif( self.unitRealType == "raid" ) then
-			self.unitRealOwner = LunaUF.raidUnits[self.unitID]
 		elseif( self.unit == "targettarget" or self.unit == "targettargettarget" ) then
 			self.unitRealOwner = "target"
 			self:RegisterNormalEvent("PLAYER_TARGET_CHANGED", Units, "CheckUnitStatus")
