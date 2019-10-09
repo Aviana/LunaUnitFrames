@@ -388,33 +388,33 @@ OnAttributeChanged = function(self, name, unit)
 	end
 
 	-- Pet changed, going from pet -> vehicle for one
-	if( self.unitRealType == "pet" or self.unitRealType == "partypet" ) then
+	if( self.unitType == "pet" or self.unitType == "partypet" ) then
 		self.unitRealOwner = self.unit == "pet" and "player" or LunaUF.partyUnits[self.unitID]
 		self:RegisterNormalEvent("UNIT_PET", Units, "CheckPetUnitUpdated")
 
-	elseif( self.unitRealType == "raidpet" ) then
+	elseif( self.unitType == "raidpet" ) then
 		self.unitRealOwner = LunaUF.raidUnits[self.unitID]
 		self:RegisterNormalEvent("UNIT_PET", Units, "CheckPetUnitUpdated")
 
 	-- Automatically do a full update on target change
-	elseif( self.unitRealType == "target" ) then
+	elseif( self.unitType == "target" ) then
 		self.isUnitVolatile = true
 		self:RegisterNormalEvent("PLAYER_TARGET_CHANGED", Units, "CheckUnitStatus")
 		self:RegisterUnitEvent("UNIT_TARGETABLE_CHANGED", self, "FullUpdate")
 
-	elseif( self.unitRealType == "player" ) then
+	elseif( self.unitType == "player" ) then
 
 		-- Force a full update when the player is alive to prevent freezes when releasing in a zone that forces a ressurect (naxx/tk/etc)
 		self:RegisterNormalEvent("PLAYER_ALIVE", self, "FullUpdate")
 
 	-- Check for a unit guid to do a full update
-	elseif( self.unitRealType == "raid" ) then
+	elseif( self.unitType == "raid" ) then
 		self:RegisterNormalEvent("GROUP_ROSTER_UPDATE", Units, "CheckGroupedUnitStatus")
 		self:RegisterUnitEvent("UNIT_NAME_UPDATE", Units, "CheckUnitStatus")
 		self:RegisterUnitEvent("UNIT_CONNECTION", self, "FullUpdate")
 		
 	-- Party members need to watch for changes
-	elseif( self.unitRealType == "party" ) then
+	elseif( self.unitType == "party" ) then
 		self:RegisterNormalEvent("GROUP_ROSTER_UPDATE", Units, "CheckGroupedUnitStatus")
 		self:RegisterNormalEvent("PARTY_MEMBER_ENABLE", Units, "CheckGroupedUnitStatus")
 		self:RegisterNormalEvent("PARTY_MEMBER_DISABLE", Units, "CheckGroupedUnitStatus")
@@ -1106,6 +1106,7 @@ local curableSpells = {
 	["PRIEST"] = {[528] = {"Disease"}, [552] = {"Disease"}, [527] = {"Magic"}, [988] = {"Magic"}},
 	["PALADIN"] = {[4987] = {"Poison", "Disease", "Magic"}, [1152] = {"Poison", "Disease"}},
 	["SHAMAN"] = {[2870] = {"Disease"}, [526] = {"Poison"}},
+	["MAGE"] = {[475] = {"Curse"}},
 }
 
 curableSpells = curableSpells[select(2, UnitClass("player"))]
