@@ -219,14 +219,28 @@ local function OnShowForced(self)
 end
 
 local function OnShow(self)
+	if self.unitType == "target" and LunaUF.db.profile.units.target.sound then
+		if ( UnitIsEnemy(self.unit, "player") ) then
+			PlaySound(SOUNDKIT.IG_CREATURE_AGGRO_SELECT)
+		elseif ( UnitIsFriend("player", self.unit) ) then
+			PlaySound(SOUNDKIT.IG_CHARACTER_NPC_SELECT)
+		else
+			PlaySound(SOUNDKIT.IG_CREATURE_NEUTRAL_SELECT)
+		end
+	end
+
 	-- Reset the event handler
 	self:SetScript("OnEvent", OnEvent)
 	Units:CheckUnitStatus(self)
 end
 
 local function OnHide(self)
-	self:SetScript("OnEvent", nil)
+	if self.unitType == "target" and LunaUF.db.profile.units.target.sound then
+		PlaySound(SOUNDKIT.INTERFACE_SOUND_LOST_TARGET_UNIT)
+	end
 
+	self:SetScript("OnEvent", nil)
+	
 	-- If it's a volatile such as target, next time it's shown it has to do an update
 	-- OR if the unit is still shown, but it's been hidden because our parent (Basically UIParent)
 	-- we want to flag it as having changed so it can be updated
@@ -496,7 +510,7 @@ local function OnLeave(self)
 end
 
 local function LUF_OnEnter(self)
-	if( not LunaUF.db.profile.tooltipCombat or not InCombatLockdown() ) then
+	if( LunaUF.db.profile.tooltipCombat or not InCombatLockdown() ) then
 		if not GameTooltip:IsForbidden() then
 			UnitFrame_OnEnter(self)
 		end

@@ -817,7 +817,7 @@ end
 
 function Tags:SplitTags(frame, config)
 	for barkey, barconfig in pairs(config.tags) do
-		if frame[barkey] then
+		if frame[barkey] or barkey == "top" or barkey == "bottom" then
 			for align,fontstring in pairs(frame.fontstrings[barkey]) do
 				table.wipe(fontstring.parts)
 				if barconfig[align].tagline ~= "" then
@@ -912,6 +912,43 @@ function Tags:SetupText(frame, config)
 					else
 						fontstring:SetPoint("RIGHT", frame[barkey], "RIGHT", -2 - offset , 0)
 						fontstring:SetWidth((frame[barkey]:GetWidth()-4)*(barconfig[align].size/100))
+					end
+					fontstring.parts = fontstring.parts or {}
+				end
+			elseif barkey == "top" or barkey == "bottom" then
+				frame.fontstrings[barkey] = frame.fontstrings[barkey] or {}
+				local bar = frame.fontstrings[barkey]
+				bar["left"] = bar["left"] or frame:CreateFontString(nil, "ARTWORK")
+				bar["center"] = bar["center"] or frame:CreateFontString(nil, "ARTWORK")
+				bar["right"] = bar["right"] or frame:CreateFontString(nil, "ARTWORK")
+				for align,fontstring in pairs(bar) do
+					fontstring:SetFont(LunaUF.Layout:LoadMedia(SML.MediaType.FONT, LunaUF.db.profile.units[frame.unitType].tags[barkey].font), barconfig.size)
+					fontstring:SetShadowColor(0, 0, 0, 1.0)
+					fontstring:SetShadowOffset(0.80, -0.80)
+					fontstring:SetJustifyH(string.upper(align))
+					fontstring:SetJustifyV(barkey == "top" and "BOTTOM" or "TOP")
+					fontstring:SetHeight(50)
+					if align == "left" then
+						if barkey == "top" then
+							fontstring:SetPoint("BOTTOMLEFT", frame, "TOPLEFT", 2, 2)
+						else
+							fontstring:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", 2, -2)
+						end
+						fontstring:SetWidth((frame:GetWidth()-4)*(barconfig[align].size/100))
+					elseif align == "center" then
+						if barkey == "top" then
+							fontstring:SetPoint("BOTTOM", frame, "TOP", 0, 2)
+						else
+							fontstring:SetPoint("TOP", frame, "BOTTOM", 0, -2)
+						end
+						fontstring:SetWidth(frame:GetWidth()*(barconfig[align].size/100))
+					else
+						if barkey == "top" then
+							fontstring:SetPoint("BOTTOMRIGHT", frame, "TOPRIGHT", -2 , 2)
+						else
+							fontstring:SetPoint("TOPRIGHT", frame, "BOTTOMRIGHT", -2 , -2)
+						end
+						fontstring:SetWidth((frame:GetWidth()-4)*(barconfig[align].size/100))
 					end
 					fontstring.parts = fontstring.parts or {}
 				end

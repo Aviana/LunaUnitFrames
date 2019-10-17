@@ -1088,10 +1088,108 @@ function LunaUF:CreateConfig()
 			order = 14,
 			inline = true,
 			args = {
+				top = {
+					name = L["Top"],
+					type = "group",
+					order = 1,
+					inline = true,
+					args = {
+						left = {
+							name = L["Left"],
+							type = "group",
+							order = 1,
+							inline = true,
+							args = {
+								tagline = {
+									name = L["Left"],
+									desc = L["Set the tags."],
+									type = "input",
+									order = 1,
+									width = "double",
+								},
+								size = {
+									name = L["Limit"],
+									desc = L["Set after wich percentage of the bar to cut off."],
+									type = "range",
+									order = 2,
+									min = 1,
+									max = 100,
+									step = 1,
+								},
+							},
+						},
+						center = {
+							name = L["Center"],
+							type = "group",
+							order = 2,
+							inline = true,
+							args = {
+								tagline = {
+									name = L["Center"],
+									desc = L["Set the tags."],
+									type = "input",
+									order = 1,
+									width = "double",
+								},
+								size = {
+									name = L["Limit"],
+									desc = L["Set after wich percentage of the bar to cut off."],
+									type = "range",
+									order = 2,
+									min = 1,
+									max = 100,
+									step = 1,
+								},
+							},
+						},
+						right = {
+							name = L["Right"],
+							type = "group",
+							order = 3,
+							inline = true,
+							args = {
+								tagline = {
+									name = L["Right"],
+									desc = L["Set the tags."],
+									type = "input",
+									order = 1,
+									width = "double",
+								},
+								size = {
+									name = L["Limit"],
+									desc = L["Set after wich percentage of the bar to cut off."],
+									type = "range",
+									order = 2,
+									min = 1,
+									max = 100,
+									step = 1,
+								},
+							},
+						},
+						size = {
+							name = L["Font Size"],
+							desc = L["Set the font size."],
+							type = "range",
+							order = 4,
+							width = "double",
+							min = 5,
+							max = 24,
+							step = 1,
+						},
+						font = {
+							order = 5,
+							type = "select",
+							name = L["Font"],
+							dialogControl = "LSM30_Font",
+							values = getMediaData,
+							get = function(info) return get(info) or LunaUF.db.profile.font end,
+						},
+					},
+				},
 				healthBar = {
 					name = L["Health bar"],
 					type = "group",
-					order = 1,
+					order = 2,
 					inline = true,
 					args = {
 						left = {
@@ -1189,7 +1287,7 @@ function LunaUF:CreateConfig()
 				powerBar = {
 					name = L["Power bar"],
 					type = "group",
-					order = 2,
+					order = 3,
 					inline = true,
 					args = {
 						left = {
@@ -1287,7 +1385,7 @@ function LunaUF:CreateConfig()
 				castBar = {
 					name = L["Cast bar"],
 					type = "group",
-					order = 3,
+					order = 4,
 					inline = true,
 					args = {
 						left = {
@@ -1385,7 +1483,7 @@ function LunaUF:CreateConfig()
 				emptyBar = {
 					name = L["Empty bar"],
 					type = "group",
-					order = 4,
+					order = 5,
 					inline = true,
 					args = {
 						left = {
@@ -1483,7 +1581,7 @@ function LunaUF:CreateConfig()
 				druidBar = {
 					name = L["Druid bar"],
 					type = "group",
-					order = 5,
+					order = 6,
 					inline = true,
 					hidden = function(info) return info[1] ~= "player" or select(2,UnitClass("player")) ~= "DRUID" end,
 					args = {
@@ -1582,9 +1680,107 @@ function LunaUF:CreateConfig()
 				xpBar = {
 					name = L["Xp bar"],
 					type = "group",
-					order = 6,
+					order = 7,
 					inline = true,
 					hidden = function(info) return info[1] ~= "player" end,
+					args = {
+						left = {
+							name = L["Left"],
+							type = "group",
+							order = 1,
+							inline = true,
+							args = {
+								tagline = {
+									name = L["Left"],
+									desc = L["Set the tags."],
+									type = "input",
+									order = 1,
+									width = "double",
+								},
+								size = {
+									name = L["Limit"],
+									desc = L["Set after wich percentage of the bar to cut off."],
+									type = "range",
+									order = 2,
+									min = 1,
+									max = 100,
+									step = 1,
+								},
+							},
+						},
+						center = {
+							name = L["Center"],
+							type = "group",
+							order = 2,
+							inline = true,
+							args = {
+								tagline = {
+									name = L["Center"],
+									desc = L["Set the tags."],
+									type = "input",
+									order = 1,
+									width = "double",
+								},
+								size = {
+									name = L["Limit"],
+									desc = L["Set after wich percentage of the bar to cut off."],
+									type = "range",
+									order = 2,
+									min = 1,
+									max = 100,
+									step = 1,
+								},
+							},
+						},
+						right = {
+							name = L["Right"],
+							type = "group",
+							order = 3,
+							inline = true,
+							args = {
+								tagline = {
+									name = L["Right"],
+									desc = L["Set the tags."],
+									type = "input",
+									order = 1,
+									width = "double",
+								},
+								size = {
+									name = L["Limit"],
+									desc = L["Set after wich percentage of the bar to cut off."],
+									type = "range",
+									order = 2,
+									min = 1,
+									max = 100,
+									step = 1,
+								},
+							},
+						},
+						size = {
+							name = L["Font Size"],
+							desc = L["Set the font size."],
+							type = "range",
+							order = 4,
+							width = "double",
+							min = 5,
+							max = 24,
+							step = 1,
+						},
+						font = {
+							order = 5,
+							type = "select",
+							name = L["Font"],
+							dialogControl = "LSM30_Font",
+							values = getMediaData,
+							get = function(info) return get(info) or LunaUF.db.profile.font end,
+						},
+					},
+				},
+				bottom = {
+					name = L["Bottom"],
+					type = "group",
+					order = 8,
+					inline = true,
 					args = {
 						left = {
 							name = L["Left"],
@@ -3641,6 +3837,12 @@ function LunaUF:CreateConfig()
 						set = function(info, value) LunaUF.db.profile.units["target"].y = tonumber(value) LunaUF.Layout:Reload("target") end,
 						disabled = Lockdown,
 					},
+					sound = {
+						name = L["Targeting sound"],
+						desc = L["Enable the sound when switching target"],
+						type = "toggle",
+						order = 2.7,
+					},
 				},
 			},
 			targettarget = {
@@ -5504,7 +5706,7 @@ function LunaUF:CreateConfig()
 		aceoptions.args.help.args[k] = {
 			order = i,
 			type = "description",
-			name = "["..k.."] = "..L[k],
+			name = "["..k.."] = "..(L[k.."desc"] or L[k]),
 			width = "full",
 		}
 		i = i + 1

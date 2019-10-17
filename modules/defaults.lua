@@ -4,7 +4,7 @@ function LunaUF:LoadDefaults()
 	self.defaults = {
 		profile = {
 			locked = false,
-			tooltipCombat = false,
+			tooltipCombat = true,
 			hidden = {cast = true, buffs = false, party = true, raid = true, player = true, pet = true, target = true},
 			statusbar = "Minimalist",
 			font = "Myriad Condensed Web",
@@ -96,6 +96,21 @@ function LunaUF:LoadDefaults()
 				timer = "all",
 			},
 			tags = {
+				["top"] = {
+					size = 10,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
+						size = 100,
+					},
+				},
 				["healthBar"] = {
 					size = 10,
 					["left"] = {
@@ -186,6 +201,21 @@ function LunaUF:LoadDefaults()
 						size = 100,
 					},
 				},
+				["bottom"] = {
+					size = 10,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
+						size = 100,
+					},
+				},
 			},
 			indicators = {
 				raidTarget = { enabled = true, anchorPoint = "CENTER", size = 20, x = 0, y = 0 },
@@ -246,6 +276,21 @@ function LunaUF:LoadDefaults()
 				timer = "all",
 			},
 			tags = {
+				["top"] = {
+					size = 10,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
+						size = 100,
+					},
+				},
 				["healthBar"] = {
 					size = 10,
 					["left"] = {
@@ -292,6 +337,21 @@ function LunaUF:LoadDefaults()
 					},
 				},
 				["emptyBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
+						size = 100,
+					},
+				},
+				["bottom"] = {
 					size = 10,
 					["left"] = {
 						tagline = "",
@@ -358,6 +418,21 @@ function LunaUF:LoadDefaults()
 				timer = "all",
 			},
 			tags = {
+				["top"] = {
+					size = 10,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
+						size = 100,
+					},
+				},
 				["healthBar"] = {
 					size = 10,
 					["left"] = {
@@ -404,6 +479,21 @@ function LunaUF:LoadDefaults()
 					},
 				},
 				["emptyBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
+						size = 100,
+					},
+				},
+				["bottom"] = {
 					size = 10,
 					["left"] = {
 						tagline = "",
@@ -475,6 +565,21 @@ function LunaUF:LoadDefaults()
 				timer = "all",
 			},
 			tags = {
+				["top"] = {
+					size = 10,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
+						size = 100,
+					},
+				},
 				["healthBar"] = {
 					size = 10,
 					["left"] = {
@@ -521,6 +626,21 @@ function LunaUF:LoadDefaults()
 					},
 				},
 				["emptyBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
+						size = 100,
+					},
+				},
+				["bottom"] = {
 					size = 10,
 					["left"] = {
 						tagline = "",
@@ -594,6 +714,21 @@ function LunaUF:LoadDefaults()
 				timer = "all",
 			},
 			tags = {
+				["top"] = {
+					size = 10,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
+						size = 100,
+					},
+				},
 				["healthBar"] = {
 					size = 10,
 					["left"] = {
@@ -640,6 +775,21 @@ function LunaUF:LoadDefaults()
 					},
 				},
 				["emptyBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
+						size = 100,
+					},
+				},
+				["bottom"] = {
 					size = 10,
 					["left"] = {
 						tagline = "",
@@ -713,6 +863,21 @@ function LunaUF:LoadDefaults()
 				timer = "all",
 			},
 			tags = {
+				["top"] = {
+					size = 10,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
+						size = 100,
+					},
+				},
 				["healthBar"] = {
 					size = 10,
 					["left"] = {
@@ -759,6 +924,21 @@ function LunaUF:LoadDefaults()
 					},
 				},
 				["emptyBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
+						size = 100,
+					},
+				},
+				["bottom"] = {
 					size = 10,
 					["left"] = {
 						tagline = "",
@@ -832,6 +1012,21 @@ function LunaUF:LoadDefaults()
 				timer = "all",
 			},
 			tags = {
+				["top"] = {
+					size = 10,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
+						size = 100,
+					},
+				},
 				["healthBar"] = {
 					size = 10,
 					["left"] = {
@@ -878,6 +1073,21 @@ function LunaUF:LoadDefaults()
 					},
 				},
 				["emptyBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
+						size = 100,
+					},
+				},
+				["bottom"] = {
 					size = 10,
 					["left"] = {
 						tagline = "",
@@ -957,6 +1167,21 @@ function LunaUF:LoadDefaults()
 				timer = "all",
 			},
 			tags = {
+				["top"] = {
+					size = 10,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
+						size = 100,
+					},
+				},
 				["healthBar"] = {
 					size = 10,
 					["left"] = {
@@ -1003,6 +1228,21 @@ function LunaUF:LoadDefaults()
 					},
 				},
 				["emptyBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
+						size = 100,
+					},
+				},
+				["bottom"] = {
 					size = 10,
 					["left"] = {
 						tagline = "",
@@ -1077,6 +1317,21 @@ function LunaUF:LoadDefaults()
 				timer = "all",
 			},
 			tags = {
+				["top"] = {
+					size = 10,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
+						size = 100,
+					},
+				},
 				["healthBar"] = {
 					size = 10,
 					["left"] = {
@@ -1123,6 +1378,21 @@ function LunaUF:LoadDefaults()
 					},
 				},
 				["emptyBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
+						size = 100,
+					},
+				},
+				["bottom"] = {
 					size = 10,
 					["left"] = {
 						tagline = "",
@@ -1193,6 +1463,21 @@ function LunaUF:LoadDefaults()
 				timer = "all",
 			},
 			tags = {
+				["top"] = {
+					size = 10,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
+						size = 100,
+					},
+				},
 				["healthBar"] = {
 					size = 8,
 					["left"] = {
@@ -1239,6 +1524,21 @@ function LunaUF:LoadDefaults()
 					},
 				},
 				["emptyBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
+						size = 100,
+					},
+				},
+				["bottom"] = {
 					size = 10,
 					["left"] = {
 						tagline = "",
@@ -1339,6 +1639,21 @@ function LunaUF:LoadDefaults()
 				timer = "all",
 			},
 			tags = {
+				["top"] = {
+					size = 10,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
+						size = 100,
+					},
+				},
 				["healthBar"] = {
 					size = 8,
 					["left"] = {
@@ -1385,6 +1700,21 @@ function LunaUF:LoadDefaults()
 					},
 				},
 				["emptyBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
+						size = 100,
+					},
+				},
+				["bottom"] = {
 					size = 10,
 					["left"] = {
 						tagline = "",
@@ -1459,6 +1789,21 @@ function LunaUF:LoadDefaults()
 				timer = "all",
 			},
 			tags = {
+				["top"] = {
+					size = 10,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
+						size = 100,
+					},
+				},
 				["healthBar"] = {
 					size = 10,
 					["left"] = {
@@ -1505,6 +1850,21 @@ function LunaUF:LoadDefaults()
 					},
 				},
 				["emptyBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
+						size = 100,
+					},
+				},
+				["bottom"] = {
 					size = 10,
 					["left"] = {
 						tagline = "",
@@ -1587,6 +1947,21 @@ function LunaUF:LoadDefaults()
 				timer = "all",
 			},
 			tags = {
+				["top"] = {
+					size = 10,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
+						size = 100,
+					},
+				},
 				["healthBar"] = {
 					size = 10,
 					["left"] = {
@@ -1633,6 +2008,21 @@ function LunaUF:LoadDefaults()
 					},
 				},
 				["emptyBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
+						size = 100,
+					},
+				},
+				["bottom"] = {
 					size = 10,
 					["left"] = {
 						tagline = "",
@@ -1715,6 +2105,21 @@ function LunaUF:LoadDefaults()
 				timer = "all",
 			},
 			tags = {
+				["top"] = {
+					size = 10,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
+						size = 100,
+					},
+				},
 				["healthBar"] = {
 					size = 10,
 					["left"] = {
@@ -1761,6 +2166,21 @@ function LunaUF:LoadDefaults()
 					},
 				},
 				["emptyBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
+						size = 100,
+					},
+				},
+				["bottom"] = {
 					size = 10,
 					["left"] = {
 						tagline = "",
@@ -1843,6 +2263,21 @@ function LunaUF:LoadDefaults()
 				timer = "all",
 			},
 			tags = {
+				["top"] = {
+					size = 10,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
+						size = 100,
+					},
+				},
 				["healthBar"] = {
 					size = 10,
 					["left"] = {
@@ -1889,6 +2324,21 @@ function LunaUF:LoadDefaults()
 					},
 				},
 				["emptyBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
+						size = 100,
+					},
+				},
+				["bottom"] = {
 					size = 10,
 					["left"] = {
 						tagline = "",
