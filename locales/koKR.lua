@@ -339,8 +339,8 @@ local L = {
   ["smartlevel"] = "플레이어 보다 10레벨 이상 높거나 보스에 대해 \"보스\"로 표시합니다.",
   ["class"] = "유닛의 직업 표시",
   ["smartclass"] = "플레이어의 직업 및 NPC의 종족 유형을 표시합니다.",
-  ["rare"] = "유닛이 희귀나 희귀정예일 때 \"희귀\"로 표시합니다.",
-  ["elite"] = "유닛이 정예나 희귀정예일 때 \"정예\"로 표시합니다.",
+  ["raredesc"] = "유닛이 희귀나 희귀정예일 때 \"희귀\"로 표시합니다.",
+  ["elitedesc"] = "유닛이 정예나 희귀정예일 때 \"정예\"로 표시합니다.",
   ["classification"] = "정예, 희귀, 보스, 기타... 표시",
   ["shortclassification"] = "각각 분류에 대해 \"E(정예)\", \"R(희귀)\", \"RE(희귀정예)\"로 표시합니다.",
   ["race"] = "가능하면 직업 표시",
@@ -404,6 +404,8 @@ local L = {
   ["Info tags"] = "정보 태그",
   ["Health and power tags"] = "생명력 및 자원 태그",
   ["Color tags"] = "색상 태그",
+  ["Targeting sound"] = "표적 소리",
+  ["Enable the sound when switching target"] = "대상을 변경했을 때 소리를 사용합니다.",
 }
 
 local LunaUF = select(2, ...)
