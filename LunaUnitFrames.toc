@@ -2,7 +2,7 @@
 ## Title: Luna Unit Frames
 ## Notes: 
 ## Author: Aviana
-## Version: 3038
+## Version: 3041
 ## SavedVariables: LunaUFDB
 ## OptionalDeps: Ace3, LibSharedMedia-3.0, AceGUI-3.0-SharedMediaWidgets, LibSpellRange-1.0, Clique, RealMobHealth
 ## X-License: WTFPL (http://www.wtfpl.net/about/)
@@ -18,7 +18,7 @@ libs\AceGUI-3.0\AceGUI-3.0.xml
 libs\AceGUI-3.0-SharedMediaWidgets\widget.xml
 libs\AceConfig-3.0\AceConfig-3.0.xml
 libs\LibVexation-1.0\lib.xml
-libs\LibClassicHealComm-1.0\lib.xml
+libs\LibHealComm-4.0\LibHealComm-4.0.xml
 libs\LibClassicDurations\LibClassicDurations.xml
 libs\LibClassicCasterino\LibClassicCasterino.lua
 #@end-no-lib-strip@

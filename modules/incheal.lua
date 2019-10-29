@@ -1,7 +1,7 @@
 local IncHeal = {}
 LunaUF:RegisterModule(IncHeal, "incHeal", LunaUF.L["Incoming heals"])
 local SML = LibStub:GetLibrary("LibSharedMedia-3.0")
-local HealComm = LibStub("LibClassicHealComm-1.0", true)
+local HealComm = LibStub("LibHealComm-4.0", true)
 local frames = {}
 
 

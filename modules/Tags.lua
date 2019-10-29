@@ -536,15 +536,15 @@ local defaultTags = {
 								end
 							end;
 	["group"]				= function(frame, unit)
-								if GetNumRaidMembers() > 0 then
+								if UnitInRaid("player") then
 									local name = UnitName(unit)
-									for i=1, GetNumRaidMembers() do
+									for i=1, GetNumGroupMembers() do
 										local raidName, _, group = GetRaidRosterInfo(i)
 										if( raidName == name ) then
 											return group
 										end
 									end
-								elseif UnitInParty(unit) and GetNumPartyMembers() > 0 then
+								elseif UnitInParty(unit) and GetNumGroupMembers() > 0 then
 									return 1
 								end
 								return ""

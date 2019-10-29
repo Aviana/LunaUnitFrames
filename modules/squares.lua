@@ -61,7 +61,7 @@ local function checkAura(unit, spells, playeronly)
 				end
 				i = i + 1
 				spellName = UnitAura(unit, i)
-				casterunit = select(7,UnitAura(unit, 1))
+				casterunit = select(7,UnitAura(unit, i))
 			end
 			i, spellName = 1, UnitAura(unit, 1, "HARMFUL")
 			casterunit = select(7,UnitAura(unit, 1, "HARMFUL"))
@@ -71,7 +71,7 @@ local function checkAura(unit, spells, playeronly)
 				end
 				i = i + 1
 				spellName = UnitAura(unit, i, "HARMFUL")
-				casterunit = select(7,UnitAura(unit, 1, "HARMFUL"))
+				casterunit = select(7,UnitAura(unit, i, "HARMFUL"))
 			end
 		end
 	end
