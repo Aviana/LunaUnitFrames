@@ -94,6 +94,7 @@ function LunaUF:LoadDefaults()
 				emphasizeBuffs = true,
 				emphasizeDebuffs = true,
 				timer = "all",
+				filterbuffs = 1,
 			},
 			tags = {
 				["top"] = {
@@ -274,6 +275,7 @@ function LunaUF:LoadDefaults()
 				emphasizeBuffs = true,
 				emphasizeDebuffs = true,
 				timer = "all",
+				filterbuffs = 1,
 			},
 			tags = {
 				["top"] = {
@@ -416,6 +418,7 @@ function LunaUF:LoadDefaults()
 				emphasizeBuffs = true,
 				emphasizeDebuffs = true,
 				timer = "all",
+				filterbuffs = 1,
 			},
 			tags = {
 				["top"] = {
@@ -563,6 +566,7 @@ function LunaUF:LoadDefaults()
 				emphasizeBuffs = true,
 				emphasizeDebuffs = true,
 				timer = "all",
+				filterbuffs = 1,
 			},
 			tags = {
 				["top"] = {
@@ -712,6 +716,7 @@ function LunaUF:LoadDefaults()
 				emphasizeBuffs = true,
 				emphasizeDebuffs = true,
 				timer = "all",
+				filterbuffs = 1,
 			},
 			tags = {
 				["top"] = {
@@ -861,6 +866,7 @@ function LunaUF:LoadDefaults()
 				emphasizeBuffs = true,
 				emphasizeDebuffs = true,
 				timer = "all",
+				filterbuffs = 1,
 			},
 			tags = {
 				["top"] = {
@@ -1010,6 +1016,7 @@ function LunaUF:LoadDefaults()
 				emphasizeBuffs = false,
 				emphasizeDebuffs = false,
 				timer = "all",
+				filterbuffs = 1,
 			},
 			tags = {
 				["top"] = {
@@ -1165,6 +1172,7 @@ function LunaUF:LoadDefaults()
 				emphasizeBuffs = true,
 				emphasizeDebuffs = true,
 				timer = "all",
+				filterbuffs = 1,
 			},
 			tags = {
 				["top"] = {
@@ -1315,6 +1323,7 @@ function LunaUF:LoadDefaults()
 				emphasizeBuffs = true,
 				emphasizeDebuffs = true,
 				timer = "all",
+				filterbuffs = 1,
 			},
 			tags = {
 				["top"] = {
@@ -1461,6 +1470,7 @@ function LunaUF:LoadDefaults()
 				emphasizeBuffs = true,
 				emphasizeDebuffs = true,
 				timer = "all",
+				filterbuffs = 1,
 			},
 			tags = {
 				["top"] = {
@@ -1637,6 +1647,7 @@ function LunaUF:LoadDefaults()
 				emphasizeBuffs = true,
 				emphasizeDebuffs = true,
 				timer = "all",
+				filterbuffs = 1,
 			},
 			tags = {
 				["top"] = {
@@ -1787,6 +1798,7 @@ function LunaUF:LoadDefaults()
 				emphasizeBuffs = true,
 				emphasizeDebuffs = true,
 				timer = "all",
+				filterbuffs = 1,
 			},
 			tags = {
 				["top"] = {
@@ -1945,6 +1957,7 @@ function LunaUF:LoadDefaults()
 				emphasizeBuffs = true,
 				emphasizeDebuffs = true,
 				timer = "all",
+				filterbuffs = 1,
 			},
 			tags = {
 				["top"] = {
@@ -2103,6 +2116,7 @@ function LunaUF:LoadDefaults()
 				emphasizeBuffs = true,
 				emphasizeDebuffs = true,
 				timer = "all",
+				filterbuffs = 1,
 			},
 			tags = {
 				["top"] = {
@@ -2261,6 +2275,7 @@ function LunaUF:LoadDefaults()
 				emphasizeBuffs = true,
 				emphasizeDebuffs = true,
 				timer = "all",
+				filterbuffs = 1,
 			},
 			tags = {
 				["top"] = {

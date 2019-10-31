@@ -183,11 +183,13 @@ function Auras:OnEnable(frame)
 		end
 	end
 
+	lCD.RegisterCallback(frame, "UNIT_BUFF", function(self, event, unit) if UnitIsUnit(frame.unit,unit) then Auras:UpdateFrames(frame) end end, frame)
 	frame:RegisterUnitEvent("UNIT_AURA", self, "Update")
 	frame:RegisterUpdateFunc(self, "Update")
 end
 
 function Auras:OnDisable(frame)
+	lCD.UnregisterCallback(frame, "UNIT_BUFF")
 	frame:UnregisterAll(self)
 end
 
@@ -224,16 +226,17 @@ end
 function Auras:UpdateFrames(frame)
 	local config = LunaUF.db.profile.units[frame.unitType].auras
 	local name, texture, count, auraType, duration, endTime, caster, spellID, main, off
+	local filter = "HELPFUL"..(config.filterbuffs == 2 and "|PLAYER" or config.filterbuffs == 3 and "|RAID" or "")
 	for i,button in ipairs(frame.auras.buffbuttons.buttons) do
 		button.cooldown.noCooldownCount = LunaUF.db.profile.omnicc
 		button.cooldown:SetHideCountdownNumbers(LunaUF.db.profile.blizzardcc)
 		if i < 33 then
-			name, texture, count, auraType, duration, endTime, caster, _, _, spellID = UnitAura(frame.unit, i, "HELPFUL")
-			if (not duration or duration == 0) and spellID then
-				local Newduration, NewendTime = lCD:GetAuraDurationByUnit(frame.unit, spellID, caster)
-				duration = Newduration or duration
-				endTime = NewendTime or endTime
-			end
+			name, texture, count, auraType, duration, endTime, caster, _, _, spellID = lCD:UnitAura(frame.unit, i, filter)
+--			if (not duration or duration == 0) and spellID then
+--				local Newduration, NewendTime = lCD:GetAuraDurationByUnit(frame.unit, spellID, caster)
+--				duration = Newduration or duration
+--				endTime = NewendTime or endTime
+--			end
 			if caster and UnitIsUnit("player", caster) and config.emphasizeBuffs then
 				button.large = true
 			else
@@ -332,15 +335,16 @@ function Auras:UpdateFrames(frame)
 			button:Hide()
 		end
 	end
+	filter = "HARMFUL"..(config.filterdebuffs and "|RAID" or "")
 	for i,button in ipairs(frame.auras.debuffbuttons.buttons) do
 		button.cooldown.noCooldownCount = LunaUF.db.profile.omnicc
 		button.cooldown:SetHideCountdownNumbers(LunaUF.db.profile.blizzardcc)
-		name, texture, count, auraType, duration, endTime, caster, _, _, spellID = UnitAura(frame.unit, i, "HARMFUL")
-		if (not duration or duration == 0) and spellID then
-			local Newduration, NewendTime = lCD:GetAuraDurationByUnit(frame.unit, spellID, caster)
-			duration = Newduration or duration
-			endTime = NewendTime or endTime
-		end
+		name, texture, count, auraType, duration, endTime, caster, _, _, spellID = lCD:UnitAura(frame.unit, i, filter)
+--		if (not duration or duration == 0) and spellID then
+--			local Newduration, NewendTime = lCD:GetAuraDurationByUnit(frame.unit, spellID, caster)
+--			duration = Newduration or duration
+--			endTime = NewendTime or endTime
+--		end
 		if caster and UnitIsUnit("player", caster) and config.emphasizeDebuffs then
 			button.large = true
 		else

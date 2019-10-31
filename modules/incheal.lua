@@ -126,7 +126,7 @@ function IncHeal:PositionBar(frame, incAmount)
 end
 
 function IncHeal:Update(frame)
-	local amount = (HealComm:GetHealAmount(frame.unitGUID, HealComm.ALL_HEALS, GetTime() + LunaUF.db.profile.inchealTime) or 0) * (HealComm:GetHealModifier(frame.unitGUID) or 1)
+	local amount = (HealComm:GetHealAmount(frame.unitGUID, LunaUF.db.profile.disablehots and HealComm.CASTED_HEALS or HealComm.ALL_HEALS, GetTime() + LunaUF.db.profile.inchealTime) or 0) * (HealComm:GetHealModifier(frame.unitGUID) or 1)
 	frame.incomingHeal = amount
 	if( not frame.visibility.incHeal or not frame.visibility.healthBar ) then return end
 	self:PositionBar(frame, amount)
