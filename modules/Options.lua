@@ -124,7 +124,7 @@ function LunaUF:CreateConfig()
 			db = db[info[i]]
 		end
 		db[info[#info]] = value
-		
+
 		LunaUF.Layout:Reload(info[1])
 	end
 
@@ -219,7 +219,7 @@ function LunaUF:CreateConfig()
 		for _, name in pairs(SML:List(mediaType)) do
 			MediaList[mediaType][name] = name
 		end
-		
+
 		return MediaList[mediaType]
 	end
 
@@ -247,20 +247,20 @@ function LunaUF:CreateConfig()
 		local unit = info[#info-1]
 		local db = LunaUF.db.profile.units[unit]
 		local alreadySet = {}
-		
+
 		db.attribPoint = value
 		if unit == "party" then
 			LunaUF.db.profile.units.partytarget.attribPoint = value
 			LunaUF.db.profile.units.partypet.attribPoint = value
 		end
-		
+
 		-- Simply re-set all frames is easier than making a complicated selection algorithm
 		for unitName, name in pairs(UnitToFrame) do
 			if unitName ~= "None" and name ~= "UIParent" and _G[name] then
 				LunaUF.modules.movers:SetFrame(_G[name])
 			end
 		end
-		
+
 		LunaUF.Units:ReloadHeader(unit)
 		if unit == "party" then
 			LunaUF.Units:ReloadHeader("partytarget")
@@ -428,7 +428,7 @@ function LunaUF:CreateConfig()
 			frame = _G[UnitToFrame[info[#info-1]]]
 		end
 		LunaUF.modules.movers:SetFrame(frame)
-		
+
 		-- Notify the configuration it can update itself now
 		if( ACR ) then
 			ACR:NotifyChange("LunaUnitFrames")
@@ -2985,22 +2985,28 @@ function LunaUF:CreateConfig()
 					type = "toggle",
 					order = 1,
 				},
+				showAlways = {
+					name = L["Always shown"],
+					desc = L["Show the bar even when inactive."],
+					type = "toggle",
+					order = 2,
+				},
 				description = {
 					name = L["Note: This bar only works with 5/5 Reckoning and at least 1/5 Redoubt talents."],
 					type = "description",
-					order = 2,
+					order = 3,
 				},
 				background = {
 					name = L["Background"],
 					desc = string.format(L["Enable or disable the %s."], L["Background"]),
 					type = "toggle",
-					order = 3,
+					order = 4,
 				},
 				backgroundAlpha = {
 					name = L["Background alpha"],
 					desc = L["Set the background alpha."],
 					type = "range",
-					order = 4,
+					order = 5,
 					min = 0.01,
 					max = 1,
 					step = 0.01,
@@ -3009,7 +3015,7 @@ function LunaUF:CreateConfig()
 					name = L["Height"],
 					desc = L["Set the height."],
 					type = "range",
-					order = 5,
+					order = 6,
 					min = 1,
 					max = 10,
 					step = 0.1,
@@ -3018,7 +3024,7 @@ function LunaUF:CreateConfig()
 					name = L["Order"],
 					desc = L["Set the order priority."],
 					type = "range",
-					order = 6,
+					order = 7,
 					min = 0,
 					max = 100,
 					step = 5,
@@ -3027,11 +3033,11 @@ function LunaUF:CreateConfig()
 					name = L["Growth direction"],
 					desc = L["Growth direction"],
 					type = "select",
-					order = 7,
+					order = 8,
 					values = {["LEFT"] = L["Left"], ["RIGHT"] = L["Right"]},
 				},
 				statusbar = {
-					order = 8,
+					order = 9,
 					type = "select",
 					name = L["Bar texture"],
 					dialogControl = "LSM30_Statusbar",
@@ -5762,7 +5768,7 @@ function LunaUF:CreateConfig()
 	end
 	AceConfigRegistry:RegisterOptionsTable(Addon, aceoptions, true)
 	aceoptions.args.profile = LibStub("AceDBOptions-3.0"):GetOptionsTable(self.db)
-	
+
 	AceConfigDialog:AddToBlizOptions(Addon, nil, nil, "general")
 	AceConfigDialog:AddToBlizOptions(Addon, L["Colors"], Addon, "colors")
 	for _,unit in ipairs(LunaUF.unitList) do
@@ -5771,6 +5777,6 @@ function LunaUF:CreateConfig()
 	AceConfigDialog:AddToBlizOptions(Addon, L["Hide Blizzard"], Addon, "hidden")
 	AceConfigDialog:AddToBlizOptions(Addon, L["Tag Help"], Addon, "help")
 	AceConfigDialog:AddToBlizOptions(Addon, L["Profiles"], Addon, "profile")
-	
+
 	AceConfigDialog:SetDefaultSize(Addon, 895, 570)
 end

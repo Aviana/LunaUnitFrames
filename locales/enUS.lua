@@ -409,6 +409,8 @@ local L = {
 ["Color tags"] = "Color tags",
 ["Targeting sound"] = "Targeting sound",
 ["Enable the sound when switching target"] = "Enable the sound when switching target",
+["Always shown"] = "Always shown",
+["Show the bar even when inactive."] = "Show the bar even when inactive.",
 }
 
 LunaUF.L = L
