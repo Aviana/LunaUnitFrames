@@ -113,7 +113,7 @@ function ReckStacks:OnCombatlog(frame, event)
 end
 
 function ReckStacks:Update(frame)
-	LunaUF.Layout:SetBarVisibility(frame, "reckStacks", LunaUF.db.profile.units[frame.unitType].reckStacks.showAlways or currStacks > 0)
+	LunaUF.Layout:SetBarVisibility(frame, "reckStacks", not LunaUF.db.profile.units[frame.unitType].reckStacks.autoHide or currStacks > 0)
 
 	for id,block in ipairs(frame.reckStacks.blocks) do
 		if id <= currStacks then
