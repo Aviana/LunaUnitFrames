@@ -349,33 +349,15 @@ function Movers:SetFrame(frame)
 			end
 		end
 		scale = 1
-	elseif position.anchorTo == "UIParent" and frame.isHeaderFrame then -- working
-		if config.attribPoint == "BOTTOM" or config.attribPoint == "LEFT" then
-			x = frame:GetLeft()
-			y = frame:GetBottom()
-			point = "BOTTOMLEFT"
-			relativePoint = "BOTTOMLEFT"
-		else
-			x = -(GetScreenWidth() - frame:GetRight())
-			y = -((768 / UIParent:GetScale()) - frame:GetTop())
-			point = "TOPRIGHT"
-			relativePoint = "TOPRIGHT"
-		end
-		scale = (frame:GetScale() * UIParent:GetScale())
-	else --working
-		x = frame:GetLeft()
-		y = frame:GetBottom()
-		point = "BOTTOMLEFT"
-		relativePoint = "BOTTOMLEFT"
+	elseif position.anchorTo == "UIParent" then -- working
 		scale = (frame:GetScale() * UIParent:GetScale())
 	end
-
 
 	position.x = x * scale
 	position.y = y * scale
 	position.point = point
 	position.relativePoint = relativePoint
-	--ChatFrame1:AddMessage("Anchoring "..frame:GetName().."'s "..point.." to "..position.anchorTo.."'s "..relativePoint.." with offset x: "..position.x.." y: "..position.y)
+	-- ChatFrame1:AddMessage("Anchoring "..frame:GetName().."'s "..point.." to "..position.anchorTo.."'s "..relativePoint.." with offset x: "..position.x.." y: "..position.y)
 	LunaUF.Layout:AnchorFrame(frame, position)
 end
 
