@@ -8,6 +8,7 @@ function LunaUF:LoadDefaults()
 			hidden = {cast = true, buffs = false, party = true, raid = true, player = true, pet = true, target = true},
 			statusbar = "Minimalist",
 			font = "Myriad Condensed Web",
+			auraborderType = "dark",
 			inchealTime = 4,
 			omnicc = false,
 			blizzardcc = false,

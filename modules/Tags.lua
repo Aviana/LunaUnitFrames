@@ -15,6 +15,10 @@ local DruidForms = {
 	[783] = GetSpellInfo(783),
 }
 
+local function abbreviateName(text)
+	return string.sub(text, 1, 1) .. "."
+end
+
 local abbrevCache = setmetatable({}, {
 	__index = function(tbl, val)
 		val = string.gsub(val, "([^%s]+) ", abbreviateName)
