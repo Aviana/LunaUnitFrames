@@ -28,6 +28,15 @@ local classOrder = {
 
 -- Frame shown, do a full update
 local function FullUpdate(self)
+	if self.unitType == "target" and LunaUF.db.profile.units.target.sound then
+		if ( UnitIsEnemy(self.unit, "player") ) then
+			PlaySound(SOUNDKIT.IG_CREATURE_AGGRO_SELECT)
+		elseif ( UnitIsFriend("player", self.unit) ) then
+			PlaySound(SOUNDKIT.IG_CHARACTER_NPC_SELECT)
+		else
+			PlaySound(SOUNDKIT.IG_CREATURE_NEUTRAL_SELECT)
+		end
+	end
 	for i=1, #(self.fullUpdates), 2 do
 		local handler = self.fullUpdates[i]
 		handler[self.fullUpdates[i + 1]](handler, self)
@@ -219,16 +228,6 @@ local function OnShowForced(self)
 end
 
 local function OnShow(self)
-	if self.unitType == "target" and LunaUF.db.profile.units.target.sound then
-		if ( UnitIsEnemy(self.unit, "player") ) then
-			PlaySound(SOUNDKIT.IG_CREATURE_AGGRO_SELECT)
-		elseif ( UnitIsFriend("player", self.unit) ) then
-			PlaySound(SOUNDKIT.IG_CHARACTER_NPC_SELECT)
-		else
-			PlaySound(SOUNDKIT.IG_CREATURE_NEUTRAL_SELECT)
-		end
-	end
-
 	-- Reset the event handler
 	self:SetScript("OnEvent", OnEvent)
 	Units:CheckUnitStatus(self)
