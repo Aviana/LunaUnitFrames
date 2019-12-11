@@ -86,6 +86,7 @@ local L = {
     ["Incoming heals"] = "預估治療",
     ["Empty bar"] = "空白條",
     ["Reckoning Stacks"] = "清算（天賦）層數",
+    ["Reckoning"] = "清算",
     ["XP/Rep bar"] = "經驗聲望條",
     ["%s (%s): %s/%s (%.2f%% done)"] = "%s (%s): %s/%s (%.2f%% )",
     ["Level %s - %s: %s/%s (%.2f%% done), %s rested."] = "等級 %s - %s: %s/%s (%.2f%% ), %s 休息充分。",

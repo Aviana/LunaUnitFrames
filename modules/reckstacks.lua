@@ -84,13 +84,11 @@ function ReckStacks:OnLayoutWidgets(frame)
 	end
 end
 
-function ReckStacks:CheckTalents(frame)
-	
+function ReckStacks:CheckTalents(frame)	
 	-- Crazy Check here :D
-	reckoningRank = select(5, GetTalentInfo(2,13)) or 0
-	redoubtRank = select(5, GetTalentInfo(2,2)) or 0
+	local reckoningRank = select(5, GetTalentInfo(2,13)) or 0
 	
-	if reckoningRank == 5 and redoubtRank >= 1 then
+	if reckoningRank >= 1 then
 		frame:RegisterNormalEvent("COMBAT_LOG_EVENT_UNFILTERED", self, "OnCombatlog")
 	else
 		frame:UnregisterSingleEvent("COMBAT_LOG_EVENT_UNFILTERED", self)
@@ -106,9 +104,11 @@ function ReckStacks:OnCombatlog(frame, event)
 		else
 			return
 		end
-	elseif (type == "SPELL_AURA_APPLIED" or type == "SPELL_AURA_REFRESH") and GetSpellInfo(20128) == select(13, CombatLogGetCurrentEventInfo()) and destGUID == UnitGUID("player") and currStacks < 4 then
-		currStacks = currStacks + 1
-		self:Update(frame)
+	elseif ( type == "SPELL_EXTRA_ATTACKS" and select(13, CombatLogGetCurrentEventInfo()) == LunaUF.L["Reckoning"] ) then
+		if ( destGUID == UnitGUID("player") and currStacks < 4 ) then
+			currStacks = currStacks + 1;
+			self:Update(frame);
+		end 
 	end
 end
 
