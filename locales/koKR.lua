@@ -301,7 +301,6 @@ local L = {
   ["Five second rule"] = "5초 규칙",
   ["Show a timer for the five second rule"] = "5초 규칙에 대한 시간을 표시합니다.",
   ["Totem bar"] = "토템 바",
-  ["Note: This bar only works with 5/5 Reckoning and at least 1/5 Redoubt talents."] = "노트: 이 바는 징벌 5/5와 최소 보루 1/5 특성에서만 동작됩니다.",
   ["Enable this group"] = "이 그룹을 사용합니다.",
   ["Offset"] = "오프셋",
   ["Set the space between units."] = "유닛 사이의 간격을 설정합니다.",

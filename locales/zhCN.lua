@@ -299,7 +299,6 @@ local L = {
     ["Five second rule"] = "5秒原则计时器",
     ["Show a timer for the five second rule"] = "显示法力值回复的5秒原则计时器",
     ["Totem bar"] = "图腾条",
-    ["Note: This bar only works with 5/5 Reckoning and at least 1/5 Redoubt talents."] = "只在学习5点清算天赋并且至少学习了1点盾牌壁垒天赋时生效。",
     ["Enable this group"] = "启用本组",
     ["Offset"] = "偏移",
     ["Set the space between units."] = "设置单位间隔。",

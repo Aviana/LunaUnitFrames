@@ -302,7 +302,6 @@ local L = {
 ["Five second rule"] = "F\195\188nf Sekunden Regel",
 ["Show a timer for the five second rule"] = "Zeige einen Z\195\164hler f\195\188r die f\195\188nf Sekunden Regel",
 ["Totem bar"] = "Totem Balken",
-["Note: This bar only works with 5/5 Reckoning and at least 1/5 Redoubt talents."] = "Hinweis: Dieser Balken funktioniert nur wenn 5/5 Abrechnung und mindestens 1/5 Verschanzen Talente vergeben sind.",
 ["Enable this group"] = "Schalte diese Gruppe ein",
 ["Offset"] = "Absatz",
 ["Set the space between units."] = "Setze den Abstand zwischen Einheiten.",
