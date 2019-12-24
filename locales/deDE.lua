@@ -89,7 +89,6 @@ local L = {
 ["Incoming heals"] = "Hereinkommende Heilung",
 ["Empty bar"] = "Leerbalken",
 ["Reckoning Stacks"] = "Abrechnungs Stapel",
-["Reckoning"] = "Abrechnung",
 ["XP/Rep bar"] = "Erfahrung/Ruf Balken",
 ["%s (%s): %s/%s (%.2f%% done)"] = "%s (%s): %s/%s (%.2f%% erledigt)",
 ["Level %s - %s: %s/%s (%.2f%% done), %s rested."] = "Stufe %s - %s: %s/%s (%.2f%% erledigt), %s ausgeruht.",

@@ -96,6 +96,8 @@ function ReckStacks:CheckTalents(frame)
 end
 
 function ReckStacks:OnCombatlog(frame, event)
+	local reckoningAuraId = 20182;
+
 	local _, type, _, sourceGUID, _, _, _, destGUID = CombatLogGetCurrentEventInfo()
 	if type == "SWING_DAMAGE" and sourceGUID == UnitGUID("player") then
 		if currStacks > 0 then
@@ -104,9 +106,11 @@ function ReckStacks:OnCombatlog(frame, event)
 		else
 			return
 		end
-	elseif ( type == "SPELL_EXTRA_ATTACKS" and select(13, CombatLogGetCurrentEventInfo()) == LunaUF.L["Reckoning"] ) then
-		if ( destGUID == UnitGUID("player") and currStacks < 4 ) then
-			currStacks = currStacks + 1;
+	elseif ( type == "SPELL_EXTRA_ATTACKS" ) then
+		local auraName, _, auraStacksAmount = select(13, CombatLogGetCurrentEventInfo());
+
+		if ( auraName == GetSpellInfo(reckoningAuraId) and destGUID == UnitGUID("player") and currStacks < 4 ) then
+			currStacks = currStacks + auraStacksAmount;
 			self:Update(frame);
 		end 
 	end

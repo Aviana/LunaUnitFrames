@@ -88,7 +88,6 @@ local L = {
   ["Incoming heals"] = "들어오는 치유",
   ["Empty bar"] = "빈 바",
   ["Reckoning Stacks"] = "징벌 중첩",
-  ["Reckoning"] = "징벌",
   ["XP/Rep bar"] = "경험치/평판 바",
   ["%s (%s): %s/%s (%.2f%% done)"] = "%s (%s): %s/%s (%.2f%% 완료)",
   ["Level %s - %s: %s/%s (%.2f%% done), %s rested."] = "%s레벨 - %s레벨: %s/%s (%.2f%% 완료), %s 휴식됨.",

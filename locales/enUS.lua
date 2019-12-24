@@ -86,7 +86,6 @@ local L = {
 ["Incoming heals"] = "Incoming heals",
 ["Empty bar"] = "Empty bar",
 ["Reckoning Stacks"] = "Reckoning Stacks",
-["Reckoning"] = "Reckoning",
 ["XP/Rep bar"] = "XP/Rep bar",
 ["%s (%s): %s/%s (%.2f%% done)"] = "%s (%s): %s/%s (%.2f%% done)",
 ["Level %s - %s: %s/%s (%.2f%% done), %s rested."] = "Level %s - %s: %s/%s (%.2f%% done), %s rested.",
