@@ -115,8 +115,10 @@ local UnitToFrame = {
 	["raidpet"] = "LUFHeaderraidpet",
 	["maintank"] = "LUFHeadermaintank",
 	["maintanktarget"] = "LUFHeadermaintanktarget",
+	["maintanktargettarget"] = "LUFHeadermaintanktargettarget",
 	["mainassist"] = "LUFHeadermainassist",
 	["mainassisttarget"] = "LUFHeadermainassisttarget",
+	["mainassisttargettarget"] = "LUFHeadermainassisttargettarget",
 }
 
 function LunaUF:CreateConfig()
@@ -402,8 +404,10 @@ function LunaUF:CreateConfig()
 				["LUFHeaderraidpet"]=L["raidpet"],
 				["LUFHeadermaintank"]=L["maintank"],
 				["LUFHeadermaintanktarget"]=L["maintanktarget"],
+				["LUFHeadermaintanktargettarget"]=L["maintanktargettarget"],
 				["LUFHeadermainassist"]=L["mainassist"],
 				["LUFHeadermainassisttarget"]=L["mainassisttarget"],
+				["LUFHeadermainassisttargettarget"]=L["mainassisttargettarget"],
 			}
 		for key in pairs(deepAnchorCheck({[UnitToFrame[unit]]=true})) do
 			tbl[key] = nil
