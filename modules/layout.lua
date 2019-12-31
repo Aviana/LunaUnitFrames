@@ -226,7 +226,6 @@ end
 function Layout:SetupFrame(frame, config)
 	frame:SetBackdrop(backdrop)
 	frame:SetBackdropColor(backdrop.backdropColor.r, backdrop.backdropColor.g, backdrop.backdropColor.b, backdrop.backdropColor.a)
---	frame:SetBackdropBorderColor(backdrop.borderColor.r, backdrop.borderColor.g, backdrop.borderColor.b, backdrop.borderColor.a)
 	
 	-- Prevent these from updating while in combat to prevent tainting
 	if( not InCombatLockdown() ) then

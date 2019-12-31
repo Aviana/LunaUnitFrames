@@ -146,7 +146,7 @@ function Squares:Update(frame)
 		if not config[pos].enabled then
 			square:Hide()
 		elseif config[pos].type == "aggro" then
-			if aggro then
+			if aggro and not UnitIsDeadOrGhost(frame.unit) then
 				square:Show()
 				square.texture:SetTexture(indicator)
 				local color = LunaUF.db.profile.colors.hostile

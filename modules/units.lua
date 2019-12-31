@@ -1,6 +1,6 @@
 local Units = {headerFrames = {}, unitFrames = {}, frameList = {}, unitEvents = {}, canCure = {}}
 local Units = {headerFrames = {}, unitFrames = {}, frameList = {}, unitEvents = {}, canCure = {}}
-Units.headerUnits = {["raid"] = true, ["raidpet"] = true, ["party"] = true, ["partytarget"] = true, ["partypet"] = true, ["maintank"] = true, ["maintanktarget"] = true, ["mainassist"] = true, ["mainassisttarget"] =true}
+Units.headerUnits = {["raid"] = true, ["raidpet"] = true, ["party"] = true, ["partytarget"] = true, ["partypet"] = true, ["maintank"] = true, ["maintanktarget"] = true, ["maintanktargettarget"] = true, ["mainassist"] = true, ["mainassisttarget"] =true, ["mainassisttargettarget"] =true}
 
 local headerFrames, unitFrames, frameList, unitEvents, headerUnits = Units.headerFrames, Units.unitFrames, Units.frameList, Units.unitEvents, Units.headerUnits
 local _G = getfenv(0)
@@ -333,6 +333,15 @@ function Units:CheckUnitStatus(frame)
 		if( guid ) then
 			frame:FullUpdate()
 		end
+		if UnitExists("target") and frame.unitType == "target" and LunaUF.db.profile.units.target.sound then
+			if ( UnitIsEnemy(frame.unit, "player") ) then
+				PlaySound(SOUNDKIT.IG_CREATURE_AGGRO_SELECT)
+			elseif ( UnitIsFriend("player", frame.unit) ) then
+				PlaySound(SOUNDKIT.IG_CHARACTER_NPC_SELECT)
+			else
+				PlaySound(SOUNDKIT.IG_CREATURE_NEUTRAL_SELECT)
+			end
+		end
 	end
 end
 
@@ -403,11 +412,11 @@ OnAttributeChanged = function(self, name, unit)
 
 	-- Pet changed, going from pet -> vehicle for one
 	if( self.unitType == "pet" or self.unitType == "partypet" ) then
-		self.unitRealOwner = self.unit == "pet" and "player" or LunaUF.partyUnits[self.unitID]
+		self.unitRealOwner = self.unit == "pet" and "player" or ("party"..self.unitID)
 		self:RegisterNormalEvent("UNIT_PET", Units, "CheckPetUnitUpdated")
 
 	elseif( self.unitType == "raidpet" ) then
-		self.unitRealOwner = LunaUF.raidUnits[self.unitID]
+		self.unitRealOwner = "raid"..self.unitID
 		self:RegisterNormalEvent("UNIT_PET", Units, "CheckPetUnitUpdated")
 
 	-- Automatically do a full update on target change
@@ -444,7 +453,7 @@ OnAttributeChanged = function(self, name, unit)
 		-- Speeds up updating units when their owner changes target, if party1 changes target then party1target is force updated, if target changes target
 		-- then targettarget and targettargettarget are also force updated
 		if( self.unitType == "partytarget" ) then
-			self.unitRealOwner = LunaUF.partyUnits[self.unitID]
+			self.unitRealOwner = "party"..self.unitID
 		elseif( self.unit == "targettarget" or self.unit == "targettargettarget" ) then
 			self.unitRealOwner = "target"
 			self:RegisterNormalEvent("PLAYER_TARGET_CHANGED", Units, "CheckUnitStatus")
@@ -658,7 +667,7 @@ function Units:SetHeaderAttributes(frame, type)
 	local offset = config.offset
 
 	-- Normal raid, ma or mt
-	if( type == "raidpet" or type == "raid" or type == "mainassist" or type == "maintank" or type == "maintanktarget" or type == "mainassisttarget" ) then
+	if( type == "raidpet" or type == "raid" or type == "mainassist" or type == "maintank" or type == "maintanktarget" or type == "mainassisttarget" or type == "maintanktargettarget" or type == "mainassisttargettarget" ) then
 		local filter
 		if( config.filters ) then
 			if config.groupBy == "GROUP" then
@@ -968,6 +977,19 @@ function Units:LoadGroupHeader(type)
 				RegisterUnitWatch(self)
 			elseif unit == "player" then
 				self:SetAttribute("unit", "target")
+				RegisterUnitWatch(self)
+			end
+		]])
+	elseif type == "mainassisttargettarget" or type == "maintanktargettarget" then
+		headerFrame:SetAttribute("refreshUnitChange", [[
+			local unit = self:GetAttribute("unit")
+			if ( not unit ) then
+				UnregisterUnitWatch(self)
+			elseif unit ~= "player" and unit ~= "targettarget" and not strmatch(unit, "targettarget$") then
+				self:SetAttribute("unit", unit.."targettarget")
+				RegisterUnitWatch(self)
+			elseif unit == "player" then
+				self:SetAttribute("unit", "targettarget")
 				RegisterUnitWatch(self)
 			end
 		]])

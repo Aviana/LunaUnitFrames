@@ -8,6 +8,7 @@ local UnitHealth = UnitHealth
 local realUnitHealth = UnitHealth
 local UnitHealthMax = UnitHealthMax
 local realUnitHealthMax = UnitHealthMax
+local UnitHasHealthData = function(unit) return UnitIsUnit("player", unit) or UnitPlayerOrPetInParty(unit) or UnitPlayerOrPetInRaid(unit) end
 
 local DruidForms = {
 	[24858] = GetSpellInfo(24858),
@@ -54,6 +55,9 @@ local function feigncheck(unit)
 end
 
 local defaultTags = {
+	["afk"]					= function(frame, unit)
+								return UnitIsAFK(unit) and L["(AFK)"]
+							end;
 	["numtargeting"]		= function(frame, unit)
 								if UnitInRaid("player") then
 									local count = 0
@@ -228,6 +232,16 @@ local defaultTags = {
 									return ""
 								end
 							end;
+	["buffcount"]			= function(frame, unit)
+								local num = 0
+								while true do
+									if UnitAura(unit, num + 1, "HELPFUL") then
+										num = num + 1
+									else
+										return num
+									end
+								end
+							end;
 --	["numheals"]			= function(frame, unit) return HealComm:getNumHeals(UnitName(unit)) end;
 	["pvp"]					= function(frame, unit) return UnitIsPVP(unit) and "PVP" or "" end;
 	["smarthealth"]			= function(frame, unit)
@@ -245,8 +259,42 @@ local defaultTags = {
 									else
 										return L["Dead"]
 									end
+								elseif not UnitHasHealthData(unit) then
+									hp = realUnitHealth(unit)
+									maxhp = realUnitHealthMax(unit)
+									if maxhp < 1 then
+										return "0%"
+									else
+										return math.ceil((hp / maxhp) * 100).."%"
+									end
 								end
 								return hp.."/"..maxhp
+							end;
+	["smarthealthp"]			= function(frame, unit)
+								local hp
+								local maxhp
+								hp = UnitHealth(unit)
+								maxhp = UnitHealthMax(unit)
+								if UnitIsGhost(unit) then
+									return L["Ghost"]
+								elseif not UnitIsConnected(unit) then
+									return L["Offline"]
+								elseif hp < 1 then
+									if feigncheck(unit) then
+										return L["Feigned"]
+									else
+										return L["Dead"]
+									end
+								elseif not UnitHasHealthData(unit) then
+									hp = realUnitHealth(unit)
+									maxhp = realUnitHealthMax(unit)
+									if maxhp < 1 then
+										return "0%"
+									else
+										return math.ceil((hp / maxhp) * 100).."%"
+									end
+								end
+								return hp.."/"..maxhp.." "..math.ceil((realUnitHealth(unit) / realUnitHealthMax(unit)) * 100).."%"
 							end;
 	["ssmarthealth"]			= function(frame, unit)
 								local hp = UnitHealth(unit)
@@ -268,8 +316,47 @@ local defaultTags = {
 									return L["Ghost"]
 								elseif not UnitIsConnected(unit) then
 									return L["Offline"]
+								elseif not UnitHasHealthData(unit) then
+									hp = realUnitHealth(unit)
+									maxhp = realUnitHealthMax(unit)
+									if maxhp < 1 then
+										return "0%"
+									else
+										return math.ceil((hp / maxhp) * 100).."%"
+									end
 								end
 								return hp.."/"..maxhp
+							end;
+	["ssmarthealthp"]			= function(frame, unit)
+								local hp = UnitHealth(unit)
+								if hp < 1 then
+									if feigncheck(unit) then
+										return L["Feigned"]
+									else
+										return L["Dead"]
+									end
+								end
+								if hp > 1000 then
+									hp = (math.floor(hp/100)/10).."K"
+								end
+								local maxhp = UnitHealthMax(unit)
+								if maxhp > 1000 then
+									maxhp = (math.floor(maxhp/100)/10).."K"
+								end
+								if UnitIsGhost(unit) then
+									return L["Ghost"]
+								elseif not UnitIsConnected(unit) then
+									return L["Offline"]
+								elseif not UnitHasHealthData(unit) then
+									hp = realUnitHealth(unit)
+									maxhp = realUnitHealthMax(unit)
+									if maxhp < 1 then
+										return "0%"
+									else
+										return math.ceil((hp / maxhp) * 100).."%"
+									end
+								end
+								return hp.."/"..maxhp.." "..math.ceil((realUnitHealth(unit) / realUnitHealthMax(unit)) * 100).."%"
 							end;
 	["healhp"]				= function(frame, unit)
 								local heal = frame.incomingHeal or 0
@@ -283,6 +370,9 @@ local defaultTags = {
 							end;
 	["hp"]					= function(frame, unit)
 								return UnitHealth(unit)
+							end;
+	["hpcombo"]				= function(frame, unit)
+							
 							end;
 	["shp"]					= function(frame, unit)
 								if UnitHealth(unit) > 1000 then
@@ -349,12 +439,12 @@ local defaultTags = {
 							end;
 	["perhp"]				= function(frame, unit)
 								local hp,maxhp
-								hp = UnitHealth(unit)
-								maxhp = UnitHealthMax(unit)
+								hp = realUnitHealth(unit)
+								maxhp = realUnitHealthMax(unit)
 								if maxhp < 1 then
 									return 0
 								else
-									return math.floor(((hp / maxhp) * 100)+0.5)
+									return math.ceil((hp / maxhp) * 100)
 								end
 							end;
 	["pp"]					= function(frame, unit) return UnitPower(unit) end;
@@ -975,6 +1065,7 @@ if RealMobHealth and RealMobHealth.GetUnitHealth then -- Changed function name f
 		local _,maxhp = RealMobHealth.GetUnitHealth(unit, true)
 		return maxhp or realUnitHealthMax(unit)
 	end
+	UnitHasHealthData = function(unit) return UnitIsUnit("player", unit) or UnitPlayerOrPetInParty(unit) or UnitPlayerOrPetInRaid(unit) or RealMobHealth.UnitHasHealthData(unit) end
 elseif RealMobHealth then -- maintain compatibility for now
 	UnitHealth = function(unit)
 		local hp = RealMobHealth.GetHealth(unit, true)

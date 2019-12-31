@@ -232,11 +232,6 @@ function Auras:UpdateFrames(frame)
 		button.cooldown:SetHideCountdownNumbers(LunaUF.db.profile.blizzardcc)
 		if i < 33 then
 			name, texture, count, auraType, duration, endTime, caster, _, _, spellID = lCD:UnitAura(frame.unit, i, filter)
---			if (not duration or duration == 0) and spellID then
---				local Newduration, NewendTime = lCD:GetAuraDurationByUnit(frame.unit, spellID, caster)
---				duration = Newduration or duration
---				endTime = NewendTime or endTime
---			end
 			if caster and UnitIsUnit("player", caster) and config.emphasizeBuffs then
 				button.large = true
 			else
@@ -418,6 +413,7 @@ function Auras:UpdateLayout(frame)
 	if config.buffpos == "INFRAME" then
 		for i,button in ipairs(frame.auras.buffbuttons.buttons) do
 			if not button:IsVisible() then break end
+			button:EnableMouse(false)
 			button:ClearAllPoints()
 			button:SetHeight(config.buffsize)
 			button:SetWidth(config.buffsize)
@@ -443,6 +439,7 @@ function Auras:UpdateLayout(frame)
 	elseif config.buffpos == "INFRAMECENTER" then
 		for i,button in ipairs(frame.auras.buffbuttons.buttons) do
 			if not button:IsVisible() then break end
+			button:EnableMouse(false)
 			button:ClearAllPoints()
 			button:SetHeight(config.buffsize)
 			button:SetWidth(config.buffsize)
@@ -468,6 +465,7 @@ function Auras:UpdateLayout(frame)
 	elseif config.buffpos == "BOTTOM" then
 		for i,button in ipairs(frame.auras.buffbuttons.buttons) do
 			if not button:IsVisible() then break end
+			button:EnableMouse(true)
 			buttonsize = not button.large and config.buffsize or config.buffsize + config.enlargedbuffsize
 			button:ClearAllPoints()
 			button:SetHeight(buttonsize)
@@ -501,6 +499,7 @@ function Auras:UpdateLayout(frame)
 	elseif config.buffpos == "TOP" then
 		for i,button in ipairs(frame.auras.buffbuttons.buttons) do
 			if not button:IsVisible() then break end
+			button:EnableMouse(true)
 			buttonsize = not button.large and config.buffsize or config.buffsize + config.enlargedbuffsize
 			button:ClearAllPoints()
 			button:SetHeight(buttonsize)
@@ -534,6 +533,7 @@ function Auras:UpdateLayout(frame)
 	elseif config.buffpos == "LEFT" then
 		for i,button in ipairs(frame.auras.buffbuttons.buttons) do
 			if not button:IsVisible() then break end
+			button:EnableMouse(true)
 			buttonsize = not button.large and config.buffsize or config.buffsize + config.enlargedbuffsize
 			button:ClearAllPoints()
 			button:SetHeight(buttonsize)
@@ -567,6 +567,7 @@ function Auras:UpdateLayout(frame)
 	else
 		for i,button in ipairs(frame.auras.buffbuttons.buttons) do
 			if not button:IsVisible() then break end
+			button:EnableMouse(true)
 			buttonsize = not button.large and config.buffsize or config.buffsize + config.enlargedbuffsize
 			button:ClearAllPoints()
 			button:SetHeight(buttonsize)
@@ -605,6 +606,7 @@ function Auras:UpdateLayout(frame)
 	if config.debuffpos == "INFRAME" then
 		for i,button in ipairs(frame.auras.debuffbuttons.buttons) do
 			if not button:IsVisible() then break end
+			button:EnableMouse(false)
 			button:ClearAllPoints()
 			button:SetHeight(config.debuffsize)
 			button:SetWidth(config.debuffsize)
@@ -628,6 +630,7 @@ function Auras:UpdateLayout(frame)
 	elseif config.debuffpos == "INFRAMECENTER" then
 		for i,button in ipairs(frame.auras.debuffbuttons.buttons) do
 			if not button:IsVisible() then break end
+			button:EnableMouse(false)
 			button:ClearAllPoints()
 			button:SetHeight(config.debuffsize)
 			button:SetWidth(config.debuffsize)
@@ -651,6 +654,7 @@ function Auras:UpdateLayout(frame)
 	elseif config.debuffpos == "BOTTOM" then
 		for i,button in ipairs(frame.auras.debuffbuttons.buttons) do
 			if not button:IsVisible() then break end
+			button:EnableMouse(true)
 			buttonsize = not button.large and config.debuffsize or config.debuffsize + config.enlargeddebuffsize
 			button:ClearAllPoints()
 			button:SetHeight(buttonsize)
@@ -684,6 +688,7 @@ function Auras:UpdateLayout(frame)
 	elseif config.debuffpos == "TOP" then
 		for i,button in ipairs(frame.auras.debuffbuttons.buttons) do
 			if not button:IsVisible() then break end
+			button:EnableMouse(true)
 			buttonsize = not button.large and config.debuffsize or config.debuffsize + config.enlargeddebuffsize
 			button:ClearAllPoints()
 			button:SetHeight(buttonsize)
@@ -717,6 +722,7 @@ function Auras:UpdateLayout(frame)
 	elseif config.debuffpos == "LEFT" then
 		for i,button in ipairs(frame.auras.debuffbuttons.buttons) do
 			if not button:IsVisible() then break end
+			button:EnableMouse(true)
 			buttonsize = not button.large and config.debuffsize or config.debuffsize + config.enlargeddebuffsize
 			button:ClearAllPoints()
 			button:SetHeight(buttonsize)
@@ -750,6 +756,7 @@ function Auras:UpdateLayout(frame)
 	else
 		for i,button in ipairs(frame.auras.debuffbuttons.buttons) do
 			if not button:IsVisible() then break end
+			button:EnableMouse(true)
 			buttonsize = not button.large and config.debuffsize or config.debuffsize + config.enlargeddebuffsize
 			button:ClearAllPoints()
 			button:SetHeight(buttonsize)

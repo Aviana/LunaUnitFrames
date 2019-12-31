@@ -93,7 +93,7 @@ function Indicators:UpdateMasterLoot(frame)
 	local lootType, partyID, raidID = GetLootMethod()
 	if( lootType ~= "master" ) then
 		frame.indicators.masterLoot:Hide()
-	elseif( not LunaUF.db.profile.locked or ( partyID and partyID == 0 and UnitIsUnit(frame.unit, "player") ) or ( partyID and partyID > 0 and UnitIsUnit(frame.unit, LunaUF.partyUnits[partyID]) ) or ( raidID and raidID > 0 and UnitIsUnit(frame.unit, LunaUF.raidUnits[raidID]) ) ) then
+	elseif( not LunaUF.db.profile.locked or ( partyID and partyID == 0 and UnitIsUnit(frame.unit, "player") ) or ( partyID and partyID > 0 and UnitIsUnit(frame.unit, "party"..partyID) ) or ( raidID and raidID > 0 and UnitIsUnit(frame.unit, "raid"..raidID) ) ) then
 		frame.indicators.masterLoot:Show()
 	else
 		frame.indicators.masterLoot:Hide()
