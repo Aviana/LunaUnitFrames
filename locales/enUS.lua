@@ -302,7 +302,6 @@ local L = {
 ["Five second rule"] = "Five second rule",
 ["Show a timer for the five second rule"] = "Show a timer for the five second rule",
 ["Totem bar"] = "Totem bar",
-["Note: This bar only works with 5/5 Reckoning and at least 1/5 Redoubt talents."] = "Note: This bar only works with 5/5 Reckoning and at least 1/5 Redoubt talents.",
 ["Enable this group"] = "Enable this group",
 ["Offset"] = "Offset",
 ["Set the space between units."] = "Set the space between units.",
