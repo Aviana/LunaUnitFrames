@@ -2985,11 +2985,6 @@ function LunaUF:CreateConfig()
 					type = "toggle",
 					order = 1,
 				},
-				description = {
-					name = L["Note: This bar only works with 5/5 Reckoning and at least 1/5 Redoubt talents."],
-					type = "description",
-					order = 2,
-				},
 				autoHide = {
 					name = L["Auto hide"],
 					desc = string.format(L["Hide when inactive"]),
