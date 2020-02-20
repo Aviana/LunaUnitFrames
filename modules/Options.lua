@@ -4590,7 +4590,7 @@ function LunaUF:CreateConfig()
 						desc = L["Set the size of the group number."],
 						type = "range",
 						order = 2.37,
-						min = -6,
+						min = 1,
 						max = 20,
 						step = 1,
 						disabled = Lockdown,

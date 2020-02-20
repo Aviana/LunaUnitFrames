@@ -5,10 +5,8 @@ local SML = LibStub:GetLibrary("LibSharedMedia-3.0")
 local vex = LibStub("LibVexation-1.0", true)
 
 local UnitHealth = UnitHealth
-local realUnitHealth = UnitHealth
 local UnitHealthMax = UnitHealthMax
-local realUnitHealthMax = UnitHealthMax
-local UnitHasHealthData = function(unit) return UnitIsUnit("player", unit) or UnitPlayerOrPetInParty(unit) or UnitPlayerOrPetInRaid(unit) end
+local UnitHasHealthData = function(unit) return not UnitPlayerControlled(unit) or UnitIsUnit("player", unit) or UnitPlayerOrPetInParty(unit) or UnitPlayerOrPetInRaid(unit) end
 
 local DruidForms = {
 	[24858] = GetSpellInfo(24858),
@@ -260,8 +258,6 @@ local defaultTags = {
 										return L["Dead"]
 									end
 								elseif not UnitHasHealthData(unit) then
-									hp = realUnitHealth(unit)
-									maxhp = realUnitHealthMax(unit)
 									if maxhp < 1 then
 										return "0%"
 									else
@@ -286,15 +282,13 @@ local defaultTags = {
 										return L["Dead"]
 									end
 								elseif not UnitHasHealthData(unit) then
-									hp = realUnitHealth(unit)
-									maxhp = realUnitHealthMax(unit)
 									if maxhp < 1 then
 										return "0%"
 									else
 										return math.ceil((hp / maxhp) * 100).."%"
 									end
 								end
-								return hp.."/"..maxhp.." "..math.ceil((realUnitHealth(unit) / realUnitHealthMax(unit)) * 100).."%"
+								return hp.."/"..maxhp.." "..math.ceil((UnitHealth(unit) / UnitHealthMax(unit)) * 100).."%"
 							end;
 	["ssmarthealth"]			= function(frame, unit)
 								local hp = UnitHealth(unit)
@@ -317,8 +311,6 @@ local defaultTags = {
 								elseif not UnitIsConnected(unit) then
 									return L["Offline"]
 								elseif not UnitHasHealthData(unit) then
-									hp = realUnitHealth(unit)
-									maxhp = realUnitHealthMax(unit)
 									if maxhp < 1 then
 										return "0%"
 									else
@@ -348,15 +340,13 @@ local defaultTags = {
 								elseif not UnitIsConnected(unit) then
 									return L["Offline"]
 								elseif not UnitHasHealthData(unit) then
-									hp = realUnitHealth(unit)
-									maxhp = realUnitHealthMax(unit)
 									if maxhp < 1 then
 										return "0%"
 									else
 										return math.ceil((hp / maxhp) * 100).."%"
 									end
 								end
-								return hp.."/"..maxhp.." "..math.ceil((realUnitHealth(unit) / realUnitHealthMax(unit)) * 100).."%"
+								return hp.."/"..maxhp.." "..math.ceil((UnitHealth(unit) / UnitHealthMax(unit)) * 100).."%"
 							end;
 	["healhp"]				= function(frame, unit)
 								local heal = frame.incomingHeal or 0
@@ -439,8 +429,8 @@ local defaultTags = {
 							end;
 	["perhp"]				= function(frame, unit)
 								local hp,maxhp
-								hp = realUnitHealth(unit)
-								maxhp = realUnitHealthMax(unit)
+								hp = UnitHealth(unit)
+								maxhp = UnitHealthMax(unit)
 								if maxhp < 1 then
 									return 0
 								else
@@ -1053,26 +1043,5 @@ function Tags:SetupText(frame, config)
 			frame.tagUpdate = CreateFrame("Frame", nil, frame)
 			frame.tagUpdate:SetScript("OnUpdate", tagUpdate)
 		end
-	end
-end
-
-if RealMobHealth and RealMobHealth.GetUnitHealth then -- Changed function name for no reason :/
-	UnitHealth = function(unit)
-		local hp = RealMobHealth.GetUnitHealth(unit, true)
-		return hp or realUnitHealth(unit)
-	end
-	UnitHealthMax = function(unit)
-		local _,maxhp = RealMobHealth.GetUnitHealth(unit, true)
-		return maxhp or realUnitHealthMax(unit)
-	end
-	UnitHasHealthData = function(unit) return UnitIsUnit("player", unit) or UnitPlayerOrPetInParty(unit) or UnitPlayerOrPetInRaid(unit) or RealMobHealth.UnitHasHealthData(unit) end
-elseif RealMobHealth then -- maintain compatibility for now
-	UnitHealth = function(unit)
-		local hp = RealMobHealth.GetHealth(unit, true)
-		return hp or realUnitHealth(unit)
-	end
-	UnitHealthMax = function(unit)
-		local _,maxhp = RealMobHealth.GetHealth(unit, true)
-		return maxhp or realUnitHealthMax(unit)
 	end
 end
