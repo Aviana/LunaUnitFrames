@@ -54,7 +54,10 @@ end
 
 local defaultTags = {
 	["afk"]					= function(frame, unit)
-								return UnitIsAFK(unit) and L["(AFK)"]
+								return UnitIsAFK(unit) and L["afk"]
+							end;
+	["nameafk"]					= function(frame, unit)
+								return UnitIsAFK(unit) and L["afk"] or UnitName(unit)
 							end;
 	["numtargeting"]		= function(frame, unit)
 								if UnitInRaid("player") then

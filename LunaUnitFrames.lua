@@ -11,6 +11,11 @@ LunaUF.enabledUnits = {}
 LunaUF.modules = {}
 LunaUF.moduleOrder = {}
 
+LunaUF.partyUnits, LunaUF.partytargetUnits, LunaUF.partypetUnits = {}, {}, {}
+for i=1, MAX_PARTY_MEMBERS do LunaUF.partyUnits[i] = "party" .. i end
+for i=1, MAX_PARTY_MEMBERS do LunaUF.partytargetUnits[i] = "partytarget" .. i end
+for i=1, MAX_PARTY_MEMBERS do LunaUF.partypetUnits[i] = "partypet" .. i end
+
 function LunaUF:OnInitialize()
 	
 	self:LoadDefaults()

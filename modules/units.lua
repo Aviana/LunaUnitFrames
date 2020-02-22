@@ -412,7 +412,7 @@ OnAttributeChanged = function(self, name, unit)
 
 	-- Pet changed, going from pet -> vehicle for one
 	if( self.unitType == "pet" or self.unitType == "partypet" ) then
-		self.unitRealOwner = self.unit == "pet" and "player" or ("party"..self.unitID)
+		self.unitRealOwner = self.unit == "pet" and "player" or self.unitID and ("party"..self.unitID)
 		self:RegisterNormalEvent("UNIT_PET", Units, "CheckPetUnitUpdated")
 
 	elseif( self.unitType == "raidpet" ) then
@@ -452,10 +452,7 @@ OnAttributeChanged = function(self, name, unit)
 		
 		-- Speeds up updating units when their owner changes target, if party1 changes target then party1target is force updated, if target changes target
 		-- then targettarget and targettargettarget are also force updated
-		if( self.unitType == "partytarget" ) then
-			self.unitRealOwner = "party"..self.unitID
-		elseif( self.unit == "targettarget" or self.unit == "targettargettarget" ) then
-			self.unitRealOwner = "target"
+		if( self.unit == "targettarget" or self.unit == "targettargettarget" ) then
 			self:RegisterNormalEvent("PLAYER_TARGET_CHANGED", Units, "CheckUnitStatus")
 		end
 

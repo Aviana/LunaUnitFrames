@@ -1,7 +1,7 @@
 local Layout = {}
 local mediaRequired, anchoringQueued
 	local backdrop = {
-		bgFile = "Chat Frame",
+		bgFile = "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\indicator",
 		insets = { left = 0, right = 0, top = 0, bottom = 0 },
 		backdropColor = {r = 0, g = 0, b = 0, a = 0.80},
 	}
@@ -222,10 +222,15 @@ function Layout:AnchorFrame(frame, config)
 	end
 end
 
+function Layout:SetBGColor(frame)
+	frame:SetBackdropColor(LunaUF.db.profile.colors.background.r, LunaUF.db.profile.colors.background.g, LunaUF.db.profile.colors.background.b, LunaUF.db.profile.colors.background.a)
+end
+
 -- Setup the main frame
 function Layout:SetupFrame(frame, config)
+	
 	frame:SetBackdrop(backdrop)
-	frame:SetBackdropColor(backdrop.backdropColor.r, backdrop.backdropColor.g, backdrop.backdropColor.b, backdrop.backdropColor.a)
+	self:SetBGColor(frame)
 	
 	-- Prevent these from updating while in combat to prevent tainting
 	if( not InCombatLockdown() ) then

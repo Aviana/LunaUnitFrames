@@ -14,6 +14,8 @@ local InfoTags = {
 	["cnumtargeting"] = true,
 	["br"] = true,
 	["name"] = true,
+	["nameafk"] = true,
+	["afk"] = true,
 	["shortname:x"] = true,
 	["abbrev:name"] = true,
 	["guild"] = true,
@@ -209,9 +211,20 @@ function LunaUF:CreateConfig()
 		LunaUF.Layout:Reload()
 	end
 
+	local function setBGColor(info, r, g, b, a)
+		local db = LunaUF.db.profile.colors[info[#info]]
+		db.r = r
+		db.g = g
+		db.b = b
+		db.a = a
+		for _, frame in pairs(LunaUF.Units.unitFrames) do
+			LunaUF.Layout:SetBGColor(frame)
+		end
+	end
+
 	local function getColor(info)
 		local db = LunaUF.db.profile.colors[info[#info]]
-		return db.r, db.g ,db.b
+		return db.r, db.g ,db.b, db.a
 	end
 
 	local MediaList = {}
@@ -3534,6 +3547,19 @@ function LunaUF:CreateConfig()
 						type = "color",
 						order = 37,
 						width = "half",
+					},
+					headerBGColors = {
+						name = L["Background"],
+						type = "header",
+						order = 38,
+					},
+					background = {
+						name = L["Background"],
+						type = "color",
+						order = 39,
+						width = "half",
+						hasAlpha = true,
+						set = setBGColor,
 					},
 				},
 			},

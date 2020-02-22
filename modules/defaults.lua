@@ -54,6 +54,7 @@ function LunaUF:LoadDefaults()
 		--XP
 		normal = {r = 0.58, g = 0.0, b = 0.55},
 		rested = {r = 0.0, g = 0.39, b = 0.88},
+		background = {r = 0, g = 0, b = 0, a = 0.80},
 	}
 	self.defaults.profile.units = {
 		player = {
@@ -1496,7 +1497,7 @@ function LunaUF:LoadDefaults()
 						size = 100,
 					},
 					["center"] = {
-						tagline = "[name][br][healerhealth]",
+						tagline = "[nameafk][br][healerhealth]",
 						size = 100,
 					},
 					["right"] = {
