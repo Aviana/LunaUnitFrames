@@ -886,8 +886,8 @@ function Units:LoadRaidGroupHeader(type)
 		end
 		if( enabled ) then
 			
-			checkForGroupNumber(frame)
 			frame.number:SetFont(LunaUF.Layout:LoadMedia(SML.MediaType.FONT, LunaUF.db.profile.units.raid.font), LunaUF.db.profile.units.raid.fontsize)
+			checkForGroupNumber(frame)
 			if LunaUF.db.profile.units.raid.groupBy == "GROUP" then
 				frame.number:SetText(GROUP.." "..id)
 			else
