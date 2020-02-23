@@ -6,7 +6,7 @@ local vex = LibStub("LibVexation-1.0", true)
 
 local UnitHealth = UnitHealth
 local UnitHealthMax = UnitHealthMax
-local UnitHasHealthData = function(unit) return not UnitPlayerControlled(unit) or UnitIsUnit("player", unit) or UnitPlayerOrPetInParty(unit) or UnitPlayerOrPetInRaid(unit) end
+local UnitHasHealthData = function(unit) return not UnitPlayerControlled(unit) or UnitIsUnit("player", unit) or UnitIsUnit("pet", unit) or UnitPlayerOrPetInParty(unit) or UnitPlayerOrPetInRaid(unit) end
 
 local DruidForms = {
 	[24858] = GetSpellInfo(24858),
