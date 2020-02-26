@@ -4,9 +4,6 @@ Unit Frames for WoW Classic
 DO NOT USE THE GREEN CLONE OR DOWNLOAD BUTTON. GET THE NEWEST RELEASE FROM THE RELEASE PAGE.
 
 
-This Addon supports RealMobHealth.
-https://www.wowinterface.com/downloads/info24924-RealMobHealth.html
-
 Clickcasting:
 https://www.warcrafttavern.com/addons/clique/
 
