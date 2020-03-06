@@ -322,6 +322,7 @@ local defaultTags = {
 							end;
 	["ssmarthealthp"]			= function(frame, unit)
 								local hp = UnitHealth(unit)
+								local maxhp = UnitHealthMax(unit)
 								if hp < 1 then
 									if feigncheck(unit) then
 										return L["Feigned"]
@@ -343,7 +344,6 @@ local defaultTags = {
 								if hp > 1000 then
 									hp = (math.floor(hp/100)/10).."K"
 								end
-								local maxhp = UnitHealthMax(unit)
 								if maxhp > 1000 then
 									maxhp = (math.floor(maxhp/100)/10).."K"
 								end
