@@ -225,7 +225,7 @@ end
 
 function Auras:UpdateFrames(frame)
 	local config = LunaUF.db.profile.units[frame.unitType].auras
-	local name, texture, count, auraType, duration, endTime, caster, spellID, main, off
+	local name, texture, count, auraType, duration, endTime, caster, spellID, main, off, _
 	local filter = "HELPFUL"..(config.filterbuffs == 2 and "|PLAYER" or config.filterbuffs == 3 and "|RAID" or "")
 	for i,button in ipairs(frame.auras.buffbuttons.buttons) do
 		button.cooldown.noCooldownCount = LunaUF.db.profile.omnicc
