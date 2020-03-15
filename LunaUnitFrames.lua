@@ -4,7 +4,7 @@ LunaUF = select(2, ...)
 
 local L = LunaUF.L
 local ACR = LibStub("AceConfigRegistry-3.0", true)
-LunaUF.version = 3045
+LunaUF.version = 3046
 LunaUF.unitList = {"player", "pet", "pettarget", "target", "targettarget", "targettargettarget", "party", "partytarget", "partypet", "raid", "raidpet", "maintank", "maintanktarget", "maintanktargettarget", "mainassist", "mainassisttarget", "mainassisttargettarget"}
 LunaUF.fakeUnits = {["targettarget"] = true, ["targettargettarget"] = true, ["pettarget"] = true, ["partytarget"] = true, ["maintanktarget"] = true, ["maintanktargettarget"] = true, ["mainassisttarget"] = true, ["mainassisttargettarget"] = true}
 LunaUF.enabledUnits = {}

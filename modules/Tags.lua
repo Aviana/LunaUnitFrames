@@ -243,7 +243,7 @@ local defaultTags = {
 									end
 								end
 							end;
---	["numheals"]			= function(frame, unit) return frame.incomingHeals end;
+	["numheals"]			= function(frame, unit) return frame.incomingHeals end;
 	["pvp"]					= function(frame, unit) return UnitIsPVP(unit) and "PVP" or "" end;
 	["smarthealth"]			= function(frame, unit)
 								local hp
