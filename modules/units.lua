@@ -181,22 +181,12 @@ local function SetBarColor(self, key, r, g, b)
 end
 
 local function SetBlockColor(self, bar, key, r, g, b)
-	--local bgColor = bar.background.overrideColor or bar.background.backgroundColor
-	--if( not LunaUF.db.profile.units[self.unitType][key].invert ) then
-	if true then
-		bar:SetStatusBarColor(r, g, b)--, LunaUF.db.profile.bars.alpha)
-		if( not bgColor ) then
-			bar.background:SetVertexColor(r, g, b)--, LunaUF.db.profile.bars.backgroundAlpha)
-		else
-			bar.background:SetVertexColor(r, g, b, LunaUF.db.profile.bars.backgroundAlpha)
-		end
+	if( not LunaUF.db.profile.units[self.unitType][key].invert ) then
+		bar:SetStatusBarColor(r, g, b, 1)
+		bar.background:SetVertexColor(r, g, b, LunaUF.db.profile.units[self.unitType][key].backgroundAlpha)
 	else
-		bar.background:SetVertexColor(r, g, b, LunaUF.db.profile.bars.alpha)
-		if( not bgColor ) then
-			bar:SetStatusBarColor(0, 0, 0, 1 - LunaUF.db.profile.bars.backgroundAlpha)
-		else
-			bar:SetStatusBarColor(bgColor.r, bgColor.g, bgColor.b, 1 - LunaUF.db.profile.bars.backgroundAlpha)
-		end
+		bar.background:SetVertexColor(r, g, b, 1)
+		bar:SetStatusBarColor(0, 0, 0, 1)
 	end
 end
 
@@ -566,6 +556,7 @@ function Units:CreateUnit(...)
 	frame.FullUpdate = FullUpdate
 	frame.UnitClassToken = ClassToken
 	frame.topFrameLevel = 5
+	frame.healValues = {}
 
 	-- Ensures that text is the absolute highest thing there is
 	frame.highFrame = CreateFrame("Frame", nil, frame)

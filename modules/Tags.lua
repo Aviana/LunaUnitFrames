@@ -226,7 +226,39 @@ local defaultTags = {
 								return select(2,GetGuildInfo(unit)) or ""
 							end;
 	["incheal"]				= function(frame, unit)
-								local heal = frame.incomingHeal or 0
+								local heal = frame.healValues.totalHeal or 0
+								if heal > 0 then
+									return heal
+								else
+									return ""
+								end
+							end;
+	["incownheal"]			= function(frame, unit)
+								local heal = frame.healValues.ownHeal or 0
+								if heal > 0 then
+									return heal
+								else
+									return ""
+								end
+							end;
+	["incpreheal"]			= function(frame, unit)
+								local heal = frame.healValues.preHeal or 0
+								if heal > 0 then
+									return heal
+								else
+									return ""
+								end
+							end;
+	["incafterheal"]			= function(frame, unit)
+								local heal = frame.healValues.afterHeal or 0
+								if heal > 0 then
+									return heal
+								else
+									return ""
+								end
+							end;
+	["hotheal"]			= function(frame, unit)
+								local heal = frame.healValues.Hots or 0
 								if heal > 0 then
 									return heal
 								else
@@ -243,7 +275,7 @@ local defaultTags = {
 									end
 								end
 							end;
-	["numheals"]			= function(frame, unit) return frame.incomingHeals end;
+	["numheals"]			= function(frame, unit) return frame.healValues.numHeals end;
 	["pvp"]					= function(frame, unit) return UnitIsPVP(unit) and "PVP" or "" end;
 	["smarthealth"]			= function(frame, unit)
 								local hp
@@ -350,7 +382,7 @@ local defaultTags = {
 								return hp.."/"..maxhp.." "..math.ceil((UnitHealth(unit) / UnitHealthMax(unit)) * 100).."%"
 							end;
 	["healhp"]				= function(frame, unit)
-								local heal = frame.incomingHeal or 0
+								local heal = frame.healValues.totalHeal or 0
 								local hp
 								hp = UnitHealth(unit)
 								if heal > 0 then
@@ -414,7 +446,7 @@ local defaultTags = {
 							end;
 	["healmishp"]			= function(frame, unit)
 								local hp,maxhp
-								local heal = frame.incomingHeal or 0
+								local heal = frame.healValues.totalHeal or 0
 								hp = UnitHealth(unit)
 								maxhp = UnitHealthMax(unit)
 								local result = hp-maxhp+heal
@@ -701,7 +733,7 @@ local defaultTags = {
 										return L["Dead"]
 									end
 								end
-								local heal = frame.incomingHeal or 0
+								local heal = frame.healValues.totalHeal or 0
 								local result = hp-maxhp+heal
 								if result == 0 then
 									return ""
@@ -753,7 +785,7 @@ local defaultTags = {
 										return L["Dead"]
 									end
 								end
-								local heal = frame.incomingHeal or 0
+								local heal = frame.healValues.totalHeal or 0
 								if UnitIsEnemy("player", unit) then
 									if heal == 0 then
 										return hp.."/"..maxhp
@@ -792,7 +824,7 @@ local defaultTags = {
 										return L["Dead"]
 									end
 								end
-								local heal = frame.incomingHeal or 0
+								local heal = frame.healValues.totalHeal or 0
 								if UnitIsEnemy("player", unit) then
 									if heal == 0 then
 										return hp.."/"..maxhp
