@@ -81,7 +81,7 @@ local function checkDispel(unit)
 	local i, name, _, _, debuffType = 1, UnitDebuff(unit, 1)
 	while name do
 		if canCure[debuffType] then
-			return UnitDebuff(unit, i)
+			return lCD:UnitAura(frame.unit, i, "HARMFUL")
 		end
 		i = i + 1
 		name, _, _, debuffType = UnitDebuff(unit, i)
