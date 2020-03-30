@@ -59,5 +59,6 @@ modules\cast.lua
 modules\borders.lua
 modules\auras.lua
 modules\xp.lua
+modules\manaprediction.lua
 
 modules\options.lua

@@ -636,10 +636,34 @@ function LunaUF:CreateConfig()
 				},
 			},
 		},
+		["manaPrediction"] = {
+			name = L["Mana Prediction"],
+			type = "group",
+			order = 5,
+			inline = true,
+			hidden = function(info) return not (info[1] == "player") end,
+			args = {
+				enabled = {
+					name = L["Enable"],
+					desc = string.format(L["Enable or disable the %s."],L["Mana Prediction"]),
+					type = "toggle",
+					order = 1,
+				},
+				color = {
+					name = L["Color"],
+					type = "color",
+					order = 2,
+					width = "half",
+					hasAlpha = true,
+					get = function(info) local db = LunaUF.db.profile.units.player.manaPrediction.color return db.r, db.g ,db.b, db.a end,
+					set = function(info, r, g, b, a) local db = LunaUF.db.profile.units.player.manaPrediction.color db.r = r db.g = g db.b = b db.a = a LunaUF.Layout:Reload() end,
+				},
+			},
+		},
 		["castBar"] = {
 			name = L["Cast Bar"],
 			type = "group",
-			order = 5,
+			order = 6,
 			inline = true,
 			args = {
 				enabled = {
@@ -692,7 +716,7 @@ function LunaUF:CreateConfig()
 		["emptyBar"] = {
 			name = L["Empty bar"],
 			type = "group",
-			order = 6,
+			order = 7,
 			inline = true,
 			args = {
 				enabled = {
@@ -760,7 +784,7 @@ function LunaUF:CreateConfig()
 		["range"] = {
 			name = L["Range"],
 			type = "group",
-			order = 7,
+			order = 8,
 			inline = true,
 			args = {
 				enabled = {
@@ -774,7 +798,7 @@ function LunaUF:CreateConfig()
 		["portrait"] = {
 			name = L["Portrait"],
 			type = "group",
-			order = 8,
+			order = 9,
 			inline = true,
 			args = {
 				enabled = {
@@ -847,7 +871,7 @@ function LunaUF:CreateConfig()
 		["incHeal"] = {
 			name = L["Incoming heals"],
 			type = "group",
-			order = 9,
+			order = 10,
 			inline = true,
 			args = {
 				enabled = {
@@ -879,7 +903,7 @@ function LunaUF:CreateConfig()
 		["auras"] = {
 			name = L["Auras"],
 			type = "group",
-			order = 10,
+			order = 11,
 			inline = true,
 			args = {
 				generalheader = {
@@ -1022,7 +1046,7 @@ function LunaUF:CreateConfig()
 		["borders"] = {
 			name = L["Borders"],
 			type = "group",
-			order = 11,
+			order = 12,
 			inline = true,
 			args = {
 				target = {
@@ -1056,7 +1080,7 @@ function LunaUF:CreateConfig()
 		["highlight"] = {
 			name = L["Highlight"],
 			type = "group",
-			order = 12,
+			order = 13,
 			inline = true,
 			args = {
 				target = {
@@ -1090,7 +1114,7 @@ function LunaUF:CreateConfig()
 		["fader"] = {
 			name = L["Combat fader"],
 			type = "group",
-			order = 13,
+			order = 14,
 			inline = true,
 			args = {
 				enabled = {
@@ -1128,7 +1152,7 @@ function LunaUF:CreateConfig()
 		["tags"] = {
 			name = L["Tags"],
 			type = "group",
-			order = 14,
+			order = 15,
 			inline = true,
 			args = {
 				top = {
@@ -1922,7 +1946,7 @@ function LunaUF:CreateConfig()
 		["indicators"] = {
 			name = L["Indicators"],
 			type = "group",
-			order = 15,
+			order = 16,
 			inline = true,
 			args = {
 				raidTarget = {
@@ -2442,7 +2466,7 @@ function LunaUF:CreateConfig()
 		["combatText"] = {
 			name = L["Combat text"],
 			type = "group",
-			order = 16,
+			order = 17,
 			hidden = function(info) return LunaUF.fakeUnits[info[1]] end,
 			inline = true,
 			args = {
@@ -2475,7 +2499,7 @@ function LunaUF:CreateConfig()
 		["squares"] = {
 			name = L["Squares"],
 			type = "group",
-			order = 17,
+			order = 18,
 			inline = true,
 			args = {
 				topleft = {

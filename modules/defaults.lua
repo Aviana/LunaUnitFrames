@@ -63,6 +63,7 @@ function LunaUF:LoadDefaults()
 			enabled = true,
 			healthBar = { enabled = true, background = true, backgroundAlpha = 0.2, colorType = "class", reactionType="npc", height = 6, order = 10},
 			powerBar = { enabled = true, background = true, backgroundAlpha = 0.2, height = 4.5, order = 20, colorType = "type" },
+			manaPrediction = { enabled = false, color = {r = 1, g = 1, b = 1, a = 0.5 } },
 			reckStacks = { enabled = true, autoHide = true, growth = "RIGHT", order = 70, height = 2, background = true, backgroundAlpha = 0.2 },
 			portrait = {enabled = true, type = "3D", alignment = "LEFT", width = 0.22, height = 4, order = 15, fullBefore = 0, fullAfter = 100},
 			castBar = { enabled = true, background = true, backgroundAlpha = 0.2, height = 3, icon = "HIDE", autoHide = true, order = 60},
