@@ -4,6 +4,7 @@ function LunaUF:LoadDefaults()
 	self.defaults = {
 		profile = {
 			locked = false,
+			previewauras = true,
 			tooltipCombat = true,
 			hidden = {cast = true, buffs = false, party = true, raid = true, player = true, pet = true, target = true},
 			statusbar = "Minimalist",

@@ -26,7 +26,7 @@ local function updateTooltip(self)
 end
 
 local function showTooltip(self)
-	if( not LunaUF.db.profile.locked ) then return end
+	if( not LunaUF.db.profile.locked and LunaUF.db.profile.previewauras ) then return end
 	if( GameTooltip:IsForbidden() ) then return end
 
 	GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
@@ -240,7 +240,7 @@ function Auras:UpdateFrames(frame)
 		else
 			texture = nil
 		end
-		if not LunaUF.db.profile.locked then
+		if not LunaUF.db.profile.locked and LunaUF.db.profile.previewauras then
 			duration = 0
 			endTime = 0
 			if i < 33 and config.buffs then
@@ -345,7 +345,7 @@ function Auras:UpdateFrames(frame)
 		else
 			button.large = nil
 		end
-		if not LunaUF.db.profile.locked then
+		if not LunaUF.db.profile.locked and LunaUF.db.profile.previewauras then
 			duration = 0
 			endTime = 0
 			texture = "Interface\\Icons\\Spell_ChargeNegative"
