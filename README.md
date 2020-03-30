@@ -5,10 +5,10 @@ DO NOT USE THE GREEN CLONE OR DOWNLOAD BUTTON. GET THE NEWEST RELEASE FROM THE R
 
 
 Clickcasting:
-https://www.warcrafttavern.com/addons/clique/
+https://www.curseforge.com/wow/addons/clique/
 
 Numeric timers on auras:
-https://www.curseforge.com/wow/addons/omni-cc/files?filter-game-version=1738749986%3A67408
+https://www.curseforge.com/wow/addons/omni-cc/
 
 
 This addon comes with LibClassicDurations integrated to view aura durations,
@@ -16,17 +16,15 @@ This addon comes with LibClassicDurations integrated to view aura durations,
 Other features include:
 
 - Config mode for easy setup
-- Enemy (and friendly) castbars
+- Enemy (and friendly) castbars (LibClassicCasterino)
 - Energy / MP5 ticker
 - Druid mana bar
 - Reckoning tracker
-- Healing communication (green heal bars)
+- Healing communication (LibHealComm-4.0)
 - Totem timer
+- Mana cost prediction
+and much more
 
-
-
-
-Feel free to fork this but give credit (at least author & link to this github)
 
 DO NOT REUPLOAD! LINK HERE INSTEAD.
 
