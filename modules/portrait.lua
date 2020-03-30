@@ -11,9 +11,20 @@ local function resetGUID(self)
 end
 
 function Portrait:OnEnable(frame)
+
+	frame.portrait = frame.portrait or CreateFrame("Frame", nil, frame)
+	frame.portraitTexture = frame.portraitTexture or frame.portrait:CreateTexture(nil, "ARTWORK")
+	frame.portraitTexture:SetAllPoints(frame.portrait)
+	if( not frame.portraitModel ) then
+		frame.portraitModel = CreateFrame("PlayerModel", nil, frame.portrait)
+		frame.portraitModel:SetScript("OnShow", resetCamera)
+		frame.portraitModel:SetScript("OnHide", resetGUID)
+		frame.portraitModel.parent = frame.portrait
+		frame.portraitModel:SetAllPoints(frame.portrait)
+	end
+	
 	frame:RegisterUnitEvent("UNIT_PORTRAIT_UPDATE", self, "UpdateFunc")
 	frame:RegisterUnitEvent("UNIT_MODEL_CHANGED", self, "Update")
-	
 	frame:RegisterUpdateFunc(self, "UpdateFunc")
 end
 
@@ -28,26 +39,6 @@ function Portrait:OnPreLayoutApply(frame, config)
 		config.portrait.isBar = true
 	else
 		config.portrait.isBar = false
-	end
-
-	if( config.portrait.type == "3D" ) then
-		if( not frame.portraitModel ) then
-			frame.portraitModel = CreateFrame("PlayerModel", nil, frame)
-			frame.portraitModel:SetScript("OnShow", resetCamera)
-			frame.portraitModel:SetScript("OnHide", resetGUID)
-			frame.portraitModel.parent = frame
-		end
-				
-		frame.portrait = frame.portraitModel
-		frame.portrait:Show()
-
-		LunaUF.Layout:ToggleVisibility(frame.portraitTexture, false)
-	else
-		frame.portraitTexture = frame.portraitTexture or frame:CreateTexture(nil, "ARTWORK")
-		frame.portrait = frame.portraitTexture
-		frame.portrait:Show()
-
-		LunaUF.Layout:ToggleVisibility(frame.portraitModel, false)
 	end
 end
 
@@ -68,42 +59,49 @@ end
 function Portrait:Update(frame, event)
 	local type = LunaUF.db.profile.units[frame.unitType].portrait.type
 	-- Use class thingy
-	if( type == "class" ) then
+	if( (type == "class" or type =="2dclass") and UnitIsPlayer(frame.unit) ) then
+		frame.portraitTexture:Show()
+		frame.portraitModel:Hide()
 		local classToken = frame:UnitClassToken()
 		if( classToken ) then
-			frame.portrait:SetTexture("Interface\\Glues\\CharacterCreate\\UI-CharacterCreate-Classes")
-			frame.portrait:SetTexCoord(CLASS_ICON_TCOORDS[classToken][1], CLASS_ICON_TCOORDS[classToken][2], CLASS_ICON_TCOORDS[classToken][3], CLASS_ICON_TCOORDS[classToken][4])
+			frame.portraitTexture:SetTexture("Interface\\Glues\\CharacterCreate\\UI-CharacterCreate-Classes")
+			frame.portraitTexture:SetTexCoord(CLASS_ICON_TCOORDS[classToken][1], CLASS_ICON_TCOORDS[classToken][2], CLASS_ICON_TCOORDS[classToken][3], CLASS_ICON_TCOORDS[classToken][4])
 		else
-			frame.portrait:SetTexture("")
+			frame.portraitTexture:SetTexture("")
 		end
 	-- Use 2D character image
-	elseif( type == "2D" ) then
+	elseif( type == "2D" or type =="2dclass" ) then
+		frame.portraitTexture:Show()
+		frame.portraitModel:Hide()
 		local height = frame.portrait:GetHeight()
 		local width = frame.portrait:GetWidth()
 		local cutoff
 		if height < width then
 			cutoff = ((width - height) / 2) / width * 0.9
-			frame.portrait:SetTexCoord(0.1, 0.9, 0.1 + cutoff, 0.9 - cutoff)
+			frame.portraitTexture:SetTexCoord(0.1, 0.9, 0.1 + cutoff, 0.9 - cutoff)
 		elseif height > width then
 			cutoff = ((height - width) / 2) / height * 0.9
-			frame.portrait:SetTexCoord(0.1 + cutoff, 0.9 - cutoff, 0.1, 0.9)
+			frame.portraitTexture:SetTexCoord(0.1 + cutoff, 0.9 - cutoff, 0.1, 0.9)
 		else
-			frame.portrait:SetTexCoord(0.10, 0.90, 0.10, 0.90)
+			frame.portraitTexture:SetTexCoord(0.10, 0.90, 0.10, 0.90)
 		end
-		SetPortraitTexture(frame.portrait, frame.unit)
+		SetPortraitTexture(frame.portraitTexture, frame.unit)
 	-- Using 3D portrait, but the players not in range so swap to question mark
 	elseif( not UnitIsVisible(frame.unit) or not UnitIsConnected(frame.unit) ) then
-		frame.portrait:ClearModel()
-		frame.portrait:SetModel("Interface\\Buttons\\talktomequestionmark.m2")
-		frame.portrait:SetModelScale(2)
-		frame.portrait:SetPosition(0, 0, -0.08)
+		frame.portraitTexture:Hide()
+		frame.portraitModel:ClearModel()
+		frame.portraitModel:SetModel("Interface\\Buttons\\talktomequestionmark.m2")
+		frame.portraitModel:SetModelScale(2)
+		frame.portraitModel:SetPosition(0, 0, -0.08)
+		frame.portraitModel:Show()
 
 	-- Use animated 3D portrait
 	else
-		frame.portrait:ClearModel()
-		frame.portrait:SetUnit(frame.unit)
-		frame.portrait:SetPortraitZoom(1)
-		frame.portrait:SetPosition(0, 0, 0)
-		frame.portrait:Show()
+		frame.portraitTexture:Hide()
+		frame.portraitModel:Show()
+		frame.portraitModel:ClearModel()
+		frame.portraitModel:SetUnit(frame.unit)
+		frame.portraitModel:SetPortraitZoom(1)
+		frame.portraitModel:SetPosition(0, 0, 0)
 	end
 end

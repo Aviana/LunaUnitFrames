@@ -788,7 +788,7 @@ function LunaUF:CreateConfig()
 					desc = L["Portrait type"],
 					type = "select",
 					order = 2,
-					values = {["3D"] = L["3D"], ["2D"] = L["2D"], ["class"] = L["Class"]},
+					values = {["3D"] = L["3D"], ["2D"] = L["2D"], ["class"] = L["Class"], ["2dclass"] = L["2D Class"]},
 				},
 				alignment = {
 					name = L["Alignment"],

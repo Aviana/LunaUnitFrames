@@ -169,6 +169,7 @@ local L = {
   ["Type"] = "유형",
   ["3D"] = "3D",
   ["2D"] = "2D",
+  ["2D Class"] = "2D Class",
   ["Inc Heal Cap"] = "들어오는 치유량",
   ["Let the prediction overgrow the bar."] = "바를 벗어나는 예상 치유량 한계를 설정합니다.",
   ["Filter %s"] = "%s 필터",

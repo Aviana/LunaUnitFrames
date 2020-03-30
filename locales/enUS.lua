@@ -167,6 +167,7 @@ local L = {
 ["Type"] = "Type",
 ["3D"] = "3D",
 ["2D"] = "2D",
+["2D Class"] = "2D Class",
 ["Inc Heal Cap"] = "Inc Heal Cap",
 ["Let the prediction overgrow the bar."] = "Let the prediction overgrow the bar.",
 ["Filter %s"] = "Filter %s",

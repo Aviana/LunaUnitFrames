@@ -170,6 +170,7 @@ local L = {
 ["Type"] = "Typ",
 ["3D"] = "3D",
 ["2D"] = "2D",
+["2D Class"] = "2D Klasse",
 ["Inc Heal Cap"] = "Hereink. Heilung Limit",
 ["Let the prediction overgrow the bar."] = "Lass die Vorhersage \195\188ber den Balken hinaus.",
 ["Filter %s"] = "Filter %s",

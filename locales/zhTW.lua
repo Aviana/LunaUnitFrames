@@ -167,6 +167,7 @@ local L = {
     ["Type"] = "類型",
     ["3D"] = "3D",
     ["2D"] = "2D",
+    ["2D Class"] = "2D Class",
     ["Inc Heal Cap"] = "最大預估比例",
     ["Let the prediction overgrow the bar."] = "預估治療量超出生命值邊界的最大比例。",
     ["Filter %s"] = "Filter %s",
