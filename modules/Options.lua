@@ -715,7 +715,7 @@ function LunaUF:CreateConfig()
 					--desc = L["Color by reaction"],
 					type = "select",
 					order = 3,
-					values = {["none"] = L["Never (Disabled)"], ["player"] = L["Players only"], ["npc"] = L["NPCs only"], ["both"] = L["Both"]},
+					values = {["none"] = L["Never (Disabled)"], ["player"] = L["Players only"], ["NPC/hostile player"] = L["NPCs and Hostile players"], ["npc"] = L["NPCs only"], ["both"] = L["Both"]},
 				},
 				class = {
 					name = L["Class Colors"],

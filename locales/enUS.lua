@@ -119,6 +119,7 @@ local L = {
 ["Health percent"] = "Health percent",
 ["Never (Disabled)"] = "Never (Disabled)",
 ["Players only"] = "Players only",
+["NPCs and Hostile players"] = "NPCs and Hostile players",
 ["NPCs only"] = "NPCs only",
 ["Both"] = "Both",
 ["Power Type"] = "Power Type",

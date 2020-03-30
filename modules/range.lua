@@ -34,6 +34,8 @@ local function spellCheck(unit)
 	else
 		if hostileSpell and IsSpellInRange(hostileSpell, unit) == 1 then
 			return true
+		elseif select(2,UnitClass("player")) == "WARRIOR" and IsSpellInRange(355, unit) == 1 then
+			return true
 		end
 	end
 	local inRange, checkedRange = UnitInRange(unit)

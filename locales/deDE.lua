@@ -122,6 +122,7 @@ local L = {
 ["Health percent"] = "Gesundheits Prozente",
 ["Never (Disabled)"] = "Niemals (Deaktiviert)",
 ["Players only"] = "Nur Spieler",
+["NPCs and Hostile players"] = "NSCs und Feindliche Spieler",
 ["NPCs only"] = "Nur NSCs",
 ["Both"] = "Beide",
 ["Power Type"] = "Kraft Typ",

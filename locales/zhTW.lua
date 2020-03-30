@@ -119,6 +119,7 @@ local L = {
     ["Health percent"] = "生命值百分比",
     ["Never (Disabled)"] = "從不（關閉）",
     ["Players only"] = "只限玩家",
+    ["NPCs and Hostile players"] = "NPCs and Hostile players",
     ["NPCs only"] = "只限NPC",
     ["Both"] = "兩者",
     ["Power Type"] = "能量類型",

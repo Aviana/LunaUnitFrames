@@ -23,7 +23,7 @@ function Empty:UpdateColor(frame)
 
 	if( ( reactionType == "npc" or reactionType == "both" ) and not UnitPlayerControlled(frame.unit) and UnitIsTapDenied(frame.unit) and UnitCanAttack("player", frame.unit) ) then
 		color = LunaUF.db.profile.colors.tapped
-	elseif ( reactionType == "player" or reactionType == "both" and UnitIsPlayer(frame.unit) ) or ( ( reactionType == "npc" or reactionType == "both" ) and not UnitIsPlayer(frame.unit) ) then
+	elseif ( reactionType == "player" or reactionType == "both" and UnitIsPlayer(frame.unit) ) or ( ( reactionType == "npc" or reactionType == "both" ) and not UnitIsPlayer(frame.unit) ) or (reactionType == "NPC/hostile player" and not UnitIsFriend(frame.unit, "player") and UnitIsPlayer(frame.unit)) then
 		if( not UnitIsFriend(frame.unit, "player") and UnitPlayerControlled(frame.unit) ) then
 			if( UnitCanAttack("player", frame.unit) ) then
 				color = LunaUF.db.profile.colors.hostile

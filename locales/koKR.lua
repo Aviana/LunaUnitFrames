@@ -121,6 +121,7 @@ local L = {
   ["Health percent"] = "생명력 백분율",
   ["Never (Disabled)"] = "미사용 (사용안함)",
   ["Players only"] = "플레이어만",
+  ["NPCs and Hostile players"] = "NPCs and Hostile players",
   ["NPCs only"] = "NPC만",
   ["Both"] = "모두",
   ["Power Type"] = "자원 유형",
