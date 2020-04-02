@@ -69,7 +69,7 @@ function Indicators:UpdateElite(frame)
 	if( classif == "rare" ) then
 		frame.indicators.elite:SetTexture("Interface\\AddOns\\LunaUnitFrames\\media\\textures\\UI-DialogBox-Silver-Dragon"..suffix)
 		frame.indicators.elite:Show()
-	elseif classif == "normal" then
+	elseif classif == "normal" and not (UnitIsUnit("player", frame.unit) and LunaUF.db.profile.units.player.indicators.elite.enabled or UnitIsUnit("pet", frame.unit) and LunaUF.db.profile.units.pet.indicators.elite.enabled) then
 		frame.indicators.elite:Hide()
 	else
 		frame.indicators.elite:SetTexture("Interface\\AddOns\\LunaUnitFrames\\media\\textures\\UI-DialogBox-Gold-Dragon"..suffix)

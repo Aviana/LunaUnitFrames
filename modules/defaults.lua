@@ -226,6 +226,7 @@ function LunaUF:LoadDefaults()
 			},
 			indicators = {
 				raidTarget = { enabled = true, anchorPoint = "CENTER", size = 20, x = 0, y = 0 },
+				elite = { enabled = false, side = "LEFT" },
 				class = { enabled = false, anchorPoint = "BOTTOMLEFT", size = 16, x = 1, y = 1 },
 				masterLoot = { enabled = true, anchorPoint = "TOPLEFT", size = 12, x = 16, y = -1 },
 				leader = { enabled = true, anchorPoint = "TOPLEFT", size = 14, x = 4, y = -1 },
@@ -376,6 +377,7 @@ function LunaUF:LoadDefaults()
 				},
 			},
 			indicators = {
+				elite = { enabled = false, side = "LEFT" },
 				happiness = {enabled = true, anchorPoint = "BOTTOMRIGHT", size = 14, x = 0, y = 0},
 				status = { enabled = true, anchorPoint = "BOTTOMLEFT", size = 16, x = 30, y = 1},
 			},

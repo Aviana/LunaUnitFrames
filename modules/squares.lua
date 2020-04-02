@@ -78,6 +78,7 @@ local function checkAura(unit, spells, playeronly)
 end
 
 local function checkDispel(unit)
+	if not UnitCanAssist("player", unit) then return end
 	local i, name, _, _, debuffType = 1, UnitDebuff(unit, 1)
 	while name do
 		if canCure[debuffType] then
