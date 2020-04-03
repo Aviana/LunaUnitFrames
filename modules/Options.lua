@@ -2,10 +2,10 @@ local Addon = select(1, ...)
 
 local AceConfigRegistry = LibStub("AceConfigRegistry-3.0")
 local AceConfigDialog = LibStub("AceConfigDialog-3.0")
-
 local SML = SML or LibStub:GetLibrary("LibSharedMedia-3.0")
-
 local ACR = LibStub("AceConfigRegistry-3.0", true)
+
+local resolutionselectvalue,groupselectvalue, profiledb = GetCurrentResolution(), "SOLO", {}
 
 local L = LunaUF.L
 
@@ -1040,6 +1040,15 @@ function LunaUF:CreateConfig()
 					type = "select",
 					order = 19,
 					values = {["LEFT"] = L["Left"], ["RIGHT"] = L["Right"], ["TOP"] = L["Top"], ["BOTTOM"] = L["Bottom"], ["INFRAME"] = L["Inside"], ["INFRAMECENTER"] = L["Inside Center"]},
+				},
+				wrap = {
+					name = L["Horizontal Limit"],
+					desc = L["Set the debuffsize."],
+					type = "range",
+					order = 16,
+					min = 4,
+					max = 50,
+					step = 1,
 				},
 			},
 		},
@@ -6050,6 +6059,102 @@ function LunaUF:CreateConfig()
 					},
 				},
 			},
+			autoprofiles = {
+				name = L["Auto Profiles"],
+				type = "group",
+				order = 20,
+				args = {
+					help = {
+						order = 1,
+						type = "group",
+						name = L["Auto Profiles - Help"],
+						inline = true,
+						args = {
+							description = {
+								type = "description",
+								name = L["You can set up here which profiles should be automatically loaded on certain conditions."],
+								width = "full",
+							},
+						},
+					},
+					switchtype = {
+						name = L["Switch by"],
+						desc = L["Type of event to switch to"],
+						type = "select",
+						order = 2,
+						values = {["DISABLED"] = L["Disabled"], ["RESOLUTION"] = L["Screen Resolution"],["GROUP"] = L["Size of Group"]},
+						get = function(info) return LunaUF.db.global.switchtype end,
+						set = function(info, value) LunaUF.db.global.switchtype = value LunaUF:AutoswitchProfileSetup() end,
+					},
+					resolutionselect = {
+						name = L["Screen Resolution"],
+						desc = L["Resolution to assign a profile to"],
+						type = "select",
+						order = 3,
+						hidden = function() return LunaUF.db.global.switchtype ~= "RESOLUTION" end,
+						values = {GetScreenResolutions()},
+						get = function(info) return resolutionselectvalue end,
+						set = function(info, value) resolutionselectvalue = value end,
+					},
+					groupselect = {
+						name = L["Size of Group"],
+						desc = L["Size of group to assign a profile to"],
+						type = "select",
+						order = 4,
+						hidden = function() return LunaUF.db.global.switchtype ~= "GROUP" end,
+						values = {["RAID40"]=L["Raid40"],["RAID20"]=L["Raid20"],["RAID5"]=L["Raid5"],["PARTY"]=L["Party"],["SOLO"]=L["Solo"],},
+						get = function(info) return groupselectvalue end,
+						set = function(info, value) groupselectvalue = value end,
+					},
+					profileselect = {
+						name = L["Profile"],
+						desc = L["Name of the profile which to switch to"],
+						type = "select",
+						order = 5,
+						values = function() LunaUF.db:GetProfiles(profiledb) profiledb["NIL"] = L["None"] return profiledb end,
+						hidden = function() return LunaUF.db.global.switchtype == "DISABLED" end,
+						get = function(info)
+							LunaUF.db:GetProfiles(profiledb)
+							profiledb["NIL"] = L["None"]
+							if LunaUF.db.global.switchtype == "RESOLUTION" then
+								local resolutions = {GetScreenResolutions()}
+								for k,v in pairs(resolutions) do
+									if k == resolutionselectvalue then
+										for i,j in pairs(profiledb) do
+											if LunaUF.db.global.resdb[v] == j then
+												return i
+											end
+										end
+									end
+								end
+								return "NIL"
+							else
+								for k,v in pairs(profiledb) do
+									if v == LunaUF.db.global.grpdb[groupselectvalue] then
+										return k
+									end
+								end
+								return "NIL"
+							end
+						end,
+						set = function(info, value)
+							LunaUF.db:GetProfiles(profiledb)
+							profiledb["NIL"] = L["None"]
+							if LunaUF.db.global.switchtype == "RESOLUTION" then
+								local resolutions = {GetScreenResolutions()}
+								for k,v in pairs(resolutions) do
+									if k == resolutionselectvalue then
+										LunaUF.db.global.resdb[v] = value ~= "NIL" and profiledb[value] or nil
+										return
+									end
+								end
+							else
+								LunaUF.db.global.grpdb[groupselectvalue] = value ~= "NIL" and profiledb[value] or nil
+							end
+						end,
+					},
+				},
+			},
 		},
 	}
 	for mod, tbl in pairs(moduleOptions) do
@@ -6102,6 +6207,7 @@ function LunaUF:CreateConfig()
 	AceConfigRegistry:RegisterOptionsTable(Addon, aceoptions, true)
 	aceoptions.args.profile = LibStub("AceDBOptions-3.0"):GetOptionsTable(self.db)
 	
+	
 	AceConfigDialog:AddToBlizOptions(Addon, nil, nil, "general")
 	AceConfigDialog:AddToBlizOptions(Addon, L["Colors"], Addon, "colors")
 	for _,unit in ipairs(LunaUF.unitList) do
@@ -6109,6 +6215,7 @@ function LunaUF:CreateConfig()
 	end
 	AceConfigDialog:AddToBlizOptions(Addon, L["Hide Blizzard"], Addon, "hidden")
 	AceConfigDialog:AddToBlizOptions(Addon, L["Tag Help"], Addon, "help")
+	AceConfigDialog:AddToBlizOptions(Addon, L["Auto Profiles"], Addon, "autoprofiles")
 	AceConfigDialog:AddToBlizOptions(Addon, L["Profiles"], Addon, "profile")
 	
 	AceConfigDialog:SetDefaultSize(Addon, 895, 570)

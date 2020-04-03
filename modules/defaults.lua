@@ -2,6 +2,11 @@
 function LunaUF:LoadDefaults()
 
 	self.defaults = {
+		global = {
+			switchtype = "DISABLED",
+			resdb = {},
+			grpdb = {},
+		},
 		profile = {
 			locked = false,
 			previewauras = true,

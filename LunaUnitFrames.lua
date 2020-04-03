@@ -25,6 +25,7 @@ function LunaUF:OnInitialize()
 	self.db.RegisterCallback(self, "OnProfileChanged", "ProfilesChanged")
 	self.db.RegisterCallback(self, "OnProfileCopied", "ProfilesChanged")
 	self.db.RegisterCallback(self, "OnProfileReset", "ProfileReset")
+	self.db.RegisterCallback(self, "OnProfileDeleted", "OnProfileDeleted")
 
 	self.db.profile.version = self.version
 	self:FireModuleEvent("OnInitialize")
@@ -35,6 +36,12 @@ function LunaUF:OnInitialize()
 	self:LoadUnits()
 	self.modules.movers:Update()
 	self:CreateConfig()
+	self:AutoswitchProfileSetup()
+	if self.db.global.switchtype == "RESOLUTION" then
+		self:AutoswitchProfile("DISPLAY_SIZE_CHANGED")
+	elseif self.db.global.switchtype == "GROUP" then
+		self:AutoswitchProfile("GROUP_ROSTER_UPDATE")
+	end
 end
 
 function LunaUF:ProfilesChanged()
@@ -67,6 +74,20 @@ function LunaUF:ProfileReset()
 	end
 	
 	resetTimer:Show()
+end
+
+function LunaUF:OnProfileDeleted(event, key, name)
+	-- Remove deleted profiles from autoswitching
+	for k,v in pairs(LunaUF.db.global.resdb) do
+		if v == name then
+			LunaUF.db.global.resdb[k] = nil
+		end
+	end
+	for k,v in pairs(LunaUF.db.global.grpdb) do
+		if v == name then
+			LunaUF.db.global.grpdb[k] = nil
+		end
+	end
 end
 
 function LunaUF:RegisterModule(module, key, name, isBar, class)
@@ -211,7 +232,6 @@ function LunaUF:Print(msg)
 end
 
 function LunaUF:LoadUnits()
-	
 	for _, type in pairs(self.unitList) do
 		local enabled = self.db.profile.units[type].enabled
 		
@@ -241,7 +261,6 @@ SlashCmdList["LUNAUF"] = function(msg)
 				return
 			end
 		end
-		
 		LunaUF:Print(string.format(L["Cannot find any profiles named \"%s\"."], profile))
 		return
 	end
@@ -250,6 +269,7 @@ SlashCmdList["LUNAUF"] = function(msg)
 	AceConfigDialog:Open("LunaUnitFrames")
 end
 
+local queuedEvent
 local frame = CreateFrame("Frame")
 frame:RegisterEvent("PLAYER_LOGIN")
 frame:RegisterEvent("ADDON_LOADED")
@@ -259,7 +279,7 @@ frame:SetScript("OnEvent", function(self, event, addon)
 	if( event == "PLAYER_LOGIN" ) then
 		LunaUF:OnInitialize()
 		self:UnregisterEvent("PLAYER_LOGIN")
-	elseif( event == "ADDON_LOADED" and ( addon == "Blizzard_ArenaUI" or addon == "Blizzard_CompactRaidFrames" ) ) then
+	elseif( event == "ADDON_LOADED" and ( addon == "Blizzard_ArenaUI" or addon == "Blizzard_CompactRaidFrames" ) and not LunaUF.InCombatLockdown) then
 		LunaUF:HideBlizzardFrames()
 	elseif event == "PLAYER_REGEN_DISABLED" then
 		LunaUF.db.profile.locked = true
@@ -270,8 +290,64 @@ frame:SetScript("OnEvent", function(self, event, addon)
 		end
 	elseif event == "PLAYER_REGEN_ENABLED" then
 		LunaUF.InCombatLockdown = nil
+		LunaUF:AutoswitchProfile(queuedEvent)
+		queuedEvent = nil
 		if( ACR ) then
 			ACR:NotifyChange("LunaUnitFrames")
 		end
+	elseif event == "DISPLAY_SIZE_CHANGED" and LunaUF.db.global.switchtype == "RESOLUTION" then
+		if not LunaUF.InCombatLockdown then
+			LunaUF:AutoswitchProfile(event)
+		else
+			queuedEvent = event
+		end
+	elseif event == "GROUP_ROSTER_UPDATE" and LunaUF.db.global.switchtype == "GROUP" then
+		if not LunaUF.InCombatLockdown then
+			LunaUF:AutoswitchProfile(event)
+		else
+			queuedEvent = event
+		end
 	end
 end)
+
+function LunaUF:AutoswitchProfileSetup()
+	queuedEvent = nil
+	frame:UnregisterEvent("DISPLAY_SIZE_CHANGED")
+	frame:UnregisterEvent("GROUP_ROSTER_UPDATE")
+	if LunaUF.db.global.switchtype == "RESOLUTION" then
+		frame:RegisterEvent("DISPLAY_SIZE_CHANGED")
+	elseif LunaUF.db.global.switchtype == "GROUP" then
+		frame:RegisterEvent("GROUP_ROSTER_UPDATE")
+	end
+end
+
+function LunaUF:AutoswitchProfile(event)
+	local profile
+	if event == "DISPLAY_SIZE_CHANGED" then
+		local resolutions = {GetScreenResolutions()}
+		profile = LunaUF.db.global.resdb[resolutions[GetCurrentResolution()]]
+	else
+		local groupType
+		if IsInRaid() then
+			local maxGrp = 1
+			for i=1,MAX_RAID_MEMBERS do
+				maxGrp = math.max((select(3,GetRaidRosterInfo(i)) or 0),maxGrp)
+			end
+			if maxGrp == 1 then
+				groupType = "RAID5"
+			elseif maxGrp == 4 then
+				groupType = "RAID20"
+			else
+				groupType = "RAID40"
+			end
+		elseif IsInGroup() then
+			groupType = "PARTY"
+		else
+			groupType = "SOLO"
+		end
+		profile = LunaUF.db.global.grpdb[groupType]
+	end
+	if profile and profile ~= LunaUF.db:GetCurrentProfile() then
+		LunaUF.db:SetProfile(profile)
+	end
+end
