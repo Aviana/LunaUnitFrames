@@ -62,29 +62,33 @@ local function UpdateWeaponEnchants(self, elapsed)
 
 	local changed
 	local hasMain, mainTimeLeft, mainCharges, mainEnchantId, hasOff, offTimeLeft, offCharges, offEnchantId = GetWeaponEnchantInfo()
-	mainTimeLeft = mainTimeLeft or 0
-	offTimeLeft = offTimeLeft or 0
-	mainTimeLeft = mainTimeLeft / 1000
-	offTimeLeft = offTimeLeft / 1000
-	if hasMain ~= mainEnchant.exists or mainTimeLeft > mainEnchant.timeLeft or mainCharges ~= mainEnchant.charges then
+	mainTimeLeft = (mainTimeLeft or 0) / 1000
+	offTimeLeft = (offTimeLeft or 0) / 1000
+	if hasMain ~= mainEnchant.exists or mainTimeLeft > mainEnchant.timeLeft then
 		changed = true
 		mainEnchant.exists = hasMain
-		mainEnchant.timeLeft = mainTimeLeft
 		mainEnchant.charges = mainCharges
 		mainEnchant.id = mainEnchantId
 		mainEnchant.startTime = GetTime()
+	elseif mainCharges ~= mainEnchant.charges then
+		changed = true
+		mainEnchant.charges = mainCharges
 	end
-	if hasOff ~= offEnchant.exists or offTimeLeft > offEnchant.timeLeft or offCharges ~= offEnchant.charges then
+	mainEnchant.timeLeft = mainTimeLeft
+	if hasOff ~= offEnchant.exists or offTimeLeft > offEnchant.timeLeft then
 		changed = true
 		offEnchant.exists = hasOff
-		offEnchant.timeLeft = offTimeLeft
 		offEnchant.charges = offCharges
 		offEnchant.id = offEnchantId
 		offEnchant.startTime = GetTime()
+	elseif offCharges ~= offEnchant.charges then
+		changed = true
+		offEnchant.charges = offCharges
 	end
+	offEnchant.timeLeft = offTimeLeft
 	if changed then
 		for _,frame in pairs(LunaUF.Units.unitFrames) do
-			if frame.unit and frame.unit == "player" then
+			if frame.unitType == "player" then
 				Auras:Update(frame)
 			end
 		end
