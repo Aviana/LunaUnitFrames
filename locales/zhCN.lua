@@ -279,6 +279,7 @@ local L = {
     ["Resurrection"] = "复活状态",
     ["Happiness"] = "快乐度",
     ["Elite"] = "精英",
+    ["Raid Role"] = "Raid Role",
     ["Set the X coordinate."] = "设置X轴坐标。",
     ["Set the Y coordinate."] = "设置Y轴坐标。",
     ["Side"] = "侧边",

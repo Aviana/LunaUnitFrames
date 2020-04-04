@@ -279,6 +279,7 @@ local L = {
 ["Resurrection"] = "Resurrection",
 ["Happiness"] = "Happiness",
 ["Elite"] = "Elite",
+["Raid Role"] = "Raid Role",
 ["Set the X coordinate."] = "Set the X coordinate.",
 ["Set the Y coordinate."] = "Set the Y coordinate.",
 ["Side"] = "Side",

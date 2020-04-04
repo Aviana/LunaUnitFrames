@@ -281,6 +281,7 @@ local L = {
   ["Resurrection"] = "부활",
   ["Happiness"] = "만족도",
   ["Elite"] = "정예",
+  ["Raid Role"] = "Raid Role",
   ["Set the X coordinate."] = "X 좌표를 설정합니다.",
   ["Set the Y coordinate."] = "Y 좌표를 설정합니다.",
   ["Side"] = "가장자리",

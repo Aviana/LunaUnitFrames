@@ -282,6 +282,7 @@ local L = {
 ["Resurrection"] = "Wiederbelebung",
 ["Happiness"] = "Zufriedenheit",
 ["Elite"] = "Elite",
+["Raid Role"] = "Schlachtzug Rolle",
 ["Set the X coordinate."] = "Setze die X Koordinate.",
 ["Set the Y coordinate."] = "Setze die Y Koordinate.",
 ["Side"] = "Seite",
