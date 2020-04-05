@@ -209,7 +209,7 @@ function IncHeal:Update(frame)
 	frame.healValues.mod = HealComm:GetHealModifier(frame.unitGUID) or 1
 	frame.healValues.totalHeal = HealComm:GetHealAmount(frame.unitGUID, flags, timeframe) or 0
 	frame.healValues.preHeal = 0
-	frame.healValues.ownHeal = HealComm:GetHealAmount(frame.unitGUID, HealComm.CASTED_HEALS, timeframe, UnitGUID("player")) or 0
+	frame.healValues.ownHeal = HealComm:GetHealAmount(frame.unitGUID, HealComm.DIRECT_HEALS, timeframe, UnitGUID("player")) or 0
 	if LunaUF.db.profile.disablehots then
 		frame.healValues.Hots = 0
 	else
