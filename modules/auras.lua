@@ -276,7 +276,7 @@ function Auras:UpdateFrames(frame)
 			else
 				button.border:SetVertexColor(1,1,1)
 			end
-			if config.timer == "self" and button.large or config.timer == "all" and duration ~= 0 then
+			if (config.timer == "self" and caster and UnitIsUnit("player", caster)) or config.timer == "all" and duration ~= 0 then
 				button.cooldown:Show()
 				button.cooldown:SetCooldown(endTime - duration, duration)
 			else
@@ -339,11 +339,6 @@ function Auras:UpdateFrames(frame)
 		button.cooldown.noCooldownCount = LunaUF.db.profile.omnicc
 		button.cooldown:SetHideCountdownNumbers(LunaUF.db.profile.blizzardcc)
 		name, texture, count, auraType, duration, endTime, caster, _, _, spellID = lCD:UnitAura(frame.unit, i, filter)
---		if (not duration or duration == 0) and spellID then
---			local Newduration, NewendTime = lCD:GetAuraDurationByUnit(frame.unit, spellID, caster)
---			duration = Newduration or duration
---			endTime = NewendTime or endTime
---		end
 		if caster and UnitIsUnit("player", caster) and config.emphasizeDebuffs then
 			button.large = true
 		else
@@ -374,7 +369,7 @@ function Auras:UpdateFrames(frame)
 			else
 				button.border:SetVertexColor(1,1,1)
 			end
-			if config.timer == "self" and button.large or config.timer == "all" and duration ~= 0 then
+			if (config.timer == "self" and caster and UnitIsUnit("player", caster)) or config.timer == "all" and duration ~= 0 then
 				button.cooldown:Show()
 				button.cooldown:SetCooldown(endTime - duration, duration)
 			else
