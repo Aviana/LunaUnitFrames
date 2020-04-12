@@ -112,7 +112,7 @@ function XP:UpdateRep(frame)
 end
 
 function XP:UpdateXP(frame)
-	if( UnitLevel(frame.unit) == MAX_PLAYER_LEVEL ) then
+	if( UnitLevel(frame.unit) == MAX_PLAYER_LEVEL or (frame.unitType == "pet" and UnitLevel(frame.unit) == UnitLevel("player")) ) then
 		frame.xpBar.xp:Hide()
 		return
 	end
