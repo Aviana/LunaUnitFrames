@@ -51,7 +51,9 @@ local PowerUpdate = function(self)
 		frame.ticker2:Hide()
 	end
 	if (Position or Position2) then
+		self:ClearAllPoints()
 		self:SetPoint("BOTTOM", frame, "LEFT", (Position or Position2) * frame:GetWidth(), 0)
+		frame.ticker2:ClearAllPoints()
 		frame.ticker2:SetPoint("TOP", frame, "LEFT", (Position2 or Position) * frame:GetWidth(), 0)
 	end
 end

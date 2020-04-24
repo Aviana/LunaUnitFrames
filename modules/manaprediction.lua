@@ -3,7 +3,7 @@ LunaUF:RegisterModule(ManaPrediction, "manaPrediction", LunaUF.L["Mana Predictio
 local manaCost = 0
 
 function ManaPrediction:OnEnable(frame)
-	frame.manaPrediction = frame.manaPrediction or frame:CreateTexture(nil, "ARTWORK")
+	frame.manaPrediction = frame.manaPrediction or frame:CreateTexture(nil, "OVERLAY")
 	frame.manaPrediction:SetTexture("Interface\\Tooltips\\UI-Tooltip-Background")
 	
 	frame:RegisterUnitEvent("UNIT_POWER_UPDATE", self, "Update")
@@ -59,7 +59,7 @@ function ManaPrediction:Update(frame)
 	local mana, maxMana = UnitPower(frame.unit), UnitPowerMax(frame.unit)
 	local pred, bar, color = frame.manaPrediction, frame.powerBar, LunaUF.db.profile.units.player.manaPrediction.color
 	
-	if manaCost == 0 then
+	if manaCost == 0 or UnitPowerType(frame.unit) ~= 0 then
 		frame.manaPrediction:Hide()
 		return
 	else
