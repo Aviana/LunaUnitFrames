@@ -12,7 +12,7 @@ function IncHeal:OnEnable(frame)
 	frame.incHeal.bars = frame.incHeal.bars or {}
 	for i=1, 4 do
 		frame.incHeal.bars[i] = frame.incHeal.bars[i] or frame.incHeal:CreateTexture(nil, "OVERLAY")
-		frame.incHeal.bars[i]:SetTexture("Interface\\Tooltips\\UI-Tooltip-Background")
+		frame.incHeal.bars[i]:SetTexture("Interface\\Addons\\LunaUnitFrames\\media\\textures\\UI-Tooltip-Background")
 	end
 	frame:RegisterUnitEvent("UNIT_MAXHEALTH", self, "PositionBar")
 	frame:RegisterUnitEvent("UNIT_HEALTH", self, "PositionBar")
