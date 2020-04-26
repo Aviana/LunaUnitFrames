@@ -7,7 +7,7 @@ local function resetCamera(self)
 end
 
 local function resetGUID(self)
-	self.guid = nil
+	self:GetParent().guid = nil
 end
 
 function Portrait:OnEnable(frame)
@@ -92,6 +92,7 @@ function Portrait:Update(frame, event)
 		frame.portraitModel:ClearModel()
 		frame.portraitModel:SetModel("Interface\\Buttons\\talktomequestionmark.m2")
 		frame.portraitModel:SetModelScale(2)
+		frame.portraitModel:SetCamDistanceScale(0.5)
 		frame.portraitModel:SetPosition(0, 0, -0.08)
 		frame.portraitModel:Show()
 
@@ -102,6 +103,7 @@ function Portrait:Update(frame, event)
 		frame.portraitModel:ClearModel()
 		frame.portraitModel:SetUnit(frame.unit)
 		frame.portraitModel:SetPortraitZoom(1)
+		frame.portraitModel:SetCamDistanceScale(1)
 		frame.portraitModel:SetPosition(0, 0, 0)
 	end
 end
