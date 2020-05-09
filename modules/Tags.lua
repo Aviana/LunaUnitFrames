@@ -4,6 +4,9 @@ local L = LunaUF.L
 local SML = LibStub:GetLibrary("LibSharedMedia-3.0")
 local vex = LibStub("LibVexation-1.0", true)
 
+local scanTip = CreateFrame("GameTooltip", "LunaAuraScanTip", nil, "GameTooltipTemplate")
+scanTip:SetOwner(WorldFrame, "ANCHOR_NONE")
+
 local UnitHealth = UnitHealth
 local UnitHealthMax = UnitHealthMax
 local UnitHasHealthData = function(unit) return not UnitPlayerControlled(unit) or UnitIsUnit("player", unit) or UnitIsUnit("pet", unit) or UnitPlayerOrPetInParty(unit) or UnitPlayerOrPetInRaid(unit) end
@@ -13,6 +16,7 @@ local DruidForms = {
 	[1066] = GetSpellInfo(1066),
 	[783] = GetSpellInfo(783),
 }
+local feignDeath = GetSpellInfo(5384)
 
 local function abbreviateName(text)
 	return string.sub(text, 1, 1) .. "."
@@ -40,12 +44,13 @@ local function Hex(r, g, b)
 end
 
 local function feigncheck(unit)
-	if select(2,UnitClass(unit)) == "HUNTER" and UnitCanAssist("player", unit) then
+	if select(2,UnitClass(unit)) == "HUNTER" then
 		for i=1,32 do
-			local id = select(10,UnitAura(unit, i, "HELPFUL"))
-			if not id then
+			scanTip:SetUnitAura(unit, i, "HELPFUL")
+			local spellName = LunaAuraScanTipTextLeft1:GetText()
+			if not spellName then
 				return
-			elseif id == 5384 then
+			elseif spellName == feignDeath then
 				return true
 			end
 		end

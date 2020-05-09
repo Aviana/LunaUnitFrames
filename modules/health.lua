@@ -34,6 +34,7 @@ function Health:OnEnable(frame)
 	frame:RegisterUnitEvent("UNIT_FACTION", self, "UpdateColor")
 	frame:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", self, "Update")
 	frame:RegisterUnitEvent("UNIT_TARGETABLE_CHANGED", self, "UpdateColor")
+	frame:RegisterUnitEvent("UNIT_TARGET", self, "UpdateColor")
 
 	if( frame.unit == "pet" ) then
 		frame:RegisterUnitEvent("UNIT_HAPPINESS", self, "UpdateColor")
