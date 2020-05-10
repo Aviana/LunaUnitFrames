@@ -37,6 +37,9 @@ local function showTooltip(self)
 		GameTooltip:SetUnitAura(self.unit, self.auraID, self.filter)
 		self:SetScript("OnUpdate", updateTooltip)
 	end
+	if not GameTooltip:IsVisible() then
+		GameTooltip:SetSpellByID(self.spellID)
+	end
 end
 
 local function hideTooltip(self)
@@ -263,6 +266,7 @@ function Auras:UpdateFrames(frame)
 		if texture then
 			button:Show()
 			button.icon:SetTexture(texture)
+			button.spellID = spellID
 			if count > 1 then
 				button.stack:Show()
 				button.stack:SetText(count)

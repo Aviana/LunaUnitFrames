@@ -465,6 +465,17 @@ function LunaUF:CreateConfig()
 		},
 	}
 
+	local function validateMissingBuffInput(info, value)
+		if LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type ~= "missing" then return true end
+		local spells = {strsplit(";",value)}
+		for k,spell in ipairs(spells) do
+			if spell ~="" and not tonumber(spell) and not GetSpellInfo(spell) then
+				return L["You can only use Spellnames for Spells your Character knows otherwise please use Spell IDs"]
+			end
+		end
+		return true
+	end
+
 	local moduleOptions = {
 		["healthBar"] = {
 			name = L["Health bar"],
@@ -2586,7 +2597,7 @@ function LunaUF:CreateConfig()
 							desc = L["What the indicator should display."],
 							type = "select",
 							order = 3,
-							values = { ["aggro"] = L["Aggro"], ["aura"] = L["Buff/Debuff"], ["ownaura"] = L["Own buff/debuff"], ["dispel"] = L["Dispel"] },
+							values = { ["aggro"] = L["Aggro"], ["aura"] = L["Buff/Debuff"], ["ownaura"] = L["Own buff/debuff"], ["dispel"] = L["Dispel"], ["missing"] = L["Missing Buff"] },
 							set = function(info, value) set(info,value) AceConfigRegistry:NotifyChange("LunaUnitFrames") end,
 						},
 						value = {
@@ -2595,20 +2606,21 @@ function LunaUF:CreateConfig()
 							type = "input",
 							order = 4,
 							hidden = function(info) return LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "aggro" or LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "dispel" end,
+							validate = validateMissingBuffInput,
 						},
 						timer = {
 							name = L["Timer"],
 							desc = string.format(L["Enable or disable the %s."],L["Timer"]),
 							type = "toggle",
 							order = 5,
-							hidden = function(info) return LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "aggro" end,
+							hidden = function(info) return LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "aggro" or LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "missing" end,
 						},
 						texture = {
 							name = L["Texture"],
 							desc = L["Show the spell texture instead of its type color."],
 							type = "toggle",
 							order = 6,
-							hidden = function(info) return LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "aggro" end,
+							hidden = function(info) return LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "aggro" or LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "missing" end,
 						},
 					},
 				},
@@ -2638,7 +2650,7 @@ function LunaUF:CreateConfig()
 							desc = L["What the indicator should display."],
 							type = "select",
 							order = 3,
-							values = { ["aggro"] = L["Aggro"], ["aura"] = L["Buff/Debuff"], ["ownaura"] = L["Own buff/debuff"], ["dispel"] = L["Dispel"] },
+							values = { ["aggro"] = L["Aggro"], ["aura"] = L["Buff/Debuff"], ["ownaura"] = L["Own buff/debuff"], ["dispel"] = L["Dispel"], ["missing"] = L["Missing Buff"] },
 							set = function(info, value) set(info,value) AceConfigRegistry:NotifyChange("LunaUnitFrames") end,
 						},
 						value = {
@@ -2647,20 +2659,21 @@ function LunaUF:CreateConfig()
 							type = "input",
 							order = 4,
 							hidden = function(info) return LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "aggro" or LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "dispel" end,
+							validate = validateMissingBuffInput,
 						},
 						timer = {
 							name = L["Timer"],
 							desc = string.format(L["Enable or disable the %s."],L["Timer"]),
 							type = "toggle",
 							order = 5,
-							hidden = function(info) return LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "aggro" end,
+							hidden = function(info) return LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "aggro" or LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "missing" end,
 						},
 						texture = {
 							name = L["Texture"],
 							desc = L["Show the spell texture instead of its type color."],
 							type = "toggle",
 							order = 6,
-							hidden = function(info) return LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "aggro" end,
+							hidden = function(info) return LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "aggro" or LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "missing" end,
 						},
 					},
 				},
@@ -2690,7 +2703,7 @@ function LunaUF:CreateConfig()
 							desc = L["What the indicator should display."],
 							type = "select",
 							order = 3,
-							values = { ["aggro"] = L["Aggro"], ["aura"] = L["Buff/Debuff"], ["ownaura"] = L["Own buff/debuff"], ["dispel"] = L["Dispel"] },
+							values = { ["aggro"] = L["Aggro"], ["aura"] = L["Buff/Debuff"], ["ownaura"] = L["Own buff/debuff"], ["dispel"] = L["Dispel"], ["missing"] = L["Missing Buff"] },
 							set = function(info, value) set(info,value) AceConfigRegistry:NotifyChange("LunaUnitFrames") end,
 						},
 						value = {
@@ -2699,20 +2712,21 @@ function LunaUF:CreateConfig()
 							type = "input",
 							order = 4,
 							hidden = function(info) return LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "aggro" or LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "dispel" end,
+							validate = validateMissingBuffInput,
 						},
 						timer = {
 							name = L["Timer"],
 							desc = string.format(L["Enable or disable the %s."],L["Timer"]),
 							type = "toggle",
 							order = 5,
-							hidden = function(info) return LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "aggro" end,
+							hidden = function(info) return LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "aggro" or LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "missing" end,
 						},
 						texture = {
 							name = L["Texture"],
 							desc = L["Show the spell texture instead of its type color."],
 							type = "toggle",
 							order = 6,
-							hidden = function(info) return LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "aggro" end,
+							hidden = function(info) return LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "aggro" or LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "missing" end,
 						},
 					},
 				},
@@ -2742,7 +2756,7 @@ function LunaUF:CreateConfig()
 							desc = L["What the indicator should display."],
 							type = "select",
 							order = 3,
-							values = { ["aggro"] = L["Aggro"], ["aura"] = L["Buff/Debuff"], ["ownaura"] = L["Own buff/debuff"], ["dispel"] = L["Dispel"] },
+							values = { ["aggro"] = L["Aggro"], ["aura"] = L["Buff/Debuff"], ["ownaura"] = L["Own buff/debuff"], ["dispel"] = L["Dispel"], ["missing"] = L["Missing Buff"] },
 							set = function(info, value) set(info,value) AceConfigRegistry:NotifyChange("LunaUnitFrames") end,
 						},
 						value = {
@@ -2751,20 +2765,21 @@ function LunaUF:CreateConfig()
 							type = "input",
 							order = 4,
 							hidden = function(info) return LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "aggro" or LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "dispel" end,
+							validate = validateMissingBuffInput,
 						},
 						timer = {
 							name = L["Timer"],
 							desc = string.format(L["Enable or disable the %s."],L["Timer"]),
 							type = "toggle",
 							order = 5,
-							hidden = function(info) return LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "aggro" end,
+							hidden = function(info) return LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "aggro" or LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "missing" end,
 						},
 						texture = {
 							name = L["Texture"],
 							desc = L["Show the spell texture instead of its type color."],
 							type = "toggle",
 							order = 6,
-							hidden = function(info) return LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "aggro" end,
+							hidden = function(info) return LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "aggro" or LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "missing" end,
 						},
 					},
 				},
@@ -2794,7 +2809,7 @@ function LunaUF:CreateConfig()
 							desc = L["What the indicator should display."],
 							type = "select",
 							order = 3,
-							values = { ["aggro"] = L["Aggro"], ["aura"] = L["Buff/Debuff"], ["ownaura"] = L["Own buff/debuff"], ["dispel"] = L["Dispel"] },
+							values = { ["aggro"] = L["Aggro"], ["aura"] = L["Buff/Debuff"], ["ownaura"] = L["Own buff/debuff"], ["dispel"] = L["Dispel"], ["missing"] = L["Missing Buff"] },
 							set = function(info, value) set(info,value) AceConfigRegistry:NotifyChange("LunaUnitFrames") end,
 						},
 						value = {
@@ -2803,20 +2818,21 @@ function LunaUF:CreateConfig()
 							type = "input",
 							order = 4,
 							hidden = function(info) return LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "aggro" or LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "dispel" end,
+							validate = validateMissingBuffInput,
 						},
 						timer = {
 							name = L["Timer"],
 							desc = string.format(L["Enable or disable the %s."],L["Timer"]),
 							type = "toggle",
 							order = 5,
-							hidden = function(info) return LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "aggro" end,
+							hidden = function(info) return LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "aggro" or LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "missing" end,
 						},
 						texture = {
 							name = L["Texture"],
 							desc = L["Show the spell texture instead of its type color."],
 							type = "toggle",
 							order = 6,
-							hidden = function(info) return LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "aggro" end,
+							hidden = function(info) return LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "aggro" or LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "missing" end,
 						},
 					},
 				},
@@ -2846,7 +2862,7 @@ function LunaUF:CreateConfig()
 							desc = L["What the indicator should display."],
 							type = "select",
 							order = 3,
-							values = { ["aggro"] = L["Aggro"], ["aura"] = L["Buff/Debuff"], ["ownaura"] = L["Own buff/debuff"], ["dispel"] = L["Dispel"] },
+							values = { ["aggro"] = L["Aggro"], ["aura"] = L["Buff/Debuff"], ["ownaura"] = L["Own buff/debuff"], ["dispel"] = L["Dispel"], ["missing"] = L["Missing Buff"] },
 							set = function(info, value) set(info,value) AceConfigRegistry:NotifyChange("LunaUnitFrames") end,
 						},
 						value = {
@@ -2855,20 +2871,21 @@ function LunaUF:CreateConfig()
 							type = "input",
 							order = 4,
 							hidden = function(info) return LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "aggro" or LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "dispel" end,
+							validate = validateMissingBuffInput,
 						},
 						timer = {
 							name = L["Timer"],
 							desc = string.format(L["Enable or disable the %s."],L["Timer"]),
 							type = "toggle",
 							order = 5,
-							hidden = function(info) return LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "aggro" end,
+							hidden = function(info) return LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "aggro" or LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "missing" end,
 						},
 						texture = {
 							name = L["Texture"],
 							desc = L["Show the spell texture instead of its type color."],
 							type = "toggle",
 							order = 6,
-							hidden = function(info) return LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "aggro" end,
+							hidden = function(info) return LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "aggro" or LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "missing" end,
 						},
 					},
 				},
@@ -2898,7 +2915,7 @@ function LunaUF:CreateConfig()
 							desc = L["What the indicator should display."],
 							type = "select",
 							order = 3,
-							values = { ["aggro"] = L["Aggro"], ["aura"] = L["Buff/Debuff"], ["ownaura"] = L["Own buff/debuff"], ["dispel"] = L["Dispel"] },
+							values = { ["aggro"] = L["Aggro"], ["aura"] = L["Buff/Debuff"], ["ownaura"] = L["Own buff/debuff"], ["dispel"] = L["Dispel"], ["missing"] = L["Missing Buff"] },
 							set = function(info, value) set(info,value) AceConfigRegistry:NotifyChange("LunaUnitFrames") end,
 						},
 						value = {
@@ -2907,20 +2924,21 @@ function LunaUF:CreateConfig()
 							type = "input",
 							order = 4,
 							hidden = function(info) return LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "aggro" or LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "dispel" end,
+							validate = validateMissingBuffInput,
 						},
 						timer = {
 							name = L["Timer"],
 							desc = string.format(L["Enable or disable the %s."],L["Timer"]),
 							type = "toggle",
 							order = 5,
-							hidden = function(info) return LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "aggro" end,
+							hidden = function(info) return LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "aggro" or LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "missing" end,
 						},
 						texture = {
 							name = L["Texture"],
 							desc = L["Show the spell texture instead of its type color."],
 							type = "toggle",
 							order = 6,
-							hidden = function(info) return LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "aggro" end,
+							hidden = function(info) return LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "aggro" or LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "missing" end,
 						},
 					},
 				},

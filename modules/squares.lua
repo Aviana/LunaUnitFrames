@@ -77,6 +77,37 @@ local function checkAura(unit, spells, playeronly)
 	end
 end
 
+local function checkMissingBuff(unit, spells)
+	local spells = {strsplit(";",spells)}
+	local found
+	for k,spell in ipairs(spells) do
+		if tonumber(spell) then
+			local i, spellID = 1, select(10,UnitAura(unit, 1))
+			while spellID do
+				if spellID == tonumber(spell) then
+					found = true
+				end
+				i = i + 1
+				spellID = select(10, UnitAura(unit, i))
+			end
+		elseif type(spell) == "string" then
+			local i, spellName = 1, UnitAura(unit, 1)
+			while spellName do
+				if spellName == spell then
+					found = true
+				end
+				i = i + 1
+				spellName = UnitAura(unit, i)
+			end
+		end
+		if found or spell == "" then
+			found = nil
+		else
+			return spell
+		end
+	end
+end
+
 local function checkDispel(unit)
 	if not UnitCanAssist("player", unit) then return end
 	local i, name, _, _, debuffType = 1, UnitDebuff(unit, 1)
@@ -234,6 +265,17 @@ function Squares:Update(frame)
 				end
 			else
 				square:Hide()
+			end
+		elseif config[pos].type == "missing" then
+			local spell = checkMissingBuff(frame.unit, config[pos].value)
+			if not spell then
+				square:Hide()
+			else
+				local icon = GetSpellTexture(spell)
+				square:Show()
+				square.texture:SetTexture(icon)
+				square.texture:SetVertexColor(1,1,1,1)
+				square.cd:Hide()
 			end
 		else
 			square:Hide()
