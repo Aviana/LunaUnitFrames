@@ -6169,7 +6169,7 @@ function LunaUF:CreateConfig()
 						type = "select",
 						order = 4,
 						hidden = function() return LunaUF.db.global.switchtype ~= "GROUP" end,
-						values = {["RAID40"]=L["Raid40"],["RAID20"]=L["Raid20"],["RAID5"]=L["Raid5"],["PARTY"]=L["Party"],["SOLO"]=L["Solo"],},
+						values = {["RAID40"]=L["Raid40"],["RAID20"]=L["Raid20"],["RAID15"]=L["Raid15"],["RAID10"]=L["Raid10"],["RAID5"]=L["Raid5"],["PARTY"]=L["Party"],["SOLO"]=L["Solo"],},
 						get = function(info) return groupselectvalue end,
 						set = function(info, value) groupselectvalue = value end,
 					},

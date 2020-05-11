@@ -335,6 +335,10 @@ function LunaUF:AutoswitchProfile(event)
 			end
 			if maxGrp == 1 then
 				groupType = "RAID5"
+			elseif maxGrp == 2 then
+				groupType = "RAID10"
+			elseif maxGrp == 3 then
+				groupType = "RAID15"
 			elseif maxGrp == 4 then
 				groupType = "RAID20"
 			else
