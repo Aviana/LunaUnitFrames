@@ -406,7 +406,13 @@ OnAttributeChanged = function(self, name, unit)
 		self:RegisterNormalEvent("UNIT_PET", Units, "CheckPetUnitUpdated")
 
 	elseif( self.unitType == "raidpet" ) then
-		self.unitRealOwner = "raid"..self.unitID
+		if self.unit == "pet" then
+			self.unitRealOwner = "player"
+		elseif strmatch(self.unit,"^party.*") then
+			self.unitRealOwner = "party"..self.unitID
+		else
+			self.unitRealOwner = "raid"..self.unitID
+		end
 		self:RegisterNormalEvent("UNIT_PET", Units, "CheckPetUnitUpdated")
 
 	-- Automatically do a full update on target change

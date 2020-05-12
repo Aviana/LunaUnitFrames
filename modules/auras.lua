@@ -233,12 +233,19 @@ end
 function Auras:UpdateFrames(frame)
 	local config = LunaUF.db.profile.units[frame.unitType].auras
 	local name, texture, count, auraType, duration, endTime, caster, spellID, main, off, _
-	local filter = "HELPFUL"..(config.filterbuffs == 2 and "|PLAYER" or config.filterbuffs == 3 and "|RAID" or "")
+	local filter = "HELPFUL"..(config.filterbuffs == 3 and "|RAID" or "")
+	local offset = 0
 	for i,button in ipairs(frame.auras.buffbuttons.buttons) do
 		button.cooldown.noCooldownCount = LunaUF.db.profile.omnicc
 		button.cooldown:SetHideCountdownNumbers(LunaUF.db.profile.blizzardcc)
-		if i < 33 then
-			name, texture, count, auraType, duration, endTime, caster, _, _, spellID = lCD:UnitAura(frame.unit, i, filter)
+		if (i+offset) < 33 then
+			name, texture, count, auraType, duration, endTime, caster, _, _, spellID = lCD:UnitAura(frame.unit, i+offset, filter)
+			if config.filterbuffs == 2 then
+				while (caster and not UnitIsUnit("player", caster)) do
+					offset = offset + 1
+					name, texture, count, auraType, duration, endTime, caster, _, _, spellID = lCD:UnitAura(frame.unit, i+offset, filter)
+				end
+			end
 			if caster and UnitIsUnit("player", caster) and config.emphasizeBuffs then
 				button.large = true
 			else
@@ -273,7 +280,7 @@ function Auras:UpdateFrames(frame)
 			else
 				button.stack:Hide()
 			end
-			button.auraID = i
+			button.auraID = i+offset
 			button.filter = "HELPFUL"
 			if config.bordercolor and magicColors[auraType] then
 				button.border:SetVertexColor(unpack(magicColors[auraType]))
