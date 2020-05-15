@@ -241,7 +241,7 @@ function Auras:UpdateFrames(frame)
 		if (i+offset) < 33 then
 			name, texture, count, auraType, duration, endTime, caster, _, _, spellID = lCD:UnitAura(frame.unit, i+offset, filter)
 			if config.filterbuffs == 2 then
-				while (caster and not UnitIsUnit("player", caster)) do
+				while ((caster and not UnitIsUnit("player", caster) or not caster) and (i + offset) <= 32) do
 					offset = offset + 1
 					name, texture, count, auraType, duration, endTime, caster, _, _, spellID = lCD:UnitAura(frame.unit, i+offset, filter)
 				end
