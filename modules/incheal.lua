@@ -4,14 +4,13 @@ local SML = LibStub:GetLibrary("LibSharedMedia-3.0")
 local HealComm = LibStub("LibHealComm-4.0", true)
 local frames = {}
 
-
-
 function IncHeal:OnEnable(frame)
 	frame.incHeal = frame.incHeal or CreateFrame("Frame", nil, frame)
+	frame.incHeal:SetFrameLevel(frame.topFrameLevel)
 	frames[frame] = true
 	frame.incHeal.bars = frame.incHeal.bars or {}
 	for i=1, 4 do
-		frame.incHeal.bars[i] = frame.incHeal.bars[i] or frame.incHeal:CreateTexture(nil, "OVERLAY")
+		frame.incHeal.bars[i] = frame.incHeal.bars[i] or frame.incHeal:CreateTexture(nil, "ARTWORK")
 		frame.incHeal.bars[i]:SetTexture("Interface\\Addons\\LunaUnitFrames\\media\\textures\\UI-Tooltip-Background")
 	end
 	frame:RegisterUnitEvent("UNIT_MAXHEALTH", self, "PositionBar")
