@@ -395,31 +395,45 @@ end
 function Auras:UpdateLayout(frame)
 	local config = LunaUF.db.profile.units[frame.unitType].auras
 	local debuffanchor = config.buffpos == config.debuffpos and frame.auras.buffbuttons or frame
+	local framelength = LunaUF.db.profile.units[frame.unitType].width - 8 --??? WTF is going on
+	local frameheight = 1
+	local buttonsize, lastButton, firstButton, rowlenght, buffoffset, debuffoffset
+	local rowheight = 0
+	if config.wrapbuffside == "LEFT" then
+		if config.wrapbuff > 1 then
+			buffoffset = -((config.wrapbuff - 1) * framelength)
+		else
+			buffoffset = framelength * (1 - config.wrapbuff)
+		end
+	end
+	if config.wrapdebuffside == "LEFT" then
+		if config.wrapdebuff > 1 then
+			debuffoffset = -((config.wrapdebuff - 1) * framelength)
+		else
+			debuffoffset = framelength * (1 - config.wrapdebuff)
+		end
+	end
 	frame.auras.buffbuttons:ClearAllPoints()
 	frame.auras.debuffbuttons:ClearAllPoints()
 	if config.buffpos == "BOTTOM" then
-		frame.auras.buffbuttons:SetPoint("TOP", frame, "BOTTOM", 0, -3)
+		frame.auras.buffbuttons:SetPoint("TOP", frame, "BOTTOM", 0 + (config.wrapbuffside == "LEFT" and buffoffset or 0), -3)
 	elseif config.buffpos == "TOP" then
-		frame.auras.buffbuttons:SetPoint("BOTTOM", frame, "TOP", 0, 3)
+		frame.auras.buffbuttons:SetPoint("BOTTOM", frame, "TOP", 0 + (config.wrapbuffside == "LEFT" and buffoffset or 0), 3)
 	elseif config.buffpos == "LEFT" then
 		frame.auras.buffbuttons:SetPoint("BOTTOMRIGHT", frame, "LEFT", -3, 1)
 	else
 		frame.auras.buffbuttons:SetPoint("BOTTOMLEFT", frame, "RIGHT", 3, 1)
 	end
 	if config.debuffpos == "BOTTOM" then
-		frame.auras.debuffbuttons:SetPoint("TOP", debuffanchor, "BOTTOM", 0, (config.buffs or config.weaponbuffs) and -3 or 0)
+		frame.auras.debuffbuttons:SetPoint("TOP", debuffanchor, "BOTTOM", 0 + (config.wrapdebuffside == "LEFT" and debuffoffset or 0), (config.buffs or config.weaponbuffs) and -3 or 0)
 	elseif config.debuffpos == "TOP" then
-		frame.auras.debuffbuttons:SetPoint("BOTTOM", debuffanchor, "TOP", 0, (config.buffs or config.weaponbuffs) and 3 or 0)
+		frame.auras.debuffbuttons:SetPoint("BOTTOM", debuffanchor, "TOP", 0 + (config.wrapdebuffside == "LEFT" and debuffoffset or 0), (config.buffs or config.weaponbuffs) and 3 or 0)
 	elseif config.debuffpos == "LEFT" then
 		frame.auras.debuffbuttons:SetPoint("TOPRIGHT", frame, "LEFT", -3, -1)
 	else
 		frame.auras.debuffbuttons:SetPoint("TOPLEFT", frame, "RIGHT", 3, -1)
 	end
 	
-	local framelength = LunaUF.db.profile.units[frame.unitType].width - 8 --??? WTF is going on
-	local frameheight = 1
-	local buttonsize, lastButton, firstButton, rowlenght
-	local rowheight = 0
 	if config.buffpos == "INFRAME" then
 		for i,button in ipairs(frame.auras.buffbuttons.buttons) do
 			if not button:IsVisible() then break end
@@ -488,7 +502,7 @@ function Auras:UpdateLayout(frame)
 				rowlenght = buttonsize
 				rowheight = buttonsize
 				firstButton = button
-			elseif (rowlenght + buttonsize + config.padding) > framelength then
+			elseif (rowlenght + buttonsize + config.padding) > (framelength * config.wrapbuff) then
 				rowlenght = buttonsize
 				button:SetPoint("TOPLEFT", firstButton, "TOPLEFT", 0, (-(config.padding)-rowheight))
 				firstButton = button
@@ -522,7 +536,7 @@ function Auras:UpdateLayout(frame)
 				rowlenght = buttonsize
 				rowheight = buttonsize
 				firstButton = button
-			elseif (rowlenght + buttonsize + config.padding) > framelength then
+			elseif (rowlenght + buttonsize + config.padding) > (framelength * config.wrapbuff) then
 				rowlenght = buttonsize
 				button:SetPoint("BOTTOMLEFT", firstButton, "BOTTOMLEFT", 0, (config.padding+rowheight))
 				firstButton = button
@@ -556,7 +570,7 @@ function Auras:UpdateLayout(frame)
 				rowlenght = buttonsize
 				rowheight = buttonsize
 				firstButton = button
-			elseif (rowlenght + buttonsize + config.padding) > framelength then
+			elseif (rowlenght + buttonsize + config.padding) > (framelength * config.wrapbuff) then
 				rowlenght = buttonsize
 				button:SetPoint("BOTTOMRIGHT", firstButton, "BOTTOMRIGHT", 0, (config.padding+rowheight))
 				firstButton = button
@@ -590,7 +604,7 @@ function Auras:UpdateLayout(frame)
 				rowlenght = buttonsize
 				rowheight = buttonsize
 				firstButton = button
-			elseif (rowlenght + buttonsize + config.padding) > framelength then
+			elseif (rowlenght + buttonsize + config.padding) > (framelength * config.wrapbuff) then
 				rowlenght = buttonsize
 				button:SetPoint("BOTTOMLEFT", firstButton, "BOTTOMLEFT", 0, (config.padding+rowheight))
 				firstButton = button
@@ -677,7 +691,7 @@ function Auras:UpdateLayout(frame)
 				rowlenght = buttonsize
 				rowheight = buttonsize
 				firstButton = button
-			elseif (rowlenght + buttonsize + config.padding) > framelength then
+			elseif (rowlenght + buttonsize + config.padding) > (framelength * config.wrapdebuff) then
 				rowlenght = buttonsize
 				button:SetPoint("TOPLEFT", firstButton, "TOPLEFT", 0, (-(config.padding)-rowheight))
 				firstButton = button
@@ -711,7 +725,7 @@ function Auras:UpdateLayout(frame)
 				rowlenght = buttonsize
 				rowheight = buttonsize
 				firstButton = button
-			elseif (rowlenght + buttonsize + config.padding) > framelength then
+			elseif (rowlenght + buttonsize + config.padding) > (framelength * config.wrapdebuff) then
 				rowlenght = buttonsize
 				button:SetPoint("BOTTOMLEFT", firstButton, "BOTTOMLEFT", 0, (config.padding+rowheight))
 				firstButton = button
@@ -745,7 +759,7 @@ function Auras:UpdateLayout(frame)
 				rowlenght = buttonsize
 				rowheight = buttonsize
 				firstButton = button
-			elseif (rowlenght + buttonsize + config.padding) > framelength then
+			elseif (rowlenght + buttonsize + config.padding) > (framelength * config.wrapdebuff) then
 				rowlenght = buttonsize
 				button:SetPoint("TOPRIGHT", firstButton, "TOPRIGHT", 0, (-(config.padding)-rowheight))
 				firstButton = button
@@ -779,7 +793,7 @@ function Auras:UpdateLayout(frame)
 				rowlenght = buttonsize
 				rowheight = buttonsize
 				firstButton = button
-			elseif (rowlenght + buttonsize + config.padding) > framelength then
+			elseif (rowlenght + buttonsize + config.padding) > (framelength * config.wrapdebuff) then
 				rowlenght = buttonsize
 				button:SetPoint("TOPLEFT", firstButton, "TOPLEFT", 0, (-(config.padding)-rowheight))
 				firstButton = button

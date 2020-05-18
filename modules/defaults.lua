@@ -106,6 +106,10 @@ function LunaUF:LoadDefaults()
 				emphasizeDebuffs = true,
 				timer = "all",
 				filterbuffs = 1,
+				wrapbuffside = "RIGHT",
+				wrapbuff = 1,
+				wrapdebuffside = "RIGHT",
+				wrapdebuff = 1,
 			},
 			tags = {
 				["top"] = {
@@ -289,6 +293,10 @@ function LunaUF:LoadDefaults()
 				emphasizeDebuffs = true,
 				timer = "all",
 				filterbuffs = 1,
+				wrapbuffside = "RIGHT",
+				wrapbuff = 1,
+				wrapdebuffside = "RIGHT",
+				wrapdebuff = 1,
 			},
 			tags = {
 				["top"] = {
@@ -433,6 +441,10 @@ function LunaUF:LoadDefaults()
 				emphasizeDebuffs = true,
 				timer = "all",
 				filterbuffs = 1,
+				wrapbuffside = "RIGHT",
+				wrapbuff = 1,
+				wrapdebuffside = "RIGHT",
+				wrapdebuff = 1,
 			},
 			tags = {
 				["top"] = {
@@ -581,6 +593,10 @@ function LunaUF:LoadDefaults()
 				emphasizeDebuffs = true,
 				timer = "all",
 				filterbuffs = 1,
+				wrapbuffside = "RIGHT",
+				wrapbuff = 1,
+				wrapdebuffside = "RIGHT",
+				wrapdebuff = 1,
 			},
 			tags = {
 				["top"] = {
@@ -732,6 +748,10 @@ function LunaUF:LoadDefaults()
 				emphasizeDebuffs = true,
 				timer = "all",
 				filterbuffs = 1,
+				wrapbuffside = "RIGHT",
+				wrapbuff = 1,
+				wrapdebuffside = "RIGHT",
+				wrapdebuff = 1,
 			},
 			tags = {
 				["top"] = {
@@ -883,6 +903,10 @@ function LunaUF:LoadDefaults()
 				emphasizeDebuffs = true,
 				timer = "all",
 				filterbuffs = 1,
+				wrapbuffside = "RIGHT",
+				wrapbuff = 1,
+				wrapdebuffside = "RIGHT",
+				wrapdebuff = 1,
 			},
 			tags = {
 				["top"] = {
@@ -1034,6 +1058,10 @@ function LunaUF:LoadDefaults()
 				emphasizeDebuffs = false,
 				timer = "all",
 				filterbuffs = 1,
+				wrapbuffside = "RIGHT",
+				wrapbuff = 1,
+				wrapdebuffside = "RIGHT",
+				wrapdebuff = 1,
 			},
 			tags = {
 				["top"] = {
@@ -1191,6 +1219,10 @@ function LunaUF:LoadDefaults()
 				emphasizeDebuffs = true,
 				timer = "all",
 				filterbuffs = 1,
+				wrapbuffside = "RIGHT",
+				wrapbuff = 1,
+				wrapdebuffside = "RIGHT",
+				wrapdebuff = 1,
 			},
 			tags = {
 				["top"] = {
@@ -1342,6 +1374,10 @@ function LunaUF:LoadDefaults()
 				emphasizeDebuffs = true,
 				timer = "all",
 				filterbuffs = 1,
+				wrapbuffside = "RIGHT",
+				wrapbuff = 1,
+				wrapdebuffside = "RIGHT",
+				wrapdebuff = 1,
 			},
 			tags = {
 				["top"] = {
@@ -1489,6 +1525,10 @@ function LunaUF:LoadDefaults()
 				emphasizeDebuffs = true,
 				timer = "all",
 				filterbuffs = 1,
+				wrapbuffside = "RIGHT",
+				wrapbuff = 1,
+				wrapdebuffside = "RIGHT",
+				wrapdebuff = 1,
 			},
 			tags = {
 				["top"] = {
@@ -1667,6 +1707,10 @@ function LunaUF:LoadDefaults()
 				emphasizeDebuffs = true,
 				timer = "all",
 				filterbuffs = 1,
+				wrapbuffside = "RIGHT",
+				wrapbuff = 1,
+				wrapdebuffside = "RIGHT",
+				wrapdebuff = 1,
 			},
 			tags = {
 				["top"] = {
@@ -1818,6 +1862,10 @@ function LunaUF:LoadDefaults()
 				emphasizeDebuffs = true,
 				timer = "all",
 				filterbuffs = 1,
+				wrapbuffside = "RIGHT",
+				wrapbuff = 1,
+				wrapdebuffside = "RIGHT",
+				wrapdebuff = 1,
 			},
 			tags = {
 				["top"] = {
@@ -1977,6 +2025,10 @@ function LunaUF:LoadDefaults()
 				emphasizeDebuffs = true,
 				timer = "all",
 				filterbuffs = 1,
+				wrapbuffside = "RIGHT",
+				wrapbuff = 1,
+				wrapdebuffside = "RIGHT",
+				wrapdebuff = 1,
 			},
 			tags = {
 				["top"] = {
@@ -2136,6 +2188,10 @@ function LunaUF:LoadDefaults()
 				emphasizeDebuffs = true,
 				timer = "all",
 				filterbuffs = 1,
+				wrapbuffside = "RIGHT",
+				wrapbuff = 1,
+				wrapdebuffside = "RIGHT",
+				wrapdebuff = 1,
 			},
 			tags = {
 				["top"] = {
@@ -2295,6 +2351,10 @@ function LunaUF:LoadDefaults()
 				emphasizeDebuffs = true,
 				timer = "all",
 				filterbuffs = 1,
+				wrapbuffside = "RIGHT",
+				wrapbuff = 1,
+				wrapdebuffside = "RIGHT",
+				wrapdebuff = 1,
 			},
 			tags = {
 				["top"] = {
@@ -2454,6 +2514,10 @@ function LunaUF:LoadDefaults()
 				emphasizeDebuffs = true,
 				timer = "all",
 				filterbuffs = 1,
+				wrapbuffside = "RIGHT",
+				wrapbuff = 1,
+				wrapdebuffside = "RIGHT",
+				wrapdebuff = 1,
 			},
 			tags = {
 				["top"] = {
@@ -2613,6 +2677,10 @@ function LunaUF:LoadDefaults()
 				emphasizeDebuffs = true,
 				timer = "all",
 				filterbuffs = 1,
+				wrapbuffside = "RIGHT",
+				wrapbuff = 1,
+				wrapdebuffside = "RIGHT",
+				wrapdebuff = 1,
 			},
 			tags = {
 				["top"] = {
