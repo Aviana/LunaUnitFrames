@@ -46,7 +46,7 @@ local function checkAura(unit, spells, playeronly)
 			end
 			i, casterunit,_,_,spellID = 1, select(7,UnitAura(unit, 1, "HARMFUL"))
 			while spellID do
-				if spellID == spell and (not playeronly or playeronly and casterunit and UnitIsUnit(casterunit,"player")) then
+				if spellID == tonumber(spell) and (not playeronly or playeronly and casterunit and UnitIsUnit(casterunit,"player")) then
 					return UnitAura(unit, i, "HARMFUL")
 				end
 				i = i + 1
