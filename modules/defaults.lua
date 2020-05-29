@@ -235,7 +235,7 @@ function LunaUF:LoadDefaults()
 			},
 			indicators = {
 				raidTarget = { enabled = true, anchorPoint = "CENTER", size = 20, x = 0, y = 0 },
-				elite = { enabled = false, side = "LEFT" },
+				elite = { enabled = false, side = "LEFT", type = "elite" },
 				class = { enabled = false, anchorPoint = "BOTTOMLEFT", size = 16, x = 1, y = 1 },
 				masterLoot = { enabled = true, anchorPoint = "TOPLEFT", size = 12, x = 16, y = -1 },
 				leader = { enabled = true, anchorPoint = "TOPLEFT", size = 14, x = 4, y = -1 },
@@ -391,7 +391,7 @@ function LunaUF:LoadDefaults()
 				},
 			},
 			indicators = {
-				elite = { enabled = false, side = "LEFT" },
+				elite = { enabled = false, side = "LEFT", type = "elite" },
 				happiness = {enabled = true, anchorPoint = "BOTTOMRIGHT", size = 14, x = 0, y = 0},
 				status = { enabled = true, anchorPoint = "BOTTOMLEFT", size = 16, x = 30, y = 1},
 			},
@@ -540,7 +540,7 @@ function LunaUF:LoadDefaults()
 			},
 			indicators = {
 				raidTarget = { enabled = true, anchorPoint = "CENTER", size = 20, x = 0, y = 0 },
-				elite = { enabled = false, anchorPoint = "RIGHT" },
+				elite = { enabled = false, side = "RIGHT" },
 				class = { enabled = false, anchorPoint = "BOTTOMRIGHT", size = 16, x = -1, y = 1 },
 				pvp = { enabled = true, anchorPoint = "RIGHT", size = 30, x = 5, y = -6 },
 				pvprank = { enabled = true, anchorPoint = "BOTTOMLEFT", size = 8, x = -46, y = 1 },
@@ -692,7 +692,7 @@ function LunaUF:LoadDefaults()
 			},
 			indicators = {
 				raidTarget = { enabled = true, anchorPoint = "CENTER", size = 20, x = 0, y = 0 },
-				elite = { enabled = false, anchorPoint = "RIGHT" },
+				elite = { enabled = false, side = "RIGHT" },
 				class = { enabled = false, anchorPoint = "BOTTOMRIGHT", size = 16, x = -1, y = 1 },
 				masterLoot = { enabled = true, anchorPoint = "TOPRIGHT", size = 12, x = -16, y = -1 },
 				leader = { enabled = true, anchorPoint = "TOPRIGHT", size = 14, x = -4, y = -1 },
@@ -847,7 +847,7 @@ function LunaUF:LoadDefaults()
 			},
 			indicators = {
 				raidTarget = { enabled = true, anchorPoint = "CENTER", size = 20, x = 0, y = 0 },
-				elite = { enabled = false, anchorPoint = "RIGHT" },
+				elite = { enabled = false, side = "RIGHT" },
 				class = { enabled = false, anchorPoint = "BOTTOMRIGHT", size = 16, x = -1, y = 1 },
 				masterLoot = { enabled = true, anchorPoint = "TOPRIGHT", size = 12, x = -16, y = -1 },
 				leader = { enabled = true, anchorPoint = "TOPRIGHT", size = 14, x = -4, y = -1 },
@@ -1002,7 +1002,7 @@ function LunaUF:LoadDefaults()
 			},
 			indicators = {
 				raidTarget = { enabled = true, anchorPoint = "CENTER", size = 20, x = 0, y = 0 },
-				elite = { enabled = false, anchorPoint = "RIGHT" },
+				elite = { enabled = false, side = "RIGHT" },
 				class = { enabled = false, anchorPoint = "BOTTOMRIGHT", size = 16, x = -1, y = 1 },
 				masterLoot = { enabled = true, anchorPoint = "TOPRIGHT", size = 12, x = -16, y = -1 },
 				leader = { enabled = true, anchorPoint = "TOPRIGHT", size = 14, x = -4, y = -1 },
@@ -2124,7 +2124,7 @@ function LunaUF:LoadDefaults()
 			},
 			indicators = {
 				raidTarget = { enabled = true, anchorPoint = "CENTER", size = 20, x = 0, y = 0 },
-				elite = { enabled = false, anchorPoint = "RIGHT" },
+				elite = { enabled = false, side = "RIGHT" },
 				class = { enabled = false, anchorPoint = "BOTTOMRIGHT", size = 16, x = -1, y = 1 },
 				masterLoot = { enabled = false, anchorPoint = "TOPRIGHT", size = 12, x = -16, y = -1 },
 				leader = { enabled = false, anchorPoint = "TOPRIGHT", size = 14, x = -4, y = -1 },
@@ -2287,7 +2287,7 @@ function LunaUF:LoadDefaults()
 			},
 			indicators = {
 				raidTarget = { enabled = true, anchorPoint = "CENTER", size = 20, x = 0, y = 0 },
-				elite = { enabled = false, anchorPoint = "RIGHT" },
+				elite = { enabled = false, side = "RIGHT" },
 				class = { enabled = false, anchorPoint = "BOTTOMRIGHT", size = 16, x = -1, y = 1 },
 				masterLoot = { enabled = false, anchorPoint = "TOPRIGHT", size = 12, x = -16, y = -1 },
 				leader = { enabled = false, anchorPoint = "TOPRIGHT", size = 14, x = -4, y = -1 },
@@ -2613,7 +2613,7 @@ function LunaUF:LoadDefaults()
 			},
 			indicators = {
 				raidTarget = { enabled = true, anchorPoint = "CENTER", size = 20, x = 0, y = 0 },
-				elite = { enabled = false, anchorPoint = "RIGHT" },
+				elite = { enabled = false, side = "RIGHT" },
 				class = { enabled = false, anchorPoint = "BOTTOMRIGHT", size = 16, x = -1, y = 1 },
 				masterLoot = { enabled = false, anchorPoint = "TOPRIGHT", size = 12, x = -16, y = -1 },
 				leader = { enabled = false, anchorPoint = "TOPRIGHT", size = 14, x = -4, y = -1 },
@@ -2776,7 +2776,7 @@ function LunaUF:LoadDefaults()
 			},
 			indicators = {
 				raidTarget = { enabled = true, anchorPoint = "CENTER", size = 20, x = 0, y = 0 },
-				elite = { enabled = false, anchorPoint = "RIGHT" },
+				elite = { enabled = false, side = "RIGHT" },
 				class = { enabled = false, anchorPoint = "BOTTOMRIGHT", size = 16, x = -1, y = 1 },
 				masterLoot = { enabled = false, anchorPoint = "TOPRIGHT", size = 12, x = -16, y = -1 },
 				leader = { enabled = false, anchorPoint = "TOPRIGHT", size = 14, x = -4, y = -1 },

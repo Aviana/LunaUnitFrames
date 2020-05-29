@@ -64,16 +64,17 @@ end
 function Indicators:UpdateElite(frame)
 	if( not frame.indicators.elite or not frame.indicators.elite.enabled ) then return end
 	local suffix = LunaUF.db.profile.units[frame.unitType].indicators.elite.side == "LEFT" and "" or "-right"
+	local thisUnit = UnitIsUnit("player",frame.unit) and "player" or UnitIsUnit("pet",frame.unit) and "pet"
 	
-	local classif = UnitClassification(frame.unit)
+	local classif = thisUnit and LunaUF.db.profile.units[thisUnit].indicators.elite.enabled and LunaUF.db.profile.units[thisUnit].indicators.elite.type or UnitClassification(frame.unit)
 	if( classif == "rare" ) then
 		frame.indicators.elite:SetTexture("Interface\\AddOns\\LunaUnitFrames\\media\\textures\\UI-DialogBox-Silver-Dragon"..suffix)
 		frame.indicators.elite:Show()
-	elseif classif == "normal" and not (UnitIsUnit("player", frame.unit) and LunaUF.db.profile.units.player.indicators.elite.enabled or UnitIsUnit("pet", frame.unit) and LunaUF.db.profile.units.pet.indicators.elite.enabled) then
-		frame.indicators.elite:Hide()
-	else
+	elseif( classif == "elite" ) then
 		frame.indicators.elite:SetTexture("Interface\\AddOns\\LunaUnitFrames\\media\\textures\\UI-DialogBox-Gold-Dragon"..suffix)
 		frame.indicators.elite:Show()
+	else
+		frame.indicators.elite:Hide()
 	end
 end
 

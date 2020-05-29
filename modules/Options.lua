@@ -2507,6 +2507,14 @@ function LunaUF:CreateConfig()
 							order = 2,
 							values = {["LEFT"] = L["Left"], ["RIGHT"] = L["Right"]},
 						},
+						type = {
+							name = L["Type"],
+							desc = L["Type"],
+							type = "select",
+							order = 3,
+							hidden = function(info) return (info[1] ~= "player" and info[1] ~= "pet") end,
+							values = {["elite"] = L["elite"], ["rare"] = L["rare"]},
+						},
 					},
 				},
 				role = {

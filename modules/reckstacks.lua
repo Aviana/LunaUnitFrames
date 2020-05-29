@@ -31,11 +31,11 @@ function ReckStacks:OnEnable(frame)
 			texture.background:SetShown(config.background)
 		end
 	end
-	
-
 
 	frame:RegisterNormalEvent("CHARACTER_POINTS_CHANGED", self, "CheckTalents")
 	frame:RegisterNormalEvent("SPELLS_CHANGED", self, "CheckTalents")
+	frame:RegisterNormalEvent("PLAYER_ENTERING_WORLD", self, "ResetStacks")
+	frame:RegisterNormalEvent("PLAYER_DEAD", self, "ResetStacks")
 
 	frame:RegisterUpdateFunc(self, "Update")
 	self:CheckTalents(frame)
@@ -84,7 +84,12 @@ function ReckStacks:OnLayoutWidgets(frame)
 	end
 end
 
-function ReckStacks:CheckTalents(frame)	
+function ReckStacks:ResetStacks(frame)
+	currStacks = 0
+	self:Update(frame)
+end
+
+function ReckStacks:CheckTalents(frame)
 	-- Crazy Check here :D
 	local reckoningRank = select(5, GetTalentInfo(2,13)) or 0
 	
