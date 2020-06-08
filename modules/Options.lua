@@ -3409,7 +3409,7 @@ function LunaUF:CreateConfig()
 						order = 10,
 						type = "select",
 						name = L["Aura border"],
-						values = {["none"] = L["None"], ["blizzard"] = "Blizzard", ["light"] = L["Light"], ["dark"] = L["Dark"], ["black"] = L["Black"]},
+						values = {["none"] = L["None"], ["blizzard"] = "Blizzard", ["light"] = L["Light"], ["dark"] = L["Dark"], ["black"] = L["Black"], ["light-thin"] = L["Light thin"], ["dark-thin"] = L["Dark thin"], ["black-thin"] = L["Black thin"]},
 						set = function(info, value) setGeneral(info, value) LunaUF.Layout:Reload() end,
 					},
 					inchealTime = {
