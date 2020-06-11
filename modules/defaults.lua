@@ -83,11 +83,13 @@ function LunaUF:LoadDefaults()
 			combatText = {enabled = false, size = 15},
 			squares = {
 				topleft = {enabled = false, type = "aggro", size = 10 },
+				top = {enabled = false, type = "aggro", size = 10 },
 				topright = {enabled = false, type = "aggro", size = 10 },
 				leftcenter = {enabled = false, type = "aggro", size = 15 },
 				center = {enabled = false, type = "aggro", size = 15 },
 				rightcenter = {enabled = false, type = "aggro", size = 15 },
 				bottomleft = {enabled = false, type = "aggro", size = 10 },
+				bottom = {enabled = false, type = "aggro", size = 10 },
 				bottomright = {enabled = false, type = "aggro", size = 10 },
 			},
 			auras = {
@@ -271,11 +273,13 @@ function LunaUF:LoadDefaults()
 			combatText = {enabled = false, size = 15},
 			squares = {
 				topleft = {enabled = false, type = "aggro", size = 10 },
+				top = {enabled = false, type = "aggro", size = 10 },
 				topright = {enabled = false, type = "aggro", size = 10 },
 				leftcenter = {enabled = false, type = "aggro", size = 15 },
 				center = {enabled = false, type = "aggro", size = 15 },
 				rightcenter = {enabled = false, type = "aggro", size = 15 },
 				bottomleft = {enabled = false, type = "aggro", size = 10 },
+				bottom = {enabled = false, type = "aggro", size = 10 },
 				bottomright = {enabled = false, type = "aggro", size = 10 },
 			},
 			auras = {
@@ -419,11 +423,13 @@ function LunaUF:LoadDefaults()
 			combatText = {enabled = false, size = 15},
 			squares = {
 				topleft = {enabled = false, type = "aggro", size = 10 },
+				top = {enabled = false, type = "aggro", size = 10 },
 				topright = {enabled = false, type = "aggro", size = 10 },
 				leftcenter = {enabled = false, type = "aggro", size = 15 },
 				center = {enabled = false, type = "aggro", size = 15 },
 				rightcenter = {enabled = false, type = "aggro", size = 15 },
 				bottomleft = {enabled = false, type = "aggro", size = 10 },
+				bottom = {enabled = false, type = "aggro", size = 10 },
 				bottomright = {enabled = false, type = "aggro", size = 10 },
 			},
 			auras = {
@@ -571,11 +577,13 @@ function LunaUF:LoadDefaults()
 			combatText = {enabled = false, size = 15},
 			squares = {
 				topleft = {enabled = false, type = "aggro", size = 10 },
+				top = {enabled = false, type = "aggro", size = 10 },
 				topright = {enabled = false, type = "aggro", size = 10 },
 				leftcenter = {enabled = false, type = "aggro", size = 15 },
 				center = {enabled = false, type = "aggro", size = 15 },
 				rightcenter = {enabled = false, type = "aggro", size = 15 },
 				bottomleft = {enabled = false, type = "aggro", size = 10 },
+				bottom = {enabled = false, type = "aggro", size = 10 },
 				bottomright = {enabled = false, type = "aggro", size = 10 },
 			},
 			auras = {
@@ -726,11 +734,13 @@ function LunaUF:LoadDefaults()
 			combatText = {enabled = false, size = 15},
 			squares = {
 				topleft = {enabled = false, type = "aggro", size = 10 },
+				top = {enabled = false, type = "aggro", size = 10 },
 				topright = {enabled = false, type = "aggro", size = 10 },
 				leftcenter = {enabled = false, type = "aggro", size = 15 },
 				center = {enabled = false, type = "aggro", size = 15 },
 				rightcenter = {enabled = false, type = "aggro", size = 15 },
 				bottomleft = {enabled = false, type = "aggro", size = 10 },
+				bottom = {enabled = false, type = "aggro", size = 10 },
 				bottomright = {enabled = false, type = "aggro", size = 10 },
 			},
 			auras = {
@@ -881,11 +891,13 @@ function LunaUF:LoadDefaults()
 			combatText = {enabled = false, size = 15},
 			squares = {
 				topleft = {enabled = false, type = "aggro", size = 10 },
+				top = {enabled = false, type = "aggro", size = 10 },
 				topright = {enabled = false, type = "aggro", size = 10 },
 				leftcenter = {enabled = false, type = "aggro", size = 15 },
 				center = {enabled = false, type = "aggro", size = 15 },
 				rightcenter = {enabled = false, type = "aggro", size = 15 },
 				bottomleft = {enabled = false, type = "aggro", size = 10 },
+				bottom = {enabled = false, type = "aggro", size = 10 },
 				bottomright = {enabled = false, type = "aggro", size = 10 },
 			},
 			auras = {
@@ -1036,11 +1048,13 @@ function LunaUF:LoadDefaults()
 			combatText = {enabled = false, size = 15},
 			squares = {
 				topleft = {enabled = false, type = "aggro", size = 10 },
+				top = {enabled = false, type = "aggro", size = 10 },
 				topright = {enabled = false, type = "aggro", size = 10 },
 				leftcenter = {enabled = false, type = "aggro", size = 15 },
 				center = {enabled = false, type = "aggro", size = 15 },
 				rightcenter = {enabled = false, type = "aggro", size = 15 },
 				bottomleft = {enabled = false, type = "aggro", size = 10 },
+				bottom = {enabled = false, type = "aggro", size = 10 },
 				bottomright = {enabled = false, type = "aggro", size = 10 },
 			},
 			auras = {
@@ -1197,11 +1211,13 @@ function LunaUF:LoadDefaults()
 			combatText = {enabled = false, size = 15},
 			squares = {
 				topleft = {enabled = false, type = "aggro", size = 10 },
+				top = {enabled = false, type = "aggro", size = 10 },
 				topright = {enabled = false, type = "aggro", size = 10 },
 				leftcenter = {enabled = false, type = "aggro", size = 15 },
 				center = {enabled = false, type = "aggro", size = 15 },
 				rightcenter = {enabled = false, type = "aggro", size = 15 },
 				bottomleft = {enabled = false, type = "aggro", size = 10 },
+				bottom = {enabled = false, type = "aggro", size = 10 },
 				bottomright = {enabled = false, type = "aggro", size = 10 },
 			},
 			auras = {
@@ -1352,11 +1368,13 @@ function LunaUF:LoadDefaults()
 			combatText = {enabled = false, size = 15},
 			squares = {
 				topleft = {enabled = false, type = "aggro", size = 10 },
+				top = {enabled = false, type = "aggro", size = 10 },
 				topright = {enabled = false, type = "aggro", size = 10 },
 				leftcenter = {enabled = false, type = "aggro", size = 15 },
 				center = {enabled = false, type = "aggro", size = 15 },
 				rightcenter = {enabled = false, type = "aggro", size = 15 },
 				bottomleft = {enabled = false, type = "aggro", size = 10 },
+				bottom = {enabled = false, type = "aggro", size = 10 },
 				bottomright = {enabled = false, type = "aggro", size = 10 },
 			},
 			auras = {
@@ -1503,11 +1521,13 @@ function LunaUF:LoadDefaults()
 			combatText = {enabled = false, size = 15},
 			squares = {
 				topleft = {enabled = false, type = "aggro", size = 10 },
+				top = {enabled = false, type = "aggro", size = 10 },
 				topright = {enabled = false, type = "aggro", size = 10 },
 				leftcenter = {enabled = false, type = "aggro", size = 15 },
 				center = {enabled = false, type = "aggro", size = 15 },
 				rightcenter = {enabled = false, type = "aggro", size = 15 },
 				bottomleft = {enabled = false, type = "aggro", size = 10 },
+				bottom = {enabled = false, type = "aggro", size = 10 },
 				bottomright = {enabled = false, type = "aggro", size = 10 },
 			},
 			auras = {
@@ -1685,11 +1705,13 @@ function LunaUF:LoadDefaults()
 			combatText = {enabled = false, size = 15},
 			squares = {
 				topleft = {enabled = false, type = "aggro", size = 10 },
+				top = {enabled = false, type = "aggro", size = 10 },
 				topright = {enabled = false, type = "aggro", size = 10 },
 				leftcenter = {enabled = false, type = "aggro", size = 15 },
 				center = {enabled = false, type = "aggro", size = 15 },
 				rightcenter = {enabled = false, type = "aggro", size = 15 },
 				bottomleft = {enabled = false, type = "aggro", size = 10 },
+				bottom = {enabled = false, type = "aggro", size = 10 },
 				bottomright = {enabled = false, type = "aggro", size = 10 },
 			},
 			auras = {
@@ -1840,11 +1862,13 @@ function LunaUF:LoadDefaults()
 			combatText = {enabled = false, size = 15},
 			squares = {
 				topleft = {enabled = false, type = "aggro", size = 10 },
+				top = {enabled = false, type = "aggro", size = 10 },
 				topright = {enabled = false, type = "aggro", size = 10 },
 				leftcenter = {enabled = false, type = "aggro", size = 15 },
 				center = {enabled = false, type = "aggro", size = 15 },
 				rightcenter = {enabled = false, type = "aggro", size = 15 },
 				bottomleft = {enabled = false, type = "aggro", size = 10 },
+				bottom = {enabled = false, type = "aggro", size = 10 },
 				bottomright = {enabled = false, type = "aggro", size = 10 },
 			},
 			auras = {
@@ -2003,11 +2027,13 @@ function LunaUF:LoadDefaults()
 			combatText = {enabled = false, size = 15},
 			squares = {
 				topleft = {enabled = false, type = "aggro", size = 10 },
+				top = {enabled = false, type = "aggro", size = 10 },
 				topright = {enabled = false, type = "aggro", size = 10 },
 				leftcenter = {enabled = false, type = "aggro", size = 15 },
 				center = {enabled = false, type = "aggro", size = 15 },
 				rightcenter = {enabled = false, type = "aggro", size = 15 },
 				bottomleft = {enabled = false, type = "aggro", size = 10 },
+				bottom = {enabled = false, type = "aggro", size = 10 },
 				bottomright = {enabled = false, type = "aggro", size = 10 },
 			},
 			auras = {
@@ -2166,11 +2192,13 @@ function LunaUF:LoadDefaults()
 			combatText = {enabled = false, size = 15},
 			squares = {
 				topleft = {enabled = false, type = "aggro", size = 10 },
+				top = {enabled = false, type = "aggro", size = 10 },
 				topright = {enabled = false, type = "aggro", size = 10 },
 				leftcenter = {enabled = false, type = "aggro", size = 15 },
 				center = {enabled = false, type = "aggro", size = 15 },
 				rightcenter = {enabled = false, type = "aggro", size = 15 },
 				bottomleft = {enabled = false, type = "aggro", size = 10 },
+				bottom = {enabled = false, type = "aggro", size = 10 },
 				bottomright = {enabled = false, type = "aggro", size = 10 },
 			},
 			auras = {
@@ -2329,11 +2357,13 @@ function LunaUF:LoadDefaults()
 			combatText = {enabled = false, size = 15},
 			squares = {
 				topleft = {enabled = false, type = "aggro", size = 10 },
+				top = {enabled = false, type = "aggro", size = 10 },
 				topright = {enabled = false, type = "aggro", size = 10 },
 				leftcenter = {enabled = false, type = "aggro", size = 15 },
 				center = {enabled = false, type = "aggro", size = 15 },
 				rightcenter = {enabled = false, type = "aggro", size = 15 },
 				bottomleft = {enabled = false, type = "aggro", size = 10 },
+				bottom = {enabled = false, type = "aggro", size = 10 },
 				bottomright = {enabled = false, type = "aggro", size = 10 },
 			},
 			auras = {
@@ -2492,11 +2522,13 @@ function LunaUF:LoadDefaults()
 			combatText = {enabled = false, size = 15},
 			squares = {
 				topleft = {enabled = false, type = "aggro", size = 10 },
+				top = {enabled = false, type = "aggro", size = 10 },
 				topright = {enabled = false, type = "aggro", size = 10 },
 				leftcenter = {enabled = false, type = "aggro", size = 15 },
 				center = {enabled = false, type = "aggro", size = 15 },
 				rightcenter = {enabled = false, type = "aggro", size = 15 },
 				bottomleft = {enabled = false, type = "aggro", size = 10 },
+				bottom = {enabled = false, type = "aggro", size = 10 },
 				bottomright = {enabled = false, type = "aggro", size = 10 },
 			},
 			auras = {
@@ -2655,11 +2687,13 @@ function LunaUF:LoadDefaults()
 			combatText = {enabled = false, size = 15},
 			squares = {
 				topleft = {enabled = false, type = "aggro", size = 10 },
+				top = {enabled = false, type = "aggro", size = 10 },
 				topright = {enabled = false, type = "aggro", size = 10 },
 				leftcenter = {enabled = false, type = "aggro", size = 15 },
 				center = {enabled = false, type = "aggro", size = 15 },
 				rightcenter = {enabled = false, type = "aggro", size = 15 },
 				bottomleft = {enabled = false, type = "aggro", size = 10 },
+				bottom = {enabled = false, type = "aggro", size = 10 },
 				bottomright = {enabled = false, type = "aggro", size = 10 },
 			},
 			auras = {

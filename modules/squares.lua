@@ -14,11 +14,13 @@ local backdrop = {
 }
 local positions = {
 	topright = "TOPRIGHT",
+	top = "TOP",
 	topleft = "TOPLEFT",
 	leftcenter = "LEFTCENTER",
 	center = "CENTER",
 	rightcenter = "RIGHTCENTER",
 	bottomright = "BOTTOMRIGHT",
+	bottom = "BOTTOM",
 	bottomleft = "BOTTOMLEFT",
 }
 local indicator = "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\indicator"
@@ -145,11 +147,13 @@ function Squares:OnEnable(frame)
 			frame.squares.square[k].cd:Hide()
 		end
 		frame.squares.square["topright"]:SetPoint("TOPRIGHT", frame.squares, "TOPRIGHT", -1, -1)
+		frame.squares.square["top"]:SetPoint("TOP", frame.squares, "TOP", 0, -1)
 		frame.squares.square["topleft"]:SetPoint("TOPLEFT", frame.squares, "TOPLEFT", 1, -1)
 		frame.squares.square["leftcenter"]:SetPoint("RIGHT", frame.squares.square["center"], "LEFT", 0, 0)
 		frame.squares.square["center"]:SetPoint("CENTER", frame.squares, "CENTER", 0, 0)
 		frame.squares.square["rightcenter"]:SetPoint("LEFT", frame.squares.square["center"], "RIGHT", 0, 0)
 		frame.squares.square["bottomright"]:SetPoint("BOTTOMRIGHT", frame.squares, "BOTTOMRIGHT", -1, 1)
+		frame.squares.square["bottom"]:SetPoint("BOTTOM", frame.squares, "BOTTOM", 0, 1)
 		frame.squares.square["bottomleft"]:SetPoint("BOTTOMLEFT", frame.squares, "BOTTOMLEFT", 1, 1)
 	end
 	
