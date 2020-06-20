@@ -198,35 +198,36 @@ function IncHeal:PositionBar(frame)
 	end
 	-- Hide left over bars
 	for i=currBar, 4 do
-		bars[currBar]:Hide()
+		bars[i]:Hide()
 	end
 end
 
 function IncHeal:Update(frame)
 	local timeframe, flags = GetTime() + LunaUF.db.profile.inchealTime, LunaUF.db.profile.disablehots and HealComm.CASTED_HEALS or HealComm.ALL_HEALS
+	local healValues = frame.healValues
 	
-	frame.healValues.mod = HealComm:GetHealModifier(frame.unitGUID) or 1
-	frame.healValues.totalHeal = HealComm:GetHealAmount(frame.unitGUID, flags, timeframe) or 0
-	frame.healValues.preHeal = 0
-	frame.healValues.ownHeal = HealComm:GetHealAmount(frame.unitGUID, HealComm.DIRECT_HEALS, timeframe, UnitGUID("player")) or 0
+	healValues.mod = HealComm:GetHealModifier(frame.unitGUID) or 1
+	healValues.totalHeal = HealComm:GetHealAmount(frame.unitGUID, flags, timeframe) or 0
+	healValues.preHeal = 0
+	healValues.ownHeal = HealComm:GetHealAmount(frame.unitGUID, HealComm.DIRECT_HEALS, timeframe, UnitGUID("player")) or 0
 	if LunaUF.db.profile.disablehots then
-		frame.healValues.Hots = 0
+		healValues.Hots = 0
 	else
-		frame.healValues.Hots = HealComm:GetHealAmount(frame.unitGUID, bit.bor(HealComm.HOT_HEALS, HealComm.CHANNEL_HEALS), timeframe) or 0
+		healValues.Hots = HealComm:GetHealAmount(frame.unitGUID, bit.bor(HealComm.HOT_HEALS, HealComm.CHANNEL_HEALS), timeframe) or 0
 	end
-	frame.healValues.numHeals = HealComm:GetNumHeals(frame.unitGUID)
+	healValues.numHeals = HealComm:GetNumHeals(frame.unitGUID)
 	
 	-- We can only scout up to 2 direct heals that would land before ours but thats good enough for most cases
 	local healTime, healFrom, healAmount = HealComm:GetNextHealAmount(frame.unitGUID, HealComm.CASTED_HEALS, timeframe)
-	if healFrom and healFrom ~= UnitGUID("player") and frame.healValues.ownHeal > 0 then
-		frame.healValues.preHeal = healAmount
+	if healFrom and healFrom ~= UnitGUID("player") and healValues.ownHeal > 0 then
+		healValues.preHeal = healAmount
 		healTime, healFrom, healAmount = HealComm:GetNextHealAmount(frame.unitGUID, HealComm.CASTED_HEALS, timeframe, healFrom)
 		if healFrom and healFrom ~= UnitGUID("player") then
-			frame.healValues.preHeal = frame.healValues.preHeal + healAmount
+			healValues.preHeal = healValues.preHeal + healAmount
 		end
 	end
 	
-	frame.healValues.afterHeal = frame.healValues.totalHeal - frame.healValues.Hots - frame.healValues.ownHeal - frame.healValues.preHeal
+	healValues.afterHeal = healValues.totalHeal - healValues.Hots - healValues.ownHeal - healValues.preHeal
 	
 	if( not frame.visibility.incHeal or not frame.visibility.healthBar ) then return end
 	self:PositionBar(frame)
