@@ -3834,6 +3834,23 @@ function LunaUF:CreateConfig()
 						hasAlpha = true,
 						set = setBGColor,
 					},
+					headerHighlight = {
+						name = L["Highlight"],
+						type = "header",
+						order = 42,
+					},
+					mouseover = {
+						name = L["Mouseover"],
+						type = "color",
+						order = 43,
+						width = "half",
+					},
+					target = {
+						name = L["target"],
+						type = "color",
+						order = 44,
+						width = "half",
+					},
 				},
 			},
 			player = {

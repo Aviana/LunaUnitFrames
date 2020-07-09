@@ -233,6 +233,7 @@ local L = {
   ["Highlight the frames borders when the unit has aggro"] = "유닛이 어그로를 끌면 프레임 테두리를 강조합니다.",
   ["Highlight the frames borders when the unit has a debuff you or someone can remove"] = "유닛에 디버프를 당신 또는 누군가 제거할 수 있으면 프레임 테두리를 강조합니다.",
   ["Highlight"] = "강조",
+  ["Mouseover"] = "Mouseover",
   ["On target"] = "선택 대상",
   ["Highlight the frame when the unit is targeted"] = "유닛이 선택되면 프레임을 강조합니다.",
   ["On mouseover"] = "마우스오버",

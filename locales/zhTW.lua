@@ -231,6 +231,7 @@ local L = {
     ["Highlight the frames borders when the unit has aggro"] = "單位獲得仇恨時高亮邊框",
     ["Highlight the frames borders when the unit has a debuff you or someone can remove"] = "Highlight the frames borders when the unit has a debuff you or someone can remove",
     ["Highlight"] = "高亮",
+    ["Mouseover"] = "Mouseover",
     ["On target"] = "目標",
     ["Highlight the frame when the unit is targeted"] = "選中目標時高亮框架",
     ["On mouseover"] = "滑鼠指向",

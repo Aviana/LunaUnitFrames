@@ -231,6 +231,7 @@ local L = {
 ["Highlight the frames borders when the unit has aggro"] = "Highlight the frames borders when the unit has aggro",
 ["Highlight the frames borders when the unit has a debuff you or someone can remove"] = "Highlight the frames borders when the unit has a debuff you or someone can remove",
 ["Highlight"] = "Highlight",
+["Mouseover"] = "Mouseover",
 ["On target"] = "On target",
 ["Highlight the frame when the unit is targeted"] = "Highlight the frame when the unit is targeted",
 ["On mouseover"] = "On mouseover",

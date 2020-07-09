@@ -1,5 +1,4 @@
 local Highlight = {}
-local goldColor, mouseColor = {r = 0.75, g = 0.75, b = 0.35}, {r = 0.75, g = 0.75, b = 0.50}
 
 local canCure = LunaUF.Units.canCure
 LunaUF:RegisterModule(Highlight, "highlight", LunaUF.L["Highlight"])
@@ -78,9 +77,9 @@ function Highlight:Update(frame)
 	elseif( frame.highlight.hasThreat ) then
 		color = LunaUF.db.profile.colors.hostile
 	elseif( frame.highlight.hasAttention ) then
-		color = goldColor
+		color = LunaUF.db.profile.colors.target
 	elseif( frame.highlight.hasMouseover ) then
-		color = mouseColor
+		color = LunaUF.db.profile.colors.mouseover
 	end
 
 	if( color ) then

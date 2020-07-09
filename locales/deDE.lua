@@ -234,6 +234,7 @@ local L = {
 ["Highlight the frames borders when the unit has aggro"] = "F\195\164rbe die Fensterr\195\164nder wenn die Einheit unter Bedrohung steht",
 ["Highlight the frames borders when the unit has a debuff you or someone can remove"] = "F\195\164rbe die Fensterr\195\164nder wenn die Einheit einen Schw\195\164chungszauber hat, den du oder irgendjemand entfernen kann.",
 ["Highlight"] = "Hervorheben",
+["Mouseover"] = "Maus drauf",
 ["On target"] = "Bei Ziel",
 ["Highlight the frame when the unit is targeted"] = "Hebe das Fenster hervor wenn die Einheit das Ziel ist",
 ["On mouseover"] = "Bei Maus",

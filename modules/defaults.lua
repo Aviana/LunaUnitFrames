@@ -63,6 +63,9 @@ function LunaUF:LoadDefaults()
 		normal = {r = 0.58, g = 0.0, b = 0.55},
 		rested = {r = 0.0, g = 0.39, b = 0.88},
 		background = {r = 0, g = 0, b = 0, a = 0.80},
+		--Highlight
+		target = {r = 0.75, g = 0.75, b = 0.35},
+		mouseover = {r = 0.75, g = 0.75, b = 0.50},
 	}
 	self.defaults.profile.units = {
 		player = {
