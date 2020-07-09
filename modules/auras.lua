@@ -37,7 +37,7 @@ local function showTooltip(self)
 		GameTooltip:SetUnitAura(self.unit, self.auraID, self.filter)
 		self:SetScript("OnUpdate", updateTooltip)
 	end
-	if not GameTooltip:IsVisible() then
+	if not GameTooltip:IsVisible() and self.spellID then
 		GameTooltip:SetSpellByID(self.spellID)
 	end
 end
