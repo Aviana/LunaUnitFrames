@@ -289,6 +289,9 @@ function LunaUF:CreateConfig()
 			LunaUF.Units:ReloadHeader("partytarget")
 			LunaUF.Units:ReloadHeader("partypet")
 		end
+		if unit == "raid" then
+			LunaUF.Units:ReloadHeader("raidpet")
+		end
 	end
 
 	local function getHideRaid(info)
@@ -5443,7 +5446,7 @@ function LunaUF:CreateConfig()
 						disabled = Lockdown,
 						set = function(info, value) set(info,value) LunaUF.Units:ReloadHeader("raidpet") end,
 					},
-					attribPoint = {
+					attribAnchorPoint = {
 						name = L["Column Growth direction"],
 						desc = L["Where a new column is started"],
 						type = "select",
