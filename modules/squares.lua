@@ -4,7 +4,6 @@ LunaUF:RegisterModule(Squares, "squares", LunaUF.L["Squares"])
 
 local lCD = LibStub("LibClassicDurations")
 
-local vex = LibStub("LibVexation-1.0", true)
 local canCure = LunaUF.Units.canCure
 local backdrop = {
 	bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
@@ -24,15 +23,6 @@ local positions = {
 	bottomleft = "BOTTOMLEFT",
 }
 local indicator = "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\indicator"
-
-local function SquaresCallback(aggro, GUID, ...)
-	for _,frame in pairs(LunaUF.Units.unitFrames) do
-		if frame.unitGUID and frame.unitGUID == GUID then
-			Squares:Update(frame)
-		end
-	end
-end
-vex:RegisterCallback(SquaresCallback)
 
 local function checkAura(unit, spells, playeronly)
 	local spells = {strsplit(";",spells)}
@@ -158,6 +148,7 @@ function Squares:OnEnable(frame)
 	end
 	
 	frame:RegisterUnitEvent("UNIT_AURA", self, "Update")
+	frame:RegisterUnitEvent("UNIT_THREAT_SITUATION_UPDATE", self, "Update")
 	frame:RegisterUpdateFunc(self, "Update")
 	
 end
@@ -176,7 +167,7 @@ end
 
 function Squares:Update(frame)
 	if not frame.squares then return end
-	local aggro = vex:GetUnitAggroByUnitGUID(frame.unitGUID)
+	local aggro = (UnitThreatSituation(frame.unit) or 0) > 1
 	local config = LunaUF.db.profile.units[frame.unitType].squares
 	for pos, square in pairs(frame.squares.square) do
 		if not config[pos].enabled then

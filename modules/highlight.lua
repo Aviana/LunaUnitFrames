@@ -4,17 +4,6 @@ local goldColor, mouseColor = {r = 0.75, g = 0.75, b = 0.35}, {r = 0.75, g = 0.7
 local canCure = LunaUF.Units.canCure
 LunaUF:RegisterModule(Highlight, "highlight", LunaUF.L["Highlight"])
 
-local vex = LibStub("LibVexation-1.0", true)
-
-local function HighlightCallback(aggro, GUID, ...)
-	for _,frame in pairs(LunaUF.Units.unitFrames) do
-		if frame.unitGUID and frame.unitGUID == GUID then
-			Highlight:UpdateThreat(frame)
-		end
-	end
-end
-vex:RegisterCallback(HighlightCallback)
-
 local function OnEnter(frame)
 	if( LunaUF.db.profile.units[frame.unitType].highlight.mouseover ) then
 		frame.highlight.hasMouseover = true
@@ -44,6 +33,7 @@ function Highlight:OnEnable(frame)
 		frame.highlight:Hide()
 	end
 	
+	frame:RegisterUnitEvent("UNIT_THREAT_SITUATION_UPDATE", self, "UpdateThreat")
 	frame:RegisterUpdateFunc(self, "UpdateThreat")
 	
 	if( frame.unitType ~= "target" ) then
@@ -102,7 +92,7 @@ function Highlight:Update(frame)
 end
 
 function Highlight:UpdateThreat(frame)
-	frame.highlight.hasThreat = LunaUF.db.profile.units[frame.unitType].highlight.aggro and vex:GetUnitAggroByUnitGUID(frame.unitGUID)
+	frame.highlight.hasThreat = LunaUF.db.profile.units[frame.unitType].highlight.aggro and (UnitThreatSituation(frame.unit) or 0) > 1
 	self:Update(frame)
 end
 

@@ -17,7 +17,6 @@ libs\AceDBOptions-3.0\AceDBOptions-3.0.xml
 libs\AceGUI-3.0\AceGUI-3.0.xml
 libs\AceGUI-3.0-SharedMediaWidgets\widget.xml
 libs\AceConfig-3.0\AceConfig-3.0.xml
-libs\LibVexation-1.0\lib.xml
 libs\LibClassicDurations\LibClassicDurations.xml
 libs\LibHealComm-4.0\LibHealComm-4.0.xml
 libs\LibClassicCasterino\LibClassicCasterino.lua

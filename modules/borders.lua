@@ -5,17 +5,6 @@ local rareColor, eliteColor = {r = 0, g = 0.63, b = 1}, {r = 1, g = 0.81, b = 0}
 local canCure = LunaUF.Units.canCure
 LunaUF:RegisterModule(Borders, "borders", LunaUF.L["Borders"])
 
-local vex = LibStub("LibVexation-1.0", true)
-
-local function BordersCallback(aggro, GUID, ...)
-	for _,frame in pairs(LunaUF.Units.unitFrames) do
-		if frame.unitGUID and frame.unitGUID == GUID then
-			Borders:UpdateThreat(frame)
-		end
-	end
-end
-vex:RegisterCallback(BordersCallback)
-
 local function OnEnter(frame)
 	if( LunaUF.db.profile.units[frame.unitType].borders.mouseover ) then
 		frame.borders.hasMouseover = true
@@ -80,7 +69,7 @@ function Borders:OnEnable(frame)
 	frame.borders.left:SetWidth(10)
 	frame.borders.right:SetWidth(10)
 	
-	
+	frame:RegisterUnitEvent("UNIT_THREAT_SITUATION_UPDATE", self, "UpdateThreat")
 	frame:RegisterUpdateFunc(self, "UpdateThreat")
 	
 	if( frame.unitType ~= "target" ) then
@@ -147,7 +136,7 @@ function Borders:Update(frame)
 end
 
 function Borders:UpdateThreat(frame)
-	frame.borders.hasThreat = LunaUF.db.profile.units[frame.unitType].borders.aggro and vex:GetUnitAggroByUnitGUID(frame.unitGUID)
+	frame.borders.hasThreat = LunaUF.db.profile.units[frame.unitType].borders.aggro and (UnitThreatSituation(frame.unit) or 0) > 1
 	self:Update(frame)
 end
 
