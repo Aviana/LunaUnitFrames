@@ -233,29 +233,13 @@ function IncHeal:Update(frame)
 	self:PositionBar(frame)
 end
 
-function IncHeal:UpdateMod(frame)
-	frame.healValues.mod = HealComm:GetHealModifier(frame.unitGUID) or 1
-	
-	if( not frame.visibility.incHeal or not frame.visibility.healthBar ) then return end
-	self:PositionBar(frame)
-end
-
 function IncHeal:UpdateIncoming(...)
 	for frame in pairs(frames) do
 		for i=1, select("#", ...) do
-			if( select(i, ...) == frame.unitGUID ) and (UnitPlayerOrPetInParty(frame.unit) or UnitPlayerOrPetInRaid(frame.unit) or UnitIsUnit("player",frame.unit) or UnitIsUnit("pet",frame.unit)) then
+			if select(i, ...) == frame.unitGUID then
 				self:Update(frame)
 				break
 			end
-		end
-	end
-end
-
-function IncHeal:UpdateModifier(guid)
-	for frame in pairs(frames) do
-		if( guid == frame.unitGUID ) and (UnitPlayerOrPetInParty(frame.unit) or UnitPlayerOrPetInRaid(frame.unit) or UnitIsUnit("player",frame.unit) or UnitIsUnit("pet",frame.unit)) then
-			self:UpdateMod(frame)
-			break
 		end
 	end
 end

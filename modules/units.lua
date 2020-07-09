@@ -335,14 +335,6 @@ function Units:CheckUnitStatus(frame)
 	end
 end
 
--- The argument from UNIT_PET is the pets owner, so the player summoning a new pet gets "player", party1 summoning a new pet gets "party1" and so on
-function Units:CheckPetUnitUpdated(frame, event, unit)
-	if( unit == frame.unitRealOwner and UnitExists(frame.unit) ) then
-		frame.unitGUID = UnitGUID(frame.unit)
-		frame:FullUpdate()
-	end
-end
-
 function Units:CheckGroupedUnitStatus(frame)
 	frame.unitGUID = UnitGUID(frame.unit)
 	frame:FullUpdate()
@@ -402,18 +394,10 @@ OnAttributeChanged = function(self, name, unit)
 
 	-- Pet changed, going from pet -> vehicle for one
 	if( self.unitType == "pet" or self.unitType == "partypet" ) then
-		self.unitRealOwner = self.unit == "pet" and "player" or self.unitID and ("party"..self.unitID)
-		self:RegisterNormalEvent("UNIT_PET", Units, "CheckPetUnitUpdated")
+		self:RegisterNormalEvent("UNIT_PET", Units, "CheckUnitStatus")
 
 	elseif( self.unitType == "raidpet" ) then
-		if self.unit == "pet" then
-			self.unitRealOwner = "player"
-		elseif strmatch(self.unit,"^party.*") then
-			self.unitRealOwner = "party"..self.unitID
-		else
-			self.unitRealOwner = "raid"..self.unitID
-		end
-		self:RegisterNormalEvent("UNIT_PET", Units, "CheckPetUnitUpdated")
+		self:RegisterNormalEvent("UNIT_PET", Units, "CheckUnitStatus")
 
 	-- Automatically do a full update on target change
 	elseif( self.unitType == "target" ) then
@@ -441,6 +425,9 @@ OnAttributeChanged = function(self, name, unit)
 		self:RegisterUnitEvent("UNIT_OTHER_PARTY_CHANGED", self, "FullUpdate")
 		self:RegisterUnitEvent("UNIT_CONNECTION", self, "FullUpdate")
 		
+	elseif( string.match(self.unitType, "^maintank.*") or string.match(self.unitType, "^mainassist.*") ) then
+		self:RegisterNormalEvent("PLAYER_ROLES_ASSIGNED", Units, "CheckGroupedUnitStatus")
+		
 	end
 	-- *target units are not real units, thus they do not receive events and must be polled for data
 	if( LunaUF.fakeUnits[self.unitType] ) then
@@ -452,7 +439,7 @@ OnAttributeChanged = function(self, name, unit)
 			self:RegisterNormalEvent("PLAYER_TARGET_CHANGED", Units, "CheckUnitStatus")
 		end
 
-		self:RegisterNormalEvent("UNIT_TARGET", Units, "CheckPetUnitUpdated")
+		self:RegisterNormalEvent("UNIT_TARGET", Units, "CheckUnitStatus")
 	end
 
 	self:CheckModules()
