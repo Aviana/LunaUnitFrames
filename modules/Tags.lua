@@ -2,7 +2,6 @@ local Tags = {}
 LunaUF.Tags = Tags
 local L = LunaUF.L
 local SML = LibStub:GetLibrary("LibSharedMedia-3.0")
-local vex = LibStub("LibVexation-1.0", true)
 
 local scanTip = CreateFrame("GameTooltip", "LunaAuraScanTip", nil, "GameTooltipTemplate")
 scanTip:SetOwner(WorldFrame, "ANCHOR_NONE")
@@ -672,7 +671,7 @@ local defaultTags = {
 								return ""
 							end;
 	["aggrocolor"]			= function(frame, unit)
-								local aggro = vex:GetUnitAggroByUnitGUID(UnitGUID(unit))
+								local aggro = (UnitThreatSituation(unit) or 0) > 1
 								if aggro then
 									return Hex(1,0,0)
 								else
