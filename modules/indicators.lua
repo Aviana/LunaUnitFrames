@@ -70,7 +70,7 @@ function Indicators:UpdateElite(frame)
 	if( classif == "rare" ) then
 		frame.indicators.elite:SetTexture("Interface\\AddOns\\LunaUnitFrames\\media\\textures\\UI-DialogBox-Silver-Dragon"..suffix)
 		frame.indicators.elite:Show()
-	elseif( classif == "elite" ) then
+	elseif( classif == "elite" or classif == "worldboss" or classif == "rareelite" ) then
 		frame.indicators.elite:SetTexture("Interface\\AddOns\\LunaUnitFrames\\media\\textures\\UI-DialogBox-Gold-Dragon"..suffix)
 		frame.indicators.elite:Show()
 	else
