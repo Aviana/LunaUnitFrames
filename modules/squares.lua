@@ -69,35 +69,65 @@ local function checkAura(unit, spells, playeronly)
 	end
 end
 
+local function isManaUser(unit)
+    local unitClass = select(2, UnitClass(unit))
+    if unitClass == "ROGUE" or unitClass == "WARRIOR" then
+        return false
+    else
+        return true
+    end
+end
+
 local function checkMissingBuff(unit, spells)
-	local spells = {strsplit(";",spells)}
-	local found
-	for k,spell in ipairs(spells) do
-		if tonumber(spell) then
-			local i, spellID = 1, select(10,UnitAura(unit, 1))
-			while spellID do
-				if spellID == tonumber(spell) then
-					found = true
-				end
-				i = i + 1
-				spellID = select(10, UnitAura(unit, i))
-			end
-		elseif type(spell) == "string" then
-			local i, spellName = 1, UnitAura(unit, 1)
-			while spellName do
-				if spellName == spell then
-					found = true
-				end
-				i = i + 1
-				spellName = UnitAura(unit, i)
-			end
-		end
-		if found or spell == "" then
+	local spellGroups = {strsplit(";",spells)}
+    local found
+    local j
+    local spellGroup
+    local spell = ""
+    local missingSpell = ""
+    for j,spellGroup in ipairs(spellGroups) do
+        -- Allow "Arcane Intellect[mana]/Arcane Brilliance[mana]"
+        -- Should only show as missing if both are missing.
+        -- Should only check mana users.
+        local localSpells = {strsplit("/",spellGroup)}
+        local k
+        for k,spell in ipairs(localSpells) do
+            local f1 = spell:find("[mana]")
+            if f1 ~= nil then
+                spell = spell:gsub("%[mana%]", "")
+                if not isManaUser(unit) then
+                    found = true
+                end
+            end
+            if found == nil or found == false then
+                missingSpell = spell
+                if tonumber(spell) then
+                    local i, spellID = 1, select(10,UnitAura(unit, 1))
+                    while spellID do
+                        if spellID == tonumber(spell) then
+                            found = true
+                        end
+                        i = i + 1
+                        spellID = select(10, UnitAura(unit, i))
+                    end
+                elseif type(spell) == "string" then
+                    local i, spellName = 1, UnitAura(unit, 1)
+                    while spellName do
+                        if spellName == spell then
+                            found = true
+                        end
+                        i = i + 1
+                        spellName = UnitAura(unit, i)
+                    end
+                end
+            end
+        end
+		if found or missingSpell == "" then
 			found = nil
-		else
-			return spell
+        else
+            return missingSpell
 		end
-	end
+    end
 end
 
 local function checkDispel(unit)
@@ -117,9 +147,9 @@ function Squares:OnEnable(frame)
 		frame.squares = CreateFrame("Frame", nil, frame)
 		frame.squares:SetAllPoints(frame)
 		frame.squares:SetFrameLevel(7)
-		
+
 		frame.squares.square = {}
-		
+
 		for k,v in pairs(positions) do
 			frame.squares.square[k] = CreateFrame("Frame", nil, frame.squares)
 			frame.squares.square[k]:SetBackdrop(backdrop)
@@ -146,11 +176,11 @@ function Squares:OnEnable(frame)
 		frame.squares.square["bottom"]:SetPoint("BOTTOM", frame.squares, "BOTTOM", 0, 1)
 		frame.squares.square["bottomleft"]:SetPoint("BOTTOMLEFT", frame.squares, "BOTTOMLEFT", 1, 1)
 	end
-	
+
 	frame:RegisterUnitEvent("UNIT_AURA", self, "Update")
 	frame:RegisterUnitEvent("UNIT_THREAT_SITUATION_UPDATE", self, "Update")
 	frame:RegisterUpdateFunc(self, "Update")
-	
+
 end
 
 function Squares:OnDisable(frame)

@@ -136,7 +136,7 @@ function LunaUF:CreateConfig()
 			db = db[info[i]]
 		end
 		db[info[#info]] = value
-		
+
 		LunaUF.Layout:Reload(info[1])
 	end
 
@@ -242,7 +242,7 @@ function LunaUF:CreateConfig()
 		for _, name in pairs(SML:List(mediaType)) do
 			MediaList[mediaType][name] = name
 		end
-		
+
 		return MediaList[mediaType]
 	end
 
@@ -270,20 +270,20 @@ function LunaUF:CreateConfig()
 		local unit = info[#info-1]
 		local db = LunaUF.db.profile.units[unit]
 		local alreadySet = {}
-		
+
 		db.attribPoint = value
 		if unit == "party" then
 			LunaUF.db.profile.units.partytarget.attribPoint = value
 			LunaUF.db.profile.units.partypet.attribPoint = value
 		end
-		
+
 		-- Simply re-set all frames is easier than making a complicated selection algorithm
 		for unitName, name in pairs(UnitToFrame) do
 			if unitName ~= "None" and name ~= "UIParent" and _G[name] then
 				LunaUF.modules.movers:SetFrame(_G[name])
 			end
 		end
-		
+
 		LunaUF.Units:ReloadHeader(unit)
 		if unit == "party" then
 			LunaUF.Units:ReloadHeader("partytarget")
@@ -456,7 +456,7 @@ function LunaUF:CreateConfig()
 			frame = _G[UnitToFrame[info[#info-1]]]
 		end
 		LunaUF.modules.movers:SetFrame(frame)
-		
+
 		-- Notify the configuration it can update itself now
 		if( ACR ) then
 			ACR:NotifyChange("LunaUnitFrames")
@@ -471,12 +471,18 @@ function LunaUF:CreateConfig()
 
 	local function validateMissingBuffInput(info, value)
 		if LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type ~= "missing" then return true end
-		local spells = {strsplit(";",value)}
-		for k,spell in ipairs(spells) do
-			if spell ~="" and not tonumber(spell) and not GetSpellInfo(spell) then
-				return L["You can only use Spellnames for Spells your Character knows otherwise please use Spell IDs"]
-			end
-		end
+        local spellGroups = {strsplit(";",value)}
+        local j
+        for j,spellGroup in ipairs(spellGroups) do
+            local localSpells = {strsplit("/",spellGroup)}
+            local k
+            for k,spell in ipairs(localSpells) do
+                spell = spell:gsub("%[mana%]", "")
+                if spell ~="" and not tonumber(spell) and not GetSpellInfo(spell) then
+                    return L["You can only use Spellnames for Spells your Character knows otherwise please use Spell IDs"]
+                end
+            end
+        end
 		return true
 	end
 
@@ -6443,8 +6449,8 @@ function LunaUF:CreateConfig()
 	end
 	AceConfigRegistry:RegisterOptionsTable(Addon, aceoptions, true)
 	aceoptions.args.profile = LibStub("AceDBOptions-3.0"):GetOptionsTable(self.db)
-	
-	
+
+
 	AceConfigDialog:AddToBlizOptions(Addon, nil, nil, "general")
 	AceConfigDialog:AddToBlizOptions(Addon, L["Colors"], Addon, "colors")
 	for _,unit in ipairs(LunaUF.unitList) do
@@ -6454,6 +6460,6 @@ function LunaUF:CreateConfig()
 	AceConfigDialog:AddToBlizOptions(Addon, L["Tag Help"], Addon, "help")
 	AceConfigDialog:AddToBlizOptions(Addon, L["Auto Profiles"], Addon, "autoprofiles")
 	AceConfigDialog:AddToBlizOptions(Addon, L["Profiles"], Addon, "profile")
-	
+
 	AceConfigDialog:SetDefaultSize(Addon, 895, 570)
 end
