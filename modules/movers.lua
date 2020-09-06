@@ -96,6 +96,9 @@ local function createConfigEnv()
 			local classToken = getValue("UnitClass", unit, CLASS_SORT_ORDER[math.random(1, #(CLASS_SORT_ORDER))])
 			return LOCALIZED_CLASS_NAMES_MALE[classToken], classToken
 		end,
+		UnitThreatSituation = function(unit)
+			return 3
+		end,
 	}, {
 		__index = _G,
 		__newindex = function(tbl, key, value) _G[key] = value end,
