@@ -196,7 +196,7 @@ function Squares:OnLayoutApplied(frame, config)
 end
 
 function Squares:Update(frame)
-	if not frame.squares then return end
+	if not frame.squares or not UnitExists(frame.unit) then return end
 	local aggro = (UnitThreatSituation(frame.unit) or 0) > 1
 	local config = LunaUF.db.profile.units[frame.unitType].squares
 	for pos, square in pairs(frame.squares.square) do
