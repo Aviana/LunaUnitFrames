@@ -471,10 +471,16 @@ function LunaUF:CreateConfig()
 
 	local function validateMissingBuffInput(info, value)
 		if LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type ~= "missing" then return true end
-		local spells = {strsplit(";",value)}
-		for k,spell in ipairs(spells) do
-			if spell ~="" and not tonumber(spell) and not GetSpellInfo(spell) then
-				return L["You can only use Spellnames for Spells your Character knows otherwise please use Spell IDs"]
+		local spellGroups = {strsplit(";",value)}
+		local j
+		for j,spellGroup in ipairs(spellGroups) do
+			local localSpells = {strsplit("/",spellGroup)}
+			local k
+			for k,spell in ipairs(localSpells) do
+				spell = spell:gsub("%[mana%]", "")
+				if spell ~="" and not tonumber(spell) and not GetSpellInfo(spell) then
+					return L["You can only use Spellnames for Spells your Character knows otherwise please use Spell IDs"]
+				end
 			end
 		end
 		return true
@@ -2641,7 +2647,7 @@ function LunaUF:CreateConfig()
 						},
 						value = {
 							name = L["Name (exact) or ID"],
-							desc = L["Name (exact) or ID of the effect to track. Can have multiple entries seperated by ;"],
+							desc = L["Name (exact) or ID of the effect to track. Use ; as a logical AND and / as logical OR. Also supports [mana] to only check on mana classes. Example: Arcane Intellect[mana]/Arcane Brilliance[mana];Dampen Magic"],
 							type = "input",
 							order = 4,
 							hidden = function(info) return LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "aggro" or LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "dispel" end,
@@ -2694,7 +2700,7 @@ function LunaUF:CreateConfig()
 						},
 						value = {
 							name = L["Name (exact) or ID"],
-							desc = L["Name (exact) or ID of the effect to track. Can have multiple entries seperated by ;"],
+							desc = L["Name (exact) or ID of the effect to track. Use ; as a logical AND and / as logical OR. Also supports [mana] to only check on mana classes. Example: Arcane Intellect[mana]/Arcane Brilliance[mana];Dampen Magic"],
 							type = "input",
 							order = 4,
 							hidden = function(info) return LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "aggro" or LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "dispel" end,
@@ -2746,7 +2752,7 @@ function LunaUF:CreateConfig()
 						},
 						value = {
 							name = L["Name (exact) or ID"],
-							desc = L["Name (exact) or ID of the effect to track. Can have multiple entries seperated by ;"],
+							desc = L["Name (exact) or ID of the effect to track. Use ; as a logical AND and / as logical OR. Also supports [mana] to only check on mana classes. Example: Arcane Intellect[mana]/Arcane Brilliance[mana];Dampen Magic"],
 							type = "input",
 							order = 4,
 							hidden = function(info) return LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "aggro" or LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "dispel" end,
@@ -2799,7 +2805,7 @@ function LunaUF:CreateConfig()
 						},
 						value = {
 							name = L["Name (exact) or ID"],
-							desc = L["Name (exact) or ID of the effect to track. Can have multiple entries seperated by ;"],
+							desc = L["Name (exact) or ID of the effect to track. Use ; as a logical AND and / as logical OR. Also supports [mana] to only check on mana classes. Example: Arcane Intellect[mana]/Arcane Brilliance[mana];Dampen Magic"],
 							type = "input",
 							order = 4,
 							hidden = function(info) return LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "aggro" or LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "dispel" end,
@@ -2852,7 +2858,7 @@ function LunaUF:CreateConfig()
 						},
 						value = {
 							name = L["Name (exact) or ID"],
-							desc = L["Name (exact) or ID of the effect to track. Can have multiple entries seperated by ;"],
+							desc = L["Name (exact) or ID of the effect to track. Use ; as a logical AND and / as logical OR. Also supports [mana] to only check on mana classes. Example: Arcane Intellect[mana]/Arcane Brilliance[mana];Dampen Magic"],
 							type = "input",
 							order = 4,
 							hidden = function(info) return LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "aggro" or LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "dispel" end,
@@ -2905,7 +2911,7 @@ function LunaUF:CreateConfig()
 						},
 						value = {
 							name = L["Name (exact) or ID"],
-							desc = L["Name (exact) or ID of the effect to track. Can have multiple entries seperated by ;"],
+							desc = L["Name (exact) or ID of the effect to track. Use ; as a logical AND and / as logical OR. Also supports [mana] to only check on mana classes. Example: Arcane Intellect[mana]/Arcane Brilliance[mana];Dampen Magic"],
 							type = "input",
 							order = 4,
 							hidden = function(info) return LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "aggro" or LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "dispel" end,
@@ -2958,7 +2964,7 @@ function LunaUF:CreateConfig()
 						},
 						value = {
 							name = L["Name (exact) or ID"],
-							desc = L["Name (exact) or ID of the effect to track. Can have multiple entries seperated by ;"],
+							desc = L["Name (exact) or ID of the effect to track. Use ; as a logical AND and / as logical OR. Also supports [mana] to only check on mana classes. Example: Arcane Intellect[mana]/Arcane Brilliance[mana];Dampen Magic"],
 							type = "input",
 							order = 4,
 							hidden = function(info) return LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "aggro" or LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "dispel" end,
@@ -3011,7 +3017,7 @@ function LunaUF:CreateConfig()
 						},
 						value = {
 							name = L["Name (exact) or ID"],
-							desc = L["Name (exact) or ID of the effect to track. Can have multiple entries seperated by ;"],
+							desc = L["Name (exact) or ID of the effect to track. Use ; as a logical AND and / as logical OR. Also supports [mana] to only check on mana classes. Example: Arcane Intellect[mana]/Arcane Brilliance[mana];Dampen Magic"],
 							type = "input",
 							order = 4,
 							hidden = function(info) return LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "aggro" or LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "dispel" end,
@@ -3063,7 +3069,7 @@ function LunaUF:CreateConfig()
 						},
 						value = {
 							name = L["Name (exact) or ID"],
-							desc = L["Name (exact) or ID of the effect to track. Can have multiple entries seperated by ;"],
+							desc = L["Name (exact) or ID of the effect to track. Use ; as a logical AND and / as logical OR. Also supports [mana] to only check on mana classes. Example: Arcane Intellect[mana]/Arcane Brilliance[mana];Dampen Magic"],
 							type = "input",
 							order = 4,
 							hidden = function(info) return LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "aggro" or LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type == "dispel" end,
