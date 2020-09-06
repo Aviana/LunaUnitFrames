@@ -136,6 +136,7 @@ function Borders:Update(frame)
 end
 
 function Borders:UpdateThreat(frame)
+	if not UnitExists(frame.unit) then return end
 	frame.borders.hasThreat = LunaUF.db.profile.units[frame.unitType].borders.aggro and (UnitThreatSituation(frame.unit) or 0) > 1
 	self:Update(frame)
 end

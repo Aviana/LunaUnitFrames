@@ -91,6 +91,7 @@ function Highlight:Update(frame)
 end
 
 function Highlight:UpdateThreat(frame)
+	if not UnitExists(frame.unit) then return end
 	frame.highlight.hasThreat = LunaUF.db.profile.units[frame.unitType].highlight.aggro and (UnitThreatSituation(frame.unit) or 0) > 1
 	self:Update(frame)
 end
