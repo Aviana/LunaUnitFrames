@@ -6,6 +6,8 @@ DO NOT USE THE GREEN CLONE OR DOWNLOAD BUTTON. GET THE NEWEST RELEASE FROM THE [
 !!!ATTENTION!!!
 -For users coming from a version prior to 4000-
 
+MAKE A BACKUP OF YOU CONFIG, YOU HAVE BEEN WARNED
+
 LUF is now based on oUF. This means i had to write the entire addon from scratch with the exception of the options menu.
 While you will be able to simply replace the addon folder as always and still keep your settings, some of them will be reset to DEFAULT values.
 It is recommended to DELETE THE ENTIRE LunaUnitFrames folder and the put in the new. This will still preserve your settings as they are stored elsewhere.
