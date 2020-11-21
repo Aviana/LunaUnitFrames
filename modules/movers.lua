@@ -16,78 +16,11 @@ local BlacklistAttributes = {
 local function OnDragStart(self)
 	if( not self:IsMovable() ) then return end
 
-<<<<<<< Updated upstream
-			return 5000
-		end,
-		UnitHasIncomingResurrection = function(unit) return true end,
-		UnitPVPRank = function(unit) return 17 end,
-		UnitClassification = function(unit) return "elite" end,
-		UnitExists = function(unit) return true end,
-		UnitIsGroupLeader = function() return true end,
-		UnitIsPVP = function(unit) return true end,
-		UnitIsDND = function(unit) return false end,
-		UnitIsAFK = function(unit) return false end,
-		UnitFactionGroup = function(unit) return _G.UnitFactionGroup("player") end,
-		UnitAffectingCombat = function() return true end,
-		CastingInfo = function()
-			-- 1 -> 10: spell, displayName, icon, startTime, endTime, isTradeSkill, castID, notInterruptible, spellID
-			local data = unitConfig["CastingInfo"] or {}
-			if( not data[5] or GetTime() < data[5] ) then
-				data[1] = L["Test spell"]
-				data[2] = L["Test spell"]
-				data[3] = "Interface\\Icons\\Spell_Nature_Rejuvenation"
-				data[4] = GetTime() * 1000
-				data[5] = data[4] + 60000
-				data[6] = false
-				data[7] = math.floor(GetTime())
-				data[8] = math.random(0, 100) < 25
-				data[9] = 1000
-				unitConfig["CastingInfo"] = data
-			end
-			
-			return unpack(data)
-		end,
-		UnitIsFriend = function(unit) return true end,
-		GetReadyCheckStatus = function(unit)
-			local status = getValue("GetReadyCheckStatus", unit, math.random(1, 3))
-			return status == 1 and "ready" or status == 2 and "notready" or "waiting"
-		end,
-		UnitPowerType = function(unit)
-			return _G.UnitPowerType("player")
-		end,
-		UnitAura = function(unit, id, filter)
-			if( type(id) ~= "number" or id > 32 ) then return end
-			
-			local texture = filter == "HELPFUL" and "Interface\\Icons\\Spell_ChargePositive" or "Interface\\Icons\\Spell_ChargeNegative"
-			local mod = id % 5
-			local auraType = mod == 0 and "Magic" or mod == 1 and "Curse" or mod == 2 and "Poison" or mod == 3 and "Disease" or "none"
-			return L["Test Aura"], texture, id, auraType, 0, 0, (math.random(0,1) > 0) and "player", id % 6 == 0
-		end,
-		UnitName = function(unit)
-			local unitID = string.match(unit, "(%d+)")
-			if( unitID ) then
-				return string.format("%s #%d", L[string.gsub(unit, "(%d+)", "")] or unit, unitID)
-			end
-			return L[unit]
-		end,
-		UnitClass = function(unit)
-			local classToken = getValue("UnitClass", unit, CLASS_SORT_ORDER[math.random(1, #(CLASS_SORT_ORDER))])
-			return LOCALIZED_CLASS_NAMES_MALE[classToken], classToken
-		end,
-		UnitThreatSituation = function(unit)
-			return 3
-		end,
-	}, {
-		__index = _G,
-		__newindex = function(tbl, key, value) _G[key] = value end,
-	})
-=======
 	if LUF.HeaderFrames[self:GetAttribute("oUF-guessUnit")] then
 		self = self:GetParent()
 	end
 
 	self:StartMoving()
->>>>>>> Stashed changes
 end
 
 local function OnDragStop(self)

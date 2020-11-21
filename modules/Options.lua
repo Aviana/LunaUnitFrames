@@ -139,13 +139,7 @@ function LUF:CreateConfig()
 			end
 		end
 		db[info[#info]] = value
-<<<<<<< Updated upstream
-
-		LunaUF.Layout:Reload(info[1])
-=======
-		
 		LUF:Reload(info[1])
->>>>>>> Stashed changes
 	end
 
 	local function get(info)
@@ -333,12 +327,7 @@ function LUF:CreateConfig()
 				LUF:CorrectPosition(_G[name])
 			end
 		end
-<<<<<<< Updated upstream
-
-		LunaUF.Units:ReloadHeader(unit)
-=======
 		LUF:SetupHeader(unit)
->>>>>>> Stashed changes
 		if unit == "party" then
 			LUF:SetupHeader("partytarget")
 			LUF:SetupHeader("partypet")
@@ -504,13 +493,7 @@ function LUF:CreateConfig()
 			LUF.db.profile.units[info[#info-2]].anchorTo = value
 			frame = _G[UnitToFrame[info[#info-2]]]
 		end
-<<<<<<< Updated upstream
-		LunaUF.modules.movers:SetFrame(frame)
-
-=======
 		LUF:CorrectPosition(frame)
-		
->>>>>>> Stashed changes
 		-- Notify the configuration it can update itself now
 		if( ACR ) then
 			ACR:NotifyChange("LunaUnitFrames")
@@ -543,42 +526,18 @@ function LUF:CreateConfig()
 	}
 
 	local function validateMissingBuffInput(info, value)
-<<<<<<< Updated upstream
-		if LunaUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type ~= "missing" then return true end
-<<<<<<< Updated upstream
 		local spellGroups = {strsplit(";",value)}
 		local j
 		for j,spellGroup in ipairs(spellGroups) do
 			local localSpells = {strsplit("/",spellGroup)}
 			local k
 			for k,spell in ipairs(localSpells) do
-=======
-        local spellGroups = {strsplit(";",value)}
-        local j
-        for j,spellGroup in ipairs(spellGroups) do
-            local localSpells = {strsplit("/",spellGroup)}
-            local k
-            for k,spell in ipairs(localSpells) do
-                spell = spell:gsub("%[mana%]", "")
-                if spell ~="" and not tonumber(spell) and not GetSpellInfo(spell) then
-                    return L["You can only use Spellnames for Spells your Character knows otherwise please use Spell IDs"]
-                end
-            end
-        end
-=======
-		if LUF.db.profile.units[info[#info-3]].squares[info[#info-1]].type ~= "missing" then return true end
-		local spellGroups = {strsplit(";",value)}
-		for _,spellGroup in ipairs(spellGroups) do
-			local localSpells = {strsplit("/",spellGroup)}
-			for _,spell in ipairs(localSpells) do
->>>>>>> Stashed changes
 				spell = spell:gsub("%[mana%]", "")
 				if spell ~="" and not tonumber(spell) and not GetSpellInfo(spell) then
 					return L["You can only use Spellnames for Spells your Character knows otherwise please use Spell IDs"]
 				end
 			end
 		end
->>>>>>> Stashed changes
 		return true
 	end
 
@@ -7116,5 +7075,5 @@ SlashCmdList["LUNAUF"] = function(msg)
 	end
 	
 	local AceConfigDialog = LibStub("AceConfigDialog-3.0")
-	AceConfigDialog:Open("LUF")
+	AceConfigDialog:Open("LunaUnitFrames")
 end
