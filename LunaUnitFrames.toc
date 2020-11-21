@@ -1,8 +1,8 @@
-## Interface: 11305
+## Interface: 11304
 ## Title: Luna Unit Frames
 ## Notes: 
 ## Author: Aviana
-## Version: 3051
+## Version: 4000
 ## SavedVariables: LunaUFDB
 ## OptionalDeps: Ace3, LibSharedMedia-3.0, AceGUI-3.0-SharedMediaWidgets, LibSpellRange-1.0, Clique, RealMobHealth
 ## X-License: WTFPL (http://www.wtfpl.net/about/)
@@ -17,47 +17,25 @@ libs\AceDBOptions-3.0\AceDBOptions-3.0.xml
 libs\AceGUI-3.0\AceGUI-3.0.xml
 libs\AceGUI-3.0-SharedMediaWidgets\widget.xml
 libs\AceConfig-3.0\AceConfig-3.0.xml
+libs\LibVexation-1.0\lib.xml
 libs\LibClassicDurations\LibClassicDurations.xml
 libs\LibHealComm-4.0\LibHealComm-4.0.xml
+libs\LibAuraTypes\LibAuraTypes.lua
+libs\LibSpellLocks\LibSpellLocks.lua
 libs\LibClassicCasterino\LibClassicCasterino.lua
+libs\oUF\oUF.xml
+# Because ElvUI disabled this for some reason
+libs\oUF\elements\additionalpower.lua
+libs\oUF_Plugins\oUF_Plugins.xml
 #@end-no-lib-strip@
 
 locales\enUS.lua
 locales\deDE.lua
-locales\esES.lua
-locales\esMX.lua
-locales\frFR.lua
-locales\koKR.lua
-locales\ruRU.lua
-locales\zhCN.lua
-locales\zhTW.lua
-
-LunaUnitFrames.lua
-
-modules\defaults.lua
-modules\units.lua
-modules\layout.lua
-modules\movers.lua
-modules\tags.lua
-modules\reckstacks.lua
-modules\totems.lua
-modules\squares.lua
-modules\range.lua
-modules\power.lua
-modules\portrait.lua
-modules\indicators.lua
-modules\incheal.lua
-modules\highlight.lua
-modules\health.lua
-modules\fader.lua
-modules\emptybar.lua
-modules\druid.lua
-modules\combopoints.lua
-modules\combattext.lua
-modules\cast.lua
-modules\borders.lua
-modules\auras.lua
-modules\xp.lua
-modules\manaprediction.lua
 
 modules\options.lua
+modules\overrides.lua
+modules\defaults.lua
+modules\movers.lua
+modules\layout.lua
+
+LunaUnitFrames.lua

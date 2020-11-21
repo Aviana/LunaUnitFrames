@@ -1,44 +1,22 @@
-local L = LunaUF.L
-local Movers = {}
-local originalEnvs = {}
-local unitConfig = {}
-local attributeBlacklist = {["showplayer"] = true, ["showraid"] = true, ["showparty"] = true, ["showsolo"] = true, ["initial-unitwatch"] = true}
-local OnDragStop, OnDragStart, configEnv
-LunaUF:RegisterModule(Movers, "movers")
+LUF = select(2, ...)
 
+local oUF = LUF.oUF
+local L = LUF.L
 local ACR = LibStub("AceConfigRegistry-3.0", true)
 
-local function getValue(func, unit, value)
-	unit = string.gsub(unit, "(%d+)", "")
-	if( unitConfig[func .. unit] == nil ) then unitConfig[func .. unit] = value end
-	return unitConfig[func .. unit]
-end
+local origEnvironment, testEnvironment = {}
+local BlacklistAttributes = {
+	["showraid"] = true,
+	["showparty"] = true,
+	["showsolo"] = true,
+	["showplayer"] = true,
+	["initial-unitwatch"] = true
+}
 
-local function createConfigEnv()
-	if( configEnv ) then return end
-	configEnv = setmetatable({
-		GetRaidTargetIndex = function(unit) return getValue("GetRaidTargetIndex", unit, math.random(1, 8)) end,
-		GetLootMethod = function(unit) return "master", 0, 0 end,
-		GetComboPoints = function() return MAX_COMBO_POINTS end,
-		GetPetHappiness = function() return 3 end,
-		UnitInRaid = function() return true end,
-		UnitInParty = function() return true end,
-		UnitPlayerOrPetInParty = function() return true end,
---		UnitIsUnit = function(unitA, unitB) return true end,
-		UnitIsDeadOrGhost = function(unit) return false end,
-		UnitIsConnected = function(unit) return true end,
-		UnitLevel = function(unit) return MAX_PLAYER_LEVEL end,
-		UnitIsPlayer = function(unit) return unit ~= "pet" and not string.match(unit, "(%w+)pet") end,
-		UnitHealth = function(unit) return getValue("UnitHealth", unit, math.random(2000, 4000)) end,
-		UnitHealthMax = function(unit) return 5000 end,
-		UnitPower = function(unit, powerType)
-			return getValue("UnitPower", unit, math.random(2000, 5000))
-		end,
-		UnitPowerMax = function(unit, powerType)
-			if powerType == Enum.PowerType.ComboPoints then
-				return 5
-			end
+local function OnDragStart(self)
+	if( not self:IsMovable() ) then return end
 
+<<<<<<< Updated upstream
 			return 5000
 		end,
 		UnitHasIncomingResurrection = function(unit) return true end,
@@ -103,212 +81,153 @@ local function createConfigEnv()
 		__index = _G,
 		__newindex = function(tbl, key, value) _G[key] = value end,
 	})
+=======
+	if LUF.HeaderFrames[self:GetAttribute("oUF-guessUnit")] then
+		self = self:GetParent()
+	end
+
+	self:StartMoving()
+>>>>>>> Stashed changes
 end
 
-local function prepareChildUnits(header, ...)
-	for i=1, select("#", ...) do
-		local frame = select(i, ...)
-		if( frame.unitType and not frame.configUnitID ) then
-			LunaUF.Units.frameList[frame] = true
-			frame.configUnitID = header.groupID and (header.groupID * 5) - 5 + i or i
-			frame:SetAttribute("unit", frame.unitType..frame.configUnitID)
-		end
+local function OnDragStop(self)
+	if( not self:IsMovable() ) then return end
+
+	if LUF.HeaderFrames[self:GetAttribute("oUF-guessUnit")] then
+		self = self:GetParent()
+	end
+
+	self:StopMovingOrSizing()
+
+	LUF:CorrectPosition(self)
+
+
+	if( ACR ) then
+		ACR:NotifyChange("LunaUnitFrames")
 	end
 end
 
-local function OnEnter(self)
-	local tooltip = self.tooltipText or self.configUnitID and string.format("%s #%d", L[self.unitType], self.configUnitID) or L[self.unitType] or self.unitType
-
-	GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
-	GameTooltip:SetText(tooltip, 1, 0.81, 0, 1, true)
-	GameTooltip:Show()
-end
-
-local function OnLeave(self)
-	GameTooltip:Hide()
-end
-
-local function setupUnits()
-	for frame in pairs(LunaUF.Units.frameList) do
-		if( frame.configMode ) then
-			-- Units visible, but it's not supposed to be
-			if( frame:IsVisible() and not LunaUF.db.profile.units[frame.unitType].enabled ) then
-				RegisterUnitWatch(frame, frame.hasStateWatch)
-				if( not UnitExists(frame.unit) ) then frame:Hide() end
-				
-			-- Unit's not visible and it's enabled so it should
-			elseif( not frame:IsVisible() and LunaUF.db.profile.units[frame.unitType].enabled ) then
-				UnregisterUnitWatch(frame)
-
-				frame:SetAttribute("state-unitexists", true)
-				frame:FullUpdate()
-				frame:Show()
-			end
-		elseif( not frame.configMode and LunaUF.db.profile.units[frame.unitType].enabled ) then
+local function enableFun(...)
+	local maxUnits = ...
+	maxUnits = maxUnits:GetParent():GetAttribute("unitsPerColumn") or 1
+	for i=1, select("#", ...) do
+		local frame = select(i, ...)
+		if not frame.inConfigMode then
+			frame.inConfigMode = true
 			frame.originalUnit = frame:GetAttribute("unit")
+			frame:SetAttribute("unit","player")
+			frame.originalSuffix = frame:GetAttribute("unitsuffix")
+			frame:SetAttribute("unitsuffix", nil)
 			frame.originalOnEnter = frame.OnEnter
 			frame.originalOnLeave = frame.OnLeave
-			frame.originalOnUpdate = frame:GetScript("OnUpdate")
 			frame:SetMovable(true)
 			frame:SetScript("OnDragStop", OnDragStop)
 			frame:SetScript("OnDragStart", OnDragStart)
 			frame.OnEnter = OnEnter
 			frame.OnLeave = OnLeave
-			frame:SetScript("OnEvent", nil)
-			frame:SetScript("OnUpdate", nil)
 			frame:RegisterForDrag("LeftButton")
-			frame.configMode = true
-			frame.unitOwner = nil
-			frame.originalMenu = frame.menu
-			frame.menu = nil
-			
-			if LunaUF.Units.headerUnits[frame.unitType] then
-				LunaUF.Units.OnAttributeChanged(frame, "unit", frame.unitType..frame.configUnitID)
-			else
-				LunaUF.Units.OnAttributeChanged(frame, "unit", frame.unitType)
-			end
-
-			if( frame.healthBar ) then frame.healthBar:SetScript("OnUpdate", nil) end
-			if( frame.powerBar ) then frame.powerBar:SetScript("OnUpdate", nil) end
-			if( frame.indicators ) then frame.indicators:SetScript("OnUpdate", nil) end
-			
 			UnregisterUnitWatch(frame)
-			frame:FullUpdate()
+			RegisterUnitWatch(frame, true)
+		end
+		if i <= maxUnits then
 			frame:Show()
+		else
+			frame:Hide()
 		end
 	end
 end
 
-function Movers:Enable()
-	createConfigEnv()
-
-	-- Setup the headers
-	for _, header in pairs(LunaUF.Units.headerFrames) do
-		for key in pairs(attributeBlacklist) do
-			header:SetAttribute(key, nil)
-		end
-		
-		local config = LunaUF.db.profile.units[header.unitType]
-		if( config.maxColumns ) then
-			local maxUnits = MAX_RAID_MEMBERS
-			if( config.filters ) then
-				for _, enabled in pairs(config.filters) do
-					if( not enabled ) then
-						maxUnits = maxUnits - 5
-					end
-				end
-			end
-					
-			header:SetAttribute("startingIndex", -math.min(config.maxColumns * 5, maxUnits) + 1)
-			header:SetAttribute("unitsPerColumn", 5)
-		elseif( LunaUF[header.unitType .. "Units"] ) then
-			header:SetAttribute("unitsPerColumn", 5)
-			header:SetAttribute("startingIndex", -#(LunaUF[header.unitType .. "Units"]) + 1)
-		end
-		
-		header.startingIndex = header:GetAttribute("startingIndex")
-		header:SetMovable(true)
-		prepareChildUnits(header, header:GetChildren())
-	end
-
-	-- Setup the test env
-	if( not self.isEnabled ) then
-		for _, func in pairs(LunaUF.Tags.defaultTags) do
-			if( type(func) == "function" ) then
-				originalEnvs[func] = getfenv(func)
-				setfenv(func, configEnv)
-			end
-		end
-
-		for _, module in pairs(LunaUF.modules) do
-			if( module.moduleName ) then
-				for key, func in pairs(module) do
-					if( type(func) == "function" ) then
-						originalEnvs[module[key]] = getfenv(module[key])
-						setfenv(module[key], configEnv)
-					end
-				end
-			end
-		end
-	end
-	
-	setupUnits()
-	setupUnits(true)
-	
-	self.isEnabled = true
-end
-
-function Movers:Disable()
-	if( not self.isEnabled ) then return nil end
-	
-	for func, env in pairs(originalEnvs) do
-		setfenv(func, env)
-		originalEnvs[func] = nil
-	end
-	
-	for frame in pairs(LunaUF.Units.frameList) do
-		if( frame.configMode ) then
-			if( frame.isMoving ) then
-				frame:GetScript("OnDragStop")(frame)
-			end
-			
-			frame.configMode = nil
-			frame.unitOwner = nil
-			frame.unit = nil
-			frame.configUnitID = nil
-			frame.menu = frame.originalMenu
-			frame.originalMenu = nil
-			frame.Hide = frame.originalHide
+local function disableFun(...)
+	for i=1, select("#", ...) do
+		local frame = select(i, ...)
+		if frame.inConfigMode then
+			frame.inConfigMode = nil
 			frame:SetAttribute("unit", frame.originalUnit)
+			frame.originalUnit = nil
+			frame:SetAttribute("unitsuffix", frame.originalSuffix)
+			frame.originalSuffix = nil
+			frame:SetMovable(false)
 			frame:SetScript("OnDragStop", nil)
 			frame:SetScript("OnDragStart", nil)
-			frame:SetScript("OnEvent", frame:IsVisible() and LunaUF.Units.OnEvent or nil)
-			frame:SetScript("OnUpdate", frame.originalOnUpdate)
 			frame.OnEnter = frame.originalOnEnter
 			frame.OnLeave = frame.originalOnLeave
-			frame:SetMovable(false)
+			frame.originalOnEnter = nil
+			frame.originalOnLeave = nil
 			frame:RegisterForDrag()
-
-			if LunaUF.db.profile.units[frame.unitType].enabled then
-				RegisterUnitWatch(frame, frame.hasStateWatch)
-			end
-			if( not UnitExists(frame.unit) ) then frame:Hide() end
+			UnregisterUnitWatch(frame)
+			RegisterUnitWatch(frame)
 		end
 	end
-			
-	for type, header in pairs(LunaUF.Units.headerFrames) do
-		header:SetMovable(false)
-		header:SetAttribute("startingIndex", 1)
-		header:SetAttribute("unitsPerColumn", LunaUF.db.profile.units[header.unitType].unitsPerColumn or 5)
-		header:SetAttribute("initial-unitWatch", true)
-		LunaUF.Units:SetHeaderAttributes(header, header.unitType)
-		if( header.unitType == type ) then
-			LunaUF.Units:ReloadHeader(header.unitType)
-		end
-	end
-
-	LunaUF.Layout:Reload()
-
-	-- Don't store these so everything can be GCed
-	unitConfig = {}
-
-	self.isEnabled = nil
 end
 
-function Movers:SetFrame(frame)
-	local scale
-	local position = LunaUF.db.profile.units[frame.unitType]
-	local config = LunaUF.db.profile.units[frame.unitType]
-	if not position.x then
-		position = LunaUF.db.profile.units[frame.unitType].positions[frame.groupID]
+local function EnableMovers()
+	for unit, frame in pairs(LUF.frameIndex) do
+		local config = LUF.db.profile.units[unit] or LUF.db.profile.units.raid
+		if config.enabled then
+			frame.configMode = true
+			if frame:GetAttribute("oUF-headerType") then
+				for key in pairs(BlacklistAttributes) do
+					frame:SetAttribute(key, nil)
+				end
+				if strmatch(unit, "^party.*$") then
+					frame:SetAttribute("unitsPerColumn", (LUF.db.profile.units.party.showPlayer or LUF.db.profile.units.party.showSolo) and 5 or 4)
+				elseif not config.unitsPerColumn then
+					frame:SetAttribute("unitsPerColumn", 5)
+				end
+				frame:SetAttribute("startingIndex", -(config.unitsPerColumn or 5)-1)
+				enableFun(frame:GetChildren())
+				frame:SetMovable(true)
+			else
+				enableFun(frame)
+			end
+		end
 	end
-	local anchor = position.anchorTo and _G[position.anchorTo]
+end
 
+local function DisableMovers()
+	for unit, frame in pairs(LUF.frameIndex) do
+		local config = LUF.db.profile.units[unit] or LUF.db.profile.units.raid
+		if config.enabled then
+			frame.configMode = nil
+			if frame:GetAttribute("oUF-headerType") then
+				disableFun(frame:GetChildren())
+				frame:SetAttribute("startingIndex", 1)
+				frame:SetMovable(false)
+				frame:SetAttribute("initial-unitWatch", true)
+				LUF:SetupHeader(unit)
+			else
+				disableFun(frame)
+			end
+		end
+	end
+end
+
+function LUF:UpdateMovers()
+	if( LUF.db.profile.locked ) then
+		DisableMovers()
+	else
+		EnableMovers()
+	end
+	self:ReloadAll()
+end
+
+function LUF:CorrectPosition(frame)
+	local scale, position
+	local config = LUF.db.profile.units[frame:GetAttribute("headerType") or frame:GetAttribute("oUF-guessUnit")]
+	if config.positions then
+		position = config.positions[tonumber(strsub(frame:GetName(),14))]
+	else
+		position = config
+	end
+	
+	local anchor = position.anchorTo and _G[position.anchorTo]
+	local anchorConfig = LUF.db.profile.units[frame:GetAttribute("headerType") or anchor:GetAttribute("oUF-guessUnit")]
+	
 	local point, anchorTo, relativePoint, x, y = frame:GetPoint()
 
-	if position.anchorTo ~= "UIParent" and not frame.isHeaderFrame then -- Working
-		if anchor.isHeaderFrame then
-			relativePoint = (LunaUF.db.profile.units[anchor.unitType].attribPoint == "TOP" or LunaUF.db.profile.units[anchor.unitType].attribPoint == "RIGHT") and "TOPRIGHT" or "BOTTOMLEFT"
+	if position.anchorTo ~= "UIParent" and not frame:GetAttribute("headerType") then
+		if anchor:GetAttribute("headerType") then
+			relativePoint = (anchorConfig.attribPoint == "TOP" or anchorConfig.attribPoint == "RIGHT") and "TOPRIGHT" or "BOTTOMLEFT"
 			point = "BOTTOMLEFT"
 			if relativePoint == "BOTTOMLEFT" then
 				x = ((frame:GetLeft()*frame:GetScale()) - anchor:GetLeft())/frame:GetScale()
@@ -327,9 +246,9 @@ function Movers:SetFrame(frame)
 			relativePoint = "TOPLEFT"
 			scale = 1
 		end
-	elseif position.anchorTo ~= "UIParent" and frame.isHeaderFrame then --working Header to header, header to frame broken
-		if anchor.isHeaderFrame then
-			relativePoint = (LunaUF.db.profile.units[anchor.unitType].attribPoint == "TOP" or LunaUF.db.profile.units[anchor.unitType].attribPoint == "RIGHT") and "TOPRIGHT" or "BOTTOMLEFT"
+	elseif position.anchorTo ~= "UIParent" and frame:GetAttribute("headerType") then
+		if anchor:GetAttribute("headerType") then
+			relativePoint = (anchorConfig.attribPoint == "TOP" or anchorConfig.attribPoint == "RIGHT") and "TOPRIGHT" or "BOTTOMLEFT"
 		else
 			relativePoint = "BOTTOMLEFT"
 		end
@@ -352,7 +271,7 @@ function Movers:SetFrame(frame)
 			end
 		end
 		scale = 1
-	elseif position.anchorTo == "UIParent" and frame.isHeaderFrame then -- working
+	elseif position.anchorTo == "UIParent" and frame:GetAttribute("headerType") then
 		if config.attribPoint == "BOTTOM" or config.attribPoint == "LEFT" then
 			x = frame:GetLeft()
 			y = frame:GetBottom()
@@ -365,7 +284,7 @@ function Movers:SetFrame(frame)
 			relativePoint = "TOPRIGHT"
 		end
 		scale = (frame:GetScale() * UIParent:GetScale())
-	else --working
+	else
 		x = frame:GetLeft()
 		y = frame:GetBottom()
 		point = "BOTTOMLEFT"
@@ -373,47 +292,9 @@ function Movers:SetFrame(frame)
 		scale = (frame:GetScale() * UIParent:GetScale())
 	end
 
-
 	position.x = x * scale
 	position.y = y * scale
 	position.point = point
 	position.relativePoint = relativePoint
-	--ChatFrame1:AddMessage("Anchoring "..frame:GetName().."'s "..point.." to "..position.anchorTo.."'s "..relativePoint.." with offset x: "..position.x.." y: "..position.y)
-	LunaUF.Layout:AnchorFrame(frame, position)
-end
-
-OnDragStart = function(self)
-	if( not self:IsMovable() ) then return end
-	
-	if( LunaUF.Units.headerUnits[self.unitType] ) then
-		self = self:GetParent()
-	end
-
-	self.isMoving = true
-	self:StartMoving()
-end
-
-OnDragStop = function(self)
-	if( not self:IsMovable() ) then return end
-	if( LunaUF.Units.headerUnits[self.unitType] ) then
-		self = self:GetParent()
-	end
-
-	self.isMoving = nil
-	self:StopMovingOrSizing()
-
-	Movers:SetFrame(self)
-
-	-- Notify the configuration it can update itself now
-	if( ACR ) then
-		ACR:NotifyChange("LunaUnitFrames")
-	end
-end
-
-function Movers:Update()
-	if( not LunaUF.db.profile.locked ) then
-		self:Enable()
-	elseif( LunaUF.db.profile.locked ) then
-		self:Disable()
-	end
+	self:PlaceFrame(frame)
 end

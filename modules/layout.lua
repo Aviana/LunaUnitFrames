@@ -1,459 +1,679 @@
-local Layout = {}
-local mediaRequired, anchoringQueued
-	local backdrop = {
-		bgFile = "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\indicator",
-		insets = { left = 0, right = 0, top = 0, bottom = 0 },
-		backdropColor = {r = 0, g = 0, b = 0, a = 0.80},
-	}
-local _G = getfenv(0)
+LUF = select(2, ...)
+
+local oUF = LUF.oUF
 local SML = LibStub:GetLibrary("LibSharedMedia-3.0")
 
-LunaUF.Layout = Layout
-
-local defaultMedia = {
-	[SML.MediaType.STATUSBAR] = "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Minimalist",
-	[SML.MediaType.FONT] = "Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Myriad Condensed Web.ttf",
-	[SML.MediaType.BACKGROUND] = "Interface\\ChatFrame\\ChatFrameBackground",
-	[SML.MediaType.BORDER] = "Interface\\None",
+local backdrop = {
+	bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
+	tile = true,
+	tileSize = 16,
+	insets = {left = -1, right = -1, top = -1, bottom = -1},
 }
 
--- Someone is using another mod that is forcing a media type for all mods using SML
-function Layout:MediaForced(mediaType)
-	self:Reload()
-end
+local RaidStatusIndicatorOffsets = {
+	["topleft"] = {
+		x = 1,
+		y = -1,
+	},
+	["top"] = {
+		x = 0,
+		y = -1,
+	},
+	["topright"] = {
+		x = -1,
+		y = -1,
+	},
+	["left"] = {
+		x = 1,
+		y = 0,
+	},
+	["center"] = {
+		x = 0,
+		y = 0,
+	},
+	["right"] = {
+		x = -1,
+		y = 0,
+	},
+	["bottomleft"] = {
+		x = 1,
+		y = 1,
+	},
+	["bottom"] = {
+		x = 0,
+		y = 1,
+	},
+	["bottomright"] = {
+		x = -1,
+		y = 1,
+	},
+}
 
-function Layout:LoadMedia(type, name)
-	local mediaName = name or LunaUF.db.profile[type]
-	if( not mediaName ) then return defaultMedia[type] end
+local UnitSpecific = {
+	player = function(frame)
+	-- Regen Ticker
+		local RegenTicker = CreateFrame("StatusBar", nil, frame.Power)
+		frame.RegenTicker = RegenTicker
 
-	local media = SML:Fetch(type, mediaName, true)
-	if( not media ) then
-		mediaRequired = mediaRequired or {}
-		mediaRequired[type] = mediaName
-		return defaultMedia[type]
-	end
-	
-	return media
-end
-
--- We might not have had a media we required at initial load, wait for it to load and then update everything when it does
-function Layout:MediaRegistered(event, mediaType, key)
-	if( mediaRequired and mediaRequired[mediaType] and mediaRequired[mediaType] == key ) then
-		mediaRequired[mediaType] = nil
-		
-		self:Reload()
-	end
-end
-
--- Helper functions
-function Layout:ToggleVisibility(frame, visible)
-	if not frame then return end
-	if( visible ) then
-		frame:Show()
-	else
-		frame:Hide()
-	end
-end	
-
-function Layout:SetBarVisibility(frame, key, status)
-	if( frame.secureLocked ) then return end
-
-	-- Show the bar if it wasn't already
-	if( status and not frame[key]:IsShown() ) then
-		frame[key].visibilityManaged = true
-		frame[key]:Show()
-		LunaUF.Layout:PositionWidgets(frame, LunaUF.db.profile.units[frame.unitType])
-
-	-- Hide the bar if it wasn't already
-	elseif( not status and frame[key]:IsShown() ) then
-		frame[key].visibilityManaged = nil
-		frame[key]:Hide()
-		LunaUF.Layout:PositionWidgets(frame, LunaUF.db.profile.units[frame.unitType])
-	end
-end
-
--- Frame changed somehow between when we first set it all up and now
-function Layout:Reload(unit)
-
-	-- Now update them
-	for frame in pairs(LunaUF.Units.frameList) do
-		if( frame.unit and ( not unit or frame.unitType == unit ) and not frame.isHeaderFrame ) then
-			frame:CheckModules()
-			self:Load(frame)
-			frame:FullUpdate()
-		end
-	end
-
-	for header in pairs(LunaUF.Units.headerFrames) do
-		if( header.unitType and ( not unit or header.unitType == unit ) ) then
-			local config = LunaUF.db.profile.units[header.unitType]
-			header:SetAttribute("style-height", config.height)
-			header:SetAttribute("style-width", config.width)
-			header:SetAttribute("style-scale", config.scale)
-		end
-	end
-
-	LunaUF:FireModuleEvent("OnLayoutReload", unit)
-end
-
--- Do a full update
-function Layout:Load(frame)
-	local unitConfig = LunaUF.db.profile.units[frame.unitType]
-
-	-- About to set layout
-	LunaUF:FireModuleEvent("OnPreLayoutApply", frame, unitConfig)
-
-	-- Figure out if we're secure locking
---	frame.secureLocked = nil
---	for _, module in pairs(LunaUF.moduleOrder) do
---		if( frame.visibility[module.moduleKey] and ShadowUF.db.profile.units[frame.unitType][module.moduleKey] and
---			ShadowUF.db.profile.units[frame.unitType][module.moduleKey].secure and module:SecureLockable() ) then
---			frame.secureLocked = true
---			break
---		end
---	end
-	
-	-- Load all of the layout things
-	self:SetupFrame(frame, unitConfig)
-	self:SetupBars(frame, unitConfig)
-	self:PositionWidgets(frame, unitConfig)
-	LunaUF.Tags:SetupText(frame, unitConfig)
-
-	-- Layouts been fully set
-	LunaUF:FireModuleEvent("OnLayoutApplied", frame, unitConfig)
-end
-
--- Register it on file load because authors seem to do a bad job at registering the callbacks
-SML:Register(SML.MediaType.FONT, "Aldrich", "Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Aldrich.ttf")
-SML:Register(SML.MediaType.FONT, "Bangers", "Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Bangers.ttf")
-SML:Register(SML.MediaType.FONT, "Celestia", "Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Celestia.ttf")
-SML:Register(SML.MediaType.FONT, "DorisPP", "Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\DorisPP.ttf")
-SML:Register(SML.MediaType.FONT, "Enigmatic", "Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Enigmatic.ttf")
-SML:Register(SML.MediaType.FONT, "FasterOne", "Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\FasterOne.ttf")
-SML:Register(SML.MediaType.FONT, "Fitzgerald", "Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Fitzgerald.ttf")
-SML:Register(SML.MediaType.FONT, "Gentium", "Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Gentium.ttf")
-SML:Register(SML.MediaType.FONT, "Iceland", "Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Iceland.ttf")
-SML:Register(SML.MediaType.FONT, "Inconsolata", "Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Inconsolata.ttf")
-SML:Register(SML.MediaType.FONT, "LiberationSans", "Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\LiberationSans.ttf")
-SML:Register(SML.MediaType.FONT, "MetalLord", "Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\MetalLord.ttf")
-SML:Register(SML.MediaType.FONT, "Myriad Condensed Web", "Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Myriad Condensed Web.ttf")
-SML:Register(SML.MediaType.FONT, "Optimus", "Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Optimus.ttf")
-SML:Register(SML.MediaType.FONT, "TradeWinds", "Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\TradeWinds.ttf")
-SML:Register(SML.MediaType.FONT, "VeraSerif", "Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\VeraSerif.ttf")
-SML:Register(SML.MediaType.FONT, "Yellowjacket", "Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Yellowjacket.ttf")
-
-SML:Register(SML.MediaType.BORDER, "Square Clean", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\borders\\ABFBorder")
-SML:Register(SML.MediaType.BACKGROUND, "Chat Frame", "Interface\\ChatFrame\\ChatFrameBackground")
-SML:Register(SML.MediaType.STATUSBAR, "BantoBar", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\banto")
-SML:Register(SML.MediaType.STATUSBAR, "Smooth",   "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\smooth")
-SML:Register(SML.MediaType.STATUSBAR, "Perl",     "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\perl")
-SML:Register(SML.MediaType.STATUSBAR, "Glaze",    "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\glaze")
-SML:Register(SML.MediaType.STATUSBAR, "Charcoal", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Charcoal")
-SML:Register(SML.MediaType.STATUSBAR, "Otravi",   "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\otravi")
-SML:Register(SML.MediaType.STATUSBAR, "Striped",  "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\striped")
-SML:Register(SML.MediaType.STATUSBAR, "LiteStep", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\LiteStep")
-SML:Register(SML.MediaType.STATUSBAR, "Aluminium", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Aluminium")
-SML:Register(SML.MediaType.STATUSBAR, "Minimalist", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Minimalist")
-SML:Register(SML.MediaType.STATUSBAR, "Armory", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Armory")
-SML:Register(SML.MediaType.STATUSBAR, "Bars", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Bars")
-SML:Register(SML.MediaType.STATUSBAR, "Button", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Button")
-SML:Register(SML.MediaType.STATUSBAR, "Cilo", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Cilo")
-SML:Register(SML.MediaType.STATUSBAR, "Dabs", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Dabs")
-SML:Register(SML.MediaType.STATUSBAR, "Diagonal", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Diagonal")
-SML:Register(SML.MediaType.STATUSBAR, "Fifths", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Fifths")
-SML:Register(SML.MediaType.STATUSBAR, "Flat", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Flat")
-SML:Register(SML.MediaType.STATUSBAR, "Fourths", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Fourths")
-SML:Register(SML.MediaType.STATUSBAR, "Glamour", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Glamour")
-SML:Register(SML.MediaType.STATUSBAR, "Glamour2", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Glamour2")
-SML:Register(SML.MediaType.STATUSBAR, "Glamour3", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Glamour3")
-SML:Register(SML.MediaType.STATUSBAR, "Glamour4", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Glamour4")
-SML:Register(SML.MediaType.STATUSBAR, "Glamour5", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Glamour5")
-SML:Register(SML.MediaType.STATUSBAR, "Glamour6", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Glamour6")
-SML:Register(SML.MediaType.STATUSBAR, "Glamour7", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Glamour7")
-SML:Register(SML.MediaType.STATUSBAR, "Gloss", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Gloss")
-SML:Register(SML.MediaType.STATUSBAR, "Healbot", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Healbot")
-SML:Register(SML.MediaType.STATUSBAR, "Lyfe", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Lyfe")
-SML:Register(SML.MediaType.STATUSBAR, "Perl2", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Perl2")
-SML:Register(SML.MediaType.STATUSBAR, "Ruben", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Ruben")
-SML:Register(SML.MediaType.STATUSBAR, "Skewed", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Skewed")
-SML:Register(SML.MediaType.STATUSBAR, "Wisps", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Wisps")
-
-
-function Layout:LoadSML()
-	SML.RegisterCallback(self, "LibSharedMedia_Registered", "MediaRegistered")
-	SML.RegisterCallback(self, "LibSharedMedia_SetGlobal", "MediaForced")
-end
-
-function Layout:AnchorFrame(frame, config)
-
-	local anchorTo = config.anchorTo or "UIParent"
-
-	if( anchorTo ~= "UIParent" ) then
-		-- The frame we wanted to anchor to doesn't exist yet, so will queue and wait for it to exist
-		if( not _G[anchorTo] ) then
-			frame.queuedConfig = config
-			frame.queuedName = anchorTo
-
-			anchoringQueued = anchoringQueued or {}
-			anchoringQueued[frame] = true
-			
-			return
-		end
-	end
-
-	local scale = 1
-	if( anchorTo == "UIParent" and not self.isHeaderFrame ) then
-		scale = frame:GetScale() * UIParent:GetScale()
-	end
-	
-	frame:ClearAllPoints()
-	frame:SetPoint(config.point, _G[anchorTo], config.relativePoint, (config.x / scale), (config.y / scale))
-
-	if( anchoringQueued ) then
-		for queued in pairs(anchoringQueued) do
-			if( queued.queuedName == frame:GetName() ) then
-				self:AnchorFrame(queued, queued.queuedConfig)
-
-				queued.queuedConfig = nil
-				queued.queuedName = nil
-				anchoringQueued[queued] = nil
-			end
-		end
-	end
-end
-
-function Layout:SetBGColor(frame)
-	frame:SetBackdropColor(LunaUF.db.profile.colors.background.r, LunaUF.db.profile.colors.background.g, LunaUF.db.profile.colors.background.b, LunaUF.db.profile.colors.background.a)
-end
-
--- Setup the main frame
-function Layout:SetupFrame(frame, config)
-	
-	frame:SetBackdrop(backdrop)
-	self:SetBGColor(frame)
-	
-	-- Prevent these from updating while in combat to prevent tainting
-	if( not InCombatLockdown() ) then
-		frame:SetHeight(config.height)
-		frame:SetWidth(config.width)
-		frame:SetScale(config.scale)
-
-		-- Let the frame clip closer to the edge, not using inset + clip as that lets you move it too far in
-		local clamp = 0.20
-		frame:SetClampRectInsets(clamp, -clamp, -clamp, clamp)
-		frame:SetClampedToScreen(true)
-
-		-- This is wrong technically, I need to redo the backdrop stuff so it will accept insets and that will fit hitbox issues
-		-- for the time being, this is a temporary fix to it
-		local hit = backdrop.borderTexture == "None" and backdrop.inset or 0
-		frame:SetHitRectInsets(hit, hit, hit, hit)
-		
-		if( not frame.ignoreAnchor ) then
-			self:AnchorFrame(frame, LunaUF.db.profile.units[frame.unitType])
-		end
-	end
-end
-
--- Setup bars
-function Layout:SetupBars(frame, config)
-	for _, module in pairs(LunaUF.modules) do
-		local key = module.moduleKey
-		local widget = frame[key]
-		if( widget and ( module.moduleHasBar or config[key] and config[key].isBar ) ) then
-			if( frame.visibility[key] and not frame[key].visibilityManaged and module.defaultVisibility == false ) then
-				self:ToggleVisibility(widget, false)
+	-- Power Prediction
+		frame.PowerPrediction = {}
+		local mainBar = CreateFrame("StatusBar", nil, frame.Power)
+		mainBar:SetStatusBarTexture([[Interface\ChatFrame\ChatFrameBackground]])
+		mainBar:SetReverseFill(true)
+		mainBar:SetFrameLevel(frame.Power:GetFrameLevel())
+		mainBar:GetStatusBarTexture():SetDrawLayer("ARTWORK",7)
+		frame.Power:SetScript("OnSizeChanged", function(self)
+			local orientation = self:GetOrientation()
+			local mod = self:GetParent().PowerPrediction.mainBar
+			mod:ClearAllPoints()
+			mod:SetOrientation(orientation)
+			if orientation == "HORIZONTAL" then
+				mod:SetPoint("TOP")
+				mod:SetPoint("BOTTOM")
+				mod:SetPoint("RIGHT", self:GetStatusBarTexture(), "RIGHT")
+				mod:SetWidth(self:GetWidth())
 			else
-				self:ToggleVisibility(widget, frame.visibility[key])
+				mod:SetPoint("LEFT")
+				mod:SetPoint("RIGHT")
+				mod:SetPoint("TOP", self:GetStatusBarTexture(), "TOP")
+				mod:SetHeight(self:GetHeight())
 			end
+		end)
+		frame.PowerPrediction.mainBar = mainBar
+
+	-- Castbar
+		local Castbar = CreateFrame("StatusBar", nil, frame)
+
+		local Background = Castbar:CreateTexture(nil, "BACKGROUND")
+		Background:SetAllPoints(Castbar)
+
+		local Icon = Castbar:CreateTexture(nil, "OVERLAY")
+		Icon:SetSize(10, 10)
+		Icon:SetPoint("TOPLEFT", Castbar, "TOPLEFT")
+
+		local SafeZone = Castbar:CreateTexture(nil, "OVERLAY")
+
+		Castbar.bg = Background
+		Castbar.Icon = Icon
+		Castbar.SafeZone = SafeZone
+		Castbar:SetScript("OnShow", LUF.PlaceModules)
+		Castbar:SetScript("OnHide", LUF.PlaceModules)
+		frame.Castbar = Castbar
+		frame.modules.castBar = Castbar
+		frame.modules.castBar.name = "Castbar"
+		
+	-- Totembar
+		if select(2, UnitClass('player')) == "SHAMAN" then
+			local totemBar = CreateFrame("Frame", nil, frame)
+			frame.Totems = {}
+			for i=1,4 do
+				frame.Totems[i] = CreateFrame("StatusBar", nil, totemBar)
+				frame.Totems[i]:SetMinMaxValues(0,1)
+				frame.Totems[i]:SetValue(0)
+				frame.Totems[i].bg = frame.Totems[i]:CreateTexture(nil, "BACKGROUND")
+				frame.Totems[i].bg:SetAllPoints(frame.Totems[i])
+			end
+			frame.Totems.PostUpdate = LUF.overrides["Totems"].PostUpdate
+			totemBar.Totems = frame.Totems
+			totemBar.Update = LUF.overrides["Totems"].Update
+			frame.modules.totemBar = totemBar
+			frame.modules.totemBar.name = "Totems"
+		end
+		
+	-- Druid Bar
+		if select(2, UnitClass('player')) == "DRUID" then
+			local AdditionalPower = CreateFrame("StatusBar", nil, frame)
+
+			local Background = AdditionalPower:CreateTexture(nil, "BACKGROUND")
+			Background:SetAllPoints(AdditionalPower)
+
+			AdditionalPower.frequentUpdates = true
+			AdditionalPower.colorDisconnected = true
+			AdditionalPower.colorPower = true
+
+			AdditionalPower.PostUpdateVisibility = LUF.overrides["AdditionalPower"].PostUpdateVisibility
+
+			AdditionalPower.bg = Background
+			frame.AdditionalPower = AdditionalPower
+			frame.modules.druidBar = AdditionalPower
+			frame.modules.druidBar.name = "AdditionalPower"
+
+			frame.tags.druidBar = {}
 			
-			if( ( widget:IsShown() or ( not frame[key].visibilityManaged and module.defaultVisibility == false ) ) and widget.SetStatusBarTexture ) then
-				widget:SetStatusBarTexture(LunaUF.Layout:LoadMedia(SML.MediaType.STATUSBAR, LunaUF.db.profile.units[frame.unitType][key].statusbar))
-				widget:GetStatusBarTexture():SetHorizTile(false)
-
-				widget:SetOrientation(config[key].vertical and "VERTICAL" or "HORIZONTAL")
-				widget:SetReverseFill(config[key].reverse and true or false)
+	-- Regen Ticker
+			local AdditionalRegenTicker = CreateFrame("StatusBar", nil, frame.AdditionalPower)
+			frame.AdditionalRegenTicker = AdditionalRegenTicker
+		end
+		
+	-- Reckoning
+		if select(2, UnitClass('player')) == "PALADIN" then
+			local reckStacks = CreateFrame("Frame", nil, frame)
+			local Reckoning = {}
+			for i=1,4 do
+				Reckoning[i] = CreateFrame("StatusBar", nil, reckStacks)
+				Reckoning[i].bg = reckStacks:CreateTexture(nil, "BACKGROUND")
+				Reckoning[i].bg:SetAllPoints(Reckoning[i])
 			end
+			reckStacks.Update = LUF.overrides["Reckoning"].Update
+			Reckoning.PostUpdate = LUF.overrides["Reckoning"].PostUpdate
+			reckStacks.Reckoning = Reckoning
+			reckStacks.name = "Reckoning"
+			frame.modules.reckStacks = reckStacks
+			frame.Reckoning = Reckoning
+		end
+		
+	-- XP Bar
+		local xpBarFrame = CreateFrame("Frame", nil, frame)
+		xpBarFrame:SetScript("OnSizeChanged", function(self)
+			self.xpBar:ClearAllPoints()
+			self.repBar:ClearAllPoints()
+			if self.xpBar:IsShown() and not self.repBar:IsShown() then
+				self.xpBar:SetAllPoints(mod)
+			elseif not self.xpBar:IsShown() and self.repBar:IsShown() then
+				self.repBar:SetAllPoints(mod)
+			elseif self.xpBar:IsShown() and self.repBar:IsShown() then
+				local x,y = self:GetWidth(), self:GetHeight() / 2
+				self.xpBar:SetPoint("BOTTOM", self, "BOTTOM")
+				self.xpBar:SetSize(x,y)
+				self.repBar:SetPoint("TOP", self, "TOP")
+				self.repBar:SetSize(x,y)
+			end
+		end)
+		local xpBar = CreateFrame("StatusBar", nil, xpBarFrame)
+		xpBar:SetFrameLevel(xpBarFrame:GetFrameLevel())
+		xpBarFrame.xpBar = xpBar
+		xpBar.bg = xpBar:CreateTexture(nil, "BACKGROUND")
+		xpBar.bg:SetAllPoints(xpBar)
+		local repBar = CreateFrame("StatusBar", nil, xpBarFrame)
+		repBar:SetFrameLevel(xpBarFrame:GetFrameLevel())
+		xpBarFrame.repBar = repBar
+		repBar.bg = repBar:CreateTexture(nil, "BACKGROUND")
+		repBar.bg:SetAllPoints(repBar)
+		frame.XPRepBar = {
+			xpBar = xpBar,
+			repBar = repBar,
+			PostUpdate = LUF.overrides["XPBar"].PostUpdate
+		}
+		frame.modules.xpBar = xpBarFrame
+		frame.modules.xpBar.name = "XPRepBar"
+		frame.tags.xpBar = {}
+		
+	-- Combo Points
+		local comboPoints = CreateFrame("Frame", nil, frame)
+		local ComboPoints = {}
+		for i=1,5 do
+			ComboPoints[i] = CreateFrame("StatusBar", nil, comboPoints)
+			ComboPoints[i].bg = comboPoints:CreateTexture(nil, "BACKGROUND")
+			ComboPoints[i].bg:SetAllPoints(ComboPoints[i])
+		end
+		comboPoints.Update = LUF.overrides["ComboPoints"].Update
+		ComboPoints.PostUpdate = LUF.overrides["ComboPoints"].PostUpdate
+		comboPoints.ComboPoints = ComboPoints
+		comboPoints.name = "ComboPoints"
+		frame.modules.comboPoints = comboPoints
+		frame.ComboPoints = ComboPoints
+	end,
 
-			if( widget.background ) then
-				if( config[key].background or config[key].invert ) then
-					widget.background:SetTexture(LunaUF.Layout:LoadMedia(SML.MediaType.STATUSBAR, LunaUF.db.profile.units[frame.unitType][key].statusbar))
-					widget.background:SetHorizTile(false)
-					widget.background:Show()
+	pet = function(frame)
+	-- XP Bar
+		local xpBarFrame = CreateFrame("Frame", nil, frame)
+		xpBarFrame:SetScript("OnSizeChanged", function() end)
+		local xpBar = CreateFrame("StatusBar", nil, xpBarFrame)
+		xpBar:SetFrameLevel(xpBarFrame:GetFrameLevel())
+		xpBarFrame.xpBar = xpBar
+		xpBar.bg = xpBar:CreateTexture(nil, "BACKGROUND")
+		xpBar.bg:SetAllPoints(xpBar)
+		xpBar:SetAllPoints(xpBarFrame)
+		frame.XPRepBar = {
+			xpBar = xpBar,
+			PostUpdate = LUF.overrides["XPBar"].PostUpdate
+		}
+		frame.modules.xpBar = xpBarFrame
+		frame.modules.xpBar.name = "XPRepBar"
+		frame.tags.xpBar = {}
+	end,
 
-					widget.background.overrideColor = {r = 0, g = 0, b = 0, a = 0.80} --LunaUF.db.profile.bars.backgroundColor or config[key].backgroundColor
+	pettarget = function(frame)
+	-- Nothing here yet
+	end,
 
-					if( widget.background.overrideColor ) then
-						widget.background:SetVertexColor(widget.background.overrideColor.r, widget.background.overrideColor.g, widget.background.overrideColor.b, 0.20)
-					end
+	pettargettarget = function(frame)
+	-- Nothing here yet
+	end,
+
+	target = function(frame)
+	-- Castbar
+		local Castbar = CreateFrame("StatusBar", nil, frame)
+
+		local Background = Castbar:CreateTexture(nil, "BACKGROUND")
+		Background:SetAllPoints(Castbar)
+
+		local Icon = Castbar:CreateTexture(nil, "OVERLAY")
+		Icon:SetSize(10, 10)
+		Icon:SetPoint("TOPLEFT", Castbar, "TOPLEFT")
+
+		local SafeZone = Castbar:CreateTexture(nil, "OVERLAY")
+
+		Castbar.bg = Background
+		Castbar.Icon = Icon
+		Castbar.SafeZone = SafeZone
+		Castbar:SetScript("OnShow", LUF.PlaceModules)
+		Castbar:SetScript("OnHide", LUF.PlaceModules)
+		frame.Castbar = Castbar
+		frame.modules.castBar = Castbar
+		frame.modules.castBar.name = "Castbar"
+	
+	-- Combo Points
+		local comboPoints = CreateFrame("Frame", nil, frame)
+		local ComboPoints = {}
+		for i=1,5 do
+			ComboPoints[i] = CreateFrame("StatusBar", nil, comboPoints)
+			ComboPoints[i].bg = comboPoints:CreateTexture(nil, "BACKGROUND")
+			ComboPoints[i].bg:SetAllPoints(ComboPoints[i])
+		end
+		comboPoints.Update = LUF.overrides["ComboPoints"].Update
+		ComboPoints.PostUpdate = LUF.overrides["ComboPoints"].PostUpdate
+		comboPoints.ComboPoints = ComboPoints
+		comboPoints.name = "ComboPoints"
+		frame.modules.comboPoints = comboPoints
+		frame.ComboPoints = ComboPoints
+	end,
+
+	targettarget = function(frame)
+	-- Nothing here yet
+	end,
+
+	targettargettarget = function(frame)
+	-- Nothing here yet
+	end,
+
+	party = function(frame)
+	-- Castbar
+		local Castbar = CreateFrame("StatusBar", nil, frame)
+
+		local Background = Castbar:CreateTexture(nil, "BACKGROUND")
+		Background:SetAllPoints(Castbar)
+
+		local Icon = Castbar:CreateTexture(nil, "OVERLAY")
+		Icon:SetSize(10, 10)
+		Icon:SetPoint("TOPLEFT", Castbar, "TOPLEFT")
+
+		local SafeZone = Castbar:CreateTexture(nil, "OVERLAY")
+
+		Castbar.bg = Background
+		Castbar.Icon = Icon
+		Castbar.SafeZone = SafeZone
+		Castbar:SetScript("OnShow", LUF.PlaceModules)
+		Castbar:SetScript("OnHide", LUF.PlaceModules)
+		frame.Castbar = Castbar
+		frame.modules.castBar = Castbar
+		frame.modules.castBar.name = "Castbar"
+	end,
+
+	partytarget = function(frame)
+	-- Nothing here yet
+	end,
+
+	partypet = function(frame)
+	-- Nothing here yet
+	end,
+
+	raid = function(frame)
+	-- Castbar
+		local Castbar = CreateFrame("StatusBar", nil, frame)
+
+		local Background = Castbar:CreateTexture(nil, "BACKGROUND")
+		Background:SetAllPoints(Castbar)
+
+		local Icon = Castbar:CreateTexture(nil, "OVERLAY")
+		Icon:SetSize(10, 10)
+		Icon:SetPoint("TOPLEFT", Castbar, "TOPLEFT")
+
+		local SafeZone = Castbar:CreateTexture(nil, "OVERLAY")
+
+		Castbar.bg = Background
+		Castbar.Icon = Icon
+		Castbar.SafeZone = SafeZone
+		Castbar:SetScript("OnShow", LUF.PlaceModules)
+		Castbar:SetScript("OnHide", LUF.PlaceModules)
+		frame.Castbar = Castbar
+		frame.modules.castBar = Castbar
+		frame.modules.castBar.name = "Castbar"
+	end,
+	
+	raidpet = function(frame)
+	-- Nothing here yet
+	end,
+	
+	maintank = function(frame)
+	-- Castbar
+		local Castbar = CreateFrame("StatusBar", nil, frame)
+
+		local Background = Castbar:CreateTexture(nil, "BACKGROUND")
+		Background:SetAllPoints(Castbar)
+
+		local Icon = Castbar:CreateTexture(nil, "OVERLAY")
+		Icon:SetSize(10, 10)
+		Icon:SetPoint("TOPLEFT", Castbar, "TOPLEFT")
+
+		local SafeZone = Castbar:CreateTexture(nil, "OVERLAY")
+
+		Castbar.bg = Background
+		Castbar.Icon = Icon
+		Castbar.SafeZone = SafeZone
+		Castbar:SetScript("OnShow", LUF.PlaceModules)
+		Castbar:SetScript("OnHide", LUF.PlaceModules)
+		frame.Castbar = Castbar
+		frame.modules.castBar = Castbar
+		frame.modules.castBar.name = "Castbar"
+	end,
+	
+	maintanktarget = function(frame)
+	-- Nothing here yet
+	end,
+	
+	maintanktargettarget = function(frame)
+	-- Nothing here yet
+	end,
+	
+	mainassist = function(frame)
+	-- Castbar
+		local Castbar = CreateFrame("StatusBar", nil, frame)
+
+		local Background = Castbar:CreateTexture(nil, "BACKGROUND")
+		Background:SetAllPoints(Castbar)
+
+		local Icon = Castbar:CreateTexture(nil, "OVERLAY")
+		Icon:SetSize(10, 10)
+		Icon:SetPoint("TOPLEFT", Castbar, "TOPLEFT")
+
+		local SafeZone = Castbar:CreateTexture(nil, "OVERLAY")
+
+		Castbar.bg = Background
+		Castbar.Icon = Icon
+		Castbar.SafeZone = SafeZone
+		Castbar:SetScript("OnShow", LUF.PlaceModules)
+		Castbar:SetScript("OnHide", LUF.PlaceModules)
+		frame.Castbar = Castbar
+		frame.modules.castBar = Castbar
+		frame.modules.castBar.name = "Castbar"
+	end,
+	
+	mainassisttarget = function(frame)
+	-- Nothing here yet
+	end,
+	
+	mainassisttargettarget = function(frame)
+	-- Nothing here yet
+	end,
+}
+
+LUF.IndicatorData = {
+	happiness = {name = "HappinessIndicator", layer = "OVERLAY" },
+	raidTarget = { name = "RaidTargetIndicator", layer = "OVERLAY" },
+	elite = { name = "EliteIndicator", layer = "ARTWORK" },
+	class = { name = "ClassIndicator", layer = "OVERLAY" },
+	masterLoot = { name = "MasterLooterIndicator", layer = "OVERLAY" },
+	leader = { name = "LeaderIndicator", layer = "OVERLAY", Override = LUF.overrides["LeaderIcon"].Update },
+	pvp = { name = "PvPIndicator", layer = "OVERLAY" },
+	pvprank = { name = "PvPRankIndicator", layer = "OVERLAY" },
+	ready = { name = "ReadyCheckIndicator", layer = "OVERLAY" },
+	status = { name = "StatusIndicator", layer = "OVERLAY" },
+	rezz = { name = "ResurrectIndicator", layer = "OVERLAY" },
+	role = { name = "RaidRoleIndicator", layer = "OVERLAY" },
+}
+
+function LUF.InitializeUnit(frame, unit, notHeaderChild)
+	local unit = unit or frame:GetAttribute("oUF-guessUnit")
+
+	frame.toplevel = CreateFrame("Frame", nil, frame)
+	frame.toplevel:SetFrameLevel(5)
+
+	frame.modules = {}
+
+	frame.tags = {}
+	frame.tags.top = {}
+	frame.tags.bottom = {}
+
+	frame.indicators = {}
+
+	frame.bg = frame:CreateTexture(nil, "BACKGROUND")
+	frame.bg:SetAllPoints(frame)
+	frame.bg:SetTexture("Interface\\ChatFrame\\ChatFrameBackground")
+
+	local Portrait = {
+	}
+	Portrait.model = CreateFrame("PlayerModel", nil, frame)
+	Portrait.texture = frame:CreateTexture(nil, "OVERLAY")
+	Portrait.texture:SetAllPoints(Portrait.model)
+
+	frame.StatusPortrait = Portrait
+	frame.modules.portrait = Portrait.model
+	frame.modules.portrait.name = "StatusPortrait"
+
+-- Healthbar
+	local Health = CreateFrame("StatusBar", nil, frame)
+
+	local Background = Health:CreateTexture(nil, "BACKGROUND")
+	Background:SetAllPoints(Health)
+
+	Health.colorTapping = true
+	Health.colorDisconnected = true
+	Health.colorHealth = true
+	Health.colorCivilian = true
+
+	Health.UpdateColor = LUF.overrides["Health"].UpdateColor
+
+	Health.bg = Background
+	frame.Health = Health
+	frame.modules.healthBar = Health
+	frame.modules.healthBar.name = "Health"
+	
+	frame.tags.healthBar = {}
+
+-- Powerbar
+	local Power = CreateFrame("StatusBar", nil, frame)
+
+	local Background = Power:CreateTexture(nil, "BACKGROUND")
+	Background:SetAllPoints(Power)
+
+	Power.frequentUpdates = true
+	Power.colorDisconnected = true
+	Power.colorPower = true
+
+	Power.bg = Background
+	frame.Power = Power
+	frame.modules.powerBar = Power
+	frame.modules.powerBar.name = "Power"
+
+	frame.tags.powerBar = {}
+
+-- Empty Bar
+	frame.Empty = CreateFrame("StatusBar", nil, frame)
+	frame.Empty.name = "Empty"
+	frame.modules.emptyBar = frame.Empty
+	frame.tags.emptyBar = {}
+
+-- Indicators
+	for iname in pairs(LUF.defaults.profile.units[unit].indicators) do
+		local data = LUF.IndicatorData[iname]
+		frame[data.name] = frame.toplevel:CreateTexture(nil, data.layer)
+		if data.Override then
+			frame[data.name].Override = data.Override
+		end
+		frame.indicators[iname] = frame[data.name]
+	end
+
+-- Range
+	if unit ~= "player" then
+		frame.Range = {
+			range = 40,
+			Override = LUF.overrides["Range"].Update
+		}
+	end
+
+-- Combat Fader
+	if not strmatch(unit,"^target.*$") then
+		frame.SimpleFader = {
+			combatAlpha = 1,
+			inactiveAlpha = 0.35,
+		}
+	end
+
+-- Auras
+	frame.SimpleAuras = CreateFrame("Frame", nil, frame)
+	frame.SimpleAuras:SetAllPoints(frame)
+
+	if(UnitSpecific[unit]) then
+		UnitSpecific[unit](frame)
+	end
+
+	if frame.Castbar then
+		frame.Castbar.PostCastStart = LUF.overrides["CastBar"].PostCastStart
+		frame.tags.castBar = {}
+	end
+
+	-- Combat Text
+	frame.CombatText = CreateFrame("Frame", nil, frame.toplevel)
+
+	-- Highlight
+	frame.Highlight = frame.toplevel:CreateTexture(nil, "BACKGROUND")
+	frame.Highlight:SetTexture([[Interface\AddOns\LUF\media\textures\highlight]])
+	frame.Highlight:SetBlendMode("ADD")
+	frame.Highlight:SetAllPoints(frame)
+
+	-- Border Highlight
+	frame.BorderHighlight = {}
+
+	-- Squares
+	local RaidStatusIndicators = {}
+	for k in pairs(LUF.defaults.profile.units.player.squares) do
+		local indicator = CreateFrame("Frame", nil, frame.toplevel)
+		indicator:SetBackdrop(backdrop)
+		indicator:SetBackdropColor(0,0,0)
+		indicator.texture = indicator:CreateTexture(nil, "OVERLAY")
+		indicator.texture:SetAllPoints(indicator)
+		if k ~= "leftcenter" and k ~= "rightcenter" then
+			indicator:SetPoint(strupper(k), frame, strupper(k), RaidStatusIndicatorOffsets[k].x, RaidStatusIndicatorOffsets[k].y)
+		end
+		RaidStatusIndicators[k] = indicator
+	end
+	RaidStatusIndicators.leftcenter:SetPoint("RIGHT", RaidStatusIndicators.center, "LEFT", -1, 0)
+	RaidStatusIndicators.rightcenter:SetPoint("LEFT", RaidStatusIndicators.center, "RIGHT", 1, 0)
+	frame.RaidStatusIndicators = RaidStatusIndicators
+
+	-- Heal Prediction
+	local otherBeforeBar = CreateFrame("StatusBar", nil, frame.Health)
+	otherBeforeBar:SetStatusBarTexture([[Interface\ChatFrame\ChatFrameBackground]])
+	otherBeforeBar:Hide()
+
+	local myBar = CreateFrame("StatusBar", nil, frame.Health)
+	myBar:SetStatusBarTexture([[Interface\ChatFrame\ChatFrameBackground]])
+	otherBeforeBar:Hide()
+
+	local otherAfterBar = CreateFrame("StatusBar", nil, frame.Health)
+	otherAfterBar:SetStatusBarTexture([[Interface\ChatFrame\ChatFrameBackground]])
+	otherBeforeBar:Hide()
+
+	local hotBar = CreateFrame("StatusBar", nil, frame.Health)
+	hotBar:SetStatusBarTexture([[Interface\ChatFrame\ChatFrameBackground]])
+	otherBeforeBar:Hide()
+
+	frame.BetterHealthPrediction = {
+		otherBeforeBar = otherBeforeBar,
+		myBar = myBar,
+		otherAfterBar = otherAfterBar,
+		hotBar = hotBar,
+	}
+	frame.Health:SetScript("OnSizeChanged", function(self)
+		local frame = self:GetParent()
+		local orientation = self:GetOrientation()
+		local otherBeforeBar, myBar, otherAfterBar, hotBar = frame.BetterHealthPrediction.otherBeforeBar, frame.BetterHealthPrediction.myBar, frame.BetterHealthPrediction.otherAfterBar, frame.BetterHealthPrediction.hotBar,
+		otherBeforeBar:ClearAllPoints()
+		otherBeforeBar:SetOrientation(orientation)
+		myBar:ClearAllPoints()
+		myBar:SetOrientation(orientation)
+		otherAfterBar:ClearAllPoints()
+		otherAfterBar:SetOrientation(orientation)
+		hotBar:ClearAllPoints()
+		hotBar:SetOrientation(orientation)
+		if orientation == "HORIZONTAL" then
+			otherBeforeBar:SetPoint("TOP")
+			otherBeforeBar:SetPoint("BOTTOM")
+			otherBeforeBar:SetPoint("LEFT", self:GetStatusBarTexture(), "RIGHT")
+			otherBeforeBar:SetWidth(self:GetWidth())
+			
+			myBar:SetPoint("TOP")
+			myBar:SetPoint("BOTTOM")
+			myBar:SetPoint("LEFT", otherBeforeBar:GetStatusBarTexture(), "RIGHT")
+			myBar:SetWidth(self:GetWidth())
+			
+			otherAfterBar:SetPoint("TOP")
+			otherAfterBar:SetPoint("BOTTOM")
+			otherAfterBar:SetPoint("LEFT", myBar:GetStatusBarTexture(), "RIGHT")
+			otherAfterBar:SetWidth(self:GetWidth())
+			
+			hotBar:SetPoint("TOP")
+			hotBar:SetPoint("BOTTOM")
+			hotBar:SetPoint("LEFT", otherAfterBar:GetStatusBarTexture(), "RIGHT")
+			hotBar:SetWidth(self:GetWidth())
+		else
+			otherBeforeBar:SetPoint("LEFT")
+			otherBeforeBar:SetPoint("RIGHT")
+			otherBeforeBar:SetPoint("BOTTOM", self:GetStatusBarTexture(), "TOP")
+			otherBeforeBar:SetHeight(self:GetHeight())
+			
+			myBar:SetPoint("LEFT")
+			myBar:SetPoint("RIGHT")
+			myBar:SetPoint("BOTTOM", otherBeforeBar:GetStatusBarTexture(), "TOP")
+			myBar:SetHeight(self:GetHeight())
+			
+			otherAfterBar:SetPoint("LEFT")
+			otherAfterBar:SetPoint("RIGHT")
+			otherAfterBar:SetPoint("BOTTOM", myBar:GetStatusBarTexture(), "TOP")
+			otherAfterBar:SetHeight(self:GetHeight())
+			
+			hotBar:SetPoint("LEFT")
+			hotBar:SetPoint("RIGHT")
+			hotBar:SetPoint("BOTTOM", otherAfterBar:GetStatusBarTexture(), "TOP")
+			hotBar:SetHeight(self:GetHeight())
+		end
+	end)
+
+-- Fontstrings
+	for bar,fstrings in pairs(frame.tags) do
+		local parent = frame.modules[bar] or frame
+		fstrings.left = parent:CreateFontString(nil, "OVERLAY")
+		fstrings.left:SetDrawLayer("OVERLAY", 7)
+		fstrings.left:SetJustifyH("LEFT")
+		fstrings.center = parent:CreateFontString(nil, "OVERLAY")
+		fstrings.center:SetDrawLayer("OVERLAY", 7)
+		fstrings.center:SetJustifyH("CENTER")
+		fstrings.right = parent:CreateFontString(nil, "OVERLAY")
+		fstrings.right:SetDrawLayer("OVERLAY", 7)
+		fstrings.right:SetJustifyH("RIGHT")
+	end
+	
+	if notHeaderChild then
+		frame:SetAttribute("oUF-guessUnit", unit)
+	end
+	
+	frame:SetScript("OnEnter", function(self)
+		if( LUF.db.profile.tooltipCombat or not InCombatLockdown() ) then
+			if not GameTooltip:IsForbidden() then
+				if LUF.db.profile.locked then
+					UnitFrame_OnEnter(self)
 				else
-					widget.background:Hide()
+					GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+					GameTooltip:SetText(LUF.L[self:GetAttribute("oUF-guessUnit")], 1, 0.81, 0, 1, true)
+					GameTooltip:Show()
 				end
 			end
 		end
-	end
-end
-
--- Setup the bar barOrder/info
-local currentConfig
-local function sortOrder(a, b)
-	return currentConfig[a].order < currentConfig[b].order
-end
-
-local barOrderH = {}
-local barOrderV = {}
-function Layout:PositionWidgets(frame, config)
-	-- Deal with setting all of the bar heights
-	local totalWeight, totalHBars, totalVBars, hasFullSize, vWeight, hWeight = 0, -1, -1, nil, 0, 0
-
-	-- Figure out total weighting as well as what bars are full sized
-	for i=#(barOrderH), 1, -1 do table.remove(barOrderH, i) end
-	for i=#(barOrderV), 1, -1 do table.remove(barOrderV, i) end
-	for key, module in pairs(LunaUF.modules) do
-		if( config[key] and not config[key].height ) then config[key].height = 0.50 end
-
-		if( ( module.moduleHasBar or config[key] and config[key].isBar ) and frame[key] and frame[key]:IsShown() and config[key].height > 0 ) then
-		
-			totalWeight = totalWeight + config[key].height
-			if config[key].vertical then
-				vWeight = vWeight + config[key].height
-				totalVBars = totalVBars + 1
-
-				table.insert(barOrderV, key)
-			else
-				hWeight = hWeight + config[key].height
-				totalHBars = totalHBars + 1
-
-				table.insert(barOrderH, key)
-			end
-
-			config[key].order = config[key].order or 99
-			
-			-- Decide whats full sized
-			if( not frame.visibility.portrait or config.portrait.isBar or config[key].order < config.portrait.fullBefore or config[key].order > config.portrait.fullAfter ) then
-				hasFullSize = true
-				frame[key].fullSize = true
-			else
-				frame[key].fullSize = nil
-			end
+	end)
+	frame:SetScript("OnLeave", function(self)
+		if not GameTooltip:IsForbidden() then
+			UnitFrame_OnLeave(self)
 		end
-	end
-
-	-- Sort the barOrder so it's all nice and orderly (:>)
-	currentConfig = config
-	table.sort(barOrderH, sortOrder)
-	table.sort(barOrderV, sortOrder)
-
-	-- Now deal with setting the heights and figure out how large the portrait should be.
-	local clip = 1 --ShadowUF.db.profile.backdrop.inset + ShadowUF.db.profile.backdrop.clip
-	local clipDoubled = clip * 2
-	
-	local portraitOffset, portraitAlignment, portraitAnchor
-	local portraitWidth = 0
-
-	if( not config.portrait.isBar ) then
-		self:ToggleVisibility(frame.portrait, frame.visibility.portrait)
-		
-		if( frame.visibility.portrait ) then
-			-- Figure out portrait alignment
-			portraitAlignment = config.portrait.alignment
-			
-			-- Set the portrait width so we can figure out the offset to use on bars, will do height and position later
-			portraitWidth = math.floor(frame:GetWidth() * config.portrait.width) - 3--ShadowUF.db.profile.backdrop.inset
-			frame.portrait:SetWidth(portraitWidth - (portraitAlignment == "RIGHT" and 1 or 0.5))
-			
-			-- Disable portrait if there isn't enough room
-			if( portraitWidth <= 0 ) then
-				frame.portrait:Hide()
-			end
-
-			-- As well as how much to offset bars by (if it's using a left alignment) to keep them all fancy looking
-			portraitOffset = clip
-			if( portraitAlignment == "LEFT" ) then
-				portraitOffset = portraitOffset + portraitWidth
-			end
-		end
-	end
-
-	hWeight = math.max(hWeight, 1)
-	totalWeight = math.max(totalWeight, 1)
-
-	-- Position and size everything
-	local portraitHeight, yOffset, hBarWidth = 0, -clip, ((frame:GetWidth() - portraitWidth) * (hWeight / totalWeight)) - clip - (#barOrderV > 0 and 0 or clip)
-	local vBarWidth = vWeight > 0 and ((frame:GetWidth() - portraitWidth) * (vWeight / totalWeight)) - clip - (#barOrderH > 0 and 1.02 or clip) or 0
-	local availableHeight = frame:GetHeight() - clipDoubled - (1.02 * totalHBars)
-	for id, key in pairs(barOrderH) do
-		local bar = frame[key]
-		-- Position the actual bar based on it's type
-		if( bar.fullSize ) then
-			bar:SetWidth(frame:GetWidth() - clipDoubled)
-			bar:SetHeight(availableHeight * (config[key].height / hWeight))
-
-			bar:ClearAllPoints()
-			bar:SetPoint("TOPLEFT", frame, "TOPLEFT", clip, yOffset)
-		else
-			bar:SetWidth(hBarWidth)
-			bar:SetHeight(availableHeight * (config[key].height / hWeight))
-
-			bar:ClearAllPoints()
-			bar:SetPoint("TOPLEFT", frame, "TOPLEFT", portraitOffset, yOffset)
-
-			portraitHeight = portraitHeight + bar:GetHeight() + 1
-		end
-		
-		-- Figure out where the portrait is going to be anchored to
-		if( not portraitAnchor and config[key].order >= config.portrait.fullBefore ) then
-			portraitAnchor = bar
-		end
-
-		yOffset = yOffset - bar:GetHeight() + (-1.02)
-	end
-
-	local xOffset = portraitOffset and 0 or clip
-	if portraitHeight == 0 then portraitHeight = availableHeight end
-	for id, key in pairs(barOrderV) do
-		local bar = frame[key]
-		-- Position the actual bar based on it's type
-		bar:SetWidth((vBarWidth * (config[key].height / vWeight)) - 0.2)
-		bar:SetHeight(portraitHeight - 1.02)
-
-		bar:ClearAllPoints()
-		if #barOrderH > 0 then
-			bar:SetPoint("TOPLEFT", portraitAnchor, "TOPRIGHT", 1.02 + xOffset, 0)
-		else
-			bar:SetPoint("TOPLEFT", frame, "TOPLEFT", xOffset + (portraitOffset or 0), -clip)
-		end
-		
-		xOffset = xOffset + bar:GetWidth() + (1.02)
-		
-		-- Figure out where the portrait is going to be anchored to
-		if( not portraitAnchor ) then
-			portraitAnchor = bar
-		end
-		
-	end
-
-	if( not portraitAnchor ) then
-		portraitAnchor = frame
-	end
-
-	if #barOrderV > 0 then vBarWidth = vBarWidth + 1.02 end
-
-	-- Now position the portrait and set the height
-	if( frame.portrait and frame.portrait:IsShown() and portraitAnchor and portraitHeight > 0 ) then
-		if( portraitAlignment == "LEFT" ) then
-			frame.portrait:ClearAllPoints()
-			frame.portrait:SetPoint("TOPLEFT", portraitAnchor, "TOPLEFT", -frame.portrait:GetWidth() - 0.5, 0)
-		elseif( portraitAlignment == "RIGHT" ) then
-			frame.portrait:ClearAllPoints()
-			frame.portrait:SetPoint("TOPRIGHT", portraitAnchor, "TOPRIGHT", frame.portrait:GetWidth() + 1 + (#barOrderH > 0 and vBarWidth or 0), 0)
-		end
-			
-		if( hasFullSize ) then
-			frame.portrait:SetHeight(portraitHeight - 1)
-		else
-			frame.portrait:SetHeight(frame:GetHeight() - clipDoubled)
-		end
-	end
-
-	LunaUF:FireModuleEvent("OnLayoutWidgets", frame, config)
+	end)
 end
