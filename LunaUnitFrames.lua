@@ -191,9 +191,9 @@ function LUF:OnLoad()
 	SML.RegisterCallback(self, "LibSharedMedia_Registered", "MediaRegistered")
 	SML.RegisterCallback(self, "LibSharedMedia_SetGlobal", "MediaForced")
 
-	self:HideBlizzardFrames()
 	self:LoadoUFSettings()
 	self:SpawnUnits()
+	self:HideBlizzardFrames()
 	self:CreateConfig()
 	self:UpdateMovers()
 	self:PlaceAllFrames()
@@ -355,17 +355,13 @@ local function handleFrame(baseName)
 end
 
 local active_hiddens = {
-	cast = true, -- The Castbar gets hidden as soon as a player frame is spawned that has the default oUF castbar
 }
 function LUF:HideBlizzardFrames()
-	if( self.db.profile.hidden.cast and not active_hiddens.cast ) then
-		CastingBarFrame_SetUnit(CastingBarFrame, nil)
-		CastingBarFrame_SetUnit(PetCastingBarFrame, nil)
+	if( self.db.profile.hidden.cast ) then
+		handleFrame(CastingBarFrame)
 		active_hiddens.cast = true
-	elseif( not self.db.profile.hidden.cast and active_hiddens.cast ) then
+	elseif( not self.db.profile.hidden.cast and not active_hiddens.cast ) then
 		CastingBarFrame_OnLoad(CastingBarFrame, 'player', true, false)
-		PetCastingBarFrame_OnLoad(PetCastingBarFrame)
-		active_hiddens.cast = nil
 	end
 
 	if( CompactRaidFrameManager ) then
