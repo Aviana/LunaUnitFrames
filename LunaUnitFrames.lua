@@ -1,7 +1,7 @@
 -- Luna Unit Frames 4.0 by Aviana
 
 LUF = select(2, ...)
-LUF.version = 4010
+LUF.version = 4020
 
 local L = LUF.L
 local ACR = LibStub("AceConfigRegistry-3.0", true)
@@ -924,8 +924,14 @@ function LUF.PlaceModules(frame)
 		xOffset = xOffset + frame.modules.portrait:GetWidth()
 	end
 	local attrPoint = point
+	local sqrX
 	for i,data in pairs(horiz) do
-		frame.modules[data.key]:SetPoint(point, attFrame, attrPoint, xOffset, yOffset)
+		if sqrX then
+			frame.modules[data.key]:SetPoint(point, attFrame, attrPoint, xOffset-sqrX, yOffset)
+			sqrX = nil
+		else
+			frame.modules[data.key]:SetPoint(point, attFrame, attrPoint, xOffset, yOffset)
+		end
 		local width = usableX * (horizValue/(horizValue+vertValue))
 		local height = usableY*(data.size/horizValue)
 		frame.modules[data.key]:SetWidth(width)
@@ -943,12 +949,14 @@ function LUF.PlaceModules(frame)
 			frame.modules[data.key]:Update()
 		end
 		if data.key == "castBar" and config.castBar.icon ~= "HIDE" then
-			local sqrX = frame.modules.castBar:GetHeight()
+			sqrX = frame.modules.castBar:GetHeight()
 			frame.modules.castBar.Icon:SetSize(sqrX, sqrX)
 			frame.modules.castBar:SetWidth(frame.modules.castBar:GetWidth() - sqrX)
 			if config.castBar.icon == "LEFT" then
 				frame.modules.castBar:ClearAllPoints()
 				frame.modules.castBar:SetPoint(point, attFrame, attrPoint, xOffset + sqrX, yOffset)
+			else
+				sqrX = nil
 			end
 		end
 		xOffset = 0
