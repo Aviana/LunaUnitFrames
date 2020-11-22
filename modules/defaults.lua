@@ -10,7 +10,7 @@ SML:Register(SML.MediaType.FONT, "Metal Lord", "Interface\\AddOns\\LunaUnitFrame
 SML:Register(SML.MediaType.FONT, "Optimus", "Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Optimus.ttf")
 SML:Register(SML.MediaType.FONT, "Trade Winds", "Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\TradeWinds.ttf")
 SML:Register(SML.MediaType.FONT, "Vera Serif", "Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\VeraSerif.ttf")
-SML:Register(SML.MediaType.FONT, "Yellowjacket", "Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Yellowjacket.ttf")
+SML:Register(SML.MediaType.FONT, "Myriad", "Interface\\AddOns\\LunaUnitFrames\\media\\fonts\\Myriad.ttf")
 SML:Register(SML.MediaType.BACKGROUND, "Chat Frame", "Interface\\ChatFrame\\ChatFrameBackground")
 SML:Register(SML.MediaType.STATUSBAR, "Minimalist", "Interface\\AddOns\\LunaUnitFrames\\media\\textures\\bars\\Minimalist")
 
