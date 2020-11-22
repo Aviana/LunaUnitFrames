@@ -676,4 +676,6 @@ function LUF.InitializeUnit(frame, unit, notHeaderChild)
 			UnitFrame_OnLeave(self)
 		end
 	end)
+	
+	frame:RegisterForClicks("AnyUp")
 end
