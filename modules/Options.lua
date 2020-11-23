@@ -2020,7 +2020,7 @@ function LUF:CreateConfig()
 					type = "group",
 					order = 7,
 					inline = true,
-					hidden = function(info) return info[1] ~= "player" end,
+					hidden = function(info) return info[1] ~= "player" and info[1] ~= "pet" end,
 					args = {
 						left = {
 							name = L["Left"],

@@ -394,7 +394,7 @@ function LUF:LoadDefaults()
 						size = 100,
 					},
 					["center"] = {
-						tagline = "[xpPet] [percxppet]",
+						tagline = "[xppet] [percxppet]",
 						size = 100,
 					},
 					["right"] = {
