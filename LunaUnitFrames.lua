@@ -1123,6 +1123,7 @@ local function SetHeaderAttributes(header, config)
 	header:SetAttribute("yMod", yMod)
 	header:SetAttribute("sortMethod", config.sortMethod)
 	header:SetAttribute("sortDir", config.sortOrder)
+	header:SetAttribute("roleFilter", config.roleFilter)
 	header:SetAttribute("x-height", config.height)
 	header:SetAttribute("x-width", config.width)
 	header:SetAttribute("x-scale", config.scale)
@@ -1156,10 +1157,8 @@ local function SetHeaderAttributes(header, config)
 		num = num + 1
 		frame = _G[ButtonName .. num]
 	end
-	if header:IsShown() then
-		header:Hide() -- trigger refresh
-		header:Show()
-	end
+	header:Hide() -- trigger refresh
+	header:Show()
 	
 	if not LUF.db.profile.locked then
 		LUF:UpdateMovers()
