@@ -538,7 +538,7 @@ function LUF.InitializeUnit(frame, unit, notHeaderChild)
 
 	-- Highlight
 	frame.Highlight = frame.toplevel:CreateTexture(nil, "BACKGROUND")
-	frame.Highlight:SetTexture([[Interface\AddOns\LUF\media\textures\highlight]])
+	frame.Highlight:SetTexture([[Interface\AddOns\LunaUnitFrames\media\textures\highlight]])
 	frame.Highlight:SetBlendMode("ADD")
 	frame.Highlight:SetAllPoints(frame)
 
