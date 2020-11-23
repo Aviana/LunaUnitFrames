@@ -3297,7 +3297,7 @@ function LUF:CreateConfig()
 							desc = L["What the indicator should display."],
 							type = "select",
 							order = 3,
-							values = { ["aggro"] = L["Aggro"], ["aura"] = L["Buff/Debuff"], ["ownaura"] = L["Own buff/debuff"], ["dispel"] = DISPELS },
+							values = { ["aggro"] = L["Aggro"], ["legacythreat"] = L["Aggro"].." ("..L["targettarget"]..")", ["aura"] = L["Buff/Debuff"], ["ownaura"] = L["Own buff/debuff"], ["dispel"] = DISPELS, ["missing"] = L["Missing Buff"] },
 							set = function(info, value) set(info,value) ACR:NotifyChange("LunaUnitFrames") end,
 						},
 						value = {
