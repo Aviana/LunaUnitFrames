@@ -677,5 +677,6 @@ function LUF.InitializeUnit(frame, unit, notHeaderChild)
 		end
 	end)
 	
+	frame:SetClampedToScreen(true)
 	frame:RegisterForClicks("AnyUp")
 end

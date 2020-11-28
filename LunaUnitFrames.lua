@@ -31,9 +31,10 @@ LUF.stateMonitor:WrapScript(LUF.stateMonitor, "OnAttributeChanged", [[
 	
 	local status = self:GetAttribute("state-raidstatus")
 	local setting = self:GetAttribute("hideraid")
-	local showParty = setting == "never" or status ~= "full" and setting == "5man"
+	local showParty = setting == "never" or status ~= "full" and setting == "5man" or setting == "always" and status == "none"
 	
 	if partyFrame and self:GetAttribute("partyEnabled") then
+		partyFrame:SetAttribute("raidHidden", not showParty)
 		if showParty then
 			partyFrame:Show()
 		else
@@ -41,6 +42,7 @@ LUF.stateMonitor:WrapScript(LUF.stateMonitor, "OnAttributeChanged", [[
 		end
 	end
 	if partytargetFrame and self:GetAttribute("partytargetEnabled") then
+		partytargetFrame:SetAttribute("raidHidden", not showParty)
 		if showParty then
 			partytargetFrame:Show()
 		else
@@ -48,6 +50,7 @@ LUF.stateMonitor:WrapScript(LUF.stateMonitor, "OnAttributeChanged", [[
 		end
 	end
 	if partypetFrame and self:GetAttribute("partypetEnabled") then
+		partypetFrame:SetAttribute("raidHidden", not showParty)
 		if showParty then
 			partypetFrame:Show()
 		else
@@ -309,13 +312,13 @@ function LUF:AutoswitchProfile(event)
 	end
 end
 
-local hiddenParent = CreateFrame('Frame', nil, UIParent)
+local hiddenParent = CreateFrame("Frame", nil, UIParent)
 hiddenParent:SetAllPoints()
 hiddenParent:Hide()
 
 local function handleFrame(baseName)
 	local frame
-	if(type(baseName) == 'string') then
+	if(type(baseName) == "string") then
 		frame = _G[baseName]
 	else
 		frame = baseName
@@ -361,7 +364,7 @@ function LUF:HideBlizzardFrames()
 		handleFrame(CastingBarFrame)
 		active_hiddens.cast = true
 	elseif( not self.db.profile.hidden.cast and not active_hiddens.cast ) then
-		CastingBarFrame_OnLoad(CastingBarFrame, 'player', true, false)
+		CastingBarFrame_OnLoad(CastingBarFrame, "player", true, false)
 	end
 
 	if( CompactRaidFrameManager ) then
@@ -415,7 +418,7 @@ function LUF:HideBlizzardFrames()
 
 	if( self.db.profile.hidden.party and not active_hiddens.party ) then
 		for i = 1, MAX_PARTY_MEMBERS do
-			handleFrame(string.format('PartyMemberFrame%d', i))
+			handleFrame(string.format("PartyMemberFrame%d", i))
 		end
 	end
 
@@ -1157,8 +1160,10 @@ local function SetHeaderAttributes(header, config)
 		num = num + 1
 		frame = _G[ButtonName .. num]
 	end
-	header:Hide() -- trigger refresh
-	header:Show()
+	if not header:GetAttribute("raidHidden") then -- Do not refresh if hidden in raid
+		header:Hide()
+		header:Show()
+	end
 	
 	if not LUF.db.profile.locked then
 		LUF:UpdateMovers()

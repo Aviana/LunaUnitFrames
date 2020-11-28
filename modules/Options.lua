@@ -2366,7 +2366,7 @@ function LUF:CreateConfig()
 						},
 					},
 				},
-				masterloot = {
+				masterLoot = {
 					name = MASTER_LOOTER,
 					type = "group",
 					order = 3,
