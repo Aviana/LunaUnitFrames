@@ -688,7 +688,7 @@ function LUF.ApplySettings(frame)
 			fstring:SetFont(LUF:LoadMedia(SML.MediaType.FONT, config.tags[barname].font), config.tags[barname].size)
 			fstring:SetShadowColor(0, 0, 0, 1.0)
 			fstring:SetShadowOffset(0.80, -0.80)
-			frame:TagWithHeal(fstring, config.tags[barname][side].tagline)
+			frame:Tag(fstring, config.tags[barname][side].tagline)
 		end
 	end
 	
@@ -869,12 +869,14 @@ end
 
 local sortUp = function(a, b) return a.order < b.order end
 local sortDown = function(a, b) return a.order > b.order end
+local horiz,vert = {},{}
 function LUF.PlaceModules(frame)
 	local frame = frame:IsObjectType("Statusbar") and frame:GetParent() or frame
 	local config = LUF.db.profile.units[frame:GetAttribute("oUF-guessUnit")]
 	if not config then return end
 	
-	local horiz,vert = {},{}
+	wipe(horiz)
+	wipe(vert)
 	local attFrame, point = frame, "TOPLEFT"
 	local xOffset, yOffset = 1, -1
 	local usableX, usableY = frame:GetWidth() - 2
@@ -932,7 +934,7 @@ function LUF.PlaceModules(frame)
 		if sqrX then
 			frame.modules[data.key]:SetPoint(point, attFrame, attrPoint, xOffset-sqrX, yOffset)
 			sqrX = nil
-		else
+		elseif frame.modules[data.key] ~= attFrame then
 			frame.modules[data.key]:SetPoint(point, attFrame, attrPoint, xOffset, yOffset)
 		end
 		local width = usableX * (horizValue/(horizValue+vertValue))
