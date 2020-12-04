@@ -1305,11 +1305,13 @@ frame:SetScript("OnEvent", function(self, event, addon)
 	elseif( event == "ADDON_LOADED" and ( addon == "Blizzard_ArenaUI" or addon == "Blizzard_CompactRaidFrames" ) and not LUF.InCombatLockdown) then
 		LUF:HideBlizzardFrames()
 	elseif event == "PLAYER_REGEN_DISABLED" then
-		LUF.db.profile.locked = true
-		LUF.InCombatLockdown = true
-		LUF:UpdateMovers()
-		if( ACR ) then
-			ACR:NotifyChange("LunaUnitFrames")
+		if not LUF.db.profile.locked then
+			LUF.db.profile.locked = true
+			LUF.InCombatLockdown = true
+			LUF:UpdateMovers()
+			if( ACR ) then
+				ACR:NotifyChange("LunaUnitFrames")
+			end
 		end
 	elseif event == "PLAYER_REGEN_ENABLED" then
 		LUF.InCombatLockdown = nil
