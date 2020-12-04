@@ -270,7 +270,8 @@ end
 LUF.overrides["ComboPoints"].PostUpdate = function(self, cur, max, hasMaxChanged, powerType)
 	local mod = self[1]:GetParent()
 	local cp = GetComboPoints("player", "target")
-	if (not cp or cp ==0) and mod.autoHide then
+	mod.isDisabled = not self.isEnabled
+	if (not cp or cp ==0) and mod.autoHide or mod.isDisabled then
 		mod:Hide()
 	else
 		mod:Show()

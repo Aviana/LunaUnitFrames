@@ -1,7 +1,7 @@
 -- Luna Unit Frames 4.0 by Aviana
 
 LUF = select(2, ...)
-LUF.version = 4030
+LUF.version = 4040
 
 local L = LUF.L
 local ACR = LibStub("AceConfigRegistry-3.0", true)
@@ -364,7 +364,7 @@ function LUF:HideBlizzardFrames()
 		handleFrame(CastingBarFrame)
 		active_hiddens.cast = true
 	elseif( not self.db.profile.hidden.cast and not active_hiddens.cast ) then
-		CastingBarFrame_OnLoad(CastingBarFrame, "player", true, false)
+		CastingBarFrame_OnLoad(CastingBarFrame, "player", true, false) --restore castbar as oUF kills it
 	end
 
 	if( CompactRaidFrameManager ) then
@@ -904,7 +904,7 @@ function LUF.PlaceModules(frame)
 				usableX = (frame:GetWidth() - 2) * config.portrait.width
 				v:SetWidth(usableX)
 				usableX = frame:GetWidth() - usableX - 2
-			elseif not config[k].autoHide or v:IsShown() then
+			elseif (not config[k].autoHide or v:IsShown()) and not v.isDisabled then
 				if config[k].vertical then
 					table.insert(vert,{key = k, order = config[k].order, size = config[k].height})
 					vertValue = vertValue + config[k].height
@@ -1305,9 +1305,9 @@ frame:SetScript("OnEvent", function(self, event, addon)
 	elseif( event == "ADDON_LOADED" and ( addon == "Blizzard_ArenaUI" or addon == "Blizzard_CompactRaidFrames" ) and not LUF.InCombatLockdown) then
 		LUF:HideBlizzardFrames()
 	elseif event == "PLAYER_REGEN_DISABLED" then
+		LUF.InCombatLockdown = true
 		if not LUF.db.profile.locked then
 			LUF.db.profile.locked = true
-			LUF.InCombatLockdown = true
 			LUF:UpdateMovers()
 			if( ACR ) then
 				ACR:NotifyChange("LunaUnitFrames")
