@@ -372,6 +372,7 @@ local L = {
 ["pvpcolor"] = "Weiss f\195\188r nicht PvP, gr\195\188n f\195\188r PvP und rot f\195\188r PvP Feinde",
 ["reactcolor"] = "Rot f\195\188r Feinde, gelb f\195\188r Neutrale und gr\195\188n f\195\188r Freunde",
 ["levelcolor"] = "Farben basierend auf der Spielerstufe gegen die Stufe der Einheit. (grau,gr\195\188n,gelb und rot)",
+["threat"] = "Bedrohung in skalierten Prozenten",
 ["aggrocolor"] = "Rot wenn die Einheit von einem Feind anvisiert wird",
 ["classcolor"] = "Klassenfarbe der Einheit",
 ["healthcolor"] = "Farbe basierend auf Gesundheit (rot = tot)",

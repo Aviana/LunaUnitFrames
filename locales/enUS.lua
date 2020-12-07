@@ -369,6 +369,7 @@ local L = {
 ["pvpcolor"] = "White for unflagged units, green for flagged friendlies and red for flagged enemies",
 ["reactcolor"] = "Red for enemies, yellow for neutrals, and green for friendlies",
 ["levelcolor"] = "Colors based on your level vs the level of the unit. (grey,green,yellow and red)",
+["threat"] = "Threat in scaled percent",
 ["aggrocolor"] = "Red if the unit is targeted by an enemy",
 ["classcolor"] = "Classcolor of the unit",
 ["healthcolor"] = "Color based on health (red = dead)",

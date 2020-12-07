@@ -369,6 +369,7 @@ local L = {
 ["pvpcolor"] = "關閉PVP時白色，開啟PVP的友方綠色，敵方紅色",
 ["reactcolor"] = "敵方紅色，中立黃色，友方綠色",
 ["levelcolor"] = "根據你與目標的等級差距顯示顏色：灰、綠、黃或紅",
+["threat"] = "Threat in scaled percent",
 ["aggrocolor"] = "獲得仇恨時紅色",
 ["classcolor"] = "職業著色",
 ["healthcolor"] = "血量百分比漸變色，死亡時紅色",

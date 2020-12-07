@@ -52,6 +52,7 @@ local InfoTags = {
 	["percxp"] = true,
 	["percxppet"] = true,
 	["rep"] = true,
+	["threat"] = true,
 }
 local HealthnPowerTags = {
 	["namehealerhealth"] = true,

@@ -1266,15 +1266,17 @@ function LUF:ReloadSingleUnit(unit)
 	local config = self.db.profile.units[unit]
 	--local res = GetScreenHeight() / strmatch(({GetScreenResolutions()})[GetCurrentResolution()], "(%d+)$")
 	
-	frame:SetWidth(config.width)
-	frame:SetHeight(config.height)
-	frame:SetScale(config.scale)
+	if not LUF.InCombatLockdown then
+		frame:SetWidth(config.width)
+		frame:SetHeight(config.height)
+		frame:SetScale(config.scale)
+	end
 	LUF.PlaceModules(frame, unit)
 	LUF.ApplySettings(frame)
 	
-	if not config.enabled then
+	if not config.enabled and frame:IsEnabled() then
 		frame:Disable()
-	else
+	elseif config.enabled and not frame:IsEnabled() then
 		frame:Enable()
 	end
 end

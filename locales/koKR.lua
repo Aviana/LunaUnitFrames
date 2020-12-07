@@ -369,6 +369,7 @@ local L = {
 ["pvpcolor"] = "깃발없는 유닛은 흰색, 깃발있고 우호적이면 녹색, 깃발있는 적은 빨갛게 표시",
 ["reactcolor"] = "적에 대해 빨강, 중립은 노랑, 우호면 녹색으로 표시",
 ["levelcolor"] = "내 레벨을 기반하여 유닛의 레벨 대비 색상을 표시 (회색, 녹색, 노랑, 빨강)",
+["threat"] = "Threat in scaled percent",
 ["aggrocolor"] = "유닛이 적군의 대상이 되면 빨갛게 표시",
 ["classcolor"] = "유닛의 직업 색상 표시",
 ["healthcolor"] = "생명력을 기반한 색상 표시 (빨강 = 죽음)",
