@@ -466,6 +466,7 @@ local moduleSettings = {
 			mod.bg:Hide()
 		end
 		mod.colorClass = config.colorType == "class"
+		mod.colorClassNPC = config.colorType == "class"
 		mod.colorPower = config.colorType == "type"
 		mod:SetOrientation(config.vertical and "VERTICAL" or "HORIZONTAL")
 	end,
