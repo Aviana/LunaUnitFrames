@@ -429,7 +429,7 @@ function LUF:HideBlizzardFrames()
 		end
 	end
 end
---]]
+
 local moduleSettings = {
 	healthBar = function(mod, config)
 		mod.texture = LUF:LoadMedia(SML.MediaType.STATUSBAR, config.statusbar)
@@ -645,13 +645,13 @@ function LUF.ApplySettings(frame)
 	-- Additional Regen Ticker
 	if frame.AdditionalRegenTicker then
 		if (config.druidBar.ticker or config.druidBar.fivesecond) then
-			frame:EnableElement("AdditionalRegenTicker")
+			frame:EnableElement("RegenTickerAlt")
 			frame.AdditionalRegenTicker.hideTicks = not config.druidBar.ticker
 			frame.AdditionalRegenTicker.hideFive = not config.druidBar.fivesecond
 			frame.AdditionalRegenTicker.autoHide = config.druidBar.hideticker
 			frame.AdditionalRegenTicker.vertical = config.druidBar.vertical
 		else
-			frame:DisableElement("AdditionalRegenTicker")
+			frame:DisableElement("RegenTickerAlt")
 		end
 	end
 	
