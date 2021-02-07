@@ -1,7 +1,7 @@
 -- Luna Unit Frames 4.0 by Aviana
 
 LUF = select(2, ...)
-LUF.version = 4050
+LUF.version = 4060
 
 local L = LUF.L
 local ACR = LibStub("AceConfigRegistry-3.0", true)
@@ -265,14 +265,18 @@ end
 
 function LUF:OnProfileDeleted(event, key, name)
 	-- Remove deleted profiles from autoswitching
-	for k,v in pairs(self.db.global.resdb) do
-		if v == name then
-			self.db.global.resdb[k] = nil
+	if self.db.global.resdb then
+		for k,v in pairs(self.db.global.resdb) do
+			if v == name then
+				self.db.global.resdb[k] = nil
+			end
 		end
 	end
-	for k,v in pairs(self.db.global.grpdb) do
-		if v == name then
-			self.db.global.grpdb[k] = nil
+	if self.db.global.grpdb then
+		for k,v in pairs(self.db.global.grpdb) do
+			if v == name then
+				self.db.global.grpdb[k] = nil
+			end
 		end
 	end
 end
@@ -496,7 +500,7 @@ local moduleSettings = {
 	emptyBar = function(mod, config)
 		mod.texture = LUF:LoadMedia(SML.MediaType.STATUSBAR, config.statusbar)
 		mod:SetStatusBarTexture(LUF:LoadMedia(SML.MediaType.STATUSBAR, config.statusbar))
-		mod:SetAlpha(config.alpha)
+		mod.alpha = config.alpha
 		mod.colorReaction = config.reactionType ~= "none" and config.reactionType
 		mod.colorClass = config.class
 		mod:SetOrientation(config.vertical and "VERTICAL" or "HORIZONTAL")
@@ -831,12 +835,19 @@ function LUF.ApplySettings(frame)
 				indicator.type = squarecfg[name].type
 				indicator.showTexture = squarecfg[name].texture
 				indicator.timer = squarecfg[name].timer
-				indicator.nameID = squarecfg[name].value
-				indicator:SetSize(squarecfg[name].size, squarecfg[name].size)
+				if indicator.type == "missing" then
+					indicator.nameID = {}
+					for i,v in ipairs({strsplit(";", squarecfg[name].value or "")}) do
+						table.insert(indicator.nameID, {strsplit("/",v)})
+					end
+				else
+					indicator.nameID = {strsplit(";", squarecfg[name].value or "")}
+				end
 			else
 				indicator.type = nil
 				indicator:Hide()
 			end
+			indicator:SetSize(squarecfg[name].size, squarecfg[name].size)
 		end
 		if isEnabled then
 			frame:EnableElement("RaidStatusIndicators")
