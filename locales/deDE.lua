@@ -352,6 +352,7 @@ local L = {
 ["missinghp"] = "Momentan fehlende Gp",
 ["healmishp"] = "Fehlende Gp nach Heilung (gr\195\188n bei kommender Heilung)",
 ["perhp"] = "Gp Prozent",
+["perstatus"] = "Wie [smarthealth] aber nur Prozente f\195\188br Gp",
 ["pp"] = "Momentane Mana/Wut/Energie usw",
 ["spp"] = "Momentane Mana/Wut/Energie usw gek\195\188rzt wenn \195\188ber 10K",
 ["maxpp"] = "Maximum mana/rage/energy etc",

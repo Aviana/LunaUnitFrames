@@ -72,6 +72,7 @@ local HealthnPowerTags = {
 	["missinghp"] = true,
 	["healmishp"] = true,
 	["perhp"] = true,
+	["perstatus"] = true,
 	["pp"] = true,
 	["spp"] = true,
 	["maxpp"] = true,

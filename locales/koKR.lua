@@ -349,6 +349,7 @@ local L = {
 ["missinghp"] = "현재의 손실된 생명력을 표시",
 ["healmishp"] = "들어오는 치유 뒤에 손실된 생명력을 표시 (치유가 들어오면 녹색)",
 ["perhp"] = "생명력 백분율 표시",
+["perstatus"] = "Like [smarthealth] but only percentages for hp",
 ["pp"] = "현재의 마나/분노/기력 등 표시",
 ["spp"] = "자원이 10K 이상의 현재의 마나/분노/기력 등을 짧게 줄여 표시",
 ["maxpp"] = "최대 마나/분노/기력 등 표시",

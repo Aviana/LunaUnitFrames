@@ -349,6 +349,7 @@ local L = {
 ["missinghp"] = "當前損失生命",
 ["healmishp"] = "算上預估治療的損失生命值，預估時顯示為綠色",
 ["perhp"] = "生命值百分比",
+["perstatus"] = "Like [smarthealth] but only percentages for hp",
 ["pp"] = "當前能量值（包括怒氣、法力等）",
 ["spp"] = "當前能量值（包括怒氣、法力等），超過10k簡寫",
 ["maxpp"] = "最大能量值",

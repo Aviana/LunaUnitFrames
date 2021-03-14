@@ -349,6 +349,7 @@ local L = {
 ["missinghp"] = "Current missing hp",
 ["healmishp"] = "Missing hp after incoming heal (green when heal is incoming)",
 ["perhp"] = "HP percent",
+["perstatus"] = "Like [smarthealth] but only percentages for hp",
 ["pp"] = "Current mana/rage/energy etc",
 ["spp"] = "Current mana/rage/energy etc shortened when over 10K",
 ["maxpp"] = "Maximum mana/rage/energy etc",
