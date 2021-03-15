@@ -28,6 +28,7 @@ function LUF:LoadDefaults()
 			tooltipCombat = true,
 			hidden = {cast = true, buffs = false, party = true, raid = true, player = true, pet = true, target = true},
 			statusbar = "Minimalist",
+			fontshadow = true,
 			auraborderType = "dark",
 			inchealTime = 4,
 			omnicc = false,

@@ -1,7 +1,7 @@
 -- Luna Unit Frames 4.0 by Aviana
 
 LUF = select(2, ...)
-LUF.version = 4070
+LUF.version = 4080
 
 local L = LUF.L
 local ACR = LibStub("AceConfigRegistry-3.0", true)
@@ -675,25 +675,30 @@ function LUF.ApplySettings(frame)
 	for barname,fstrings in pairs(frame.tags) do
 		for side,fstring in pairs(fstrings) do
 			fstring:ClearAllPoints()
+			local barconfig = config.tags[barname]
 			if frame.modules[barname] then
-				fstring:SetPoint(strupper(side), frame.modules[barname], strupper(side), fstringoffsets[side], config.tags[barname][side].offset or 0)
+				fstring:SetPoint(strupper(side), frame.modules[barname], strupper(side), fstringoffsets[side], barconfig[side].offset or 0)
 			elseif barname == "top" then
 				if side ~= "center" then
-					fstring:SetPoint("BOTTOM"..strupper(side), frame, "TOP"..strupper(side), fstringoffsets[side], config.tags[barname][side].offset or 0)
+					fstring:SetPoint("BOTTOM"..strupper(side), frame, "TOP"..strupper(side), fstringoffsets[side], barconfig[side].offset or 0)
 				else
-					fstring:SetPoint("BOTTOM", frame, "TOP", fstringoffsets[side], config.tags[barname][side].offset or 0)
+					fstring:SetPoint("BOTTOM", frame, "TOP", fstringoffsets[side], barconfig[side].offset or 0)
 				end
 			else
 				if side ~= "center" then
-					fstring:SetPoint("TOP"..strupper(side), frame, "BOTTOM"..strupper(side), fstringoffsets[side], config.tags[barname][side].offset or 0)
+					fstring:SetPoint("TOP"..strupper(side), frame, "BOTTOM"..strupper(side), fstringoffsets[side], barconfig[side].offset or 0)
 				else
-					fstring:SetPoint("TOP", frame, "BOTTOM", fstringoffsets[side], config.tags[barname][side].offset or 0)
+					fstring:SetPoint("TOP", frame, "BOTTOM", fstringoffsets[side], barconfig[side].offset or 0)
 				end
 			end
-			fstring:SetFont(LUF:LoadMedia(SML.MediaType.FONT, config.tags[barname].font), config.tags[barname].size)
-			fstring:SetShadowColor(0, 0, 0, 1.0)
-			fstring:SetShadowOffset(0.80, -0.80)
-			frame:Tag(fstring, config.tags[barname][side].tagline)
+			fstring:SetFont(LUF:LoadMedia(SML.MediaType.FONT, barconfig.font), barconfig.size, (barconfig.outline or LUF.db.profile.fontoutline) and "OUTLINE")
+			if barconfig.shadow or LUF.db.profile.fontshadow then
+				fstring:SetShadowColor(0, 0, 0, 1.0)
+				fstring:SetShadowOffset(0.80, -0.80)
+			else
+				fstring:SetShadowColor(0, 0, 0, 0)
+			end
+			frame:Tag(fstring, barconfig[side].tagline)
 		end
 	end
 	
@@ -1045,12 +1050,26 @@ local initialConfigFunction = [[
 		self:SetAttribute("unitsuffix", "targettarget")
 	elseif strmatch(unit,"target") then
 		self:SetAttribute("unitsuffix", "target")
+	elseif strmatch(unit,"partypet") then
+		self:SetAttribute("refreshUnitChange", parent:GetAttribute("refreshUnitChange"))
 	end
 	self:SetAttribute("oUF-guessUnit",unit)
 	
 	self:SetHeight(parent:GetAttribute("x-height") or 1)
 	self:SetWidth(parent:GetAttribute("x-width") or 1)
 	self:SetScale(parent:GetAttribute("x-scale") or 1)
+]]
+
+local refreshUnitChange = [[
+	local unit = self:GetAttribute("unit")
+	if unit and not strmatch(unit, "pet") then
+		if unit == "player" then
+			unit = "pet"
+		else
+			unit = "partypet"..(strmatch(unit,"%d") or "")
+		end
+		self:SetAttribute("unit", unit)
+	end
 ]]
 
 function LUF:SpawnUnits()
@@ -1067,12 +1086,13 @@ function LUF:SpawnUnits()
 				end
 			else
 				local template
-				if strmatch(unit, "pet") then
+				if unit == "raidpet" then
 					template = "SecureGroupPetHeaderTemplate"
-				elseif unit == "partytarget" then
-					template = "SecurePartyHeaderTemplate"
 				end
 				self.frameIndex[unit] = oUF:SpawnHeader("LUFHeader"..unit, template, nil, "oUF-initialConfigFunction", format(initialConfigFunction, unit))
+				if unit == "partypet" then
+					self.frameIndex[unit]:SetAttribute("refreshUnitChange", refreshUnitChange)
+				end
 				self.frameIndex[unit]:Show() --Set Show() early to allow child spawning
 				self.frameIndex[unit]:SetAttribute("headerType", unit)
 			end
@@ -1104,7 +1124,7 @@ function LUF:SpawnUnits()
 		frame.grpNumber:SetShadowOffset(0.80, -0.80)
 		frame.grpNumber:SetJustifyH("CENTER")
 		frame.grpNumber:SetFont("Fonts\\FRIZQT__.TTF", 11) --A default value to prevent "font not set" errors
-		frame.grpNumber:SetText(L["Pet"])
+		frame.grpNumber:SetText(PET)
 	end
 	self:SetupAllHeaders()
 	self.frameIndex.target.PostUpdate = LUF.overrides.Target.PostUpdate
