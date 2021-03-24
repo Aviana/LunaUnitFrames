@@ -2,9 +2,6 @@ LUF = select(2, ...)
 
 local oUF = LUF.oUF
 
-local LibClassicCasterino = LibStub('LibClassicCasterino', true)
-local UnitCastingInfo = CastingInfo
-
 LUF.overrides = {}
 
 local Spells = {
@@ -334,11 +331,5 @@ LUF.overrides["Target"].PostUpdate = function(self, event)
 		end
 	else
 		currentTargetGUID = nil
-	end
-end
-
-if LibClassicCasterino then
-	UnitCastingInfo = function(unit)
-		return LibClassicCasterino:UnitCastingInfo(unit)
 	end
 end

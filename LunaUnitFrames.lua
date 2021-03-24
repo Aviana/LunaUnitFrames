@@ -1,7 +1,7 @@
 -- Luna Unit Frames 4.0 by Aviana
 
 LUF = select(2, ...)
-LUF.version = 4080
+LUF.version = 4090
 
 local L = LUF.L
 local ACR = LibStub("AceConfigRegistry-3.0", true)
@@ -20,6 +20,7 @@ L.party = PARTY
 L.raid = RAID
 L.maintank = MAINTANK
 L.mainassist = MAIN_ASSIST
+L.focus = FOCUS
 
 LUF.stateMonitor = CreateFrame("Frame", nil, nil, "SecureHandlerBaseTemplate")
 LUF.stateMonitor:WrapScript(LUF.stateMonitor, "OnAttributeChanged", [[
@@ -67,6 +68,9 @@ LUF.unitList = {
 	"target",
 	"targettarget",
 	"targettargettarget",
+	"focus",
+	"focustarget",
+	"focustargettarget",
 	"party",
 	"partytarget",
 	"partypet",
@@ -85,6 +89,8 @@ LUF.fakeUnits = {
 	["targettargettarget"] = true,
 	["pettarget"] = true,
 	["pettargettarget"] = true,
+	["focustarget"] = true,
+	["focustargettarget"] = true,
 	["partytarget"] = true,
 	["maintanktarget"] = true,
 	["maintanktargettarget"] = true,
@@ -412,6 +418,10 @@ function LUF:HideBlizzardFrames()
 
 	if( self.db.profile.hidden.pet and not active_hiddens.pet ) then
 		handleFrame(PetFrame)
+	end
+
+	if( self.db.profile.hidden.focus and not active_hiddens.focus ) then
+		handleFrame(FocusFrame)
 	end
 
 	if( self.db.profile.hidden.target and not active_hiddens.target ) then
@@ -1078,7 +1088,7 @@ function LUF:SpawnUnits()
 	for unit, config in pairs(self.db.profile.units) do
 		if self.HeaderFrames[unit] then
 			if unit == "raid" then
-				for id=1,8 do
+				for id=1,9 do
 					local data = config.positions[id]
 					self.frameIndex["raid"..id] = oUF:SpawnHeader("LUFHeaderraid"..id, nil, nil, "oUF-initialConfigFunction", format(initialConfigFunction, "raid"))
 					self.frameIndex["raid"..id]:Show() --Set Show() early to allow child spawning
@@ -1111,9 +1121,9 @@ function LUF:SpawnUnits()
 	self.stateMonitor:SetAttribute("partypetEnabled", self.db.profile.units.partypet.enabled)
 	self.stateMonitor:SetAttribute("hideraid", self.db.profile.units.party.hideraid)
 	RegisterStateDriver(self.stateMonitor, "raidstatus", "[target=raid6, exists] full; [target=raid1, exists] semi; none")
-	for i=1, 9 do
+	for i=1, 10 do
 		local frame
-		if i == 9 then
+		if i == 10 then
 			frame = self.frameIndex["raidpet"]
 		else
 			frame = self.frameIndex["raid"..i]
@@ -1228,11 +1238,12 @@ local classOrder = {
 	[1] = "DRUID",
 	[2] = "HUNTER",
 	[3] = "MAGE",
-	[4] = "PALADIN,SHAMAN",
+	[4] = "PALADIN",
 	[5] = "PRIEST",
 	[6] = "ROGUE",
-	[7] = "WARLOCK",
-	[8] = "WARRIOR",
+	[7] = "SHAMAN",
+	[8] = "WARLOCK",
+	[9] = "WARRIOR",
 }
 
 function LUF:SetupHeader(headerUnit)
@@ -1241,22 +1252,14 @@ function LUF:SetupHeader(headerUnit)
 	
 	if headerUnit == "raid" then
 		if not self.frameIndex["raid1"] then return end
-		for id=1,8 do
+		for id=1,9 do
 			header = self.frameIndex["raid"..id]
 			if config.groupBy == "GROUP" then
 				header:SetAttribute("groupFilter", tostring(id))
 				header.grpNumber:SetText(GROUP.." "..id)
 			else
 				header:SetAttribute("groupFilter", classOrder[id])
-				if id == 4 then
-					if UnitFactionGroup("player") == "Horde" then
-						header.grpNumber:SetText(LOCALIZED_CLASS_NAMES_MALE["SHAMAN"])
-					else
-						header.grpNumber:SetText(LOCALIZED_CLASS_NAMES_MALE["PALADIN"])
-					end
-				else
-					header.grpNumber:SetText(LOCALIZED_CLASS_NAMES_MALE[classOrder[id]])
-				end
+				header.grpNumber:SetText(LOCALIZED_CLASS_NAMES_MALE[classOrder[id]])
 			end
 			SetHeaderAttributes(header, config)
 		end
@@ -1281,7 +1284,7 @@ function LUF:ReloadHeaderUnits(headerUnit)
 	
 	if headerUnit == "raid" then
 		if not self.frameIndex["raid1"] then return end
-		for id=1,8 do
+		for id=1,9 do
 			header = self.frameIndex["raid"..id]
 			SetHeaderSettings(header)
 		end
