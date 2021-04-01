@@ -1143,6 +1143,7 @@ function LUF:LoadDefaults()
 			healthBar = { enabled = true, background = true, backgroundAlpha = 0.2, colorType = "class", reactionType="npc", height = 6, order = 10},
 			portrait = { enabled = false, type = "3D", alignment = "LEFT", width = 0.22, height = 4, order = 15, fullBefore = 0, fullAfter = 50},
 			powerBar = { enabled = true, background = true, backgroundAlpha = 0.2, height = 4.5, order = 20, colorType = "type" },
+			castBar = { enabled = true, background = true, backgroundAlpha = 0.2, height = 3, icon = "HIDE", autoHide = true, order = 60},
 			emptyBar = { enabled = false, height = 3, order = 50, reactionType="npc", class = true, alpha = 0.2},
 			range = { enabled = false },
 			highlight = { enabled = true, debuff = 2 },
@@ -1222,6 +1223,21 @@ function LUF:LoadDefaults()
 					},
 					["right"] = {
 						tagline = "[pp]/[maxpp]",
+						size = 100,
+					},
+				},
+				["castBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "[castname]",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "[casttime]",
 						size = 100,
 					},
 				},

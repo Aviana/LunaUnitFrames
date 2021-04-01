@@ -579,7 +579,7 @@ function LUF.InitializeUnit(frame, unit, notHeaderChild)
 	-- Squares
 	local RaidStatusIndicators = {}
 	for k in pairs(LUF.defaults.profile.units.player.squares) do
-		local indicator = CreateFrame("Frame", nil, frame.toplevel)
+		local indicator = CreateFrame("Frame", nil, frame.toplevel, "BackdropTemplate")
 		indicator:SetBackdrop(backdrop)
 		indicator:SetBackdropColor(0,0,0)
 		indicator.texture = indicator:CreateTexture(nil, "OVERLAY")
