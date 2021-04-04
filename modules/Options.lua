@@ -324,7 +324,7 @@ function LUF:CreateConfig()
 			LUF.db.profile.units.partytarget.attribPoint = value
 			LUF.db.profile.units.partypet.attribPoint = value
 		elseif unit == "raid" then
-			LUF.db.profile.units.partypet.attribPoint = value
+			LUF.db.profile.units.raidpet.attribPoint = value
 		end
 
 		-- Simply re-set all frames is easier than making a complicated selection algorithm
@@ -6477,7 +6477,7 @@ function LUF:CreateConfig()
 								max = 40,
 								step = 1,
 								disabled = Lockdown,
-								set = setHeader,
+								set = function(info, value) setHeader(info, value) LUF:SetupHeader("maintanktarget") LUF:SetupHeader("maintanktargettarget") end,
 							},
 						},
 					},
@@ -6896,7 +6896,7 @@ function LUF:CreateConfig()
 								max = 40,
 								step = 1,
 								disabled = Lockdown,
-								set = setHeader,
+								set = function(info, value) setHeader(info,value) LUF:SetupHeader("mainassisttarget") LUF:SetupHeader("mainassisttargettarget") end,
 							},
 						},
 					},
