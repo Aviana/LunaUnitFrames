@@ -1,0 +1,20 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+	<Script file="oUF_ClassIndicator\oUF_ClassIndicator.lua"/>
+	<Script file="oUF_EliteIndicator\oUF_EliteIndicator.lua"/>
+	<Script file="oUF_StatusIndicator\oUF_StatusIndicator.lua"/>
+	<Script file="oUF_RegenTicker\oUF_RegenTicker.lua"/>
+	<Script file="oUF_ComboPoints\oUF_ComboPoints.lua"/>
+	<Script file="oUF_EmptyBar\oUF_EmptyBar.lua"/>
+	<Script file="oUF_XPBar\oUF_XPBar.lua"/>
+	<Script file="oUF_CombatText\oUF_CombatText.lua"/>
+	<Script file="oUF_StatusPortrait\oUF_StatusPortrait.lua"/>
+	<Script file="oUF_Highlight\oUF_Highlight.lua"/>
+	<Script file="oUF_BorderHighlight\oUF_BorderHighlight.lua"/>
+	<Script file="oUF_Reckoning\oUF_Reckoning.lua"/>
+	<Script file="oUF_SimpleAuras\oUF_SimpleAuras.lua"/>
+	<Script file="oUF_RaidStatusIndicators\oUF_RaidStatusIndicators.lua"/>
+	<Script file="oUF_BetterHealthPrediction\oUF_BetterHealthPrediction.lua"/>
+	<Script file="oUF_SimpleFader\oUF_SimpleFader.lua"/>
+	<Script file="oUF_TagsWithHeal\oUF_TagsWithHeal.lua"/>
+	<Script file="oUF_RegenTickerAlt\oUF_RegenTickerAlt.lua"/>
+</Ui>
