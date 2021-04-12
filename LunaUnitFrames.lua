@@ -1,7 +1,7 @@
 -- Luna Unit Frames 4.0 by Aviana
 
 LUF = select(2, ...)
-LUF.version = 4080
+LUF.version = 4090
 
 local L = LUF.L
 local ACR = LibStub("AceConfigRegistry-3.0", true)
@@ -757,6 +757,7 @@ function LUF.ApplySettings(frame)
 		Auras.largeBuffSize = AuraConfig.enlargedbuffsize
 		Auras.wrapBuffSide = AuraConfig.wrapbuffside
 		Auras.wrapBuff = AuraConfig.wrapbuff
+		Auras.buffOffset = AuraConfig.buffOffset
 		
 		Auras.debuffs = AuraConfig.debuffs
 		Auras.debuffAnchor = AuraConfig.debuffpos
@@ -765,6 +766,7 @@ function LUF.ApplySettings(frame)
 		Auras.largeDebuffSize = AuraConfig.enlargeddebuffsize
 		Auras.wrapDebuffSide = AuraConfig.wrapdebuffside
 		Auras.wrapDebuff = AuraConfig.wrapdebuff
+		Auras.debuffOffset = AuraConfig.debuffOffset
 		
 		Auras.timer = AuraConfig.timer
 		Auras.spacing = AuraConfig.padding
@@ -853,7 +855,13 @@ function LUF.ApplySettings(frame)
 				indicator:Hide()
 			end
 			indicator:SetSize(squarecfg[name].size, squarecfg[name].size)
+			indicator:ClearAllPoints()
+			if name ~= "leftcenter" and name ~= "rightcenter" then
+				indicator:SetPoint(strupper(name), frame, strupper(name), squarecfg[name].x, squarecfg[name].y )
+			end
 		end
+		frame.RaidStatusIndicators.leftcenter:SetPoint("RIGHT", frame.RaidStatusIndicators.center, "LEFT", config.squares.leftcenter.x, config.squares.leftcenter.y)
+		frame.RaidStatusIndicators.rightcenter:SetPoint("LEFT", frame.RaidStatusIndicators.center, "RIGHT", config.squares.rightcenter.x, config.squares.rightcenter.y)
 		if isEnabled then
 			frame:EnableElement("RaidStatusIndicators")
 		else

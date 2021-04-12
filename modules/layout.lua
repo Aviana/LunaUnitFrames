@@ -553,13 +553,8 @@ function LUF.InitializeUnit(frame, unit, notHeaderChild)
 		indicator:SetBackdropColor(0,0,0)
 		indicator.texture = indicator:CreateTexture(nil, "OVERLAY")
 		indicator.texture:SetAllPoints(indicator)
-		if k ~= "leftcenter" and k ~= "rightcenter" then
-			indicator:SetPoint(strupper(k), frame, strupper(k), RaidStatusIndicatorOffsets[k].x, RaidStatusIndicatorOffsets[k].y)
-		end
 		RaidStatusIndicators[k] = indicator
 	end
-	RaidStatusIndicators.leftcenter:SetPoint("RIGHT", RaidStatusIndicators.center, "LEFT", -1, 0)
-	RaidStatusIndicators.rightcenter:SetPoint("LEFT", RaidStatusIndicators.center, "RIGHT", 1, 0)
 	frame.RaidStatusIndicators = RaidStatusIndicators
 
 	-- Heal Prediction
