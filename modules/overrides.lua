@@ -189,7 +189,7 @@ LUF.overrides["Health"].UpdateColor = function(self, event, unit)
 
 	local bg = element.bg
 	if(b) then
-		if element.colorInvert then
+		if element.colorInvert and UnitIsConnected(unit) then
 			element:SetStatusBarColor(0, 0, 0, 1)
 			
 			if(bg) then
