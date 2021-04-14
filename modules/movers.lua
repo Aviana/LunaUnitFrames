@@ -96,23 +96,30 @@ end
 local function EnableMovers()
 	for unit, frame in pairs(LUF.frameIndex) do
 		local config = LUF.db.profile.units[unit] or LUF.db.profile.units.raid
-		if config.enabled then
-			frame.configMode = true
-			if frame:GetAttribute("oUF-headerType") then
-				for key in pairs(BlacklistAttributes) do
-					frame:SetAttribute(key, nil)
+		if not (unit == "raid9" and LUF.db.profile.units.raid.groupBy == "GROUP") then
+			if config.enabled then
+				frame.configMode = true
+				if frame:GetAttribute("oUF-headerType") then
+					for key in pairs(BlacklistAttributes) do
+						frame:SetAttribute(key, nil)
+					end
+					if strmatch(unit, "^party.*$") then
+						frame:SetAttribute("unitsPerColumn", (LUF.db.profile.units.party.showPlayer or LUF.db.profile.units.party.showSolo) and 5 or 4)
+					elseif not config.unitsPerColumn then
+						frame:SetAttribute("unitsPerColumn", 5)
+					end
+					frame:SetAttribute("startingIndex", -(config.unitsPerColumn or 5)-1)
+					enableFun(frame:GetChildren())
+					frame:SetMovable(true)
+				else
+					enableFun(frame)
 				end
-				if strmatch(unit, "^party.*$") then
-					frame:SetAttribute("unitsPerColumn", (LUF.db.profile.units.party.showPlayer or LUF.db.profile.units.party.showSolo) and 5 or 4)
-				elseif not config.unitsPerColumn then
-					frame:SetAttribute("unitsPerColumn", 5)
-				end
-				frame:SetAttribute("startingIndex", -(config.unitsPerColumn or 5)-1)
-				enableFun(frame:GetChildren())
-				frame:SetMovable(true)
-			else
-				enableFun(frame)
 			end
+		else
+			disableFun(frame:GetChildren())
+			frame:SetAttribute("startingIndex", 1)
+			frame:SetMovable(false)
+			frame:SetAttribute("initial-unitWatch", true)
 		end
 	end
 end
