@@ -385,7 +385,7 @@ local tagStrings = {
 
 	["hotheal"] = [[function(unit)
 		local mod = LHC:GetHealModifier(UnitGUID(unit)) or 1
-		local heal = LHC:GetHealAmount(UnitGUID(unit), bit.bor(LHC.HOT_HEALS, LHC.CHANNEL_HEALS), GetTime() + GetHealTimeFrame()) or 0
+		local heal = LHC:GetHealAmount(UnitGUID(unit), bit.bor(LHC.HOT_HEALS, LHC.CHANNEL_HEALS, LHC.BOMB_HEALS), GetTime() + GetHealTimeFrame()) or 0
 		if heal > 0 then
 			return math.floor(heal * mod)
 		end
