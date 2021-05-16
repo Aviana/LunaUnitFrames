@@ -1,7 +1,7 @@
 -- Luna Unit Frames 4.0 by Aviana
 
 LUF = select(2, ...)
-LUF.version = 4120
+LUF.version = 4130
 
 local L = LUF.L
 local ACR = LibStub("AceConfigRegistry-3.0", true)
@@ -21,6 +21,7 @@ L.raid = RAID
 L.maintank = MAINTANK
 L.mainassist = MAIN_ASSIST
 L.focus = FOCUS
+L.arena = ARENA
 
 LUF.stateMonitor = CreateFrame("Frame", nil, nil, "SecureHandlerBaseTemplate")
 LUF.stateMonitor:WrapScript(LUF.stateMonitor, "OnAttributeChanged", [[
@@ -82,6 +83,9 @@ LUF.unitList = {
 	"mainassist",
 	"mainassisttarget",
 	"mainassisttargettarget",
+	"arena",
+	"arenapet",
+	"arenatarget",
 }
 
 LUF.fakeUnits = {
@@ -95,7 +99,8 @@ LUF.fakeUnits = {
 	["maintanktarget"] = true,
 	["maintanktargettarget"] = true,
 	["mainassisttarget"] = true,
-	["mainassisttargettarget"] = true
+	["mainassisttargettarget"] = true,
+	["arenatarget"] = true,
 }
 
 LUF.HeaderFrames = {
@@ -110,7 +115,34 @@ LUF.HeaderFrames = {
 	["mainassist"] = true,
 	["mainassisttarget"] = true,
 	["mainassisttargettarget"] = true,
+	["arena"] = true,
+	["arenapet"] = true,
+	["arenatarget"] = true,
 }
+
+-- taken from framexml
+local function getRelativePointAnchor( point )
+	point = point:upper();
+	if (point == "TOP") then
+		return "BOTTOM", 0, -1;
+	elseif (point == "BOTTOM") then
+		return "TOP", 0, 1;
+	elseif (point == "LEFT") then
+		return "RIGHT", 1, 0;
+	elseif (point == "RIGHT") then
+		return "LEFT", -1, 0;
+	elseif (point == "TOPLEFT") then
+		return "BOTTOMRIGHT", 1, -1;
+	elseif (point == "TOPRIGHT") then
+		return "BOTTOMLEFT", -1, -1;
+	elseif (point == "BOTTOMLEFT") then
+		return "TOPRIGHT", 1, 1;
+	elseif (point == "BOTTOMRIGHT") then
+		return "TOPLEFT", -1, 1;
+	else
+		return "CENTER", 0, 0;
+	end
+end
 
 function LUF:Print(msg)
 	DEFAULT_CHAT_FRAME:AddMessage("|cFF2150C2LunaUnitFrames|cFFFFFFFF: ".. msg)
@@ -434,6 +466,16 @@ function LUF:HideBlizzardFrames()
 		for i = 1, MAX_PARTY_MEMBERS do
 			handleFrame(string.format("PartyMemberFrame%d", i))
 		end
+	end
+
+	if( self.db.profile.hidden.arena and not active_hiddens.arena ) then
+		for i = 1, 5 do
+			handleFrame(string.format("ArenaEnemyFrame%d", i))
+		end
+
+		-- Blizzard_ArenaUI should not be loaded
+		Arena_LoadUI = function() end
+		--SetCVar('showArenaEnemyFrames', '0', 'SHOW_ARENA_ENEMY_FRAMES_TEXT')
 	end
 
 	-- As a reload is required to reset the hidden hooks, we can just set this to true if anything is true
@@ -882,7 +924,7 @@ function LUF.ApplySettings(frame)
 	--Healing Prediction
 	if frame.BetterHealthPrediction then
 		local healConfig = config.incHeal
-		if healConfig.enabled then
+		if healConfig and healConfig.enabled then
 			frame.BetterHealthPrediction.timeFrame = LUF.db.profile.inchealTime
 			frame.BetterHealthPrediction.maxOverflow = healConfig.cap
 			frame.BetterHealthPrediction.disableHots = LUF.db.profile.disablehots
@@ -896,6 +938,21 @@ function LUF.ApplySettings(frame)
 			frame:EnableElement("BetterHealthPrediction")
 		else
 			frame:DisableElement("BetterHealthPrediction")
+		end
+	end
+	
+	--Arena Trinket
+	if frame.Trinket then
+		local trinketConfig = config.trinket
+		if trinketConfig.enabled then
+			local point = getRelativePointAnchor(trinketConfig.anchorPoint)
+			frame.Trinket:ClearAllPoints()
+			frame.Trinket:SetPoint(point, frame, trinketConfig.anchorPoint, trinketConfig.x, trinketConfig.y)
+			frame.Trinket:SetHeight(trinketConfig.size)
+			frame.Trinket:SetWidth(trinketConfig.size)
+			frame:EnableElement("Trinket")
+		else
+			frame:DisableElement("Trinket")
 		end
 	end
 	
@@ -1041,7 +1098,7 @@ end
 
 function LUF:PlaceFrame(frame)
 	local scale = 1
-	local unit = frame:GetAttribute("headerType") or frame:GetAttribute("oUF-guessUnit")
+	local unit = frame:GetAttribute("oUF-headerType") or frame:GetAttribute("oUF-guessUnit")
 	local config = self.db.profile.units[unit]
 	if config.positions then
 		config = config.positions[tonumber(strsub(frame:GetName(),14))]
@@ -1093,6 +1150,7 @@ local refreshUnitChange = [[
 function LUF:SpawnUnits()
 	oUF:RegisterStyle("LunaUnitFrames", self.InitializeUnit)
 	oUF:RegisterInitCallback(function(frame) LUF.PlaceModules(frame) LUF.ApplySettings(frame) end)
+	
 	for unit, config in pairs(self.db.profile.units) do
 		if self.HeaderFrames[unit] then
 			if unit == "raid" then
@@ -1100,7 +1158,22 @@ function LUF:SpawnUnits()
 					local data = config.positions[id]
 					self.frameIndex["raid"..id] = oUF:SpawnHeader("LUFHeaderraid"..id, nil, nil, "oUF-initialConfigFunction", format(initialConfigFunction, "raid"))
 					self.frameIndex["raid"..id]:Show() --Set Show() early to allow child spawning
-					self.frameIndex["raid"..id]:SetAttribute("headerType", unit)
+					self.frameIndex["raid"..id]:SetAttribute("oUF-headerType", unit)
+				end
+			elseif unit:match("^arena.*") then
+				self.frameIndex[unit] = CreateFrame("Frame", "LUFHeader"..unit, UIParent, "SecureFrameTemplate")
+				self.frameIndex[unit]:SetAttribute("oUF-headerType", unit)
+				self.frameIndex[unit].isArena = true
+				self.frameIndex[unit]:SetHeight(1)
+				self.frameIndex[unit]:SetWidth(1)
+				for i=1, 5 do
+					if unit:match(".*target$") then
+						local frame = oUF:Spawn("arena"..i.."target", "LUFHeader"..unit.."UnitButton"..i)
+						frame:SetParent(_G["LUFHeader"..unit])
+					else
+						local frame = oUF:Spawn(unit..i, "LUFHeader"..unit.."UnitButton"..i)
+						frame:SetParent(_G["LUFHeader"..unit])
+					end
 				end
 			else
 				local template
@@ -1112,7 +1185,7 @@ function LUF:SpawnUnits()
 					self.frameIndex[unit]:SetAttribute("refreshUnitChange", refreshUnitChange)
 				end
 				self.frameIndex[unit]:Show() --Set Show() early to allow child spawning
-				self.frameIndex[unit]:SetAttribute("headerType", unit)
+				self.frameIndex[unit]:SetAttribute("oUF-headerType", unit)
 			end
 		else
 			self.frameIndex[unit] = oUF:Spawn(unit, "LUFUnit"..unit)
@@ -1149,7 +1222,50 @@ function LUF:SpawnUnits()
 	self.frameIndex.target:HookScript("OnHide", LUF.overrides.Target.PostUpdate)
 end
 
+local function SetArenaHeader(header, config)
+	local point = config.attribPoint
+	local relativePoint, xOffsetMult, yOffsetMult = getRelativePointAnchor(point)
+	local xMultiplier, yMultiplier =  abs(xOffsetMult), abs(yOffsetMult)
+	local xMod = config.attribPoint == "LEFT" and 1 or config.attribPoint == "RIGHT" and -1 or 0
+	local yMod = config.attribPoint == "TOP" and -1 or config.attribPoint == "BOTTOM" and 1 or 0
+	local xOffset = config.offset * xMod
+	local yOffset = config.offset * yMod
+	local currentAnchor = header
+
+	local ButtonName = header:GetName() .. "UnitButton"
+	local num = 1
+	local frame = _G[ButtonName .. num]
+	while( frame ) do
+		if not LUF.InCombatLockdown then
+			if not config.enabled and frame:IsEnabled() then
+				frame:Disable()
+			elseif config.enabled and not frame:IsEnabled() then
+				frame:Enable()
+			end
+			
+			frame:ClearAllPoints()
+			if ( num == 1 ) then
+				frame:SetPoint(point, currentAnchor, point, 0, 0)
+			else
+				frame:SetPoint(point, currentAnchor, relativePoint, xMultiplier * xOffset, yMultiplier * yOffset)
+			end
+
+			frame:SetWidth(config.width)
+			frame:SetHeight(config.height)
+			frame:SetScale(config.scale)
+		end
+		LUF.PlaceModules(frame)
+		currentAnchor = frame
+		num = num + 1
+		frame = _G[ButtonName .. num]
+	end
+end
+
 local function SetHeaderAttributes(header, config)
+	if header.isArena then
+		SetArenaHeader(header, config)
+		return
+	end
 	if not config.enabled or config.filters and not config.filters[tonumber(strmatch(header:GetName(),".+(%d)"))] then
 		header:Hide()
 		return
@@ -1174,8 +1290,6 @@ local function SetHeaderAttributes(header, config)
 	header:SetAttribute("columnAnchorPoint", config.attribAnchorPoint)
 	header:SetAttribute("xOffset", config.offset * xMod)
 	header:SetAttribute("yOffset", config.offset * yMod)
-	header:SetAttribute("xMod", xMod)
-	header:SetAttribute("yMod", yMod)
 	header:SetAttribute("sortMethod", config.sortMethod)
 	header:SetAttribute("sortDir", config.sortOrder)
 	header:SetAttribute("roleFilter", config.roleFilter)

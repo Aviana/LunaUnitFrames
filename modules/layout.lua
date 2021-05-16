@@ -437,6 +437,45 @@ local UnitSpecific = {
 	mainassisttargettarget = function(frame)
 	-- Nothing here yet
 	end,
+	
+	arena = function(frame)
+	-- Castbar
+		local Castbar = CreateFrame("StatusBar", nil, frame)
+
+		local Background = Castbar:CreateTexture(nil, "BACKGROUND")
+		Background:SetAllPoints(Castbar)
+
+		local Icon = Castbar:CreateTexture(nil, "OVERLAY")
+		Icon:SetSize(10, 10)
+		Icon:SetPoint("TOPLEFT", Castbar, "TOPLEFT")
+
+		local SafeZone = Castbar:CreateTexture(nil, "OVERLAY")
+
+		Castbar.bg = Background
+		Castbar.Icon = Icon
+		Castbar.SafeZone = SafeZone
+		Castbar:SetScript("OnShow", LUF.PlaceModules)
+		Castbar:SetScript("OnHide", LUF.PlaceModules)
+		frame.Castbar = Castbar
+		frame.modules.castBar = Castbar
+		frame.modules.castBar.name = "Castbar"
+		
+	-- Trinket
+		frame.Trinket = CreateFrame("Frame", nil, frame.toplevel)
+		frame.Trinket.icon = frame.Trinket:CreateTexture(nil, "OVERLAY")
+		frame.Trinket.icon:SetAllPoints()
+		frame.Trinket.cd = CreateFrame("Cooldown", frame:GetName().."TrinketCooldown", frame.Trinket, "CooldownFrameTemplate")
+		frame.Trinket.cd:SetAllPoints()
+		frame.Trinket.cd:SetReverse(true)
+	end,
+	
+	arenapet = function(frame)
+	-- Nothing here yet
+	end,
+	
+	arenatarget = function(frame)
+	-- Nothing here yet
+	end,
 }
 
 LUF.IndicatorData = {
@@ -455,7 +494,15 @@ LUF.IndicatorData = {
 }
 
 function LUF.InitializeUnit(frame, unit, notHeaderChild)
-	local unit = unit or frame:GetAttribute("oUF-guessUnit")
+	if notHeaderChild then
+		if frame:GetName():match("arena") then
+			frame:SetAttribute("oUF-guessUnit", frame:GetName():match("LUFHeader(arena.*)UnitButton%d$"))
+		else
+			frame:SetAttribute("oUF-guessUnit", unit)
+		end
+	end
+
+	local unit = frame:GetAttribute("oUF-guessUnit")
 
 	frame.toplevel = CreateFrame("Frame", nil, frame)
 	frame.toplevel:SetFrameLevel(5)
@@ -678,10 +725,6 @@ function LUF.InitializeUnit(frame, unit, notHeaderChild)
 		fstrings.right = parent:CreateFontString(nil, "OVERLAY")
 		fstrings.right:SetDrawLayer("OVERLAY", 7)
 		fstrings.right:SetJustifyH("RIGHT")
-	end
-	
-	if notHeaderChild then
-		frame:SetAttribute("oUF-guessUnit", unit)
 	end
 	
 	frame:SetScript("OnEnter", function(self)
