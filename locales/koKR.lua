@@ -396,6 +396,8 @@ local L = {
 ["Color tags"] = "색상 태그",
 ["Targeting sound"] = "표적 소리",
 ["Enable the sound when switching target"] = "대상을 변경했을 때 소리를 사용합니다.",
+["Right click to focus"] = "Right click to focus",
+["Focus the unit upon right clicking"] = "Focus the unit upon right clicking",
 }
 
 local LUF = select(2, ...)

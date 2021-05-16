@@ -396,6 +396,8 @@ local L = {
 ["Color tags"] = "Color tags",
 ["Targeting sound"] = "Targeting sound",
 ["Enable the sound when switching target"] = "Enable the sound when switching target",
+["Right click to focus"] = "Right click to focus",
+["Focus the unit upon right clicking"] = "Focus the unit upon right clicking",
 }
 
 LUF.L = L

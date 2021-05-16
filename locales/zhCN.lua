@@ -396,6 +396,8 @@ local L = {
 ["Color tags"] = "颜色标签",
 ["Targeting sound"] = "Targeting sound",
 ["Enable the sound when switching target"] = "Enable the sound when switching target",
+["Right click to focus"] = "Right click to focus",
+["Focus the unit upon right clicking"] = "Focus the unit upon right clicking",
 }
 
 local LUF = select(2, ...)

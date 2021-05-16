@@ -399,6 +399,8 @@ local L = {
 ["Color tags"] = "Farb Tags",
 ["Targeting sound"] = "Ziel Ger\195\164usch",
 ["Enable the sound when switching target"] = "Schalte das Ger\195\164usch bei Zielwechsel ein",
+["Right click to focus"] = "Rechtsklick fokus",
+["Focus the unit upon right clicking"] = "Fokussiere die Einheit bei Rechtsklick",
 }
 
 local LUF = select(2, ...)

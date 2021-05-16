@@ -1253,6 +1253,12 @@ local function SetArenaHeader(header, config)
 			frame:SetWidth(config.width)
 			frame:SetHeight(config.height)
 			frame:SetScale(config.scale)
+			
+			if config.enableFocus then
+				frame:SetAttribute("*type2", "focus")
+			else
+				frame:SetAttribute("*type2", "togglemenu")
+			end
 		end
 		LUF.PlaceModules(frame)
 		currentAnchor = frame
