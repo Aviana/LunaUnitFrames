@@ -6585,13 +6585,12 @@ function LUF:CreateConfig()
 							},
 							attribPoint = {
 								name = L["Growth direction"],
-								desc = string.format(L["This is set through %s options."],RAID),
+								desc = L["The direction in which new frames are added."],
 								type = "select",
 								order = 2.8,
 								values = {["RIGHT"] = L["Left"],["LEFT"] = L["Right"],["BOTTOM"] = L["Up"],["TOP"] = L["Down"]},
 								--get = function(info) return LUF.db.profile.units["raid"].attribPoint end,
 								set = setGrowthDir,
-								disabled = true,
 							},
 							sortMethod = {
 								name = L["Sort by"],
