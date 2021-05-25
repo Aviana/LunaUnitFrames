@@ -246,6 +246,7 @@ local L = {
 ["rare"] = strmatch(GARRISON_MISSION_RARE,"%a*"),
 ["elite"] = ELITE,
 ["Ticker"] = "每跳计时",
+["Ticker Background"] = "Ticker Background",
 ["Since mana/energy regenerate in ticks, show a timer for it"] = "显示法力、能量回复的每跳计时",
 ["Autohide ticker"] = "自动隐藏",
 ["Hide the ticker when it's not needed"] = "没有能量条时隐藏",

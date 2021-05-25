@@ -43,6 +43,8 @@ Yawt.
 .wrapDebuff         - Percentage by how much to adjust the side (number, 1 = 100%)
 .forceShow          - Show dummy auras (boolean)
 .overlay            - Texture for the overlay (string or number)
+.maxBuffs           - Maximum number of positive effects to display (default = 32)
+.maxDebuffs         - Maximum number of negative effects to display (default = 40)
 
 ## Attributes
 
@@ -343,7 +345,7 @@ local function UpdateAuras(self, event, unit)
 		local filter = "HELPFUL"..(element.buffFilter == 3 and "|RAID" or "")
 		local button
 		if element.buffs then
-			for i=1,32 do
+			for i=1,(element.maxBuffs or 32) do
 				local name, _, _, _, _, _, caster = UnitAura(self.unit, i, filter)
 				if name or element.forceShow then
 					if element.buffFilter ~= 2 or caster == "player" then
@@ -375,7 +377,7 @@ local function UpdateAuras(self, event, unit)
 		offset = 0
 		filter = "HARMFUL"..(element.debuffFilter == 3 and "|RAID" or "")
 		if element.debuffs then
-			for i=1,16 do
+			for i=1,(element.maxDebuffs or 40) do
 				local name, _, _, _, _, _, caster = UnitAura(self.unit, i, filter)
 				if name or element.forceShow then
 					if element.debuffFilter ~= 2 or caster == "player" then

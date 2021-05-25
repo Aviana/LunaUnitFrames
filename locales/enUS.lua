@@ -246,6 +246,7 @@ local L = {
 ["rare"] = strupper(strmatch(GARRISON_MISSION_RARE,"%a*")),
 ["elite"] = ELITE,
 ["Ticker"] = "Ticker",
+["Ticker Background"] = "Ticker Background",
 ["Since mana/energy regenerate in ticks, show a timer for it"] = "Since mana/energy regenerate in ticks, show a timer for it",
 ["Autohide ticker"] = "Autohide ticker",
 ["Hide the ticker when it's not needed"] = "Hide the ticker when it's not needed",

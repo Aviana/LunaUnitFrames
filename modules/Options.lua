@@ -268,7 +268,7 @@ function LUF:CreateConfig()
 		LUF:ReloadAll()
 	end
 
-	local function setBGColor(info, r, g, b, a)
+	local function setAlphaColor(info, r, g, b, a)
 		local db = LUF.db.profile.colors[info[#info]]
 		db.r = r
 		db.g = g
@@ -320,14 +320,11 @@ function LUF:CreateConfig()
 	local function setGrowthDir(info, value)
 		local unit = info[#info-2]
 		local db = LUF.db.profile.units[unit]
-		local alreadySet = {}
 
 		db.attribPoint = value
 		if unit == "party" then
 			LUF.db.profile.units.partytarget.attribPoint = value
 			LUF.db.profile.units.partypet.attribPoint = value
-		elseif unit == "raid" then
-			LUF.db.profile.units.raidpet.attribPoint = value
 		end
 
 		-- Simply re-set all frames is easier than making a complicated selection algorithm
@@ -340,8 +337,6 @@ function LUF:CreateConfig()
 		if unit == "party" then
 			LUF:SetupHeader("partytarget")
 			LUF:SetupHeader("partypet")
-		elseif unit == "raid" then
-			LUF:SetupHeader("raidpet")
 		end
 		
 	end
@@ -1133,29 +1128,38 @@ function LUF:CreateConfig()
 					isPercent = true,
 					hidden = function(info) return (LUF.db.profile.units[info[1]].auras.buffpos ~= "TOP" and LUF.db.profile.units[info[1]].auras.buffpos ~= "BOTTOM") end,
 				},
+				buffcount = {
+					name = "Maximum Number of Buffs",
+					desc = "Limit the maximum number of shown buffs",
+					type = "range",
+					order = 15,
+					min = 1,
+					max = 32,
+					step = 1,
+				},
 				debuffheader = {
 					name = L["Debuffs"],
 					type = "header",
-					order = 15,
+					order = 16,
 				},
 				debuffs = {
 					name = L["Debuffs"],
 					desc = string.format(L["Enable or disable the %s."],L["Debuffs"]),
 					type = "toggle",
-					order = 16,
+					order = 17,
 				},
 				filterdebuffs = {
 					name = string.format(L["Filter %s"],L["Debuffs"]),
 					desc = L["Show only debuffs that you can dispel or cast"],
 					type = "select",
-					order = 17,
+					order = 18,
 					values = {[1] = OFF, [2] = L["Your own"], [3] = DISPELS},
 				},
 				debuffsize = {
 					name = L["Size"],
 					desc = L["Set the debuffsize."],
 					type = "range",
-					order = 18,
+					order = 19,
 					min = 4,
 					max = 50,
 					step = 1,
@@ -1164,7 +1168,7 @@ function LUF:CreateConfig()
 					name = L["Bigger debuffs"],
 					desc = EMPHASIZE_MY_SPELLS_TEXT,
 					type = "range",
-					order = 19,
+					order = 20,
 					min = 0,
 					max = 20,
 					step = 1,
@@ -1174,14 +1178,14 @@ function LUF:CreateConfig()
 					name = L["Position"],
 					desc = string.format(L["Position of the %s."],L["Debuffs"]),
 					type = "select",
-					order = 20,
+					order = 21,
 					values = {["LEFT"] = L["Left"], ["RIGHT"] = L["Right"], ["TOP"] = L["Top"], ["BOTTOM"] = L["Bottom"], ["INFRAME"] = L["Inside"], ["INFRAMECENTER"] = L["Inside Center"]},
 				},
 				debuffOffset = {
 					name = L["Y Position"],
 					desc = L["Offset"],
 					type = "range",
-					order = 21,
+					order = 22,
 					min = -50,
 					max = 50,
 					step = 1,
@@ -1191,7 +1195,7 @@ function LUF:CreateConfig()
 					name = L["Horizontal Limit Side"],
 					desc = L["Side on which to cut shorter than the frame"],
 					type = "select",
-					order = 22,
+					order = 23,
 					hidden = function(info) return (LUF.db.profile.units[info[1]].auras.debuffpos ~= "TOP" and LUF.db.profile.units[info[1]].auras.debuffpos ~= "BOTTOM") end,
 					values = {["LEFT"] = L["Left"], ["RIGHT"] = L["Right"]},
 				},
@@ -1199,13 +1203,22 @@ function LUF:CreateConfig()
 					name = L["Horizontal Limit"],
 					desc = L["Limit to a percentage of the frame."],
 					type = "range",
-					order = 23,
+					order = 24,
 					min = 0.2,
 					max = 1.5,
 					step = 0.01,
 					width = "double",
 					isPercent = true,
 					hidden = function(info) return (LUF.db.profile.units[info[1]].auras.debuffpos ~= "TOP" and LUF.db.profile.units[info[1]].auras.debuffpos ~= "BOTTOM") end,
+				},
+				debuffcount = {
+					name = "Maximum Number of Debuffs",
+					desc = "Limit the maximum number of shown debuffs",
+					type = "range",
+					order = 25,
+					min = 1,
+					max = 40,
+					step = 1,
 				},
 			},
 		},
@@ -4539,7 +4552,7 @@ function LUF:CreateConfig()
 								type = "color",
 								order = 1,
 								hasAlpha = true,
-								set = setBGColor,
+								set = setAlphaColor,
 							},
 							mouseover = {
 								name = L["Mouseover"],
@@ -4550,6 +4563,20 @@ function LUF:CreateConfig()
 								name = TARGET,
 								type = "color",
 								order = 3,
+							},
+							ticker = {
+								name = L["Ticker"],
+								type = "color",
+								hasAlpha = true,
+								order = 4,
+								set = setAlphaColor,
+							},
+							tickerBG = {
+								name = L["Ticker Background"],
+								type = "color",
+								hasAlpha = true,
+								order = 5,
+								set = setAlphaColor,
 							},
 						},
 					},
@@ -6562,7 +6589,7 @@ function LUF:CreateConfig()
 								type = "select",
 								order = 2.8,
 								values = {["RIGHT"] = L["Left"],["LEFT"] = L["Right"],["BOTTOM"] = L["Up"],["TOP"] = L["Down"]},
-								get = function(info) return LUF.db.profile.units["raid"].attribPoint end,
+								--get = function(info) return LUF.db.profile.units["raid"].attribPoint end,
 								set = setGrowthDir,
 								disabled = true,
 							},

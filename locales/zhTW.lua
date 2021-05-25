@@ -246,6 +246,7 @@ local L = {
 ["rare"] = "稀有",
 ["elite"] = "精英",
 ["Ticker"] = "每跳計時",
+["Ticker Background"] = "Ticker Background",
 ["Since mana/energy regenerate in ticks, show a timer for it"] = "顯示回復法力、能量的每跳計時",
 ["Autohide ticker"] = "自動隱藏",
 ["Hide the ticker when it's not needed"] = "沒有能量條時隱藏",

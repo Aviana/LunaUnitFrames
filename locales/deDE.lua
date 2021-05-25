@@ -249,6 +249,7 @@ local L = {
 ["rare"] = "Selten",
 ["elite"] = "Elite",
 ["Ticker"] = "Ticker",
+["Ticker Background"] = "Ticker Hintergrund",
 ["Since mana/energy regenerate in ticks, show a timer for it"] = "Da Mana/Energie in Ticks regeneriert, zeige eine Zeitanzeige daf\195\188r",
 ["Autohide ticker"] = "Z\195\164hler verstecken",
 ["Hide the ticker when it's not needed"] = "Verstecke die Zeitanzeige wenn sie nicht gebraucht wird",

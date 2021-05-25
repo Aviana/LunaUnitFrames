@@ -601,6 +601,7 @@ local moduleSettings = {
 	druidBar = function(mod, config)
 		mod.texture = LUF:LoadMedia(SML.MediaType.STATUSBAR, config.statusbar)
 		mod:SetStatusBarTexture(LUF:LoadMedia(SML.MediaType.STATUSBAR, config.statusbar))
+		mod.disableHide = config.autoHide
 		if config.background then
 			mod.bg:SetTexture(mod.texture)
 			mod.bg:Show()
@@ -685,6 +686,8 @@ function LUF.ApplySettings(frame)
 		frame.StatusPortrait.type = config.portrait.type
 	end
 	
+	local tickerColor = LUF.db.profile.colors.ticker
+	local tickerBgColor = LUF.db.profile.colors.tickerBG
 	-- Regen Ticker
 	if frame.RegenTicker then
 		if (config.powerBar.ticker or config.powerBar.fivesecond) and select(2, UnitClass("player")) ~= "WARRIOR" then
@@ -693,6 +696,12 @@ function LUF.ApplySettings(frame)
 			frame.RegenTicker.hideFive = not config.powerBar.fivesecond
 			frame.RegenTicker.autoHide = config.powerBar.hideticker
 			frame.RegenTicker.vertical = config.powerBar.vertical
+			frame.RegenTicker.Spark.texture:SetVertexColor(tickerColor.r,tickerColor.g,tickerColor.b,1)
+			frame.RegenTicker.splitTimer.Spark.texture:SetVertexColor(tickerColor.r,tickerColor.g,tickerColor.b,1)
+			frame.RegenTicker.Spark:SetAlpha(tickerColor.a)
+			frame.RegenTicker.splitTimer:SetAlpha(tickerColor.a)
+			frame.RegenTicker.Spark:SetBackdropColor(tickerBgColor.r,tickerBgColor.g,tickerBgColor.b,tickerBgColor.a)
+			frame.RegenTicker.splitTimer.Spark:SetBackdropColor(tickerBgColor.r,tickerBgColor.g,tickerBgColor.b,tickerBgColor.a)
 		else
 			frame:DisableElement("RegenTicker")
 		end
@@ -706,6 +715,12 @@ function LUF.ApplySettings(frame)
 			frame.AdditionalRegenTicker.hideFive = not config.druidBar.fivesecond
 			frame.AdditionalRegenTicker.autoHide = config.druidBar.hideticker
 			frame.AdditionalRegenTicker.vertical = config.druidBar.vertical
+			frame.AdditionalRegenTicker.Spark.texture:SetVertexColor(tickerColor.r,tickerColor.g,tickerColor.b,1)
+			frame.AdditionalRegenTicker.splitTimer.Spark.texture:SetVertexColor(tickerColor.r,tickerColor.g,tickerColor.b,1)
+			frame.AdditionalRegenTicker.Spark:SetAlpha(tickerColor.a)
+			frame.AdditionalRegenTicker.splitTimer:SetAlpha(tickerColor.a)
+			frame.AdditionalRegenTicker.Spark:SetBackdropColor(tickerBgColor.r,tickerBgColor.g,tickerBgColor.b,tickerBgColor.a)
+			frame.AdditionalRegenTicker.splitTimer.Spark:SetBackdropColor(tickerBgColor.r,tickerBgColor.g,tickerBgColor.b,tickerBgColor.a)
 		else
 			frame:DisableElement("RegenTickerAlt")
 		end
@@ -819,6 +834,8 @@ function LUF.ApplySettings(frame)
 		Auras.wrapDebuffSide = AuraConfig.wrapdebuffside
 		Auras.wrapDebuff = AuraConfig.wrapdebuff
 		Auras.debuffOffset = AuraConfig.debuffOffset
+		Auras.maxBuffs = AuraConfig.buffcount
+		Auras.maxDebuffs = AuraConfig.debuffcount
 		
 		Auras.timer = AuraConfig.timer
 		Auras.spacing = AuraConfig.padding
@@ -1457,6 +1474,25 @@ function LUF:ReloadAll()
 	end
 end
 
+local function ScanRoster()
+	ChatFrame1:AddMessage("Running fix")
+	timerRunning = nil
+end
+
+local timerRunning
+local function CheckforRosterBug()
+	if UnitInRaid("player") then
+		for i=1, GetNumGroupMembers() do
+			local name = GetRaidRosterInfo(i)
+			if not timerRunning and not name then
+				ChatFrame1:AddMessage("Potentially found the bug")
+				timerRunning = true
+				C_Timer.After(1, ScanRoster)
+			end
+		end
+	end
+end
+
 local queuedEvent
 local frame = CreateFrame("Frame")
 frame:RegisterEvent("PLAYER_LOGIN")
@@ -1491,11 +1527,14 @@ frame:SetScript("OnEvent", function(self, event, addon)
 		else
 			queuedEvent = event
 		end
-	elseif event == "GROUP_ROSTER_UPDATE" and LUF.db.char.switchtype == "GROUP" then
-		if not LUF.InCombatLockdown then
-			LUF:AutoswitchProfile(event)
-		else
-			queuedEvent = event
+	elseif event == "GROUP_ROSTER_UPDATE" then
+		CheckforRosterBug()
+		if LUF.db.char.switchtype == "GROUP" then
+			if not LUF.InCombatLockdown then
+				LUF:AutoswitchProfile(event)
+			else
+				queuedEvent = event
+			end
 		end
 	end
 end)

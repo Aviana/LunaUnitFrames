@@ -246,6 +246,7 @@ local L = {
 ["rare"] = strmatch(GARRISON_MISSION_RARE,"%a*"),
 ["elite"] = ELITE,
 ["Ticker"] = "눈끔",
+["Ticker Background"] = "Ticker Background",
 ["Since mana/energy regenerate in ticks, show a timer for it"] = "마나/기력이 재생되는 시간을 눈끔으로 표시합니다.",
 ["Autohide ticker"] = "눈끔 자동숨김",
 ["Hide the ticker when it's not needed"] = "필요하지 않을 때 눈끔을 숨깁니다.",
