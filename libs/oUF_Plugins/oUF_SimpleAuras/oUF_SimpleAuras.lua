@@ -111,6 +111,7 @@ local weaponEnchantData = {
 	[1703] = 3600, -- Dense Weightstone (60 min)
 	[2954] = 3600, -- Fel Weightstone (60 min)
 	[2955] = 3600, -- Adamantite Weightstone (60 min)
+	[3093] = 300,  -- Scourgebane (5 min)
 }
 
 local function UpdateTooltip(self)
