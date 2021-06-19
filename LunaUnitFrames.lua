@@ -1,7 +1,7 @@
 -- Luna Unit Frames 4.0 by Aviana
 
 LUF = select(2, ...)
-LUF.version = 4140
+LUF.version = 4150
 
 local L = LUF.L
 local ACR = LibStub("AceConfigRegistry-3.0", true)
@@ -339,6 +339,8 @@ function LUF:AutoswitchProfile(event)
 				groupType = "RAID15"
 			elseif maxGrp == 4 then
 				groupType = "RAID20"
+			elseif maxGrp == 5 then
+				groupType = "RAID25"
 			else
 				groupType = "RAID40"
 			end
@@ -402,15 +404,15 @@ end
 local active_hiddens = {
 }
 function LUF:HideBlizzardFrames()
-	if( self.db.profile.hidden.cast ) then
+	if( LUF.db.profile.hidden.cast ) then
 		handleFrame(CastingBarFrame)
 		active_hiddens.cast = true
-	elseif( not self.db.profile.hidden.cast and not active_hiddens.cast ) then
+	elseif( not LUF.db.profile.hidden.cast and not active_hiddens.cast ) then
 		CastingBarFrame_OnLoad(CastingBarFrame, "player", true, false) --restore castbar as oUF kills it
 	end
 
 	if( CompactRaidFrameManager ) then
-		if( self.db.profile.hidden.raid and not active_hiddens.raid ) then
+		if( LUF.db.profile.hidden.raid and not active_hiddens.raid ) then
 			active_hiddens.raid = true
 			local function hideRaid()
 				CompactRaidFrameManager:UnregisterAllEvents()
@@ -425,7 +427,7 @@ function LUF:HideBlizzardFrames()
 			end
 			
 			hooksecurefunc("CompactRaidFrameManager_UpdateShown", function()
-				if( self.db.profile.hidden.raid ) then
+				if( LUF.db.profile.hidden.raid ) then
 					hideRaid()
 				end
 			end)
@@ -436,7 +438,7 @@ function LUF:HideBlizzardFrames()
 		end
 	end
 
-	if( self.db.profile.hidden.buffs and not active_hiddens.buffs ) then
+	if( LUF.db.profile.hidden.buffs and not active_hiddens.buffs ) then
 		BuffFrame:UnregisterAllEvents()
 		BuffFrame:Hide()
 		TemporaryEnchantFrame:UnregisterAllEvents()
@@ -444,31 +446,31 @@ function LUF:HideBlizzardFrames()
 		TemporaryEnchantFrame_Hide()
 	end
 
-	if( self.db.profile.hidden.player and not active_hiddens.player ) then
+	if( LUF.db.profile.hidden.player and not active_hiddens.player ) then
 		handleFrame(PlayerFrame)
 	end
 
-	if( self.db.profile.hidden.pet and not active_hiddens.pet ) then
+	if( LUF.db.profile.hidden.pet and not active_hiddens.pet ) then
 		handleFrame(PetFrame)
 	end
 
-	if( self.db.profile.hidden.focus and not active_hiddens.focus ) then
+	if( LUF.db.profile.hidden.focus and not active_hiddens.focus ) then
 		handleFrame(FocusFrame)
 	end
 
-	if( self.db.profile.hidden.target and not active_hiddens.target ) then
+	if( LUF.db.profile.hidden.target and not active_hiddens.target ) then
 		handleFrame(TargetFrame)
 		handleFrame(ComboFrame)
 		handleFrame(TargetFrameToT)
 	end
 
-	if( self.db.profile.hidden.party and not active_hiddens.party ) then
+	if( LUF.db.profile.hidden.party and not active_hiddens.party ) then
 		for i = 1, MAX_PARTY_MEMBERS do
 			handleFrame(string.format("PartyMemberFrame%d", i))
 		end
 	end
 
-	if( self.db.profile.hidden.arena and not active_hiddens.arena ) then
+	if( LUF.db.profile.hidden.arena and not active_hiddens.arena ) then
 		for i = 1, 5 do
 			handleFrame(string.format("ArenaEnemyFrame%d", i))
 		end
@@ -479,7 +481,7 @@ function LUF:HideBlizzardFrames()
 	end
 
 	-- As a reload is required to reset the hidden hooks, we can just set this to true if anything is true
-	for type, flag in pairs(self.db.profile.hidden) do
+	for type, flag in pairs(LUF.db.profile.hidden) do
 		if( flag ) then
 			active_hiddens[type] = true
 		end

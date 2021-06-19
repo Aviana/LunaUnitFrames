@@ -290,6 +290,7 @@ local L = {
 ["Size of Group"] = "그룹의 크기",
 ["Size of group to assign a profile to"] = "프로필에 할당할 그룹의 크기",
 ["Raid40"] = "40인 공격대",
+["Raid25"] = "25인 공격대",
 ["Raid20"] = "20인 공격대",
 ["Raid15"] = "15인 공격대",
 ["Raid10"] = "10인 공격대",

@@ -293,6 +293,7 @@ local L = {
 ["Size of Group"] = "Gruppeng\195\182sse",
 ["Size of group to assign a profile to"] = "Gr\195\182sse der Gruppe, der ein Profil zugeordnet wird",
 ["Raid40"] = "Schlachtzug40",
+["Raid25"] = "Schlachtzug25",
 ["Raid20"] = "Schlachtzug20",
 ["Raid15"] = "Schlachtzug15",
 ["Raid10"] = "Schlachtzug10",

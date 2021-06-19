@@ -750,6 +750,8 @@ end
 
 local playerFrames = {}
 local function UpdateWeaponEnchants(self, silent)
+	weaponWatchTimer = nil
+
 	local hasMainHandEnchant, mainHandExpiration, mainHandChargeNum, mainHandEnchantID, hasOffHandEnchant, offHandExpiration, offHandChargeNum, offHandEnchantId = GetWeaponEnchantInfo()
 	if hasMainHandEnchant then
 		mainHandEnd = GetTime() + (mainHandExpiration / 1000)
@@ -777,10 +779,11 @@ local function UpdateWeaponEnchants(self, silent)
 end
 
 local function SetWeaponUpdateTimer(self, event, unit)
-	if weaponWatchTimer and not weaponWatchTimer:IsCancelled() then
-		weaponWatchTimer:Cancel()
+	if unit ~= "player" then return end
+	if not weaponWatchTimer then
+		weaponWatchTimer = true
+		C_Timer.After(1, UpdateWeaponEnchants)
 	end
-	weaponWatchTimer = C_Timer.NewTimer(1, UpdateWeaponEnchants)
 end
 
 local function OnSizeChanged(self)

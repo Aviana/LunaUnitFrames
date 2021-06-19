@@ -290,6 +290,7 @@ local L = {
 ["Size of Group"] = "Size of Group",
 ["Size of group to assign a profile to"] = "Size of group to assign a profile to",
 ["Raid40"] = "Raid40",
+["Raid25"] = "Raid25",
 ["Raid20"] = "Raid20",
 ["Raid15"] = "Raid15",
 ["Raid10"] = "Raid10",
