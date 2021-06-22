@@ -50,7 +50,7 @@ local SPELL_POWER_ENERGY = Enum.PowerType.Energy or 3
 local SPELL_POWER_COMBO_POINTS = Enum.PowerType.ComboPoints or 4
 
 -- Holds the class specific stuff.
-local ClassPowerID, ClassPowerTypes = nil, {}
+local ClassPowerID, ClassPowerType
 local ComboPointsEnable, ComboPointsDisable
 local RequirePower, RequireSpell
 
@@ -70,7 +70,7 @@ local function UpdateColor(element, powerType)
 end
 
 local function Update(self, event, unit, powerType)
-	if (not (unit and (UnitIsUnit(unit, "player") and  ClassPowerTypes[powerType]))) then
+	if (not (unit and (UnitIsUnit(unit, "player") and (ClassPowerType == powerType or powerType == "ENERGY")))) then
 		return
 	end
 
@@ -162,7 +162,7 @@ local function Visibility(self, event, unit)
 	end
 
 	local isEnabled = element.isEnabled
-	local powerType = "COMBO_POINTS"
+	local powerType = ClassPowerType
 
 	if(shouldEnable) then
 		--[[ Override: ComboPoints:UpdateColor(powerType)
@@ -205,7 +205,7 @@ do
 
 		self.ComboPoints.isEnabled = true
 
-		Path(self, "ComboPointsEnable", "player", "COMBO_POINTS")
+		Path(self, "ComboPointsEnable", "player", ClassPowerType)
 	end
 
 	function ComboPointsDisable(self)
@@ -218,13 +218,12 @@ do
 		end
 
 		self.ComboPoints.isEnabled = false
-		Path(self, "ComboPointsDisable", "player", "COMBO_POINTS")
+		Path(self, "ComboPointsDisable", "player", ClassPowerType)
 	end
 
 	if(PlayerClass == "ROGUE" or PlayerClass == "DRUID") then
 		ClassPowerID = SPELL_POWER_COMBO_POINTS
-		ClassPowerTypes["COMBO_POINTS"] = true
-		ClassPowerTypes["ENERGY"] = true
+		ClassPowerType = "COMBO_POINTS"
 
 		if(PlayerClass == "DRUID") then
 			RequirePower = SPELL_POWER_ENERGY
