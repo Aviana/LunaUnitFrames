@@ -343,7 +343,7 @@ local function UpdateAuras(self, event, unit)
 		local buffs = element.buffFrame
 		local currentSlot = 1
 		local offset = 0
-		local filter = "HELPFUL"..(element.buffFilter == 3 and "|RAID" or "")
+		local filter = "HELPFUL"..(element.buffFilter == 3 and UnitCanAssist("player", unit) and "|RAID" or "")
 		local button
 		if element.buffs then
 			for i=1,(element.maxBuffs or 32) do
@@ -553,7 +553,7 @@ local function Update(self, event, unit)
 				if not button:IsVisible() then break end
 				button:ClearAllPoints()
 				if i == 1 then
-					button:SetPoint("TOPLEFT", element, "TOPLEFT", 1, -1)
+					button:SetPoint("TOPLEFT", element, "TOPLEFT", 1, -1 + (element.buffOffset or 0))
 					rowLenght = element.buffSize + element.spacing
 					firstButton = button
 				elseif (rowLenght + element.buffSize) <= frameWidth then
@@ -572,7 +572,7 @@ local function Update(self, event, unit)
 				if not button:IsVisible() then break end
 				button:ClearAllPoints()
 				if i == 1 then
-					button:SetPoint("BOTTOMLEFT", element, "LEFT", 1, 0)
+					button:SetPoint("BOTTOMLEFT", element, "LEFT", 1, (element.buffOffset or 0))
 					rowLenght = element.buffSize + element.spacing
 					firstButton = button
 				elseif (rowLenght + element.buffSize) <= frameWidth then
@@ -710,7 +710,7 @@ local function Update(self, event, unit)
 				if not button:IsVisible() then break end
 				button:ClearAllPoints()
 				if i == 1 then
-					button:SetPoint("BOTTOMLEFT", element, "BOTTOMLEFT", 1, 1)
+					button:SetPoint("BOTTOMLEFT", element, "BOTTOMLEFT", 1, 1 + (element.debuffOffset or 0))
 					rowLenght = element.debuffSize + element.spacing
 					firstButton = button
 				elseif (rowLenght + element.debuffSize) <= frameWidth then
@@ -728,7 +728,7 @@ local function Update(self, event, unit)
 				if not button:IsVisible() then break end
 				button:ClearAllPoints()
 				if i == 1 then
-					button:SetPoint("TOPLEFT", element, "LEFT", 1, 0)
+					button:SetPoint("TOPLEFT", element, "LEFT", 1, (element.debuffOffset or 0))
 					rowLenght = element.debuffSize + element.spacing
 					firstButton = button
 				elseif (rowLenght + element.debuffSize) <= frameWidth then
