@@ -343,7 +343,7 @@ local function UpdateAuras(self, event, unit)
 		local buffs = element.buffFrame
 		local currentSlot = 1
 		local offset = 0
-		local filter = "HELPFUL"..(element.buffFilter == 3 and UnitCanAssist("player", unit) and "|RAID" or "")
+		local filter = "HELPFUL"..(element.buffFilter == 3 and (UnitCanAssist("player", unit) or not UnitIsVisible(unit)) and "|RAID" or "")
 		local button
 		if element.buffs then
 			for i=1,(element.maxBuffs or 32) do
