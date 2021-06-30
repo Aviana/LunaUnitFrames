@@ -321,10 +321,10 @@ end
 
 function LUF:AutoswitchProfile(event)
 	local profile
-	if event == "DISPLAY_SIZE_CHANGED" then
+	if event == "DISPLAY_SIZE_CHANGED" and self.db.char.switchtype == "RESOLUTION" then
 		local resolutions = {GetScreenResolutions()}
 		profile = self.db.char.resdb[resolutions[GetCurrentResolution()]]
-	else
+	elseif event == "GROUP_ROSTER_UPDATE" and self.db.char.switchtype == "GROUP" then
 		local groupType
 		if IsInRaid() then
 			local maxGrp = 1
@@ -1530,7 +1530,7 @@ frame:SetScript("OnEvent", function(self, event, addon)
 		if( ACR ) then
 			ACR:NotifyChange("LunaUnitFrames")
 		end
-	elseif event == "DISPLAY_SIZE_CHANGED" and LUF.db.char.switchtype == "RESOLUTION" then
+	elseif event == "DISPLAY_SIZE_CHANGED" then
 		if not LUF.InCombatLockdown then
 			LUF:AutoswitchProfile(event)
 		else
@@ -1538,12 +1538,10 @@ frame:SetScript("OnEvent", function(self, event, addon)
 		end
 	elseif event == "GROUP_ROSTER_UPDATE" then
 		CheckforRosterBug()
-		if LUF.db.char.switchtype == "GROUP" then
-			if not LUF.InCombatLockdown then
-				LUF:AutoswitchProfile(event)
-			else
-				queuedEvent = event
-			end
+		if not LUF.InCombatLockdown then
+			LUF:AutoswitchProfile(event)
+		else
+			queuedEvent = event
 		end
 	end
 end)
