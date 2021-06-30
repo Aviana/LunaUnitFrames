@@ -89,6 +89,8 @@ local HealthnPowerTags = {
 	["incpreheal"] = true,
 	["incafterheal"] = true,
 	["hotheal"] = true,
+	["effheal"] = true,
+	["overheal"] = true,
 }
 local ColorTags = {
 	["combatcolor"] = true,

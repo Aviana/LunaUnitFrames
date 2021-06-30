@@ -404,6 +404,8 @@ end
 local active_hiddens = {
 }
 function LUF:HideBlizzardFrames()
+	if not LUF.db then return end --Prevent calling this before the db is loaded
+	
 	if( LUF.db.profile.hidden.cast ) then
 		handleFrame(CastingBarFrame)
 		active_hiddens.cast = true

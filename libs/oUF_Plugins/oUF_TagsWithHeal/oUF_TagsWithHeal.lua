@@ -391,6 +391,28 @@ local tagStrings = {
 		end
 	end]],
 
+	["effheal"] = [[function(unit)
+		local mod = LHC:GetHealModifier(UnitGUID(unit)) or 1
+		local heal = LHC:GetHealAmount(UnitGUID(unit), LHC.DIRECT_HEALS, GetTime() + GetHealTimeFrame()) or 0
+		heal = heal * mod
+		local healthmissing = UnitHealthMax(unit) - UnitHealth(unit)
+		heal = math.min(healthmissing, heal)
+		if heal > 0 then
+			return math.floor(heal)
+		end
+	end]],
+
+	["overheal"] = [[function(unit)
+		local mod = LHC:GetHealModifier(UnitGUID(unit)) or 1
+		local heal = LHC:GetHealAmount(UnitGUID(unit), LHC.DIRECT_HEALS, GetTime() + GetHealTimeFrame()) or 0
+		heal = heal * mod
+		local healthmissing = UnitHealthMax(unit) - UnitHealth(unit)
+		heal = heal - healthmissing
+		if heal > 0 then
+			return math.floor(heal * mod)
+		end
+	end]],
+
 	["buffcount"] = [[function(unit)
 		local num = 0
 		while true do
@@ -1202,6 +1224,8 @@ local tagEvents = {
 	["incpreheal"]          = "HealComm_HealStarted HealComm_HealUpdated HealComm_HealStopped HealComm_ModifierChanged HealComm_GUIDDisappeared",
 	["incafterheal"]        = "HealComm_HealStarted HealComm_HealUpdated HealComm_HealStopped HealComm_ModifierChanged HealComm_GUIDDisappeared",
 	["hotheal"]             = "HealComm_HealStarted HealComm_HealUpdated HealComm_HealStopped HealComm_ModifierChanged HealComm_GUIDDisappeared",
+	["effheal"]             = "HealComm_HealStarted HealComm_HealUpdated HealComm_HealStopped HealComm_ModifierChanged HealComm_GUIDDisappeared",
+	["overheal"]            = "HealComm_HealStarted HealComm_HealUpdated HealComm_HealStopped HealComm_ModifierChanged HealComm_GUIDDisappeared",
 	["buffcount"]           = "UNIT_AURA",
 	["numheals"]            = "HealComm_HealStarted HealComm_HealUpdated HealComm_HealStopped HealComm_GUIDDisappeared",
 	["pvp"]                 = "PLAYER_FLAGS_CHANGED UNIT_FACTION",
