@@ -33,6 +33,7 @@ function LUF:LoadDefaults()
 			inchealTime = 4,
 			omnicc = false,
 			blizzardcc = false,
+			strata = "MEDIUM",
 			range = { dist = 40, alpha = 0.4 },
 		},
 	}

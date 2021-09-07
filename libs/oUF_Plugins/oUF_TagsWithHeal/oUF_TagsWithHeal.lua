@@ -1136,7 +1136,9 @@ local tagStrings = {
 
 	["rep"] = [[function(unit)
 		local name, standing, min, max, value, factionID = GetWatchedFactionInfo()
-		return (value-min).."/"..(max-min).." "..name
+		if name then
+			return (value-min).."/"..(max-min).." "..name
+		end
 	end]],
 }
 
