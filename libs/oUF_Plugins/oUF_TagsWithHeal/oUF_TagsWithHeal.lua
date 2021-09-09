@@ -869,7 +869,7 @@ local tagStrings = {
 			status, scaledPercentage = select(2, UnitDetailedThreatSituation("player", unit))
 		end
 		if status then
-			return scaledPercentage.."%"
+			return ceil(scaledPercentage).."%"
 		end
 	end]],
 

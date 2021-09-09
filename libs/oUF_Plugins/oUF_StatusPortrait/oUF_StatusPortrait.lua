@@ -140,7 +140,7 @@ local function Update(self, event, unit)
 			element.texture:Hide()
 			element.model:Show()
 		elseif element.type == "class" or element.type == "2dclass" and UnitIsPlayer(unit) then
-			local class = select(2,UnitClass(unit))
+			local class = select(2,UnitClass(unit)) or "WARRIOR"
 			element.texture:SetTexture("Interface\\Glues\\CharacterCreate\\UI-CharacterCreate-Classes")
 			element.texture:SetTexCoord(CLASS_ICON_TCOORDS[class][1], CLASS_ICON_TCOORDS[class][2], CLASS_ICON_TCOORDS[class][3], CLASS_ICON_TCOORDS[class][4])
 			element.texture:Show()
