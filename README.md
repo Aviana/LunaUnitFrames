@@ -1,11 +1,6 @@
 # LunaUnitFrames
 Unit Frames for WoW Classic
 
--EXPERIMENTAL TBC SUPPORT-
-
-This is not finished yet. Nor is it tested in any way since i lack access to the beta.
-
-
 DO NOT USE THE GREEN CLONE OR DOWNLOAD BUTTON. GET THE NEWEST RELEASE FROM THE [RELEASE](https://github.com/Aviana/LunaUnitFrames/releases) PAGE.
 
 !!!ATTENTION!!!
