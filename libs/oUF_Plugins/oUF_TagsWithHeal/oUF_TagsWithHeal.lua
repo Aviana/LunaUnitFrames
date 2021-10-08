@@ -69,6 +69,7 @@ local _, ns = ...
 local oUF = ns.oUF
 local Private = oUF.Private
 local LHC = LibStub("LibHealComm-4.0")
+local LT = LibStub("LibTargeted")
 
 local _PATTERN = '%[..-%]+'
 
@@ -134,6 +135,7 @@ local _ENV = {
 	RARE = strmatch(GARRISON_MISSION_RARE,"%a*"),
 	GHOST = GetSpellInfo(8326),
 	LHC = LHC,
+	LT = LT,
 	GetHealTimeFrame = function() return oUF.TagsWithHealTimeFrame or 4 end,
 	GetShowHots = function() if oUF.TagsWithHealDisableHots then return LHC.DIRECT_HEALS else return LHC.ALL_HEALS end end,
 }
@@ -1140,6 +1142,13 @@ local tagStrings = {
 			return (value-min).."/"..(max-min).." "..name
 		end
 	end]],
+
+	["enumtargeting"] = [[function(unit)
+		local num = LT:GetUnitTargetedCount(unit)
+		if num > 0 then
+			return num
+		end
+	end]],
 }
 
 local tags = setmetatable(
@@ -1203,6 +1212,7 @@ local LibEvents = {
 	["HealComm_HealStopped"] = LHC,
 	["HealComm_ModifierChanged"] = LHC,
 	["HealComm_GUIDDisappeared"] = LHC,
+	["TARGETED_COUNT_CHANGED"] = LT,
 }
 
 local tagEvents = {
