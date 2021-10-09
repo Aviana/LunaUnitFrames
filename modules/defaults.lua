@@ -1863,7 +1863,6 @@ function LUF:LoadDefaults()
 				[6] = true,
 				[7] = true,
 				[8] = true,
-				[9] = true,
 			},
 			positions = {
 				[1] = {point = "TOPLEFT", anchorTo = "UIParent", relativePoint = "TOPLEFT", x = 10, y = -380},
@@ -1874,7 +1873,6 @@ function LUF:LoadDefaults()
 				[6] = {point = "TOPRIGHT", anchorTo = "LUFHeaderraid5", relativePoint = "TOPRIGHT", x = 64, y = 0},
 				[7] = {point = "TOPRIGHT", anchorTo = "LUFHeaderraid6", relativePoint = "TOPRIGHT", x = 64, y = 0},
 				[8] = {point = "TOPRIGHT", anchorTo = "LUFHeaderraid7", relativePoint = "TOPRIGHT", x = 64, y = 0},
-				[9] = {point = "TOPRIGHT", anchorTo = "LUFHeaderraid8", relativePoint = "TOPRIGHT", x = 64, y = 0},
 			},
 		},
 		raidpet = {

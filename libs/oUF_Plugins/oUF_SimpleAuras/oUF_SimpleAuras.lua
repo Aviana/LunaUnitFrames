@@ -69,6 +69,7 @@ local _, ns = ...
 local oUF = ns.oUF
 
 local LCD = LibStub("LibClassicDurations", true)
+LCD:Register("LunaUnitFrames")
 local weaponWatchTimer
 local mainHandEnd, mainHandDuration, mainHandCharges, offHandEnd, offHandDuration, offHandCharges
 
