@@ -54,6 +54,9 @@ libs\oUF_Plugins\oUF_Plugins.xml
 
 locales\enUS.lua
 locales\deDE.lua
+locales\koKR.lua
+locales\zhCN.lua
+locales\zhTW.lua
 
 modules\options.lua
 modules\overrides.lua
