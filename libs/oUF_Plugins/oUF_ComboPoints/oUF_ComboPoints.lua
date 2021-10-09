@@ -70,9 +70,6 @@ local function UpdateColor(element, powerType)
 end
 
 local function Update(self, event, unit, powerType)
-	if (not (unit and (UnitIsUnit(unit, "player") and powerType == ClassPowerType))) then
-		return
-	end
 
 	local element = self.ComboPoints
 
@@ -85,19 +82,11 @@ local function Update(self, event, unit, powerType)
 		element:PreUpdate()
 	end
 
-	local cur, max, mod, oldMax
 	if(event ~= "ComboPointsDisable") then
-		local powerID = ClassPowerID
-		cur = UnitPower(unit, powerID, true)
-		max = UnitPowerMax(unit, powerID)
-		mod = UnitPowerDisplayMod(powerID)
 
-		-- mod should never be 0, but according to Blizz code it can actually happen
-		cur = mod == 0 and 0 or cur / mod
-
-		local numActive = cur + 0.9
-		for i = 1, max do
-			if(i > numActive) then
+		local cur = GetComboPoints("player", "target")
+		for i = 1, 5 do
+			if(i > cur) then
 				element[i]:Hide()
 				element[i]:SetValue(0)
 			else
@@ -105,30 +94,15 @@ local function Update(self, event, unit, powerType)
 				element[i]:SetValue(cur - i + 1)
 			end
 		end
-
-		oldMax = element.__max
-		if(max ~= oldMax) then
-			if(max < oldMax) then
-				for i = max + 1, oldMax do
-					element[i]:Hide()
-					element[i]:SetValue(0)
-				end
-			end
-
-			element.__max = max
-		end
 	end
-	--[[ Callback: ComboPoints:PostUpdate(cur, max, hasMaxChanged, powerType)
+	--[[ Callback: ComboPoints:PostUpdate(cur)
 	Called after the element has been updated.
 
 	* self          - the ComboPoints element
 	* cur           - the current amount of power (number)
-	* max           - the maximum amount of power (number)
-	* hasMaxChanged - indicates whether the maximum amount has changed since the last update (boolean)
-	* powerType     - the active power type (string)
 	--]]
 	if(element.PostUpdate) then
-		return element:PostUpdate(cur, max, oldMax ~= max, powerType)
+		return element:PostUpdate(cur)
 	end
 end
 
@@ -202,6 +176,9 @@ do
 	function ComboPointsEnable(self)
 		self:RegisterEvent("UNIT_POWER_FREQUENT", Path, true)
 		self:RegisterEvent("UNIT_MAXPOWER", Path, true)
+		if self.unit == "player" then
+			self:RegisterEvent("PLAYER_TARGET_CHANGED", Path, true)
+		end
 
 		self.ComboPoints.isEnabled = true
 
@@ -211,6 +188,9 @@ do
 	function ComboPointsDisable(self)
 		self:UnregisterEvent("UNIT_POWER_FREQUENT", Path)
 		self:UnregisterEvent("UNIT_MAXPOWER", Path)
+		if self.unit == "player" then
+			self:UnregisterEvent("PLAYER_TARGET_CHANGED", Path)
+		end
 
 		local element = self.ComboPoints
 		for i = 1, #element do

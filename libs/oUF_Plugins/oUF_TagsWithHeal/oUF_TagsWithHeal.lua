@@ -70,6 +70,7 @@ local oUF = ns.oUF
 local Private = oUF.Private
 local LCC = LibStub('LibClassicCasterino', true)
 local LHC = LibStub("LibHealComm-4.0")
+local LT = LibStub("LibTargeted")
 
 local _PATTERN = '%[..-%]+'
 
@@ -137,6 +138,7 @@ local _ENV = {
 	RARE = strmatch(GARRISON_MISSION_RARE,"%a*"),
 	GHOST = GetSpellInfo(8326),
 	LHC = LHC,
+	LT = LT,
 	GetHealTimeFrame = function() return oUF.TagsWithHealTimeFrame or 4 end,
 	GetShowHots = function() if oUF.TagsWithHealDisableHots then return LHC.DIRECT_HEALS else return LHC.ALL_HEALS end end,
 }
@@ -389,6 +391,28 @@ local tagStrings = {
 	["hotheal"] = [[function(unit)
 		local mod = LHC:GetHealModifier(UnitGUID(unit)) or 1
 		local heal = LHC:GetHealAmount(UnitGUID(unit), bit.bor(LHC.HOT_HEALS, LHC.CHANNEL_HEALS), GetTime() + GetHealTimeFrame()) or 0
+		if heal > 0 then
+			return math.floor(heal * mod)
+		end
+	end]],
+
+	["effheal"] = [[function(unit)
+		local mod = LHC:GetHealModifier(UnitGUID(unit)) or 1
+		local heal = LHC:GetHealAmount(UnitGUID(unit), LHC.DIRECT_HEALS, GetTime() + GetHealTimeFrame()) or 0
+		heal = heal * mod
+		local healthmissing = UnitHealthMax(unit) - UnitHealth(unit)
+		heal = math.min(healthmissing, heal)
+		if heal > 0 then
+			return math.floor(heal)
+		end
+	end]],
+
+	["overheal"] = [[function(unit)
+		local mod = LHC:GetHealModifier(UnitGUID(unit)) or 1
+		local heal = LHC:GetHealAmount(UnitGUID(unit), LHC.DIRECT_HEALS, GetTime() + GetHealTimeFrame()) or 0
+		heal = heal * mod
+		local healthmissing = UnitHealthMax(unit) - UnitHealth(unit)
+		heal = heal - healthmissing
 		if heal > 0 then
 			return math.floor(heal * mod)
 		end
@@ -850,7 +874,7 @@ local tagStrings = {
 			status, scaledPercentage = select(2, UnitDetailedThreatSituation("player", unit))
 		end
 		if status then
-			return scaledPercentage.."%"
+			return ceil(scaledPercentage).."%"
 		end
 	end]],
 
@@ -1083,10 +1107,10 @@ local tagStrings = {
 	end]],
 
 	["casttime"] = [[function(unit)
-		local name, _, texture, startTime, endTime = CastingInfo(unit)
+		local name, _, texture, startTime, endTime = UnitCastingInfo(unit)
 		local retTime
 		if not name then
-			name, _, texture, startTime, endTime = ChannelInfo(unit)
+			name, _, texture, startTime, endTime = UnitChannelInfo(unit)
 			if name then
 				retTime = (endTime / 1000) - GetTime()
 			end
@@ -1118,6 +1142,13 @@ local tagStrings = {
 	["rep"] = [[function(unit)
 		local name, standing, min, max, value, factionID = GetWatchedFactionInfo()
 		return (value-min).."/"..(max-min).." "..name
+	end]],
+	
+	["enumtargeting"] = [[function(unit)
+		local num = LT:GetUnitTargetedCount(unit)
+		if num > 0 then
+			return num
+		end
 	end]],
 }
 
@@ -1190,6 +1221,7 @@ local LibEvents = {
 	["HealComm_HealStopped"] = LHC,
 	["HealComm_ModifierChanged"] = LHC,
 	["HealComm_GUIDDisappeared"] = LHC,
+	["TARGETED_COUNT_CHANGED"] = LT,
 }
 
 local tagEvents = {
@@ -1213,6 +1245,8 @@ local tagEvents = {
 	["incpreheal"]          = "HealComm_HealStarted HealComm_HealUpdated HealComm_HealStopped HealComm_ModifierChanged HealComm_GUIDDisappeared",
 	["incafterheal"]        = "HealComm_HealStarted HealComm_HealUpdated HealComm_HealStopped HealComm_ModifierChanged HealComm_GUIDDisappeared",
 	["hotheal"]             = "HealComm_HealStarted HealComm_HealUpdated HealComm_HealStopped HealComm_ModifierChanged HealComm_GUIDDisappeared",
+	["effheal"]             = "HealComm_HealStarted HealComm_HealUpdated HealComm_HealStopped HealComm_ModifierChanged HealComm_GUIDDisappeared",
+	["overheal"]            = "HealComm_HealStarted HealComm_HealUpdated HealComm_HealStopped HealComm_ModifierChanged HealComm_GUIDDisappeared",
 	["buffcount"]           = "UNIT_AURA",
 	["numheals"]            = "HealComm_HealStarted HealComm_HealUpdated HealComm_HealStopped HealComm_GUIDDisappeared",
 	["pvp"]                 = "PLAYER_FLAGS_CHANGED UNIT_FACTION",
@@ -1352,6 +1386,7 @@ local onUpdateDelay = {}
 onUpdateDelay["numtargeting"] = 0.5
 onUpdateDelay["cnumtargeting"] = 0.5
 onUpdateDelay["afktime"] = 0.5
+onUpdateDelay["casttime"] = 0.1
 
 local escapeSequences = {
 	["||c"] = "|c",

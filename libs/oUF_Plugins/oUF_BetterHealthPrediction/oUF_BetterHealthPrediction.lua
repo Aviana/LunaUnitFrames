@@ -97,7 +97,7 @@ local function Update(self, event, unit)
 	if element.disableHots then
 		hotHeal = 0
 	else
-		hotHeal = HealComm:GetHealAmount(guid, bit.bor(HealComm.HOT_HEALS, HealComm.CHANNEL_HEALS), timeFrame) or 0
+		hotHeal = HealComm:GetHealAmount(guid, bit.bor(HealComm.HOT_HEALS, HealComm.CHANNEL_HEALS, HealComm.BOMB_HEALS), timeFrame) or 0
 	end
 	totalHeal = totalHeal + hotHeal
 

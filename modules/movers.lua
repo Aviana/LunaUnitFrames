@@ -146,7 +146,7 @@ end
 
 function LUF:CorrectPosition(frame)
 	local scale, position
-	local config = LUF.db.profile.units[frame:GetAttribute("headerType") or frame:GetAttribute("oUF-guessUnit")]
+	local config = LUF.db.profile.units[frame:GetAttribute("oUF-headerType") or frame:GetAttribute("oUF-guessUnit")]
 	if config.positions then
 		position = config.positions[tonumber(strsub(frame:GetName(),14))]
 	else
@@ -154,12 +154,12 @@ function LUF:CorrectPosition(frame)
 	end
 	
 	local anchor = position.anchorTo and _G[position.anchorTo]
-	local anchorConfig = LUF.db.profile.units[frame:GetAttribute("headerType") or anchor:GetAttribute("oUF-guessUnit")]
+	local anchorConfig = LUF.db.profile.units[frame:GetAttribute("oUF-headerType") or anchor:GetAttribute("oUF-guessUnit")]
 	
 	local point, anchorTo, relativePoint, x, y = frame:GetPoint()
 
-	if position.anchorTo ~= "UIParent" and not frame:GetAttribute("headerType") then
-		if anchor:GetAttribute("headerType") then
+	if position.anchorTo ~= "UIParent" and not frame:GetAttribute("oUF-headerType") then
+		if anchor:GetAttribute("oUF-headerType") then
 			relativePoint = (anchorConfig.attribPoint == "TOP" or anchorConfig.attribPoint == "RIGHT") and "TOPRIGHT" or "BOTTOMLEFT"
 			point = "BOTTOMLEFT"
 			if relativePoint == "BOTTOMLEFT" then
@@ -179,8 +179,8 @@ function LUF:CorrectPosition(frame)
 			relativePoint = "TOPLEFT"
 			scale = 1
 		end
-	elseif position.anchorTo ~= "UIParent" and frame:GetAttribute("headerType") then
-		if anchor:GetAttribute("headerType") then
+	elseif position.anchorTo ~= "UIParent" and frame:GetAttribute("oUF-headerType") then
+		if anchor:GetAttribute("oUF-headerType") then
 			relativePoint = (anchorConfig.attribPoint == "TOP" or anchorConfig.attribPoint == "RIGHT") and "TOPRIGHT" or "BOTTOMLEFT"
 		else
 			relativePoint = "BOTTOMLEFT"
@@ -204,7 +204,7 @@ function LUF:CorrectPosition(frame)
 			end
 		end
 		scale = 1
-	elseif position.anchorTo == "UIParent" and frame:GetAttribute("headerType") then
+	elseif position.anchorTo == "UIParent" and frame:GetAttribute("oUF-headerType") then
 		if config.attribPoint == "BOTTOM" or config.attribPoint == "LEFT" then
 			x = frame:GetLeft()
 			y = frame:GetBottom()

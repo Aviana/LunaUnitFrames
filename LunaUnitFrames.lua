@@ -1,7 +1,7 @@
 -- Luna Unit Frames 4.0 by Aviana
 
 LUF = select(2, ...)
-LUF.version = 4100
+LUF.version = 4220
 
 local L = LUF.L
 local ACR = LibStub("AceConfigRegistry-3.0", true)
@@ -89,7 +89,7 @@ LUF.fakeUnits = {
 	["maintanktarget"] = true,
 	["maintanktargettarget"] = true,
 	["mainassisttarget"] = true,
-	["mainassisttargettarget"] = true
+	["mainassisttargettarget"] = true,
 }
 
 LUF.HeaderFrames = {
@@ -105,6 +105,30 @@ LUF.HeaderFrames = {
 	["mainassisttarget"] = true,
 	["mainassisttargettarget"] = true,
 }
+
+-- taken from framexml
+local function getRelativePointAnchor( point )
+	point = point:upper();
+	if (point == "TOP") then
+		return "BOTTOM", 0, -1;
+	elseif (point == "BOTTOM") then
+		return "TOP", 0, 1;
+	elseif (point == "LEFT") then
+		return "RIGHT", 1, 0;
+	elseif (point == "RIGHT") then
+		return "LEFT", -1, 0;
+	elseif (point == "TOPLEFT") then
+		return "BOTTOMRIGHT", 1, -1;
+	elseif (point == "TOPRIGHT") then
+		return "BOTTOMLEFT", -1, -1;
+	elseif (point == "BOTTOMLEFT") then
+		return "TOPRIGHT", 1, 1;
+	elseif (point == "BOTTOMRIGHT") then
+		return "TOPLEFT", -1, 1;
+	else
+		return "CENTER", 0, 0;
+	end
+end
 
 function LUF:Print(msg)
 	DEFAULT_CHAT_FRAME:AddMessage("|cFF2150C2LunaUnitFrames|cFFFFFFFF: ".. msg)
@@ -283,10 +307,10 @@ end
 
 function LUF:AutoswitchProfile(event)
 	local profile
-	if event == "DISPLAY_SIZE_CHANGED" then
+	if event == "DISPLAY_SIZE_CHANGED" and self.db.char.switchtype == "RESOLUTION" then
 		local resolutions = {GetScreenResolutions()}
 		profile = self.db.char.resdb[resolutions[GetCurrentResolution()]]
-	else
+	elseif event == "GROUP_ROSTER_UPDATE" and self.db.char.switchtype == "GROUP" then
 		local groupType
 		if IsInRaid() then
 			local maxGrp = 1
@@ -301,6 +325,8 @@ function LUF:AutoswitchProfile(event)
 				groupType = "RAID15"
 			elseif maxGrp == 4 then
 				groupType = "RAID20"
+			elseif maxGrp == 5 then
+				groupType = "RAID25"
 			else
 				groupType = "RAID40"
 			end
@@ -364,15 +390,17 @@ end
 local active_hiddens = {
 }
 function LUF:HideBlizzardFrames()
-	if( self.db.profile.hidden.cast ) then
+	if not LUF.db then return end --Prevent calling this before the db is loaded
+	
+	if( LUF.db.profile.hidden.cast ) then
 		handleFrame(CastingBarFrame)
 		active_hiddens.cast = true
-	elseif( not self.db.profile.hidden.cast and not active_hiddens.cast ) then
+	elseif( not LUF.db.profile.hidden.cast and not active_hiddens.cast ) then
 		CastingBarFrame_OnLoad(CastingBarFrame, "player", true, false) --restore castbar as oUF kills it
 	end
 
 	if( CompactRaidFrameManager ) then
-		if( self.db.profile.hidden.raid and not active_hiddens.raid ) then
+		if( LUF.db.profile.hidden.raid and not active_hiddens.raid ) then
 			active_hiddens.raid = true
 			local function hideRaid()
 				CompactRaidFrameManager:UnregisterAllEvents()
@@ -387,7 +415,7 @@ function LUF:HideBlizzardFrames()
 			end
 			
 			hooksecurefunc("CompactRaidFrameManager_UpdateShown", function()
-				if( self.db.profile.hidden.raid ) then
+				if( LUF.db.profile.hidden.raid ) then
 					hideRaid()
 				end
 			end)
@@ -398,7 +426,7 @@ function LUF:HideBlizzardFrames()
 		end
 	end
 
-	if( self.db.profile.hidden.buffs and not active_hiddens.buffs ) then
+	if( LUF.db.profile.hidden.buffs and not active_hiddens.buffs ) then
 		BuffFrame:UnregisterAllEvents()
 		BuffFrame:Hide()
 		TemporaryEnchantFrame:UnregisterAllEvents()
@@ -406,28 +434,28 @@ function LUF:HideBlizzardFrames()
 		TemporaryEnchantFrame_Hide()
 	end
 
-	if( self.db.profile.hidden.player and not active_hiddens.player ) then
+	if( LUF.db.profile.hidden.player and not active_hiddens.player ) then
 		handleFrame(PlayerFrame)
 	end
 
-	if( self.db.profile.hidden.pet and not active_hiddens.pet ) then
+	if( LUF.db.profile.hidden.pet and not active_hiddens.pet ) then
 		handleFrame(PetFrame)
 	end
 
-	if( self.db.profile.hidden.target and not active_hiddens.target ) then
+	if( LUF.db.profile.hidden.target and not active_hiddens.target ) then
 		handleFrame(TargetFrame)
 		handleFrame(ComboFrame)
 		handleFrame(TargetFrameToT)
 	end
 
-	if( self.db.profile.hidden.party and not active_hiddens.party ) then
+	if( LUF.db.profile.hidden.party and not active_hiddens.party ) then
 		for i = 1, MAX_PARTY_MEMBERS do
 			handleFrame(string.format("PartyMemberFrame%d", i))
 		end
 	end
 
 	-- As a reload is required to reset the hidden hooks, we can just set this to true if anything is true
-	for type, flag in pairs(self.db.profile.hidden) do
+	for type, flag in pairs(LUF.db.profile.hidden) do
 		if( flag ) then
 			active_hiddens[type] = true
 		end
@@ -549,6 +577,7 @@ local moduleSettings = {
 	druidBar = function(mod, config)
 		mod.texture = LUF:LoadMedia(SML.MediaType.STATUSBAR, config.statusbar)
 		mod:SetStatusBarTexture(LUF:LoadMedia(SML.MediaType.STATUSBAR, config.statusbar))
+		mod.disableHide = config.autoHide
 		if config.background then
 			mod.bg:SetTexture(mod.texture)
 			mod.bg:Show()
@@ -633,6 +662,8 @@ function LUF.ApplySettings(frame)
 		frame.StatusPortrait.type = config.portrait.type
 	end
 	
+	local tickerColor = LUF.db.profile.colors.ticker
+	local tickerBgColor = LUF.db.profile.colors.tickerBG
 	-- Regen Ticker
 	if frame.RegenTicker then
 		if (config.powerBar.ticker or config.powerBar.fivesecond) and select(2, UnitClass("player")) ~= "WARRIOR" then
@@ -641,6 +672,12 @@ function LUF.ApplySettings(frame)
 			frame.RegenTicker.hideFive = not config.powerBar.fivesecond
 			frame.RegenTicker.autoHide = config.powerBar.hideticker
 			frame.RegenTicker.vertical = config.powerBar.vertical
+			frame.RegenTicker.Spark.texture:SetVertexColor(tickerColor.r,tickerColor.g,tickerColor.b,1)
+			frame.RegenTicker.splitTimer.Spark.texture:SetVertexColor(tickerColor.r,tickerColor.g,tickerColor.b,1)
+			frame.RegenTicker.Spark:SetAlpha(tickerColor.a)
+			frame.RegenTicker.splitTimer:SetAlpha(tickerColor.a)
+			frame.RegenTicker.Spark:SetBackdropColor(tickerBgColor.r,tickerBgColor.g,tickerBgColor.b,tickerBgColor.a)
+			frame.RegenTicker.splitTimer.Spark:SetBackdropColor(tickerBgColor.r,tickerBgColor.g,tickerBgColor.b,tickerBgColor.a)
 		else
 			frame:DisableElement("RegenTicker")
 		end
@@ -654,6 +691,12 @@ function LUF.ApplySettings(frame)
 			frame.AdditionalRegenTicker.hideFive = not config.druidBar.fivesecond
 			frame.AdditionalRegenTicker.autoHide = config.druidBar.hideticker
 			frame.AdditionalRegenTicker.vertical = config.druidBar.vertical
+			frame.AdditionalRegenTicker.Spark.texture:SetVertexColor(tickerColor.r,tickerColor.g,tickerColor.b,1)
+			frame.AdditionalRegenTicker.splitTimer.Spark.texture:SetVertexColor(tickerColor.r,tickerColor.g,tickerColor.b,1)
+			frame.AdditionalRegenTicker.Spark:SetAlpha(tickerColor.a)
+			frame.AdditionalRegenTicker.splitTimer:SetAlpha(tickerColor.a)
+			frame.AdditionalRegenTicker.Spark:SetBackdropColor(tickerBgColor.r,tickerBgColor.g,tickerBgColor.b,tickerBgColor.a)
+			frame.AdditionalRegenTicker.splitTimer.Spark:SetBackdropColor(tickerBgColor.r,tickerBgColor.g,tickerBgColor.b,tickerBgColor.a)
 		else
 			frame:DisableElement("RegenTickerAlt")
 		end
@@ -767,6 +810,8 @@ function LUF.ApplySettings(frame)
 		Auras.wrapDebuffSide = AuraConfig.wrapdebuffside
 		Auras.wrapDebuff = AuraConfig.wrapdebuff
 		Auras.debuffOffset = AuraConfig.debuffOffset
+		Auras.maxBuffs = AuraConfig.buffcount
+		Auras.maxDebuffs = AuraConfig.debuffcount
 		
 		Auras.timer = AuraConfig.timer
 		Auras.spacing = AuraConfig.padding
@@ -872,7 +917,7 @@ function LUF.ApplySettings(frame)
 	--Healing Prediction
 	if frame.BetterHealthPrediction then
 		local healConfig = config.incHeal
-		if healConfig.enabled then
+		if healConfig and healConfig.enabled then
 			frame.BetterHealthPrediction.timeFrame = LUF.db.profile.inchealTime
 			frame.BetterHealthPrediction.maxOverflow = healConfig.cap
 			frame.BetterHealthPrediction.disableHots = LUF.db.profile.disablehots
@@ -894,18 +939,21 @@ end
 
 local sortUp = function(a, b) return a.order < b.order end
 local sortDown = function(a, b) return a.order > b.order end
-local horiz,vert = {},{}
+local left,center,right = {},{},{}
 function LUF.PlaceModules(frame)
 	local frame = frame:IsObjectType("Statusbar") and frame:GetParent() or frame
 	local config = LUF.db.profile.units[frame:GetAttribute("oUF-guessUnit")]
 	if not config then return end
 	
-	wipe(horiz)
-	wipe(vert)
+	wipe(left)
+	wipe(center)
+	wipe(right)
 	local attFrame, point = frame, "TOPLEFT"
-	local xOffset, yOffset = 1, -1
-	local usableX, usableY = frame:GetWidth() - 2
-	local vertValue, horizValue = 0, 0
+	local xOffset, yOffset = 1
+	local usableX, usableY = frame:GetWidth() - 1, frame:GetHeight() - 1
+	local usableXLeft, usableXCenter, usableXRight = 0, 0, 0
+	local usableYLeft, usableYCenter, usableYRight = 0, 0, 0
+	local leftSum, centerSum, rightSum = 0, 0, 0
 	
 	frame.tags.top.left:SetWidth(usableX*config.tags.top.left.size/100)
 	frame.tags.top.center:SetWidth(usableX*config.tags.top.center.size/100)
@@ -928,110 +976,299 @@ function LUF.PlaceModules(frame)
 				v:SetHeight(frame:GetHeight() - 2)
 				usableX = (frame:GetWidth() - 2) * config.portrait.width
 				v:SetWidth(usableX)
-				usableX = frame:GetWidth() - usableX - 2
+				usableX = frame:GetWidth() - usableX - 1
 			elseif (not config[k].autoHide or v:IsShown()) and not v.isDisabled then
-				if config[k].vertical then
-					table.insert(vert,{key = k, order = config[k].order, size = config[k].height})
-					vertValue = vertValue + config[k].height
-				else
-					table.insert(horiz, {key = k, order = config[k].order, size = config[k].height})
-					horizValue = horizValue + config[k].height
+				if config[k].posSlot == "LEFT" then
+					table.insert(left,{key = k, order = config[k].order, size = config[k].height})
+					leftSum = leftSum + config[k].height
+				elseif config[k].posSlot == "RIGHT" then
+					table.insert(right, {key = k, order = config[k].order, size = config[k].height})
+					rightSum = rightSum + config[k].height
+				else -- this should make center the default
+					table.insert(center, {key = k, order = config[k].order, size = config[k].height})
+					centerSum = centerSum + config[k].height
 				end
 			end
 		else
 			frame:DisableElement(v.name)
 		end
 	end
-	table.sort(vert,sortDown)
-	table.sort(horiz,sortUp)
-	usableY = frame:GetHeight() - #horiz - 1
-	if vertValue > 0 and horizValue > 0 then
-		usableX = usableX - 1
-	end
+
+	local totalSum = 0
 	
-	-- Horizontal bars
+	if leftSum > 0 then
+		if config.slots["left"].orientation == "vertical" then
+			table.sort(left,sortUp)
+			usableX = usableX - 1
+			usableYLeft = usableY - #left
+		else
+			table.sort(left,sortDown)
+			usableX = usableX - #left
+			usableYLeft = usableY - 1
+		end
+		totalSum = config.slots["left"].value
+	end
+	if centerSum > 0 then
+		if config.slots["center"].orientation == "vertical" then
+			table.sort(center,sortUp)
+			usableX = usableX - 1
+			usableYCenter = usableY - #center
+		else
+			table.sort(center,sortDown)
+			usableX = usableX - #center
+			usableYCenter = usableY - 1
+		end
+		totalSum = totalSum + config.slots["center"].value
+	end
+	if rightSum > 0 then
+		if config.slots["right"].orientation == "vertical" then
+			table.sort(right,sortUp)
+			usableX = usableX - 1
+			usableYRight = usableY - #right
+		else
+			table.sort(right,sortDown)
+			usableX = usableX - #right
+			usableYRight = usableY - 1
+		end
+		totalSum = totalSum + config.slots["right"].value
+	end
+	usableXLeft = usableX * (config.slots["left"].value/totalSum)
+	usableXCenter = usableX * (config.slots["center"].value/totalSum)
+	usableXRight = usableX * (config.slots["right"].value/totalSum)
+	
+	
+	local width, height, sqrX, attrPoint
+	
+	-- Left bars
+	yOffset = -1
 	if config.portrait.enabled and config.portrait.alignment == "LEFT" then
 		xOffset = xOffset + frame.modules.portrait:GetWidth()
 	end
-	local attrPoint = point
-	local sqrX
-	for i,data in pairs(horiz) do
-		if sqrX then
-			frame.modules[data.key]:SetPoint(point, attFrame, attrPoint, xOffset-sqrX, yOffset)
-			sqrX = nil
-		elseif frame.modules[data.key] ~= attFrame then
-			frame.modules[data.key]:SetPoint(point, attFrame, attrPoint, xOffset, yOffset)
-		end
-		local width = usableX * (horizValue/(horizValue+vertValue))
-		local height = usableY*(data.size/horizValue)
-		frame.modules[data.key]:SetWidth(width)
-		frame.modules[data.key]:SetHeight(height)
-		if frame.tags[data.key] then
-			local tagconfig = config.tags[data.key]
-			frame.tags[data.key].left:SetWidth(width*tagconfig.left.size/100)
-			frame.tags[data.key].left:SetHeight(height)
-			frame.tags[data.key].center:SetWidth(width*tagconfig.center.size/100)
-			frame.tags[data.key].center:SetHeight(height)
-			frame.tags[data.key].right:SetWidth(width*tagconfig.right.size/100)
-			frame.tags[data.key].right:SetHeight(height)
-		end
-		if frame.modules[data.key].Update then
-			frame.modules[data.key]:Update()
-		end
-		if data.key == "castBar" and config.castBar.icon ~= "HIDE" then
-			sqrX = frame.modules.castBar:GetHeight()
-			frame.modules.castBar.Icon:SetSize(sqrX, sqrX)
-			frame.modules.castBar:SetWidth(frame.modules.castBar:GetWidth() - sqrX)
-			if config.castBar.icon == "LEFT" then
-				frame.modules.castBar:ClearAllPoints()
-				frame.modules.castBar:SetPoint(point, attFrame, attrPoint, xOffset + sqrX, yOffset)
-			else
-				sqrX = nil
+	attrPoint = point
+	sqrX = 0
+	if config.slots["left"].orientation == "vertical" then
+		width = usableXLeft
+		for i,data in pairs(left) do
+			if frame.modules[data.key] ~= attFrame then
+				frame.modules[data.key]:SetPoint(point, attFrame, attrPoint, xOffset-sqrX, yOffset)
+				sqrX = 0
 			end
+			height = usableYLeft * (data.size/leftSum)
+			if data.key == "castBar" and config.castBar.icon ~= "HIDE" then
+				sqrX = height
+				frame.modules.castBar.Icon:SetSize(sqrX, sqrX)
+				frame.modules.castBar:SetWidth(width - sqrX)
+				if config.castBar.icon == "LEFT" then
+					frame.modules.castBar:ClearAllPoints()
+					frame.modules.castBar:SetPoint(point, attFrame, attrPoint, xOffset + sqrX, yOffset)
+				else
+					sqrX = 0
+				end
+			else
+				frame.modules[data.key]:SetWidth(width)
+			end
+			frame.modules[data.key]:SetHeight(height)
+			if frame.tags[data.key] then
+				local tagconfig = config.tags[data.key]
+				frame.tags[data.key].left:SetWidth(width*tagconfig.left.size/100)
+				frame.tags[data.key].left:SetHeight(height)
+				frame.tags[data.key].center:SetWidth(width*tagconfig.center.size/100)
+				frame.tags[data.key].center:SetHeight(height)
+				frame.tags[data.key].right:SetWidth(width*tagconfig.right.size/100)
+				frame.tags[data.key].right:SetHeight(height)
+			end
+			if frame.modules[data.key].Update then
+				frame.modules[data.key]:Update()
+			end
+			xOffset = 0
+			attrPoint = "BOTTOMLEFT"
+			attFrame = frame.modules[data.key]
 		end
-		xOffset = 0
-		attrPoint = "BOTTOMLEFT"
-		attFrame = frame.modules[data.key]
+	else
+		height = usableYLeft
+		for i,data in pairs(left) do
+			if frame.modules[data.key] ~= attFrame then
+				frame.modules[data.key]:SetPoint(point, attFrame, attrPoint, xOffset, yOffset)
+			end
+			width = usableXLeft * (data.size/leftSum)
+			frame.modules[data.key]:SetWidth(width)
+			frame.modules[data.key]:SetHeight(height)
+			if frame.tags[data.key] then
+				local tagconfig = config.tags[data.key]
+				frame.tags[data.key].left:SetWidth(width*tagconfig.left.size/100)
+				frame.tags[data.key].left:SetHeight(height)
+				frame.tags[data.key].center:SetWidth(width*tagconfig.center.size/100)
+				frame.tags[data.key].center:SetHeight(height)
+				frame.tags[data.key].right:SetWidth(width*tagconfig.right.size/100)
+				frame.tags[data.key].right:SetHeight(height)
+			end
+			if frame.modules[data.key].Update then
+				frame.modules[data.key]:Update()
+			end
+			xOffset = 1
+			yOffset = 0
+			attrPoint = "TOPRIGHT"
+			attFrame = frame.modules[data.key]
+		end
 	end
 	
-	-- Vertical bars
+	-- Center Bars
 	attFrame = frame
-	point = "TOPRIGHT"
+	xOffset = 1
+	yOffset = -1
+	attrPoint = "TOPLEFT"
+	if config.portrait.enabled and config.portrait.alignment == "LEFT" then
+		xOffset = xOffset + frame.modules.portrait:GetWidth()
+	end
+	if leftSum > 0 then
+		xOffset = xOffset + usableXLeft + 1
+	end
+	if config.slots["center"].orientation == "vertical" then
+		width = usableXCenter
+		for i,data in pairs(center) do
+			if frame.modules[data.key] ~= attFrame then
+				frame.modules[data.key]:SetPoint(point, attFrame, attrPoint, xOffset-sqrX, yOffset)
+				sqrX = 0
+			end
+			height = usableYCenter * (data.size/centerSum)
+			if data.key == "castBar" and config.castBar.icon ~= "HIDE" then
+				sqrX = height
+				frame.modules.castBar.Icon:SetSize(sqrX, sqrX)
+				frame.modules.castBar:SetWidth(width - sqrX)
+				if config.castBar.icon == "LEFT" then
+					frame.modules.castBar:ClearAllPoints()
+					frame.modules.castBar:SetPoint(point, attFrame, attrPoint, xOffset + sqrX, yOffset)
+				else
+					sqrX = 0
+				end
+			else
+				frame.modules[data.key]:SetWidth(width)
+			end
+			frame.modules[data.key]:SetHeight(height)
+			if frame.tags[data.key] then
+				local tagconfig = config.tags[data.key]
+				frame.tags[data.key].left:SetWidth(width*tagconfig.left.size/100)
+				frame.tags[data.key].left:SetHeight(height)
+				frame.tags[data.key].center:SetWidth(width*tagconfig.center.size/100)
+				frame.tags[data.key].center:SetHeight(height)
+				frame.tags[data.key].right:SetWidth(width*tagconfig.right.size/100)
+				frame.tags[data.key].right:SetHeight(height)
+			end
+			if frame.modules[data.key].Update then
+				frame.modules[data.key]:Update()
+			end
+			xOffset = 0
+			attrPoint = "BOTTOMLEFT"
+			attFrame = frame.modules[data.key]
+		end
+	else
+		height = usableYCenter
+		for i,data in pairs(center) do
+			if frame.modules[data.key] ~= attFrame then
+				frame.modules[data.key]:SetPoint(point, attFrame, attrPoint, xOffset, yOffset)
+			end
+			width = usableXCenter * (data.size/centerSum)
+			frame.modules[data.key]:SetWidth(width)
+			frame.modules[data.key]:SetHeight(height)
+			if frame.tags[data.key] then
+				local tagconfig = config.tags[data.key]
+				frame.tags[data.key].left:SetWidth(width*tagconfig.left.size/100)
+				frame.tags[data.key].left:SetHeight(height)
+				frame.tags[data.key].center:SetWidth(width*tagconfig.center.size/100)
+				frame.tags[data.key].center:SetHeight(height)
+				frame.tags[data.key].right:SetWidth(width*tagconfig.right.size/100)
+				frame.tags[data.key].right:SetHeight(height)
+			end
+			if frame.modules[data.key].Update then
+				frame.modules[data.key]:Update()
+			end
+			xOffset = 1
+			yOffset = 0
+			attrPoint = "TOPRIGHT"
+			attFrame = frame.modules[data.key]
+		end
+	end
+	
+	-- Right Bars
+	
+	attFrame = frame
 	xOffset = -1
-	usableX = usableX - #vert + 1
+	yOffset = -1
 	if config.portrait.enabled and config.portrait.alignment == "RIGHT" then
 		xOffset = xOffset - frame.modules.portrait:GetWidth()
 	end
-	yOffset = -1
-	attrPoint = point
-	for i,data in pairs(vert) do
-		frame.modules[data.key]:SetPoint(point, attFrame, attrPoint, xOffset, yOffset)
-		local width = usableX*(vertValue/(horizValue+vertValue))*(data.size/vertValue)
-		local height = frame:GetHeight()-2
-		frame.modules[data.key]:SetWidth(width)
-		frame.modules[data.key]:SetHeight(height)
-		if frame.tags[data.key] then
-			local tagconfig = config.tags[data.key]
-			frame.tags[data.key].left:SetWidth(width*tagconfig.left.size/100)
-			frame.tags[data.key].left:SetHeight(height)
-			frame.tags[data.key].center:SetWidth(width*tagconfig.center.size/100)
-			frame.tags[data.key].center:SetHeight(height)
-			frame.tags[data.key].right:SetWidth(width*tagconfig.right.size/100)
-			frame.tags[data.key].right:SetHeight(height)
+	attrPoint = "TOPRIGHT"
+	point = "TOPRIGHT"
+	if config.slots["right"].orientation == "vertical" then
+		width = usableXRight
+		for i,data in pairs(right) do
+			if frame.modules[data.key] ~= attFrame then
+				frame.modules[data.key]:SetPoint(point, attFrame, attrPoint, xOffset-sqrX, yOffset)
+				sqrX = 0
+			end
+			height = usableYRight * (data.size/rightSum)
+			if data.key == "castBar" and config.castBar.icon ~= "HIDE" then
+				sqrX = height
+				frame.modules.castBar.Icon:SetSize(sqrX, sqrX)
+				frame.modules.castBar:SetWidth(width - sqrX)
+				if config.castBar.icon == "LEFT" then
+					frame.modules.castBar:ClearAllPoints()
+					frame.modules.castBar:SetPoint(point, attFrame, attrPoint, xOffset + sqrX, yOffset)
+				else
+					sqrX = 0
+				end
+			else
+				frame.modules[data.key]:SetWidth(width)
+			end
+			frame.modules[data.key]:SetHeight(height)
+			if frame.tags[data.key] then
+				local tagconfig = config.tags[data.key]
+				frame.tags[data.key].left:SetWidth(width*tagconfig.left.size/100)
+				frame.tags[data.key].left:SetHeight(height)
+				frame.tags[data.key].center:SetWidth(width*tagconfig.center.size/100)
+				frame.tags[data.key].center:SetHeight(height)
+				frame.tags[data.key].right:SetWidth(width*tagconfig.right.size/100)
+				frame.tags[data.key].right:SetHeight(height)
+			end
+			if frame.modules[data.key].Update then
+				frame.modules[data.key]:Update()
+			end
+			xOffset = 0
+			attrPoint = "BOTTOMRIGHT"
+			attFrame = frame.modules[data.key]
 		end
-		if frame.modules[data.key].Update then
-			frame.modules[data.key]:Update()
+	else
+		height = usableYRight
+		for i,data in pairs(right) do
+			if frame.modules[data.key] ~= attFrame then
+				frame.modules[data.key]:SetPoint(point, attFrame, attrPoint, xOffset, yOffset)
+			end
+			width = usableXRight * (data.size/rightSum)
+			frame.modules[data.key]:SetWidth(width)
+			frame.modules[data.key]:SetHeight(height)
+			if frame.tags[data.key] then
+				local tagconfig = config.tags[data.key]
+				frame.tags[data.key].left:SetWidth(width*tagconfig.left.size/100)
+				frame.tags[data.key].left:SetHeight(height)
+				frame.tags[data.key].center:SetWidth(width*tagconfig.center.size/100)
+				frame.tags[data.key].center:SetHeight(height)
+				frame.tags[data.key].right:SetWidth(width*tagconfig.right.size/100)
+				frame.tags[data.key].right:SetHeight(height)
+			end
+			if frame.modules[data.key].Update then
+				frame.modules[data.key]:Update()
+			end
+			xOffset = -1
+			yOffset = 0
+			attrPoint = "TOPLEFT"
+			attFrame = frame.modules[data.key]
 		end
-		xOffset = -1
-		yOffset = 0
-		attrPoint = "TOPLEFT"
-		attFrame = frame.modules[data.key]
 	end
 end
 
 function LUF:PlaceFrame(frame)
 	local scale = 1
-	local unit = frame:GetAttribute("headerType") or frame:GetAttribute("oUF-guessUnit")
+	local unit = frame:GetAttribute("oUF-headerType") or frame:GetAttribute("oUF-guessUnit")
 	local config = self.db.profile.units[unit]
 	if config.positions then
 		config = config.positions[tonumber(strsub(frame:GetName(),14))]
@@ -1083,6 +1320,7 @@ local refreshUnitChange = [[
 function LUF:SpawnUnits()
 	oUF:RegisterStyle("LunaUnitFrames", self.InitializeUnit)
 	oUF:RegisterInitCallback(function(frame) LUF.PlaceModules(frame) LUF.ApplySettings(frame) end)
+	
 	for unit, config in pairs(self.db.profile.units) do
 		if self.HeaderFrames[unit] then
 			if unit == "raid" then
@@ -1090,7 +1328,7 @@ function LUF:SpawnUnits()
 					local data = config.positions[id]
 					self.frameIndex["raid"..id] = oUF:SpawnHeader("LUFHeaderraid"..id, nil, nil, "oUF-initialConfigFunction", format(initialConfigFunction, "raid"))
 					self.frameIndex["raid"..id]:Show() --Set Show() early to allow child spawning
-					self.frameIndex["raid"..id]:SetAttribute("headerType", unit)
+					self.frameIndex["raid"..id]:SetAttribute("oUF-headerType", unit)
 				end
 			else
 				local template
@@ -1102,7 +1340,7 @@ function LUF:SpawnUnits()
 					self.frameIndex[unit]:SetAttribute("refreshUnitChange", refreshUnitChange)
 				end
 				self.frameIndex[unit]:Show() --Set Show() early to allow child spawning
-				self.frameIndex[unit]:SetAttribute("headerType", unit)
+				self.frameIndex[unit]:SetAttribute("oUF-headerType", unit)
 			end
 		else
 			self.frameIndex[unit] = oUF:Spawn(unit, "LUFUnit"..unit)
@@ -1110,6 +1348,9 @@ function LUF:SpawnUnits()
 				self.frameIndex[unit].isChild = true --Hack to prevent oUF from hiding the castbar
 			end
 		end
+	end
+	for unit,frame in pairs(self.frameIndex) do
+		frame:SetFrameStrata(self.db.profile.strata)
 	end
 	self.stateMonitor:SetFrameRef("partyFrame", self.frameIndex["party"])
 	self.stateMonitor:SetFrameRef("partytargetFrame", self.frameIndex["partytarget"])
@@ -1164,8 +1405,6 @@ local function SetHeaderAttributes(header, config)
 	header:SetAttribute("columnAnchorPoint", config.attribAnchorPoint)
 	header:SetAttribute("xOffset", config.offset * xMod)
 	header:SetAttribute("yOffset", config.offset * yMod)
-	header:SetAttribute("xMod", xMod)
-	header:SetAttribute("yMod", yMod)
 	header:SetAttribute("sortMethod", config.sortMethod)
 	header:SetAttribute("sortDir", config.sortOrder)
 	header:SetAttribute("roleFilter", config.roleFilter)
@@ -1357,18 +1596,20 @@ frame:SetScript("OnEvent", function(self, event, addon)
 		end
 	elseif event == "PLAYER_REGEN_ENABLED" then
 		LUF.InCombatLockdown = nil
-		LUF:AutoswitchProfile(queuedEvent)
+		if queuedEvent then
+			LUF:AutoswitchProfile(queuedEvent)
+		end
 		queuedEvent = nil
 		if( ACR ) then
 			ACR:NotifyChange("LunaUnitFrames")
 		end
-	elseif event == "DISPLAY_SIZE_CHANGED" and LUF.db.char.switchtype == "RESOLUTION" then
+	elseif event == "DISPLAY_SIZE_CHANGED" then
 		if not LUF.InCombatLockdown then
 			LUF:AutoswitchProfile(event)
 		else
 			queuedEvent = event
 		end
-	elseif event == "GROUP_ROSTER_UPDATE" and LUF.db.char.switchtype == "GROUP" then
+	elseif event == "GROUP_ROSTER_UPDATE" then
 		if not LUF.InCombatLockdown then
 			LUF:AutoswitchProfile(event)
 		else

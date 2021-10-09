@@ -1,10 +1,10 @@
-## Interface: 11307
+## Interface: 11400
 ## Title: Luna Unit Frames
 ## Notes: 
 ## Author: Aviana
-## Version: 4100
+## Version: 4220
 ## SavedVariables: LunaUFDB
-## OptionalDeps: Ace3, LibSharedMedia-3.0, AceGUI-3.0-SharedMediaWidgets, LibSpellRange-1.0, Clique
+## OptionalDeps: Ace3, LibSharedMedia-3.0, AceGUI-3.0-SharedMediaWidgets, Clique
 ## X-License: WTFPL (http://www.wtfpl.net/about/)
 ## X-Donate: paypal.me/LunaUnitFrames
 
@@ -18,11 +18,12 @@ libs\AceGUI-3.0\AceGUI-3.0.xml
 libs\AceGUI-3.0-SharedMediaWidgets\widget.xml
 libs\AceConfig-3.0\AceConfig-3.0.xml
 libs\LibVexation-1.0\lib.xml
-libs\LibClassicDurations\LibClassicDurations.xml
 libs\LibHealComm-4.0\LibHealComm-4.0.xml
 libs\LibAuraTypes\LibAuraTypes.lua
 libs\LibSpellLocks\LibSpellLocks.lua
+libs\LibTargeted\LibTargeted.lua
 libs\LibClassicCasterino\LibClassicCasterino.lua
+libs\LibClassicDurations\LibClassicDurations.xml
 
 # oUF
 libs\oUF\init.lua
@@ -55,6 +56,9 @@ libs\oUF_Plugins\oUF_Plugins.xml
 
 locales\enUS.lua
 locales\deDE.lua
+locales\koKR.lua
+locales\zhCN.lua
+locales\zhTW.lua
 
 modules\options.lua
 modules\overrides.lua

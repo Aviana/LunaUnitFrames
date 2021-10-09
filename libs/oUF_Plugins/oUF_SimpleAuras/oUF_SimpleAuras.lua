@@ -45,6 +45,8 @@ Yawt.
 .wrapDebuff         - Percentage by how much to adjust the side (number, 1 = 100%)
 .forceShow          - Show dummy auras (boolean)
 .overlay            - Texture for the overlay (string or number)
+.maxBuffs           - Maximum number of positive effects to display (default = 32)
+.maxDebuffs         - Maximum number of negative effects to display (default = 40)
 
 ## Attributes
 
@@ -84,18 +86,15 @@ local weaponEnchantData = {
 	[523] = 300,   -- Flametongue 4 (5 min)
 	[1665] = 300,  -- Flametongue 5 (5 min)
 	[1666] = 300,  -- Flametongue 6 (5 min)
-	[2634] = 300,  -- Flametongue 7 (5 min)
 	[124] = 10,    -- Flametongue Totem 1 (10 sec)
 	[285] = 10,    -- Flametongue Totem 2 (10 sec)
 	[543] = 10,    -- Flametongue Totem 3 (10 sec)
 	[1683] = 10,   -- Flametongue Totem 4 (10 sec)
-	[2637] = 10,   -- Flametongue Totem 5 (10 sec)
 	[2] = 300,     -- Frostbrand 1 (5 min)
 	[12] = 300,    -- Frostbrand 2 (5 min)
 	[524] = 300,   -- Frostbrand 3 (5 min)
 	[1667] = 300,  -- Frostbrand 4 (5 min)
 	[1668] = 300,  -- Frostbrand 5 (5 min)
-	[2635] = 300,  -- Frostbrand 6 (5 min)
 	[29] = 300,    -- Rockbiter 1 (5 min)
 	[6] = 300,     -- Rockbiter 2 (5 min)
 	[1] = 300,     -- Rockbiter 3 (5 min)
@@ -103,18 +102,13 @@ local weaponEnchantData = {
 	[1663] = 300,  -- Rockbiter 5 (5 min)
 	[683] = 300,   -- Rockbiter 6 (5 min)
 	[1664] = 300,  -- Rockbiter 7 (5 min)
-	[2632] = 300,  -- Rockbiter 8 (5 min)
-	[2633] = 300,  -- Rockbiter 9 (5 min)
 	[283] = 300,   -- Windfury 1 (5 min)
 	[284] = 300,   -- Windfury 2 (5 min)
 	[525] = 300,   -- Windfury 3 (5 min)
 	[1669] = 300,  -- Windfury 4 (5 min)
-	[2636] = 300,  -- Windfury 5 (5 min)
 	[1783] = 10,   -- Windfury Totem 1 (10 sec)
 	[563] = 10,    -- Windfury Totem 2 (10 sec)
 	[564] = 10,    -- Windfury Totem 3 (10 sec)
-	[2638] = 10,   -- Windfury Totem 4 (10 sec)
-	[2639] = 10,   -- Windfury Totem 5 (10 sec)
 	[1003] = 300,  -- Venomhide Poison (5 min)
 }
 
@@ -360,10 +354,10 @@ local function UpdateAuras(self, event, unit)
 		local buffs = element.buffFrame
 		local currentSlot = 1
 		local offset = 0
-		local filter = "HELPFUL"..(element.buffFilter == 3 and "|RAID" or "")
+		local filter = "HELPFUL"..(element.buffFilter == 3 and (UnitCanAssist("player", unit) or not UnitIsVisible(unit)) and "|RAID" or "")
 		local button
 		if element.buffs then
-			for i=1,32 do
+			for i=1,(element.maxBuffs or 32) do
 				local name, _, _, _, _, _, caster = LCD:UnitAura(self.unit, i, filter)
 				if name or element.forceShow then
 					if element.buffFilter ~= 2 or caster == "player" then
@@ -395,7 +389,7 @@ local function UpdateAuras(self, event, unit)
 		offset = 0
 		filter = "HARMFUL"..(element.debuffFilter == 3 and "|RAID" or "")
 		if element.debuffs then
-			for i=1,16 do
+			for i=1,(element.maxDebuffs or 40) do
 				local name, _, _, _, _, _, caster = LCD:UnitAura(self.unit, i, filter)
 				if name or element.forceShow then
 					if element.debuffFilter ~= 2 or caster == "player" then
@@ -767,6 +761,8 @@ end
 
 local playerFrames = {}
 local function UpdateWeaponEnchants(self, silent)
+	weaponWatchTimer = nil
+	
 	local hasMainHandEnchant, mainHandExpiration, mainHandChargeNum, mainHandEnchantID, hasOffHandEnchant, offHandExpiration, offHandChargeNum, offHandEnchantId = GetWeaponEnchantInfo()
 	if hasMainHandEnchant then
 		mainHandEnd = GetTime() + (mainHandExpiration / 1000)
@@ -794,10 +790,11 @@ local function UpdateWeaponEnchants(self, silent)
 end
 
 local function SetWeaponUpdateTimer(self, event, unit)
-	if weaponWatchTimer and not weaponWatchTimer:IsCancelled() then
-		weaponWatchTimer:Cancel()
+	if unit ~= "player" then return end
+	if not weaponWatchTimer then
+		weaponWatchTimer = true
+		C_Timer.After(1, UpdateWeaponEnchants)
 	end
-	weaponWatchTimer = C_Timer.NewTimer(1, UpdateWeaponEnchants)
 end
 
 local function OnSizeChanged(self)

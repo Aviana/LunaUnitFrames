@@ -206,7 +206,7 @@ local function Update(self, event, unit)
 						indicator:Hide()
 					end
 				elseif indicator.type == "aura" and indicator.nameID then
-					local hasicon, _, Type, hasduration, hasexpirationTime = select(2, checkAura(unit, indicator.nameID))
+					local hasicon, count, Type, hasduration, hasexpirationTime = select(2, checkAura(unit, indicator.nameID))
 					if hasicon then
 						indicator:Show()
 						if indicator.showTexture then
@@ -226,6 +226,12 @@ local function Update(self, event, unit)
 							indicator.cd:SetCooldown(hasexpirationTime - hasduration, hasduration)
 						else
 							indicator.cd:Hide()
+						end
+						if indicator.count then
+							indicator.count:Show()
+							indicator.count:SetText(count > 1 and count)
+						else
+							indicator.count:Hide()
 						end
 					else
 						indicator:Hide()
@@ -271,7 +277,7 @@ local function Update(self, event, unit)
 						indicator:Hide()
 					end
 				elseif indicator.type == "ownaura" and indicator.nameID then
-					local ownicon, _, debuffType, ownduration, ownexpirationTime = select(2, checkAura(unit, indicator.nameID, true))
+					local ownicon, count, debuffType, ownduration, ownexpirationTime = select(2, checkAura(unit, indicator.nameID, true))
 					if ownicon then
 						indicator:Show()
 						if indicator.showTexture then
@@ -291,6 +297,12 @@ local function Update(self, event, unit)
 							indicator.cd:SetCooldown(ownexpirationTime - ownduration, ownduration)
 						else
 							indicator.cd:Hide()
+						end
+						if indicator.count then
+							indicator.count:Show()
+							indicator.count:SetText(count > 1 and count)
+						else
+							indicator.count:Hide()
 						end
 					else
 						indicator:Hide()
@@ -368,6 +380,17 @@ local function Enable(self)
 					indicator.cd:SetReverse(true)
 					indicator.cd:SetSwipeColor(0, 0, 0, 0.8)
 					indicator.cd:SetAllPoints(indicator)
+				end
+
+				if not indicator.count then
+					local countFrame = CreateFrame('Frame', nil, indicator)
+					countFrame:SetAllPoints(indicator)
+					countFrame:SetFrameLevel(indicator.cd:GetFrameLevel() + 1)
+
+					indicator.count = countFrame:CreateFontString(nil, 'OVERLAY', 'NumberFontNormal')
+					local fontName = indicator.count:GetFont()
+					indicator.count:SetFont(fontName, 10, "OUTLINE")
+					indicator.count:SetPoint('BOTTOMRIGHT', countFrame, 'BOTTOMRIGHT', -1, 0)
 				end
 			end
 		end

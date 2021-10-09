@@ -33,9 +33,6 @@ local _, ns = ...
 local oUF = ns.oUF
 
 local playerClass = select(2,UnitClass("player"))
-local playerGUID = UnitGUID("player")
-local reckoningName = GetSpellInfo(20182)
-local currStacks = 0
 
 local function Update(self, event)
 
@@ -49,6 +46,17 @@ local function Update(self, event)
 	if(element.PreUpdate) then
 		element:PreUpdate()
 	end
+
+	local i, currStacks, stacks, spellId, _ = 1,.0
+
+	repeat
+		stacks, _, _, _, _, _, _, spellId = select(3, UnitBuff("player", i))
+		if spellId == 20178 then
+			currStacks = stacks
+			break
+		end
+		i = i + 1
+	until (not spellId)
 
 -- Do the thing here
 	for i = 1, #element do
@@ -97,27 +105,6 @@ local function ForceUpdate(element)
 	return Path(element.__owner, "ForceUpdate", element.__owner.unit)
 end
 
-local function OnCombatlog(self)
-	local type, _, sourceGUID, _, _, _, destGUID = select(2,CombatLogGetCurrentEventInfo())
-	if type == "SWING_DAMAGE" and sourceGUID == playerGUID then
-		if currStacks > 0 then
-			currStacks = 0
-			Path(self)
-		end
-	elseif type == "SPELL_EXTRA_ATTACKS" then
-		local name = select(13, CombatLogGetCurrentEventInfo())
-		if ( name == reckoningName and destGUID == playerGUID and currStacks < 4 ) then
-			currStacks = currStacks + 1
-			Path(self)
-		end 
-	end
-end
-
-local function resetStacks(self)
-	currStacks = 0
-	Path(self)
-end
-
 local function Enable(self, unit)
 	local element = self.Reckoning
 	if element and playerClass == "PALADIN" then
@@ -125,9 +112,7 @@ local function Enable(self, unit)
 		element.__max = #element
 		element.ForceUpdate = ForceUpdate
 
-		self:RegisterEvent("PLAYER_ENTERING_WORLD", resetStacks, true)
-		self:RegisterEvent("PLAYER_DEAD", resetStacks, true)
-		self:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED", OnCombatlog, true)
+		self:RegisterEvent("UNIT_AURA", Path)
 
 		for i = 1, #element do
 			local bar = element[i]
@@ -146,9 +131,7 @@ end
 
 local function Disable(self)
 	if(self.Reckoning) then
-		self:UnregisterEvent("PLAYER_ENTERING_WORLD", resetStacks)
-		self:UnregisterEvent("PLAYER_DEAD", resetStacks)
-		self:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED", OnCombatlog)
+		self:UnregisterEvent("UNIT_AURA", Path)
 	end
 end
 

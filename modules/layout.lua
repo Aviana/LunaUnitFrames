@@ -424,7 +424,15 @@ LUF.IndicatorData = {
 }
 
 function LUF.InitializeUnit(frame, unit, notHeaderChild)
-	local unit = unit or frame:GetAttribute("oUF-guessUnit")
+	if notHeaderChild then
+		if frame:GetName():match("arena") then
+			frame:SetAttribute("oUF-guessUnit", frame:GetName():match("LUFHeader(arena.*)UnitButton%d$"))
+		else
+			frame:SetAttribute("oUF-guessUnit", unit)
+		end
+	end
+
+	local unit = frame:GetAttribute("oUF-guessUnit")
 
 	frame.toplevel = CreateFrame("Frame", nil, frame)
 	frame.toplevel:SetFrameLevel(5)
@@ -548,7 +556,7 @@ function LUF.InitializeUnit(frame, unit, notHeaderChild)
 	-- Squares
 	local RaidStatusIndicators = {}
 	for k in pairs(LUF.defaults.profile.units.player.squares) do
-		local indicator = CreateFrame("Frame", nil, frame.toplevel)
+		local indicator = CreateFrame("Frame", nil, frame.toplevel, "BackdropTemplate")
 		indicator:SetBackdrop(backdrop)
 		indicator:SetBackdropColor(0,0,0)
 		indicator.texture = indicator:CreateTexture(nil, "OVERLAY")
@@ -647,10 +655,6 @@ function LUF.InitializeUnit(frame, unit, notHeaderChild)
 		fstrings.right = parent:CreateFontString(nil, "OVERLAY")
 		fstrings.right:SetDrawLayer("OVERLAY", 7)
 		fstrings.right:SetJustifyH("RIGHT")
-	end
-	
-	if notHeaderChild then
-		frame:SetAttribute("oUF-guessUnit", unit)
 	end
 	
 	frame:SetScript("OnEnter", function(self)
