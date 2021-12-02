@@ -1163,7 +1163,9 @@ local tagStrings = {
 
 	["rep"] = [[function(unit)
 		local name, standing, min, max, value, factionID = GetWatchedFactionInfo()
-		return (value-min).."/"..(max-min).." "..name
+		if name then
+			return (value-min).."/"..(max-min).." "..name
+		end
 	end]],
 	
 	["enumtargeting"] = [[function(unit)
@@ -1342,6 +1344,7 @@ local unitlessEvents = {
 	PLAYER_TARGET_CHANGED = true,
 	PLAYER_UPDATE_RESTING = true,
 	PLAYER_LOGIN = true,
+	UPDATE_FACTION = true,
 }
 
 local events = {}
