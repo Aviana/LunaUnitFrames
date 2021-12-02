@@ -1311,6 +1311,7 @@ local unitlessEvents = {
 	PLAYER_TARGET_CHANGED = true,
 	PLAYER_UPDATE_RESTING = true,
 	PLAYER_LOGIN = true,
+	UPDATE_FACTION = true,
 }
 
 local events = {}
