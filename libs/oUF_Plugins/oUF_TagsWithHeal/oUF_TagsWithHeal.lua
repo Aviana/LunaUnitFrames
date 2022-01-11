@@ -499,10 +499,14 @@ local tagStrings = {
 				return math.ceil((hp / maxhp) * 100).."%"
 			end
 		end
-		if hp > 1000 then
+		if hp > 1000000 then
+			hp = (math.floor(hp/10000)/100).."M"
+		elseif hp > 1000 then
 			hp = (math.floor(hp/100)/10).."K"
 		end
-		if maxhp > 1000 then
+		if maxhp > 1000000 then
+			maxhp = (math.floor(maxhp/10000)/100).."M"
+		elseif maxhp > 1000 then
 			maxhp = (math.floor(maxhp/100)/10).."K"
 		end
 		return hp.."/"..maxhp
@@ -529,10 +533,14 @@ local tagStrings = {
 				return math.ceil((hp / maxhp) * 100).."%"
 			end
 		end
-		if hp > 1000 then
+		if hp > 1000000 then
+			hp = (math.floor(hp/10000)/100).."M"
+		elseif hp > 1000 then
 			hp = (math.floor(hp/100)/10).."K"
 		end
-		if maxhp > 1000 then
+		if maxhp > 1000000 then
+			maxhp = (math.floor(maxhp/10000)/100).."M"
+		elseif maxhp > 1000 then
 			maxhp = (math.floor(maxhp/100)/10).."K"
 		end
 		return hp.."/"..maxhp.." "..math.ceil((UnitHealth(unit) / UnitHealthMax(unit)) * 100).."%"
@@ -556,10 +564,13 @@ local tagStrings = {
 	end]],
 
 	["shp"] = [[function(unit)
-		if UnitHealth(unit) > 1000 then
-			return (math.floor(UnitHealth(unit)/100)/10).."K"
+		local hp = UnitHealth(unit)
+		if hp > 1000000 then
+			return (math.floor(hp/10000)/100).."M"
+		elseif hp > 1000 then
+			return (math.floor(hp/100)/10).."K"
 		else
-			return UnitHealth(unit)
+			return hp
 		end
 	end]],
 
@@ -573,7 +584,9 @@ local tagStrings = {
 				return DEAD
 			end
 		end
-		if hp > 1000 then
+		if hp > 1000000 then
+			hp = (math.floor(hp/10000)/100).."M"
+		elseif hp > 1000 then
 			hp = (math.floor(hp/100)/10).."K"
 		end
 		if UnitIsGhost(unit) then
@@ -589,10 +602,13 @@ local tagStrings = {
 	end]],
 
 	["smaxhp"] = [[function(unit)
-		if UnitHealthMax(unit) > 1000 then
-			return (math.floor(UnitHealthMax(unit)/100)/10).."K"
+		local maxhp = UnitHealthMax(unit)
+		if maxhp > 1000000 then
+			return (math.floor(maxhp/10000)/100).."M"
+		elseif maxhp > 1000 then
+			return (math.floor(maxhp/100)/10).."K"
 		else
-			return UnitHealthMax(unit)
+			return maxhp
 		end
 	end]],
 
@@ -660,20 +676,26 @@ local tagStrings = {
 	["pp"] = [[function(unit) return UnitPower(unit) end]],
 
 	["spp"] = [[function(unit)
-		if UnitPower(unit) > 1000 then
-			return (math.floor(UnitPower(unit)/100)/10).."K"
+		local power = UnitPower(unit)
+		if power > 1000000 then
+			return (math.floor(power/10000)/100).."M"
+		elseif power > 1000 then
+			return (math.floor(power/100)/10).."K"
 		else
-			return UnitPower(unit)
+			return power
 		end
 	end]],
 
 	["maxpp"] = [[function(unit) return UnitPowerMax(unit) end]],
 
 	["smaxpp"] = [[function(unit)
-		if UnitPowerMax(unit) > 1000 then
-			return (math.floor(UnitPowerMax(unit)/100)/10).."K"
+		local maxpower = UnitPowerMax(unit)
+		if maxpower > 1000000 then
+			return (math.floor(maxpower/10000)/100).."M"
+		elseif maxpower > 1000 then
+			return (math.floor(maxpower/100)/10).."K"
 		else
-			return UnitPowerMax(unit)
+			return maxpower
 		end
 	end]],
 
