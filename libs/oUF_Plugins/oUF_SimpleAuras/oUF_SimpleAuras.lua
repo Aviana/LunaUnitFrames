@@ -239,6 +239,11 @@ local function updateIcon(element, unit, index, position, filter, isDebuff)
 			
 			button = (element.CreateIcon or createAuraIcon) (auras, position)
 			auras[auras.createdIcons] = button
+			
+			-- Bugreport #910, something strange going on here trying to compensate
+			if not auras[auras.createdIcons] then
+				auras.createdIcons = auras.createdIcons - 1
+			end
 
 		end
 

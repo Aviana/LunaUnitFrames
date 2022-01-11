@@ -8704,7 +8704,7 @@ function LUF:CreateConfig()
 						desc = L["Type of event to switch to"],
 						type = "select",
 						order = 2,
-						values = {["DISABLED"] = ADDON_DISABLED, ["RESOLUTION"] = L["Screen Resolution"],["GROUP"] = L["Size of Group"],
+						values = {["DISABLED"] = ADDON_DISABLED, ["RESOLUTION"] = L["Screen Resolution"],["GROUP"] = L["Size of Group"]},
 						get = function(info) return LUF.db.char.switchtype end,
 						set = function(info, value) LUF.db.char.switchtype = value LUF:AutoswitchProfileSetup() end,
 					},
@@ -8724,7 +8724,7 @@ function LUF:CreateConfig()
 						type = "select",
 						order = 4,
 						hidden = function() return LUF.db.char.switchtype ~= "GROUP" end,
-						values = {["RAID40"]=L["Raid40"],["RAID25"]=L["Raid25"],["RAID20"]=L["Raid20"],["RAID15"]=L["Raid15"],["RAID10"]=L["Raid10"],["RAID5"]=L["Raid5"],["PARTY"]=PARTY,["SOLO"]=L["Solo"],},
+						values = {["RAID40"]=L["Raid40"],["RAID25"]=L["Raid25"],["RAID20"]=L["Raid20"],["RAID15"]=L["Raid15"],["RAID10"]=L["Raid10"],["RAID5"]=L["Raid5"],["PARTY"]=PARTY,["SOLO"]=L["Solo"]},
 						get = function(info) return groupselectvalue end,
 						set = function(info, value) groupselectvalue = value end,
 					},
@@ -8774,7 +8774,6 @@ function LUF:CreateConfig()
 								LUF.db.char.grpdb[groupselectvalue] = value ~= "NIL" and profiledb[value] or nil
 							end
 						end,
-						},
 					},
 				},
 			},
