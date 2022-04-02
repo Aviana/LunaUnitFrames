@@ -323,6 +323,7 @@ local L = {
 ["numtargeting"] = "你队伍中以该单位为目标的人数",
 ["cnumtargeting"] = "使用颜色来表示选中目标人数",
 ["enumtargeting"] = "Guessed amount of enemies targeting this unit (PvP only)",
+["grpnum"] = "The unit number in the respective group",
 ["br"] = "换行",
 ["name"] = "显示名字",
 ["shortname:x"] = "显示名字的前x位，x=1-12",

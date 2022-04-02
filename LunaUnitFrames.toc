@@ -1,8 +1,8 @@
-## Interface: 20503
+## Interface: 20504
 ## Title: Luna Unit Frames
 ## Notes: 
 ## Author: Aviana
-## Version: 4260
+## Version: 4270
 ## SavedVariables: LunaUFDB
 ## OptionalDeps: Ace3, LibSharedMedia-3.0, AceGUI-3.0-SharedMediaWidgets, Clique
 ## X-License: WTFPL (http://www.wtfpl.net/about/)
