@@ -10,6 +10,7 @@ local InfoTags = {
 	["numtargeting"] = true,
 	["cnumtargeting"] = true,
 	["enumtargeting"] = true,
+	["grpnum"] = true,
 	["br"] = true,
 	["name"] = true,
 	["nameafk"] = true,

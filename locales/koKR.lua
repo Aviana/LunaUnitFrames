@@ -323,6 +323,7 @@ local L = {
 ["numtargeting"] = "유닛을 대상으로 하는 그룹 내 인원수를 표시합니다.",
 ["cnumtargeting"] = "대상으로 하는 그룹 내 인원수를 색상화한 버전",
 ["enumtargeting"] = "Guessed amount of enemies targeting this unit (PvP only)",
+["grpnum"] = "The unit number in the respective group",
 ["br"] = "빈 라인 추가",
 ["name"] = "유닛의 정확한 이름을 표시합니다.",
 ["shortname:x"] = "이름의 첫 x글자를 표시합니다. (x는 1-12)",

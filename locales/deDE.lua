@@ -326,6 +326,7 @@ local L = {
 ["numtargeting"] = "Anzahl an Spielern die diese Einheit aus deiner Gruppe im Ziel haben",
 ["cnumtargeting"] = "Gef\195\164rbte Version von numtargeting",
 ["enumtargeting"] = "Gesch\195\164tzte Anzahl Feinde die dieses Ziel haben (Nur PvP)",
+["grpnum"] = "Die Einheitennummer in der zugh\195\182rigen Gruppe",
 ["br"] = "F\195\188gt eine Zeilenumbruch hinzu",
 ["name"] = "Gibt den reinen Namen der Einheit zur\195\188ck",
 ["shortname:x"] = "Gibt x Buchstaben des Namens zur\195\188ck (1-12)",

@@ -323,6 +323,7 @@ local L = {
 ["numtargeting"] = "Number of people in your group targeting this unit",
 ["cnumtargeting"] = "Colored version of numtargeting",
 ["enumtargeting"] = "Guessed amount of enemies targeting this unit (PvP only)",
+["grpnum"] = "The unit number in the respective group",
 ["br"] = "Adds a line break",
 ["name"] = "Returns plain name of the unit",
 ["shortname:x"] = "Returns the first x letters of the name (1-12)",

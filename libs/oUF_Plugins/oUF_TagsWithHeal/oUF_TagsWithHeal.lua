@@ -221,6 +221,10 @@ local tagStrings = {
 		end
 	end]],
 
+	["grpnum"] = [[function(unit)
+		return strmatch(unit, "(%d+)") or 0
+	end]],
+
 	["happiness"] = [[function(unit)
 		if not UnitIsUnit(unit,"pet") or select(2,UnitClass("player")) ~= "HUNTER" then
 			return
