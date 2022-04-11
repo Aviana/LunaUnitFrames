@@ -1,7 +1,7 @@
 # LunaUnitFrames
 Unit Frames for WoW Classic
 
-DO NOT USE THE GREEN CLONE OR DOWNLOAD BUTTON. GET THE NEWEST RELEASE FROM THE [RELEASE](https://github.com/Aviana/LunaUnitFrames/releases) PAGE.
+LunaUnitFrames supports/recommends WowUp.io for automatic updates: https://wowup.io/
 
 !!!ATTENTION!!!
 -For users coming from a version prior to 4000-
@@ -18,13 +18,14 @@ Due to this change asian clients will now start with a font that is compatible w
 - Castbars have been removed from some units
 
 Clickcasting:
-https://www.curseforge.com/wow/addons/clique/
+https://www.wowinterface.com/downloads/info5108-Clique.html
 
 Numeric timers on auras:
-https://www.curseforge.com/wow/addons/omni-cc/
+https://www.wowinterface.com/downloads/info4836-OmniCC.html
 
 Additional Bar Textures & Fonts:
-https://www.curseforge.com/wow/addons/sharedmedia
+https://www.wowinterface.com/downloads/search.php?search=sharedmedia
+https://addons.wago.io/?search=sharedmedia
 
 This addon comes with LibClassicDurations integrated to view aura durations,
 
