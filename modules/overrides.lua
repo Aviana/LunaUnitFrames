@@ -49,7 +49,9 @@ local function spellCheck(unit)
 end
 
 local function measureDistance(unit)
-	if CheckInteractDistance(unit, 3) then
+	if not UnitIsVisible(unit) or not UnitInPhase(unit) then
+		return 1000
+	elseif CheckInteractDistance(unit, 3) then
 		return 10
 	elseif CheckInteractDistance(unit, 4) then
 		return 30

@@ -4585,6 +4585,26 @@ function LUF:CreateConfig()
 								type = "color",
 								order = 6,
 							},
+							blood = {
+								name = COMBAT_TEXT_RUNE_BLOOD,
+								type = "color",
+								order = 7,
+							},
+							unholy = {
+								name = COMBAT_TEXT_RUNE_UNHOLY,
+								type = "color",
+								order = 8,
+							},
+							frost = {
+								name = COMBAT_TEXT_RUNE_FROST,
+								type = "color",
+								order = 9,
+							},
+							death = {
+								name = COMBAT_TEXT_RUNE_DEATH,
+								type = "color",
+								order = 10,
+							},
 						},
 					},
 					GradientColors = {

@@ -198,6 +198,11 @@ function LUF:LoadoUFSettings()
 	self.oUF.colors.power[4] = self.oUF.colors.power.COMBOPOINTS
 	self.oUF.colors.power.RUNIC_POWER = {colors.RUNIC_POWER.r, colors.RUNIC_POWER.g, colors.RUNIC_POWER.b}
 	self.oUF.colors.power[5] = self.oUF.colors.power.RUNIC_POWER
+
+	self.oUF.colors.runes[1] = {colors.blood.r, colors.blood.g, colors.blood.b}
+	self.oUF.colors.runes[2] = {colors.unholy.r, colors.unholy.g, colors.unholy.b}
+	self.oUF.colors.runes[3] = {colors.frost.r, colors.frost.g, colors.frost.b}
+	self.oUF.colors.runes[4] = {colors.death.r, colors.death.g, colors.death.b}
 	
 	self.oUF.colors.happiness[1] = {colors.unhappy.r, colors.unhappy.g, colors.unhappy.b}
 	self.oUF.colors.happiness[2] = {colors.content.r, colors.content.g, colors.content.b}
@@ -1449,7 +1454,7 @@ function LUF:SpawnUnits()
 			elseif unit:match("^arena.*") then
 				self.frameIndex[unit] = CreateFrame("Frame", "LUFHeader"..unit, UIParent, "SecureFrameTemplate")
 				self.frameIndex[unit]:SetAttribute("oUF-headerType", unit)
-				self.frameIndex[unit].isArena = true
+				self.frameIndex[unit].isCustom = true
 				self.frameIndex[unit]:SetHeight(1)
 				self.frameIndex[unit]:SetWidth(1)
 				for i=1, 5 do
@@ -1464,10 +1469,10 @@ function LUF:SpawnUnits()
 			elseif unit == "boss" then
 				self.frameIndex[unit] = CreateFrame("Frame", "LUFHeader"..unit, UIParent, "SecureFrameTemplate")
 				self.frameIndex[unit]:SetAttribute("oUF-headerType", unit)
-				self.frameIndex[unit].isBoss = true
+				self.frameIndex[unit].isCustom = true
 				self.frameIndex[unit]:SetHeight(1)
 				self.frameIndex[unit]:SetWidth(1)
-				for i=1, 8 do
+				for i=1, MAX_BOSS_FRAMES do
 					local frame = oUF:Spawn(unit..i, "LUFHeader"..unit.."UnitButton"..i)
 					frame:SetParent(_G["LUFHeader"..unit])
 				end
@@ -1524,7 +1529,7 @@ function LUF:SpawnUnits()
 	self.frameIndex.target:HookScript("OnHide", LUF.overrides.Target.PostUpdate)
 end
 
-local function SetArenaHeader(header, config)
+local function SetCustomHeader(header, config)
 	local point = config.attribPoint
 	local relativePoint, xOffsetMult, yOffsetMult = getRelativePointAnchor(point)
 	local xMultiplier, yMultiplier =  abs(xOffsetMult), abs(yOffsetMult)
@@ -1570,8 +1575,8 @@ local function SetArenaHeader(header, config)
 end
 
 local function SetHeaderAttributes(header, config)
-	if header.isArena then
-		SetArenaHeader(header, config)
+	if header.isCustom then
+		SetCustomHeader(header, config)
 		return
 	end
 	if not config.enabled or config.filters and not config.filters[tonumber(strmatch(header:GetName(),"%a+(%d+)"))] then

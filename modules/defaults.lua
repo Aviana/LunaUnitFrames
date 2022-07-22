@@ -57,6 +57,10 @@ function LUF:LoadDefaults()
 		ENERGY = {r = 1.0, g = 0.85, b = 0.10},
 		COMBOPOINTS = {r = 1.0, g = 0.80, b = 0.0},
 		RUNIC_POWER = {r = 0.35, g = 0.45, b = 0.60},
+		blood = {r = 1, g = 0, b = 0.4},
+		unholy = {r = 0, g = 0.4, b = 1},
+		frost = {r = 0, g = 1, b = 0.4},
+		death = {r = 0.7, g = 0.5, b = 1},
 		-- Gradient
 		red = {r = 0.90, g = 0.0, b = 0.0},
 		green = {r = 0.20, g = 0.90, b = 0.20},
@@ -3930,7 +3934,7 @@ function LUF:LoadDefaults()
 			anchorTo = "LUFHeaderarena",
 		},
 		boss = {
-			enabled = true,
+			enabled = false,
 			healthBar = { enabled = true, background = true, backgroundAlpha = 0.2, colorType = "class", reactionType="npc", height = 6, order = 10, posSlot = "CENTER"},
 			portrait = {enabled = false, type = "3D", alignment = "LEFT", width = 0.22, height = 4, order = 15, posSlot = "CENTER"},
 			powerBar = { enabled = false, background = true, backgroundAlpha = 0.2, height = 4.5, order = 20, colorType = "type", posSlot = "CENTER" },
@@ -4086,7 +4090,6 @@ function LUF:LoadDefaults()
 			point = "CENTER",
 			relativePoint = "CENTER",
 			anchorTo = "UIParent",
-			unitsPerColumn = 8,
 		},
 	}
 end
