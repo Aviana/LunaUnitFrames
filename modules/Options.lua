@@ -406,6 +406,7 @@ function LUF:CreateConfig()
 		end
 		LUF:SetupHeader("raid")
 		LUF:SetupHeader("raidpet")
+		LUF.stateMonitor:SetAttribute("showWhen", value)
 	end
 
 	local function Lockdown() return LUF.InCombatLockdown end
@@ -6534,6 +6535,14 @@ function LUF:CreateConfig()
 								set = setShowWhen,
 								disabled = Lockdown,
 							},
+							hideParty = {
+								name = L["Hide < 6 Raid"],
+								desc = L["Hide when 5 or less people in raid"],
+								type = "toggle",
+								order = 2.35,
+								disabled = function() return LUF.db.profile.units.raid.showParty or (LUF.db.profile.units.raid.showSolo and LUF.db.profile.units.raid.showPlayer) or Lockdown() end,
+								set = function(info, value) set(info, value) LUF.stateMonitor:SetAttribute("hideParty", LUF.db.profile.units.raid.hideParty) end,
+							},
 							groupnumbers = {
 								name = L["Groupnumbers"],
 								desc = L["Show Groupnumbers next to the group"],
@@ -7148,10 +7157,18 @@ function LUF:CreateConfig()
 								name = L["Show when"],
 								desc = string.format(L["This is set through %s options."],RAID),
 								type = "select",
-								order = 2.92,
+								order = 2.921,
 								values = {["ALWAYS"] = ALWAYS,["PARTY"] = PARTY, ["RAID"] = RAID},
 								get = getShowWhen,
 								set = function(info,value) end,
+								disabled = true,
+							},
+							hideParty = {
+								name = L["Hide < 6 Raid"],
+								desc = string.format(L["This is set through %s options."],RAID),
+								type = "toggle",
+								order = 2.922,
+								get = function(info) return LUF.db.profile.units.raid.hideParty end,
 								disabled = true,
 							},
 							unitsPerColumn = {
