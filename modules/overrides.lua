@@ -234,7 +234,7 @@ LUF.overrides["Totems"].PostUpdate = function(self, slot, haveTotem, name, start
 	local mod = self[1]:GetParent()
 	mod:Show()
 	for i=1,4 do
-		if GetTotemInfo(i) then
+		if select(3,GetTotemInfo(i)) ~= 0 then
 			break
 		end
 		if i == 4 and mod.autoHide then

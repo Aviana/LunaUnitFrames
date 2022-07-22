@@ -410,7 +410,7 @@ function LUF:LoadDefaults()
 						size = 100,
 					},
 					["center"] = {
-						tagline = "[xppet] [percxppet]",
+						tagline = "[xp] [percxp]",
 						size = 100,
 					},
 					["right"] = {
@@ -817,7 +817,7 @@ function LUF:LoadDefaults()
 						size = 100,
 					},
 					["right"] = {
-						tagline = "[smarthealthp]",
+						tagline = "[ssmarthealthp]",
 						size = 100,
 					},
 				},

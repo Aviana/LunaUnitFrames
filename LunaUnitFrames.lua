@@ -538,7 +538,11 @@ local moduleSettings = {
 			mod.bg:Hide()
 		end
 		mod.colorHappiness = config.colorType == "happiness"
-		mod.colorClass = config.colorType == "class"
+		if config.colorType == "happiness" then
+			mod.colorClass = true
+		else
+			mod.colorClass = config.colorType == "class"
+		end
 		mod.colorReaction = config.reactionType ~= "none" and config.reactionType
 		mod.colorSmooth = config.colorType == "percent"
 		mod.colorInvert = config.invert
@@ -1717,28 +1721,6 @@ function LUF:ReloadAll()
 	end
 end
 
-local function ScanRoster()
-	timerRunning = nil
-	if not LUF.InCombatLockdown then
-		for id=1,9 do
-			LUF.frameIndex["raid"..id]:SetAttribute("ForceUpdate", math.random())
-		end
-	end
-end
-
-local timerRunning
-local function CheckforRosterBug()
-	if UnitInRaid("player") then
-		for i=1, GetNumGroupMembers() do
-			local name = GetRaidRosterInfo(i)
-			if not timerRunning and not name then
-				timerRunning = true
-				C_Timer.After(1, ScanRoster)
-			end
-		end
-	end
-end
-
 local queuedEvent
 local frame = CreateFrame("Frame")
 frame:RegisterEvent("PLAYER_LOGIN")
@@ -1777,7 +1759,6 @@ frame:SetScript("OnEvent", function(self, event, addon)
 			queuedEvent = event
 		end
 	elseif event == "GROUP_ROSTER_UPDATE" then
-		CheckforRosterBug()
 		if not LUF.InCombatLockdown then
 			LUF:AutoswitchProfile(event)
 		else
