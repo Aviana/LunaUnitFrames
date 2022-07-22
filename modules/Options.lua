@@ -489,7 +489,7 @@ function LUF:CreateConfig()
 		if info[#info-2] == "raid" then
 			local nbr = strmatch(info[#info], "%d")
 			LUF.db.profile.units.raid.positions[tonumber(nbr)].anchorTo = value
-			frame = LUF.Units.headerFrames["raid"..nbr]
+			frame = LUF.frameIndex["raid"..nbr]
 		else
 			LUF.db.profile.units[info[#info-2]].anchorTo = value
 			frame = _G[UnitToFrame[info[#info-2]]]

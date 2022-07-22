@@ -474,7 +474,11 @@ local moduleSettings = {
 			mod.bg:Hide()
 		end
 		mod.colorHappiness = config.colorType == "happiness"
-		mod.colorClass = config.colorType == "class"
+		if config.colorType == "happiness" then
+			mod.colorClass = true
+		else
+			mod.colorClass = config.colorType == "class"
+		end
 		mod.colorReaction = config.reactionType ~= "none" and config.reactionType
 		mod.colorSmooth = config.colorType == "percent"
 		mod.colorInvert = config.invert
