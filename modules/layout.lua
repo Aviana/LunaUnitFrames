@@ -197,7 +197,40 @@ local UnitSpecific = {
 		frame.modules.xpBar = xpBarFrame
 		frame.modules.xpBar.name = "XPRepBar"
 		frame.tags.xpBar = {}
-		
+
+		if select(2, UnitClass('player')) == "DEATHKNIGHT" then
+	-- Ghoul Timer
+			local Ghoul = CreateFrame("StatusBar", nil, frame)
+
+			local Background = Ghoul:CreateTexture(nil, "BACKGROUND")
+			Background:SetAllPoints(Ghoul)
+
+			Ghoul.bg = Background
+			Ghoul:SetScript("OnShow", LUF.PlaceModules)
+			Ghoul:SetScript("OnHide", LUF.PlaceModules)
+			Ghoul:SetMinMaxValues(0,1)
+			Ghoul:SetValue(0)
+			Ghoul.PostUpdate = LUF.overrides["Ghoul"].PostUpdate
+			frame.Ghoul = Ghoul
+			frame.modules.ghoul = Ghoul
+			frame.modules.ghoul.name = "Ghoul"
+
+	-- Runes
+			local runes = CreateFrame("Frame", nil, frame)
+			local Runes = {}
+			for i=1,6 do
+				Runes[i] = CreateFrame("StatusBar", nil, runes)
+				Runes[i].bg = runes:CreateTexture(nil, "BACKGROUND")
+				Runes[i].bg:SetAllPoints(Runes[i])
+			end
+			runes.Update = LUF.overrides["Runes"].Update
+			Runes.PostUpdate = LUF.overrides["Runes"].PostUpdate
+			runes.Runes = Runes
+			runes.name = "Runes"
+			frame.modules.runes = runes
+			frame.Runes = Runes
+		end
+
 	-- Combo Points
 		local comboPoints = CreateFrame("Frame", nil, frame)
 		local ComboPoints = {}
@@ -476,6 +509,29 @@ local UnitSpecific = {
 	arenatarget = function(frame)
 	-- Nothing here yet
 	end,
+
+	boss = function(frame)
+		-- Castbar
+		local Castbar = CreateFrame("StatusBar", nil, frame)
+
+		local Background = Castbar:CreateTexture(nil, "BACKGROUND")
+		Background:SetAllPoints(Castbar)
+
+		local Icon = Castbar:CreateTexture(nil, "OVERLAY")
+		Icon:SetSize(10, 10)
+		Icon:SetPoint("TOPLEFT", Castbar, "TOPLEFT")
+
+		local SafeZone = Castbar:CreateTexture(nil, "OVERLAY")
+
+		Castbar.bg = Background
+		Castbar.Icon = Icon
+		Castbar.SafeZone = SafeZone
+		Castbar:SetScript("OnShow", LUF.PlaceModules)
+		Castbar:SetScript("OnHide", LUF.PlaceModules)
+		frame.Castbar = Castbar
+		frame.modules.castBar = Castbar
+		frame.modules.castBar.name = "Castbar"
+	end
 }
 
 LUF.IndicatorData = {
@@ -497,6 +553,8 @@ function LUF.InitializeUnit(frame, unit, notHeaderChild)
 	if notHeaderChild then
 		if frame:GetName():match("arena") then
 			frame:SetAttribute("oUF-guessUnit", frame:GetName():match("LUFHeader(arena.*)UnitButton%d$"))
+		elseif frame:GetName():match("boss") then
+			frame:SetAttribute("oUF-guessUnit", frame:GetName():match("LUFHeader(boss.*)UnitButton%d$"))
 		else
 			frame:SetAttribute("oUF-guessUnit", unit)
 		end

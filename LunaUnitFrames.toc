@@ -1,4 +1,4 @@
-## Interface: 20504
+## Interface: 30400
 ## Title: Luna Unit Frames
 ## Notes: 
 ## Author: Aviana
@@ -35,7 +35,6 @@ libs\oUF\colors.lua
 libs\oUF\elements\additionalpower.lua
 libs\oUF\elements\assistantindicator.lua
 libs\oUF\elements\castbar.lua
-libs\oUF\elements\happinessindicator.lua
 libs\oUF\elements\health.lua
 libs\oUF\elements\leaderindicator.lua
 libs\oUF\elements\masterlooterindicator.lua
@@ -48,6 +47,7 @@ libs\oUF\elements\range.lua
 libs\oUF\elements\readycheckindicator.lua
 libs\oUF\elements\resurrectindicator.lua
 libs\oUF\elements\totems.lua
+libs\oUF\elements\runes.lua
 
 libs\oUF_Plugins\oUF_Plugins.xml
 #@end-no-lib-strip@

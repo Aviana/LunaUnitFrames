@@ -26,7 +26,7 @@ function LUF:LoadDefaults()
 			locked = false,
 			previewauras = true,
 			tooltipCombat = true,
-			hidden = {cast = true, buffs = false, party = true, raid = true, player = true, pet = true, target = true, focus = true, arena = true},
+			hidden = {cast = true, buffs = false, party = true, raid = true, player = true, pet = true, target = true, focus = true, arena = true, boss = true},
 			statusbar = "Minimalist",
 			fontshadow = true,
 			auraborderType = "dark",
@@ -49,12 +49,14 @@ function LUF:LoadDefaults()
 		DRUID = {r = 1.0, g = 0.49, b = 0.04},
 		SHAMAN = {r = 0.14, g = 0.35, b = 1.0},
 		WARRIOR = {r = 0.78, g = 0.61, b = 0.43},
+		DEATHKNIGHT = {r = 0.77, g = 0.12, b = 0.23},
 		--Power
 		MANA = {r = 0.30, g = 0.50, b = 0.85},
 		RAGE = {r = 0.90, g = 0.20, b = 0.30},
 		FOCUS = {r = 1.0, g = 0.50, b = 0.25},
 		ENERGY = {r = 1.0, g = 0.85, b = 0.10},
 		COMBOPOINTS = {r = 1.0, g = 0.80, b = 0.0},
+		RUNIC_POWER = {r = 0.35, g = 0.45, b = 0.60},
 		-- Gradient
 		red = {r = 0.90, g = 0.0, b = 0.0},
 		green = {r = 0.20, g = 0.90, b = 0.20},
@@ -84,6 +86,7 @@ function LUF:LoadDefaults()
 		--Cast
 		channel = {r = 0.25, g = 0.25, b = 1.0}, --???
 		cast = {r = 1.0, g = 0.70, b = 0.30}, --???
+		noninterruptible = {r = 0.71, g = 0, b = 1},
 		--XP
 		normal = {r = 0.58, g = 0.0, b = 0.55}, --???
 		rested = {r = 0.0, g = 0.39, b = 0.88}, --???
@@ -103,11 +106,13 @@ function LUF:LoadDefaults()
 			reckStacks = { enabled = true, autoHide = true, growth = "RIGHT", order = 70, height = 2, background = true, backgroundAlpha = 0.2 },
 			portrait = {enabled = true, type = "3D", alignment = "LEFT", width = 0.22, height = 4, order = 15, posSlot = "CENTER"},
 			castBar = { enabled = true, background = true, backgroundAlpha = 0.2, height = 3, icon = "HIDE", autoHide = true, order = 60, posSlot = "CENTER"},
-			xpBar = { enabled = false, height = 2, order = 80, background = false, backgroundAlpha = 0.2, alpha = 1, autoHide = true, posSlot = "CENTER" },
+			xpBar = { enabled = false, height = 2, order = 90, background = false, backgroundAlpha = 0.2, alpha = 1, autoHide = true, posSlot = "CENTER" },
 			emptyBar = { enabled = false, height = 3, order = 50, reactionType="npc", class = true, alpha = 0.2, posSlot = "CENTER"},
 			druidBar = {enabled = false, autoHide = true, order = 70, height = 3, background = true, backgroundAlpha = 0.2, posSlot = "CENTER" },
 			totemBar = {enabled = false, order = 70, height = 2, background = true, backgroundAlpha = 0.2, autoHide = true, posSlot = "CENTER"},
 			comboPoints = {enabled = false, background = true, backgroundAlpha = 0.2, autoHide = true, order = 70, growth = "RIGHT", height = 2, posSlot = "CENTER"},
+			ghoul = { enabled = false, background = true, backgroundAlpha = 0.2, height = 2, autoHide = true, order = 70, posSlot = "CENTER"},
+			runes = {enabled = true, background = true, backgroundAlpha = 0.2, order = 80, height = 2, posSlot = "CENTER"},
 			highlight = { enabled = true, debuff = 2 },
 			borders = { enabled = true, debuff = 2, size = 1 },
 			fader = {enabled = false, combatAlpha = 1, inactiveAlpha = 0.2, speedyFade = false},
@@ -410,7 +415,7 @@ function LUF:LoadDefaults()
 						size = 100,
 					},
 					["center"] = {
-						tagline = "[xppet] [percxppet]",
+						tagline = "[xp] [percxp]",
 						size = 100,
 					},
 					["right"] = {
@@ -817,7 +822,7 @@ function LUF:LoadDefaults()
 						size = 100,
 					},
 					["right"] = {
-						tagline = "[smarthealthp]",
+						tagline = "[ssmarthealthp]",
 						size = 100,
 					},
 				},
@@ -2324,6 +2329,7 @@ function LUF:LoadDefaults()
 				[7] = true,
 				[8] = true,
 				[9] = true,
+				[10] = true,
 			},
 			positions = {
 				[1] = {point = "TOPLEFT", anchorTo = "UIParent", relativePoint = "TOPLEFT", x = 10, y = -380},
@@ -2335,6 +2341,7 @@ function LUF:LoadDefaults()
 				[7] = {point = "TOPRIGHT", anchorTo = "LUFHeaderraid6", relativePoint = "TOPRIGHT", x = 64, y = 0},
 				[8] = {point = "TOPRIGHT", anchorTo = "LUFHeaderraid7", relativePoint = "TOPRIGHT", x = 64, y = 0},
 				[9] = {point = "TOPRIGHT", anchorTo = "LUFHeaderraid8", relativePoint = "TOPRIGHT", x = 64, y = 0},
+				[10] = {point = "TOPRIGHT", anchorTo = "LUFHeaderraid9", relativePoint = "TOPRIGHT", x = 64, y = 0},
 			},
 		},
 		raidpet = {
@@ -3921,6 +3928,165 @@ function LUF:LoadDefaults()
 			point = "TOP",
 			relativePoint = "TOP",
 			anchorTo = "LUFHeaderarena",
+		},
+		boss = {
+			enabled = true,
+			healthBar = { enabled = true, background = true, backgroundAlpha = 0.2, colorType = "class", reactionType="npc", height = 6, order = 10, posSlot = "CENTER"},
+			portrait = {enabled = false, type = "3D", alignment = "LEFT", width = 0.22, height = 4, order = 15, posSlot = "CENTER"},
+			powerBar = { enabled = false, background = true, backgroundAlpha = 0.2, height = 4.5, order = 20, colorType = "type", posSlot = "CENTER" },
+			emptyBar = { enabled = false, height = 3, order = 50, reactionType="npc", class = true, alpha = 0.2, posSlot = "CENTER"},
+			castBar = { enabled = false, background = true, backgroundAlpha = 0.2, height = 3, icon = "HIDE", autoHide = true, order = 60, posSlot = "CENTER"},
+			range = { enabled = false },
+			highlight = { enabled = true, debuff = 2 },
+			borders = { enabled = true, debuff = 2, size = 1 },
+			fader = {enabled = false, combatAlpha = 1, inactiveAlpha = 0.2, speedyFade = false},
+			combatText = {enabled = false, size = 15},
+			squares = {
+				topleft = {enabled = false, type = "aggro", size = 10, x = 0, y = 0 },
+				top = {enabled = false, type = "aggro", size = 10, x = 0, y = 0 },
+				topright = {enabled = false, type = "aggro", size = 10, x = 0, y = 0 },
+				leftcenter = {enabled = false, type = "aggro", size = 15, x = -1, y = 0 },
+				center = {enabled = false, type = "aggro", size = 15, x = 0, y = 0 },
+				rightcenter = {enabled = false, type = "aggro", size = 15, x = 1, y = 0 },
+				bottomleft = {enabled = false, type = "aggro", size = 10, x = 0, y = 0 },
+				bottom = {enabled = false, type = "aggro", size = 10, x = 0, y = 0 },
+				bottomright = {enabled = false, type = "aggro", size = 10, x = 0, y = 0 },
+			},
+			auras = {
+				buffs = false,
+				debuffs = false,
+				buffsize = 18,
+				debuffsize = 18,
+				enlargedbuffsize = 0,
+				enlargeddebuffsize = 0,
+				buffOffset = 0,
+				debuffOffset = 0,
+				buffpos = "BOTTOM",
+				debuffpos = "BOTTOM",
+				bordercolor = true,
+				padding = 0,
+				timer = "all",
+				filterbuffs = 1,
+				filterdebuffs = 1,
+				wrapbuffside = "RIGHT",
+				wrapbuff = 1,
+				wrapdebuffside = "RIGHT",
+				wrapdebuff = 1,
+				buffcount = 32,
+				debuffcount = 40,
+			},
+			tags = {
+				["top"] = {
+					size = 10,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
+						size = 100,
+					},
+				},
+				["healthBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "[name]",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "[perhp]%",
+						size = 100,
+					},
+				},
+				["powerBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
+						size = 100,
+					},
+				},
+				["castBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "[castname]",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "[casttime]",
+						size = 100,
+					},
+				},
+				["emptyBar"] = {
+					size = 10,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
+						size = 100,
+					},
+				},
+				["bottom"] = {
+					size = 10,
+					["left"] = {
+						tagline = "",
+						size = 100,
+					},
+					["center"] = {
+						tagline = "",
+						size = 100,
+					},
+					["right"] = {
+						tagline = "",
+						size = 100,
+					},
+				},
+			},
+			indicators = {
+				status = { enabled = false, anchorPoint = "BOTTOMRIGHT", size = 16, x = -30, y = 1 },
+			},
+			slots = {
+				left = {value = 10, orientation = "horizontal"},
+				center = {value = 10, orientation = "vertical"},
+				right = {value = 10, orientation = "horizontal"},
+			},
+			scale = 1,
+			width = 100,
+			height = 15,
+			x = 0,
+			y = 0,
+			attribPoint = "TOP",
+			attribAnchorPoint = "LEFT",
+			offset = 0,
+			point = "CENTER",
+			relativePoint = "CENTER",
+			anchorTo = "UIParent",
+			unitsPerColumn = 8,
 		},
 	}
 end

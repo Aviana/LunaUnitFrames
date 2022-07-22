@@ -96,7 +96,7 @@ end
 local function EnableMovers()
 	for unit, frame in pairs(LUF.frameIndex) do
 		local config = LUF.db.profile.units[unit] or LUF.db.profile.units.raid
-		if not (unit == "raid9" and LUF.db.profile.units.raid.groupBy == "GROUP") then
+		if not ((unit == "raid9" or unit == "raid10") and LUF.db.profile.units.raid.groupBy == "GROUP") then
 			if config.enabled then
 				frame.configMode = true
 				if frame:GetAttribute("oUF-headerType") then
@@ -155,7 +155,7 @@ function LUF:CorrectPosition(frame)
 	local scale, position
 	local config = LUF.db.profile.units[frame:GetAttribute("oUF-headerType") or frame:GetAttribute("oUF-guessUnit")]
 	if config.positions then
-		position = config.positions[tonumber(strsub(frame:GetName(),14))]
+		position = config.positions[tonumber(strmatch(frame:GetName(),"%d+"))]
 	else
 		position = config
 	end

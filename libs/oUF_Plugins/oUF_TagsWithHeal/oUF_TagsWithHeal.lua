@@ -343,6 +343,14 @@ local tagStrings = {
 		end
 	end]],
 
+	["directheal"] = [[function(unit)
+		local mod = LHC:GetHealModifier(UnitGUID(unit)) or 1
+		local heal = LHC:GetHealAmount(UnitGUID(unit), LHC.DIRECT_HEALS, GetTime() + GetHealTimeFrame()) or 0
+		if heal > 0 then
+			return math.floor(heal * mod)
+		end
+	end]],
+
 	["incownheal"] = [[function(unit)
 		local mod = LHC:GetHealModifier(UnitGUID(unit)) or 1
 		local heal = LHC:GetHealAmount(UnitGUID(unit), LHC.DIRECT_HEALS, GetTime() + GetHealTimeFrame(), UnitGUID("player")) or 0
@@ -832,7 +840,11 @@ local tagStrings = {
 	end]],
 
 	["cpoints"] = [[function(unit)
-		return GetComboPoints("player", "target")
+		if UnitHasVehicleUI("player") then
+			return GetComboPoints("pet", "target")
+		else
+			return GetComboPoints("player", "target")
+		end
 	end]],
 
 	["rare"] = [[function(unit)
@@ -1144,22 +1156,22 @@ local tagStrings = {
 	end]],
 
 	["xp"] = [[function(unit)
-		return UnitXP(unit).."/"..UnitXPMax(unit)..(GetXPExhaustion() and (" (+"..GetXPExhaustion()..")") or "")
+		if UnitIsUnit(unit,"pet") then
+			local currentXP, maxXP = GetPetExperience()
+			return currentXP.."/"..maxXP
+		else
+			return UnitXP(unit).."/"..UnitXPMax(unit)..(GetXPExhaustion() and (" (+"..GetXPExhaustion()..")") or "")
+		end
 	end]],
 
 	["percxp"] = [[function(unit)
-		return math.floor(UnitXP("player")/UnitXPMax("player")*10000)/100 .. "%"
-	end]],
-
-	["xppet"] = [[function(unit)
-		local currentXP, maxXP = GetPetExperience()
-		return currentXP.."/"..maxXP
-	end]],
-
-	["percxppet"] = [[function(unit)
-		local currentXP, maxXP = GetPetExperience()
-		if maxXP == 0 then return end
-		return math.floor(currentXP/maxXP*10000)/100 .. "%"
+		if UnitIsUnit(unit,"pet") then
+			local currentXP, maxXP = GetPetExperience()
+			if maxXP == 0 then return end
+			return math.floor(currentXP/maxXP*10000)/100 .. "%"
+		else
+			return math.floor(UnitXP("player")/UnitXPMax("player")*10000)/100 .. "%"
+		end
 	end]],
 
 	["rep"] = [[function(unit)
@@ -1258,6 +1270,7 @@ local tagEvents = {
 	["guild"]               = "UNIT_NAME_UPDATE",
 	["guildrank"]           = "UNIT_NAME_UPDATE",
 	["incheal"]             = "HealComm_HealStarted HealComm_HealUpdated HealComm_HealStopped HealComm_ModifierChanged HealComm_GUIDDisappeared",
+	["directheal"]			= "HealComm_HealStarted HealComm_HealUpdated HealComm_HealStopped HealComm_ModifierChanged HealComm_GUIDDisappeared",
 	["incownheal"]          = "HealComm_HealStarted HealComm_HealUpdated HealComm_HealStopped HealComm_ModifierChanged HealComm_GUIDDisappeared",
 	["incpreheal"]          = "HealComm_HealStarted HealComm_HealUpdated HealComm_HealStopped HealComm_ModifierChanged HealComm_GUIDDisappeared",
 	["incafterheal"]        = "HealComm_HealStarted HealComm_HealUpdated HealComm_HealStopped HealComm_ModifierChanged HealComm_GUIDDisappeared",
@@ -1300,7 +1313,7 @@ local tagEvents = {
 	["abbrev:name"]         = "UNIT_NAME_UPDATE",
 	["server"]              = "UNIT_NAME_UPDATE",
 	["status"]              = "UNIT_HEALTH UNIT_CONNECTION",
-	["cpoints"]             = "UNIT_POWER_FREQUENT",
+	["cpoints"]             = "UNIT_POWER_FREQUENT UNIT_POWER_UPDATE",
 	["rare"]                = "UNIT_CLASSIFICATION_CHANGED",
 	["elite"]               = "UNIT_CLASSIFICATION_CHANGED",
 	["classification"]      = "UNIT_CLASSIFICATION_CHANGED",
@@ -1331,6 +1344,7 @@ local tagEvents = {
 }
 
 local unitlessEvents = {
+	UNIT_POWER_UPDATE = true,
 	GROUP_ROSTER_UPDATE = true,
 	PARTY_LEADER_CHANGED = true,
 	PLAYER_LEVEL_UP = true,

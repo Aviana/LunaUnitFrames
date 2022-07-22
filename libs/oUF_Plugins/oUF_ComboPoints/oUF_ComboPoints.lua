@@ -84,7 +84,12 @@ local function Update(self, event, unit, powerType)
 
 	if(event ~= "ComboPointsDisable") then
 
-		local cur = GetComboPoints("player", "target")
+		local cur
+		if UnitHasVehicleUI("player") then
+			cur = GetComboPoints("pet", "target")
+		else
+			cur = GetComboPoints("player", "target")
+		end
 		for i = 1, 5 do
 			if(i > cur) then
 				element[i]:Hide()
@@ -133,10 +138,13 @@ local function Visibility(self, event, unit)
 				self:RegisterEvent("SPELLS_CHANGED", Visibility, true)
 			end
 		end
+	elseif UnitHasVehicleUI("player") and UnitPowerType("pet") == SPELL_POWER_ENERGY then
+		shouldEnable = true
+		unit = "pet"
 	end
 
 	local isEnabled = element.isEnabled
-	local powerType = ClassPowerType
+	local powerType = ClassPowerType or "COMBO_POINTS"
 
 	if(shouldEnable) then
 		--[[ Override: ComboPoints:UpdateColor(powerType)
@@ -176,7 +184,7 @@ do
 	function ComboPointsEnable(self)
 		self:RegisterEvent("UNIT_POWER_FREQUENT", Path, true)
 		self:RegisterEvent("UNIT_MAXPOWER", Path, true)
-		if self.unit == "player" then
+		if self.unit == "player" or self.unit == "pet" then
 			self:RegisterEvent("PLAYER_TARGET_CHANGED", Path, true)
 		end
 
@@ -188,7 +196,7 @@ do
 	function ComboPointsDisable(self)
 		self:UnregisterEvent("UNIT_POWER_FREQUENT", Path)
 		self:UnregisterEvent("UNIT_MAXPOWER", Path)
-		if self.unit == "player" then
+		if self.unit == "player" or self.unit == "pet" then
 			self:UnregisterEvent("PLAYER_TARGET_CHANGED", Path)
 		end
 
@@ -223,6 +231,9 @@ local function Enable(self, unit)
 			self:RegisterEvent("UNIT_DISPLAYPOWER", VisibilityPath, true) -- needs to be unitless for target
 		end
 
+		self:RegisterEvent("UNIT_ENTERED_VEHICLE", VisibilityPath, true) -- needs to be unitless for target
+		self:RegisterEvent("UNIT_EXITED_VEHICLE", VisibilityPath, true) -- needs to be unitless for target
+
 		element.ComboPointsEnable = ComboPointsEnable
 		element.ComboPointsDisable = ComboPointsDisable
 
@@ -247,6 +258,8 @@ local function Disable(self)
 
 		self:UnregisterEvent("UNIT_DISPLAYPOWER", VisibilityPath)
 		self:UnregisterEvent("SPELLS_CHANGED", Visibility)
+		self:UnregisterEvent("UNIT_ENTERED_VEHICLE", VisibilityPath)
+		self:UnregisterEvent("UNIT_EXITED_VEHICLE", VisibilityPath)
 	end
 end
 

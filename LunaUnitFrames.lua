@@ -22,10 +22,23 @@ L.maintank = MAINTANK
 L.mainassist = MAIN_ASSIST
 L.focus = FOCUS
 L.arena = ARENA
+L.boss = BOSS
 
 LUF.stateMonitor = CreateFrame("Frame", nil, nil, "SecureHandlerBaseTemplate")
 LUF.stateMonitor:WrapScript(LUF.stateMonitor, "OnAttributeChanged", [[
 	if( name == "partyEnabled" or name == "partytargetEnabled" or name == "partypetEnabled" ) then return end
+
+	if name == "state-vehiclestatus" or name == "hidepetinvehicle" then
+		local hidepetinvehicle = self:GetAttribute("hidepetinvehicle")
+		local vehiclestatus = self:GetAttribute("state-vehiclestatus")
+		if vehiclestatus == "vehicle" and hidepetinvehicle then
+			self:GetFrameRef("petFrame"):SetAttribute("unit", "none")
+			self:GetFrameRef("petFrame"):Hide()
+		else
+			self:GetFrameRef("petFrame"):SetAttribute("unit", "pet")
+		end
+		return
+	end
 	
 	local partyFrame = self:GetFrameRef("partyFrame")
 	local partytargetFrame = self:GetFrameRef("partytargetFrame")
@@ -86,6 +99,7 @@ LUF.unitList = {
 	"arena",
 	"arenapet",
 	"arenatarget",
+	"boss",
 }
 
 LUF.fakeUnits = {
@@ -118,6 +132,7 @@ LUF.HeaderFrames = {
 	["arena"] = true,
 	["arenapet"] = true,
 	["arenatarget"] = true,
+	["boss"] = true,
 }
 
 -- taken from framexml
@@ -169,6 +184,7 @@ function LUF:LoadoUFSettings()
 	self.oUF.colors.class.DRUID = {colors.DRUID.r, colors.DRUID.g, colors.DRUID.b}
 	self.oUF.colors.class.SHAMAN = {colors.SHAMAN.r, colors.SHAMAN.g, colors.SHAMAN.b}
 	self.oUF.colors.class.WARRIOR = {colors.WARRIOR.r, colors.WARRIOR.g, colors.WARRIOR.b}
+	self.oUF.colors.class.DEATHKNIGHT = {colors.DEATHKNIGHT.r, colors.DEATHKNIGHT.g, colors.DEATHKNIGHT.b}
 	
 	self.oUF.colors.power.MANA = {colors.MANA.r, colors.MANA.g, colors.MANA.b}
 	self.oUF.colors.power[0] = self.oUF.colors.power.MANA
@@ -180,6 +196,8 @@ function LUF:LoadoUFSettings()
 	self.oUF.colors.power[3] = self.oUF.colors.power.ENERGY
 	self.oUF.colors.power.COMBO_POINTS = {colors.COMBOPOINTS.r, colors.COMBOPOINTS.g, colors.COMBOPOINTS.b}
 	self.oUF.colors.power[4] = self.oUF.colors.power.COMBOPOINTS
+	self.oUF.colors.power.RUNIC_POWER = {colors.RUNIC_POWER.r, colors.RUNIC_POWER.g, colors.RUNIC_POWER.b}
+	self.oUF.colors.power[5] = self.oUF.colors.power.RUNIC_POWER
 	
 	self.oUF.colors.happiness[1] = {colors.unhappy.r, colors.unhappy.g, colors.unhappy.b}
 	self.oUF.colors.happiness[2] = {colors.content.r, colors.content.g, colors.content.b}
@@ -376,6 +394,7 @@ local function handleFrame(baseName)
 	end
 
 	if(frame) then
+		UnregisterUnitWatch(frame)
 		frame:UnregisterAllEvents()
 		frame:Hide()
 
@@ -479,6 +498,15 @@ function LUF:HideBlizzardFrames()
 		end
 	end
 
+	if( LUF.db.profile.hidden.boss and not active_hiddens.boss ) then
+		for i=1, MAX_BOSS_FRAMES do
+			local name = "Boss" .. i .. "TargetFrame"
+			handleFrame(_G[name])
+			handleFrame(_G[name .. "HealthBar"])
+			handleFrame(_G[name .. "ManaBar"])
+		end
+	end
+
 	if( LUF.db.profile.hidden.arena and not active_hiddens.arena ) then
 		for i = 1, 5 do
 			handleFrame(string.format("ArenaEnemyFrame%d", i))
@@ -509,7 +537,11 @@ local moduleSettings = {
 			mod.bg:Hide()
 		end
 		mod.colorHappiness = config.colorType == "happiness"
-		mod.colorClass = config.colorType == "class"
+		if config.colorType == "happiness" then
+			mod.colorClass = true
+		else
+			mod.colorClass = config.colorType == "class"
+		end
 		mod.colorReaction = config.reactionType ~= "none" and config.reactionType
 		mod.colorSmooth = config.colorType == "percent"
 		mod.colorInvert = config.invert
@@ -640,6 +672,36 @@ local moduleSettings = {
 		end
 		mod.autoHide = config.autoHide
 		mod.growth = config.growth
+		mod:Update()
+	end,
+	ghoul = function(mod, config)
+		if not config.enabled then mod:Hide() return end
+		mod.texture = LUF:LoadMedia(SML.MediaType.STATUSBAR, config.statusbar)
+		mod:SetStatusBarTexture(LUF:LoadMedia(SML.MediaType.STATUSBAR, config.statusbar))
+		if config.background then
+			mod.bg:SetTexture(mod.texture)
+			mod.bg:SetVertexColor(1, 1, 1)
+			mod.bg:Show()
+			mod.bg:SetAlpha(config.backgroundAlpha)
+		else
+			mod.bg:Hide()
+		end
+		mod.autoHide = config.autoHide
+	end,
+	runes = function(mod, config)
+		if not config.enabled then mod:Hide() return end
+		local texture = LUF:LoadMedia(SML.MediaType.STATUSBAR, config.statusbar)
+		for i=1, 6 do
+			local rune = mod.Runes[i]
+			rune:SetStatusBarTexture(texture)
+			rune.bg:SetTexture(texture)
+			rune.bg:SetAlpha(config.backgroundAlpha)
+			if config.background then
+				rune.bg:Show()
+			else
+				rune.bg:Hide()
+			end
+		end
 		mod:Update()
 	end,
 	xpBar = function(mod, config)
@@ -1346,8 +1408,6 @@ local initialConfigFunction = [[
 		self:SetAttribute("unitsuffix", "targettarget")
 	elseif strmatch(unit,"target") then
 		self:SetAttribute("unitsuffix", "target")
-	elseif strmatch(unit,"partypet") then
-		self:SetAttribute("refreshUnitChange", parent:GetAttribute("refreshUnitChange"))
 	end
 	self:SetAttribute("oUF-guessUnit",unit)
 	
@@ -1366,6 +1426,11 @@ local refreshUnitChange = [[
 		end
 		self:SetAttribute("unit", unit)
 	end
+	if(unit) then
+		RegisterStateDriver(self, 'vehicleui', '[@' .. unit .. ',unithasvehicleui]vehicle; novehicle')
+	else
+		UnregisterStateDriver(self, 'vehicleui')
+	end
 ]]
 
 function LUF:SpawnUnits()
@@ -1375,7 +1440,7 @@ function LUF:SpawnUnits()
 	for unit, config in pairs(self.db.profile.units) do
 		if self.HeaderFrames[unit] then
 			if unit == "raid" then
-				for id=1,9 do
+				for id=1,10 do
 					local data = config.positions[id]
 					self.frameIndex["raid"..id] = oUF:SpawnHeader("LUFHeaderraid"..id, nil, nil, "oUF-initialConfigFunction", format(initialConfigFunction, "raid"))
 					self.frameIndex["raid"..id]:Show() --Set Show() early to allow child spawning
@@ -1396,6 +1461,16 @@ function LUF:SpawnUnits()
 						frame:SetParent(_G["LUFHeader"..unit])
 					end
 				end
+			elseif unit == "boss" then
+				self.frameIndex[unit] = CreateFrame("Frame", "LUFHeader"..unit, UIParent, "SecureFrameTemplate")
+				self.frameIndex[unit]:SetAttribute("oUF-headerType", unit)
+				self.frameIndex[unit].isBoss = true
+				self.frameIndex[unit]:SetHeight(1)
+				self.frameIndex[unit]:SetWidth(1)
+				for i=1, 8 do
+					local frame = oUF:Spawn(unit..i, "LUFHeader"..unit.."UnitButton"..i)
+					frame:SetParent(_G["LUFHeader"..unit])
+				end
 			else
 				local template
 				if unit == "raidpet" then
@@ -1403,7 +1478,7 @@ function LUF:SpawnUnits()
 				end
 				self.frameIndex[unit] = oUF:SpawnHeader("LUFHeader"..unit, template, nil, "oUF-initialConfigFunction", format(initialConfigFunction, unit))
 				if unit == "partypet" then
-					self.frameIndex[unit]:SetAttribute("refreshUnitChange", refreshUnitChange)
+					self.frameIndex[unit]:SetAttribute("_initialAttribute-refreshUnitChange", refreshUnitChange)
 				end
 				self.frameIndex[unit]:Show() --Set Show() early to allow child spawning
 				self.frameIndex[unit]:SetAttribute("oUF-headerType", unit)
@@ -1421,14 +1496,17 @@ function LUF:SpawnUnits()
 	self.stateMonitor:SetFrameRef("partyFrame", self.frameIndex["party"])
 	self.stateMonitor:SetFrameRef("partytargetFrame", self.frameIndex["partytarget"])
 	self.stateMonitor:SetFrameRef("partypetFrame", self.frameIndex["partypet"])
+	self.stateMonitor:SetFrameRef("petFrame", self.frameIndex["pet"])
 	self.stateMonitor:SetAttribute("partyEnabled", self.db.profile.units.party.enabled)
 	self.stateMonitor:SetAttribute("partytargetEnabled", self.db.profile.units.partytarget.enabled)
 	self.stateMonitor:SetAttribute("partypetEnabled", self.db.profile.units.partypet.enabled)
 	self.stateMonitor:SetAttribute("hideraid", self.db.profile.units.party.hideraid)
+	self.stateMonitor:SetAttribute("hidepetinvehicle", self.db.profile.units.pet.hidepetinvehicle)
+	RegisterStateDriver(self.stateMonitor, "vehiclestatus", "[target=vehicle, exists] vehicle; player")
 	RegisterStateDriver(self.stateMonitor, "raidstatus", "[target=raid6, exists] full; [target=raid1, exists] semi; none")
-	for i=1, 10 do
+	for i=1, 11 do
 		local frame
-		if i == 10 then
+		if i == 11 then
 			frame = self.frameIndex["raidpet"]
 		else
 			frame = self.frameIndex["raid"..i]
@@ -1496,7 +1574,7 @@ local function SetHeaderAttributes(header, config)
 		SetArenaHeader(header, config)
 		return
 	end
-	if not config.enabled or config.filters and not config.filters[tonumber(strmatch(header:GetName(),".+(%d)"))] then
+	if not config.enabled or config.filters and not config.filters[tonumber(strmatch(header:GetName(),"%a+(%d+)"))] then
 		header:Hide()
 		return
 	end
@@ -1587,15 +1665,16 @@ local function SetHeaderSettings(header)
 end
 
 local classOrder = {
-	[1] = "DRUID",
-	[2] = "HUNTER",
-	[3] = "MAGE",
-	[4] = "PALADIN",
-	[5] = "PRIEST",
-	[6] = "ROGUE",
-	[7] = "SHAMAN",
-	[8] = "WARLOCK",
-	[9] = "WARRIOR",
+	[1] = "DEATHKNIGHT",
+	[2] = "DRUID",
+	[3] = "HUNTER",
+	[4] = "MAGE",
+	[5] = "PALADIN",
+	[6] = "PRIEST",
+	[7] = "ROGUE",
+	[8] = "SHAMAN",
+	[9] = "WARLOCK",
+	[10] = "WARRIOR",
 }
 
 function LUF:SetupHeader(headerUnit)
@@ -1604,7 +1683,7 @@ function LUF:SetupHeader(headerUnit)
 	
 	if headerUnit == "raid" then
 		if not self.frameIndex["raid1"] then return end
-		for id=1,9 do
+		for id=1,10 do
 			header = self.frameIndex["raid"..id]
 			if config.groupBy == "GROUP" then
 				header:SetAttribute("groupFilter", tostring(id))
@@ -1636,7 +1715,7 @@ function LUF:ReloadHeaderUnits(headerUnit)
 	
 	if headerUnit == "raid" then
 		if not self.frameIndex["raid1"] then return end
-		for id=1,9 do
+		for id=1,10 do
 			header = self.frameIndex["raid"..id]
 			SetHeaderSettings(header)
 		end
@@ -1681,28 +1760,6 @@ function LUF:ReloadAll()
 	end
 end
 
-local function ScanRoster()
-	timerRunning = nil
-	if not LUF.InCombatLockdown then
-		for id=1,9 do
-			LUF.frameIndex["raid"..id]:SetAttribute("ForceUpdate", math.random())
-		end
-	end
-end
-
-local timerRunning
-local function CheckforRosterBug()
-	if UnitInRaid("player") then
-		for i=1, GetNumGroupMembers() do
-			local name = GetRaidRosterInfo(i)
-			if not timerRunning and not name then
-				timerRunning = true
-				C_Timer.After(1, ScanRoster)
-			end
-		end
-	end
-end
-
 local queuedEvent
 local frame = CreateFrame("Frame")
 frame:RegisterEvent("PLAYER_LOGIN")
@@ -1741,7 +1798,6 @@ frame:SetScript("OnEvent", function(self, event, addon)
 			queuedEvent = event
 		end
 	elseif event == "GROUP_ROSTER_UPDATE" then
-		CheckforRosterBug()
 		if not LUF.InCombatLockdown then
 			LUF:AutoswitchProfile(event)
 		else
