@@ -18,4 +18,5 @@
 	<Script file="oUF_Trinkets\oUF_Trinkets.lua"/>
 	<Script file="oUF_Ghoul\oUF_Ghoul.lua"/>
 	<Script file="oUF_HappinessIndicator\oUF_HappinessIndicator.lua"/>
+	<Script file="oUF_AdditionalPower\oUF_AdditionalPower.lua"/>
 </Ui>

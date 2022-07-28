@@ -32,7 +32,6 @@ libs\oUF\factory.lua
 libs\oUF\blizzard.lua
 libs\oUF\units.lua
 libs\oUF\colors.lua
-libs\oUF\elements\additionalpower.lua
 libs\oUF\elements\assistantindicator.lua
 libs\oUF\elements\castbar.lua
 libs\oUF\elements\health.lua
