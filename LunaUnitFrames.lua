@@ -229,8 +229,8 @@ function LUF:LoadoUFSettings()
 	self.oUF.colors.power[5] = self.oUF.colors.power.RUNIC_POWER
 
 	self.oUF.colors.runes[1] = {colors.blood.r, colors.blood.g, colors.blood.b}
-	self.oUF.colors.runes[2] = {colors.unholy.r, colors.unholy.g, colors.unholy.b}
-	self.oUF.colors.runes[3] = {colors.frost.r, colors.frost.g, colors.frost.b}
+	self.oUF.colors.runes[2] = {colors.frost.r, colors.frost.g, colors.frost.b}
+	self.oUF.colors.runes[3] = {colors.unholy.r, colors.unholy.g, colors.unholy.b}
 	self.oUF.colors.runes[4] = {colors.death.r, colors.death.g, colors.death.b}
 	
 	self.oUF.colors.happiness[1] = {colors.unhappy.r, colors.unhappy.g, colors.unhappy.b}

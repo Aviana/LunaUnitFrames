@@ -58,8 +58,8 @@ function LUF:LoadDefaults()
 		COMBOPOINTS = {r = 1.0, g = 0.80, b = 0.0},
 		RUNIC_POWER = {r = 0.35, g = 0.45, b = 0.60},
 		blood = {r = 1, g = 0, b = 0.4},
-		unholy = {r = 0, g = 0.4, b = 1},
-		frost = {r = 0, g = 1, b = 0.4},
+		unholy = {r = 0, g = 1, b = 0.4},
+		frost = {r = 0, g = 0.4, b = 1},
 		death = {r = 0.7, g = 0.5, b = 1},
 		-- Gradient
 		red = {r = 0.90, g = 0.0, b = 0.0},
