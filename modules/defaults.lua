@@ -98,8 +98,6 @@ function LUF:LoadDefaults()
 		--Highlight
 		target = {r = 0.75, g = 0.75, b = 0.35}, --???
 		mouseover = {r = 0.75, g = 0.75, b = 0.50}, --???
-		ticker = {r = 1, g = 1, b = 1, a = 1},
-		tickerBG = {r = 0, g = 0, b = 0, a = 1},
 	}
 	self.defaults.profile.units = {
 		player = {

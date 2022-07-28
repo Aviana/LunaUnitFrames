@@ -677,27 +677,6 @@ function LUF:CreateConfig()
 					type = "toggle",
 					order = 1,
 				},
-				ticker = {
-					name = L["Ticker"],
-					desc = L["Since mana/energy regenerate in ticks, show a timer for it"],
-					type = "toggle",
-					order = 2,
-					hidden = function(info) return info[1] ~= "player" or select(2, UnitClass("player")) == "WARRIOR" end
-				},
-				hideticker = {
-					name = L["Autohide ticker"],
-					desc = L["Hide the ticker when it's not needed"],
-					type = "toggle",
-					order = 3,
-					hidden = function(info) return info[1] ~= "player" or select(2, UnitClass("player")) == "WARRIOR" end
-				},
-				fivesecond = {
-					name = L["Five second rule"],
-					desc = L["Show a timer for the five second rule"],
-					type = "toggle",
-					order = 4,
-					hidden = function(info) return info[1] ~= "player" or select(2, UnitClass("player")) == "WARRIOR" end
-				},
 				background = {
 					name = BACKGROUND,
 					desc = string.format(L["Enable or disable the %s."], BACKGROUND),
@@ -3832,24 +3811,6 @@ function LUF:CreateConfig()
 					type = "toggle",
 					order = 2,
 				},
-				ticker = {
-					name = L["Ticker"],
-					desc = L["Since mana/energy regenerate in ticks, show a timer for it"],
-					type = "toggle",
-					order = 3,
-				},
-				hideticker = {
-					name = L["Autohide ticker"],
-					desc = L["Hide the ticker when it's not needed"],
-					type = "toggle",
-					order = 4,
-				},
-				fivesecond = {
-					name = L["Five second rule"],
-					desc = L["Show a timer for the five second rule"],
-					type = "toggle",
-					order = 5,
-				},
 				background = {
 					name = BACKGROUND,
 					desc = string.format(L["Enable or disable the %s."], BACKGROUND),
@@ -4808,20 +4769,6 @@ function LUF:CreateConfig()
 								name = TARGET,
 								type = "color",
 								order = 3,
-							},
-							ticker = {
-								name = L["Ticker"],
-								type = "color",
-								hasAlpha = true,
-								order = 4,
-								set = setAlphaColor,
-							},
-							tickerBG = {
-								name = L["Ticker Background"],
-								type = "color",
-								hasAlpha = true,
-								order = 5,
-								set = setAlphaColor,
 							},
 						},
 					},
