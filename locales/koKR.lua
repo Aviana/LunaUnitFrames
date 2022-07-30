@@ -256,6 +256,7 @@ local L = {
 ["nameafk"] = "Name or ("..AFK..")",
 ["rare"] = strmatch(GARRISON_MISSION_RARE,"%a*"),
 ["elite"] = ELITE,
+["Raidrole"] = "Raidrole",
 ["Ticker"] = "눈끔",
 ["Ticker Background"] = "Ticker Background",
 ["Since mana/energy regenerate in ticks, show a timer for it"] = "마나/기력이 재생되는 시간을 눈끔으로 표시합니다.",

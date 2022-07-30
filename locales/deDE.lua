@@ -259,6 +259,7 @@ local L = {
 ["nameafk"] = "Name oder (AFK)",
 ["rare"] = "Selten",
 ["elite"] = "Elite",
+["Raidrole"] = "Schlachtzugrolle",
 ["Ticker"] = "Ticker",
 ["Ticker Background"] = "Ticker Hintergrund",
 ["Since mana/energy regenerate in ticks, show a timer for it"] = "Da Mana/Energie in Ticks regeneriert, zeige eine Zeitanzeige daf\195\188r",

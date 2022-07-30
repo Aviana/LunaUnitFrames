@@ -40,6 +40,7 @@ libs\oUF\elements\masterlooterindicator.lua
 libs\oUF\elements\power.lua
 libs\oUF\elements\powerprediction.lua
 libs\oUF\elements\pvpindicator.lua
+libs\oUF\elements\grouproleindicator.lua
 libs\oUF\elements\raidroleindicator.lua
 libs\oUF\elements\raidtargetindicator.lua
 libs\oUF\elements\range.lua

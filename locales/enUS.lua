@@ -256,6 +256,7 @@ local L = {
 ["nameafk"] = "Name or ("..AFK..")",
 ["rare"] = strupper(strmatch(GARRISON_MISSION_RARE,"%a*")),
 ["elite"] = ELITE,
+["Raidrole"] = "Raidrole",
 ["Ticker"] = "Ticker",
 ["Ticker Background"] = "Ticker Background",
 ["Since mana/energy regenerate in ticks, show a timer for it"] = "Since mana/energy regenerate in ticks, show a timer for it",

@@ -256,6 +256,7 @@ local L = {
 ["nameafk"] = "Name or (離開)",
 ["rare"] = "稀有",
 ["elite"] = "精英",
+["Raidrole"] = "Raidrole",
 ["Ticker"] = "每跳計時",
 ["Ticker Background"] = "Ticker Background",
 ["Since mana/energy regenerate in ticks, show a timer for it"] = "顯示回復法力、能量的每跳計時",
