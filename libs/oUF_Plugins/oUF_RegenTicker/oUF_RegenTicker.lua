@@ -36,18 +36,6 @@ local GetSpellPowerCost = GetSpellPowerCost
 
 local myClass = select(2, UnitClass("player"))
 local Mp5EndTime = nil
-local Mp5IgnoredSpells = {
-	[57946] = true, -- life tap 8
-	[27222] = true, -- life tap 7
-	[11689] = true, -- life tap 6
-	[11688] = true, -- life tap 5
-	[11687] = true, -- life tap 4
-	[1456] = true, -- life tap 3
-	[1455] = true, -- life tap 2
-	[1454] = true, -- life tap 1
-	[18182] = true, -- improved life tap 1
-	[18183] = true, -- improved life tap 2
-}
 local backdrop = {
 	bgFile = [[Interface\Tooltips\UI-Tooltip-Background]],
 	tile = true,
@@ -108,7 +96,7 @@ local OnUnitSpellcastSucceeded = function(_, _, _, _, spellID)
 		end
 	end
 
-	if not spellCost or Mp5IgnoredSpells[spellID] then
+	if not spellCost then
 		return
 	end
 
