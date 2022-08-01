@@ -1,7 +1,7 @@
 -- Luna Unit Frames 4.0 by Aviana
 
 LUF = select(2, ...)
-LUF.version = 4310
+LUF.version = 4330
 
 local L = LUF.L
 local ACR = LibStub("AceConfigRegistry-3.0", true)
