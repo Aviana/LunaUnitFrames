@@ -793,6 +793,34 @@ function LUF.ApplySettings(frame)
 		frame.StatusPortrait.type = config.portrait.type
 	end
 	
+	local tickerColor = LUF.db.profile.colors.ticker
+	local tickerBgColor = LUF.db.profile.colors.tickerBG
+	-- Regen Ticker
+	if frame.RegenTicker then
+		if config.powerBar.fivesecond and select(2, UnitClass("player")) ~= "WARRIOR" and select(2, UnitClass("player")) ~= "ROGUE" and select(2, UnitClass("player")) ~= "DEATHKNIGHT" then
+			frame:EnableElement("RegenTicker")
+			frame.RegenTicker.vertical = config.powerBar.vertical
+			frame.RegenTicker.Spark.texture:SetVertexColor(tickerColor.r,tickerColor.g,tickerColor.b,1)
+			frame.RegenTicker.Spark:SetAlpha(tickerColor.a)
+			frame.RegenTicker.Spark:SetBackdropColor(tickerBgColor.r,tickerBgColor.g,tickerBgColor.b,tickerBgColor.a)
+		else
+			frame:DisableElement("RegenTicker")
+		end
+	end
+
+	-- Additional Regen Ticker
+	if frame.AdditionalRegenTicker then
+		if config.druidBar.fivesecond then
+			frame:EnableElement("RegenTickerAlt")
+			frame.AdditionalRegenTicker.vertical = config.druidBar.vertical
+			frame.AdditionalRegenTicker.Spark.texture:SetVertexColor(tickerColor.r,tickerColor.g,tickerColor.b,1)
+			frame.AdditionalRegenTicker.Spark:SetAlpha(tickerColor.a)
+			frame.AdditionalRegenTicker.Spark:SetBackdropColor(tickerBgColor.r,tickerBgColor.g,tickerBgColor.b,tickerBgColor.a)
+		else
+			frame:DisableElement("RegenTickerAlt")
+		end
+	end
+
 	-- Power Prediction
 	if frame.PowerPrediction then
 		if config.manaPrediction.enabled then

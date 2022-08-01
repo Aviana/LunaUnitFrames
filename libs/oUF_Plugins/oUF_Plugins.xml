@@ -2,6 +2,7 @@
 	<Script file="oUF_ClassIndicator\oUF_ClassIndicator.lua"/>
 	<Script file="oUF_EliteIndicator\oUF_EliteIndicator.lua"/>
 	<Script file="oUF_StatusIndicator\oUF_StatusIndicator.lua"/>
+	<Script file="oUF_RegenTicker\oUF_RegenTicker.lua"/>
 	<Script file="oUF_ComboPoints\oUF_ComboPoints.lua"/>
 	<Script file="oUF_EmptyBar\oUF_EmptyBar.lua"/>
 	<Script file="oUF_XPBar\oUF_XPBar.lua"/>
@@ -15,6 +16,7 @@
 	<Script file="oUF_BetterHealthPrediction\oUF_BetterHealthPrediction.lua"/>
 	<Script file="oUF_SimpleFader\oUF_SimpleFader.lua"/>
 	<Script file="oUF_TagsWithHeal\oUF_TagsWithHeal.lua"/>
+	<Script file="oUF_RegenTickerAlt\oUF_RegenTickerAlt.lua"/>
 	<Script file="oUF_Trinkets\oUF_Trinkets.lua"/>
 	<Script file="oUF_Ghoul\oUF_Ghoul.lua"/>
 	<Script file="oUF_HappinessIndicator\oUF_HappinessIndicator.lua"/>
