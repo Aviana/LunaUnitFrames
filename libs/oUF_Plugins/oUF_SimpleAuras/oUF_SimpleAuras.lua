@@ -70,49 +70,16 @@ local oUF = ns.oUF
 local weaponWatchTimer
 local mainHandEnd, mainHandDuration, mainHandCharges, offHandEnd, offHandDuration, offHandCharges
 
--- Things in this table have a duration other than 30 min
+-- Things in this table have a duration other than 60 min
 local weaponEnchantData = {
-	[2684] = 3600, -- +100 Attack Power vs Undead (60 min)
-	[2685] = 3600, -- +60 Spell Power vs Undead (60 min)
-	[2629] = 3600, -- Brilliant Mana Oil (60 min)
-	[2625] = 3600, -- Lesser Mana Oil (60 min)
-	[2624] = 3600, -- Minor Mana Oil (60 min)
-	[2677] = 3600, -- Superior Mana Oil (60 min)
-	[2626] = 3600, -- Lesser Wizard Oil (60 min)
-	[2623] = 3600, -- Minor Wizard Oil (60 min)
-	[2678] = 3600, -- Superior Wizard Oil (60 min)
-	[2627] = 3600, -- Wizard Oil (60 min)
+	[25] = 1800,   -- Shadow Oil (30 min)
 	[263] = 600,   -- Fishing +25 (10 min)
 	[264] = 600,   -- Fishing +50 (10 min)
 	[265] = 600,   -- Fishing +75 (10 min)
 	[266] = 600,   -- Fishing +100 (10 min)
-	[124] = 10,    -- Flametongue Totem 1 (10 sec)
-	[285] = 10,    -- Flametongue Totem 2 (10 sec)
-	[543] = 10,    -- Flametongue Totem 3 (10 sec)
-	[1683] = 10,   -- Flametongue Totem 4 (10 sec)
-	[2637] = 10,   -- Flametongue Totem 5 (10 sec)
-	[1783] = 10,   -- Windfury Totem 1 (10 sec)
-	[563] = 10,    -- Windfury Totem 2 (10 sec)
-	[564] = 10,    -- Windfury Totem 3 (10 sec)
-	[2638] = 10,   -- Windfury Totem 4 (10 sec)
-	[2639] = 10,   -- Windfury Totem 5 (10 sec)
 	[1003] = 300,  -- Venomhide Poison (5 min)
-	[40] = 3600,   -- Rough Sharpening Stone (60 min)
-	[13] = 3600,   -- Coarse Sharpening Stone (60 min)
-	[14] = 3600,   -- Heavy Sharpening Stone (60 min)
-	[483] = 3600,  -- Solid Sharpening Stone (60 min)
-	[1643] = 3600, -- Dense Sharpening Stone (60 min)
-	[2506] = 3600, -- Elemental Sharpening Stone (60 min)
-	[2712] = 3600, -- Fel Sharpening Stone (60 min)
-	[2713] = 3600, -- Adamantite Sharpening Stone (60 min)
-	[19] = 3600,   -- Rough Weightstone (60 min)
-	[20] = 3600,   -- Coarse Weightstone (60 min)
-	[21] = 3600,   -- Heavy Weightstone (60 min)
-	[484] = 3600,  -- Solid Weightstone (60 min)
-	[1703] = 3600, -- Dense Weightstone (60 min)
-	[2954] = 3600, -- Fel Weightstone (60 min)
-	[2955] = 3600, -- Adamantite Weightstone (60 min)
 	[3093] = 300,  -- Scourgebane (5 min)
+	[3102] = 1800, -- Bloodboil Poison (30 min)
 }
 
 local function UpdateTooltip(self)
@@ -769,7 +736,7 @@ local function UpdateWeaponEnchants(self, silent)
 	local hasMainHandEnchant, mainHandExpiration, mainHandChargeNum, mainHandEnchantID, hasOffHandEnchant, offHandExpiration, offHandChargeNum, offHandEnchantId = GetWeaponEnchantInfo()
 	if hasMainHandEnchant then
 		mainHandEnd = GetTime() + (mainHandExpiration / 1000)
-		mainHandDuration = weaponEnchantData[mainHandEnchantID] or 1800
+		mainHandDuration = weaponEnchantData[mainHandEnchantID] or 3600
 		mainHandCharges = mainHandChargeNum
 	else
 		mainHandEnd = nil
@@ -778,7 +745,7 @@ local function UpdateWeaponEnchants(self, silent)
 	end
 	if hasOffHandEnchant then
 		offHandEnd = GetTime() + (offHandExpiration / 1000)
-		offHandDuration = weaponEnchantData[offHandEnchantId] or 1800
+		offHandDuration = weaponEnchantData[offHandEnchantId] or 3600
 		offHandCharges = offHandChargeNum
 	else
 		offHandEnd = nil
