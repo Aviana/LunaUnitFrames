@@ -1107,7 +1107,7 @@ local tagStrings = {
 	end]],
 
 	["healthcolor"] = [[function(unit)
-		local percent = UnitHealth(unit) / UnitHealthMax(unit)
+		local percent = UnitHealth(unit) / max(UnitHealthMax(unit),1)
 		if( percent >= 1 ) then return Hex(LUF.db.profile.colors.green.r, LUF.db.profile.colors.green.g, LUF.db.profile.colors.green.b) end
 		if( percent == 0 ) then return Hex(LUF.db.profile.colors.red.r, LUF.db.profile.colors.red.g, LUF.db.profile.colors.red.b) end
 		
