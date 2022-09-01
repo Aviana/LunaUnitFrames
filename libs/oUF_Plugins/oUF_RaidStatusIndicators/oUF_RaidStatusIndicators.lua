@@ -132,26 +132,21 @@ local function checkAura(unit, spells, playeronly)
 				casterunit,_,_,spellID = select(7, UnitAura(unit, i, "HARMFUL"))
 			end
 		elseif type(spell) == "string" then
-			local i, spellName = 1, UnitAura(unit, 1)
-			local casterunit = select(7,UnitAura(unit, 1))
-			local lowerSpell = strlower(spell)
+			local i, spellName,_,_,_,_,_,casterunit = 1, UnitAura(unit, 1)
 			while spellName do
-				if strmatch(strlower(spellName),lowerSpell) and (not playeronly or playeronly and casterunit and UnitIsUnit(casterunit,"player")) then
+				if strmatch(spellName,spell) and (not playeronly or playeronly and casterunit and UnitIsUnit(casterunit,"player")) then
 					return UnitAura(unit, i)
 				end
 				i = i + 1
-				spellName = UnitAura(unit, i)
-				casterunit = select(7,UnitAura(unit, i))
+				spellName,_,_,_,_,_,casterunit = UnitAura(unit, i)
 			end
-			i, spellName = 1, UnitAura(unit, 1, "HARMFUL")
-			casterunit = select(7,UnitAura(unit, 1, "HARMFUL"))
+			i, spellName,_,_,_,_,_,casterunit = 1, UnitAura(unit, 1, "HARMFUL")
 			while spellName do
-				if strmatch(strlower(spellName),lowerSpell) and (not playeronly or playeronly and casterunit and UnitIsUnit(casterunit,"player")) then
+				if strmatch(spellName,spell) and (not playeronly or playeronly and casterunit and UnitIsUnit(casterunit,"player")) then
 					return UnitAura(unit, i, "HARMFUL")
 				end
 				i = i + 1
-				spellName = UnitAura(unit, i, "HARMFUL")
-				casterunit = select(7,UnitAura(unit, i, "HARMFUL"))
+				spellName,_,_,_,_,_,casterunit = UnitAura(unit, i, "HARMFUL")
 			end
 		end
 	end
