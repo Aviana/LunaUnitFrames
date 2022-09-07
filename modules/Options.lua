@@ -3863,9 +3863,16 @@ function LUF:CreateConfig()
 				},
 				autoHide = {
 					name = L["Auto hide"],
-					desc = string.format(L["Hide when inactive"]),
+					desc = L["Hide when inactive"],
 					type = "toggle",
 					order = 2,
+				},
+				bearEnergy = {
+					name = L["Bear Energy"],
+					desc = L["Show Energy instead of Mana in Bear Form"],
+					type = "toggle",
+					order = 3,
+					set = function(info, value) LUF.oUF.bearEnergy = value set(info, value) end
 				},
 				fivesecond = {
 					name = L["Five second rule"],

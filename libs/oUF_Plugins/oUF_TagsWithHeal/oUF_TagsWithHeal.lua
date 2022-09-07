@@ -138,6 +138,8 @@ local _ENV = {
 	LT = LT,
 	GetHealTimeFrame = function() return oUF.TagsWithHealTimeFrame or 4 end,
 	GetShowHots = function() if oUF.TagsWithHealDisableHots then return LHC.DIRECT_HEALS else return LHC.ALL_HEALS end end,
+	DruidPower = function() if oUF.bearEnergy and UnitPowerType('player') == 1 then return UnitPower('player', 3) end return UnitPower('player', 0) end,
+	DruidPowerMax = function() if oUF.bearEnergy and UnitPowerType('player') == 1 then return UnitPowerMax('player', 3) end return UnitPowerMax('player', 0) end,
 }
 _ENV.ColorGradient = function(...)
 	return _ENV._FRAME:ColorGradient(...)
@@ -729,13 +731,13 @@ local tagStrings = {
 
 	["druid:pp"] = [[function(unit)
 		if unit == "player" then
-			return UnitPower(unit, Enum.PowerType.Mana)
+			return DruidPower()
 		end
 	end]],
 
 	["druid:maxpp"] = [[function(unit)
 		if unit == "player" then
-			return UnitPowerMax(unit, Enum.PowerType.Mana)
+			return DruidPowerMax()
 		end
 	end]],
 
@@ -743,10 +745,10 @@ local tagStrings = {
 		if unit ~= "player" then
 			return
 		end
-		if UnitPowerMax(unit, Enum.PowerType.Mana)-UnitPower(unit, Enum.PowerType.Mana) == 0 then
+		if DruidPowerMax()-DruidPower() == 0 then
 			return
 		else
-			return UnitPower(unit, Enum.PowerType.Mana)-UnitPowerMax(unit, Enum.PowerType.Mana)
+			return DruidPower()-DruidPowerMax()
 		end
 	end]],
 
@@ -754,7 +756,7 @@ local tagStrings = {
 		if unit ~= "player" then
 			return
 		end
-		local mana,manamax = UnitPower(unit, Enum.PowerType.Mana),UnitPowerMax(unit, Enum.PowerType.Mana)
+		local mana,manamax = DruidPower(),DruidPowerMax()
 		if manamax == 0 then
 			return 0
 		else

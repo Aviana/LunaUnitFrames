@@ -29,6 +29,7 @@ The following options are listed by priority. The first check that returns true 
                      second return of [UnitClass](http://wowprogramming.com/docs/api/UnitClass.html) (boolean)
 .colorSmooth       - Use `self.colors.smooth` to color the bar with a smooth gradient based on the player's current
                      additional power percentage (boolean)
+.bearEnergy		   - Show Energy instead of Mana while in Bear Form
 .disableHide       - Do not hide when the main resource is mana
 
 ## Sub-Widget Options
@@ -69,13 +70,17 @@ local UnitPowerType = UnitPowerType
 -- end block
 
 
-local function UpdateColor(self, event, unit, powertype)
-	if(not (unit and unit == 'player') and powertype == 'MANA') then return end
+local function UpdateColor(self, event, unit)
+	if(not (unit and unit == 'player')) then return end
 	local element = self.AdditionalPower
 
 	local r, g, b, t
 	if(element.colorPower) then
-		t = self.colors.power[0]
+		if element.bearEnergy and UnitPowerType('player') == 1 then
+			t = self.colors.power[3]
+		else
+			t = self.colors.power[0]
+		end
 	elseif(element.colorClass and UnitIsPlayer(unit)) then
 		local _, class = UnitClass(unit)
 		t = self.colors.class[class]
@@ -115,9 +120,9 @@ local function ColorPath(self, ...)
 end
 
 local function Update(self, event, unit, powertype)
-	if(not (unit and UnitIsUnit(unit, 'player') and powertype == 'MANA')) then return end
-
 	local element = self.AdditionalPower
+	if not (unit and UnitIsUnit(unit, 'player') and element.powerType == powertype) then return end
+
 	--[[ Callback: AdditionalPower:PreUpdate(unit)
 	Called before the element has been updated.
 
@@ -128,8 +133,15 @@ local function Update(self, event, unit, powertype)
 		element:PreUpdate(unit)
 	end
 
-	local cur = UnitPower('player', 0)
-	local max = UnitPowerMax('player', 0)
+	local cur, max
+
+	if element.powerType == 'ENERGY' then
+		cur = UnitPower('player', 3)
+		max = UnitPowerMax('player', 3)
+	else
+		cur = UnitPower('player', 0)
+		max = UnitPowerMax('player', 0)
+	end
 
 	element:SetMinMaxValues(0, max)
 
@@ -164,9 +176,7 @@ local function Path(self, ...)
 	* unit  - the unit accompanying the event (string)
 	* ...   - the arguments accompanying the event
 	--]]
-	(self.AdditionalPower.Override or Update) (self, ...);
-
-	ColorPath(self, ...)
+	(self.AdditionalPower.Override or Update) (self, ...)
 end
 
 local function ElementEnable(self)
@@ -190,7 +200,7 @@ local function ElementEnable(self)
 	element.isEnabled = true
 	-- end block
 
-	Path(self, 'ElementEnable', 'player', 'MANA')
+	Path(self, 'ElementEnable', 'player', element.powerType)
 end
 
 local function ElementDisable(self)
@@ -236,7 +246,9 @@ local function VisibilityPath(self, ...)
 	* event - the event triggering the update (string)
 	* unit  - the unit accompanying the event (string)
 	--]]
+	self.AdditionalPower.powerType = self.AdditionalPower.bearEnergy and UnitPowerType('player') == 1 and "ENERGY" or "MANA"
 	(self.AdditionalPower.OverrideVisibility or Visibility) (self, ...)
+	ColorPath(self, ...)
 end
 
 local function ForceUpdate(element)

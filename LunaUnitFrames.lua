@@ -253,6 +253,8 @@ function LUF:LoadoUFSettings()
 	
 	self.oUF.TagsWithHealTimeFrame = self.db.profile.inchealTime
 	self.oUF.TagsWithHealDisableHots = self.db.profile.disablehots
+
+	self.oUF.bearEnergy = self.db.profile.units.player.druidBar.bearEnergy
 end
 
 function LUF:ResetColors()
@@ -679,6 +681,7 @@ local moduleSettings = {
 		mod.texture = LUF:LoadMedia(SML.MediaType.STATUSBAR, config.statusbar)
 		mod:SetStatusBarTexture(LUF:LoadMedia(SML.MediaType.STATUSBAR, config.statusbar))
 		mod.disableHide = config.autoHide
+		mod.bearEnergy = config.bearEnergy
 		if config.background then
 			mod.bg:SetTexture(mod.texture)
 			mod.bg:Show()
