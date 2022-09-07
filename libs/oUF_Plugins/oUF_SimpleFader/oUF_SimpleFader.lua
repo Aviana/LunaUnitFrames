@@ -65,7 +65,7 @@ local function Update(self, event)
 	( CastingInfo() or ChannelInfo() ) or
 	( PowerTypesFull[UnitPowerType(unit)] and UnitPower(unit) ~= UnitPowerMax(unit) ) or
 	( UnitHealth(unit) ~= UnitHealthMax(unit) ) or
-	( unit == "player" and self:GetParent() == UIParent and UnitExists("target") ) then
+	( unit == "player" and UnitExists("target") ) then
 		startFading(self, true, element.combatAlpha, element.fastFade)
 	else
 		startFading(self, nil, element.inactiveAlpha, element.fastFade)
