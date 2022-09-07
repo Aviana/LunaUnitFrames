@@ -426,6 +426,8 @@ local L = {
 ["Enable the sound when switching target"] = "Enable the sound when switching target",
 ["Right click to focus"] = "Right click to focus",
 ["Focus the unit upon right clicking"] = "Focus the unit upon right clicking",
+["Fade"] = "Fade",
+["Fade when on cooldown"] = "Fade when on cooldown",
 }
 
 LUF.L = L

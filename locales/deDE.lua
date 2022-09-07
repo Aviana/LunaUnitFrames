@@ -429,6 +429,8 @@ local L = {
 ["Enable the sound when switching target"] = "Schalte das Ger\195\164usch bei Zielwechsel ein",
 ["Right click to focus"] = "Rechtsklick fokus",
 ["Focus the unit upon right clicking"] = "Fokussiere die Einheit bei Rechtsklick",
+["Fade"] = "Verblassen",
+["Fade when on cooldown"] = "Verblasse w\195\164hrend der Regeneration",
 }
 
 local LUF = select(2, ...)

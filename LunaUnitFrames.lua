@@ -727,6 +727,7 @@ local moduleSettings = {
 	end,
 	runes = function(mod, config)
 		if not config.enabled then mod:Hide() return end
+		mod.Runes.fadeInactive = config.fadeInactive
 		local texture = LUF:LoadMedia(SML.MediaType.STATUSBAR, config.statusbar)
 		for i=1, 6 do
 			local rune = mod.Runes[i]
