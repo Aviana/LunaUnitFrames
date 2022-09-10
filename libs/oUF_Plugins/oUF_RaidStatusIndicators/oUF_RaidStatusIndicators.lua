@@ -66,11 +66,7 @@ end
 
 local function isManaUser(unit)
 	local unitClass = select(2, UnitClass(unit))
-	if unitClass == "ROGUE" or unitClass == "WARRIOR" then
-		return false
-	else
-		return true
-	end
+	return unitClass ~= "ROGUE" and unitClass ~= "WARRIOR" and unitClass ~= "DEATHKNIGHT"
 end
 
 local function checkMissingBuff(unit, spells)
