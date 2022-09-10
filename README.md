@@ -1,5 +1,5 @@
 # LunaUnitFrames
-Unit Frames for WoW Classic TBC
+Unit Frames for WoW Classic WotLK
 
 LunaUnitFrames supports/recommends WowUp.io for automatic updates: https://wowup.io/
 
