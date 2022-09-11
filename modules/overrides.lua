@@ -275,8 +275,11 @@ LUF.overrides["AdditionalPower"].PostUpdateVisibility = function(self, visible, 
 end
 
 LUF.overrides["Runes"] = {}
-LUF.overrides["Runes"].Update = function(self)
+LUF.overrides["Runes"].Update = function(self, event)
 	local Runes = self.Runes
+
+	if event == "RUNE_TYPE_UPDATE" or event == "RUNE_POWER_UPDATE" then return end
+	
 	local x, y = (self:GetWidth() - 5) / 6 , self:GetHeight()
 	for i=1, 6 do
 		Runes[i]:SetSize(x, y)

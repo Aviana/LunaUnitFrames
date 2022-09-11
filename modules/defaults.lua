@@ -116,7 +116,7 @@ function LUF:LoadDefaults()
 			totemBar = {enabled = false, order = 70, height = 2, background = true, backgroundAlpha = 0.2, autoHide = true, posSlot = "CENTER"},
 			comboPoints = {enabled = false, background = true, backgroundAlpha = 0.2, autoHide = true, order = 70, growth = "RIGHT", height = 2, posSlot = "CENTER"},
 			ghoul = { enabled = false, background = true, backgroundAlpha = 0.2, height = 2, autoHide = true, order = 70, posSlot = "CENTER"},
-			runes = {enabled = true, background = true, backgroundAlpha = 0.2, order = 80, height = 2, posSlot = "CENTER"},
+			runes = {enabled = true, background = true, backgroundAlpha = 0.2, fontsize = 8, order = 80, height = 2, posSlot = "CENTER"},
 			highlight = { enabled = true, debuff = 2 },
 			borders = { enabled = true, debuff = 2, size = 1 },
 			fader = {enabled = false, combatAlpha = 1, inactiveAlpha = 0.2, speedyFade = false},

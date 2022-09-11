@@ -222,6 +222,8 @@ local UnitSpecific = {
 				Runes[i] = CreateFrame("StatusBar", nil, runes)
 				Runes[i].bg = runes:CreateTexture(nil, "BACKGROUND")
 				Runes[i].bg:SetAllPoints(Runes[i])
+				Runes[i].timer = Runes[i]:CreateFontString("LUFRuneCooldown"..i, "OVERLAY")
+				Runes[i].timer:SetPoint("CENTER", Runes[i], "CENTER")
 			end
 			runes.Update = LUF.overrides["Runes"].Update
 			Runes.PostUpdate = LUF.overrides["Runes"].PostUpdate

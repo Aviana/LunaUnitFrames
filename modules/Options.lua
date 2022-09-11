@@ -321,6 +321,7 @@ function LUF:CreateConfig()
 			tbl.combatText.font = nil
 		end
 		LUF.db.profile.units.raid.font = nil
+		LUF.db.profile.units.player.runes.font = nil
 	end
 
 	local function setGrowthDir(info, value)
@@ -4169,17 +4170,40 @@ function LUF:CreateConfig()
 					type = "toggle",
 					order = 2,
 				},
+				timer = {
+					name = L["Timer"],
+					desc = string.format(L["Enable or disable the %s."],L["Timer"]),
+					type = "toggle",
+					order = 3,
+				},
+				font = {
+					order = 4,
+					type = "select",
+					name = L["Font"],
+					dialogControl = "LSM30_Font",
+					values = getMediaData,
+					get = function(info) return get(info) or LUF.db.profile.font or SML.DefaultMedia.font end,
+				},
+				fontsize = {
+					name = FONT_SIZE,
+					desc = L["Set the font size."],
+					type = "range",
+					order = 5,
+					min = 5,
+					max = 24,
+					step = 1,
+				},
 				background = {
 					name = BACKGROUND,
 					desc = string.format(L["Enable or disable the %s."], BACKGROUND),
 					type = "toggle",
-					order = 3,
+					order = 6,
 				},
 				backgroundAlpha = {
 					name = L["Background alpha"],
 					desc = L["Set the background alpha."],
 					type = "range",
-					order = 4,
+					order = 7,
 					min = 0,
 					max = 1,
 					step = 0.01,
@@ -4188,7 +4212,7 @@ function LUF:CreateConfig()
 					name = L["Height"],
 					desc = L["Set the height."],
 					type = "range",
-					order = 5,
+					order = 8,
 					min = 1,
 					max = 10,
 					step = 0.1,
@@ -4197,13 +4221,13 @@ function LUF:CreateConfig()
 					name = L["Order"],
 					desc = L["Set the order priority."],
 					type = "range",
-					order = 6,
+					order = 9,
 					min = 0,
 					max = 100,
 					step = 5,
 				},
 				statusbar = {
-					order = 7,
+					order = 10,
 					type = "select",
 					name = L["Bar texture"],
 					dialogControl = "LSM30_Statusbar",
@@ -4214,7 +4238,7 @@ function LUF:CreateConfig()
 					name = L["Bar Group"],
 					desc = L["Select the bar stack"],
 					type = "select",
-					order = 8,
+					order = 11,
 					values = {["LEFT"] = L["Left Group"], ["RIGHT"] = L["Right Group"], ["CENTER"] = L["Center Group"]},
 				},
 			},

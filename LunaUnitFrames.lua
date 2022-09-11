@@ -728,6 +728,7 @@ local moduleSettings = {
 	runes = function(mod, config)
 		if not config.enabled then mod:Hide() return end
 		mod.Runes.fadeInactive = config.fadeInactive
+		mod.Runes.disableTimer = not config.timer
 		local texture = LUF:LoadMedia(SML.MediaType.STATUSBAR, config.statusbar)
 		for i=1, 6 do
 			local rune = mod.Runes[i]
@@ -739,6 +740,7 @@ local moduleSettings = {
 			else
 				rune.bg:Hide()
 			end
+			rune.timer:SetFont(LUF:LoadMedia(SML.MediaType.FONT, config.font), config.fontsize)
 		end
 		mod:Update()
 	end,
