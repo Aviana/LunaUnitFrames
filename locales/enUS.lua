@@ -428,6 +428,8 @@ local L = {
 ["Focus the unit upon right clicking"] = "Focus the unit upon right clicking",
 ["Fade"] = "Fade",
 ["Fade when on cooldown"] = "Fade when on cooldown",
+["Rune Grace"] = "Rune Grace",
+["Highlights a rune while it does not have to be used yet to maximize efficiency"] = "Highlights a rune while it does not have to be used yet to maximize efficiency",
 }
 
 LUF.L = L

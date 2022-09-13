@@ -224,6 +224,11 @@ local UnitSpecific = {
 				Runes[i].bg:SetAllPoints(Runes[i])
 				Runes[i].timer = Runes[i]:CreateFontString("LUFRuneCooldown"..i, "OVERLAY")
 				Runes[i].timer:SetPoint("CENTER", Runes[i], "CENTER")
+				Runes[i].hl = Runes[i]:CreateTexture(nil, "OVERLAY")
+				Runes[i].hl:SetTexture([[Interface\AddOns\LunaUnitFrames\media\textures\highlight]])
+				Runes[i].hl:SetBlendMode("ADD")
+				Runes[i].hl:SetAllPoints(Runes[i])
+				Runes[i].hl:Hide()
 			end
 			runes.Update = LUF.overrides["Runes"].Update
 			Runes.PostUpdate = LUF.overrides["Runes"].PostUpdate

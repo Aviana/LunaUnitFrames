@@ -431,6 +431,8 @@ local L = {
 ["Focus the unit upon right clicking"] = "Fokussiere die Einheit bei Rechtsklick",
 ["Fade"] = "Verblassen",
 ["Fade when on cooldown"] = "Verblasse w\195\164hrend der Regeneration",
+["Rune Grace"] = "Runen Frist",
+["Highlights a rune while it does not have to be used yet to maximize efficiency"] = "Hebt runen hervor wenn sie noch nicht genutzt werden m\195\188ssen für maximale Effizienz",
 }
 
 local LUF = select(2, ...)

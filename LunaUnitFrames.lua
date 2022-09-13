@@ -1,7 +1,7 @@
 -- Luna Unit Frames 4.0 by Aviana
 
 LUF = select(2, ...)
-LUF.version = 4333
+LUF.version = 4334
 
 local L = LUF.L
 local ACR = LibStub("AceConfigRegistry-3.0", true)
@@ -729,6 +729,7 @@ local moduleSettings = {
 		if not config.enabled then mod:Hide() return end
 		mod.Runes.fadeInactive = config.fadeInactive
 		mod.Runes.disableTimer = not config.timer
+		mod.Runes.disableGrace = not config.grace
 		local texture = LUF:LoadMedia(SML.MediaType.STATUSBAR, config.statusbar)
 		for i=1, 6 do
 			local rune = mod.Runes[i]

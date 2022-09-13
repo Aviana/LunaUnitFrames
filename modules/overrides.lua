@@ -277,9 +277,6 @@ end
 LUF.overrides["Runes"] = {}
 LUF.overrides["Runes"].Update = function(self, event)
 	local Runes = self.Runes
-
-	if event == "RUNE_TYPE_UPDATE" or event == "RUNE_POWER_UPDATE" then return end
-	
 	local x, y = (self:GetWidth() - 5) / 6 , self:GetHeight()
 	for i=1, 6 do
 		Runes[i]:SetSize(x, y)
@@ -288,16 +285,14 @@ LUF.overrides["Runes"].Update = function(self, event)
 	end
 end
 
-LUF.overrides["Runes"].PostUpdate = function(self, runemap, hasVehicle, allReady)
+LUF.overrides["Runes"].PostUpdate = function(self, runemap, hasVehicle)
 	local mod = self[1]:GetParent()
-	if hasVehicle then
-		mod:Hide()
-		mod.isDisabled = true
-	else
-		mod:Show()
-		mod.isDisabled = nil
+
+	if hasVehicle and not mod.isDisabled or not hasVehicle and mod.isDisabled then
+		mod:SetShown(mod.isDisabled)
+		mod.isDisabled = not mod.isDisabled
+		LUF.PlaceModules(mod:GetParent())
 	end
-	LUF.PlaceModules(mod:GetParent())
 end
 
 LUF.overrides["ComboPoints"] = {}

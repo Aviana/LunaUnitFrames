@@ -2,13 +2,12 @@
 ## Title: Luna Unit Frames
 ## Notes: 
 ## Author: Aviana
-## Version: 4333
+## Version: 4334
 ## SavedVariables: LunaUFDB
 ## OptionalDeps: Ace3, LibSharedMedia-3.0, AceGUI-3.0-SharedMediaWidgets, Clique
 ## X-License: WTFPL (http://www.wtfpl.net/about/)
 ## X-Donate: paypal.me/LunaUnitFrames
 
-#@no-lib-strip@
 libs\LibStub\LibStub.lua
 libs\CallbackHandler-1.0\CallbackHandler-1.0.xml
 libs\LibSharedMedia-3.0\lib.xml
@@ -23,7 +22,7 @@ libs\LibAuraTypes\LibAuraTypes.lua
 libs\LibSpellLocks\LibSpellLocks.lua
 libs\LibTargeted\LibTargeted.lua
 
-# oUF
+# oUF - We load only what we need
 libs\oUF\init.lua
 libs\oUF\private.lua
 libs\oUF\ouf.lua
@@ -37,7 +36,6 @@ libs\oUF\elements\castbar.lua
 libs\oUF\elements\health.lua
 libs\oUF\elements\leaderindicator.lua
 libs\oUF\elements\masterlooterindicator.lua
-libs\oUF\elements\power.lua
 libs\oUF\elements\powerprediction.lua
 libs\oUF\elements\pvpindicator.lua
 libs\oUF\elements\grouproleindicator.lua
@@ -47,10 +45,8 @@ libs\oUF\elements\range.lua
 libs\oUF\elements\readycheckindicator.lua
 libs\oUF\elements\resurrectindicator.lua
 libs\oUF\elements\totems.lua
-libs\oUF\elements\runes.lua
 
 libs\oUF_Plugins\oUF_Plugins.xml
-#@end-no-lib-strip@
 
 locales\enUS.lua
 locales\deDE.lua
