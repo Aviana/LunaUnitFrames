@@ -243,7 +243,7 @@ LUF.overrides["Totems"].Update = function(self)
 	end
 end
 
-LUF.overrides["Totems"].PostUpdate = function(self, slot, haveTotem, name, start, duration, icon)
+LUF.overrides["Totems"].PostTotemUpdate = function(self)
 	local mod = self[1]:GetParent()
 	mod:Show()
 	for i=1,4 do

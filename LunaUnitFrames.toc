@@ -2,7 +2,7 @@
 ## Title: Luna Unit Frames
 ## Notes: 
 ## Author: Aviana
-## Version: 4334
+## Version: 4335
 ## SavedVariables: LunaUFDB
 ## OptionalDeps: Ace3, LibSharedMedia-3.0, AceGUI-3.0-SharedMediaWidgets, Clique
 ## X-License: WTFPL (http://www.wtfpl.net/about/)
@@ -44,7 +44,6 @@ libs\oUF\elements\raidtargetindicator.lua
 libs\oUF\elements\range.lua
 libs\oUF\elements\readycheckindicator.lua
 libs\oUF\elements\resurrectindicator.lua
-libs\oUF\elements\totems.lua
 
 libs\oUF_Plugins\oUF_Plugins.xml
 

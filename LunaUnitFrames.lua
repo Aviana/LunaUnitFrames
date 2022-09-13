@@ -1,7 +1,7 @@
 -- Luna Unit Frames 4.0 by Aviana
 
 LUF = select(2, ...)
-LUF.version = 4334
+LUF.version = 4335
 
 local L = LUF.L
 local ACR = LibStub("AceConfigRegistry-3.0", true)
@@ -661,6 +661,7 @@ local moduleSettings = {
 			[3] = {0,0,1},
 			[4] = {0.41,0.8,0.94},
 		}
+		mod.Totems.disableTimer = not config.timer
 		for i=1, 4 do
 			local totem = mod.Totems[i]
 			totem:SetStatusBarTexture(texture)
@@ -673,6 +674,7 @@ local moduleSettings = {
 			else
 				totem.bg:Hide()
 			end
+			totem.timer:SetFont(LUF:LoadMedia(SML.MediaType.FONT, config.font), config.fontsize)
 		end
 		mod.autoHide = config.autoHide
 		mod:Update()
