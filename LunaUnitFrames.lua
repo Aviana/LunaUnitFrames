@@ -1570,6 +1570,13 @@ local function SetCustomHeader(header, config)
 	local yOffset = config.offset * yMod
 	local currentAnchor = header
 
+	if not config.enabled then
+		header:Hide()
+		return
+	else
+		header:Show()
+	end
+
 	local ButtonName = header:GetName() .. "UnitButton"
 	local num = 1
 	local frame = _G[ButtonName .. num]
