@@ -787,12 +787,15 @@ function LUF.InitializeUnit(frame, unit, notHeaderChild)
 		fstrings.left = parent:CreateFontString(nil, "OVERLAY")
 		fstrings.left:SetDrawLayer("OVERLAY", 7)
 		fstrings.left:SetJustifyH("LEFT")
+		fstrings.left:SetFont("Fonts\\FRIZQT__.TTF", 8) -- prevent "font not set" errors
 		fstrings.center = parent:CreateFontString(nil, "OVERLAY")
 		fstrings.center:SetDrawLayer("OVERLAY", 7)
 		fstrings.center:SetJustifyH("CENTER")
+		fstrings.center:SetFont("Fonts\\FRIZQT__.TTF", 8)
 		fstrings.right = parent:CreateFontString(nil, "OVERLAY")
 		fstrings.right:SetDrawLayer("OVERLAY", 7)
 		fstrings.right:SetJustifyH("RIGHT")
+		fstrings.right:SetFont("Fonts\\FRIZQT__.TTF", 8)
 	end
 	
 	frame:SetScript("OnEnter", function(self)

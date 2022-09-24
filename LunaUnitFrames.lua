@@ -1,7 +1,7 @@
 -- Luna Unit Frames 4.0 by Aviana
 
 LUF = select(2, ...)
-LUF.version = 4336
+LUF.version = 4337
 
 local L = LUF.L
 local ACR = LibStub("AceConfigRegistry-3.0", true)
@@ -1814,7 +1814,6 @@ frame:RegisterEvent("ADDON_LOADED")
 frame:RegisterEvent("PLAYER_REGEN_DISABLED")
 frame:RegisterEvent("PLAYER_REGEN_ENABLED")
 frame:RegisterEvent("PLAYER_ENTERING_WORLD")
-frame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 frame:SetScript("OnEvent", function(self, event, arg1)
 	if( event == "PLAYER_LOGIN" ) then
 		LUF:OnLoad()
@@ -1852,6 +1851,7 @@ frame:SetScript("OnEvent", function(self, event, arg1)
 			queuedEvent = event
 		end
 	elseif event == "PLAYER_ENTERING_WORLD" then
+		frame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 		if not LUF.InCombatLockdown then
 			LUF:AutoswitchProfile(event)
 		else
