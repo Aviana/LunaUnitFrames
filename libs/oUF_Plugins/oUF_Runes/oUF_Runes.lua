@@ -81,7 +81,7 @@ local function onUpdateTimer(self, elapsed)
 	end
 	if duration < max then
 		self:SetValue(duration)
-		self.timer:SetText(math.max(0,floor((self.max - duration)*10)/10))
+		self.timer:SetText(math.max(0,ceil(self.max - duration)))
 	end
 end
 
@@ -166,6 +166,7 @@ local function RuneUpdate(self, event, runeID, usable)
 		rune:SetMinMaxValues(0, 1)
 		rune:SetValue(1)
 		rune:SetAlpha(1)
+		rune:SetScript('OnUpdate', nil)
 		if rune.timer then
 			rune.timer:SetText("")
 		end
