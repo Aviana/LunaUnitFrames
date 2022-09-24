@@ -4,7 +4,7 @@ local AceConfigDialog = LibStub("AceConfigDialog-3.0")
 local SML = SML or LibStub:GetLibrary("LibSharedMedia-3.0")
 local ACR = LibStub("AceConfigRegistry-3.0", true)
 local L = LUF.L
-local resolutionselectvalue,groupselectvalue, profiledb = GetCurrentResolution(), "SOLO", {}
+local resolutionselectvalue,groupselectvalue, specselectvalue, profiledb = GetCurrentResolution(), "SOLO", "SPEC1", {}
 
 local InfoTags = {
 	["numtargeting"] = true,
@@ -10460,7 +10460,7 @@ function LUF:CreateConfig()
 						desc = L["Type of event to switch to"],
 						type = "select",
 						order = 2,
-						values = {["DISABLED"] = ADDON_DISABLED, ["RESOLUTION"] = L["Screen Resolution"],["GROUP"] = L["Size of Group"],["ARENA"] = ARENA},
+						values = {["DISABLED"] = ADDON_DISABLED, ["RESOLUTION"] = L["Screen Resolution"],["GROUP"] = L["Size of Group"],["ARENA"] = ARENA, ["SPECIALIZATION"] = SPECIALIZATION},
 						get = function(info) return LUF.db.char.switchtype end,
 						set = function(info, value) LUF.db.char.switchtype = value LUF:AutoswitchProfileSetup() end,
 					},
@@ -10484,11 +10484,21 @@ function LUF:CreateConfig()
 						get = function(info) return groupselectvalue end,
 						set = function(info, value) groupselectvalue = value end,
 					},
+					specselect = {
+						name = SPECIALIZATION,
+						--desc = L["Size of group to assign a profile to"],
+						type = "select",
+						order = 5,
+						hidden = function() return LUF.db.char.switchtype ~= "SPECIALIZATION" end,
+						values = {["SPEC1"]=SPECIALIZATION.." 1",["SPEC2"]=SPECIALIZATION.." 2"},
+						get = function(info) return specselectvalue end,
+						set = function(info, value) specselectvalue = value end,
+					},					
 					profileselect = {
 						name = L["Profile"],
 						desc = L["Name of the profile which to switch to"],
 						type = "select",
-						order = 5,
+						order = 6,
 						values = function() LUF.db:GetProfiles(profiledb) profiledb["NIL"] = NONE return profiledb end,
 						hidden = function() return LUF.db.char.switchtype == "DISABLED" end,
 						get = function(info)
@@ -10503,6 +10513,13 @@ function LUF:CreateConfig()
 												return i
 											end
 										end
+									end
+								end
+								return "NIL"
+							elseif LUF.db.char.switchtype == "SPECIALIZATION" then
+								for k,v in pairs(profiledb) do
+									if v == LUF.db.char.specdb[specselectvalue] then
+										return k
 									end
 								end
 								return "NIL"
@@ -10526,6 +10543,8 @@ function LUF:CreateConfig()
 										return
 									end
 								end
+							elseif LUF.db.char.switchtype == "SPECIALIZATION" then
+								LUF.db.char.specdb[specselectvalue] = value ~= "NIL" and profiledb[value] or nil
 							elseif LUF.db.char.switchtype == "GROUP" then
 								LUF.db.char.grpdb[groupselectvalue] = value ~= "NIL" and profiledb[value] or nil
 							else

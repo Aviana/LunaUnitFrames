@@ -373,7 +373,7 @@ function LUF:OnProfileDeleted(event, key, name)
 	end
 end
 
-function LUF:AutoswitchProfile(event)
+function LUF:AutoswitchProfile(event, arg1)
 	local profile
 	if event == "DISPLAY_SIZE_CHANGED" and self.db.char.switchtype == "RESOLUTION" then
 		local resolutions = {GetScreenResolutions()}
@@ -411,6 +411,8 @@ function LUF:AutoswitchProfile(event)
 		elseif self.db.char.grpdb["NONARENA"] then
 			profile = self.db.char.grpdb["NONARENA"]
 		end
+	elseif event == "ACTIVE_TALENT_GROUP_CHANGED" and self.db.char.switchtype == "SPECIALIZATION" then
+		profile = self.db.char.specdb["SPEC"..arg1]
 	end
 	if profile and profile ~= self.db:GetCurrentProfile() then
 		self.db:SetProfile(profile)
@@ -1812,11 +1814,12 @@ frame:RegisterEvent("ADDON_LOADED")
 frame:RegisterEvent("PLAYER_REGEN_DISABLED")
 frame:RegisterEvent("PLAYER_REGEN_ENABLED")
 frame:RegisterEvent("PLAYER_ENTERING_WORLD")
-frame:SetScript("OnEvent", function(self, event, addon)
+frame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+frame:SetScript("OnEvent", function(self, event, arg1)
 	if( event == "PLAYER_LOGIN" ) then
 		LUF:OnLoad()
 		self:UnregisterEvent("PLAYER_LOGIN")
-	elseif( event == "ADDON_LOADED" and ( addon == "Blizzard_ArenaUI" or addon == "Blizzard_CompactRaidFrames" ) and not LUF.InCombatLockdown) then
+	elseif( event == "ADDON_LOADED" and ( arg1 == "Blizzard_ArenaUI" or arg1 == "Blizzard_CompactRaidFrames" ) and not LUF.InCombatLockdown) then
 		LUF:HideBlizzardFrames()
 	elseif event == "PLAYER_REGEN_DISABLED" then
 		LUF.InCombatLockdown = true
@@ -1851,6 +1854,12 @@ frame:SetScript("OnEvent", function(self, event, addon)
 	elseif event == "PLAYER_ENTERING_WORLD" then
 		if not LUF.InCombatLockdown then
 			LUF:AutoswitchProfile(event)
+		else
+			queuedEvent = event
+		end
+	elseif event == "ACTIVE_TALENT_GROUP_CHANGED" then
+		if not LUF.InCombatLockdown then
+			LUF:AutoswitchProfile(event, arg1)
 		else
 			queuedEvent = event
 		end

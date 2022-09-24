@@ -21,6 +21,7 @@ function LUF:LoadDefaults()
 			switchtype = "DISABLED",
 			resdb = {},
 			grpdb = {},
+			specdb = {},
 		},
 		profile = {
 			locked = false,
