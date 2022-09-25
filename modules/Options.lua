@@ -526,7 +526,6 @@ function LUF:CreateConfig()
 			["player"] = true,
 		},
 		["castBar"] = {
-			["pet"] = true,
 			["pettarget"] = true,
 			["pettargettarget"] = true,
 			["targettarget"] = true,
@@ -534,8 +533,6 @@ function LUF:CreateConfig()
 			["partytarget"] = true,
 			["focustarget"] = true,
 			["focustargettarget"] = true,
-			["partypet"] = true,
-			["raidpet"] = true,
 			["maintanktarget"] = true,
 			["maintanktargettarget"] = true,
 			["mainassisttarget"] = true,

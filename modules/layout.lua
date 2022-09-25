@@ -257,6 +257,27 @@ local UnitSpecific = {
 	end,
 
 	pet = function(frame)
+	-- Castbar
+		local Castbar = CreateFrame("StatusBar", nil, frame)
+
+		local Background = Castbar:CreateTexture(nil, "BACKGROUND")
+		Background:SetAllPoints(Castbar)
+
+		local Icon = Castbar:CreateTexture(nil, "OVERLAY")
+		Icon:SetSize(10, 10)
+		Icon:SetPoint("TOPLEFT", Castbar, "TOPLEFT")
+
+		local SafeZone = Castbar:CreateTexture(nil, "OVERLAY")
+
+		Castbar.bg = Background
+		Castbar.Icon = Icon
+		Castbar.SafeZone = SafeZone
+		Castbar:SetScript("OnShow", LUF.PlaceModules)
+		Castbar:SetScript("OnHide", LUF.PlaceModules)
+		frame.Castbar = Castbar
+		frame.modules.castBar = Castbar
+		frame.modules.castBar.name = "Castbar"
+
 	-- XP Bar
 		local xpBarFrame = CreateFrame("Frame", nil, frame)
 		xpBarFrame:SetScript("OnSizeChanged", function() end)
@@ -388,7 +409,26 @@ local UnitSpecific = {
 	end,
 
 	partypet = function(frame)
-	-- Nothing here yet
+	-- Castbar
+		local Castbar = CreateFrame("StatusBar", nil, frame)
+
+		local Background = Castbar:CreateTexture(nil, "BACKGROUND")
+		Background:SetAllPoints(Castbar)
+
+		local Icon = Castbar:CreateTexture(nil, "OVERLAY")
+		Icon:SetSize(10, 10)
+		Icon:SetPoint("TOPLEFT", Castbar, "TOPLEFT")
+
+		local SafeZone = Castbar:CreateTexture(nil, "OVERLAY")
+
+		Castbar.bg = Background
+		Castbar.Icon = Icon
+		Castbar.SafeZone = SafeZone
+		Castbar:SetScript("OnShow", LUF.PlaceModules)
+		Castbar:SetScript("OnHide", LUF.PlaceModules)
+		frame.Castbar = Castbar
+		frame.modules.castBar = Castbar
+		frame.modules.castBar.name = "Castbar"
 	end,
 
 	raid = function(frame)
@@ -415,7 +455,26 @@ local UnitSpecific = {
 	end,
 	
 	raidpet = function(frame)
-	-- Nothing here yet
+	-- Castbar
+		local Castbar = CreateFrame("StatusBar", nil, frame)
+
+		local Background = Castbar:CreateTexture(nil, "BACKGROUND")
+		Background:SetAllPoints(Castbar)
+
+		local Icon = Castbar:CreateTexture(nil, "OVERLAY")
+		Icon:SetSize(10, 10)
+		Icon:SetPoint("TOPLEFT", Castbar, "TOPLEFT")
+
+		local SafeZone = Castbar:CreateTexture(nil, "OVERLAY")
+
+		Castbar.bg = Background
+		Castbar.Icon = Icon
+		Castbar.SafeZone = SafeZone
+		Castbar:SetScript("OnShow", LUF.PlaceModules)
+		Castbar:SetScript("OnHide", LUF.PlaceModules)
+		frame.Castbar = Castbar
+		frame.modules.castBar = Castbar
+		frame.modules.castBar.name = "Castbar"
 	end,
 	
 	maintank = function(frame)
