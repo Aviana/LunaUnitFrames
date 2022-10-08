@@ -161,6 +161,8 @@ local function RuneUpdate(self, event, runeID, usable)
 	local rune = self.Runes[runemap[runeID]]
 	local combat = UnitAffectingCombat("player")
 
+	if not rune then return end
+
 	local start, duration, runeReady = GetRuneCooldown(runeID)
 	if runeReady then
 		rune:SetMinMaxValues(0, 1)
