@@ -109,7 +109,6 @@ local _ENV = {
 			end
 		end
 	end,
-	UnitHasHealthData = function(unit) return not UnitPlayerControlled(unit) or UnitIsUnit("player", unit) or UnitIsUnit("pet", unit) or UnitPlayerOrPetInParty(unit) or UnitPlayerOrPetInRaid(unit) end,
 	DruidForms = {
 		[24858] = GetSpellInfo(24858), --moonkin
 		[1066] = GetSpellInfo(1066), -- seal
@@ -459,12 +458,6 @@ local tagStrings = {
 			else
 				return DEAD
 			end
-		elseif not UnitHasHealthData(unit) then
-			if maxhp < 1 then
-				return "0%"
-			else
-				return math.ceil((hp / maxhp) * 100).."%"
-			end
 		end
 		return hp.."/"..maxhp
 	end]],
@@ -481,12 +474,6 @@ local tagStrings = {
 				return feignDeath
 			else
 				return DEAD
-			end
-		elseif not UnitHasHealthData(unit) then
-			if maxhp < 1 then
-				return "0%"
-			else
-				return math.ceil((hp / maxhp) * 100).."%"
 			end
 		end
 		return hp.."/"..maxhp.." "..math.ceil((UnitHealth(unit) / UnitHealthMax(unit)) * 100).."%"
@@ -506,12 +493,6 @@ local tagStrings = {
 			return GHOST
 		elseif not UnitIsConnected(unit) then
 			return FRIENDS_LIST_OFFLINE
-		elseif not UnitHasHealthData(unit) then
-			if maxhp < 1 then
-				return "0%"
-			else
-				return math.ceil((hp / maxhp) * 100).."%"
-			end
 		end
 		if hp > 1000000 then
 			hp = (math.floor(hp/10000)/100).."M"
@@ -540,12 +521,6 @@ local tagStrings = {
 			return GHOST
 		elseif not UnitIsConnected(unit) then
 			return FRIENDS_LIST_OFFLINE
-		elseif not UnitHasHealthData(unit) then
-			if maxhp < 1 then
-				return "0%"
-			else
-				return math.ceil((hp / maxhp) * 100).."%"
-			end
 		end
 		if hp > 1000000 then
 			hp = (math.floor(hp/10000)/100).."M"
