@@ -136,25 +136,6 @@ local function ColorPath(self, ...)
 	(self.Runes.UpdateColor or UpdateColor) (self, ...)
 end
 
-local function Update(self, event)
-	local element = self.Runes
-	local hasVehicle = UnitHasVehicleUI('player')
-
-	for i=1, 6 do
-		element[i]:SetShown(not hasVehicle)
-	end
-
-	--[[ Callback: Runes:PostUpdate(runemap)
-	Called after the element has been updated.
-
-	* self    - the Runes element
-	* runemap - the ordered list of runes' indices (table)
-	--]]
-	if(element.PostUpdate) then
-		return element:PostUpdate(runemap, hasVehicle)
-	end
-end
-
 local function RuneUpdate(self, event, runeID, usable)
 	local currentTime = GetTime()
 	local alpha = self.Runes.fadeInactive and 0.4 or 1
@@ -195,6 +176,26 @@ local function RuneUpdate(self, event, runeID, usable)
 
 end
 
+local function Update(self, event)
+	local element = self.Runes
+	local hasVehicle = UnitHasVehicleUI('player')
+
+	for i=1, 6 do
+		element[i]:SetShown(not hasVehicle)
+		RuneUpdate(self, event, i)
+	end
+
+	--[[ Callback: Runes:PostUpdate(runemap)
+	Called after the element has been updated.
+
+	* self    - the Runes element
+	* runemap - the ordered list of runes' indices (table)
+	--]]
+	if(element.PostUpdate) then
+		return element:PostUpdate(runemap, hasVehicle)
+	end
+end
+
 local function Path(self, ...)
 	--[[ Override: Runes.Override(self, event, ...)
 	Used to completely override the internal update function.
@@ -222,6 +223,8 @@ local function Enable(self, unit)
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
 
+		resetGrace(self)
+
 		for i = 1, #element do
 			local rune = element[i]
 			if(rune:IsObjectType('StatusBar') and not (rune:GetStatusBarTexture() or rune:GetStatusBarAtlas())) then
@@ -240,6 +243,7 @@ local function Enable(self, unit)
 		self:RegisterEvent('PLAYER_REGEN_ENABLED', resetGrace, true)
 		self:RegisterEvent('RUNE_TYPE_UPDATE', ColorPath, true)
 		self:RegisterEvent('RUNE_POWER_UPDATE', RuneUpdate, true)
+		self:RegisterEvent('PLAYER_ENTERING_WORLD', Update, true)
 
 		return true
 	end
@@ -265,6 +269,7 @@ local function Disable(self)
 		self:UnregisterEvent('PLAYER_REGEN_ENABLED', resetGrace)
 		self:UnregisterEvent('RUNE_TYPE_UPDATE', ColorPath)
 		self:UnregisterEvent('RUNE_POWER_UPDATE', RuneUpdate)
+		self:UnregisterEvent('PLAYER_ENTERING_WORLD', Update)
 	end
 end
 
