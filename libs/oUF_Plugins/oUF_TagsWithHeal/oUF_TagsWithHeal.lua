@@ -152,7 +152,15 @@ local tagStrings = {
 	end]],
 
 	["nameafk"] = [[function(unit)
-		return UnitIsAFK(unit) and AFK or UnitName(unit)
+		if UnitIsAFK(unit) then return AFK end
+		local grptype, id = strmatch(gsub(unit,"pet",""), "^(%a+)(%d+)$")
+		if id and UnitHasVehicleUI(grptype..id) then
+			return UnitName(grptype..id)
+		elseif (unit == "player" or unit == "pet") and UnitHasVehicleUI("player") then
+			return UnitName("player")
+		else
+			return UnitName(unit) or ""
+		end
 	end]],
 
 	["afktime"] = [[function(unit)
@@ -769,7 +777,7 @@ local tagStrings = {
 		return Hex(color)
 	end]],
 
-	["name"] = [[function(unit) return UnitName(unit) or "" end]],
+	["name"] = [[function(unit) return UnitName(unit) or ""	end]],
 
 	["shortname"] = [[function(unit, realunit, var)
 		local length = tonumber(var) or 3
