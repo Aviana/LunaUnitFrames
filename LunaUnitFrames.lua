@@ -1474,7 +1474,7 @@ local refreshUnitChangePartyPet = [[
 
 local refreshUnitChangeRaid = [[
 	local unit = self:GetAttribute("unit")
-	
+
 	if unit == "player" or unit == "pet" then
 		RegisterStateDriver(self, 'vehicleui', '[@player' .. ',unithasvehicleui]vehicle; novehicle')
 		if UnitHasVehicleUI("player") then
@@ -1485,29 +1485,30 @@ local refreshUnitChangeRaid = [[
 		return
 	end
 
-	local grptype, id
+	local grptype, id, petunit
 	if (unit) then
 		unit = gsub(unit,"pet","")
-		grptype, id = strmatch(unit, "^(%a+)(%d+)$")
-		RegisterStateDriver(self, 'vehicleui', '[@' .. grptype .. id .. ',unithasvehicleui]vehicle; novehicle')
+		petunit = gsub(unit, "^(%a+)(%d+)$", "%1pet%2")
+		RegisterStateDriver(self, 'vehicleui', '[@' .. unit .. ',unithasvehicleui]vehicle; novehicle')
 	else
 		UnregisterStateDriver(self, 'vehicleui')
 		return
 	end
 
 	if UnitHasVehicleUI(unit) then
-		self:SetAttribute("unit", grptype.."pet"..id)
+		self:SetAttribute("unit", petunit)
 	else
-		self:SetAttribute("unit", grptype..id)
+		self:SetAttribute("unit", unit)
 	end
 ]]
 
 local onstatevehicleuiRaid = [[
 	local unit = self:GetAttribute("unit")
+	
 	if not unit then return end
 
 	if unit == "player" or unit == "pet" then
-		if UnitHasVehicleUI("player") then
+		if newstate == "vehicle" then
 			self:SetAttribute("unit", "pet")
 		else
 			self:SetAttribute("unit", "player")
@@ -1516,11 +1517,11 @@ local onstatevehicleuiRaid = [[
 	end
 
 	unit = gsub(unit,"pet","")
-	local grptype, id = strmatch(unit, "^(%a+)(%d+)$")
-	if UnitHasVehicleUI(unit) then
-		self:SetAttribute("unit", grptype.."pet"..id)
+	local petunit = gsub(unit, "^(%a+)(%d+)$", "%1pet%2")
+	if newstate == "vehicle" then
+		self:SetAttribute("unit", petunit)
 	else
-		self:SetAttribute("unit", grptype..id)
+		self:SetAttribute("unit", unit)
 	end
 ]]
 
@@ -1537,20 +1538,20 @@ local refreshUnitChangeRaidPet = [[
 		return
 	end
 
-	local grptype, id
+	local grptype, id, petunit
 	if (unit) then
 		unit = gsub(unit,"pet","")
-		grptype, id = strmatch(unit, "^(%a+)(%d+)$")
-		RegisterStateDriver(self, 'vehicleui', '[@' .. grptype .. id .. ',unithasvehicleui]vehicle; novehicle')
+		petunit = gsub(unit, "^(%a+)(%d+)$", "%1pet%2")
+		RegisterStateDriver(self, 'vehicleui', '[@' .. unit .. ',unithasvehicleui]vehicle; novehicle')
 	else
 		UnregisterStateDriver(self, 'vehicleui')
 		return
 	end
 
-	if UnitHasVehicleUI("raid"..id) then
-		self:SetAttribute("unit", grptype..id)
+	if UnitHasVehicleUI(unit) then
+		self:SetAttribute("unit", unit)
 	else
-		self:SetAttribute("unit", grptype.."pet"..id)
+		self:SetAttribute("unit", petunit)
 	end
 ]]
 
@@ -1559,7 +1560,7 @@ local onstatevehicleuiRaidPet = [[
 	if not unit then return end
 
 	if unit == "player" or unit == "pet" then
-		if UnitHasVehicleUI("player") then
+		if newstate == "vehicle" then
 			self:SetAttribute("unit", "player")
 		else
 			self:SetAttribute("unit", "pet")
@@ -1568,11 +1569,11 @@ local onstatevehicleuiRaidPet = [[
 	end	
 
 	unit = gsub(unit,"pet","")
-	local grptype, id = strmatch(unit, "^(%a+)(%d+)$")
-	if UnitHasVehicleUI("raid"..id) then
-		self:SetAttribute("unit", grptype..id)
+	local petunit = gsub(unit, "^(%a+)(%d+)$", "%1pet%2")
+	if newstate == "vehicle" then
+		self:SetAttribute("unit", unit)
 	else
-		self:SetAttribute("unit", grptype.."pet"..id)
+		self:SetAttribute("unit", petunit)
 	end
 ]]
 
