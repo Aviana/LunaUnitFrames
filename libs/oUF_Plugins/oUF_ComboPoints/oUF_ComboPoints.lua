@@ -7,6 +7,10 @@ Handles the visibility and updating of the player"s class resources (like Chi Or
 
 ComboPoints - A `table` consisting of 5 StatusBars as the maximum return of [UnitPowerMax](http://wowprogramming.com/docs/api/UnitPowerMax.html).
 
+## Options
+
+.showTarget - Always show target combo points
+
 ## Sub-Widgets
 
 .bg - A `Texture` used as a background. It will inherit the color of the main StatusBar.
@@ -81,14 +85,18 @@ local function Update(self, event, unit, powerType)
 	if(element.PreUpdate) then
 		element:PreUpdate()
 	end
-
+	local cur
 	if(event ~= "ComboPointsDisable") then
-
-		local cur
 		if UnitHasVehicleUI("player") then
-			cur = GetComboPoints("pet", "target")
-		else
+			if UnitIsUnit(self.unit or "pet", "pet") then
+				cur = GetComboPoints("pet", "pet")
+			else
+				cur = GetComboPoints("pet", "target")
+			end
+		elseif self.modules.comboPoints.showTarget then
 			cur = GetComboPoints("player", "target")
+		else
+			cur = GetComboPoints("player", self.unit)
 		end
 		for i = 1, 5 do
 			if(i > cur) then

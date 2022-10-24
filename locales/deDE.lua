@@ -208,6 +208,7 @@ local L = {
 ["Highlight the frame when the unit has a debuff you or someone can remove"] = "Hebe das Fenster hervor wenn die Einheit einen Schw\195\164chungszauber hat, den du oder irgendjemand entfernen kann.",
 ["Your own"] = "Deine eigenen",
 ["Auto hide"] = "Automatisch Verstecken",
+["Show Combo Points you have on your target"] = "Zeige Ziel Kombo Punkte",
 ["Hide when inactive"] = "Verstecke wenn Inaktiv",
 ["Cast icon"] = "Zauber Bild",
 ["Set the behaviour of the cast icon"] = "Setze das Verhalten des Zauber Bildes",

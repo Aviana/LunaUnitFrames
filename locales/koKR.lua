@@ -205,6 +205,7 @@ local L = {
 ["Highlight the frame when the unit has a debuff you or someone can remove"] = "유닛에 디버프를 당신 또는 누군가 제거할 수 있으면 프레임을 강조합니다.",
 ["Your own"] = "당신 자신",
 ["Auto hide"] = "자동 숨김",
+["Show Combo Points you have on your target"] = "Show Combo Points you have on your target",
 ["Hide when inactive"] = "비활성 시 숨깁니다.",
 ["Cast icon"] = "시전 아이콘",
 ["Set the behaviour of the cast icon"] = "시전 아이콘을 표시할 지 설정합니다.",

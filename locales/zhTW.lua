@@ -205,6 +205,7 @@ local L = {
 ["Highlight the frame when the unit has a debuff you or someone can remove"] = "Highlight the frame when the unit has a debuff you or someone can remove",
 ["Your own"] = "Your own",
 ["Auto hide"] = "自動隱藏",
+["Show Combo Points you have on your target"] = "Show Combo Points you have on your target",
 ["Hide when inactive"] = "沒有這項元素時隱藏",
 ["Cast icon"] = "法術圖示",
 ["Set the behaviour of the cast icon"] = "設定法術圖示的位置",

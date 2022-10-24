@@ -658,6 +658,7 @@ local moduleSettings = {
 			end
 		end
 		mod.autoHide = config.autoHide
+		mod.showTarget = config.showTarget
 		mod.growth = config.growth
 		mod:Update()
 	end,

@@ -205,6 +205,7 @@ local L = {
 ["Highlight the frame when the unit has a debuff you or someone can remove"] = "Highlight the frame when the unit has a debuff you or someone can remove",
 ["Your own"] = "Your own",
 ["Auto hide"] = "Auto hide",
+["Show Combo Points you have on your target"] = "Show Combo Points you have on your target",
 ["Hide when inactive"] = "Hide when inactive",
 ["Cast icon"] = "Cast icon",
 ["Set the behaviour of the cast icon"] = "Set the behaviour of the cast icon",

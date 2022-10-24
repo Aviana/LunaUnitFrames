@@ -115,7 +115,7 @@ function LUF:LoadDefaults()
 			emptyBar = { enabled = false, height = 3, order = 50, reactionType="npc", class = true, alpha = 0.2, posSlot = "CENTER"},
 			druidBar = {enabled = false, autoHide = true, order = 70, height = 3, background = true, backgroundAlpha = 0.2, posSlot = "CENTER" },
 			totemBar = {enabled = false, order = 70, height = 2, background = true, backgroundAlpha = 0.2, fontsize = 8, autoHide = true, posSlot = "CENTER"},
-			comboPoints = {enabled = false, background = true, backgroundAlpha = 0.2, autoHide = true, order = 70, growth = "RIGHT", height = 2, posSlot = "CENTER"},
+			comboPoints = {enabled = true, background = true, backgroundAlpha = 0.2, autoHide = true, order = 70, growth = "RIGHT", height = 2, posSlot = "CENTER"},
 			ghoul = { enabled = false, background = true, backgroundAlpha = 0.2, height = 2, autoHide = true, order = 70, posSlot = "CENTER"},
 			runes = {enabled = true, background = true, backgroundAlpha = 0.2, fontsize = 8, order = 80, height = 2, posSlot = "CENTER"},
 			highlight = { enabled = true, debuff = 2 },

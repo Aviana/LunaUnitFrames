@@ -310,16 +310,10 @@ LUF.overrides["ComboPoints"].Update = function(self)
 	end
 end
 
-LUF.overrides["ComboPoints"].PostUpdate = function(self, cur, max, hasMaxChanged, powerType)
+LUF.overrides["ComboPoints"].PostUpdate = function(self, cur)
 	local mod = self[1]:GetParent()
-	local cp
-	if UnitHasVehicleUI("player") then
-		cp = GetComboPoints("pet", "target")
-	else
-		cp = GetComboPoints("player", "target")
-	end
-	mod.isDisabled = not self.isEnabled
-	if (not cp or cp ==0) and mod.autoHide or mod.isDisabled then
+
+	if (not cur or cur ==0) and mod.autoHide or not self.isEnabled then
 		mod:Hide()
 	else
 		mod:Show()
