@@ -279,7 +279,7 @@ local function updateIcon(element, unit, index, position, filter, isDebuff)
 			end
 
 			if(button.icon) then button.icon:SetTexture(texture) end
-			if(button.count) then button.count:SetText(count > 1 and count) end
+			if(button.count) then button.count:SetText(count > 1 and count or "") end
 
 			local size
 			local preventBuffGrowth, preventDebuffGrowth = (element.buffAnchor == "INFRAME" or element.buffAnchor == "INFRAMECENTER"), (element.debuffAnchor == "INFRAME" or element.debuffAnchor == "INFRAMECENTER")
