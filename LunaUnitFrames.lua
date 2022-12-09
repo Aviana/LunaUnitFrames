@@ -1,7 +1,7 @@
 -- Luna Unit Frames 4.0 by Aviana
 
 LUF = select(2, ...)
-LUF.version = 4342
+LUF.version = 4343
 
 local L = LUF.L
 local ACR = LibStub("AceConfigRegistry-3.0", true)
@@ -1185,6 +1185,7 @@ function LUF.PlaceModules(frame)
 		end
 		totalSum = totalSum + config.slots["right"].value
 	end
+	totalSum = max(1,totalSum)
 	usableXLeft = usableX * (config.slots["left"].value/totalSum)
 	usableXCenter = usableX * (config.slots["center"].value/totalSum)
 	usableXRight = usableX * (config.slots["right"].value/totalSum)
