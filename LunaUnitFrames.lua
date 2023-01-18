@@ -1,7 +1,7 @@
 -- Luna Unit Frames 4.0 by Aviana
 
 LUF = select(2, ...)
-LUF.version = 4343
+LUF.version = 4344
 
 local L = LUF.L
 local ACR = LibStub("AceConfigRegistry-3.0", true)
@@ -31,17 +31,11 @@ LUF.stateMonitor:WrapScript(LUF.stateMonitor, "OnAttributeChanged", [[
 	if name == "state-vehiclestatus" or name == "hidepetinvehicle" then
 		local hidepetinvehicle = self:GetAttribute("hidepetinvehicle")
 		local vehiclestatus = self:GetAttribute("state-vehiclestatus")
-		if vehiclestatus == "vehicle" then
-			if hidepetinvehicle then
-				self:GetFrameRef("petFrame"):SetAttribute("unit", "none")
-				self:GetFrameRef("petFrame"):Hide()
-			else
-				self:GetFrameRef("petFrame"):SetAttribute("unit", "player")
-			end
-			self:GetFrameRef("playerFrame"):SetAttribute("unit", "pet")
+		if vehiclestatus == "vehicle" and hidepetinvehicle then
+			self:GetFrameRef("petFrame"):SetAttribute("unit", "none")
+			self:GetFrameRef("petFrame"):Hide()
 		else
 			self:GetFrameRef("petFrame"):SetAttribute("unit", "pet")
-			self:GetFrameRef("playerFrame"):SetAttribute("unit", "player")
 		end
 		return
 	end
@@ -1457,7 +1451,7 @@ local initialConfigFunction = [[
 	self:SetScale(parent:GetAttribute("x-scale") or 1)
 ]]
 
-local refreshUnitChangePartyPet = [[
+local refreshUnitChange = [[
 	local unit = self:GetAttribute("unit")
 	if unit and not strmatch(unit, "pet") then
 		if unit == "player" then
@@ -1474,111 +1468,6 @@ local refreshUnitChangePartyPet = [[
 	end
 ]]
 
-local refreshUnitChangeRaid = [[
-	local unit = self:GetAttribute("unit")
-
-	if unit == "player" or unit == "pet" then
-		RegisterStateDriver(self, 'vehicleui', '[@player' .. ',unithasvehicleui]vehicle; novehicle')
-		if UnitHasVehicleUI("player") then
-			self:SetAttribute("unit", "pet")
-		else
-			self:SetAttribute("unit", "player")
-		end
-		return
-	end
-
-	local grptype, id, petunit
-	if (unit) then
-		unit = gsub(unit,"pet","")
-		petunit = gsub(unit, "^(%a+)(%d+)$", "%1pet%2")
-		RegisterStateDriver(self, 'vehicleui', '[@' .. unit .. ',unithasvehicleui]vehicle; novehicle')
-	else
-		UnregisterStateDriver(self, 'vehicleui')
-		return
-	end
-
-	if UnitHasVehicleUI(unit) then
-		self:SetAttribute("unit", petunit)
-	else
-		self:SetAttribute("unit", unit)
-	end
-]]
-
-local onstatevehicleuiRaid = [[
-	local unit = self:GetAttribute("unit")
-	
-	if not unit then return end
-
-	if unit == "player" or unit == "pet" then
-		if newstate == "vehicle" then
-			self:SetAttribute("unit", "pet")
-		else
-			self:SetAttribute("unit", "player")
-		end
-		return
-	end
-
-	unit = gsub(unit,"pet","")
-	local petunit = gsub(unit, "^(%a+)(%d+)$", "%1pet%2")
-	if newstate == "vehicle" then
-		self:SetAttribute("unit", petunit)
-	else
-		self:SetAttribute("unit", unit)
-	end
-]]
-
-local refreshUnitChangeRaidPet = [[
-	local unit = self:GetAttribute("unit")
-
-	if unit == "player" or unit == "pet" then
-		RegisterStateDriver(self, 'vehicleui', '[@player' .. ',unithasvehicleui]vehicle; novehicle')
-		if UnitHasVehicleUI("player") then
-			self:SetAttribute("unit", "player")
-		else
-			self:SetAttribute("unit", "pet")
-		end
-		return
-	end
-
-	local grptype, id, petunit
-	if (unit) then
-		unit = gsub(unit,"pet","")
-		petunit = gsub(unit, "^(%a+)(%d+)$", "%1pet%2")
-		RegisterStateDriver(self, 'vehicleui', '[@' .. unit .. ',unithasvehicleui]vehicle; novehicle')
-	else
-		UnregisterStateDriver(self, 'vehicleui')
-		return
-	end
-
-	if UnitHasVehicleUI(unit) then
-		self:SetAttribute("unit", unit)
-	else
-		self:SetAttribute("unit", petunit)
-	end
-]]
-
-local onstatevehicleuiRaidPet = [[
-	local unit = self:GetAttribute("unit")
-	if not unit then return end
-
-	if unit == "player" or unit == "pet" then
-		if newstate == "vehicle" then
-			self:SetAttribute("unit", "player")
-		else
-			self:SetAttribute("unit", "pet")
-		end
-		return
-	end	
-
-	unit = gsub(unit,"pet","")
-	local petunit = gsub(unit, "^(%a+)(%d+)$", "%1pet%2")
-	if newstate == "vehicle" then
-		self:SetAttribute("unit", unit)
-	else
-		self:SetAttribute("unit", petunit)
-	end
-]]
-
 function LUF:SpawnUnits()
 	oUF:RegisterStyle("LunaUnitFrames", self.InitializeUnit)
 	oUF:RegisterInitCallback(function(frame) LUF.PlaceModules(frame) LUF.ApplySettings(frame) end)
@@ -1589,8 +1478,6 @@ function LUF:SpawnUnits()
 				for id=1,10 do
 					local data = config.positions[id]
 					self.frameIndex["raid"..id] = oUF:SpawnHeader("LUFHeaderraid"..id, nil, nil, "oUF-initialConfigFunction", format(initialConfigFunction, "raid"))
-					self.frameIndex["raid"..id]:SetAttribute("_initialAttribute-refreshUnitChange", refreshUnitChangeRaid)
-					self.frameIndex["raid"..id]:SetAttribute('_initialAttribute-_onstate-vehicleui', onstatevehicleuiRaid)
 					self.frameIndex["raid"..id]:Show() --Set Show() early to allow child spawning
 					self.frameIndex["raid"..id]:SetAttribute("oUF-headerType", unit)
 				end
@@ -1619,16 +1506,15 @@ function LUF:SpawnUnits()
 					local frame = oUF:Spawn(unit..i, "LUFHeader"..unit.."UnitButton"..i)
 					frame:SetParent(_G["LUFHeader"..unit])
 				end
-			elseif unit == "raidpet" then
-				self.frameIndex[unit] = oUF:SpawnHeader("LUFHeader"..unit, "SecureGroupPetHeaderTemplate", nil, "oUF-initialConfigFunction", format(initialConfigFunction, unit))
-				self.frameIndex[unit]:SetAttribute("_initialAttribute-refreshUnitChange", refreshUnitChangeRaidPet)
-				self.frameIndex[unit]:SetAttribute("_initialAttribute-_onstate-vehicleui", onstatevehicleuiRaidPet)
-				self.frameIndex[unit]:Show() --Set Show() early to allow child spawning
-				self.frameIndex[unit]:SetAttribute("oUF-headerType", unit)
 			else
-				self.frameIndex[unit] = oUF:SpawnHeader("LUFHeader"..unit, nil, nil, "oUF-initialConfigFunction", format(initialConfigFunction, unit))
+				local template
+
+				if unit == "raidpet" then
+					template = "SecureGroupPetHeaderTemplate"
+				end
+				self.frameIndex[unit] = oUF:SpawnHeader("LUFHeader"..unit, template, nil, "oUF-initialConfigFunction", format(initialConfigFunction, unit))
 				if unit == "partypet" then
-					self.frameIndex[unit]:SetAttribute("_initialAttribute-refreshUnitChange", refreshUnitChangePartyPet)
+					self.frameIndex[unit]:SetAttribute("_initialAttribute-refreshUnitChange", refreshUnitChange)
 				end
 				self.frameIndex[unit]:Show() --Set Show() early to allow child spawning
 				self.frameIndex[unit]:SetAttribute("oUF-headerType", unit)
@@ -1644,7 +1530,6 @@ function LUF:SpawnUnits()
 		frame:SetFrameStrata(self.db.profile.strata)
 	end
 	local config = self.db.profile.units
-	self.stateMonitor:SetFrameRef("playerFrame", self.frameIndex["player"])
 	self.stateMonitor:SetFrameRef("partyFrame", self.frameIndex["party"])
 	self.stateMonitor:SetFrameRef("partytargetFrame", self.frameIndex["partytarget"])
 	self.stateMonitor:SetFrameRef("partypetFrame", self.frameIndex["partypet"])
