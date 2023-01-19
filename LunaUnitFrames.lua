@@ -1,7 +1,7 @@
 -- Luna Unit Frames 4.0 by Aviana
 
 LUF = select(2, ...)
-LUF.version = 4344
+LUF.version = 4345
 
 local L = LUF.L
 local ACR = LibStub("AceConfigRegistry-3.0", true)
@@ -1445,6 +1445,7 @@ local initialConfigFunction = [[
 		self:SetAttribute("unitsuffix", "target")
 	end
 	self:SetAttribute("oUF-guessUnit",unit)
+	self:SetAttribute("toggleForVehicle", true)
 	
 	self:SetHeight(parent:GetAttribute("x-height") or 1)
 	self:SetWidth(parent:GetAttribute("x-width") or 1)
@@ -1478,8 +1479,9 @@ function LUF:SpawnUnits()
 				for id=1,10 do
 					local data = config.positions[id]
 					self.frameIndex["raid"..id] = oUF:SpawnHeader("LUFHeaderraid"..id, nil, nil, "oUF-initialConfigFunction", format(initialConfigFunction, "raid"))
-					self.frameIndex["raid"..id]:Show() --Set Show() early to allow child spawning
+					self.frameIndex["raid"..id]:SetAttribute('_initialAttribute-_onstate-vehicleui', nil)
 					self.frameIndex["raid"..id]:SetAttribute("oUF-headerType", unit)
+					self.frameIndex["raid"..id]:Show() --Set Show() early to allow child spawning
 				end
 			elseif unit:match("^arena.*") then
 				self.frameIndex[unit] = CreateFrame("Frame", "LUFHeader"..unit, UIParent, "SecureFrameTemplate")
