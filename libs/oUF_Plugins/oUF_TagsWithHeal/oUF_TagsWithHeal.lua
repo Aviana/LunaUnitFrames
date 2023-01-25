@@ -1321,10 +1321,8 @@ local tagEvents = {
 	["color"]               = "PLAYER_LOGIN", -- Dummy
 	["br"]                  = "PLAYER_LOGIN", -- Dummy
 	["castname"]            = "UNIT_SPELLCAST_START UNIT_SPELLCAST_CHANNEL_START UNIT_SPELLCAST_STOP",
-	["xp"]                  = "PLAYER_XP_UPDATE UPDATE_EXHAUSTION",
-	["percxp"]              = "PLAYER_XP_UPDATE",
-	["xpPet"]               = "UNIT_PET_EXPERIENCE UNIT_LEVEL",
-	["percxpPet"]           = "UNIT_PET_EXPERIENCE UNIT_LEVEL",
+	["xp"]                  = "PLAYER_XP_UPDATE UPDATE_EXHAUSTION UNIT_PET_EXPERIENCE UNIT_LEVEL",
+	["percxp"]              = "PLAYER_XP_UPDATE UNIT_PET_EXPERIENCE UNIT_LEVEL",
 	["rep"]                 = "UPDATE_FACTION",
 }
 
