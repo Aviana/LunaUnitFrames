@@ -41,7 +41,7 @@ local playerClass = select(2, UnitClass("player"))
 local canCure = {}
 local cures = {
 	["DRUID"] = {[2782] = {"Curse"}, [2893] = {"Poison"}, [8946] = {"Poison"}},
-	["PRIEST"] = {[528] = {"Disease"}, [552] = {"Disease"}, [527] = {"Magic"}, [988] = {"Magic"}},
+	["PRIEST"] = {[528] = {"Disease"}, [552] = {"Disease"}, [527] = {"Magic"}, [988] = {"Magic"}, [64127] = {"Poison"}, [64129] = {"Poison"}},
 	["PALADIN"] = {[4987] = {"Poison", "Disease", "Magic"}, [1152] = {"Poison", "Disease"}},
 	["SHAMAN"] = {[526] = {"Poison", "Disease"}, [51886] = {"Curse", "Poison", "Disease"}},
 	["MAGE"] = {[475] = {"Curse"}},
