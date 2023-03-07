@@ -1,3 +1,5 @@
+- DEVELOMENT HAS STOPPED SINCE I NO LONGER PLAY THE GAME -
+
 # LunaUnitFrames
 Unit Frames for WoW Classic
 
